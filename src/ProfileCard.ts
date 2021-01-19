@@ -22,9 +22,7 @@ export const ProfileCard = ({
   introduction,
   location,
 }: ProfilePresentation) => html`
-  <div>
-    <img style=${styles.image} src=${imageSrc} alt=${name} />
-  </div>
+  <div>${Image(imageSrc, name)}</div>
   <div style=${styles.info}>
     <h3 style=${styles.name}>${name}</h3>
     <div style=${styles.intro}>
@@ -35,3 +33,6 @@ export const ProfileCard = ({
 
 const Line = (value, prefix = nothing) =>
   value ? html`<p>${prefix} ${value}</p>` : nothing;
+
+const Image = (src, alt) =>
+  src ? html`<img style=${styles.image} src=${src} alt=${alt} />` : nothing;
