@@ -17,9 +17,12 @@ export const ProfileView = (subject: NamedNode) => {
     country: "Germany",
     organization: "Solid Community",
     role: "Test Double",
+    location: "Hamburg, Germany",
   };
-  return html` <div style="${styles.grid}">
-    <div style="${styles.card}">${ProfileCard(profile)}</div>
-    <div style="${styles.card}">Friend list</div>
-  </div>`;
+  return html`
+    <div style="${styles.grid}">
+      <div style="${styles.card}">${ProfileCard(profile)}</div>
+      <div style="${styles.card}">Friend list</div>
+    </div>
+  `;
 };
