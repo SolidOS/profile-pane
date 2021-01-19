@@ -1,4 +1,4 @@
-import { html } from "lit-html";
+import { html, nothing } from "lit-html";
 import { styleMap } from "lit-html/directives/style-map";
 import {
   fullWidth,
@@ -7,39 +7,31 @@ import {
   textCenter,
   textGray,
 } from "./baseStyles";
-
-interface Props {
-  webId: string;
-  name: string;
-  role: string;
-  country: string;
-  organization: string;
-  imageSrc: string;
-  location: string;
-}
+import { ProfilePresentation } from "./presenter";
 
 const styles = {
   image: styleMap(fullWidth()),
   name: styleMap(heading()),
-  role: styleMap({ ...textGray(), ...textCenter() }),
+  intro: styleMap({ ...textGray(), ...textCenter() }),
   info: styleMap(padding()),
 };
 
 export const ProfileCard = ({
   name,
   imageSrc,
-  role,
-  organization,
+  introduction,
   location,
-}: Props) => html`
+}: ProfilePresentation) => html`
   <div>
     <img style=${styles.image} src=${imageSrc} alt=${name} />
   </div>
   <div style=${styles.info}>
     <h3 style=${styles.name}>${name}</h3>
-    <div style=${styles.role}>
-      <p>${role} at ${organization}</p>
-      <p>🌐 ${location}</p>
+    <div style=${styles.intro}>
+      ${Line(introduction)} ${Line(location, "🌐")}
     </div>
   </div>
 `;
+
+const Line = (value, prefix = nothing) =>
+  value ? html`<p>${prefix} ${value}</p>` : nothing;

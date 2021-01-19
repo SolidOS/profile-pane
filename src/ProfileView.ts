@@ -5,6 +5,7 @@ import { card, responsiveGrid } from "./baseStyles";
 import { ProfileCard } from "./ProfileCard";
 import { DataBrowserContext } from "pane-registry";
 import { FriendList } from "./FriendList";
+import { presentProfile } from "./presenter";
 
 const styles = {
   grid: styleMap(responsiveGrid()),
@@ -15,15 +16,7 @@ export const ProfileView = (
   subject: NamedNode,
   context: DataBrowserContext
 ) => {
-  const profile = {
-    webId: subject.value,
-    name: "Jane Doe",
-    imageSrc: "https://i.pravatar.cc/300?img=30",
-    country: "Germany",
-    organization: "Solid Community",
-    role: "Test Double",
-    location: "Hamburg, Germany",
-  };
+  const profile = presentProfile(subject, context.session.store);
 
   return html`
     <div style="${styles.grid}">
