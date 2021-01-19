@@ -9,8 +9,7 @@ describe("profile-pane", () => {
       dom: document,
     } as DataBrowserContext;
     const result = pane.render(subject, context);
-    expect(result).toContainHTML(
-      "Hello, https://janedoe.example/profile/card#me"
-    );
+    expect(result).toContainHTML("Jane Doe");
+    expect(result).toContainHTML("Test Double at Solid Community");
   });
 });
