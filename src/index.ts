@@ -19,9 +19,9 @@ const Pane = {
     }
     return null;
   },
-  render: (subject: NamedNode, { dom }: DataBrowserContext): HTMLElement => {
-    const target = dom.createElement("div");
-    render(ProfileView(subject), target);
+  render: (subject: NamedNode, context: DataBrowserContext): HTMLElement => {
+    const target = context.dom.createElement("div");
+    render(ProfileView(subject, context), target);
     return target;
   },
 };

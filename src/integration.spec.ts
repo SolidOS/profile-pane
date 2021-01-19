@@ -11,5 +11,7 @@ describe("profile-pane", () => {
     const result = pane.render(subject, context);
     expect(result).toContainHTML("Jane Doe");
     expect(result).toContainHTML("Test Double at Solid Community");
+    expect(result).toContainHTML("Hamburg, Germany");
+    expect(result).toContainHTML("Friends");
   });
 });

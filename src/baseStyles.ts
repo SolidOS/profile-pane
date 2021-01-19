@@ -38,6 +38,11 @@ export const textXl = () => ({
   fontSize: "1.25rem",
   lineHeight: "1.75rem",
 });
+
+export const fontThin = () => ({
+  fontWeight: "100",
+});
+
 export const fontSemibold = () => ({
   fontWeight: "600",
 });
@@ -55,6 +60,13 @@ export const heading = () => ({
   ...textXl(),
   ...fontSemibold(),
   ...textDarkGray(),
+  margin: "0",
+});
+
+export const headingLight = () => ({
+  ...textGray(),
+  ...fontThin(),
+  ...textXl(),
   margin: "0",
 });
 
