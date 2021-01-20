@@ -21,9 +21,13 @@ export const ProfileView = (
   return html`
     <div style="${styles.grid}">
       <div>
-        <div style="${styles.card}">${ProfileCard(profile)}</div>
+        <div data-testid="profile-card" style="${styles.card}">
+          ${ProfileCard(profile)}
+        </div>
       </div>
-      <div style="${styles.card}">${FriendList(subject, context)}</div>
+      <div data-testid="friend-list" style="${styles.card}">
+        ${FriendList(subject, context)}
+      </div>
     </div>
   `;
 };

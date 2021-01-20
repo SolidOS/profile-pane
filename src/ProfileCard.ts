@@ -22,7 +22,7 @@ export const ProfileCard = ({
   introduction,
   location,
 }: ProfilePresentation) => html`
-  <div>${Image(imageSrc, name)}</div>
+  ${Image(imageSrc, name)}
   <div style=${styles.info}>
     <h3 style=${styles.name}>${name}</h3>
     <div style=${styles.intro}>
