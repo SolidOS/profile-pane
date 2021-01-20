@@ -1,14 +1,14 @@
 import { html } from "lit-html";
 import { NamedNode } from "rdflib";
 import { styleMap } from "lit-html/directives/style-map.js";
-import { card, responsiveGrid } from "./baseStyles";
+import { card, paddingSmall, responsiveGrid } from "./baseStyles";
 import { ProfileCard } from "./ProfileCard";
 import { DataBrowserContext } from "pane-registry";
 import { FriendList } from "./FriendList";
 import { presentProfile } from "./presenter";
 
 const styles = {
-  grid: styleMap(responsiveGrid()),
+  grid: styleMap({ ...responsiveGrid(), ...paddingSmall() }),
   card: styleMap(card()),
 };
 
