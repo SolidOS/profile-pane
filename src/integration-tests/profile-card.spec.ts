@@ -1,24 +1,14 @@
-import pane from "./";
-import { parse, sym } from "rdflib";
-import { DataBrowserContext } from "pane-registry";
+import pane from "../";
+import { parse } from "rdflib";
 import { store } from "solid-ui";
 import {
   getByAltText,
   getByTestId,
   queryByAltText,
 } from "@testing-library/dom";
+import { context, doc, subject } from "./setup";
 
 describe("profile-pane", () => {
-  const subject = sym("https://janedoe.example/profile/card#me");
-  const doc = subject.doc();
-
-  const context = {
-    dom: document,
-    session: {
-      store,
-    },
-  } as DataBrowserContext;
-
   let result;
 
   describe("with full profile", () => {
@@ -66,22 +56,6 @@ describe("profile-pane", () => {
         "https://janedoe.example/profile/me.jgp"
       );
     });
-
-    describe("friend list", () => {
-      let friends;
-      beforeAll(() => {
-        friends = getByTestId(result, "friend-list");
-      });
-      it("renders the friend list", () => {
-        expect(friends).toContainHTML("Friends");
-      });
-      it("renders John in list", () => {
-        expect(friends).toContainHTML("John Doe");
-      });
-      it("renders Alice in list", () => {
-        expect(friends).toContainHTML("Alice");
-      });
-    });
   });
 
   describe("with empty profile", () => {
@@ -99,11 +73,6 @@ describe("profile-pane", () => {
     it("does not render broken profile image", () => {
       const image = queryByAltText(card, /.*/);
       expect(image).toBeNull();
-    });
-
-    it("renders an empty friend list", () => {
-      const friends = getByTestId(result, "friend-list");
-      expect(friends.textContent.trim()).toBe("Friends");
     });
   });
 });
