@@ -2,11 +2,14 @@ import pane from "../";
 import { parse } from "rdflib";
 import { store } from "solid-ui";
 import {
+  findByAltText,
+  findByTestId,
   getByAltText,
-  getByTestId,
   queryByAltText,
+  waitFor,
 } from "@testing-library/dom";
 import { context, doc, subject } from "./setup";
+import fetchMock from "jest-fetch-mock";
 
 describe("profile-pane", () => {
   let result;
@@ -25,11 +28,6 @@ describe("profile-pane", () => {
           vcard:hasAddress [
             vcard:locality "Hamburg";
             vcard:country-name "Germany";
-          ];
-          foaf:knows [
-            foaf:name "John Doe";
-          ], [
-            vcard:fn "Alice";
           ];
       .
   `;
@@ -60,10 +58,10 @@ describe("profile-pane", () => {
 
   describe("with empty profile", () => {
     let card;
-    beforeAll(() => {
+    beforeAll(async () => {
       store.removeDocument(doc);
       result = pane.render(subject, context);
-      card = getByTestId(result, "profile-card");
+      card = await findByTestId(result, "profile-card");
     });
 
     it("renders only a makeshift name based on URI", () => {
@@ -73,6 +71,74 @@ describe("profile-pane", () => {
     it("does not render broken profile image", () => {
       const image = queryByAltText(card, /.*/);
       expect(image).toBeNull();
+    });
+  });
+
+  describe("with extended profile", () => {
+    beforeAll(() => {
+      store.removeDocument(doc);
+      let turtle = `
+      @prefix : <#>.
+      @prefix foaf: <http://xmlns.com/foaf/0.1/> .
+      @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+      :me foaf:name "Jane Doe";
+          rdfs:seeAlso <./more.ttl>, <./address.ttl>;
+      .`;
+      parse(turtle, store, doc.uri);
+      fetchMock.mockOnceIf(
+        "https://janedoe.example/profile/more.ttl",
+        `
+              @prefix jane: </profile/card#>.
+      @prefix foaf: <http://xmlns.com/foaf/0.1/> .
+      @prefix vcard: <http://www.w3.org/2006/vcard/ns#> .
+      jane:me foaf:img </profile/me.jgp>;
+          vcard:role "Test Double";
+          vcard:organization-name "Solid Community";
+      .
+      `,
+        {
+          headers: {
+            "Content-Type": "text/turtle",
+          },
+        }
+      );
+      fetchMock.mockOnceIf(
+        "https://janedoe.example/profile/address.ttl",
+        `
+              @prefix jane: </profile/card#>.
+      @prefix vcard: <http://www.w3.org/2006/vcard/ns#> .
+      jane:me vcard:hasAddress [
+            vcard:locality "Hamburg";
+            vcard:country-name "Germany";
+          ];
+      .
+      `,
+        {
+          headers: {
+            "Content-Type": "text/turtle",
+          },
+        }
+      );
+      result = pane.render(subject, context);
+    });
+
+    it("renders the name", () =>
+      waitFor(() => expect(result).toContainHTML("Jane Doe")));
+
+    it("renders the introduction", () =>
+      waitFor(() =>
+        expect(result).toContainHTML("Test Double at Solid Community")
+      ));
+
+    it("renders the location", () =>
+      waitFor(() => expect(result).toContainHTML("🌐 Hamburg, Germany")));
+
+    it("renders the image", async () => {
+      const image = await findByAltText(result, "Jane Doe");
+      expect(image).toHaveAttribute(
+        "src",
+        "https://janedoe.example/profile/me.jgp"
+      );
     });
   });
 });
