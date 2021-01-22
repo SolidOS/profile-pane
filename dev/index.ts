@@ -1,10 +1,47 @@
 import { sym } from "rdflib";
 import { default as pane } from "../src";
 import { context, fetcher } from "./context";
+import { authn, widgets } from "solid-ui";
 
-const webId = "https://angelo.veltens.org/profile/card#me";
+const {
+  currentSession,
+  popupLogin,
+  logout,
+  trackSession,
+} = authn.solidAuthClient;
 
-fetcher.load(webId).then(() => {
-  const app = pane.render(sym(webId), context);
+const loginButton = widgets.button(
+  document,
+  undefined,
+  "Login",
+  async function () {
+    let session = await currentSession();
+    const popupUri = "https://solidcommunity.net/common/popup.html";
+    if (!session) {
+      await popupLogin({ popupUri });
+    }
+  }
+);
+
+const logoutButton = widgets.button(document, undefined, "Logout", () =>
+  logout()
+);
+
+const loginBanner = document.getElementById("loginBanner");
+
+trackSession((session) => {
+  if (!session) {
+    loginBanner.innerHTML = "";
+    loginBanner.appendChild(loginButton);
+  } else {
+    loginBanner.innerHTML = `Logged in as ${session.webId}`;
+    loginBanner.appendChild(logoutButton);
+  }
+});
+
+const webIdToShow = "https://angelo.veltens.org/profile/card#me";
+
+fetcher.load(webIdToShow).then(() => {
+  const app = pane.render(sym(webIdToShow), context);
   document.getElementById("app").replaceWith(app);
 });
