@@ -3,6 +3,8 @@ SolidOS pane that displays a personal profile page
 
 This is a re-write that is going to replace the current profile pane
 
+![CI](https://github.com/solid/profile-pane/workflows/CI/badge.svg)
+
 ## Contribute
 
 ### Tech stack
