@@ -1,7 +1,7 @@
 import pane from "../";
 import { parse } from "rdflib";
 import { store } from "solid-ui";
-import { findByTestId, getByTestId } from "@testing-library/dom";
+import { findByTestId } from "@testing-library/dom";
 import { context, doc, subject } from "./setup";
 import fetchMock from "jest-fetch-mock";
 
@@ -11,7 +11,7 @@ describe("profile-pane", () => {
   describe("with friends", () => {
     beforeAll(async () => {
       store.removeDocument(doc);
-      let turtle = `
+      const turtle = `
       @prefix : <#>.
       @prefix foaf: <http://xmlns.com/foaf/0.1/> .
       @prefix vcard: <http://www.w3.org/2006/vcard/ns#> .
@@ -27,7 +27,6 @@ describe("profile-pane", () => {
       friends = await findByTestId(result, "friend-list");
     });
 
-    beforeAll(() => {});
     it("renders the friend list", () => {
       expect(friends).toContainHTML("Friends");
     });
@@ -54,7 +53,7 @@ describe("profile-pane", () => {
   describe("with more friends in separate document", () => {
     beforeAll(async () => {
       store.removeDocument(doc);
-      let turtle = `
+      const turtle = `
       @prefix : <#>.
       @prefix foaf: <http://xmlns.com/foaf/0.1/> .
       @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
@@ -91,7 +90,6 @@ describe("profile-pane", () => {
       friends = await findByTestId(result, "friend-list");
     });
 
-    beforeAll(() => {});
     it("renders the friend list", () => {
       expect(friends).toContainHTML("Friends");
     });

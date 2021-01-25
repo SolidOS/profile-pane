@@ -17,7 +17,7 @@ describe("profile-pane", () => {
   describe("with full profile", () => {
     beforeAll(() => {
       store.removeDocument(doc);
-      let turtle = `
+      const turtle = `
       @prefix : <#>.
       @prefix foaf: <http://xmlns.com/foaf/0.1/> .
       @prefix vcard: <http://www.w3.org/2006/vcard/ns#> .
@@ -77,7 +77,7 @@ describe("profile-pane", () => {
   describe("with extended profile", () => {
     beforeAll(() => {
       store.removeDocument(doc);
-      let turtle = `
+      const turtle = `
       @prefix : <#>.
       @prefix foaf: <http://xmlns.com/foaf/0.1/> .
       @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .

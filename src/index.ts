@@ -20,7 +20,10 @@ const Pane = {
   global: false,
   icon: icons.iconBase + "noun_15059.svg",
   name: "profile",
-  label: function (subject, context) {
+  label: function (
+    subject: NamedNode,
+    context: DataBrowserContext
+  ): string | null {
     const t = context.session.store.findTypeURIs(subject);
     if (
       t[ns.vcard("Individual").uri] ||

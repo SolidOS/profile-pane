@@ -1,4 +1,4 @@
-import { html } from "lit-html";
+import { html, TemplateResult } from "lit-html";
 import { NamedNode } from "rdflib";
 import { styleMap } from "lit-html/directives/style-map.js";
 import { card, paddingSmall, responsiveGrid } from "./baseStyles";
@@ -10,7 +10,7 @@ import { presentProfile } from "./presenter";
 export const ProfileView = (
   subject: NamedNode,
   context: DataBrowserContext
-) => {
+): TemplateResult => {
   const profile = presentProfile(subject, context.session.store);
 
   const styles = {

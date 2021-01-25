@@ -1,7 +1,7 @@
 import { ns, widgets } from "solid-ui";
 import { DataBrowserContext } from "pane-registry";
 import { NamedNode } from "rdflib";
-import { html } from "lit-html";
+import { html, TemplateResult } from "lit-html";
 import { styleMap } from "lit-html/directives/style-map";
 import { headingLight, padding } from "./baseStyles";
 
@@ -13,7 +13,7 @@ const styles = {
 export const FriendList = (
   subject: NamedNode,
   context: DataBrowserContext
-) => html`
+): TemplateResult => html`
   <div style=${styles.root}>
     <h3 style=${styles.heading}>Friends</h3>
     ${createList(subject, context)}

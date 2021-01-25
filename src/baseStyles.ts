@@ -1,3 +1,7 @@
+/*
+  eslint-disable @typescript-eslint/explicit-module-boundary-types
+ */
+
 export const responsiveGrid = () => ({
   "--auto-grid-min-size": "20rem",
   display: "grid",

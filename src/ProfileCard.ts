@@ -1,4 +1,4 @@
-import { html, nothing } from "lit-html";
+import { html, nothing, TemplateResult } from "lit-html";
 import { styleMap } from "lit-html/directives/style-map";
 import {
   fullWidth,
@@ -21,7 +21,7 @@ export const ProfileCard = ({
   introduction,
   location,
   highlightColor,
-}: ProfilePresentation) => {
+}: ProfilePresentation): TemplateResult => {
   const nameStyle = styleMap({
     ...heading(),
     "text-decoration": "underline",
