@@ -78,4 +78,29 @@ describe("presenter", () => {
     const result = presentProfile(jane, store);
     expect(result.location).toBe("Hamburg, Germany");
   });
+
+  describe("coloring", () => {
+    it("presents default colors", () => {
+      const result = presentProfile(jane, store);
+      expect(result.backgroundColor).toBe("#eee");
+      expect(result.highlightColor).toBe("#090");
+    });
+    it("uses background color from profile settings", () => {
+      store.add(jane, ns.solid("profileBackgroundColor"), "#123456", doc);
+      const { backgroundColor } = presentProfile(jane, store);
+      expect(backgroundColor).toBe("#123456");
+    });
+    it("uses highlight color from profile settings", () => {
+      store.add(jane, ns.solid("profileHighlightColor"), "#987654", doc);
+      const { highlightColor } = presentProfile(jane, store);
+      expect(highlightColor).toBe("#987654");
+    });
+    it("presents default colors if settings are messed up", () => {
+      store.add(jane, ns.solid("profileBackgroundColor"), "foobar", doc);
+      store.add(jane, ns.solid("profileHighlightColor"), "42", doc);
+      const result = presentProfile(jane, store);
+      expect(result.backgroundColor).toBe("#eee");
+      expect(result.highlightColor).toBe("#090");
+    });
+  });
 });

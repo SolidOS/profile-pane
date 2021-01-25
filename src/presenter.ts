@@ -2,12 +2,15 @@ import { IndexedFormula, NamedNode } from "rdflib";
 import { ns, utils } from "solid-ui";
 import { findImage } from "solid-ui/lib/widgets/buttons";
 import Node from "rdflib/src/node-internal";
+import { validateHTMLColorHex } from "validate-color";
 
 export interface ProfilePresentation {
   name: string;
   imageSrc?: string;
   introduction?: string;
   location?: string;
+  backgroundColor: string;
+  highlightColor: string;
 }
 
 export const presentProfile = (
@@ -28,11 +31,16 @@ export const presentProfile = (
     address != null
       ? store.anyValue(address as NamedNode, ns.vcard("locality"))
       : null;
+
+  const { backgroundColor, highlightColor } = getColors(subject, store);
+
   return {
     name,
     imageSrc,
     introduction: formatIntroduction(role, orgName),
     location: formatLocation(countryName, locality),
+    backgroundColor,
+    highlightColor,
   };
 };
 
@@ -44,4 +52,28 @@ function formatLocation(countryName: string | void, locality: string | void) {
 
 function formatIntroduction(role: string | void, orgName: string | void) {
   return role && orgName ? `${role} at ${orgName}` : orgName || role || null;
+}
+
+function getColors(subject: NamedNode, store: IndexedFormula) {
+  const backgroundColor = store.anyValue(
+    subject,
+    ns.solid("profileBackgroundColor"),
+    null,
+    subject.doc()
+  );
+
+  const highlightColor = store.anyValue(
+    subject,
+    ns.solid("profileHighlightColor"),
+    null,
+    subject.doc()
+  );
+  return {
+    backgroundColor: validColorOrDefault(backgroundColor, "#eee"),
+    highlightColor: validColorOrDefault(highlightColor, "#090"),
+  };
+}
+
+function validColorOrDefault(color: string | void, fallback: string) {
+  return color && validateHTMLColorHex(color) ? color : fallback;
 }

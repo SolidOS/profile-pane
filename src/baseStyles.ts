@@ -7,6 +7,7 @@ export const responsiveGrid = () => ({
 });
 
 export const card = () => ({
+  backgroundColor: "white",
   borderRadius: "4px",
   boxShadow: "0 1px 5px rgba(0,0,0,0.2)",
   padding: "0",
