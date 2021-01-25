@@ -95,5 +95,12 @@ describe("presenter", () => {
       const { highlightColor } = presentProfile(jane, store);
       expect(highlightColor).toBe("#987654");
     });
+    it("presents default colors if settings are messed up", () => {
+      store.add(jane, ns.solid("profileBackgroundColor"), "foobar", doc);
+      store.add(jane, ns.solid("profileHighlightColor"), "42", doc);
+      const result = presentProfile(jane, store);
+      expect(result.backgroundColor).toBe("#eee");
+      expect(result.highlightColor).toBe("#090");
+    });
   });
 });

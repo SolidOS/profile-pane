@@ -2,6 +2,7 @@ import { IndexedFormula, NamedNode } from "rdflib";
 import { ns, utils } from "solid-ui";
 import { findImage } from "solid-ui/lib/widgets/buttons";
 import Node from "rdflib/src/node-internal";
+import { validateHTMLColorHex } from "validate-color";
 
 export interface ProfilePresentation {
   name: string;
@@ -54,20 +55,25 @@ function formatIntroduction(role: string | void, orgName: string | void) {
 }
 
 function getColors(subject: NamedNode, store: IndexedFormula) {
-  const backgroundColor =
-    store.anyValue(
-      subject,
-      ns.solid("profileBackgroundColor"),
-      null,
-      subject.doc()
-    ) || "#eee";
+  const backgroundColor = store.anyValue(
+    subject,
+    ns.solid("profileBackgroundColor"),
+    null,
+    subject.doc()
+  );
 
-  const highlightColor =
-    store.anyValue(
-      subject,
-      ns.solid("profileHighlightColor"),
-      null,
-      subject.doc()
-    ) || "#090";
-  return { backgroundColor, highlightColor };
+  const highlightColor = store.anyValue(
+    subject,
+    ns.solid("profileHighlightColor"),
+    null,
+    subject.doc()
+  );
+  return {
+    backgroundColor: validColorOrDefault(backgroundColor, "#eee"),
+    highlightColor: validColorOrDefault(highlightColor, "#090"),
+  };
+}
+
+function validColorOrDefault(color: string | void, fallback: string) {
+  return color && validateHTMLColorHex(color) ? color : fallback;
 }
