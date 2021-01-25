@@ -30,13 +30,16 @@ export const presentProfile = (
     address != null
       ? store.anyValue(address as NamedNode, ns.vcard("locality"))
       : null;
+
+  const { backgroundColor, highlightColor } = getColors(subject, store);
+
   return {
     name,
     imageSrc,
     introduction: formatIntroduction(role, orgName),
     location: formatLocation(countryName, locality),
-    backgroundColor: "#eee",
-    highlightColor: "#090",
+    backgroundColor,
+    highlightColor,
   };
 };
 
@@ -48,4 +51,23 @@ function formatLocation(countryName: string | void, locality: string | void) {
 
 function formatIntroduction(role: string | void, orgName: string | void) {
   return role && orgName ? `${role} at ${orgName}` : orgName || role || null;
+}
+
+function getColors(subject: NamedNode, store: IndexedFormula) {
+  const backgroundColor =
+    store.anyValue(
+      subject,
+      ns.solid("profileBackgroundColor"),
+      null,
+      subject.doc()
+    ) || "#eee";
+
+  const highlightColor =
+    store.anyValue(
+      subject,
+      ns.solid("profileHighlightColor"),
+      null,
+      subject.doc()
+    ) || "#090";
+  return { backgroundColor, highlightColor };
 }
