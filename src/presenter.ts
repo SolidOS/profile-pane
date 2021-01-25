@@ -8,6 +8,8 @@ export interface ProfilePresentation {
   imageSrc?: string;
   introduction?: string;
   location?: string;
+  backgroundColor: string;
+  highlightColor: string;
 }
 
 export const presentProfile = (
@@ -33,6 +35,8 @@ export const presentProfile = (
     imageSrc,
     introduction: formatIntroduction(role, orgName),
     location: formatLocation(countryName, locality),
+    backgroundColor: "#eee",
+    highlightColor: "#090",
   };
 };
 

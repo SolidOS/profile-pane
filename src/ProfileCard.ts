@@ -11,7 +11,6 @@ import { ProfilePresentation } from "./presenter";
 
 const styles = {
   image: styleMap(fullWidth()),
-  name: styleMap(heading()),
   intro: styleMap({ ...textGray(), ...textCenter() }),
   info: styleMap(padding()),
 };
@@ -21,15 +20,23 @@ export const ProfileCard = ({
   imageSrc,
   introduction,
   location,
-}: ProfilePresentation) => html`
-  ${Image(imageSrc, name)}
-  <div style=${styles.info}>
-    <h3 style=${styles.name}>${name}</h3>
-    <div style=${styles.intro}>
-      ${Line(introduction)} ${Line(location, "🌐")}
+  highlightColor,
+}: ProfilePresentation) => {
+  const nameStyle = styleMap({
+    ...heading(),
+    "text-decoration": "underline",
+    "text-decoration-color": highlightColor,
+  });
+  return html`
+    ${Image(imageSrc, name)}
+    <div style=${styles.info}>
+      <h3 style=${nameStyle}>${name}</h3>
+      <div style=${styles.intro}>
+        ${Line(introduction)} ${Line(location, "🌐")}
+      </div>
     </div>
-  </div>
-`;
+  `;
+};
 
 const Line = (value, prefix = nothing) =>
   value ? html`<p>${prefix} ${value}</p>` : nothing;

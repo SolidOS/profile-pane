@@ -78,4 +78,10 @@ describe("presenter", () => {
     const result = presentProfile(jane, store);
     expect(result.location).toBe("Hamburg, Germany");
   });
+
+  it("presents default colors", () => {
+    const result = presentProfile(jane, store);
+    expect(result.backgroundColor).toBe("#eee");
+    expect(result.highlightColor).toBe("#090");
+  });
 });
