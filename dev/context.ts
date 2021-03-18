@@ -1,10 +1,11 @@
 import {DataBrowserContext, LiveStore, PaneRegistry} from "pane-registry";
-import { store } from "solid-ui";
+import { store, solidLogicSingleton } from "solid-ui";
 
 export const context: DataBrowserContext = {
   session: {
     store: store as LiveStore,
     paneRegistry: null as PaneRegistry,
+    logic: solidLogicSingleton
   },
   dom: document,
   getOutliner: () => null,
