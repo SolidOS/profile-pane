@@ -2,10 +2,12 @@ import { html, TemplateResult } from "lit-html";
 import { NamedNode } from "rdflib";
 import { styleMap } from "lit-html/directives/style-map.js";
 import { card, paddingSmall, responsiveGrid } from "./baseStyles";
+import {ChatWithMe} from "./ChatWithMe";
 import { ProfileCard } from "./ProfileCard";
 import { DataBrowserContext } from "pane-registry";
 import { FriendList } from "./FriendList";
 import { presentProfile } from "./presenter";
+import { widgets } from "solid-ui";
 
 export const ProfileView = (
   subject: NamedNode,
@@ -31,6 +33,9 @@ export const ProfileView = (
       </div>
       <div data-testid="friend-list" style="${styles.card}">
         ${FriendList(subject, context)}
+      </div>
+      <div>
+        ${ChatWithMe(subject, context)}
       </div>
     </div>
   `;
