@@ -1,13 +1,28 @@
-import { sym } from "rdflib";
-import { store } from "solid-ui";
-import { DataBrowserContext } from "pane-registry";
+import {DataBrowserContext, PaneRegistry} from "pane-registry";
+import {sym} from "rdflib";
+import {SolidLogic} from "solid-logic";
+import {store} from "solid-ui"
 
 export const subject = sym("https://janedoe.example/profile/card#me");
 export const doc = subject.doc();
 
 export const context = {
-  dom: document,
-  session: {
-    store,
-  },
+    dom: document,
+    getOutliner: () => null,
+    session: {
+        paneRegistry: {
+            byName: (name: string) => {
+                return {
+                    render: () => {
+                        return document.createElement('div')
+                            .appendChild(
+                                document.createTextNode(`mock ${name} pane`)
+                            );
+                    }
+                }
+            }
+        } as PaneRegistry,
+        store,
+        logic: {} as SolidLogic,
+    },
 } as DataBrowserContext;

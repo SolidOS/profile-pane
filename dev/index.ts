@@ -15,7 +15,7 @@ const loginButton = widgets.button(
   undefined,
   "Login",
   async function () {
-    let session = await currentSession();
+    const session = await currentSession();
     const popupUri = "https://solidcommunity.net/common/popup.html";
     if (!session) {
       await popupLogin({ popupUri });
