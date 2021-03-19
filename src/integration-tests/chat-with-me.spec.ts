@@ -40,6 +40,22 @@ describe("chat with me", () => {
         });
     });
 
+    describe("while chat loading", () => {
+        let result;
+        beforeAll(() => {
+            context.session.logic.chat = {
+                getChat: jest.fn().mockReturnValue(new Promise(() => null)),
+            } as unknown as ChatLogic
+            result = pane.render(subject, context);
+        });
+
+        it("renders a loading text", async () => {
+            const button = await findByText(result, "Loading...");
+            expect(button).not.toBeNull();
+        });
+
+    });
+
     describe("with a started chat", () => {
         let result;
         beforeAll(() => {

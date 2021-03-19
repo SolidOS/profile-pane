@@ -2,7 +2,7 @@ import {html, TemplateResult} from "lit-html";
 import {DataBrowserContext} from "pane-registry";
 import {NamedNode} from "rdflib";
 import {widgets} from "solid-ui";
-import { asyncAppend } from "lit-html/directives/async-append";
+import { asyncReplace } from "lit-html/directives/async-replace";
 
 
 export const ChatWithMe = (subject: NamedNode, context: DataBrowserContext): TemplateResult => {
@@ -14,6 +14,7 @@ export const ChatWithMe = (subject: NamedNode, context: DataBrowserContext): Tem
 
         let exists;
         try {
+            yield "Loading..."
             exists = await logic.getChat(subject, false);
         } catch (e) {
             exists = false;
@@ -45,6 +46,6 @@ export const ChatWithMe = (subject: NamedNode, context: DataBrowserContext): Tem
     }
 
     return html`
-        ${asyncAppend(chatContainer())}
+        ${asyncReplace(chatContainer())}
     `;
 };
