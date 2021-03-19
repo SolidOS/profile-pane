@@ -11,8 +11,7 @@
     "start": "webpack serve --config webpack.dev.config.js",
     "build": "tsc",
     "test": "jest",
-    "lint": "eslint ./src",
-    "prepublishOnly": "npm run lint && npm run test && npm run build"
+    "lint": "eslint ./src"
   },
   "files": [
     "/lib"
