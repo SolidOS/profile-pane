@@ -6,7 +6,7 @@ import { asyncReplace } from "lit-html/directives/async-replace";
 
 
 export const ChatWithMe = (subject: NamedNode, context: DataBrowserContext): TemplateResult => {
-    const logic = context.session.logic.chat;
+    const logic = context.session.logic;
     const longChatPane = context.session.paneRegistry.byName('long chat')
 
     async function* chatContainer() {
