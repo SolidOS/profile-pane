@@ -15,7 +15,7 @@ export const ChatWithMe = (subject: NamedNode, context: DataBrowserContext): Tem
         let exists;
         try {
             yield "Loading..."
-            exists = await logic.getChat(subject, false);
+            exists = await logic.chat.getChat(subject, false);
         } catch (e) {
             exists = false;
         }
@@ -29,7 +29,7 @@ export const ChatWithMe = (subject: NamedNode, context: DataBrowserContext): Tem
                 "Chat with me",
                 async () => {
                     try {
-                        const chat: NamedNode = await logic.getChat(subject);
+                        const chat: NamedNode = await logic.chat.getChat(subject);
                         chatContainer.innerHTML = "";
                         chatContainer.appendChild(longChatPane.render(chat, context, {}));
                     } catch (e) {

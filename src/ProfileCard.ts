@@ -20,6 +20,7 @@ export const ProfileCard = ({
   imageSrc,
   introduction,
   location,
+  pronouns,
   highlightColor,
 }: ProfilePresentation): TemplateResult => {
   const nameStyle = styleMap({
@@ -32,7 +33,9 @@ export const ProfileCard = ({
     <div style=${styles.info}>
       <h3 style=${nameStyle}>${name}</h3>
       <div style=${styles.intro}>
-        ${Line(introduction)} ${Line(location, "🌐")}
+        ${Line(introduction)}
+        ${Line(location, "🌐")}
+        ${Line(pronouns)}
       </div>
     </div>
   `;
