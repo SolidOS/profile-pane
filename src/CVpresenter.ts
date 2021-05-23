@@ -1,86 +1,129 @@
-import { IndexedFormula, NamedNode } from "rdflib";
-import { ns, utils, language } from "solid-ui";
+import { IndexedFormula, NamedNode, Literal, Namespace } from "rdflib";
+import { ns, language } from "solid-ui";
 import { findImage } from "solid-ui/lib/widgets/buttons";
 import Node from "rdflib/src/node-internal";
 import { validateHTMLColorHex } from "validate-color";
 
 export interface Role {
-  startDate?: Date,
+  startDate?: Literal,
+  endDate: Literal,
+  dates: string,
+  orgName: string,
+  roleText: string,
+  orgHomePage?: string
+}
+export interface CVPresentation { rolesByType: {
+    PastRole: Role[];
+    CurrentRole: Role[];
+    FutureRole: Role[];
+  };
+   skills: string[];
+  }
 
-}
-export interface CVPresentation {
-  pastRoles: Role[];
-  currentRoles: Role[];
-  futureRoles: Role[]
-}
+const ORG = Namespace('http://www.w3.org/ns/org#');
+
+export const typesOfRole = ['PastRole', 'CurrentRole', 'FutureRole'];
 
 export const presentCV = (
   subject: NamedNode,
   store: IndexedFormula
 ): CVPresentation => {
   const profile = subject.doc()
+  const memberships = store.each(null, ORG('member'), subject, profile)
 
-  const pastRoles = []
-  const currentRoles = []
-  const futureRoles = []
+  function initialArray () {
+    const ar:Role[] = []
+    return ar
+  }
 
- const memberships = store.each(null, ns.org('member'), subject, profile)
-
- const typesOfRole = ['PastRole', 'CurrentRole', 'FutureRole']
- let rolesByType = []
- for (t of typesOfRole) {
+ const rolesByType = { PastRole: [], CurrentRole: [], FutureRole: [] }
+  /*
+  for (const t of typesOfRole) {
    rolesByType[t] = []
- }
- const now = new Date()
-
- for (const membership of memberships) {
-   let item = {}
-   if (store.holds(membership, ns.rdf('type'), ns.solid('PastRole'), profile) {
-     item.endDate = store.any(membership, ns.schema('startDate'), null, profile)
-   }
-   item.endDate = item.endDate || now
-   for (t of typesOfRole) {
+  }
+  */
+  // const now = Literal.fromValue(new Date()) // toISOString
+  let endDate
+  for (const membership of memberships) {
+    let endDate, orgHomePage, orgNameGiven, publicIdName, roleName, publicId
      if (store.holds(membership, ns.rdf('type'), ns.solid('PastRole'), profile)) {
-        rolesByType[t].push(item)
+       endDate = store.any(membership as any, ns.schema('endDate'), null, profile)
      }
-   }
-   // Things should have start dates but we will be very lenient in this view
-   item.startDate = store.any(membership, ns.schema('startDate'), null, profile) || now
-   let publicId = store.any(membership, ns.solid('publicId'), null, profile)
-   let organization = store.any(membership, ns.org('organization'), null, profile)
-   if (organization) {
-     item.orgName = store.anyJS(organization , ns.schema('name'), null, profile)
-     item.orgHomePage = store.any(organization , ns.schema('uri'), null, profile)
-   }
-   if (publicId) {
-     publicIdName = store.anyJS(publicId , ns.schema('name'), null, profile)
-   }
-   item.name =  publicIdName || item.orgName
-   item.dates = item.startDate ? '(' + item.startDate.value.slice(0,4) + '-' + (
-     item.endDate ? item.endDate.value.slice(0,4) : ''
-   ) : ''
-   let escoRole =  store.any(membership, ns.org('role'), null, profile)
-   if (escoRole) {
-     item.roleName =  store.anyJS(escoRole, ns.org('role'), null, profile)
-   }
-   let textRole = store.anyJS(membership, ns.schema('startDate'), null, profile)
-   item.roleText = (textRole && item.roleName) ? item.roleName + ' - ' + textRole
-      : textRole || item.roleName
 
- }
+/* Just for the record this would not be a bad way to write this code in future
+  const where = store.setDoc(profile).setFolloing(false).ns(ns).where
+  const {  startDate, endDate, orgName, roleText, dates, orgHomePage, orgNameGiven } =
+    where`
+      ${membership} schema:startDate $startDate;
+                    schema:endDate? $endDate;  # optional
+                    org:organization ?org .
+
+      ?org   schema:name ?orgNameGiven;
+            solid:publicId ?publicId;
+            schema:uri ?orgHomePage .
+
+      ?publicId schema:name ?orgName .
+     `;
+  */
+
+     // Things should have start dates but we will be very lenient in this view
+     //endDate = endDate || now
+     const startDate = store.any(membership as any, ns.schema('startDate'), null, profile) as Literal
+     // const publicId = store.any(membership as any, ns.solid('publicId'), null, profile)
+     const organization = store.any(membership as any, ORG('organization'), null, profile)
+     if (organization) {
+       orgNameGiven = store.anyJS(organization as any, ns.schema('name'), null, profile)
+       orgHomePage = store.any(organization as any, ns.schema('uri'), null, profile)
+       publicId = store.any(organization as any, ns.solid('publicId'), null, profile)
+     }
+     if (publicId) {
+       publicIdName = store.anyJS(publicId as any, ns.schema('name'), null, profile)
+     }
+     const orgName =  publicIdName || orgNameGiven
+
+     const dates = startDate ? '(' + startDate.value.slice(0,4) + '-' +
+       ( endDate ? endDate.value.slice(0,4) : '') +')'
+       : ''
+     const escoRole =  store.any(membership as any, ORG('role'), null, profile)
+     if (escoRole) {
+       roleName =  store.anyJS(escoRole as any, ns.schema('name'), null, profile) as string | null
+     }
+     const roleText0 = store.anyJS(membership as any, ns.vcard('role'), null, profile)
+     const roleText = (roleText0 && roleName) ? roleName + ' - ' + roleText0
+        : roleText0 || roleName
+
+      const item: Role = {
+        startDate: startDate as Literal, endDate, orgName, roleText, dates, orgHomePage
+      }
+
+      for (const t of typesOfRole) {
+        if (store.holds(membership, ns.rdf('type'), ns.solid(t), profile)) {
+           rolesByType[t].push(item)
+        }
+      }
+   }
+
  // Most recent thing most relevant -> sort by end date
- for (t of typesOfRole) {
+ for (const t of typesOfRole) {
    rolesByType[t].sort(function (x, y) {
      if (x.endDate && y.endDate) {
        return x.endDate > y.endDate ? -1 : 1
      }
      return x.startDate > y.startDate ? -1 : 1
    })
- }
-
-  return {
-    pastRoles,
-    currentRoles,
-    futureRoles
   }
+
+  const skills = store.each(subject, ns.schema('skills'), null, profile).map(sk => {
+    if (sk.termType === 'Literal') return sk.value // Not normal but allow this
+    const publicId =  store.anyJS(sk as any, ns.solid('publicId'), null, profile)
+    if (publicId) {
+      const name = store.anyJS(publicId, ns.schema('name'), null, profile)
+      if (name) return name // @@ check language and get name in diff language if necessary
+    }
+    const manual = store.anyJS(sk as any, ns.vcard('role'), null, profile)
+    if (manual) return manual
+    return '¿¿¿ skill ???'
+  })
+
+  return { rolesByType, skills }
 }
