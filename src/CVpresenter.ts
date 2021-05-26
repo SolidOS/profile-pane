@@ -29,7 +29,7 @@ export const presentCV = (
   store: IndexedFormula
 ): CVPresentation => {
   const profile = subject.doc()
-  const memberships = store.each(null, ORG('member'), subject, profile)
+  const memberships = store.each(null, ORG('member'), subject, null)
 
   function initialArray () {
     const ar:Role[] = []
@@ -46,8 +46,8 @@ export const presentCV = (
   let endDate
   for (const membership of memberships) {
     let endDate, orgHomePage, orgNameGiven, publicIdName, roleName, publicId
-     if (store.holds(membership, ns.rdf('type'), ns.solid('PastRole'), profile)) {
-       endDate = store.any(membership as any, ns.schema('endDate'), null, profile)
+     if (store.holds(membership, ns.rdf('type'), ns.solid('PastRole'))) {
+       endDate = store.any(membership as any, ns.schema('endDate'))
      }
 
 /* Just for the record this would not be a bad way to write this code in future
@@ -68,27 +68,27 @@ export const presentCV = (
 
      // Things should have start dates but we will be very lenient in this view
      //endDate = endDate || now
-     const startDate = store.any(membership as any, ns.schema('startDate'), null, profile) as Literal
-     // const publicId = store.any(membership as any, ns.solid('publicId'), null, profile)
-     const organization = store.any(membership as any, ORG('organization'), null, profile)
+     const startDate = store.any(membership as any, ns.schema('startDate')) as Literal
+     // const publicId = store.any(membership as any, ns.solid('publicId'))
+     const organization = store.any(membership as any, ORG('organization'))
      if (organization) {
-       orgNameGiven = store.anyJS(organization as any, ns.schema('name'), null, profile)
-       orgHomePage = store.any(organization as any, ns.schema('uri'), null, profile)
-       publicId = store.any(organization as any, ns.solid('publicId'), null, profile)
+       orgNameGiven = store.anyJS(organization as any, ns.schema('name'))
+       orgHomePage = store.any(organization as any, ns.schema('uri'))
+       publicId = store.any(organization as any, ns.solid('publicId'))
      }
      if (publicId) {
-       publicIdName = store.anyJS(publicId as any, ns.schema('name'), null, profile)
+       publicIdName = store.anyJS(publicId as any, ns.schema('name'))
      }
      const orgName =  publicIdName || orgNameGiven
 
      const dates = startDate ? '(' + startDate.value.slice(0,4) + '-' +
        ( endDate ? endDate.value.slice(0,4) : '') +')'
        : ''
-     const escoRole =  store.any(membership as any, ORG('role'), null, profile)
+     const escoRole =  store.any(membership as any, ORG('role'))
      if (escoRole) {
-       roleName =  store.anyJS(escoRole as any, ns.schema('name'), null, profile) as string | null
+       roleName =  store.anyJS(escoRole as any, ns.schema('name')) as string | null
      }
-     const roleText0 = store.anyJS(membership as any, ns.vcard('role'), null, profile)
+     const roleText0 = store.anyJS(membership as any, ns.vcard('role'))
      const roleText = (roleText0 && roleName) ? roleName + ' - ' + roleText0
         : roleText0 || roleName
 
@@ -97,7 +97,7 @@ export const presentCV = (
       }
 
       for (const t of typesOfRole) {
-        if (store.holds(membership, ns.rdf('type'), ns.solid(t), profile)) {
+        if (store.holds(membership, ns.rdf('type'), ns.solid(t))) {
            rolesByType[t].push(item)
         }
       }
@@ -113,14 +113,14 @@ export const presentCV = (
    })
   }
 
-  const skills = store.each(subject, ns.schema('skills'), null, profile).map(sk => {
+  const skills = store.each(subject, ns.schema('skills')).map(sk => {
     if (sk.termType === 'Literal') return sk.value // Not normal but allow this
-    const publicId =  store.anyJS(sk as any, ns.solid('publicId'), null, profile)
+    const publicId =  store.anyJS(sk as any, ns.solid('publicId'))
     if (publicId) {
-      const name = store.anyJS(publicId, ns.schema('name'), null, profile)
+      const name = store.anyJS(publicId, ns.schema('name'))
       if (name) return name // @@ check language and get name in diff language if necessary
     }
-    const manual = store.anyJS(sk as any, ns.vcard('role'), null, profile)
+    const manual = store.anyJS(sk as any, ns.vcard('role'))
     if (manual) return manual
     return '¿¿¿ skill ???'
   })
