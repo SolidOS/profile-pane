@@ -21,8 +21,8 @@ export const CVCard = (profileBasics: ProfilePresentation, cvData: CVPresentatio
   const { rolesByType, skills } = cvData
   const nameStyle = styleMap({
     ...heading(),
-    "text-decoration": "underline",
-    "text-decoration-color": profileBasics.highlightColor,
+    // "text-decoration": "underline",
+    "color": profileBasics.highlightColor, // was "text-decoration-color"
   });
   function renderRole (role) {
     return role ? html`<div style="margin-top: 0.3em; margin-bottom: 0.3em;">
@@ -53,7 +53,7 @@ export const CVCard = (profileBasics: ProfilePresentation, cvData: CVPresentatio
 
   return html`
     <div style=${styles.info}>
-      <h3 style=${nameStyle}>Curriculum Vitae</h3>
+      <h3 style=${nameStyle}>Bio</h3>
       <div style=${styles.info}>
         ${renderRoles(rolesByType['CurrentRole'])}
       </div>

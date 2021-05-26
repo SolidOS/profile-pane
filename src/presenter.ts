@@ -24,7 +24,6 @@ export const presentProfile = (
   const imageSrc = findImage(subject);
   const role = store.anyValue(subject, ns.vcard("role"))
   const orgName = store.anyValue(subject, ns.vcard("organization-name")); // @@ Search whole store
-  console.log('@@ orgName ', orgName)
 
   const address: Node | null = store.any(subject, ns.vcard("hasAddress"));
   const countryName =
