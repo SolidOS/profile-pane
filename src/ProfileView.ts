@@ -43,7 +43,7 @@ export const ProfileView = (
       <div data-testid="friend-list" style="${styles.card}">
         ${FriendList(subject, context)}
       </div>
-      <div data-testid="friend-list" style="${styles.card}">
+      <div data-testid="curriculum-vitae" style="${styles.card}">
         ${CVCard(profileBasics, rolesByType)}
       </div>
       <div style="${styles.chat}">${ChatWithMe(subject, context)}</div>
