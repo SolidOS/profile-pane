@@ -41,7 +41,7 @@ trackSession((session) => {
 // https://testingsolidos.solidcommunity.net/profile/card#me
 // https://timbl.inrupt.net/profile/card#me
 //
-// const webIdToShow = "https://timbl.inrupt.net/profile/card#me";
+// const webIdToShow = "https://angelo.veltens.org/profile/card#me";
 const webIdToShow = "https://testingsolidos.solidcommunity.net/profile/card#me";
 // const webIdToShow = "https://timbl.inrupt.net/profile/card#me";
 
