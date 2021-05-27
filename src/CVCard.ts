@@ -8,7 +8,7 @@ import {
   textGray,
 } from "./baseStyles";
 import { ProfilePresentation } from "./presenter";
-import { CVPresentation } from "./CVpresenter";
+import { CVPresentation } from "./CVPresenter";
 
 const styles = {
   image: styleMap(fullWidth()),
