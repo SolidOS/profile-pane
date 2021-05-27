@@ -24,10 +24,10 @@ const ORG = Namespace('http://www.w3.org/ns/org#');
 
 export const typesOfRole = ['PastRole', 'CurrentRole', 'FutureRole'];
 
-export const presentCV = (
+export function presentCV (
   subject: NamedNode,
   store: IndexedFormula
-): CVPresentation => {
+): CVPresentation {
   const profile = subject.doc()
   const memberships = store.each(null, ORG('member'), subject, null)
 

@@ -10,7 +10,7 @@ import { card, padding, paddingSmall, responsiveGrid } from "./baseStyles";
 import { ChatWithMe } from "./ChatWithMe";
 import { FriendList } from "./FriendList";
 import { presentProfile } from "./presenter";
-import { presentCV } from './CVPresenter'
+import { presentCV } from './CVPresenter' // 20210527
 import { ProfileCard } from "./ProfileCard";
 import { CVCard } from "./CVCard";
 
