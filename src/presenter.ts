@@ -23,26 +23,26 @@ export const presentProfile = (
   const name = utils.label(subject);
   const imageSrc = findImage(subject);
   const role = store.anyValue(subject, ns.vcard("role"))
-  const orgName = store.anyValue(subject, ns.vcard("organization-name"), null, profile);
+  const orgName = store.anyValue(subject, ns.vcard("organization-name")); // @@ Search whole store
 
-  const address: Node | null = store.any(subject, ns.vcard("hasAddress"), null, profile);
+  const address: Node | null = store.any(subject, ns.vcard("hasAddress"));
   const countryName =
     address != null
-      ? store.anyValue(address as NamedNode, ns.vcard("country-name"), null, profile)
+      ? store.anyValue(address as NamedNode, ns.vcard("country-name"))
       : null;
   const locality =
     address != null
-      ? store.anyValue(address as NamedNode, ns.vcard("locality"), null, profile)
+      ? store.anyValue(address as NamedNode, ns.vcard("locality"))
       : null;
 
   const { backgroundColor, highlightColor } = getColors(subject, store);
 
-  let pronouns = store.anyJS(subject, ns.solid('preferredSubjectPronoun'), null, profile) || ''
+  let pronouns = store.anyJS(subject, ns.solid('preferredSubjectPronoun')) || ''
   if (pronouns) {
-    const them = store.anyJS(subject, ns.solid('preferredObjectPronoun'), null, profile)
+    const them = store.anyJS(subject, ns.solid('preferredObjectPronoun'))
     if (them) {
       pronouns += '/' + them
-      const their = store.anyJS(subject, ns.solid('preferredRelativePronoun'), null, profile)
+      const their = store.anyJS(subject, ns.solid('preferredRelativePronoun'))
       if (their) {
         pronouns += '/' + their
       }
