@@ -24,7 +24,7 @@ const ORG = Namespace('http://www.w3.org/ns/org#');
 
 export const typesOfRole = ['PastRole', 'CurrentRole', 'FutureRole'];
 
-export function presentCV
+export function presentCV (
   subject: NamedNode,
   store: IndexedFormula
 ): CVPresentation {

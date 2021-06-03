@@ -12,7 +12,7 @@ describe("presenter", () => {
 
   it("presents minimum available info", () => {
     const result = presentProfile(jane, store);
-    expect(result.name).toBe("card");
+    expect(result.name).toBe("jane.doe.example");
     expect(result.imageSrc).toBeNull();
     expect(result.introduction).toBeNull();
     expect(result.location).toBeNull();
