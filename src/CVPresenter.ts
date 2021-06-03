@@ -24,7 +24,7 @@ const ORG = Namespace('http://www.w3.org/ns/org#');
 
 export const typesOfRole = ['PastRole', 'CurrentRole', 'FutureRole'];
 
-export function presentCV (
+export function presentCV
   subject: NamedNode,
   store: IndexedFormula
 ): CVPresentation {
@@ -37,12 +37,6 @@ export function presentCV (
   }
 
  const rolesByType = { PastRole: [], CurrentRole: [], FutureRole: [] }
-  /*
-  for (const t of typesOfRole) {
-   rolesByType[t] = []
-  }
-  */
-  // const now = Literal.fromValue(new Date()) // toISOString
   let endDate
   for (const membership of memberships) {
     let endDate, orgHomePage, orgNameGiven, publicIdName, roleName, publicId
@@ -67,9 +61,8 @@ export function presentCV (
   */
 
      // Things should have start dates but we will be very lenient in this view
-     //endDate = endDate || now
      const startDate = store.any(membership as any, ns.schema('startDate')) as Literal
-     // const publicId = store.any(membership as any, ns.solid('publicId'))
+
      const organization = store.any(membership as any, ORG('organization'))
      if (organization) {
        orgNameGiven = store.anyJS(organization as any, ns.schema('name'))
