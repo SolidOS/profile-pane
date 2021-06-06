@@ -10,6 +10,7 @@
   "scripts": {
     "start": "webpack serve --config webpack.dev.config.js",
     "build": "tsc",
+    "check": "npm run lint && npm run build && npm run test",
     "test": "jest",
     "lint": "eslint ./src"
   },

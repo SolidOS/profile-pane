@@ -1,4 +1,4 @@
-import { IndexedFormula, NamedNode, Node } from "rdflib";
+import { IndexedFormula, NamedNode } from "rdflib";
 import { ns, utils, store } from "solid-ui";
 import { findImage } from "solid-ui/lib/widgets/buttons";
 import Node from "rdflib/src/node-internal";
@@ -15,7 +15,7 @@ export interface ProfilePresentation {
   highlightColor: string;
 }
 
-export function pronounsAsText (subject:Node): string {
+export function pronounsAsText (subject:NamedNode): string {
   let pronouns = store.anyJS(subject, ns.solid('preferredSubjectPronoun')) || ''
   if (pronouns) {
     const them = store.anyJS(subject, ns.solid('preferredObjectPronoun'))
