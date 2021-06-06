@@ -15,6 +15,22 @@ export interface ProfilePresentation {
   highlightColor: string;
 }
 
+export function pronounsAsText (subject) {
+  let pronouns = store.anyJS(subject, ns.solid('preferredSubjectPronoun')) || ''
+  if (pronouns) {
+    const them = store.anyJS(subject, ns.solid('preferredObjectPronoun'))
+    if (them) {
+      pronouns += '/' + them
+      const their = store.anyJS(subject, ns.solid('preferredRelativePronoun'))
+      if (their) {
+        pronouns += '/' + their
+      }
+    }
+    pronouns = ' (' + pronouns + ') '
+  }
+  return prouns || ''
+}
+
 export const presentProfile = (
   subject: NamedNode,
   store: IndexedFormula
@@ -34,21 +50,8 @@ export const presentProfile = (
     address != null
       ? store.anyValue(address as NamedNode, ns.vcard("locality"))
       : null;
-
   const { backgroundColor, highlightColor } = getColors(subject, store);
-
-  let pronouns = store.anyJS(subject, ns.solid('preferredSubjectPronoun')) || ''
-  if (pronouns) {
-    const them = store.anyJS(subject, ns.solid('preferredObjectPronoun'))
-    if (them) {
-      pronouns += '/' + them
-      const their = store.anyJS(subject, ns.solid('preferredRelativePronoun'))
-      if (their) {
-        pronouns += '/' + their
-      }
-    }
-    pronouns = ' (' + pronouns + ') '
-  }
+  let pronouns = pronounsAsText(subject)
   return {
     name,
     imageSrc,
