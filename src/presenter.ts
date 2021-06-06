@@ -16,19 +16,19 @@ export interface ProfilePresentation {
 }
 
 export function pronounsAsText (subject:NamedNode): string {
-  let pronouns = store.anyJS(subject, ns.solid('preferredSubjectPronoun')) || ''
+  let pronouns = store.anyJS(subject, ns.solid('preferredSubjectPronoun')) || '';
   if (pronouns) {
-    const them = store.anyJS(subject, ns.solid('preferredObjectPronoun'))
+    const them = store.anyJS(subject, ns.solid('preferredObjectPronoun'));
     if (them) {
       pronouns += '/' + them
-      const their = store.anyJS(subject, ns.solid('preferredRelativePronoun'))
+      const their = store.anyJS(subject, ns.solid('preferredRelativePronoun'));
       if (their) {
-        pronouns += '/' + their
+        pronouns += '/' + their;
       }
     }
-    pronouns = ' (' + pronouns + ') '
+    pronouns = ' (' + pronouns + ') ';
   }
-  return pronouns || ''
+  return pronouns || '';
 }
 
 export const presentProfile = (
