@@ -2,7 +2,6 @@ import { html, TemplateResult } from "lit-html";
 import { styleMap } from "lit-html/directives/style-map.js";
 import { DataBrowserContext } from "pane-registry";
 import { NamedNode } from "rdflib";
-import { pad } from "solid-ui";
 import { card, padding, paddingSmall, responsiveGrid } from "./baseStyles";
 import { ChatWithMe } from "./ChatWithMe";
 import { FriendList } from "./FriendList";

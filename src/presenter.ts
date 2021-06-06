@@ -1,5 +1,5 @@
-import { IndexedFormula, NamedNode } from "rdflib";
-import { ns, utils, language, store } from "solid-ui";
+import { IndexedFormula, NamedNode, Node } from "rdflib";
+import { ns, utils, store } from "solid-ui";
 import { findImage } from "solid-ui/lib/widgets/buttons";
 import Node from "rdflib/src/node-internal";
 import { validateHTMLColorHex } from "validate-color";
@@ -15,7 +15,7 @@ export interface ProfilePresentation {
   highlightColor: string;
 }
 
-export function pronounsAsText (subject) {
+export function pronounsAsText (subject:Node): string {
   let pronouns = store.anyJS(subject, ns.solid('preferredSubjectPronoun')) || ''
   if (pronouns) {
     const them = store.anyJS(subject, ns.solid('preferredObjectPronoun'))
@@ -35,7 +35,6 @@ export const presentProfile = (
   subject: NamedNode,
   store: IndexedFormula
 ): ProfilePresentation => {
-  const profile = subject.doc()
   const name = utils.label(subject);
   const imageSrc = findImage(subject);
   const role = store.anyValue(subject, ns.vcard("role"))
@@ -51,7 +50,7 @@ export const presentProfile = (
       ? store.anyValue(address as NamedNode, ns.vcard("locality"))
       : null;
   const { backgroundColor, highlightColor } = getColors(subject, store);
-  let pronouns = pronounsAsText(subject)
+  const pronouns = pronounsAsText(subject)
   return {
     name,
     imageSrc,
