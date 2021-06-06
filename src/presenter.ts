@@ -1,5 +1,5 @@
 import { IndexedFormula, NamedNode } from "rdflib";
-import { ns, utils, language } from "solid-ui";
+import { ns, utils, language, store } from "solid-ui";
 import { findImage } from "solid-ui/lib/widgets/buttons";
 import Node from "rdflib/src/node-internal";
 import { validateHTMLColorHex } from "validate-color";
@@ -28,7 +28,7 @@ export function pronounsAsText (subject) {
     }
     pronouns = ' (' + pronouns + ') '
   }
-  return prouns || ''
+  return pronouns || ''
 }
 
 export const presentProfile = (
