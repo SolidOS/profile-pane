@@ -4,7 +4,7 @@
 import { html, TemplateResult } from "lit-html";
 import { styleMap } from "lit-html/directives/style-map.js";
 import { DataBrowserContext } from "pane-registry";
-import { NamedNode, } from "rdflib";
+import { NamedNode } from "rdflib";
 import { card, padding, paddingSmall, responsiveGrid } from "./baseStyles";
 import { ChatWithMe } from "./ChatWithMe";
 import { FriendList } from "./FriendList";

@@ -1,5 +1,5 @@
 import { IndexedFormula, NamedNode } from "rdflib";
-import { ns, utils } from "solid-ui";
+import { ns, utils, store } from "solid-ui";
 import { findImage } from "solid-ui/lib/widgets/buttons";
 import Node from "rdflib/src/node-internal";
 import { validateHTMLColorHex } from "validate-color";
@@ -13,6 +13,22 @@ export interface ProfilePresentation {
   pronouns?: string;
   backgroundColor: string;
   highlightColor: string;
+}
+
+export function pronounsAsText (subject:NamedNode): string {
+  let pronouns = store.anyJS(subject, ns.solid('preferredSubjectPronoun')) || '';
+  if (pronouns) {
+    const them = store.anyJS(subject, ns.solid('preferredObjectPronoun'));
+    if (them) {
+      pronouns += '/' + them
+      const their = store.anyJS(subject, ns.solid('preferredRelativePronoun'));
+      if (their) {
+        pronouns += '/' + their;
+      }
+    }
+    pronouns = ' (' + pronouns + ') ';
+  }
+  return pronouns || '';
 }
 
 export const presentProfile = (
@@ -33,21 +49,8 @@ export const presentProfile = (
     address != null
       ? store.anyValue(address as NamedNode, ns.vcard("locality"))
       : null;
-
   const { backgroundColor, highlightColor } = getColors(subject, store);
-
-  let pronouns = store.anyJS(subject, ns.solid('preferredSubjectPronoun')) || ''
-  if (pronouns) {
-    const them = store.anyJS(subject, ns.solid('preferredObjectPronoun'))
-    if (them) {
-      pronouns += '/' + them
-      const their = store.anyJS(subject, ns.solid('preferredRelativePronoun'))
-      if (their) {
-        pronouns += '/' + their
-      }
-    }
-    pronouns = ' (' + pronouns + ') '
-  }
+  const pronouns = pronounsAsText(subject)
   return {
     name,
     imageSrc,
