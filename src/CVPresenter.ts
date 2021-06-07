@@ -1,8 +1,5 @@
 import { IndexedFormula, NamedNode, Literal, Namespace } from "rdflib";
-import { ns, language } from "solid-ui";
-import { findImage } from "solid-ui/lib/widgets/buttons";
-import Node from "rdflib/src/node-internal";
-import { validateHTMLColorHex } from "validate-color";
+import { ns } from "solid-ui";
 
 export interface Role {
   startDate?: Literal,
@@ -28,13 +25,7 @@ export function presentCV (
   subject: NamedNode,
   store: IndexedFormula
 ): CVPresentation {
-  const profile = subject.doc()
   const memberships = store.each(null, ORG('member'), subject, null)
-
-  function initialArray () {
-    const ar:Role[] = []
-    return ar
-  }
 
  const rolesByType = { PastRole: [], CurrentRole: [], FutureRole: [] }
   let endDate
@@ -43,22 +34,6 @@ export function presentCV (
      if (store.holds(membership, ns.rdf('type'), ns.solid('PastRole'))) {
        endDate = store.any(membership as any, ns.schema('endDate'))
      }
-
-/* Just for the record this would not be a bad way to write this code in future
-  const where = store.setDoc(profile).setFolloing(false).ns(ns).where
-  const {  startDate, endDate, orgName, roleText, dates, orgHomePage, orgNameGiven } =
-    where`
-      ${membership} schema:startDate $startDate;
-                    schema:endDate? $endDate;  # optional
-                    org:organization ?org .
-
-      ?org   schema:name ?orgNameGiven;
-            solid:publicId ?publicId;
-            schema:uri ?orgHomePage .
-
-      ?publicId schema:name ?orgName .
-     `;
-  */
 
      // Things should have start dates but we will be very lenient in this view
      const startDate = store.any(membership as any, ns.schema('startDate')) as Literal

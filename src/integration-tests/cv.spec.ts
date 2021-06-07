@@ -51,9 +51,20 @@ pro:card a foaf:PersonalProfileDocument; foaf:maker :me; foaf:primaryTopic :me.
 
 :id1621182189397 solid:publicId l:de.
 
+:id1621184812427
+    a solid:FutureRole;
+    schema:description "Second future role";
+    schema:startDate "2023-12-25"^^xsd:date;
+    vcard:role "Mission a Mars";
+    org:member :me;
+    org:organization :id1621184844320;
+    org:role occup:6b0ad7c0-a37f-45c6-a486-ee943a11429e.
+
 :id1621182208190
     a solid:CurrentRole;
     schema:startDate "2021-04-01"^^xsd:date;
+    schema:endDate "2022-04-01"^^xsd:date;
+
     vcard:role "Testeuse des Apps Solid";
     org:member :me;
     org:organization :id1621182234226;
@@ -63,6 +74,7 @@ pro:card a foaf:PersonalProfileDocument; foaf:maker :me; foaf:primaryTopic :me.
     schema:name "Apple";
     schema:uri not:;
     solid:publicId ent:Q312.
+
 :id1621182452881
     a solid:PastRole;
     schema:description "This was an imaginary but fun gig.";
@@ -83,19 +95,17 @@ pro:card a foaf:PersonalProfileDocument; foaf:maker :me; foaf:primaryTopic :me.
     org:member :me;
     org:organization :id1621183860447;
     org:role occup:807a1ac3-4f56-41f3-a68c-d653d558eb0a.
+
+
+
+
 :id1621183860447
     a schema:GovernmentOrganization;
     schema:name "National Aeronautical and Space Administration";
     schema:uri ww:;
     solid:publicId ent:Q23548.
-:id1621184812427
-    a solid:FutureRole;
-    schema:description "Second future role";
-    schema:startDate "2023-12-25"^^xsd:date;
-    vcard:role "Mission a Mars";
-    org:member :me;
-    org:organization :id1621184844320;
-    org:role occup:6b0ad7c0-a37f-45c6-a486-ee943a11429e.
+
+
 :id1621184844320
     a schema:GovernmentOrganization;
     schema:name "NASA";
@@ -110,10 +120,13 @@ pro:card a foaf:PersonalProfileDocument; foaf:maker :me; foaf:primaryTopic :me.
 
 :id1622021775187 solid:publicId skill:b805f989-14d5-46ad-80b0-755634b66dba.
 
+:skill2 vcard:role  "sitting and chatting" .
+
+
 :me
     a schema:Person, foaf:Person;
     schema:knowsLanguage ( :id1621179872094 :id1621182189397 );
-    schema:skills :id1622021761923, :id1622021775187;
+    schema:skills :id1622021761923, :id1622021775187, :skill2, :NonExistentSkill;
     vcard:bday "2021-05-14"^^xsd:date;
     vcard:fn "Testing SolidOS Test";
     vcard:hasAddress :id1622021411833;
@@ -177,6 +190,12 @@ describe("profile-pane", () => {
     });
     it("renders skill 2 in CV", () => {
       expect(element).toContainHTML("travailler dans de mauvaises conditions");
+    });
+    it("renders skill 3 vcard role in CV", () => {
+      expect(element).toContainHTML("sitting");
+    });
+    it("renders error flag when missing skill text CV", () => {
+      expect(element).toContainHTML("¿¿¿ skill ???");
     });
 
   });

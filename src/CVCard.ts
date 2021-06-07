@@ -1,4 +1,4 @@
-import { html, nothing, TemplateResult } from "lit-html";
+import { html, TemplateResult } from "lit-html";
 import { styleMap } from "lit-html/directives/style-map";
 import {
   fullWidth,
