@@ -72,10 +72,3 @@ export const CVCard = (profileBasics: ProfilePresentation, cvData: CVPresentatio
     </div>
   `;
 };
-/*
-const Line = (value, prefix = nothing) =>
-  value ? html`<p>${prefix} ${value}</p>` : nothing;
-
-const Image = (src, alt) =>
-  src ? html`<img style=${styles.image} src=${src} alt=${alt} />` : nothing;
-*/

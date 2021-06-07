@@ -1,4 +1,4 @@
-import { IndexedFormula, NamedNode, Literal, Namespace } from "rdflib";
+import { IndexedFormula, NamedNode, Literal, Namespace, Node, Store } from "rdflib";
 import { ns } from "solid-ui";
 
 export interface Role {
@@ -21,6 +21,24 @@ const ORG = Namespace('http://www.w3.org/ns/org#');
 
 export const typesOfRole = ['PastRole', 'CurrentRole', 'FutureRole'];
 
+export function skillAsText (store: Store, sk: Node):string {
+  if (sk.termType === 'Literal') return sk.value // Not normal but allow this
+  const publicId =  store.anyJS(sk as NamedNode, ns.solid('publicId'))
+  if (publicId) {
+    const name = store.anyJS(publicId, ns.schema('name'))
+    if (name) return name // @@ check language and get name in diff language if necessary
+  }
+  const manual = store.anyJS(sk as NamedNode, ns.vcard('role'))
+  if (manual) return manual
+  return '¿¿¿ skill ???'
+}
+
+export function datesAsText (startDate?:Literal, endDate?:Literal):string {
+  return startDate ? '(' + startDate.value.slice(0,4) + '-' +
+    ( endDate ? endDate.value.slice(0,4) : '') +')'
+    : ''
+}
+
 export function presentCV (
   subject: NamedNode,
   store: IndexedFormula
@@ -28,35 +46,29 @@ export function presentCV (
   const memberships = store.each(null, ORG('member'), subject, null)
 
  const rolesByType = { PastRole: [], CurrentRole: [], FutureRole: [] }
-  let endDate
   for (const membership of memberships) {
-    let endDate, orgHomePage, orgNameGiven, publicIdName, roleName, publicId
-     if (store.holds(membership, ns.rdf('type'), ns.solid('PastRole'))) {
-       endDate = store.any(membership as any, ns.schema('endDate'))
-     }
-
+    let orgHomePage, orgNameGiven, publicIdName, roleName, publicId
      // Things should have start dates but we will be very lenient in this view
-     const startDate = store.any(membership as any, ns.schema('startDate')) as Literal
+     const startDate = store.any(membership as NamedNode, ns.schema('startDate')) as Literal | null
+     const endDate = store.any(membership as NamedNode, ns.schema('endDate')) as Literal | null
+     const dates = datesAsText(startDate, endDate)
 
-     const organization = store.any(membership as any, ORG('organization'))
+     const organization = store.any(membership as NamedNode, ORG('organization'))
      if (organization) {
-       orgNameGiven = store.anyJS(organization as any, ns.schema('name'))
-       orgHomePage = store.any(organization as any, ns.schema('uri'))
-       publicId = store.any(organization as any, ns.solid('publicId'))
+       orgNameGiven = store.anyJS(organization as NamedNode, ns.schema('name'))
+       orgHomePage = store.any(organization as NamedNode, ns.schema('uri'))
+       publicId = store.any(organization as NamedNode, ns.solid('publicId'))
      }
      if (publicId) {
-       publicIdName = store.anyJS(publicId as any, ns.schema('name'))
+       publicIdName = store.anyJS(publicId as NamedNode, ns.schema('name'))
      }
      const orgName =  publicIdName || orgNameGiven
 
-     const dates = startDate ? '(' + startDate.value.slice(0,4) + '-' +
-       ( endDate ? endDate.value.slice(0,4) : '') +')'
-       : ''
-     const escoRole =  store.any(membership as any, ORG('role'))
+     const escoRole =  store.any(membership as NamedNode, ORG('role'))
      if (escoRole) {
-       roleName =  store.anyJS(escoRole as any, ns.schema('name')) as string | null
+       roleName =  store.anyJS(escoRole as NamedNode, ns.schema('name')) as string | null
      }
-     const roleText0 = store.anyJS(membership as any, ns.vcard('role'))
+     const roleText0 = store.anyJS(membership as NamedNode, ns.vcard('role'))
      const roleText = (roleText0 && roleName) ? roleName + ' - ' + roleText0
         : roleText0 || roleName
 
@@ -81,17 +93,7 @@ export function presentCV (
    })
   }
 
-  const skills = store.each(subject, ns.schema('skills')).map(sk => {
-    if (sk.termType === 'Literal') return sk.value // Not normal but allow this
-    const publicId =  store.anyJS(sk as any, ns.solid('publicId'))
-    if (publicId) {
-      const name = store.anyJS(publicId, ns.schema('name'))
-      if (name) return name // @@ check language and get name in diff language if necessary
-    }
-    const manual = store.anyJS(sk as any, ns.vcard('role'))
-    if (manual) return manual
-    return '¿¿¿ skill ???'
-  })
+  const skills = store.each(subject, ns.schema('skills')).map(sk => skillAsText(store, sk))
 
   return { rolesByType, skills }
 }

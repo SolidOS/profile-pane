@@ -62,7 +62,7 @@ pro:card a foaf:PersonalProfileDocument; foaf:maker :me; foaf:primaryTopic :me.
 :id1621182208190
     a solid:CurrentRole;
     schema:startDate "2021-04-01"^^xsd:date;
-    schema:endDate "2022-04-01"^^xsd:date;
+    # schema:endDate "2022-04-01"^^xsd:date;
 
     vcard:role "Testeuse des Apps Solid";
     org:member :me;
