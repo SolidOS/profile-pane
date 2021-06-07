@@ -1,5 +1,5 @@
 import { IndexedFormula, NamedNode } from "rdflib";
-import { ns, utils, language } from "solid-ui";
+import { ns, utils } from "solid-ui";
 import { findImage } from "solid-ui/lib/widgets/buttons";
 import Node from "rdflib/src/node-internal";
 import { validateHTMLColorHex } from "validate-color";
@@ -19,7 +19,6 @@ export const presentProfile = (
   subject: NamedNode,
   store: IndexedFormula
 ): ProfilePresentation => {
-  const profile = subject.doc()
   const name = utils.label(subject);
   const imageSrc = findImage(subject);
   const role = store.anyValue(subject, ns.vcard("role"))

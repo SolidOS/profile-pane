@@ -3,7 +3,6 @@ import { parse } from "rdflib";
 import { store } from "solid-ui";
 import { findByTestId } from "@testing-library/dom";
 import { context, doc, subject } from "./setup";
-import fetchMock from "jest-fetch-mock";
 
 // This was at testingsolidos.solidcommunity.net
 const exampleProfile = `@prefix : <#>.
