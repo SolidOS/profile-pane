@@ -9,13 +9,16 @@ export interface Role {
   roleText: string,
   orgHomePage?: string
 }
-export interface CVPresentation { rolesByType: {
-    PastRole: Role[];
-    CurrentRole: Role[];
-    FutureRole: Role[];
-  };
-   skills: string[];
-  }
+export interface CVPresentation { 
+  rolesByType: RolesByType;
+  skills: string[];
+}
+
+export interface RolesByType {
+  PastRole: Role[];
+  CurrentRole: Role[];
+  FutureRole: Role[];
+}
 
 const ORG = Namespace('http://www.w3.org/ns/org#');
 
@@ -39,13 +42,14 @@ export function datesAsText (startDate?:Literal, endDate?:Literal):string {
     : ''
 }
 
-export function presentCV (
-  subject: NamedNode,
-  store: IndexedFormula
-): CVPresentation {
+function getRolesByType(
+  store: IndexedFormula,
+  subject: NamedNode
+): RolesByType {
+
   const memberships = store.each(null, ORG('member'), subject, null)
 
- const rolesByType = { PastRole: [], CurrentRole: [], FutureRole: [] }
+  const rolesByType = { PastRole: [], CurrentRole: [], FutureRole: [] }
   for (const membership of memberships) {
     let orgHomePage, orgNameGiven, publicIdName, roleName, publicId
      // Things should have start dates but we will be very lenient in this view
@@ -78,11 +82,19 @@ export function presentCV (
 
       for (const t of typesOfRole) {
         if (store.holds(membership, ns.rdf('type'), ns.solid(t))) {
-           rolesByType[t].push(item)
+           rolesByType[t].push(item);
         }
       }
    }
+   return rolesByType;
+}
 
+export function presentCV(
+  subject: NamedNode,
+  store: IndexedFormula
+): CVPresentation {
+  
+ const rolesByType = getRolesByType(store, subject)
  // Most recent thing most relevant -> sort by end date
  for (const t of typesOfRole) {
    rolesByType[t].sort(function (x, y) {
