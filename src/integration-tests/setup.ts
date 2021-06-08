@@ -25,4 +25,4 @@ export const context = {
         store,
         logic: {} as SolidLogic,
     },
-} as DataBrowserContext;
+} as unknown as DataBrowserContext;

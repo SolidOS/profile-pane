@@ -39,6 +39,14 @@ export const textCenter = () => ({
   textAlign: "center",
 });
 
+export const textLeft = () => ({
+  textAlign: "left",
+});
+
+export const textRight = () => ({
+  textAlign: "right",
+});
+
 export const textXl = () => ({
   fontSize: "1.25rem",
   lineHeight: "1.75rem",

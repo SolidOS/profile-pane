@@ -21,10 +21,14 @@ describe("profile-pane", () => {
       @prefix : <#>.
       @prefix foaf: <http://xmlns.com/foaf/0.1/> .
       @prefix vcard: <http://www.w3.org/2006/vcard/ns#> .
+      @prefix solid: <http://www.w3.org/ns/solid/terms#>.
       :me foaf:name "Jane Doe";
           foaf:img </profile/me.jgp>;
           vcard:role "Test Double";
           vcard:organization-name "Solid Community";
+          solid:preferredObjectPronoun "they";
+          solid:preferredRelativePronoun "them";
+          solid:preferredSubjectPronoun "their";
           vcard:hasAddress [
             vcard:locality "Hamburg";
             vcard:country-name "Germany";
@@ -47,6 +51,10 @@ describe("profile-pane", () => {
       expect(result).toContainHTML("🌐 Hamburg, Germany");
     });
 
+    it("renders the preferred Pronouns", () => {
+      expect(result).toContainHTML("their/they/them");
+    });
+
     it("renders the image", () => {
       const image = getByAltText(result, "Jane Doe");
       expect(image).toHaveAttribute(
@@ -65,7 +73,7 @@ describe("profile-pane", () => {
     });
 
     it("renders only a makeshift name based on URI", () => {
-      expect(card.textContent.trim()).toBe("card");
+      expect(card.textContent.trim()).toBe("janedoe.example");
     });
 
     it("does not render broken profile image", () => {

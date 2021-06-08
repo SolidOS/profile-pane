@@ -12,7 +12,7 @@ describe("presenter", () => {
 
   it("presents minimum available info", () => {
     const result = presentProfile(jane, store);
-    expect(result.name).toBe("card");
+    expect(result.name).toBe("jane.doe.example");
     expect(result.imageSrc).toBeNull();
     expect(result.introduction).toBeNull();
     expect(result.location).toBeNull();
@@ -79,6 +79,14 @@ describe("presenter", () => {
     expect(result.location).toBe("Hamburg, Germany");
   });
 
+  it("presents preferred Pronouns", () => {
+    store.add(jane, ns.solid("preferredSubjectPronoun"), "they", doc);
+    store.add(jane, ns.solid("preferredObjectPronoun"), "them", doc);
+    store.add(jane, ns.solid("preferredRelativePronoun"), "their", doc);
+    const result = presentProfile(jane, store);
+    expect(result.pronouns).toBe(" (they/them/their) ");
+  });
+  
   describe("coloring", () => {
     it("presents default colors", () => {
       const result = presentProfile(jane, store);

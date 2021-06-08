@@ -38,8 +38,12 @@ trackSession((session) => {
     loginBanner.appendChild(logoutButton);
   }
 });
-
-const webIdToShow = "https://angelo.veltens.org/profile/card#me";
+// https://testingsolidos.solidcommunity.net/profile/card#me
+// https://timbl.inrupt.net/profile/card#me
+//
+// const webIdToShow = "https://angelo.veltens.org/profile/card#me";
+const webIdToShow = "https://testingsolidos.solidcommunity.net/profile/card#me";
+// const webIdToShow = "https://timbl.inrupt.net/profile/card#me";
 
 fetcher.load(webIdToShow).then(() => {
   const app = pane.render(sym(webIdToShow), context);
