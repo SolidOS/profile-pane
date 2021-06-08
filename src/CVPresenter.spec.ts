@@ -10,10 +10,17 @@ describe("CVPresenter", () => {
     store.removeDocument(doc);
   });
 
-  it("presents minimum available info", () => {
+  it.skip("presents minimum available info", () => {
     const result = presentCV(jane, store);
     expect(result.rolesByType).toBeNull();
     expect(result.skills).toBeNull();
   });
 
+  it.skip("presents minimum available info", () => {
+    const organization = blankNode();
+    store.add(jane, ns.org("member"), organization, doc);
+    store.add(organization, ns.schema("name"), "Inrupt", doc);
+    const result = presentCV(jane, store);
+    expect(result.rolesByType).toBe('Inrupt');
+  });
 });
