@@ -73,7 +73,7 @@ describe("profile-pane", () => {
     });
 
     it("renders only a makeshift name based on URI", () => {
-      expect(card.textContent.trim()).toBe("janedoe.example");
+      expect(card.textContent.trim()).toContain("janedoe.example");
     });
 
     it("does not render broken profile image", () => {
