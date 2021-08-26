@@ -10,10 +10,9 @@ const styles = {
   heading: styleMap(headingLight()),
 };
 
-export const FriendList = (
-  subject: NamedNode,
-  context: DataBrowserContext
-): TemplateResult => html`
+const noFriendsFoundMessage = "You have no friends in your list yet";
+
+export const FriendList = (subject: NamedNode, context: DataBrowserContext): TemplateResult => html`
   <div style=${styles.root}>
     <h3 style=${styles.heading}>Friends</h3>
     ${createList(subject, context)}
@@ -28,5 +27,11 @@ const createList = (subject: NamedNode, { dom }: DataBrowserContext) => {
     predicate: ns.foaf("knows"),
     noun: "friend",
   });
-  return target;
+  if (target.textContent === "")
+    return noFriendsInTheListMessage(dom, noFriendsFoundMessage);
+  else return target;
 };
+
+const noFriendsInTheListMessage = (dom: HTMLDocument, message: string): TemplateResult => html`
+  <div id="no-friends" style=${styles.root}>${message}</div>
+`;
