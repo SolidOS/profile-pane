@@ -3,23 +3,24 @@ import { default as pane } from "../src";
 import { context, fetcher } from "./context";
 import { authn } from "solid-ui";
 
-window.addEventListener("DOMContentLoaded", async () => {
-  alert("whatever");
-  const loginBanner = document.getElementById("loginBanner");
-  rebuildHeader(loginBanner)();
-  authn.authSession.onLogout(rebuildHeader(loginBanner));
-  authn.authSession.onLogin(rebuildHeader(loginBanner));
-});
+const loginBanner = document.getElementById("loginBanner");
+const webId = document.getElementById("webId");
 
-function rebuildHeader(loginBanner: HTMLElement) {
-  return async () => {
-    const sessionInfo = authn.authSession.info;
-    const user = sessionInfo.webId ? sym(sessionInfo.webId) : null;
-    const webId = document.getElementById("webId");
-    webId.innerHTML = sessionInfo.webId;
-    await loginBanner.appendChild(authn.loginStatusBox(document, null, {}));
-  };
+loginBanner.appendChild(authn.loginStatusBox(document, null, {}));
+
+async function finishLogin() {
+  await authn.authSession.handleIncomingRedirect();
+  const session = authn.authSession;
+  if (session.info.isLoggedIn) {
+    // Update the page with the status.
+    webId.innerHTML = "Logged in as: " + authn.currentUser().uri;
+  } else {
+    webId.innerHTML = "";
+  }
 }
+
+finishLogin();
+
 
 // https://testingsolidos.solidcommunity.net/profile/card#me
 // https://timbl.inrupt.net/profile/card#me
