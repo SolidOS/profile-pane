@@ -5,6 +5,7 @@ import * as UI from "solid-ui";
 import { padding, textCenter } from "./baseStyles";
 
 let buttonContainer = <HTMLDivElement>document.createElement("div");
+//TODO create dedicated component in UI
 const positiveFrontendMessageDiv = <HTMLDivElement>document.createElement("div");
 positiveFrontendMessageDiv.setAttribute(
   "style",
@@ -16,11 +17,11 @@ const styles = {
 };
 
 //Same not logged in error message like on 'Chat with me' buton
-export const userNotLoggedInErrorMessage = "Current user not found! Not logged in?";
+const userNotLoggedInErrorMessage = "Current user not found! Not logged in?";
 const internalErrorMessage = "An internal error occured!";
 const friendWasAddedSuccesMessage = "Friend was added!";
 const friendExistsMessage = "Friend already exists";
-export const addMeToYourFriendsButtonText = "Add me to your friend list";
+const addMeToYourFriendsButtonText = "Add me to your friend list";
 const friendExistsAlreadyButtonText = "Already part of friend list";
 
 const addMeToYourFriendsHtml = (
@@ -142,4 +143,4 @@ window.addEventListener("unhandledrejection", function () {
   buttonContainer.appendChild(UI.widgets.errorMessageBlock(window.document, internalErrorMessage));
 });
 
-export { addMeToYourFriendsHtml, saveNewFriend, createAddMeToYourFriendsButton };
+export { addMeToYourFriendsHtml, addMeToYourFriendsButtonText, userNotLoggedInErrorMessage };
