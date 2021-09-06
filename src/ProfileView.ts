@@ -12,7 +12,7 @@ import { presentProfile } from "./presenter";
 import { presentCV } from './CVPresenter' // 20210527
 import { ProfileCard } from "./ProfileCard";
 import { CVCard } from "./CVCard";
-import { addMeToYourFriendsHtml } from "./addMeToYourFriends";
+import { addMeToYourFriendsDiv } from "./addMeToYourFriends";
 
 export const ProfileView = (
   subject: NamedNode,
@@ -38,7 +38,7 @@ export const ProfileView = (
       <div>
         <div data-testid="profile-card" style="${styles.card}">
           ${ProfileCard(profileBasics)}
-          ${addMeToYourFriendsHtml(subject, context)}
+          ${addMeToYourFriendsDiv(subject, context)}
         </div>
       </div>
       <div data-testid="friend-list" style="${styles.card}">
