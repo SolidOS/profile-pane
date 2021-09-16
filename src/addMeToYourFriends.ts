@@ -16,7 +16,7 @@ import {
 
 let buttonContainer = <HTMLDivElement>document.createElement("div");
 
-//TODO add style elements in UI
+//panel local style
 const styles = {
   button: styleMap({ ...textCenter(), ...padding() }),
 };
@@ -39,7 +39,7 @@ const createAddMeToYourFriendsButton = (
     context.dom,
     undefined,
     logInAddMeToYourFriendsButtonText,
-    undefined,
+    setButtonHandler, //sets an onclick event listener
     {
       needsBorder: true,
     }
@@ -48,38 +48,41 @@ const createAddMeToYourFriendsButton = (
   //not logged in
   button.setAttribute("class", "textButton-0-1-3"); //style of 'Primary' UI button with needsBorder=true
 
-  const me = authn.currentUser();
-  const store = context.session.store;
-
-  if (checkIfAnyUserLoggedIn(me)) {
-    checkIfFriendExists(store, me, subject).then((friendExists) => {
-      if (friendExists) {
-        //logged in and friend exists
-        button.innerHTML = friendExistsAlreadyButtonText.toUpperCase();
-        button.setAttribute("class", "textButton-0-1-3"); //style of 'Primary' UI button with needsBorder=true
-      } else {
-        //logged in and friend is new
-        button.innerHTML = addMeToYourFriendsButtonText.toUpperCase();
-        button.setAttribute("class", "textButton-0-1-2"); //style of 'Primary' UI button with needsBorder=false
-      }
+  button.refresh = refreshButton();
+  
+  function setButtonHandler(event) {
+    event.preventDefault();
+    saveNewFriend(subject, context)
+    .then(() => {
+      clearPreviousMessage(buttonContainer);
+      mention(buttonContainer, friendWasAddedSuccesMessage);
+      refreshButton();
+    })
+    .catch(error => {
+      clearPreviousMessage(buttonContainer);
+      //else UI.widgets.complain(buttonContainer, message); //displays an error message at the top of the window
+      complain(buttonContainer, context, error);
     });
   }
-
-  button.addEventListener(
-    "click",
-    () =>
-      saveNewFriend(subject, context)
-        .then(() => {
-          clearPreviousMessage(buttonContainer);
-          mention(buttonContainer, friendWasAddedSuccesMessage);
-        })
-        .catch((error) => {
-          clearPreviousMessage(buttonContainer);
-          //else UI.widgets.complain(buttonContainer, message); //displays an error message at the top of the window
-          complain(buttonContainer, context, error);
-        }),
-    false
-  );
+  
+  function refreshButton() {
+     const me = authn.currentUser();
+     const store = context.session.store;
+    
+    if (checkIfAnyUserLoggedIn(me)) {
+      checkIfFriendExists(store, me, subject).then((friendExists) => {
+        if (friendExists) {
+          //logged in and friend exists or friend was just added
+          button.innerHTML = friendExistsAlreadyButtonText.toUpperCase();
+          button.setAttribute("class", "textButton-0-1-3"); //style of 'Primary' UI button with needsBorder=true
+        } else {
+          //logged in and friend does not exist yet
+          button.innerHTML = addMeToYourFriendsButtonText.toUpperCase();
+          button.setAttribute("class", "textButton-0-1-2"); //style of 'Primary' UI button with needsBorder=false
+        }
+      });
+    }
+  }
 
   return button;
 };
@@ -111,7 +114,11 @@ function checkIfAnyUserLoggedIn(me: rdf.NamedNode): boolean {
   else return false;
 }
 
-async function checkIfFriendExists(store: LiveStore, me: rdf.NamedNode, subject: rdf.NamedNode): Promise<boolean> {
+async function checkIfFriendExists(
+  store: LiveStore,
+  me: rdf.NamedNode,
+  subject: rdf.NamedNode
+): Promise<boolean> {
   await store.fetcher.load(me);
   if (store.whether(me, ns.foaf("knows"), subject, me.doc()) === 0) return false;
   else return true;
@@ -124,4 +131,10 @@ window.addEventListener("unhandledrejection", function () {
   buttonContainer.appendChild(widgets.errorMessageBlock(window.document, internalErrorMessage));
 });
 
-export { addMeToYourFriendsDiv, createAddMeToYourFriendsButton, saveNewFriend, checkIfAnyUserLoggedIn, checkIfFriendExists};
+export {
+  addMeToYourFriendsDiv,
+  createAddMeToYourFriendsButton,
+  saveNewFriend,
+  checkIfAnyUserLoggedIn,
+  checkIfFriendExists,
+};

@@ -16,7 +16,7 @@ function mention(buttonContainer: HTMLDivElement, message: string): void {
     "style",
     "margin: 0.1em; padding: 0.5em; border: 0.05em solid gray; background-color: #efe; color:black;"
   );
-  //positiveFrontendMessageDiv.setAttribute('style', UI.style.messageBodyStyle) -> using UI but missing green backgrounf color
+  //positiveFrontendMessageDiv.setAttribute('style', UI.style.messageBodyStyle) -> using UI but missing green backgroung color
   positiveFrontendMessageDiv.innerHTML = message;
   buttonContainer.appendChild(positiveFrontendMessageDiv);
 }
