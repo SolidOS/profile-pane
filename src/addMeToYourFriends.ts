@@ -44,12 +44,7 @@ const createAddMeToYourFriendsButton = (
       needsBorder: true,
     }
   );
-  //this is to make clear which style we have, for code readability
-  //not logged in
-  button.setAttribute("class", "textButton-0-1-3"); //style of 'Primary' UI button with needsBorder=true
 
-  button.refresh = refreshButton();
-  
   function setButtonHandler(event) {
     event.preventDefault();
     saveNewFriend(subject, context)
@@ -58,17 +53,19 @@ const createAddMeToYourFriendsButton = (
       mention(buttonContainer, friendWasAddedSuccesMessage);
       refreshButton();
     })
-    .catch(error => {
+    .catch((error) => {
       clearPreviousMessage(buttonContainer);
       //else UI.widgets.complain(buttonContainer, message); //displays an error message at the top of the window
       complain(buttonContainer, context, error);
     });
   }
   
+  button.refresh = refreshButton();
+
   function refreshButton() {
-     const me = authn.currentUser();
-     const store = context.session.store;
-    
+    const me = authn.currentUser();
+    const store = context.session.store;
+
     if (checkIfAnyUserLoggedIn(me)) {
       checkIfFriendExists(store, me, subject).then((friendExists) => {
         if (friendExists) {
@@ -81,6 +78,10 @@ const createAddMeToYourFriendsButton = (
           button.setAttribute("class", "textButton-0-1-2"); //style of 'Primary' UI button with needsBorder=false
         }
       });
+    } else {
+      //not logged in
+      button.innerHTML = logInAddMeToYourFriendsButtonText.toUpperCase();
+      button.setAttribute("class", "textButton-0-1-3"); //style of 'Primary' UI button with needsBorder=false
     }
   }
 
