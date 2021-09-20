@@ -1,12 +1,13 @@
 import pane from "../";
 import { parse } from "rdflib";
 import { store } from "solid-ui";
-import { findByTestId } from "@testing-library/dom";
+import { findByTestId, findByText } from "@testing-library/dom";
 import { context, doc, subject } from "./setup";
 import fetchMock from "jest-fetch-mock";
 
 describe("profile-pane", () => {
   let friends;
+  let noFriendsMessage;
 
   describe("with friends", () => {
     beforeAll(async () => {
@@ -43,10 +44,15 @@ describe("profile-pane", () => {
       store.removeDocument(doc);
       const result = pane.render(subject, context);
       friends = await findByTestId(result, "friend-list");
+      noFriendsMessage = await findByText(result, "You have no friends in your list yet");
+    });
+
+    it("renders the friend list", () => {
+      expect(friends).toContainHTML("Friends");
     });
 
     it("renders an empty friend list", () => {
-      expect(friends.textContent.trim()).toBe("Friends");
+      expect(noFriendsMessage).not.toBeNull();
     });
   });
 
