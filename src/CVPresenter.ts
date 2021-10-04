@@ -1,5 +1,5 @@
 import { IndexedFormula, NamedNode, Literal, Namespace, Node, Store } from "rdflib";
-import { ns } from "solid-ui";
+import { ns, utils } from "solid-ui";
 
 export interface Role {
   startDate?: Literal,
@@ -40,10 +40,8 @@ export function skillAsText (store: Store, sk: Node):string {
 export function languageAsText (store: Store, lan: Node):string {
   if (lan.termType === 'Literal') return lan.value // Not normal but allow this
   const publicId = store.anyJS(lan as NamedNode, ns.solid('publicId'))
-  if (publicId) {
-    const name = store.anyJS(publicId, ns.schema('name'));
-    if (name) return name // @@ check language and get name in diff language if necessary
-  }
+  if (publicId)
+    return utils.label(publicId, true); // @@ check language and get name in diff language if necessary
   return '_'
 }
 

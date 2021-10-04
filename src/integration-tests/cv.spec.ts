@@ -201,7 +201,7 @@ describe("profile-pane", () => {
     });
 
     it("renders languages", () => {
-      expect(element).toContainHTML("germano");
+      expect(element).toContainHTML("Germano");
     });
   });
 
