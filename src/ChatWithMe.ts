@@ -3,6 +3,7 @@ import {DataBrowserContext} from "pane-registry";
 import {NamedNode} from "rdflib";
 import {widgets} from "solid-ui";
 import { asyncReplace } from "lit-html/directives/async-replace";
+import { chatWithMeButtonText, loadingMessage } from "./texts";
 
 
 export const ChatWithMe = (subject: NamedNode, context: DataBrowserContext): TemplateResult => {
@@ -14,7 +15,7 @@ export const ChatWithMe = (subject: NamedNode, context: DataBrowserContext): Tem
 
         let exists;
         try {
-            yield "Loading..."
+            yield loadingMessage,
             exists = await logic.chat.getChat(subject, false);
         } catch (e) {
             exists = false;
@@ -26,7 +27,7 @@ export const ChatWithMe = (subject: NamedNode, context: DataBrowserContext): Tem
             const button = widgets.button(
                 context.dom,
                 undefined,
-                "Chat with me",
+                chatWithMeButtonText,
                 async () => {
                     try {
                         const chat: NamedNode = await logic.chat.getChat(subject);
