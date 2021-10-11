@@ -196,7 +196,13 @@ describe("profile-pane", () => {
     it("renders error flag when missing skill text CV", () => {
       expect(element).toContainHTML("¿¿¿ skill ???");
     });
+    it("renders languages", () => {
+      expect(element).toContainHTML("French");
+    });
 
+    it("renders languages", () => {
+      expect(element).toContainHTML("Germano");
+    });
   });
 
 });

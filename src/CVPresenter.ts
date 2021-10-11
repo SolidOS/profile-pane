@@ -1,5 +1,5 @@
 import { IndexedFormula, NamedNode, Literal, Namespace, Node, Store } from "rdflib";
-import { ns } from "solid-ui";
+import { ns, utils } from "solid-ui";
 
 export interface Role {
   startDate?: Literal,
@@ -12,6 +12,7 @@ export interface Role {
 export interface CVPresentation { 
   rolesByType: RolesByType;
   skills: string[];
+  languages: string[];
 }
 
 export interface RolesByType {
@@ -34,6 +35,14 @@ export function skillAsText (store: Store, sk: Node):string {
   const manual = store.anyJS(sk as NamedNode, ns.vcard('role'))
   if (manual) return manual
   return '¿¿¿ skill ???'
+}
+
+export function languageAsText (store: Store, lan: Node):string {
+  if (lan.termType === 'Literal') return lan.value // Not normal but allow this
+  const publicId = store.anyJS(lan as NamedNode, ns.solid('publicId'))
+  if (publicId)
+    return utils.label(publicId, true); // @@ check language and get name in diff language if necessary
+  return '_'
 }
 
 export function datesAsText (startDate?:Literal, endDate?:Literal):string {
@@ -107,5 +116,9 @@ export function presentCV(
 
   const skills = store.each(subject, ns.schema('skills')).map(sk => skillAsText(store, sk))
 
-  return { rolesByType, skills }
+  const languagesInStore = store.anyJS(subject, ns.schema('knowsLanguage'))
+  let languages = []
+  if (languagesInStore) languages = languagesInStore.map(lan => languageAsText(store, lan))
+
+  return { rolesByType, skills, languages }
 }
