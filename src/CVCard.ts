@@ -18,7 +18,7 @@ const styles = {
 };
 
 export const CVCard = (profileBasics: ProfilePresentation, cvData: CVPresentation): TemplateResult => {
-  const { rolesByType, skills } = cvData
+  const { rolesByType, skills, languages } = cvData
   const nameStyle = styleMap({
     ...heading(),
     // "text-decoration": "underline",
@@ -42,7 +42,9 @@ export const CVCard = (profileBasics: ProfilePresentation, cvData: CVPresentatio
       <div style=${styles.info}>
         ${renderSkills(skills)}
       </div>
-
+      <div style=${styles.info}>
+        ${renderLanguages(languages)}
+      </div>
     </div>
   `;
 };
@@ -75,3 +77,18 @@ function renderSkills (skills) {
   ${skills.length > 1 ? renderSkills(skills.slice(1)) : html``}
   `
 }
+
+function renderLan (language) {
+  return language ? html`<div style="margin: 0.5em;">
+  <p style="text-align: center;">${language}</p>
+  </div>
+  ` : html``;
+}
+
+function renderLanguages (languages) {
+
+  return html`${renderLan(languages[0])}
+  ${languages.length > 1 ? renderLanguages(languages.slice(1)) : html``}
+  `
+}
+

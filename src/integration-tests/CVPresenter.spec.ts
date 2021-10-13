@@ -1,4 +1,4 @@
-import { presentCV} from "./CVPresenter";
+import { presentCV} from "../CVPresenter";
 import { blankNode, sym } from "rdflib";
 import { ns, store } from "solid-ui";
 

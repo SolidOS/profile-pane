@@ -1,4 +1,4 @@
-import { presentProfile } from "./presenter";
+import { presentProfile } from "../presenter";
 import { blankNode, sym } from "rdflib";
 import { ns, store } from "solid-ui";
 
