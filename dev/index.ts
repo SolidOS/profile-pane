@@ -1,43 +1,27 @@
 import { sym } from "rdflib";
 import { default as pane } from "../src";
 import { context, fetcher } from "./context";
-import { authn, widgets } from "solid-ui";
-
-const {
-  currentSession,
-  popupLogin,
-  logout,
-  trackSession,
-} = authn.solidAuthClient;
-
-const loginButton = widgets.button(
-  document,
-  undefined,
-  "Login",
-  async function () {
-    const session = await currentSession();
-    const popupUri = "https://solidcommunity.net/common/popup.html";
-    if (!session) {
-      await popupLogin({ popupUri });
-    }
-  }
-);
-
-const logoutButton = widgets.button(document, undefined, "Logout", () =>
-  logout()
-);
+import { authn } from "solid-ui";
 
 const loginBanner = document.getElementById("loginBanner");
+const webId = document.getElementById("webId");
 
-trackSession((session) => {
-  if (!session) {
-    loginBanner.innerHTML = "";
-    loginBanner.appendChild(loginButton);
+loginBanner.appendChild(authn.loginStatusBox(document, null, {}));
+
+async function finishLogin() {
+  await authn.authSession.handleIncomingRedirect();
+  const session = authn.authSession;
+  if (session.info.isLoggedIn) {
+    // Update the page with the status.
+    webId.innerHTML = "Logged in as: " + authn.currentUser().uri;
   } else {
-    loginBanner.innerHTML = `Logged in as ${session.webId}`;
-    loginBanner.appendChild(logoutButton);
+    webId.innerHTML = "";
   }
-});
+}
+
+finishLogin();
+
+
 // https://testingsolidos.solidcommunity.net/profile/card#me
 // https://timbl.inrupt.net/profile/card#me
 //
