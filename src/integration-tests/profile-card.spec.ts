@@ -48,7 +48,8 @@ describe("profile-pane", () => {
     });
 
     it("renders the location", () => {
-      expect(result).toContainHTML("🌐 Hamburg, Germany");
+      expect(result).toContainHTML("🌐");
+      expect(result).toContainHTML("Hamburg, Germany");
     });
 
     it("renders the preferred Pronouns", () => {
@@ -139,7 +140,11 @@ describe("profile-pane", () => {
       ));
 
     it("renders the location", () =>
-      waitFor(() => expect(result).toContainHTML("🌐 Hamburg, Germany")));
+      waitFor(() => {
+        expect(result).toContainHTML("🌐");
+        expect(result).toContainHTML("Hamburg, Germany");
+      }
+    ));
 
     it("renders the image", async () => {
       const image = await findByAltText(result, "Jane Doe");
