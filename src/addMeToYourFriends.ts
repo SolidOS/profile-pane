@@ -125,13 +125,6 @@ async function checkIfFriendExists(
   else return true;
 }
 
-//Because the code has unhandled Promises we still want to signal the user a message.
-//Console will contain actual error.
-window.addEventListener("unhandledrejection", function () {
-  clearPreviousMessage(buttonContainer);
-  buttonContainer.appendChild(widgets.errorMessageBlock(window.document, internalErrorMessage));
-});
-
 export {
   addMeToYourFriendsDiv,
   createAddMeToYourFriendsButton,
