@@ -41,7 +41,7 @@ export const ProfileCard = ({
   `;
 };
 
-const Line = (value, prefix = nothing) =>
+const Line = (value, prefix: symbol | string = nothing ) =>
   value ? html`<p>${prefix} ${value}</p>` : nothing;
 
 const Image = (src, alt) =>
