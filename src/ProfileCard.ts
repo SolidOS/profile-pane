@@ -1,5 +1,5 @@
 import { html, nothing, TemplateResult } from "lit-html";
-import { styleMap } from "lit-html/directives/style-map";
+import { styleMap } from "lit-html/directives/style-map.js";
 import {
   fullWidth,
   heading,
@@ -33,15 +33,13 @@ export const ProfileCard = ({
     <div style=${styles.info}>
       <h3 style=${nameStyle}>${name}</h3>
       <div style=${styles.intro}>
-        ${Line(introduction)}
-        ${Line(location, "🌐")}
-        ${Line(pronouns)}
+        ${Line(introduction)} ${Line(location, "🌐")} ${Line(pronouns)}
       </div>
     </div>
   `;
 };
 
-const Line = (value, prefix: symbol | string = nothing ) =>
+const Line = (value, prefix: symbol | string = nothing) =>
   value ? html`<p>${prefix} ${value}</p>` : nothing;
 
 const Image = (src, alt) =>

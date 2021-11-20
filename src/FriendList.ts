@@ -2,7 +2,7 @@ import { ns, widgets } from "solid-ui";
 import { DataBrowserContext } from "pane-registry";
 import { NamedNode } from "rdflib";
 import { html, TemplateResult } from "lit-html";
-import { styleMap } from "lit-html/directives/style-map";
+import { styleMap } from "lit-html/directives/style-map.js";
 import { headingLight, padding } from "./baseStyles";
 
 const styles = {
@@ -12,7 +12,10 @@ const styles = {
 
 const noFriendsFoundMessage = "You have no friends in your list yet";
 
-export const FriendList = (subject: NamedNode, context: DataBrowserContext): TemplateResult => html`
+export const FriendList = (
+  subject: NamedNode,
+  context: DataBrowserContext
+): TemplateResult => html`
   <div style=${styles.root}>
     <h3 style=${styles.heading}>Friends</h3>
     ${createList(subject, context)}
@@ -32,6 +35,9 @@ const createList = (subject: NamedNode, { dom }: DataBrowserContext) => {
   else return target;
 };
 
-const noFriendsInTheListMessage = (dom: HTMLDocument, message: string): TemplateResult => html`
+const noFriendsInTheListMessage = (
+  dom: HTMLDocument,
+  message: string
+): TemplateResult => html`
   <div id="no-friends" style=${styles.root}>${message}</div>
 `;
