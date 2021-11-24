@@ -1,8 +1,12 @@
 import { html, TemplateResult } from "lit-html";
-import { styleMap } from "lit-html/directives/style-map";
+import { styleMap } from "lit-html/directives/style-map.js";
 import { DataBrowserContext, LiveStore } from "pane-registry";
 import { rdf, widgets, authn, ns } from "solid-ui";
-import { complain, mention, clearPreviousMessage } from "./addMeToYourFriendsHelper";
+import {
+  complain,
+  mention,
+  clearPreviousMessage,
+} from "./addMeToYourFriendsHelper";
 import { padding, textCenter } from "./baseStyles";
 import {
   logInAddMeToYourFriendsButtonText,
@@ -48,18 +52,18 @@ const createAddMeToYourFriendsButton = (
   function setButtonHandler(event) {
     event.preventDefault();
     saveNewFriend(subject, context)
-    .then(() => {
-      clearPreviousMessage(buttonContainer);
-      mention(buttonContainer, friendWasAddedSuccesMessage);
-      refreshButton();
-    })
-    .catch((error) => {
-      clearPreviousMessage(buttonContainer);
-      //else UI.widgets.complain(buttonContainer, message); //displays an error message at the top of the window
-      complain(buttonContainer, context, error);
-    });
+      .then(() => {
+        clearPreviousMessage(buttonContainer);
+        mention(buttonContainer, friendWasAddedSuccesMessage);
+        refreshButton();
+      })
+      .catch((error) => {
+        clearPreviousMessage(buttonContainer);
+        //else UI.widgets.complain(buttonContainer, message); //displays an error message at the top of the window
+        complain(buttonContainer, context, error);
+      });
   }
-  
+
   button.refresh = refreshButton();
 
   function refreshButton() {
@@ -88,7 +92,10 @@ const createAddMeToYourFriendsButton = (
   return button;
 };
 
-async function saveNewFriend(subject: rdf.NamedNode, context: DataBrowserContext): Promise<void> {
+async function saveNewFriend(
+  subject: rdf.NamedNode,
+  context: DataBrowserContext
+): Promise<void> {
   const me = authn.currentUser();
   const store = context.session.store;
 
@@ -121,7 +128,8 @@ async function checkIfFriendExists(
   subject: rdf.NamedNode
 ): Promise<boolean> {
   await store.fetcher.load(me);
-  if (store.whether(me, ns.foaf("knows"), subject, me.doc()) === 0) return false;
+  if (store.whether(me, ns.foaf("knows"), subject, me.doc()) === 0)
+    return false;
   else return true;
 }
 

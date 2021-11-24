@@ -1,5 +1,6 @@
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const path = require("path");
+const NodePolyfillPlugin = require("node-polyfill-webpack-plugin");
 
 module.exports = [
   {
@@ -9,7 +10,10 @@ module.exports = [
       path: path.resolve(__dirname, "dist"),
       filename: "dev.bundle.js",
     },
-    plugins: [new HtmlWebpackPlugin({ template: "./dev/index.html" })],
+    plugins: [
+      new NodePolyfillPlugin(),
+      new HtmlWebpackPlugin({ template: "./dev/index.html" }),
+    ],
     module: {
       rules: [
         {
@@ -22,17 +26,10 @@ module.exports = [
     resolve: {
       extensions: ["*", ".js", ".ts"],
     },
-    externals: {
-      fs: "null",
-      "node-fetch": "fetch",
-      "isomorphic-fetch": "fetch",
-      xmldom: "window",
-      "text-encoding": "TextEncoder",
-      "whatwg-url": "window",
-      "@trust/webcrypto": "crypto",
-    },
     devServer: {
-      contentBase: "./dist",
+      static: {
+        directory: path.join(__dirname, "dist"),
+      },
     },
     devtool: "source-map",
   },
