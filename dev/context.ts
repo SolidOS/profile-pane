@@ -1,6 +1,7 @@
-import {DataBrowserContext, LiveStore, PaneRegistry} from "pane-registry";
+import {DataBrowserContext, PaneRegistry} from "pane-registry";
 import { store, solidLogicSingleton } from "solid-ui";
 import {longChatPane} from "chat-pane";
+import { LiveStore } from "solid-logic";
 
 export const context: DataBrowserContext = {
   session: {

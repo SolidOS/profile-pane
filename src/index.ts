@@ -1,8 +1,9 @@
-import { DataBrowserContext, LiveStore } from "pane-registry";
+import { DataBrowserContext } from "pane-registry";
 import { NamedNode } from "rdflib";
 import { render } from "lit-html";
 import { ProfileView } from "./ProfileView";
 import { icons, ns } from "solid-ui";
+import { LiveStore } from "solid-logic";
 
 async function loadExtendedProfile(store: LiveStore, subject: NamedNode) {
   const otherProfiles = store.each(
