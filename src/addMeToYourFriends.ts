@@ -1,6 +1,7 @@
 import { html, TemplateResult } from "lit-html";
 import { styleMap } from "lit-html/directives/style-map.js";
-import { DataBrowserContext, LiveStore } from "pane-registry";
+import { DataBrowserContext} from "pane-registry";
+import { LiveStore } from "solid-logic";
 import { rdf, widgets, authn, ns } from "solid-ui";
 import {
   complain,
