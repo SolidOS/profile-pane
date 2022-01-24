@@ -1,22 +1,15 @@
 import { html, TemplateResult } from "lit-html";
 import { styleMap } from "lit-html/directives/style-map.js";
-import { DataBrowserContext} from "pane-registry";
-import { LiveStore } from "solid-logic";
-import { rdf, widgets, authn, ns } from "solid-ui";
+import { DataBrowserContext } from "pane-registry";
+import { authn, LiveStore } from "solid-logic";
+import { ns, rdf, widgets } from "solid-ui";
 import {
-  complain,
-  mention,
-  clearPreviousMessage,
+  clearPreviousMessage, complain,
+  mention
 } from "./addMeToYourFriendsHelper";
 import { padding, textCenter } from "./baseStyles";
 import {
-  logInAddMeToYourFriendsButtonText,
-  friendExistsAlreadyButtonText,
-  addMeToYourFriendsButtonText,
-  friendWasAddedSuccesMessage,
-  userNotLoggedInErrorMessage,
-  friendExistsMessage,
-  internalErrorMessage,
+  addMeToYourFriendsButtonText, friendExistsAlreadyButtonText, friendExistsMessage, friendWasAddedSuccesMessage, logInAddMeToYourFriendsButtonText, userNotLoggedInErrorMessage
 } from "./texts";
 
 let buttonContainer = <HTMLDivElement>document.createElement("div");

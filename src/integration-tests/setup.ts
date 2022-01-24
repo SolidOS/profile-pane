@@ -1,7 +1,6 @@
-import {DataBrowserContext, PaneRegistry} from "pane-registry";
-import {sym} from "rdflib";
-import {SolidLogic} from "solid-logic";
-import {store} from "solid-ui"
+import { DataBrowserContext, PaneRegistry } from "pane-registry";
+import { sym } from "rdflib";
+import { SolidLogic, store } from "solid-logic";
 
 export const subject = sym("https://janedoe.example/profile/card#me");
 export const doc = subject.doc();
