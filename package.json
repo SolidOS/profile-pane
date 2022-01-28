@@ -31,7 +31,7 @@
   },
   "license": "MIT",
   "dependencies": {
-    "contacts-pane": "^2.5.8",
+    "contacts-pane": "^2.6.0",
     "lit-html": "^2.0.2",
     "pane-registry": "^2.4.6",
     "rdflib": "^2.2.17",
