@@ -1,7 +1,8 @@
 import { html, TemplateResult } from "lit-html";
 import { styleMap } from "lit-html/directives/style-map.js";
 import { DataBrowserContext } from "pane-registry";
-import { authn, LiveStore } from "solid-logic";
+import { authn } from "solid-logic";
+import { LiveStore } from "rdflib";
 import { ns, rdf, widgets } from "solid-ui";
 import {
   clearPreviousMessage, complain,
