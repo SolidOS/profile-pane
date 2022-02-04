@@ -1,4 +1,4 @@
-import { IndexedFormula, NamedNode } from "rdflib";
+import { NamedNode, LiveStore } from "rdflib";
 import { ns, utils, widgets } from "solid-ui";
 import { store } from "solid-logic";
 import Node from "rdflib/src/node-internal";
@@ -33,7 +33,7 @@ export function pronounsAsText (subject:NamedNode): string {
 
 export const presentProfile = (
   subject: NamedNode,
-  store: IndexedFormula
+  store: LiveStore
 ): ProfilePresentation => {
   const name = utils.label(subject);
   const imageSrc = widgets.findImage(subject);
@@ -72,7 +72,7 @@ function formatIntroduction(role: string | void, orgName: string | void) {
   return role && orgName ? `${role} at ${orgName}` : orgName || role || null;
 }
 
-function getColors(subject: NamedNode, store: IndexedFormula) {
+function getColors(subject: NamedNode, store: LiveStore) {
   const backgroundColor = store.anyValue(
     subject,
     ns.solid("profileBackgroundColor"),

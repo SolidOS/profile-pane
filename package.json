@@ -10,6 +10,7 @@
   "scripts": {
     "start": "webpack serve --config webpack.dev.config.js",
     "build": "tsc",
+    "clean": "rm -rf lib",
     "check": "npm run lint && npm run build && npm run test",
     "test": "jest",
     "lint": "eslint ./src"
@@ -33,9 +34,9 @@
   "dependencies": {
     "contacts-pane": "file:../contacts-pane",
     "lit-html": "^2.0.2",
-    "pane-registry": "^2.4.6",
+    "pane-registry": "2.4.6-7ecb64b0",
     "rdflib": "^2.2.17",
-    "solid-logic": "^1.3.13-2e3e7417",
+    "solid-logic": "file:../solid-logic",
     "solid-ui": "file:../solid-ui",
     "validate-color": "^2.2.1"
   },

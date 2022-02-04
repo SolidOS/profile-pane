@@ -1,4 +1,4 @@
-import { IndexedFormula, NamedNode, Literal, Namespace, Node, Store } from "rdflib";
+import { LiveStore, NamedNode, Literal, Namespace, Node, Store } from "rdflib";
 import { ns, utils } from "solid-ui";
 
 export interface Role {
@@ -52,7 +52,7 @@ export function datesAsText (startDate?:Literal, endDate?:Literal):string {
 }
 
 function getRolesByType(
-  store: IndexedFormula,
+  store: LiveStore,
   subject: NamedNode
 ): RolesByType {
 
@@ -100,7 +100,7 @@ function getRolesByType(
 
 export function presentCV(
   subject: NamedNode,
-  store: IndexedFormula
+  store: LiveStore
 ): CVPresentation {
   
  const rolesByType = getRolesByType(store, subject)

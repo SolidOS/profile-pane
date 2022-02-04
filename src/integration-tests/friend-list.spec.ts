@@ -1,6 +1,6 @@
 import pane from "../index";
 import { parse } from "rdflib";
-import { store } from "solid-logic";
+import { solidLogicSingleton } from "solid-logic";
 import { findByTestId, findByText } from "@testing-library/dom";
 import { context, doc, subject } from "./setup";
 import fetchMock from "jest-fetch-mock";
@@ -11,7 +11,6 @@ describe("profile-pane", () => {
 
   describe("with friends", () => {
     beforeAll(async () => {
-      store.removeDocument(doc);
       const turtle = `
       @prefix : <#>.
       @prefix foaf: <http://xmlns.com/foaf/0.1/> .
@@ -23,10 +22,11 @@ describe("profile-pane", () => {
           ];
       .
   `;
-      parse(turtle, store, doc.uri);
+      parse(turtle, solidLogicSingleton.store, doc.uri);
       const result = pane.render(subject, context);
       friends = await findByTestId(result, "friend-list");
     });
+    afterAll(() => { solidLogicSingleton.store.removeDocument(doc)})
 
     it("renders the friend list", () => {
       expect(friends).toContainHTML("Friends");
@@ -41,7 +41,6 @@ describe("profile-pane", () => {
 
   describe("without friends", () => {
     beforeAll(async () => {
-      store.removeDocument(doc);
       const result = pane.render(subject, context);
       friends = await findByTestId(result, "friend-list");
       noFriendsMessage = await findByText(result, "You have no friends in your list yet");
@@ -58,7 +57,6 @@ describe("profile-pane", () => {
 
   describe("with more friends in separate document", () => {
     beforeAll(async () => {
-      store.removeDocument(doc);
       const turtle = `
       @prefix : <#>.
       @prefix foaf: <http://xmlns.com/foaf/0.1/> .
@@ -72,7 +70,7 @@ describe("profile-pane", () => {
           rdfs:seeAlso <./friends.ttl>;
       .
   `;
-      parse(turtle, store, doc.uri);
+      parse(turtle, solidLogicSingleton.store, doc.uri);
       fetchMock.mockOnceIf(
         "https://janedoe.example/profile/friends.ttl",
         `
@@ -95,6 +93,7 @@ describe("profile-pane", () => {
       const result = pane.render(subject, context);
       friends = await findByTestId(result, "friend-list");
     });
+    afterAll(() => { solidLogicSingleton.store.removeDocument(doc)})
 
     it("renders the friend list", () => {
       expect(friends).toContainHTML("Friends");
