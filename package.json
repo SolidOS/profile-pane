@@ -32,12 +32,12 @@
   },
   "license": "MIT",
   "dependencies": {
-    "contacts-pane": "file:../contacts-pane",
+    "contacts-pane": "2.6.0-fd0082d5",
     "lit-html": "^2.0.2",
     "pane-registry": "2.4.6-7ecb64b0",
     "rdflib": "^2.2.17",
-    "solid-logic": "file:../solid-logic",
-    "solid-ui": "file:../solid-ui",
+    "solid-logic": "1.3.13-60e05a84",
+    "solid-ui": "2.4.16-4ab5f1f1",
     "validate-color": "^2.2.1"
   },
   "devDependencies": {
@@ -51,7 +51,7 @@
     "@typescript-eslint/parser": "^5.3.1",
     "babel-jest": "^27.3.1",
     "babel-loader": "^8.2.3",
-    "chat-pane": "file:../chat-pane",
+    "chat-pane": "2.4.15-9211de3a",
     "eslint": "^7.32.0",
     "html-webpack-plugin": "^5.5.0",
     "jest": "^27.3.1",
