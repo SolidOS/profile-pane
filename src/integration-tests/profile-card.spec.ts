@@ -1,6 +1,6 @@
-import pane from "../";
+import pane from "../index";
 import { parse } from "rdflib";
-import { store } from "solid-ui";
+import { solidLogicSingleton } from 'solid-logic'
 import {
   findByAltText,
   findByTestId,
@@ -16,7 +16,6 @@ describe("profile-pane", () => {
 
   describe("with full profile", () => {
     beforeAll(() => {
-      store.removeDocument(doc);
       const turtle = `
       @prefix : <#>.
       @prefix foaf: <http://xmlns.com/foaf/0.1/> .
@@ -35,9 +34,10 @@ describe("profile-pane", () => {
           ];
       .
   `;
-      parse(turtle, store, doc.uri);
+      parse(turtle, solidLogicSingleton.store, doc.uri);
       result = pane.render(subject, context);
     });
+    afterAll(() => { solidLogicSingleton.store.removeDocument(doc)})
 
     it("renders the name", () => {
       expect(result).toContainHTML("Jane Doe");
@@ -68,7 +68,6 @@ describe("profile-pane", () => {
   describe("with empty profile", () => {
     let card;
     beforeAll(async () => {
-      store.removeDocument(doc);
       result = pane.render(subject, context);
       card = await findByTestId(result, "profile-card");
     });
@@ -85,7 +84,6 @@ describe("profile-pane", () => {
 
   describe("with extended profile", () => {
     beforeAll(() => {
-      store.removeDocument(doc);
       const turtle = `
       @prefix : <#>.
       @prefix foaf: <http://xmlns.com/foaf/0.1/> .
@@ -93,7 +91,7 @@ describe("profile-pane", () => {
       :me foaf:name "Jane Doe";
           rdfs:seeAlso <./more.ttl>, <./address.ttl>;
       .`;
-      parse(turtle, store, doc.uri);
+      parse(turtle, solidLogicSingleton.store, doc.uri);
       fetchMock.mockOnceIf(
         "https://janedoe.example/profile/more.ttl",
         `
@@ -130,6 +128,7 @@ describe("profile-pane", () => {
       );
       result = pane.render(subject, context);
     });
+    afterAll(() => { solidLogicSingleton.store.removeDocument(doc)})
 
     it("renders the name", () =>
       waitFor(() => expect(result).toContainHTML("Jane Doe")));

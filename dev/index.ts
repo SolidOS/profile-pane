@@ -1,16 +1,17 @@
 import { sym } from "rdflib";
 import { default as pane } from "../src";
 import { context, fetcher } from "./context";
-import { authn } from "solid-ui";
+import { authn, authSession } from "solid-logic";
+import * as UI from "solid-ui";
 
 const loginBanner = document.getElementById("loginBanner");
 const webId = document.getElementById("webId");
 
-loginBanner.appendChild(authn.loginStatusBox(document, null, {}));
+loginBanner.appendChild(UI.login.loginStatusBox(document, null, {}));
 
 async function finishLogin() {
-  await authn.authSession.handleIncomingRedirect();
-  const session = authn.authSession;
+  await authSession.handleIncomingRedirect();
+  const session = authSession;
   if (session.info.isLoggedIn) {
     // Update the page with the status.
     webId.innerHTML = "Logged in as: " + authn.currentUser().uri;

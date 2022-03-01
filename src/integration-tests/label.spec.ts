@@ -1,6 +1,6 @@
-import pane from "../";
+import pane from "../index";
 import { parse } from "rdflib";
-import { store } from "solid-ui";
+import { store } from "solid-logic";
 import { context, doc, subject } from "./setup";
 
 // This was at testingsolidos.solidcommunity.net

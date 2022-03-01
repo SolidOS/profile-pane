@@ -1,6 +1,6 @@
-import pane from "../";
+import pane from "../index";
 import { parse } from "rdflib";
-import { store } from "solid-ui";
+import { store } from "solid-logic";
 import { findByTestId } from "@testing-library/dom";
 import { context, doc, subject } from "./setup";
 

@@ -1,6 +1,7 @@
 import { presentCV} from "../CVPresenter";
 import { blankNode, sym } from "rdflib";
-import { ns, store } from "solid-ui";
+import { ns } from "solid-ui";
+import { store } from "solid-logic";
 
 describe("CVPresenter", () => {
   const jane = sym("https://jane.doe.example/profile/card#me");
