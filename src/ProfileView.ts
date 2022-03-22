@@ -4,7 +4,7 @@
 import { html, TemplateResult } from "lit-html";
 import { styleMap } from "lit-html/directives/style-map.js";
 import { DataBrowserContext } from "pane-registry";
-import { NamedNode, Store } from "rdflib";
+import { NamedNode, LiveStore } from "rdflib";
 import { card, padding, paddingSmall, responsiveGrid } from "./baseStyles";
 import { ChatWithMe } from "./ChatWithMe";
 import { FriendList } from "./FriendList";
@@ -18,8 +18,8 @@ export const ProfileView = (
   subject: NamedNode,
   context: DataBrowserContext
 ): TemplateResult => {
-  const profileBasics = presentProfile(subject, context.session.store as Store); // rdflib rdfs type problems
-  const rolesByType = presentCV (subject, context.session.store as Store)
+  const profileBasics = presentProfile(subject, context.session.store as LiveStore); // rdflib rdfs type problems
+  const rolesByType = presentCV (subject, context.session.store as LiveStore)
   const styles = {
     grid: styleMap({
       ...responsiveGrid(),
