@@ -13,7 +13,6 @@ This is a re-write that is going to replace the current profile pane
 - lit-html
 - Jest
 - Eslint
-- Prettier
 - SolidOS
 
 ### Tests
