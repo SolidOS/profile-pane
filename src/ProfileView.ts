@@ -12,6 +12,7 @@ import { presentProfile } from "./presenter";
 import { presentCV } from './CVPresenter' // 20210527
 import { ProfileCard } from "./ProfileCard";
 import { CVCard } from "./CVCard";
+import { QRCodeCard } from "./QRCodeCard";
 import { addMeToYourFriendsDiv } from "./addMeToYourFriends";
 
 export const ProfileView = (
@@ -48,6 +49,9 @@ export const ProfileView = (
         ${CVCard(profileBasics, rolesByType)}
       </div>
       <div style="${styles.chat}">${ChatWithMe(subject, context)}</div>
+      <div data-testid="qrcode-display" style="${styles.card}">
+        ${QRCodeCard(profileBasics, subject)}
+      </div>
 
     </div>
   `;

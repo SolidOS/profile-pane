@@ -3,6 +3,7 @@ import { NamedNode, LiveStore } from "rdflib";
 import { render } from "lit-html";
 import { ProfileView } from "./ProfileView";
 import { icons, ns } from "solid-ui";
+import { toCanvas } from 'qrcode'
 
 async function loadExtendedProfile(store: LiveStore, subject: NamedNode) {
   const otherProfiles = store.each(
@@ -38,9 +39,23 @@ const Pane = {
     const target = context.dom.createElement("div");
     const store = context.session.store;
 
-    loadExtendedProfile(store, subject).then(() =>
+    loadExtendedProfile(store, subject).then(() => {
       render(ProfileView(subject, context), target)
-    );
+
+      const QRCodeEles = Array.from(context.dom.getElementsByClassName('QRCode'))
+      if (!QRCodeEles.length) return console.error("QRCode Ele missing")
+      for (const canvas of QRCodeEles) {
+        const value = canvas.getAttribute('data-value')
+        if (!value) return console.error("QRCode data-value missing")
+        toCanvas(canvas, value, function (error) {
+          if (error) {
+            console.error('QRcode error!', error)
+          } else {
+            console.log('QRcode success.');
+          }
+        });
+      }
+    })
 
     return target;
   },
