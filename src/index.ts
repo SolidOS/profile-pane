@@ -44,11 +44,13 @@ const Pane = {
 
       const QRCodeEles = Array.from(context.dom.getElementsByClassName('QRCode'))
       if (!QRCodeEles.length) return console.error("QRCode Ele missing")
-      for (const canvas of QRCodeEles) {
+      for (const canvas of QRCodeEles as HTMLElement[]) {
         const value = canvas.getAttribute('data-value')
         if (!value) return console.error("QRCode data-value missing")
         const highlightColor = canvas.getAttribute('highlightColor') || '#000000'
         const backgroundColor = canvas.getAttribute('backgroundColor') || '#ffffff'
+        console.log(`@@ qrcodes2 colours highlightColor ${highlightColor}, backgroundColor ${backgroundColor}`)
+
         const options = {
           color: {
             dark: highlightColor,
@@ -61,6 +63,9 @@ const Pane = {
             console.error('QRcode error!', error)
           } else {
             console.log('QRcode success.');
+            canvas.style.width = "80%"
+            canvas.style.height = "80%"
+            canvas.style.margin = "10%"
           }
         });
       }
