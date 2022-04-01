@@ -47,7 +47,16 @@ const Pane = {
       for (const canvas of QRCodeEles) {
         const value = canvas.getAttribute('data-value')
         if (!value) return console.error("QRCode data-value missing")
-        toCanvas(canvas, value, function (error) {
+        const highlightColor = canvas.getAttribute('highlightColor') || '#000000'
+        const backgroundColor = canvas.getAttribute('backgroundColor') || '#ffffff'
+        const options = {
+          color: {
+            dark: highlightColor,
+            light: backgroundColor
+          }
+        }
+        // see https://www.npmjs.com/package/qrcode#tocanvascanvaselement-text-options-cberror
+        toCanvas(canvas, value, options, function (error) {
           if (error) {
             console.error('QRcode error!', error)
           } else {

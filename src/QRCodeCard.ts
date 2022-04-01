@@ -33,32 +33,14 @@ export const QRCodeCard = (
     // "text-decoration": "underline",
     color: profileBasics.highlightColor, // was "text-decoration-color"
   });
+  const qrCodeCanvasStyle = 'width: 80%; margin:auto;'
+  const highlightColor = profileBasics.highlightColor || '#000000'
+  const backgroundColor = profileBasics.backgroundColor || '#ffffff'
 
-  // See https://reactjs.org/docs/refs-and-the-dom.html
-  const result:TemplateResult = html`
+  return html`
     <div style=${styles.info}>
-      <h3 style=${nameStyle}>QR Code</h3> // @@ put name here?
-      <canvas class="QRCode" data-value="${subject.uri}"></canvas>
+      <h3 style=${nameStyle}>QR Code</h3>
+      <canvas class="QRCode" style="${qrCodeCanvasStyle}" data-value="${subject.uri} highlightColor="${highlightColor}"} backgroundColor="${backgroundColor}"></canvas>
     </div>
   `;
-  // const ele = result.getTemplateElement()
-  // console.log('result: ', result) // @@@
-  // for (const x in result) console.log('    result ', x, ' -> ', result[x])
-
-  //const ele2 = ele.firstChild
-  //console.log('ele2 ' + ele2.innerHTML)
-  // ele2.appendChild(renderQRCode(subject.uri))
-  return result
 };
-
-function renderQRCode(string) {
-  const canvas = dom.createElement('canvas')
-  toCanvas(canvas, string, function (error) {
-    if (error) {
-      console.error('QRcode error!', error)
-    } else {
-      console.log('QRcode success.');
-    }
-  });
-  return canvas
-}
