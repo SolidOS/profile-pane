@@ -1,4 +1,5 @@
 const HtmlWebpackPlugin = require("html-webpack-plugin");
+const NodePolyfillPlugin = require("node-polyfill-webpack-plugin");
 
 module.exports = [
   {
@@ -6,6 +7,7 @@ module.exports = [
     entry: ["./dev/index.ts"],
     plugins: [
       new HtmlWebpackPlugin({ template: "./dev/index.html" }),
+      new NodePolyfillPlugin()
     ],
     module: {
       rules: [
@@ -18,8 +20,9 @@ module.exports = [
     },
     resolve: {
       extensions: ["*", ".js", ".ts"],
-      fallback: { "path": require.resolve("path-browserify") },
+      fallback: { "path": require.resolve("path-browserify") }
     },
+
     devServer: {
       static: './dist'
     },
