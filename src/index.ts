@@ -39,11 +39,16 @@ const Pane = {
     const target = context.dom.createElement("div");
     const store = context.session.store;
 
-    loadExtendedProfile(store, subject).then(() => {
-      render(ProfileView(subject, context), target)
+    loadExtendedProfile(store, subject).then(async () => {
+      const testAAAAA = render(ProfileView(subject, context), target) // @@ await??
+      console.log('testAAAAA', testAAAAA)
 
       const QRCodeEles = Array.from(context.dom.getElementsByClassName('QRCode'))
-      if (!QRCodeEles.length) return console.error("QRCode Ele missing")
+      if (!QRCodeEles.length) {
+        console.log('target: ', target.innerHTML)
+        setTimeout(10, () => {console.log('After a pause: ', Array.from(context.dom.getElementsByClassName('QRCode')))})
+        return console.error("QRCode Ele missing")
+      }
       for (const canvas of QRCodeEles as HTMLElement[]) {
         const value = canvas.getAttribute('data-value')
         if (!value) return console.error("QRCode data-value missing")
