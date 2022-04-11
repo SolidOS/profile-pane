@@ -1,7 +1,6 @@
 // A card in my profile to show yu a QRCode of my webid
 //
-import { toCanvas } from 'qrcode'
-import { html, TemplateResult, render } from "lit-html";
+import { html, TemplateResult } from "lit-html";
 import { NamedNode } from 'rdflib'
 import {
   fullWidth,
@@ -12,10 +11,7 @@ import {
   textGray,
 } from "./baseStyles";
 import { ProfilePresentation } from "./presenter";
-// import { QRCodePresentation } from "./QRCodePresenter";
 import { styleMap } from "lit-html/directives/style-map.js";
-
-const dom = document // @@ get from context.dom
 
 const styles = {
   image: styleMap(fullWidth()),

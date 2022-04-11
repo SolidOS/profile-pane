@@ -7,6 +7,7 @@ module.exports = [
     entry: ["./dev/index.ts"],
     plugins: [
       new HtmlWebpackPlugin({ template: "./dev/index.html" }),
+      new NodePolyfillPlugin()
     ],
     module: {
       rules: [
