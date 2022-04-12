@@ -46,7 +46,7 @@ const Pane = {
       const QRCodeEles = Array.from(context.dom.getElementsByClassName('QRCode'))
       if (!QRCodeEles.length) {
         console.log('target: ', target.innerHTML)
-        setTimeout(10, () => {console.log('After a pause: ', Array.from(context.dom.getElementsByClassName('QRCode')))})
+        setTimeout(() => {console.log('After a pause: ', Array.from(context.dom.getElementsByClassName('QRCode')))}, 10)
         return console.error("QRCode Ele missing")
       }
       for (const canvas of QRCodeEles as HTMLElement[]) {
