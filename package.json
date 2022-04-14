@@ -1,6 +1,6 @@
 {
   "name": "profile-pane",
-  "version": "1.0.9",
+  "version": "1.0.10",
   "description": "A SolidOS compatible pane to display a personal profile page",
   "repository": {
     "type": "git",
