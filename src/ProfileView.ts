@@ -42,9 +42,7 @@ export const ProfileView = (
           ${addMeToYourFriendsDiv(subject, context)}
         </div>
       </div>
-      <div data-testid="friend-list" style="${styles.card}">
-        ${FriendList(subject, context)}
-      </div>
+      ${FriendList(subject, context)}
       <div data-testid="curriculum-vitae" style="${styles.card}">
         ${CVCard(profileBasics, rolesByType)}
       </div>
@@ -52,7 +50,6 @@ export const ProfileView = (
       <div data-testid="qrcode-display" style="${styles.card}">
         ${QRCodeCard(profileBasics, subject)}
       </div>
-
     </div>
   `;
 };
