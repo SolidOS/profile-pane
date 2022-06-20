@@ -1,7 +1,7 @@
 import pane from "../index";
 import { parse } from "rdflib";
 import { solidLogicSingleton } from "solid-logic";
-import { findByTestId, findByText } from "@testing-library/dom";
+import { findByTestId, findByText, queryByText } from "@testing-library/dom";
 import { context, doc, subject } from "./setup";
 import fetchMock from "jest-fetch-mock";
 
@@ -42,16 +42,12 @@ describe("profile-pane", () => {
   describe("without friends", () => {
     beforeAll(async () => {
       const result = pane.render(subject, context);
-      friends = await findByTestId(result, "friend-list");
-      noFriendsMessage = await findByText(result, "You have no friends in your list yet");
+
+      friends = await queryByText(result, "Friends");
     });
 
     it("renders the friend list", () => {
-      expect(friends).toContainHTML("Friends");
-    });
-
-    it("renders an empty friend list", () => {
-      expect(noFriendsMessage).not.toBeNull();
+      expect(friends).toBeNull()
     });
   });
 
