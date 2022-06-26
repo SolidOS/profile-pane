@@ -40,6 +40,8 @@ npm start
 
 Visit `http://localhost:8080/` to render the pane. Adjust `const webIdToShow` in `./dev/index.ts` to show a
  different profile.
+
+Once you have given the proper write/read permissions between your localhost and the pod provider of your choice, you don't have to click "Log In" under "pane under development" everytime you test new features. It should write to your pod in real time anytime you make changes to your solid provider profile. This will save you a lot of time and energy.
  
 ### Build
 
