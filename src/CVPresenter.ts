@@ -3,7 +3,7 @@ import { ns, utils } from "solid-ui";
 
 export interface Role {
   startDate?: Literal,
-  endDate: Literal,
+  endDate: Literal | undefined,
   dates: string,
   orgName: string,
   roleText: string,
@@ -34,7 +34,7 @@ export function skillAsText (store: Store, sk: Node):string {
   }
   const manual = store.anyJS(sk as NamedNode, ns.vcard('role'))
   if (manual) return manual
-  return '¿¿¿ skill ???'
+  return 'Skill'
 }
 
 export function languageAsText (store: Store, lan: Node):string {
@@ -42,12 +42,12 @@ export function languageAsText (store: Store, lan: Node):string {
   const publicId = store.anyJS(lan as NamedNode, ns.solid('publicId'))
   if (publicId)
     return utils.label(publicId, true); // @@ check language and get name in diff language if necessary
-  return '_'
+  return ''
 }
 
 export function datesAsText (startDate?:Literal, endDate?:Literal):string {
-  return startDate ? '(' + startDate.value.slice(0,4) + '-' +
-    ( endDate ? endDate.value.slice(0,4) : '') +')'
+  return startDate ? '(' + startDate.value.slice(0,10) + ' to ' +
+    ( endDate ? endDate.value.slice(0,10) : '') +')'
     : ''
 }
 
@@ -62,10 +62,10 @@ function getRolesByType(
   for (const membership of memberships) {
     let orgHomePage, orgNameGiven, publicIdName, roleName, publicId
      // Things should have start dates but we will be very lenient in this view
-     const startDate = store.any(membership as NamedNode, ns.schema('startDate')) as Literal | null
-     const endDate = store.any(membership as NamedNode, ns.schema('endDate')) as Literal | null
+     const startDate = store.any(membership as NamedNode, ns.schema('startDate')) as Literal | undefined
+     const endDate = store.any(membership as NamedNode, ns.schema('endDate')) as Literal | undefined
      const dates = datesAsText(startDate, endDate)
-
+ 
      const organization = store.any(membership as NamedNode, ORG('organization'))
      if (organization) {
        orgNameGiven = store.anyJS(organization as NamedNode, ns.schema('name'))
