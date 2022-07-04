@@ -32,7 +32,7 @@
   },
   "license": "MIT",
   "dependencies": {
-    "contacts-pane": "2.6.3-bcef8ee0",
+    "contacts-pane": "2.6.3-1a471d10",
     "lit-html": "^2.2.2",
     "node-polyfill-webpack-plugin": "^1.1.4",
     "pane-registry": "2.4.10-e0d1abde",
