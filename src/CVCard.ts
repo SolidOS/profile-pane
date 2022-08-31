@@ -8,54 +8,75 @@ import {
   textGray,
 } from "./baseStyles";
 import { ProfilePresentation } from "./presenter";
-import { CVPresentation } from "./CVPresenter";
+import { CVPresentation, languageAsText } from "./CVPresenter";
 import { styleMap } from "lit-html/directives/style-map.js";
+import { card } from "./baseStyles";
+
 
 const styles = {
   image: styleMap(fullWidth()),
   intro: styleMap({ ...textGray(), ...textCenter() }),
-  card: styleMap({}),
+  card: styleMap(card()),
   info: styleMap({ ...paddingSmall(), ...textLeft() }),
 };
+
+
 
 export const CVCard = (
   profileBasics: ProfilePresentation,
   cvData: CVPresentation
 ): TemplateResult => {
+ 
   const { rolesByType, skills, languages } = cvData;
+  
   const nameStyle = styleMap({
     ...heading(),
     // "text-decoration": "underline",
     color: profileBasics.highlightColor, // was "text-decoration-color"
   });
-
+  if(renderRoles(rolesByType["FutureRole"]) || renderRoles(rolesByType["CurrentRole"]) || renderRoles(rolesByType["PastRole"]) || renderSkills(skills) || renderLanguages(languages)){
   return html`
+  <div data-testid="curriculum-vitae" style="${styles.card}">
     <div style=${styles.info}>
       <h3 style=${nameStyle}>Bio</h3>
+      <div style=${styles.info}>${renderRoles(rolesByType["FutureRole"])}</div>
+      <hr />
       <div style=${styles.info}>${renderRoles(rolesByType["CurrentRole"])}</div>
       <hr />
       <div style=${styles.info}>${renderRoles(rolesByType["PastRole"])}</div>
       <hr />
-      <div style=${styles.info}>${renderRoles(rolesByType["FutureRole"])}</div>
+      <h3 style=${nameStyle}>Skills</h3>
       <div style=${styles.info}>${renderSkills(skills)}</div>
+      <h3 style=${nameStyle}>Languages</h3>
       <div style=${styles.info}>${renderLanguages(languages)}</div>
+    
     </div>
-  `;
+    </div>
+  `};
+  return html``
 };
 
 function renderRole(role) {
   return role
     ? html`<div style="margin-top: 0.3em; margin-bottom: 0.3em;">
-        <b>${role.orgName}</b>
+        
         <span>${role.roleText}</span>
+        <p>
+        <b>${role.orgName}</b>
         <span>${role.dates}</span>
+        
+        
       </div> `
     : html``;
 }
 
+
+
 function renderRoles(roles) {
-  return html`${renderRole(roles[0])}
-  ${roles.length > 1 ? renderRoles(roles.slice(1)) : html``} `;
+  if(roles[0].orgName > "" || roles[0].roleText > "" || roles[0].startDate > "") // it helps to use JSON.stringify() to extract information on arrays and objects.
+    return html`${renderRole(roles[0])}${renderRole(roles.slice(1))}`
+   else (roles[0].orgName < "" || roles[0].roleText < "" || roles[0].startDate < "")
+    return null;
 }
 
 function renderSkill(skill) {
@@ -67,8 +88,11 @@ function renderSkill(skill) {
 }
 
 function renderSkills(skills) {
-  return html`${renderSkill(skills[0])}
-  ${skills.length > 1 ? renderSkills(skills.slice(1)) : html``} `;
+  
+  if(skills[0] > "")
+    return html`${renderSkill(skills[0])}${renderSkill(skills.slice(1))}`
+  else(skills[0] < "")
+    return null;
 }
 
 function renderLan(language) {
@@ -80,6 +104,8 @@ function renderLan(language) {
 }
 
 function renderLanguages(languages) {
-  return html`${renderLan(languages[0])}
-  ${languages.length > 1 ? renderLanguages(languages.slice(1)) : html``} `;
+  if(languages[0] > "")
+    return html`${renderLan(languages[0])}${renderLanguages(languages.slice(1))}`
+  else(languages[0] < "")
+    return null;
 }
