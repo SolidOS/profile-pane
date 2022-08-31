@@ -1,6 +1,3 @@
-/*  Profile View
-*/
-
 import { html, TemplateResult } from "lit-html";
 import { styleMap } from "lit-html/directives/style-map.js";
 import { DataBrowserContext } from "pane-registry";
@@ -45,9 +42,9 @@ export const ProfileView = (
       <div data-testid="friend-list" style="${styles.card}">
         ${FriendList(subject, context)}
       </div>
-      <div data-testid="curriculum-vitae" style="${styles.card}">
+      
         ${CVCard(profileBasics, rolesByType)}
-      </div>
+        
       <div style="${styles.chat}">${ChatWithMe(subject, context)}</div>
       <div data-testid="qrcode-display" style="${styles.card}">
         ${QRCodeCard(profileBasics, subject)}
