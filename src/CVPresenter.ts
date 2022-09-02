@@ -34,7 +34,7 @@ export function skillAsText (store: Store, sk: Node):string {
   }
   const manual = store.anyJS(sk as NamedNode, ns.vcard('role'))
   if (manual) return manual
-  return ''
+  return '¿¿¿ skill ???'
 }
 
 export function languageAsText (store: Store, lan: Node):string {
@@ -42,13 +42,13 @@ export function languageAsText (store: Store, lan: Node):string {
   const publicId = store.anyJS(lan as NamedNode, ns.solid('publicId'))
   if (publicId)
     return utils.label(publicId, true); // @@ check language and get name in diff language if necessary
-  return '-'                            // place holder for empty language fields. For example, language[3] if left blank will equal to '-'                      
+  return '-'                                                  
 }
 
 export function datesAsText (startDate?:Literal, endDate?:Literal):string {
   return startDate ? '(' + startDate.value.slice(0,10) + ' to ' +
     ( endDate ? endDate.value.slice(0,10) : '') +')'
-    : ''                                //startDate.value.slice or endDate.value.slice when sliced at a length of 10 shows full length of month/day/year string on CVCard.
+    : ''                                
 }
 
 function getRolesByType(
