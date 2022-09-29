@@ -59,7 +59,6 @@ function renderRole(role) {
         <b>${role.orgName}</b>
         <span>${strToUpperCase(role.roleText)}</span>
         <span>${role.dates}</span>   
-        <p></p>
       </div> `
     : html``;
 }
