@@ -8,7 +8,7 @@ import {
   textGray,
 } from "./baseStyles";
 import { ProfilePresentation } from "./presenter";
-import { CVPresentation  } from "./CVPresenter";
+import { CVPresentation } from "./CVPresenter";
 import { styleMap } from "lit-html/directives/style-map.js";
 import { card } from "./baseStyles";
 
@@ -31,6 +31,7 @@ export const CVCard = (
     // "text-decoration": "underline",
     color: profileBasics.highlightColor, // was "text-decoration-color"
   });
+
   if(renderRoles(rolesByType["FutureRole"]) || renderRoles(rolesByType["CurrentRole"]) || renderRoles(rolesByType["PastRole"]) || renderSkills(skills) || renderLanguages(languages)){
   return html`
   <div data-testid="curriculum-vitae" style="${styles.card}">
@@ -46,8 +47,6 @@ export const CVCard = (
       <div style=${styles.info}>${renderSkills(skills)}</div>
       <h3 style=${nameStyle}>Languages</h3>
       <div style=${styles.info}>${renderLanguages(languages)}</div>
-      
-    
     </div>
     </div>
   `}
@@ -57,9 +56,8 @@ export const CVCard = (
 function renderRole(role) {
   return role
     ? html`<div style="margin-top: 0.3em; margin-bottom: 0.3em;">
-        <span>${strToUpperCase(role.roleText)}</span>
-        <p>
         <b>${role.orgName}</b>
+        <span>${strToUpperCase(role.roleText)}</span>
         <span>${role.dates}</span>   
         <p></p>
       </div> `
