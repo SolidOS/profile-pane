@@ -98,8 +98,8 @@ function renderLanguages(languages) {
 } 
 
 function strToUpperCase(str) {
-  var strCase = str.split(' ');
-  for(var i = 0; i < strCase.length; i++) {
+  let strCase = str.split(' ');
+  for(let i = 0; i < strCase.length; i++) {
    strCase[i] = strCase[i].charAt(0).toUpperCase() +
    strCase[i].substring(1);
   }
