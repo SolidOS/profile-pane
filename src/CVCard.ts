@@ -8,7 +8,7 @@ import {
   textGray,
 } from "./baseStyles";
 import { ProfilePresentation } from "./presenter";
-import { CVPresentation } from "./CVPresenter";
+import { CVPresentation  } from "./CVPresenter";
 import { styleMap } from "lit-html/directives/style-map.js";
 import { card } from "./baseStyles";
 
@@ -46,6 +46,8 @@ export const CVCard = (
       <div style=${styles.info}>${renderSkills(skills)}</div>
       <h3 style=${nameStyle}>Languages</h3>
       <div style=${styles.info}>${renderLanguages(languages)}</div>
+      
+    
     </div>
     </div>
   `}
@@ -55,10 +57,11 @@ export const CVCard = (
 function renderRole(role) {
   return role
     ? html`<div style="margin-top: 0.3em; margin-bottom: 0.3em;">
-        <span>${role.roleText}</span>
+        <span>${strToUpperCase(role.roleText)}</span>
         <p>
         <b>${role.orgName}</b>
-        <span>${role.dates}</span>    
+        <span>${role.dates}</span>   
+        <p></p>
       </div> `
     : html``;
 }
@@ -78,7 +81,7 @@ function renderSkill(skill) {
 
 function renderSkills(skills) {
   if(skills[0] > "")
-    return html`${renderSkill(skills[0])} ${skills.length > 1 ? renderSkills(skills.slice(1)) : html``}`
+    return html`${renderSkill(strToUpperCase(skills[0]))} ${skills.length > 1 ? renderSkills(skills.slice(1)) : html``}`
 }
 
 function renderLan(language) {
@@ -93,3 +96,12 @@ function renderLanguages(languages) {
   if(languages[0] > "")
     return html`${renderLan(languages[0])}${languages.length > 1 ? renderLanguages(languages.slice(1)) : html``}`
 } 
+
+function strToUpperCase(str) {
+  var strCase = str.split(' ');
+  for(var i = 0; i < strCase.length; i++) {
+   strCase[i] = strCase[i].charAt(0).toUpperCase() +
+   strCase[i].substring(1);
+  }
+  return strCase.join(' ');
+}
