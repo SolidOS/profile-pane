@@ -31,7 +31,7 @@ export const ChatWithMe = (
         chatWithMeButtonText,
         async () => {
           try {
-            const chat: NamedNode = await logic.chat.getChat(subject);
+            const chat: NamedNode = await logic.chat.getChat(subject, true);
             chatContainer.innerHTML = "";
             chatContainer.appendChild(longChatPane.render(chat, context, {}));
           } catch (e) {
