@@ -64,8 +64,8 @@ function renderRole(role) {
 }
 
 function renderRoles(roles) {
-  if(roles[0].orgName > "" || roles[0].roleText > "" || roles[0].startDate > "")
-    return html`${renderRole(roles[0])}${roles.length > 1 ? renderRoles(roles.slice(1)) : html``}`
+    if (roles.length > 1 && (roles[0].orgName > "" || roles[0].roleText > "" || roles[0].startDate) > "")
+      return html`${renderRole(roles[0])}${roles.length > 1 ? renderRoles(roles.slice(1)) : html``}`
 }
 
 function renderSkill(skill) {
@@ -95,10 +95,10 @@ function renderLanguages(languages) {
 } 
 
 function strToUpperCase(str) {
-  let strCase = str.split(' ');
+  const strCase = str.split(' ');
   for(let i = 0; i < strCase.length; i++) {
-   strCase[i] = strCase[i].charAt(0).toUpperCase() +
-   strCase[i].substring(1);
+    strCase[i] = strCase[i].charAt(0).toUpperCase() +
+    strCase[i].substring(1);
   }
   return strCase.join(' ');
 }
