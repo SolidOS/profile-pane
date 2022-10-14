@@ -64,7 +64,7 @@ function renderRole(role) {
 }
 
 function renderRoles(roles) {
-    if (roles.length > 1 && (roles[0].orgName > "" || roles[0].roleText > "" || roles[0].startDate) > "")
+    if (roles[0] > "")
       return html`${renderRole(roles[0])}${roles.length > 1 ? renderRoles(roles.slice(1)) : html``}`
 }
 
