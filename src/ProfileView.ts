@@ -42,17 +42,12 @@ export const ProfileView = (
           ${addMeToYourFriendsDiv(subject, context)}
         </div>
       </div>
-      <div data-testid="friend-list" style="${styles.card}">
         ${FriendList(subject, context)}
-      </div>
-      <div data-testid="curriculum-vitae" style="${styles.card}">
         ${CVCard(profileBasics, rolesByType)}
-      </div>
       <div style="${styles.chat}">${ChatWithMe(subject, context)}</div>
       <div data-testid="qrcode-display" style="${styles.card}">
         ${QRCodeCard(profileBasics, subject)}
       </div>
-
     </div>
   `;
 };

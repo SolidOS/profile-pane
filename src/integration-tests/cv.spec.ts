@@ -173,28 +173,28 @@ describe("profile-pane", () => {
       expect(element).toContainHTML("Bio");
     });
     it("renders role testeuse d’accessibilité in bio", () => {
-      expect(element).toContainHTML("testeuse d’accessibilité");
+      expect(element).toContainHTML("testeuse D’accessibilité");
     });
     it("renders organization Apple in list", () => {
       expect(element).toContainHTML("Apple");
     });
     it("renders lone start date in list", () => {
-      expect(element).toContainHTML("(2021-)");
+      expect(element).toContainHTML("(2021-04-01 to");
     });
     it("renders start and end dates in role", () => {
-      expect(element).toContainHTML("(1960-1963)");
+      expect(element).toContainHTML("(1960-04-01 to 1963-04-01)");
     });
     it("renders skill 1 in CV", () => {
-      expect(element).toContainHTML("tester du matériel d’instrumentation");
+      expect(element).toContainHTML("Tester Du Matériel D’instrumentation");
     });
     it("renders skill 2 in CV", () => {
-      expect(element).toContainHTML("travailler dans de mauvaises conditions");
+      expect(element).toContainHTML("Travailler Dans De Mauvaises Conditions");
     });
     it("renders skill 3 vcard role in CV", () => {
-      expect(element).toContainHTML("sitting");
+      expect(element).toContainHTML("Sitting");
     });
     it("renders error flag when missing skill text CV", () => {
-      expect(element).toContainHTML("¿¿¿ skill ???");
+      expect(element).toContainHTML("¿¿¿ Skill ???");
     });
     it("renders languages", () => {
       expect(element).toContainHTML("French");

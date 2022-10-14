@@ -42,13 +42,13 @@ export function languageAsText (store: Store, lan: Node):string {
   const publicId = store.anyJS(lan as NamedNode, ns.solid('publicId'))
   if (publicId)
     return utils.label(publicId, true); // @@ check language and get name in diff language if necessary
-  return '_'
+  return '-'                                                  
 }
 
 export function datesAsText (startDate?:Literal, endDate?:Literal):string {
-  return startDate ? '(' + startDate.value.slice(0,4) + '-' +
-    ( endDate ? endDate.value.slice(0,4) : '') +')'
-    : ''
+  return startDate ? '(' + startDate.value.slice(0,10) + ' to ' +
+    ( endDate ? endDate.value.slice(0,10) : '') +')'
+    : ''                                
 }
 
 function getRolesByType(
