@@ -63,10 +63,10 @@ const createAddMeToYourFriendsButton = (
 
   function refreshButton() {
     const me = authn.currentUser();
-    const store = context.session.store;
+    const store: LiveStore = context.session.store;
 
     if (checkIfAnyUserLoggedIn(me)) {
-      checkIfFriendExists(store, me, subject).then((friendExists) => {
+      checkIfFriendExists(store , me, subject).then((friendExists) => {
         if (friendExists) {
           //logged in and friend exists or friend was just added
           button.innerHTML = friendExistsAlreadyButtonText.toUpperCase();
@@ -92,10 +92,10 @@ async function saveNewFriend(
   context: DataBrowserContext
 ): Promise<void> {
   const me = authn.currentUser();
-  const store = context.session.store;
+  const store: LiveStore = context.session.store;
 
   if (checkIfAnyUserLoggedIn(me)) {
-    if (!(await checkIfFriendExists(store, me, subject))) {
+    if (!(await checkIfFriendExists(store , me, subject))) {
       //if friend does not exist, we add her/him
       await store.fetcher.load(me);
       const updater = store.updater;
