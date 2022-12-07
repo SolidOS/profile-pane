@@ -32,8 +32,9 @@ export function skillAsText (store: Store, sk: Node):string {
     const name = store.anyJS(publicId, ns.schema('name'))
     if (name) return name // @@ check language and get name in diff language if necessary
   }
+
   const manual = store.anyJS(sk as NamedNode, ns.vcard('role'))
-  if (manual) return manual
+  if (manual && manual[0] > "") return manual
   return '¿¿¿ skill ???'
 }
 
