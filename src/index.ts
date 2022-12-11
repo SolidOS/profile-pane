@@ -2,7 +2,7 @@ import { DataBrowserContext } from "pane-registry";
 import { NamedNode, LiveStore } from "rdflib";
 import { render } from "lit-html";
 import { ProfileView } from "./ProfileView";
-import { icons, ns } from "solid-ui";
+import { icons, ns , utils } from "solid-ui";
 import * as qrcode from 'qrcode'
 
 async function loadExtendedProfile(store: LiveStore, subject: NamedNode) {
@@ -39,9 +39,20 @@ const Pane = {
     const target = context.dom.createElement("div");
     const store = context.session.store;
 
-    loadExtendedProfile(store, subject).then(() => {
-      render(ProfileView(subject, context), target)
-
+    loadExtendedProfile(store, subject).then(async () => {
+      render(await ProfileView(subject, context), target)
+/*  Not currently used as personTR does itself
+      const fillIns =  Array.from(target.getElementsByClassName('fillInLater'))
+      for (const ele of fillIns) {
+        const href = ele.getAttribute('href')
+        store.fetcher.load(href).then(()=> { // async
+          const label = utils.label(store.sym(href))
+          ele.children[1].textContent =  label // Relabel
+          console.log('   ele.children[0]',   ele.children[1])
+          console.log(` Relabelled  ${href} to "${label}"`)
+        })
+      }
+      */
       const QRCodeEles = Array.from(target.getElementsByClassName('QRCode')) // was context.dom
       if (!QRCodeEles.length) return console.error("QRCode Ele missing")
       for (const QRCodeElement of QRCodeEles as HTMLElement[]) {
