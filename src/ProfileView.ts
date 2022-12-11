@@ -54,4 +54,4 @@ export async function ProfileView (
       </div>
     </div>
   `;
-};
+}
