@@ -4,6 +4,20 @@ import { store } from "solid-logic";
 import { findByTestId } from "@testing-library/dom";
 import { context, doc, subject } from "./setup";
 
+
+import { alice, bob, boby, club,
+AlicePhotoFolder, AlicePreferences, AlicePhotos, AlicePreferencesFile, AlicePrivateTypeIndex, AlicePrivateTypes, AliceProfile, AliceProfileFile, AlicePublicTypeIndex, AlicePublicTypes,
+BobProfile,
+ClubPreferences, ClubPreferencesFile, ClubPrivateTypeIndex, ClubPrivateTypes, ClubProfile, ClubPublicTypeIndex, ClubPublicTypes,
+clearLocalStore } from './helpers/dataSetup.ts'
+
+
+function waitforme(milisec) {
+    return new Promise(resolve => {
+        setTimeout(() => { resolve('') }, milisec);
+    })
+}
+
 // This was at testingsolidos.solidcommunity.net
 const exampleProfile = `@prefix : <#>.
 @prefix foaf: <http://xmlns.com/foaf/0.1/>.
@@ -26,6 +40,8 @@ const exampleProfile = `@prefix : <#>.
 @prefix c: <https://solidos.solidcommunity.net/profile/card#>.
 @prefix n0: <http://www.w3.org/ns/auth/acl#>.
 @prefix skill: <http://data.europa.eu/esco/skill/>.
+@prefix wf: <http://www.w3.org/2005/01/wf/flow#>.
+@prefix bookm: <https://bookm.example.com/foo#>.
 
 occup:50af07f0-7a75-424e-a66d-5a9deea10f4c
     schema:name
@@ -156,8 +172,22 @@ pro:card a foaf:PersonalProfileDocument; foaf:maker :me; foaf:primaryTopic :me.
 l:de schema:name "germano"@ia.
 
 l:fr schema:name "French"@en;
+#########################################
 
 solid:publicTypeIndex <> .
+
+
+<> a solid:ListedDocument, solid:TypeIndex.
+
+:id1621776092316
+    a solid:TypeRegistration;
+    solid:forClass bookm:Bookmark;
+    solid:instance </profile/bookmarks.ttl>.
+
+:id1670695250649 solid:forClass wf:Tracker; solid:instance <#tracker1> .
+
+:id1670695314828 solid:forClass vcard:AddressBook; solid:instance <#book1>  .
+
 
 <#reg1> solid:forClass vcard:AddressBook; solid:instance <#book1> .
 
@@ -172,14 +202,16 @@ describe("profile-pane", () => {
       store.removeDocument(doc);
       parse(exampleProfile, store, doc.uri);
       const result = pane.render(subject, context);
-      element = await findByTestId(result, "curriculum-vitae");
+      element = await findByTestId(result, "stuff");
     });
 
     it("renders the stuff", () => {
       expect(element).toContainHTML("Stuff");
     });
-    it("renders the Contacts", () => {
-      expect(element).toContainHTML("Contacts");
+    it.skip("renders the three rows", async () => { // @@ How to test it after it has been filled in async?
+      const tableEle = await findByTestId(element, "stuffTable")
+      await waitforme(1000) // ms
+      expect(tableEle.children.length).toEqual(3);
     });
 
   });

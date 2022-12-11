@@ -41,7 +41,7 @@ export const StuffCard = (profileBasics: ProfilePresentation,
     <div style=${styles.info}>
       <h3 style=${nameStyle}>Stuff</h3>
 
-      <div style=${styles.info}><table>${renderThings(stuff, dom)}</table></div>
+      <div style=${styles.info}><table data-testid="stuffTable">${renderThings(stuff, dom)}</table></div>
       <hr />
 
     </div>

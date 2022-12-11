@@ -34,6 +34,10 @@ for (const k in iconForClass) {
   iconForClassMap[theClass.uri] = uri.join(iconForClass[k], icons.iconBase)
 }
 
+export function getIconForClass (klass:NamedNode) {
+  const icon0 = iconForClassMap[klass.uri]
+  return icon0 || icons.iconBase + 'noun_10636.svg' //  fall back to black disk
+}
 
 export async function presentStuff(
   subject: NamedNode
@@ -43,11 +47,7 @@ export async function presentStuff(
  console.log('scopedItems', scopedItems)
 
  const stuff = scopedItems.map(item => {
-   const icon0 = iconForClassMap[item.type.uri]
-   if (!icon0) {
-     console.warn('No icon in map for class', item.type.uri)
-   }
-   const icon = icon0 || icons.iconBase + 'noun_10636.svg' //  fall back to black disk
+   const icon = getIconForClass(item.type)
    const href = item.instance.uri
    const name = utils.label(item.instance)
    const instance = item.instance
