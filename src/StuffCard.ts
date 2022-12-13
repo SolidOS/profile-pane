@@ -49,15 +49,12 @@ export const StuffCard = (profileBasics: ProfilePresentation,
 `
 }
 
-function renderThingAsDOM (thing, dom) {
+function renderThing (thing, dom) {
   const options = {}
   const row = widgets.personTR(dom, null, thing.instance, options)
   return row
 }
-function renderThing (thing, dom) {
-  return renderThingAsDOM(thing, dom)
-  return html` ${asyncReplace(renderThingAsDOM(thing, dom))} `;
-}
+
 function renderThing0 (thing, dom) {
   return thing
     ? html`<div style="margin: 0.5em;">

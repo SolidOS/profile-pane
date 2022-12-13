@@ -32,6 +32,7 @@
   },
   "license": "MIT",
   "dependencies": {
+    "@testing-library/react": "^13.4.0",
     "contacts-pane": "^2.6.5",
     "lit-html": "^2.3.1",
     "node-polyfill-webpack-plugin": "^1.1.4",
@@ -39,7 +40,7 @@
     "path-browserify": "^1.0.1",
     "qrcode": "^1.5.1",
     "rdflib": "^2.2.21",
-    "solid-logic": "^2.0.1",
+    "solid-logic": "^2.1.0",
     "solid-ui": "^2.4.24",
     "validate-color": "^2.2.1"
   },

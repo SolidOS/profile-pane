@@ -4,6 +4,7 @@ import { store } from "solid-logic";
 import { findByTestId } from "@testing-library/dom";
 import { context, doc, subject } from "./setup";
 
+import { waitFor } from '@testing-library/react';
 
 import { alice, bob, boby, club,
 AlicePhotoFolder, AlicePreferences, AlicePhotos, AlicePreferencesFile, AlicePrivateTypeIndex, AlicePrivateTypes, AliceProfile, AliceProfileFile, AlicePublicTypeIndex, AlicePublicTypes,
@@ -12,7 +13,7 @@ ClubPreferences, ClubPreferencesFile, ClubPrivateTypeIndex, ClubPrivateTypes, Cl
 clearLocalStore } from './helpers/dataSetup.ts'
 
 
-function waitforme(milisec) {
+function delay(milisec) {
     return new Promise(resolve => {
         setTimeout(() => { resolve('') }, milisec);
     })
@@ -210,7 +211,14 @@ describe("profile-pane", () => {
     });
     it.skip("renders the three rows", async () => { // @@ How to test it after it has been filled in async?
       const tableEle = await findByTestId(element, "stuffTable")
-      await waitforme(1000) // ms
+      await waitFor(() => { tableEle.children.length === 3 })
+      // await waitFor(() => expect(tableEle.children.length).toEqual(3))
+      /*
+      for (let i=0; i < 1000; i++) {
+        if (tableEle.children.length > 0) break;
+        // await new Promise(process.nextTick);
+        await delay(100) // ms
+      }*/
       expect(tableEle.children.length).toEqual(3);
     });
 
