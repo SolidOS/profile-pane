@@ -36,7 +36,7 @@
     "contacts-pane": "^2.6.5",
     "lit-html": "^2.3.1",
     "node-polyfill-webpack-plugin": "^1.1.4",
-    "pane-registry": "^2.4.13",
+    "pane-registry": "^2.4.15",
     "path-browserify": "^1.0.1",
     "qrcode": "^1.5.1",
     "rdflib": "^2.2.21",
