@@ -1,8 +1,12 @@
 import { sym } from 'rdflib'
 import * as rdf from "rdflib";
-import solidNamespace from "solid-namespace";
-import { SolidNamespace } from '../../src/types';
+import * as solidNamespace  from "solid-namespace";
+import { SolidNamespace } from 'solid-logic';
 const ns: SolidNamespace = solidNamespace(rdf);
+
+// Map of all the common
+export const prefixes = Object.keys(ns).map(prefix => `@prefix ${prefix}: ${ns[prefix]('')}.\n`).join('\n') // In turtle
+
 
 //------ Club -------------------------------------------------------
 const club = sym('https://club.example.com/profile/card.ttl#it')
@@ -118,6 +122,7 @@ export function loadWebObject() {
     web[ClubPreferencesFile.uri] = ClubPreferences
     web[ClubPrivateTypeIndex.uri] = ClubPrivateTypes
     web[ClubPublicTypeIndex.uri] = ClubPublicTypes
+    console.log('Test web object loaded.')
     return web
 }
 
