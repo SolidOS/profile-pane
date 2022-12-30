@@ -1,0 +1,18 @@
+@prefix : <#>.
+@prefix solid: <http://www.w3.org/ns/solid/terms#>.
+@prefix vcard: <http://www.w3.org/2006/vcard/ns#>.
+@prefix wf: <http://www.w3.org/2005/01/wf/flow#>.
+@prefix bookm: <http://www.w3.org/2002/01/bookmark#>.
+@prefix in: </public/Testing%20Tracker/index.ttl#>.
+@prefix inde: </public/Contacts/index.ttl#>.
+
+<> a solid:ListedDocument, solid:TypeIndex.
+
+:id1621776092316
+    a solid:TypeRegistration;
+    solid:forClass bookm:Bookmark;
+    solid:instance </profile/bookmarks.ttl>.
+:id1670695250649 solid:forClass wf:Tracker; solid:instance in:this.
+
+:id1670695314828 solid:forClass vcard:AddressBook; solid:instance inde:this.
+

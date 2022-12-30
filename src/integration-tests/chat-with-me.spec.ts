@@ -1,9 +1,22 @@
 import {findByText, fireEvent,} from "@testing-library/dom";
 import {parse} from "rdflib";
-import {ChatLogic} from "solid-logic/lib/chat/ChatLogic";
+// import {ChatLogic} from "solid-logic";
 import pane from "../";
 import {context, doc, subject} from "./setup";
 
+
+// @@ SHULD BE EXPORTED FROM solid-logic
+/*
+interface ChatLogic {
+    setAcl: (chatContainer: NamedNode, me: NamedNode, invitee: NamedNode) => Promise<void>,
+    addToPrivateTypeIndex: (chatThing, me) => void | Promise<void>,
+    findChat: (invitee: NamedNode) => Promise<Chat>,
+    createChatThing: (chatContainer: NamedNode, me: NamedNode) => Promise<NamedNode>,
+    mintNew: (newPaneOptions: NewPaneOptions) => Promise<CreatedPaneOptions>,
+    getChat: (invitee: NamedNode, boolean) => Promise<NamedNode | null>,
+    sendInvite: (invitee: NamedNode, chatThing: NamedNode) => void
+}
+*/
 describe("chat with me", () => {
 
     beforeAll(() => {
@@ -23,7 +36,7 @@ describe("chat with me", () => {
         beforeAll(() => {
             context.session.logic.chat = {
                 getChat: jest.fn().mockReturnValue(null),
-            } as unknown as ChatLogic
+            } as any // as ChatLogic
             result = pane.render(subject, context);
         });
 
@@ -45,7 +58,7 @@ describe("chat with me", () => {
         beforeAll(() => {
             context.session.logic.chat = {
                 getChat: jest.fn().mockReturnValue(new Promise(() => null)),
-            } as unknown as ChatLogic
+            } as any // as ChatLogic
             result = pane.render(subject, context);
         });
 
@@ -61,7 +74,7 @@ describe("chat with me", () => {
         beforeAll(() => {
             context.session.logic.chat = {
                 getChat: jest.fn().mockReturnValue('https://pod.example/chat'),
-            } as unknown as ChatLogic
+            } as any // as ChatLogic
             result = pane.render(subject, context);
         });
 
