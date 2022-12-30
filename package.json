@@ -34,6 +34,7 @@
   "dependencies": {
     "@testing-library/react": "^13.4.0",
     "contacts-pane": "^2.6.5",
+    "jest-environment-jsdom": "^27.5.1",
     "lit-html": "^2.3.1",
     "node-polyfill-webpack-plugin": "^1.1.4",
     "pane-registry": "^2.4.15",

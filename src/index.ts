@@ -74,7 +74,7 @@ const Pane = {
           if (error) {
             console.error('QRcode error!', error)
           } else {
-            console.log('QRcode success.', svg);
+            // console.log('QRcode success.', svg);
             QRCodeElement.innerHTML = svg
             QRCodeElement.style.width = "80%"
             QRCodeElement.style.height = "80%"
