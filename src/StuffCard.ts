@@ -65,7 +65,7 @@ function renderThing0 (thing, dom) {
 }
 
 function renderThings(things, dom) {
-    console.log('Renderthings: ', things)
+    // console.log('Renderthings: ', things)
     if (things.length === 0) return html``;
     return html`${renderThing(things[0], dom)}${things.length > 1 ? renderThings(things.slice(1), dom) : html``}`
 }

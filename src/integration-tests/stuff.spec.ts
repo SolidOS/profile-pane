@@ -4,7 +4,7 @@ import { store } from "solid-logic";
 import { findByTestId } from "@testing-library/dom";
 import { context, doc, subject } from "./setup";
 
-import { waitFor } from '@testing-library/react';
+import { waitFor, waitForElementToBeRemoved } from '@testing-library/react';
 
 import { alice, bob, boby, club,
 AlicePhotoFolder, AlicePreferences, AlicePhotos, AlicePreferencesFile, AlicePrivateTypeIndex, AlicePrivateTypes, AliceProfile, AliceProfileFile, AlicePublicTypeIndex, AlicePublicTypes,
@@ -206,20 +206,24 @@ describe("profile-pane", () => {
       element = await findByTestId(result, "stuff");
     });
 
-    it("renders the stuff", () => {
+    it("renders the Stuff heading", () => {
       expect(element).toContainHTML("Stuff");
     });
-    it.skip("renders the three rows", async () => { // @@ How to test it after it has been filled in async?
+    it("renders the three rows", async () => { // @@ How to test it after it has been filled in async?
       const tableEle = await findByTestId(element, "stuffTable")
-      await waitFor(() => { tableEle.children.length === 3 })
+      expect(tableEle.tagName).toEqual('TABLE');
+      await Promise.resolve();
+
+      const row1 = tableEle.firstChild
+      expect(row1.nodeType).toEqual(8); // Comment node
+      const nodes = tableEle.childNodes
+      expect(nodes.length).toEqual(2)
+      // await waitForElementToBeRemoved(nodes[0])
+
+      // await waitFor(() => { tableEle.firstChild.nodeType !== 8 })
       // await waitFor(() => expect(tableEle.children.length).toEqual(3))
-      /*
-      for (let i=0; i < 1000; i++) {
-        if (tableEle.children.length > 0) break;
-        // await new Promise(process.nextTick);
-        await delay(100) // ms
-      }*/
-      expect(tableEle.children.length).toEqual(3);
+
+      expect(tableEle.childNodes.length).toEqual(2);
     });
 
   });
