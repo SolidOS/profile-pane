@@ -40,7 +40,7 @@
     "pane-registry": "^2.4.15",
     "path-browserify": "^1.0.1",
     "qrcode": "^1.5.1",
-    "rdflib": "^2.2.21",
+    "rdflib": "^2.2.22",
     "solid-logic": "^2.1.0",
     "solid-namespace": "^0.5.2",
     "solid-ui": "^2.4.24",
