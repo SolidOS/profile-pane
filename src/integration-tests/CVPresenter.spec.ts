@@ -3,6 +3,8 @@ import { blankNode, sym } from "rdflib";
 import { ns } from "solid-ui";
 import { store } from "solid-logic";
 
+import { context, doc, subject } from "./setup"; // @@ kludge
+
 describe("CVPresenter", () => {
   const jane = sym("https://jane.doe.example/profile/card#me");
   const doc = jane.doc();

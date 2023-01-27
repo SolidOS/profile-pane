@@ -1,4 +1,13 @@
+
+// https://stackoverflow.com/questions/68468203/why-am-i-getting-textencoder-is-not-defined-in-jest
+import { TextEncoder, TextDecoder } from 'util'
+global.TextEncoder = TextEncoder
+global.TextDecoder = TextDecoder
+console.log(' @@@ TextDecoder TextDecoder TextDecoder TextDecoder TextDecoder: ', TextDecoder)
+
+
 import { context, subject } from "./setup";
+
 import { addMeToYourFriendsDiv, checkIfAnyUserLoggedIn, checkIfFriendExists, createAddMeToYourFriendsButton, saveNewFriend } from "../addMeToYourFriends";
 
 describe("add-me-to-your-friends functions", () => {
@@ -6,52 +15,50 @@ describe("add-me-to-your-friends functions", () => {
       it("exists", () => {
         expect(addMeToYourFriendsDiv).toBeInstanceOf(Function);
       });
-  
+
       it("runs", () => {
         expect(addMeToYourFriendsDiv(subject, context)).toBeTruthy();
       });
     });
-  
+
     describe("createAddMeToYourFriendsButton", () => {
       it("exists", () => {
         expect(createAddMeToYourFriendsButton).toBeInstanceOf(Function);
       });
-  
+
       it("runs", () => {
         expect(createAddMeToYourFriendsButton(subject, context)).toBeTruthy();
       });
     });
-  
+
     describe("saveNewFriend", () => {
       it("exists", () => {
         expect(saveNewFriend).toBeInstanceOf(Function);
       });
-  
+
     });
-  
+
     describe("checkIfAnyUserLoggedIn", () => {
       it("exists", () => {
         expect(checkIfAnyUserLoggedIn).toBeInstanceOf(Function);
       });
-  
+
       it("runs", () => {
         expect(checkIfAnyUserLoggedIn(subject)).toBe(true);
         expect(checkIfAnyUserLoggedIn(null)).toBe(false);
         expect(checkIfAnyUserLoggedIn(undefined)).toBe(false);
       });
     });
-  
+
     describe("checkIfFriendExists", () => {
       it("exists", () => {
         expect(checkIfFriendExists).toBeInstanceOf(Function);
       });
-  
+
       it("runs", () => {
         expect(checkIfFriendExists(context.session.store, subject, subject)).toBeTruthy();
         expect(checkIfFriendExists(context.session.store, subject, subject)).toBeInstanceOf(Promise);
       });
     });
-  
+
   });
-
-

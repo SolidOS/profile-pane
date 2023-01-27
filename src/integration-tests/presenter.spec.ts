@@ -3,6 +3,8 @@ import { blankNode, sym } from "rdflib";
 import { ns } from "solid-ui";
 import { store } from "solid-logic";
 
+import { context, doc, subject } from "./setup"; // @@ kludge
+
 describe("presenter", () => {
   const jane = sym("https://jane.doe.example/profile/card#me");
   const doc = jane.doc();
@@ -87,7 +89,7 @@ describe("presenter", () => {
     const result = presentProfile(jane, store);
     expect(result.pronouns).toBe(" (they/them/their) ");
   });
-  
+
   describe("coloring", () => {
     it("presents default colors", () => {
       const result = presentProfile(jane, store);
