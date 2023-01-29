@@ -1,8 +1,9 @@
 import { sym } from 'rdflib'
 import * as rdf from "rdflib";
 import solidNamespace from "solid-namespace";
-import { SolidNamespace } from '../../src/types';
-const ns: SolidNamespace = solidNamespace(rdf);
+// import { SolidNamespace } from '../../../src/types';
+const ns = solidNamespace(rdf);
+// const ns = solidNamespace(rdf);
 
 //------ Club -------------------------------------------------------
 const club = sym('https://club.example.com/profile/card.ttl#it')
