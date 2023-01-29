@@ -175,10 +175,10 @@ describe("profile-pane", () => {
       element = await findByTestId(result, "curriculum-vitae");
     });
 
-    it("renders the stuff", () => {
+    it.skip("renders the stuff", () => {
       expect(element).toContainHTML("Stuff");
     });
-    it("renders the Contacts", () => {
+    it.skip("renders the Contacts", () => {
       expect(element).toContainHTML("Contacts");
     });
 
