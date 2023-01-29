@@ -47,7 +47,7 @@ export async function presentStuff(
  console.log('scopedItems', scopedItems)
 
  const stuff = scopedItems.map(item => {
-   const icon = getIconForClass(item.type)
+   const icon = getIconForClass(item.type || ns.rdf('Resource'))
    const href = item.instance.uri
    const name = utils.label(item.instance)
    const instance = item.instance
