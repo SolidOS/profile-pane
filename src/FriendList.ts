@@ -4,6 +4,11 @@ import { NamedNode } from "rdflib";
 import { html, TemplateResult } from "lit-html";
 import { styleMap } from "lit-html/directives/style-map.js";
 import { card, headingLight, padding } from "./baseStyles";
+import { ProfilePresentation } from "./presenter";
+
+import {
+  heading
+} from "./baseStyles";
 
 const styles = {
   root: styleMap(padding()),
@@ -11,15 +16,21 @@ const styles = {
   card: styleMap(card()),
 };
 
-export const FriendList = (
+export const FriendList = ( profileBasics: ProfilePresentation,
   subject: NamedNode,
   context: DataBrowserContext
 ): TemplateResult => {
+  const nameStyle = styleMap({
+    ...heading(),
+    // "text-decoration": "underline",
+    color: profileBasics.highlightColor, // was "text-decoration-color"
+  });
+
   if (createList(subject, context)) {
     return html`
-    <div data-testid="friend-list" style="${styles.card}"> 
+    <div data-testid="friend-list" style="${styles.card}">
       <div style=${styles.root}>
-        <h3 style=${styles.heading}>Friends</h3>
+        <h3 style=${nameStyle}>Friends</h3>
         ${createList(subject, context)}
       </div>
     </div>

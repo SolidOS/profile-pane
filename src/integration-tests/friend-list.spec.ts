@@ -1,13 +1,12 @@
 import pane from "../index";
 import { parse } from "rdflib";
 import { solidLogicSingleton } from "solid-logic";
-import { findByTestId, findByText, queryByText } from "@testing-library/dom";
+import { findByTestId, queryByText } from "@testing-library/dom";
 import { context, doc, subject } from "./setup";
 import fetchMock from "jest-fetch-mock";
 
 describe("profile-pane", () => {
   let friends;
-  let noFriendsMessage;
 
   describe("with friends", () => {
     beforeAll(async () => {
