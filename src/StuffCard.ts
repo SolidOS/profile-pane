@@ -13,9 +13,10 @@ import {
   textGray,
 } from "./baseStyles";
 import { ProfilePresentation } from "./presenter";
-import { StuffPresentation } from "./StuffPresenter";
 import { styleMap } from "lit-html/directives/style-map.js";
 import { card } from "./baseStyles";
+
+const dom = document
 
 const styles = {
   image: styleMap(fullWidth()),
@@ -29,7 +30,6 @@ export const StuffCard = (profileBasics: ProfilePresentation,
   subject: NamedNode, stuffData): TemplateResult => {
 
   const { stuff }  = stuffData;
-  const { dom } = context;
   const nameStyle = styleMap({
     ...heading(),
     // "text-decoration": "underline",
@@ -41,7 +41,7 @@ export const StuffCard = (profileBasics: ProfilePresentation,
     <div style=${styles.info}>
       <h3 style=${nameStyle}>Stuff</h3>
 
-      <div style=${styles.info}><table data-testid="stuffTable">${renderThings(stuff, dom)}</table></div>
+      <div style=${styles.info}><table data-testid="stuffTable">${renderThings(stuff)}</table></div>
       <hr />
 
     </div>
@@ -54,23 +54,16 @@ function renderThingAsDOM (thing, dom) {
   const row = widgets.personTR(dom, null, thing.instance, options)
   return row
 }
+
 function renderThing (thing, dom) {
   return renderThingAsDOM(thing, dom)
   return html` ${asyncReplace(renderThingAsDOM(thing, dom))} `;
 }
-function renderThing0 (thing, dom) {
-  return thing
-    ? html`<div style="margin: 0.5em;">
-        <div style="margin: 1em; padding: 1em; border: 0.1em solid grey;">
-        <a class="fillInLater" href="${thing.href}"><img src="${thing.icon}" style="height: 2em; width: 2em;"><span>${thing.name}</span></a>
-      </div> `
-    : html``;
-}
 
-function renderThings(things, dom) {
+function renderThings(things) {
     console.log('Renderthings: ', things)
     if (things.length === 0) return html``;
-    return html`${renderThing(things[0], dom)}${things.length > 1 ? renderThings(things.slice(1), dom) : html``}`
+    return html`${renderThing(things[0], dom)}${things.length > 1 ? renderThings(things.slice(1)) : html``}`
 }
 
 // ENDS

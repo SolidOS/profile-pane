@@ -1,15 +1,11 @@
-import { LiveStore, NamedNode, Literal, Namespace, Node, Store, uri } from "rdflib";
+import { NamedNode, uri } from "rdflib";
 import { ns, utils, widgets, icons } from "solid-ui";
 import { solidLogicSingleton } from 'solid-logic'
 
 const { iconForClass } = widgets
 const { typeIndex } = solidLogicSingleton
 const {
-  getScopedAppInstances,
-  getRegistrations,
-  loadAllTypeIndexes,
-  getScopedAppsFromIndex,
-  deleteTypeIndexRegistration
+  getScopedAppInstances
 } = typeIndex
 
 
@@ -23,8 +19,6 @@ export interface Item {
 export interface StuffPresentation {
   stuff: Item[];
 }
-
-const ORG = Namespace('http://www.w3.org/ns/org#');
 
 export const iconForClassMap = {} // @@ move to buttons in solid-ui
 for (const k in iconForClass) {
@@ -46,8 +40,8 @@ export async function presentStuff(
  const scopedItems = await getScopedAppInstances(null, subject)
  console.log('scopedItems', scopedItems)
 
- const stuff = scopedItems.map(item => {
-   const icon = getIconForClass((item as any).type || ns.rdf('Resource')) // @@ work with old or new solid-logic
+ const stuff = scopedItems.map(item => { // work with old or new solid-logic
+   const icon = getIconForClass((item as any).type || ns.rdf('Resource'))  // eslint-disable-line
    const href = item.instance.uri
    const name = utils.label(item.instance)
    const instance = item.instance

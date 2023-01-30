@@ -2,7 +2,7 @@ import { DataBrowserContext } from "pane-registry";
 import { NamedNode, LiveStore } from "rdflib";
 import { render } from "lit-html";
 import { ProfileView } from "./ProfileView";
-import { icons, ns , utils } from "solid-ui";
+import { icons, ns } from "solid-ui";
 import * as qrcode from 'qrcode'
 
 async function loadExtendedProfile(store: LiveStore, subject: NamedNode) {

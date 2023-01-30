@@ -7,12 +7,7 @@ import { card, headingLight, padding } from "./baseStyles";
 import { ProfilePresentation } from "./presenter";
 
 import {
-  fullWidth,
-  heading,
-  paddingSmall,
-  textCenter,
-  textLeft,
-  textGray,
+  heading
 } from "./baseStyles";
 
 const styles = {

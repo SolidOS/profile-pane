@@ -4,13 +4,13 @@ import { store } from "solid-logic";
 import { findByTestId } from "@testing-library/dom";
 import { context, doc, subject } from "./setup";
 
-
+/*
 import { alice, bob, boby, club,
 AlicePhotoFolder, AlicePreferences, AlicePhotos, AlicePreferencesFile, AlicePrivateTypeIndex, AlicePrivateTypes, AliceProfile, AliceProfileFile, AlicePublicTypeIndex, AlicePublicTypes,
 BobProfile,
 ClubPreferences, ClubPreferencesFile, ClubPrivateTypeIndex, ClubPrivateTypes, ClubProfile, ClubPublicTypeIndex, ClubPublicTypes,
 clearLocalStore } from './helpers/dataSetup.ts'
-
+*/
 
 function waitforme(milisec) {
     return new Promise(resolve => {
