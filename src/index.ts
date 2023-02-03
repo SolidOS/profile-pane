@@ -60,7 +60,7 @@ const Pane = {
         if (!value) return console.error("QRCode data-value missing")
         const highlightColor = QRCodeElement.getAttribute('highlightColor') || '#000000'
         const backgroundColor = QRCodeElement.getAttribute('backgroundColor') || '#ffffff'
-        // zconsole.log(`@@ qrcodes2 colours highlightColor ${highlightColor}, backgroundColor ${backgroundColor}`)
+        // console.log(`@@ qrcodes2 colours highlightColor ${highlightColor}, backgroundColor ${backgroundColor}`)
 
         const options = {
           type: 'svg',
@@ -74,7 +74,7 @@ const Pane = {
           if (error) {
             console.error('QRcode error!', error)
           } else {
-            console.log('QRcode success.', svg);
+            // console.log('QRcode success.', svg);
             QRCodeElement.innerHTML = svg
             QRCodeElement.style.width = "80%"
             QRCodeElement.style.height = "80%"

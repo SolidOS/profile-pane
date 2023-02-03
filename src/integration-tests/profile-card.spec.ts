@@ -39,9 +39,10 @@ describe("profile-pane", () => {
     });
     afterAll(() => { solidLogicSingleton.store.removeDocument(doc)})
 
-    it("renders the name", () => {
-      expect(result).toContainHTML("Jane Doe");
-    });
+    it("renders the name", () =>
+      waitFor(() =>
+        expect(result).toContainHTML("Jane Doe")
+    ));
 
     it("renders the introduction", () => {
       expect(result).toContainHTML("Test Double at Solid Community");
