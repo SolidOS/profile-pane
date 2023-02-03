@@ -32,7 +32,7 @@
   },
   "license": "MIT",
   "dependencies": {
-    "contacts-pane": "^2.6.7",
+    "contacts-pane": "^2.6.8",
     "lit-html": "^2.6.1",
     "qrcode": "^1.5.1",
     "solid-ui": "^2.4.25",

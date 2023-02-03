@@ -44,9 +44,10 @@ describe("profile-pane", () => {
         expect(result).toContainHTML("Jane Doe")
     ));
 
-    it("renders the introduction", () => {
-      expect(result).toContainHTML("Test Double at Solid Community");
-    });
+    it("renders the introduction", () =>
+      waitFor(() =>
+        expect(result).toContainHTML("Test Double at Solid Community")
+    ));
 
     it("renders the location", () => {
       expect(result).toContainHTML("🌐");
