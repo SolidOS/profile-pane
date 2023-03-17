@@ -30,8 +30,8 @@ export const QRCodeCard = (
     color: profileBasics.highlightColor, // was "text-decoration-color"
   });
   const qrCodeCanvasStyle = 'width: 80%; margin:auto;'
-  const highlightColor = profileBasics.highlightColor || '#000000'
-  const backgroundColor = profileBasics.backgroundColor || '#ffffff'
+  const highlightColor = '#7c4cfc'
+  const backgroundColor = '#ffffff'
   // console.log(`@@ qrcodes colours highlightColor ${highlightColor}, backgroundColor ${backgroundColor}`)
 
   return html`
