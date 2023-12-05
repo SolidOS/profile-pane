@@ -33,10 +33,10 @@
   },
   "license": "MIT",
   "dependencies": {
-    "contacts-pane": "^2.6.10",
+    "contacts-pane": "^2.6.11",
     "lit-html": "^2.6.1",
-    "qrcode": "^1.5.1",
-    "solid-ui": "^2.4.27",
+    "qrcode": "^1.5.3",
+    "solid-ui": "^2.4.32",
     "validate-color": "^2.2.4"
   },
   "devDependencies": {
@@ -51,7 +51,7 @@
     "@typescript-eslint/parser": "^5.55.0",
     "babel-jest": "^27.5.1",
     "babel-loader": "^8.3.0",
-    "chat-pane": "^2.4.23",
+    "chat-pane": "^2.4.25",
     "eslint": "^8.36.0",
     "html-webpack-plugin": "^5.5.0",
     "jest": "^27.5.1",
