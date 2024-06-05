@@ -3,7 +3,7 @@
  */
 
 export const responsiveGrid = () => ({
-  "--auto-grid-min-size": "20rem",
+  "--auto-grid-min-size": "30rem", // was 20rem but allowed 2 on phone
   display: "grid",
   "grid-template-columns":
     "repeat(auto-fill, minmax(var(--auto-grid-min-size), 1fr))",
