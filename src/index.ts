@@ -2,6 +2,7 @@ import { DataBrowserContext } from "pane-registry";
 import { NamedNode, LiveStore } from "rdflib";
 import { render } from "lit-html";
 import { ProfileView } from "./ProfileView";
+import editProfileView from './editProfilePane/editProfile.view.ts'
 import { icons, ns } from "solid-ui";
 import * as qrcode from 'qrcode'
 
@@ -35,6 +36,7 @@ const Pane = {
     }
     return null;
   },
+  editor: editProfileView,
   render: (subject: NamedNode, context: DataBrowserContext): HTMLElement => {
     const target = context.dom.createElement("div");
     const store = context.session.store;

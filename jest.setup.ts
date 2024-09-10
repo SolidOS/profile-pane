@@ -6,3 +6,8 @@ global.TextEncoder = TextEncoder;
 global.TextDecoder = TextDecoder
 
 fetchMock.enableMocks();
+
+// Added 2024-09
+
+global.Buffer = Buffer
+
