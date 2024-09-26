@@ -22,6 +22,9 @@ To run all tests:
 npm test
 ```
 
+If you are a first time developer/user on Windows 10, the repository may give package issues regarding webpack or jest.
+If this is the case, simply run "npm audit fix" and upgrade the repository. It should work fine.
+
 #### Unit tests
 
 Unit tests use `jest` and are placed next to the tested file as `*.spec.ts` files.
