@@ -2,6 +2,7 @@ import { DataBrowserContext } from "pane-registry";
 import { NamedNode, LiveStore } from "rdflib";
 import { render } from "lit-html";
 import { ProfileView } from "./ProfileView";
+import editProfileView from './editProfilePane/editProfile.view'
 import { icons, ns } from "solid-ui";
 import * as qrcode from 'qrcode'
 
@@ -35,7 +36,19 @@ const Pane = {
     }
     return null;
   },
+  editor: editProfileView,                                            
   render: (subject: NamedNode, context: DataBrowserContext): HTMLElement => {
+
+    async function switchToEditor () {
+      alert('switching to editor')
+      target.innerHTML = '' // Clear
+      const newPane = editProfileView.render(subject, context)
+      const parent = target.parentNode
+      parent.removeChild(target)
+      parent.appendChild(newPane)
+    }
+    
+
     const target = context.dom.createElement("div");
     const store = context.session.store;
 
@@ -53,6 +66,14 @@ const Pane = {
         })
       }
       */
+      const editButtons = Array.from(target.getElementsByClassName('ProfilePaneCVEditButton'))
+      if (editButtons.length) {
+        const editButton = editButtons[0]
+        editButton.addEventListener('click', switchToEditor)
+      } else {
+        alert('No edit button')
+      }
+
       const QRCodeEles = Array.from(target.getElementsByClassName('QRCode')) // was context.dom
       if (!QRCodeEles.length) return console.error("QRCode Ele missing")
       for (const QRCodeElement of QRCodeEles as HTMLElement[]) {
@@ -88,4 +109,5 @@ const Pane = {
     return target;
   },
 };
+
 export default Pane;

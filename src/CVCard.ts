@@ -1,10 +1,14 @@
 import { html, TemplateResult } from "lit-html";
+import { icons } from "solid-ui";
+
+const editButtonURI = icons.iconBase + 'noun_253504.svg'
+
 import {
   fullWidth,
   heading,
   paddingSmall,
   textCenter,
-  textLeft,
+  textLeft, textRight,
   textGray,
 } from "./baseStyles";
 import { ProfilePresentation } from "./presenter";
@@ -17,6 +21,7 @@ const styles = {
   intro: styleMap({ ...textGray(), ...textCenter() }),
   card: styleMap(card()),
   info: styleMap({ ...paddingSmall(), ...textLeft() }),
+  tools: styleMap({ ...paddingSmall(), ...textRight() }),
 };
 
 export const CVCard = (
@@ -47,6 +52,7 @@ export const CVCard = (
       <div style=${styles.info}>${renderSkills(skills)}</div>
       <h3 style=${nameStyle}>Languages</h3>
       <div style=${styles.info}>${renderLanguages(languages)}</div>
+      <div style=${styles.tools}>${renderEditButton()}</div>
     </div>
     </div>
   `}
@@ -104,4 +110,10 @@ function strToUpperCase(str) {
     return strCase.join(' ');
   }
   return '';
+}
+
+function renderEditButton () {
+  return html `<button type="button" class="ProfilePaneCVEditButton">
+  <img  src="${editButtonURI}">
+  Edit</button>`
 }
