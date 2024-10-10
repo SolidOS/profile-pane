@@ -29,7 +29,7 @@ const editProfileView: PaneDefinition = {
     const dom = context.dom
     const store = context.session.store as Store
 
-    function complainIfBad (ok: Boolean, mess: any) {
+    function complainIfBad (ok: boolean, mess: string) {
       if (ok) return
       div.appendChild(widgets.errorMessageBlock(dom, mess, '#fee'))
     }
@@ -95,7 +95,7 @@ const editProfileView: PaneDefinition = {
           throw new Error('Store has no updater')
         }
         if (store.any(me, ns.solid('editableProfile'))) {
-          editableProfile = store.any(me as any, ns.solid('editableProfile')) as NamedNode
+          editableProfile = store.any(me, ns.solid('editableProfile')) as NamedNode
         } else if (store.updater.editable(profile.uri, store)) {
           editableProfile = profile
         } else {

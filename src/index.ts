@@ -39,7 +39,7 @@ const Pane = {
   editor: editProfileView,                                            
   render: (subject: NamedNode, context: DataBrowserContext): HTMLElement => {
 
-    async function switchToEditor (_event) {
+    async function switchToEditor () {
       alert('switching to editor')
       target.innerHTML = '' // Clear
       const newPane = editProfileView.render(subject, context)

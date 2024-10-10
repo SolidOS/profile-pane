@@ -1,5 +1,5 @@
 import { html, TemplateResult } from "lit-html";
-import { ns, utils, widgets, icons } from "solid-ui";
+import { icons } from "solid-ui";
 
 const editButtonURI = icons.iconBase + 'noun_253504.svg'
 
