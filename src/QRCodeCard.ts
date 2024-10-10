@@ -12,6 +12,7 @@ import {
 } from "./baseStyles";
 import { ProfilePresentation } from "./presenter";
 import { styleMap } from "lit-html/directives/style-map.js";
+import { utils } from "solid-ui";
 
 const styles = {
   image: styleMap(fullWidth()),
@@ -34,10 +35,27 @@ export const QRCodeCard = (
   const backgroundColor = profileBasics.backgroundColor || '#ffffff'
   // console.log(`@@ qrcodes colours highlightColor ${highlightColor}, backgroundColor ${backgroundColor}`)
 
+  const name = utils.label(subject);
+
+  const BEGIN:string = 'BEGIN:VCARD\r\n';
+  const END:string = 'END:VCARD\r\n';
+  const FN:string = 'FN:' + name + '\r\n';
+  const URL:string = 'URL:' + subject.uri + 'r\n';
+  const VERSIONV:string = 'VERSION:4.0\r\n';
+
+// find out how to import values from presenter.ts
+// once those values are imported, make sure any user input aligns
+
+
+  const vCard: string = BEGIN + FN + URL + END + VERSIONV;
+
+
+  // console.log(`@@ qrcodes colours highlightColor ${highlightColor}, backgroundColor ${backgroundColor}`)
+   
   return html`
     <div style=${styles.info}>
       <h3 style=${nameStyle}>${profileBasics.name}</h3>
-      <div class="QRCode" style="${qrCodeCanvasStyle}" data-value="${subject.uri}" highlightColor="${highlightColor}"} backgroundColor="${backgroundColor}"></div>
+      <div class="QRCode" style="${qrCodeCanvasStyle}" data-value="${vCard}" highlightColor="${highlightColor}" backgroundColor="${backgroundColor}"></div>
     </div>
   `;
 };
