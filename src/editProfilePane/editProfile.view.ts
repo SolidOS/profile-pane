@@ -13,7 +13,7 @@ import { NamedNode, parse, Store, sym } from 'rdflib'
 import { icons, login, ns, style, widgets } from 'solid-ui'
 import { paneDiv } from './profile.dom'
 // import profileFormText from './profileFormText.ttl'
-import profileFormText from './wrapped-profileFormText'
+import { profileFormText } from './wrapped-profileFormText'
 
 const highlightColor = style.highlightColor || '#7C4DFF'
 
