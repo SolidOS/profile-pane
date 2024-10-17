@@ -39,40 +39,39 @@ jobs:
             !node_modules
           retention-days: 1z
 
-#  npm-publish-build:
-#    needs: build
-#    runs-on: ubuntu-latest
-#    steps:
-#      - uses: actions/download-artifact@v4
-#        with:
-#          name: buildUpload
-#      - uses: actions/setup-node@v4
-#        with:
-#          node-version: 20.x
-#      - uses: rlespinasse/github-slug-action@v3.x
-#      - name: Append commit hash to package version
-#        run: 'sed -i -E "s/(\"version\": *\"[^\"]+)/\1-${GITHUB_SHA_SHORT}/" package.json'
-#      - name: Disable pre- and post-publish actions
-#        run: 'sed -i -E "s/\"((pre|post)publish)/\"ignore:\1/" package.json'
-#      - uses: JS-DevTools/npm-publish@v3
-#        with:
-#          token: ${{ secrets.NPM_TOKEN }}
-#          tag: ${{ env.GITHUB_REF_SLUG }}
-
-#  npm-publish-latest:
-#    needs: build
-#    runs-on: ubuntu-latest
-#    if: github.ref == 'refs/heads/main'
-#    steps:
-#      - uses: actions/download-artifact@v4
-#        with:
-#          name: build
-#      - uses: actions/setup-node@v4
-#        with:
-#          node-version: 20.x
-#      - name: Disable pre- and post-publish actions
-#        run: 'sed -i -E "s/\"((pre|post)publish)/\"ignore:\1/" package.json'
-#      - uses: JS-DevTools/npm-publish@v3
-#        with:
-#          token: ${{ secrets.NPM_TOKEN }}
-#          tag: latest
+  npm-publish-build:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: buildUpload
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+      - uses: rlespinasse/github-slug-action@v3.x
+      - name: Append commit hash to package version
+        run: 'sed -i -E "s/(\"version\": *\"[^\"]+)/\1-${GITHUB_SHA_SHORT}/" package.json'
+      - name: Disable pre- and post-publish actions
+        run: 'sed -i -E "s/\"((pre|post)publish)/\"ignore:\1/" package.json'
+      - name: test node
+        run: node -v
+      - name: test npm
+        run: npm -v
+  npm-publish-latest:
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: build
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20.x
+      - name: Disable pre- and post-publish actions
+        run: 'sed -i -E "s/\"((pre|post)publish)/\"ignore:\1/" package.json'
+      - uses: JS-DevTools/npm-publish@v3
+        with:
+          token: ${{ secrets.NPM_TOKEN }}
+          tag: latest
