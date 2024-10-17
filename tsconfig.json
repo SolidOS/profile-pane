@@ -8,7 +8,8 @@
     "skipLibCheck": true // otherwise it takes *.d.ts from node_modules see: https://stackoverflow.com/questions/51634361/how-to-force-tsc-to-ignore-node-modules-folder
   },
   "include": [
-    "./src/**/*"
+    "./src/**/*",
+     "**/*.ttl"
   ],
-  "exclude": ["node_modules/rdflib/src/update-manager.ts", "**/*.spec.ts", "**/*.test.ts"]
+  "exclude": ["node_modules/rdflib/src/update-manager.ts", "src/editProfilePane/profileFormText.ttl", "**/*.spec.ts", "**/*.test.ts"]
 }
