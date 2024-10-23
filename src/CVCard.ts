@@ -4,19 +4,23 @@ import {
   heading,
   paddingSmall,
   textCenter,
-  textLeft,
+  textLeft, textRight,
   textGray,
 } from "./baseStyles";
 import { ProfilePresentation } from "./presenter";
 import { CVPresentation } from "./CVPresenter";
 import { styleMap } from "lit-html/directives/style-map.js";
 import { card } from "./baseStyles";
+import { icons } from "solid-ui";
+
+const editButtonURI = icons.iconBase + 'noun_253504.svg'
 
 const styles = {
   image: styleMap(fullWidth()),
   intro: styleMap({ ...textGray(), ...textCenter() }),
   card: styleMap(card()),
   info: styleMap({ ...paddingSmall(), ...textLeft() }),
+  tools: styleMap({ ...paddingSmall(), ...textRight() }),
 };
 
 export const CVCard = (
@@ -47,6 +51,7 @@ export const CVCard = (
       <div style=${styles.info}>${renderSkills(skills)}</div>
       <h3 style=${nameStyle}>Languages</h3>
       <div style=${styles.info}>${renderLanguages(languages)}</div>
+          <div style=${styles.tools}>${renderEditButton()}</div>
     </div>
     </div>
   `}
@@ -105,3 +110,12 @@ function strToUpperCase(str) {
   }
   return '';
 }
+
+function renderEditButton () {
+    return html `<button type="button" class="ProfilePaneCVEditButton">
+    <img  src="${editButtonURI}">
+    Edit</button>`
+}
+
+// ends
+

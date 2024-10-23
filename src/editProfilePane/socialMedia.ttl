@@ -15,15 +15,10 @@
 @prefix : <#>.
 
 
-:OnlineAccountProvider a rdfs:Class;
-    rdfs:label "Online Account Provider".
-
-
-:FB a :OnlineAccountProvider;
-    rdfs:label "Facebook";
-    :userProfilePrefix "https://www.facebook.com/";
-    foaf:icon <https://upload.wikimedia.org/wikipedia/commons/b/b9/2023_Facebook_icon.svg>;
-    foaf:homepage <https://www.facebook.com/> .
+solid:SocialAccount a rdfs:Class;
+    rdfs:label "Online Account Provider";
+    owl:oneOf ( :BS :FB :IG :REDDIT :X :SNAP :TIKTOK )
+    .
 
 :BS a :OnlineAccountProvider;
     rdfs:label "Bluesky";
@@ -31,45 +26,45 @@
     foaf:icon <https://upload.wikimedia.org/wikipedia/commons/b/b9/2023_Facebook_icon.svg>;
     foaf:homepage <https://bsky.app/> .
 
-:REDDIT a :OnlineAccountProvider;
-    rdfs:label "Reddit";
-    :userProfilePrefix "https://www.reddit.com/user/";
+:FB a :OnlineAccountProvider;
+    rdfs:label "Facebook";
+    :userProfilePrefix "https://www.facebook.com/";
     foaf:icon <https://upload.wikimedia.org/wikipedia/commons/b/b9/2023_Facebook_icon.svg>;
-    foaf:homepage <https://bsky.app/> .
+    foaf:homepage <https://www.facebook.com/> .
 
-
-
-# from AI:
-
-@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>.
-@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
-@prefix foaf: <http://xmlns.com/foaf/0.1/>.
-@prefix owl: <http://www.w3.org/2002/07/owl#>.
-@prefix solid: <http://www.w3.org/ns/solid/terms#>.
-@prefix ui: <http://www.w3.org/ns/ui#>.
-@prefix schema: <http://schema.org/>.
-@prefix vcard: <http://www.w3.org/2006/vcard/ns#>.
-
-@prefix org: <http://www.w3.org/ns/org#>.
-@prefix esco: <http://data.europa.eu/esco/model#>.
-@prefix wd: <http://www.wikidata.org/entity/>.
-@prefix wdt: <http://www.wikidata.org/prop/direct/>.
-@prefix : <#>.
-
-:OnlineAccountProvider a rdfs:Class;
-    rdfs:label "Online Account Provider".
-
-:X a :OnlineAccountProvider;
-    rdfs:label "X (formerly Twitter)";
-    :userProfilePrefix "https://x.com/";
-    foaf:icon <https://upload.wikimedia.org/wikipedia/en/6/6f/Twitter_Logo_2021.svg>;
-    foaf:homepage <https://x.com/> .
 
 :IG a :OnlineAccountProvider;
     rdfs:label "Instagram";
     :userProfilePrefix "https://www.instagram.com/";
     foaf:icon <https://upload.wikimedia.org/wikipedia/commons/a/a5/Instagram_icon.png>;
     foaf:homepage <https://www.instagram.com/> .
+
+:LI a :OnlineAccountProvider;
+    rdfs:label "Linked In";
+    :userProfilePrefix "https://www.linkedin.com/";
+    foaf:icon <https://upload.wikimedia.org/wikipedia/commons/b/b9/2023_Facebook_icon.svg>;
+    foaf:homepage <https://linkedin.com/> .
+
+:MEDIUM a :OnlineAccountProvider;
+    rdfs:label "Linked In";
+    :userProfilePrefix "https://www.linkedin.com/";
+    foaf:icon <https://upload.wikimedia.org/wikipedia/commons/b/b9/2023_Facebook_icon.svg>;
+    foaf:homepage <https://linkedin.com/> .
+
+:NOSR a :OnlineAccountProvider; ### FEDERATED
+    rdfs:label "Linked In";
+    :userProfilePrefix "https://www.linkedin.com/";
+    foaf:icon <https://upload.wikimedia.org/wikipedia/commons/b/b9/2023_Facebook_icon.svg>;
+    foaf:homepage <https://linkedin.com/> .
+
+
+
+:REDDIT a :OnlineAccountProvider;
+    rdfs:label "Reddit";
+    :userProfilePrefix "https://www.reddit.com/user/";
+    foaf:icon <https://upload.wikimedia.org/wikipedia/commons/b/b9/2023_Facebook_icon.svg>;
+    foaf:homepage <https://bsky.app/> .
+
 
 :SNAP a :OnlineAccountProvider;
     rdfs:label "Snapchat";
@@ -82,5 +77,16 @@
     :userProfilePrefix "https://www.tiktok.com/@";
     foaf:icon <https://upload.wikimedia.org/wikipedia/en/a/a9/TikTok_logo.svg>;
     foaf:homepage <https://www.tiktok.com/> .
-    
+
+
+:X a :OnlineAccountProvider;
+    rdfs:label "X (formerly Twitter)";
+    :userProfilePrefix "https://x.com/";
+    foaf:icon <https://upload.wikimedia.org/wikipedia/en/6/6f/Twitter_Logo_2021.svg>;
+    foaf:homepage <https://x.com/> .
+
+:OTHER a :OnlineAccountProvider;
+    rdfs:label "Other" .
+#    foaf:icon <https://upload.wikimedia.org/wikipedia/en/6/6f/Twitter_Logo_2021.svg>;
+#    foaf:homepage <https://x.com/> .
 
