@@ -1,4 +1,3 @@
-# 20210404a
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>.
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
 @prefix foaf: <http://xmlns.com/foaf/0.1/>.
@@ -24,6 +23,7 @@
       :nicknameField
       :pronounsForm
       :LanguagesPrompt :LanguagesForm
+      :SocialsPrompt :SocialsForm
       :CVGroup
       :SkillsPrompt :SkillsForm
       ).
@@ -381,6 +381,27 @@ WHERE
  # Note we restrict code to two-letter codes with the second regex, so as to limit the deluge of languages
  # Hope there are not any important ones which have three-letter codes.
  # Omitted: SERVICE wikibase:label { bd:serviceParam wikibase:language "$(languages)". }
+
+########### Social Media - other accounts
+#
+# Twitter, Linked In, Orkid, Mastodon, Bluesky, Instagram, Facebook,
+# Snapchat, TikTok, etc
+
+:SocialsPrompt a ui:Comment; ui:contents  "Social Media etc?" .
+
+:SocialsForm a ui:Multiple;
+    ui:label "Socials";
+    ui:property foaf:account;
+    ui:ordered true; # Allow user to order occounts most important first.
+    ui:part :AccountsForm.
+
+:AccountsForm a ui:Group; ui:weight 1; ui:parts ( :AccountField ).
+
+:AccountField a ui:Classifier; ui:label "What sort of account?"@en;
+      ui:category solid:SocialAccount  .
+
+
+
 
 
 # ENDS
