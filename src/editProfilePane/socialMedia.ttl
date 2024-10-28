@@ -153,25 +153,25 @@ foaf:Account a rdfs:Class;
 
 :BlueSkyAccount rdfs:subClassOf foaf:Account ;
     rdfs:label "Bluesky";
-    :userProfilePrefix "https://bsky.app/profile/";
+    foaf:userProfilePrefix "https://bsky.app/profile/";
     foaf:icon <https://upload.wikimedia.org/wikipedia/commons/b/b9/2023_Facebook_icon.svg>;
     foaf:homepage <https://bsky.app/> .
 
 :FacebookAccount rdfs:subClassOf foaf:Account ;
     rdfs:label "Facebook";
-    :userProfilePrefix "https://www.facebook.com/";
+    foaf:userProfilePrefix "https://www.facebook.com/";
     foaf:icon <https://upload.wikimedia.org/wikipedia/commons/b/b9/2023_Facebook_icon.svg>;
     foaf:homepage <https://www.facebook.com/> .
 
 :InstagramAccount rdfs:subClassOf foaf:Account ;
     rdfs:label "Instagram";
-    :userProfilePrefix "https://www.instagram.com/";
+    foaf:userProfilePrefix "https://www.instagram.com/";
     foaf:icon <https://upload.wikimedia.org/wikipedia/commons/a/a5/Instagram_icon.png>;
     foaf:homepage <https://www.instagram.com/> .
 
 :LinkedInAccount rdfs:subClassOf foaf:Account ;
     rdfs:label "Linked In";
-    :userProfilePrefix "https://www.linkedin.com/";
+    foaf:userProfilePrefix "https://www.linkedin.com/";
     foaf:icon <https://upload.wikimedia.org/wikipedia/commons/b/b9/2023_Facebook_icon.svg>;
     foaf:homepage <https://linkedin.com/> .
 
@@ -182,38 +182,38 @@ foaf:Account a rdfs:Class;
 
 :MediumAccount rdfs:subClassOf foaf:Account ;
     rdfs:label "Medium";
-    :userProfilePrefix "https://www.linkedin.com/";
+    foaf:userProfilePrefix "https://www.linkedin.com/";
     foaf:icon <https://upload.wikimedia.org/wikipedia/commons/b/b9/2023_Facebook_icon.svg>;
     foaf:homepage <https://linkedin.com/> .
 
 :NostrAccount rdfs:subClassOf foaf:Account ; ### FEDERATED
     rdfs:label "Nostr";
-    :userProfilePrefix "https://www.linkedin.com/";
+    foaf:userProfilePrefix "https://www.linkedin.com/";
     foaf:icon <https://upload.wikimedia.org/wikipedia/commons/b/b9/2023_Facebook_icon.svg>;
     foaf:homepage <https://linkedin.com/> .
 
 :RedditAccount rdfs:subClassOf foaf:Account ;
     rdfs:label "Reddit";
-    :userProfilePrefix "https://www.reddit.com/user/";
+    foaf:userProfilePrefix "https://www.reddit.com/user/";
     foaf:icon <https://upload.wikimedia.org/wikipedia/commons/b/b9/2023_Facebook_icon.svg>;
     foaf:homepage <https://bsky.app/> .
 
 :SnapchatAccount rdfs:subClassOf foaf:Account ;
     rdfs:label "Snapchat";
-    :userProfilePrefix "https://www.snapchat.com/add/";
+    foaf:userProfilePrefix "https://www.snapchat.com/add/";
     foaf:icon <https://upload.wikimedia.org/wikipedia/en/a/ad/Snapchat_logo.svg>;
     foaf:homepage <https://www.snapchat.com/> .
 
 :TiktokAccount rdfs:subClassOf foaf:Account ;
     rdfs:label "TikTok";
-    :userProfilePrefix "https://www.tiktok.com/@";
+    foaf:userProfilePrefix "https://www.tiktok.com/@";
     foaf:icon <https://upload.wikimedia.org/wikipedia/en/a/a9/TikTok_logo.svg>;
     foaf:homepage <https://www.tiktok.com/> .
 
 
 :TwitterAccount rdfs:subClassOf foaf:Account ;
     rdfs:label "X (formerly Twitter)";
-    :userProfilePrefix "https://x.com/";
+    foaf:userProfilePrefix "https://x.com/";
     foaf:icon <https://upload.wikimedia.org/wikipedia/en/6/6f/Twitter_Logo_2021.svg>;
     foaf:homepage <https://x.com/> .
 

@@ -25,7 +25,7 @@ export async function ProfileView (
 ): Promise <TemplateResult> {
   const profileBasics = presentProfile(subject, context.session.store as LiveStore); // rdflib rdfs type problems
   const rolesByType = presentCV (subject, context.session.store as LiveStore)
-  const Accounts = presentSocial(subject, context.session.store as LiveStore)
+  const accounts = presentSocial(subject, context.session.store as LiveStore)
   const stuffData = await presentStuff(subject)
   const styles = {
     grid: styleMap({

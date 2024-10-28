@@ -41,16 +41,9 @@ export const SocialCard = (
   <div data-testid="curriculum-vitae" style="${styles.card}">
     <div style=${styles.info}>
       <h3 style=${nameStyle}>Social</h3>
-      <div style=${styles.info}>${renderAccounts(accountsByType["FutureAccount"])}</div>
-      <hr />
-      <div style=${styles.info}>${renderAccounts(accountsByType["CurrentAccount"])}</div>
-      <hr />
-      <div style=${styles.info}>${renderAccounts(accountsByType["PastAccount"])}</div>
-      <hr />
-      <h3 style=${nameStyle}>Skills</h3>
-      <div style=${styles.info}>${renderSkills(skills)}</div>
-      <h3 style=${nameStyle}>Languages</h3>
-      <div style=${styles.info}>${renderLanguages(languages)}</div>
+  
+      <h3 style=${nameStyle}>Accounts</h3>
+      <div style=${styles.info}>${renderAccounts(accounts)}</div>
     </div>
     </div>
   `}

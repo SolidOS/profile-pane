@@ -8,16 +8,9 @@ export interface Account {
   name: string,
   icon: string,
   homepage: string,
-
 }
 export interface SocialPresentation { 
   accounts: Account[];
-}
-
-export interface RolesByType {
-  PastRole: Role[];
-  CurrentRole: Role[];
-  FutureRole: Role[];
 }
 
 export function presentSocial(
@@ -25,47 +18,51 @@ export function presentSocial(
   store: LiveStore
 ): SocialPresentation {
   
-  function nameForAccount (subject) {
+  function nameForAccount (subject):string {
     const acIcon = store.any(subject, ns.foaf('name')) // on the account itself?
     if (acIcon) return acIcon.value;
-    const classes = store.each(subject, ns.rdf('type'))
+    const classes = store.each(subject, ns.rdf('type')) as NamedNode[]
     for (const k of classes) {
-      const classIcon = store.any(k, ns.foaf('icon'))
+      const classIcon: Node = store.any(k as NamedNode, ns.foaf('icon')) // @@ use
       if (classIcon)  {
         return classIcon.value;
       }
+      return utils.label(k)
     }
     return utils.label(subject)
   }
 
-  function iconForAccount (subject) {
+  function iconForAccount (subject):string {
     const acIcon = store.any(subject, ns.foaf('icon')) // on the account itself?
-    if (acIcon) return acIcon.uri;
+    if (acIcon) return acIcon.value;
     const classes = store.each(subject, ns.rdf('type'))
     for (const k of classes) {
-      const classIcon = store.any(k, ns.foaf('icon'))
-      if (classIcon)  {
-        return classIcon.uri;
+      const classIcon: Node | null  = store.any(k as any, ns.foaf('icon'))
+      if (classIcon !==  null)  {
+        return classIcon.value;
       }
     }
     return DEFAULT_ICON_URI
   }
 
-  function homepageForAccount (subject) {
+  function homepageForAccount (subject):string {
     const acHomepage = store.any(subject, ns.foaf('homepage')) // on the account itself?
-    if (acHomepage) return acHomepage.uri;
-    const accountId = store.anyJS(subject, ns.foaf('id')) || 'NoId?'
+    if (acHomepage) return acHomepage.value;
+    const id = store.anyJS(subject, ns.foaf('id')) // @@ account id 
+    if (!id) return null
+
     const classes = store.each(subject, ns.rdf('type'))
-    for (const k in classes) {
-      const classIcon = store.each(k, ns.foaf('icon'))
-      if (classIcon)  {
-        return classIcon.uri;
+    for (const k of classes) {
+      const userProfilePrefix: Node | null = store.any(k as any, ns.foaf('userProfilePrefix'))
+      if (userProfilePrefix)  {
+        return userProfilePrefix.value + id ;
       }
     }
-    return DEFAULT_ICON_URI
+    return null
   }
 
   function accountAsObject (ac) {
+
     return {
       name: nameForAccount(ac),
       icon: iconForAccount(ac),
@@ -73,7 +70,8 @@ export function presentSocial(
     }
 
   }
-  const accounts = store.each(subject, ns.foaf('account')).map(ac => accountAsObject(ac))
+  const accountThings: Node[] = store.each(subject, ns.foaf('account'))
+  const accounts: Account[] = accountThings.map(ac => accountAsObject(ac))
 
   return { accounts }
 }
