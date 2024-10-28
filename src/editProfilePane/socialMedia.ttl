@@ -15,78 +15,213 @@
 @prefix : <#>.
 
 
-solid:SocialAccount a rdfs:Class;
-    rdfs:label "Online Account Provider";
-    owl:oneOf ( :BS :FB :IG :REDDIT :X :SNAP :TIKTOK )
-    .
 
-:BS a :OnlineAccountProvider;
+########### Social Media - other accounts
+#
+# Twitter, Linked In, Orkid, Mastodon, Bluesky, Instagram, Facebook,
+# Snapchat, TikTok, etc
+
+:SocialsPrompt a ui:Heading; ui:contents  "Social Media etc?" .
+:SocialsPrompt a ui:Comment; ui:contents  "Link to accounts in social media sites, etc" .
+
+:SocialsForm a ui:Multiple;
+    ui:label "Social Media etc";
+    ui:property foaf:account;
+    ui:ordered true; # Allow user to order occounts most important first.
+    ui:part :AccountsForm.
+
+:AccountsForm a ui:Group; ui:weight 1; ui:parts ( :AccountField :AccountIdField ).
+
+:AccountField a ui:Classifier; ui:label "What sort of account?"@en;
+      ui:multiple false ; 
+      ui:category foaf:Account  .
+
+:AccountIdField a ui:Options . 
+
+  :AccountIdField a ui:Options; ui:dependingOn rdf:type; ui:case
+     [ ui:for :BlueSkyAccount; ui:use :BlueSkyIdField ],
+     [ ui:for :FacebookAccount; ui:use :FacebookIdField ],
+     [ ui:for :InstagramAccount; ui:use :InstagramIdField ],
+     [ ui:for :LinkedInAccount; ui:use :LinkedInIdField ],
+     [ ui:for :MastodonAccount; ui:use :MastodonIdField ],
+     [ ui:for :RedditAccount; ui:use :RedditIdField ],
+     [ ui:for :SnapchatAccount; ui:use :SnapchatIdField ],
+     [ ui:for :TiktokAccount; ui:use :TiktokIdField ],
+     [ ui:for :TwitterAccount; ui:use :TwitterIdField ],
+     [ ui:for :OtherAccount; ui:use :OtherIdForm  ] .
+
+  :BlueSkyIdField
+      a ui:SingleLineTextField ;
+      ui:label "Bluesky Id";
+      ui:maxLength "200" ;
+      ui:property foaf:id ; # @@ check
+      ui:pattern "@[a-z0-9A-Z_-](.[a-z0-9A-Z_-])*";  # @@
+      ui:size    40 .
+
+  :FacebookIdField
+      a ui:SingleLineTextField ;
+      ui:label "Facebook Id";
+      ui:maxLength "200" ;
+      ui:property foaf:id ; # @@ check
+      ui:pattern "[a-z0-9A-Z_-]*";  # @@
+      ui:size    40 .
+
+  :InstagramIdField
+      a ui:SingleLineTextField ;
+      ui:label "Instagram Id";
+      ui:maxLength "200" ;
+      ui:property foaf:id ; # @@ check
+      ui:pattern "[a-z0-9A-Z_-]*";  # @@
+      ui:size    40 .
+
+  :LinkedInIdField
+      a ui:SingleLineTextField ;
+      ui:label "Linked In Id";
+      ui:maxLength "200" ;
+      ui:property foaf:id ; # @@ check
+      ui:pattern "[a-z0-9A-Z_-]*(.[a-z0-9A-Z_-])*";  # @@
+      ui:size    40 .
+
+  :MastodonIdField
+      a ui:SingleLineTextField ;
+      ui:label "Mastodon (Activity Pub) Id";
+      ui:maxLength "200" ;
+      ui:property foaf:id ; # @@ check
+      ui:pattern "@[a-z0-9A-Z_-]*(.[a-z0-9A-Z_-])*";  # @@
+      ui:size    40 .
+
+  :RedditIdField
+      a ui:SingleLineTextField ;
+      ui:label "Reddit Id";
+      ui:maxLength "200" ;
+      ui:property foaf:id ; # @@ check
+      ui:pattern "[a-z0-9A-Z_-]*";  # @@
+      ui:size    40 .
+
+  :SnapchatIdField
+      a ui:SingleLineTextField ;
+      ui:label "Snapchat Id";
+      ui:maxLength "200" ;
+      ui:property foaf:id ; # @@ check
+      ui:pattern "@[a-z0-9A-Z_-]*";  # @@
+      ui:size    40 .
+
+  :TiktokIdField
+      a ui:SingleLineTextField ;
+      ui:label "Tiktok Id";
+      ui:maxLength "200" ;
+      ui:property foaf:id ; # @@ check
+      ui:pattern "@[a-z0-9A-Z_-]*";  # @@
+      ui:size    40 .
+
+  :TwitterIdField
+      a ui:SingleLineTextField ;
+      ui:label "Twitter Id";
+      ui:maxLength "200" ;
+      ui:property foaf:id ; # @@ check
+      ui:pattern "@[a-z0-9A-Z_-]*";  # @@
+      ui:size    40 .
+
+# an unknown SN account needs more info
+
+  :OtherIdForm a ui:Group; ui:weight 0; ui:parts ( :OtherIdField :OtherIconField ).
+
+  :OtherIdField
+      a ui:NamedNodeURIField ;
+      ui:label "URL of account to link to";
+      ui:maxLength "200" ;
+      ui:property foaf:homepage ; # @@ check
+      ui:size    60 .
+
+  :OtherIconField
+      a ui:NamedNodeURIField ;
+      ui:label "URL of icon to display";
+      ui:maxLength "200" ;
+      ui:property foaf:icon ;
+      ui:size    60 .
+
+
+
+
+
+##### Ontology of Accounts
+
+foaf:Account a rdfs:Class;
+    rdfs:label "Online Account Provider";
+    owl:oneOf ( :BlueSkyAccount :FacebookAccount :InstagramAccount :MastodonAccount 
+    :RedditAccount :SnapchatAccount :TiktokAccount  :TwitterAccount :OtherAccount) .
+
+:BlueSkyAccount rdfs:subClassOf foaf:Account ;
     rdfs:label "Bluesky";
     :userProfilePrefix "https://bsky.app/profile/";
     foaf:icon <https://upload.wikimedia.org/wikipedia/commons/b/b9/2023_Facebook_icon.svg>;
     foaf:homepage <https://bsky.app/> .
 
-:FB a :OnlineAccountProvider;
+:FacebookAccount rdfs:subClassOf foaf:Account ;
     rdfs:label "Facebook";
     :userProfilePrefix "https://www.facebook.com/";
     foaf:icon <https://upload.wikimedia.org/wikipedia/commons/b/b9/2023_Facebook_icon.svg>;
     foaf:homepage <https://www.facebook.com/> .
 
-
-:IG a :OnlineAccountProvider;
+:InstagramAccount rdfs:subClassOf foaf:Account ;
     rdfs:label "Instagram";
     :userProfilePrefix "https://www.instagram.com/";
     foaf:icon <https://upload.wikimedia.org/wikipedia/commons/a/a5/Instagram_icon.png>;
     foaf:homepage <https://www.instagram.com/> .
 
-:LI a :OnlineAccountProvider;
+:LinkedInAccount rdfs:subClassOf foaf:Account ;
     rdfs:label "Linked In";
     :userProfilePrefix "https://www.linkedin.com/";
     foaf:icon <https://upload.wikimedia.org/wikipedia/commons/b/b9/2023_Facebook_icon.svg>;
     foaf:homepage <https://linkedin.com/> .
 
-:MEDIUM a :OnlineAccountProvider;
-    rdfs:label "Linked In";
+:MastodonAccount rdfs:subClassOf foaf:Account ;
+    rdfs:label "Mastodon" ;
+    foaf:icon <https://upload.wikimedia.org/wikipedia/en/6/6f/Twitter_Logo_2021.svg>;
+    foaf:homepage <https://x.com/> .
+
+:MediumAccount rdfs:subClassOf foaf:Account ;
+    rdfs:label "Medium";
     :userProfilePrefix "https://www.linkedin.com/";
     foaf:icon <https://upload.wikimedia.org/wikipedia/commons/b/b9/2023_Facebook_icon.svg>;
     foaf:homepage <https://linkedin.com/> .
 
-:NOSR a :OnlineAccountProvider; ### FEDERATED
-    rdfs:label "Linked In";
+:NostrAccount rdfs:subClassOf foaf:Account ; ### FEDERATED
+    rdfs:label "Nostr";
     :userProfilePrefix "https://www.linkedin.com/";
     foaf:icon <https://upload.wikimedia.org/wikipedia/commons/b/b9/2023_Facebook_icon.svg>;
     foaf:homepage <https://linkedin.com/> .
 
-
-
-:REDDIT a :OnlineAccountProvider;
+:RedditAccount rdfs:subClassOf foaf:Account ;
     rdfs:label "Reddit";
     :userProfilePrefix "https://www.reddit.com/user/";
     foaf:icon <https://upload.wikimedia.org/wikipedia/commons/b/b9/2023_Facebook_icon.svg>;
     foaf:homepage <https://bsky.app/> .
 
-
-:SNAP a :OnlineAccountProvider;
+:SnapchatAccount rdfs:subClassOf foaf:Account ;
     rdfs:label "Snapchat";
     :userProfilePrefix "https://www.snapchat.com/add/";
     foaf:icon <https://upload.wikimedia.org/wikipedia/en/a/ad/Snapchat_logo.svg>;
     foaf:homepage <https://www.snapchat.com/> .
 
-:TIKTOK a :OnlineAccountProvider;
+:TiktokAccount rdfs:subClassOf foaf:Account ;
     rdfs:label "TikTok";
     :userProfilePrefix "https://www.tiktok.com/@";
     foaf:icon <https://upload.wikimedia.org/wikipedia/en/a/a9/TikTok_logo.svg>;
     foaf:homepage <https://www.tiktok.com/> .
 
 
-:X a :OnlineAccountProvider;
+:TwitterAccount rdfs:subClassOf foaf:Account ;
     rdfs:label "X (formerly Twitter)";
     :userProfilePrefix "https://x.com/";
     foaf:icon <https://upload.wikimedia.org/wikipedia/en/6/6f/Twitter_Logo_2021.svg>;
     foaf:homepage <https://x.com/> .
 
-:OTHER a :OnlineAccountProvider;
-    rdfs:label "Other" .
-#    foaf:icon <https://upload.wikimedia.org/wikipedia/en/6/6f/Twitter_Logo_2021.svg>;
-#    foaf:homepage <https://x.com/> .
+
+:OtherAccount rdfs:subClassOf foaf:Account ;
+    rdfs:label "Other" ;
+    foaf:icon <https://upload.wikimedia.org/wikipedia/en/6/6f/Twitter_Logo_2021.svg>;
+    foaf:homepage <https://x.com/> .
+
+# ends
 

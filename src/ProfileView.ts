@@ -10,9 +10,11 @@ import { ChatWithMe } from "./ChatWithMe";
 import { FriendList } from "./FriendList";
 import { presentProfile } from "./presenter";
 import { presentCV } from './CVPresenter' // 20210527
+import { presentSocial } from './SocialPresenter' // 20210527
 import { presentStuff } from './StuffPresenter' // 20210527
 import { ProfileCard } from "./ProfileCard";
 import { CVCard } from "./CVCard";
+import { SocialCard } from "./SocialCard";
 import { StuffCard } from "./StuffCard";
 import { QRCodeCard } from "./QRCodeCard";
 import { addMeToYourFriendsDiv } from "./addMeToYourFriends";
@@ -23,6 +25,7 @@ export async function ProfileView (
 ): Promise <TemplateResult> {
   const profileBasics = presentProfile(subject, context.session.store as LiveStore); // rdflib rdfs type problems
   const rolesByType = presentCV (subject, context.session.store as LiveStore)
+  const Accounts = presentSocial(subject, context.session.store as LiveStore)
   const stuffData = await presentStuff(subject)
   const styles = {
     grid: styleMap({
@@ -46,6 +49,7 @@ export async function ProfileView (
         </div>
       </div>
         ${CVCard(profileBasics, rolesByType)}
+        ${SocialCard(profileBasics, accounts)}
         ${StuffCard(profileBasics, context, subject, stuffData)}
         ${FriendList(profileBasics, subject, context)}
       <div style="${styles.chat}">${ChatWithMe(subject, context)}</div>
