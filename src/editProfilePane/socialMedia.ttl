@@ -172,18 +172,18 @@ foaf:Account a rdfs:Class;
 :LinkedInAccount rdfs:subClassOf foaf:Account ;
     rdfs:label "Linked In";
     foaf:userProfilePrefix "https://www.linkedin.com/";
-    foaf:icon <https://upload.wikimedia.org/wikipedia/commons/b/b9/2023_Facebook_icon.svg>;
+    foaf:icon <https://upload.wikimedia.org/wikipedia/commons/8/81/LinkedIn_icon.svg>;
     foaf:homepage <https://linkedin.com/> .
 
 :MastodonAccount rdfs:subClassOf foaf:Account ;
     rdfs:label "Mastodon" ;
-    foaf:icon <https://upload.wikimedia.org/wikipedia/en/6/6f/Twitter_Logo_2021.svg>;
+    foaf:icon <hhttps://upload.wikimedia.org/wikipedia/commons/d/d5/Mastodon_logotype_%28simple%29_new_hue.svg>;
     foaf:homepage <https://x.com/> .
 
 :MediumAccount rdfs:subClassOf foaf:Account ;
     rdfs:label "Medium";
     foaf:userProfilePrefix "https://www.linkedin.com/";
-    foaf:icon <https://upload.wikimedia.org/wikipedia/commons/b/b9/2023_Facebook_icon.svg>;
+    foaf:icon <https://upload.wikimedia.org/wikipedia/commons/a/a5/Medium_icon.svg>;
     foaf:homepage <https://linkedin.com/> .
 
 :NostrAccount rdfs:subClassOf foaf:Account ; ### FEDERATED

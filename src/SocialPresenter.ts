@@ -1,9 +1,18 @@
-import { LiveStore, NamedNode, Literal, Namespace, Node, Store } from "rdflib";
+import { LiveStore, NamedNode, Literal, Namespace, Collection, Node, parse, Store } from "rdflib";
 import { ns, utils, icons } from "solid-ui";
-import { ACLControlBox5 } from "solid-ui/lib/acl/acl-control";
+import { profileFormText } from './editProfilePane/wrapped-profileFormText'
 
 const DEFAULT_ICON_URI = icons.iconBase + 'noun_10636_grey.svg' // grey disc
 
+
+export function loadProfileForm (store: LiveStore) {
+  const preferencesForm = store.sym('https://solidos.github.io/solid-panes/dashboard/profileStyle.ttl#this')
+  const preferencesFormDoc = preferencesForm.doc()
+  if (!store.holds(undefined, undefined, undefined, preferencesFormDoc)) {
+    // If not loaded already
+    parse(profileFormText, store, preferencesFormDoc.uri, 'text/turtle', () => null) // Load form directly
+  }
+}
 export interface Account {
   name: string,
   icon: string,
@@ -23,20 +32,21 @@ export function presentSocial(
     if (acIcon) return acIcon.value;
     const classes = store.each(subject, ns.rdf('type')) as NamedNode[]
     for (const k of classes) {
-      const classIcon: Node = store.any(k as NamedNode, ns.foaf('icon')) // @@ use
+      const classIcon: Node = store.any(k as NamedNode, ns.rdfs('label'))
       if (classIcon)  {
         return classIcon.value;
       }
       return utils.label(k)
     }
-    return utils.label(subject)
+    return ''
   }
 
   function iconForAccount (subject):string {
     const acIcon = store.any(subject, ns.foaf('icon')) // on the account itself?
     if (acIcon) return acIcon.value;
     const classes = store.each(subject, ns.rdf('type'))
-    for (const k of classes) {
+    console.log('@@ classes[0].termType ', classes[0].termType)
+    for (const k of (classes as Node[])) {
       const classIcon: Node | null  = store.any(k as any, ns.foaf('icon'))
       if (classIcon !==  null)  {
         return classIcon.value;
@@ -62,7 +72,6 @@ export function presentSocial(
   }
 
   function accountAsObject (ac) {
-
     return {
       name: nameForAccount(ac),
       icon: iconForAccount(ac),
@@ -70,7 +79,10 @@ export function presentSocial(
     }
 
   }
-  const accountThings: Node[] = store.each(subject, ns.foaf('account'))
+  loadProfileForm(store) // get ontology info
+
+  const accountThings: Node[] = store.anyJS(subject, ns.foaf('account')) // load the collection
+  console.log('Social: accounts', accountThings)
   const accounts: Account[] = accountThings.map(ac => accountAsObject(ac))
 
   return { accounts }

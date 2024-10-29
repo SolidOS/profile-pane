@@ -38,11 +38,10 @@ export const SocialCard = (
   if(accounts.length){
 
   return html`
-  <div data-testid="curriculum-vitae" style="${styles.card}">
+  <div data-testid="social-media" style="${styles.card}">
     <div style=${styles.info}>
-      <h3 style=${nameStyle}>Social</h3>
-  
-      <h3 style=${nameStyle}>Accounts</h3>
+      <h3 style=${nameStyle}>Social Media &c</h3>
+
       <div style=${styles.info}>${renderAccounts(accounts)}</div>
     </div>
     </div>
@@ -51,18 +50,19 @@ export const SocialCard = (
 }
 
 function renderAccount(account) {
-  return account
+  return account.homepage && account.name && account.icon
     ? html`<div style="margin-top: 0.3em; margin-bottom: 0.3em;">
-        <b>${account.name}</b>
-        <a href="{account.homepage}"> 
-        <img src="{account.icon}" alt="{account.name}"> 
+
+        <a href="${account.homepage}" target="social"> 
+                <span>${account.name}</span>
+        <img style="width: 2em; height: 2em; margin: 1em;" src="${account.icon}" alt="${account.name}"> 
         </a>
       </div> ` 
     : html``;
 }
 
 function renderAccounts(accounts) {
-    if (accounts[0] > "")
+    if (accounts.length > 0)
       return html`${renderAccount(accounts[0])}${accounts.length > 1 ? renderAccounts(accounts.slice(1)) : html``}`
 }
 
