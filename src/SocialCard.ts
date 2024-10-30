@@ -40,7 +40,7 @@ export const SocialCard = (
   return html`
   <div data-testid="social-media" style="${styles.card}">
     <div style=${styles.info}>
-      <h3 style=${nameStyle}>Social Media &c</h3>
+      <h3 style=${nameStyle}>Follow me on</h3>
 
       <div style=${styles.info}>${renderAccounts(accounts)}</div>
     </div>
