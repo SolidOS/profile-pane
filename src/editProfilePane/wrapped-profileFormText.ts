@@ -565,18 +565,18 @@ foaf:Account a rdfs:Class;
 :LinkedInAccount rdfs:subClassOf foaf:Account ;
     rdfs:label "Linked In";
     foaf:userProfilePrefix "https://www.linkedin.com/";
-    foaf:icon <https://upload.wikimedia.org/wikipedia/commons/b/b9/2023_Facebook_icon.svg>;
+    foaf:icon <https://upload.wikimedia.org/wikipedia/commons/8/81/LinkedIn_icon.svg>;
     foaf:homepage <https://linkedin.com/> .
 
 :MastodonAccount rdfs:subClassOf foaf:Account ;
     rdfs:label "Mastodon" ;
-    foaf:icon <https://upload.wikimedia.org/wikipedia/en/6/6f/Twitter_Logo_2021.svg>;
+    foaf:icon <hhttps://upload.wikimedia.org/wikipedia/commons/d/d5/Mastodon_logotype_%28simple%29_new_hue.svg>;
     foaf:homepage <https://x.com/> .
 
 :MediumAccount rdfs:subClassOf foaf:Account ;
     rdfs:label "Medium";
     foaf:userProfilePrefix "https://www.linkedin.com/";
-    foaf:icon <https://upload.wikimedia.org/wikipedia/commons/b/b9/2023_Facebook_icon.svg>;
+    foaf:icon <https://upload.wikimedia.org/wikipedia/commons/a/a5/Medium_icon.svg>;
     foaf:homepage <https://linkedin.com/> .
 
 :NostrAccount rdfs:subClassOf foaf:Account ; ### FEDERATED
@@ -588,7 +588,7 @@ foaf:Account a rdfs:Class;
 :RedditAccount rdfs:subClassOf foaf:Account ;
     rdfs:label "Reddit";
     foaf:userProfilePrefix "https://www.reddit.com/user/";
-    foaf:icon <https://upload.wikimedia.org/wikipedia/commons/b/b9/2023_Facebook_icon.svg>;
+    foaf:icon <https://upload.wikimedia.org/wikipedia/commons/1/1e/The_reddit_2023_mini_logo.jpg>;
     foaf:homepage <https://bsky.app/> .
 
 :SnapchatAccount rdfs:subClassOf foaf:Account ;
@@ -600,14 +600,14 @@ foaf:Account a rdfs:Class;
 :TiktokAccount rdfs:subClassOf foaf:Account ;
     rdfs:label "TikTok";
     foaf:userProfilePrefix "https://www.tiktok.com/@";
-    foaf:icon <https://upload.wikimedia.org/wikipedia/en/a/a9/TikTok_logo.svg>;
+    foaf:icon <https://upload.wikimedia.org/wikipedia/commons/3/34/Ionicons_logo-tiktok.svg>;
     foaf:homepage <https://www.tiktok.com/> .
 
 
 :TwitterAccount rdfs:subClassOf foaf:Account ;
     rdfs:label "X (formerly Twitter)";
     foaf:userProfilePrefix "https://x.com/";
-    foaf:icon <https://upload.wikimedia.org/wikipedia/en/6/6f/Twitter_Logo_2021.svg>;
+    foaf:icon <https://upload.wikimedia.org/wikipedia/commons/6/6f/Logo_of_Twitter.svg>;
     foaf:homepage <https://x.com/> .
 
 
