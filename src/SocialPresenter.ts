@@ -28,7 +28,8 @@ export function presentSocial(
 ): SocialPresentation {
   
   function nameForAccount (subject):string {
-    const acIcon = store.any(subject, ns.foaf('name')) // on the account itself?
+    const acIcon = store.any(subject, ns.foaf('name')) ||
+                   store.any(subject, ns.rdfs('label')) // on the account itself?
     if (acIcon) return acIcon.value;
     const classes = store.each(subject, ns.rdf('type')) as NamedNode[]
     for (const k of classes) {
@@ -59,7 +60,7 @@ export function presentSocial(
     const acHomepage = store.any(subject, ns.foaf('homepage')) // on the account itself?
     if (acHomepage) return acHomepage.value;
     const id = store.anyJS(subject, ns.foaf('id')) // @@ account id 
-    if (!id) return null
+    if (!id) return "No id?"
 
     const classes = store.each(subject, ns.rdf('type'))
     for (const k of classes) {
@@ -68,7 +69,7 @@ export function presentSocial(
         return userProfilePrefix.value + id ;
       }
     }
-    return null
+    return "no userProfilePrefix?"
   }
 
   function accountAsObject (ac) {
@@ -82,6 +83,7 @@ export function presentSocial(
   loadProfileForm(store) // get ontology info
 
   const accountThings: Node[] = store.anyJS(subject, ns.foaf('account')) // load the collection
+  if (!accountThings) return { accounts: []} // could have been undefined
   console.log('Social: accounts', accountThings)
   const accounts: Account[] = accountThings.map(ac => accountAsObject(ac))
 

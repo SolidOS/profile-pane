@@ -411,14 +411,14 @@ WHERE
 
 ########### Social Media - other accounts
 #
-# Twitter, Linked In, Orkid, Mastodon, Bluesky, Instagram, Facebook,
+# Twitter, Linked In, Orkid, Mastodon, Matrix, Bluesky, Instagram, Facebook, Github,
 # Snapchat, TikTok, etc
 
 :SocialsPrompt a ui:Heading; ui:contents  "Social Media etc?" .
 :SocialsPrompt a ui:Comment; ui:contents  "Link to accounts in social media sites, etc" .
 
 :SocialsForm a ui:Multiple;
-    ui:label "Social Media etc";
+    ui:label "online account";
     ui:property foaf:account;
     ui:ordered true; # Allow user to order occounts most important first.
     ui:part :AccountsForm.
@@ -434,9 +434,11 @@ WHERE
   :AccountIdField a ui:Options; ui:dependingOn rdf:type; ui:case
      [ ui:for :BlueSkyAccount; ui:use :BlueSkyIdField ],
      [ ui:for :FacebookAccount; ui:use :FacebookIdField ],
+     [ ui:for :GithubAccount; ui:use :GithubIdField ],
      [ ui:for :InstagramAccount; ui:use :InstagramIdField ],
      [ ui:for :LinkedInAccount; ui:use :LinkedInIdField ],
      [ ui:for :MastodonAccount; ui:use :MastodonIdField ],
+     [ ui:for :MatrixAccount; ui:use :MatrixIdField ],
      [ ui:for :RedditAccount; ui:use :RedditIdField ],
      [ ui:for :SnapchatAccount; ui:use :SnapchatIdField ],
      [ ui:for :TiktokAccount; ui:use :TiktokIdField ],
@@ -447,7 +449,7 @@ WHERE
       a ui:SingleLineTextField ;
       ui:label "Bluesky Id";
       ui:maxLength "200" ;
-      ui:property foaf:id ; # @@ check
+      ui:property foaf:id ; 
       ui:pattern "@[a-z0-9A-Z_-](.[a-z0-9A-Z_-])*";  # @@
       ui:size    40 .
 
@@ -455,7 +457,15 @@ WHERE
       a ui:SingleLineTextField ;
       ui:label "Facebook Id";
       ui:maxLength "200" ;
-      ui:property foaf:id ; # @@ check
+      ui:property foaf:id ; 
+      ui:pattern "[a-z0-9A-Z_-]*";  # @@
+      ui:size    40 .
+
+  :GithubIdField
+      a ui:SingleLineTextField ;
+      ui:label "Github Id";
+      ui:maxLength "200" ;
+      ui:property foaf:id ; 
       ui:pattern "[a-z0-9A-Z_-]*";  # @@
       ui:size    40 .
 
@@ -463,7 +473,7 @@ WHERE
       a ui:SingleLineTextField ;
       ui:label "Instagram Id";
       ui:maxLength "200" ;
-      ui:property foaf:id ; # @@ check
+      ui:property foaf:id ; 
       ui:pattern "[a-z0-9A-Z_-]*";  # @@
       ui:size    40 .
 
@@ -471,7 +481,7 @@ WHERE
       a ui:SingleLineTextField ;
       ui:label "Linked In Id";
       ui:maxLength "200" ;
-      ui:property foaf:id ; # @@ check
+      ui:property foaf:id ; 
       ui:pattern "[a-z0-9A-Z_-]*(.[a-z0-9A-Z_-])*";  # @@
       ui:size    40 .
 
@@ -479,7 +489,15 @@ WHERE
       a ui:SingleLineTextField ;
       ui:label "Mastodon (Activity Pub) Id";
       ui:maxLength "200" ;
-      ui:property foaf:id ; # @@ check
+      ui:property foaf:id ; 
+      ui:pattern "@[a-z0-9A-Z_-]*(.[a-z0-9A-Z_-])*";  # @@
+      ui:size    40 .
+
+  :MatrixIdField
+      a ui:SingleLineTextField ;
+      ui:label "Matrix Username";
+      ui:maxLength "200" ;
+      ui:property foaf:id ; 
       ui:pattern "@[a-z0-9A-Z_-]*(.[a-z0-9A-Z_-])*";  # @@
       ui:size    40 .
 
@@ -487,7 +505,7 @@ WHERE
       a ui:SingleLineTextField ;
       ui:label "Reddit Id";
       ui:maxLength "200" ;
-      ui:property foaf:id ; # @@ check
+      ui:property foaf:id ; 
       ui:pattern "[a-z0-9A-Z_-]*";  # @@
       ui:size    40 .
 
@@ -495,7 +513,7 @@ WHERE
       a ui:SingleLineTextField ;
       ui:label "Snapchat Id";
       ui:maxLength "200" ;
-      ui:property foaf:id ; # @@ check
+      ui:property foaf:id ; 
       ui:pattern "@[a-z0-9A-Z_-]*";  # @@
       ui:size    40 .
 
@@ -503,7 +521,7 @@ WHERE
       a ui:SingleLineTextField ;
       ui:label "Tiktok Id";
       ui:maxLength "200" ;
-      ui:property foaf:id ; # @@ check
+      ui:property foaf:id ; 
       ui:pattern "@[a-z0-9A-Z_-]*";  # @@
       ui:size    40 .
 
@@ -511,20 +529,27 @@ WHERE
       a ui:SingleLineTextField ;
       ui:label "Twitter Id";
       ui:maxLength "200" ;
-      ui:property foaf:id ; # @@ check
+      ui:property foaf:id ; 
       ui:pattern "@[a-z0-9A-Z_-]*";  # @@
       ui:size    40 .
 
 # an unknown SN account needs more info
 
-  :OtherIdForm a ui:Group; ui:weight 0; ui:parts ( :OtherIdField :OtherIconField ).
+  :OtherIdForm a ui:Group; ui:weight 0; ui:parts ( :OtherIdField :OtherIconField :OtherLabelield ).
 
   :OtherIdField
       a ui:NamedNodeURIField ;
       ui:label "URL of account to link to";
       ui:maxLength "200" ;
-      ui:property foaf:homepage ; # @@ check
+      ui:property foaf:homepage ; 
       ui:size    60 .
+
+  :OtherLabelield
+      a ui:SingleLineTextField ;
+      ui:label "Label";
+      ui:maxLength "200" ;
+      ui:property rdfs:label ; 
+      ui:size    40 .
 
   :OtherIconField
       a ui:NamedNodeURIField ;
@@ -535,19 +560,18 @@ WHERE
 
 
 
-
-
 ##### Ontology of Accounts
 
 foaf:Account a rdfs:Class;
     rdfs:label "Online Account Provider";
-    owl:oneOf ( :BlueSkyAccount :FacebookAccount :InstagramAccount :MastodonAccount 
+    owl:disjointUnionOf ( :BlueSkyAccount :FacebookAccount :GithubAccount :InstagramAccount
+    :LinkedInAccount :MastodonAccount :MatrixAccount 
     :RedditAccount :SnapchatAccount :TiktokAccount  :TwitterAccount :OtherAccount) .
 
 :BlueSkyAccount rdfs:subClassOf foaf:Account ;
     rdfs:label "Bluesky";
     foaf:userProfilePrefix "https://bsky.app/profile/";
-    foaf:icon <https://upload.wikimedia.org/wikipedia/commons/b/b9/2023_Facebook_icon.svg>;
+    foaf:icon <https://upload.wikimedia.org/wikipedia/commons/7/7a/Bluesky_Logo.svg>;
     foaf:homepage <https://bsky.app/> .
 
 :FacebookAccount rdfs:subClassOf foaf:Account ;
@@ -555,6 +579,12 @@ foaf:Account a rdfs:Class;
     foaf:userProfilePrefix "https://www.facebook.com/";
     foaf:icon <https://upload.wikimedia.org/wikipedia/commons/b/b9/2023_Facebook_icon.svg>;
     foaf:homepage <https://www.facebook.com/> .
+
+:GithubAccount rdfs:subClassOf foaf:Account ;
+    rdfs:label "Github";
+    foaf:userProfilePrefix "https://www.github.com/";
+    foaf:icon <https://upload.wikimedia.org/wikipedia/commons/9/91/Octicons-mark-github.svg>;
+    foaf:homepage <https://github.com/> .
 
 :InstagramAccount rdfs:subClassOf foaf:Account ;
     rdfs:label "Instagram";
@@ -570,8 +600,14 @@ foaf:Account a rdfs:Class;
 
 :MastodonAccount rdfs:subClassOf foaf:Account ;
     rdfs:label "Mastodon" ;
-    foaf:icon <hhttps://upload.wikimedia.org/wikipedia/commons/d/d5/Mastodon_logotype_%28simple%29_new_hue.svg>;
-    foaf:homepage <https://x.com/> .
+    foaf:icon <https://upload.wikimedia.org/wikipedia/commons/d/d5/Mastodon_logotype_%28simple%29_new_hue.svg>;
+    foaf:homepage <https://joinmastodon.org/> .
+
+:MatrixAccount rdfs:subClassOf foaf:Account ;
+    rdfs:label "Matrix" ;
+    foaf:icon <https://upload.wikimedia.org/wikipedia/commons/7/7c/Matrix_icon.svg>;
+    foaf:userProfilePrefix "https://matrix.to/";
+    foaf:homepage <https://matrix.org/> .
 
 :MediumAccount rdfs:subClassOf foaf:Account ;
     rdfs:label "Medium";
@@ -584,6 +620,12 @@ foaf:Account a rdfs:Class;
     foaf:userProfilePrefix "https://www.linkedin.com/";
     foaf:icon <https://upload.wikimedia.org/wikipedia/commons/b/b9/2023_Facebook_icon.svg>;
     foaf:homepage <https://linkedin.com/> .
+
+:PinterestAccount rdfs:subClassOf foaf:Account ;
+    rdfs:label "Pinterest";
+    foaf:userProfilePrefix "https://pinterest.com/";
+    foaf:icon <https://upload.wikimedia.org/wikipedia/commons/1/1e/The_reddit_2023_mini_logo.jpg>;
+    foaf:homepage <https://pinterest.com/> .
 
 :RedditAccount rdfs:subClassOf foaf:Account ;
     rdfs:label "Reddit";
@@ -612,9 +654,9 @@ foaf:Account a rdfs:Class;
 
 
 :OtherAccount rdfs:subClassOf foaf:Account ;
-    rdfs:label "Other" ;
-    foaf:icon <https://upload.wikimedia.org/wikipedia/en/6/6f/Twitter_Logo_2021.svg>;
-    foaf:homepage <https://x.com/> .
+    rdfs:label "Other" .
+   # foaf:icon <https://upload.wikimedia.org/wikipedia/en/6/6f/Twitter_Logo_2021.svg>;
+   # foaf:homepage <https://x.com/> .
 
 # ends
 
