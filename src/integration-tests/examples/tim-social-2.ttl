@@ -3,7 +3,7 @@
              @prefix : <#> .
     @prefix Ber: <https://www.w3.org/People/Berners-Lee/> .
     @prefix foaf: <http://xmlns.com/foaf/0.1/> .
-    @prefix prof: <https://solidos.github.io/solid-panes/dashboard/profileStyle.ttl#> .
+    @prefix prof: <https://solidos.github.io/profile-pane/src/ontology/socialMedia.ttl#> .
     @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
     
     :id1729675527480     a prof:BlueSkyAccount;

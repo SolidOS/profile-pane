@@ -1,4 +1,4 @@
-import pane from "../index";
+pbcimport pane from "../index";
 import { parse } from "rdflib";
 import { store } from "solid-logic";
 import { findByTestId } from "@testing-library/dom";

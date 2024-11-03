@@ -55,7 +55,7 @@
 @prefix skill: <http://data.europa.eu/esco/skill/>.
 @prefix tim: </>.
 @prefix ww: <https://www.cern.ch/>.
-@prefix prof: <https://solidos.github.io/solid-panes/dashboard/profileStyle.ttl#>.
+@prefix soc: <https://solidos.github.io/profile-pane/src/ontology/socialMedia.ttl#>.
 @prefix n6: <https://>.
 @prefix c1: <https://solidos.solidcommunity.net/profile/card#>.
 
@@ -72,33 +72,33 @@
 
 
 
-:id1729675527480 a prof:BlueSkyAccount; foaf:id "timbl.bsky.social".
+:id1729675527480 a soc:BlueSkyAccount; foaf:id "timbl.bsky.social".
 
-:id1729912807298 a prof:FacebookAccount; foaf:id "tim.bernerslee.9".
+:id1729912807298 a soc:FacebookAccount; foaf:id "tim.bernerslee.9".
 
-:id1729912986863 a prof:InstagramAccount; foaf:id "timblee".
+:id1729912986863 a soc:InstagramAccount; foaf:id "timblee".
 
-:id1730055928507 a prof:MastodonAccount; foaf:id "@timbl@w3c.social".
+:id1730055928507 a soc:MastodonAccount; foaf:id "@timbl@w3c.social".
 
-:id1730056067040 a prof:RedditAccount.
+:id1730056067040 a soc:RedditAccount.
 
-:id1730056125033 a prof:RedditAccount; foaf:id "timbl".
+:id1730056125033 a soc:RedditAccount; foaf:id "timbl".
 
-:id1730056175230 a prof:TwitterAccount; foaf:id "@timberners_lee".
+:id1730056175230 a soc:TwitterAccount; foaf:id "@timberners_lee".
 
 :id1730056248989
-    a prof:OtherAccount;
+    a soc:OtherAccount;
     rdfs:label "My homepage at W3C";
     foaf:homepage Ber:;
     foaf:icon <https://www.w3.org/assets/logos/w3c/w3c-bars.svg>.
-:id1730058497607 a prof:SnapchatAccount.
+:id1730058497607 a soc:SnapchatAccount.
 
-:id1730059685809 a prof:TiktokAccount.
+:id1730059685809 a soc:TiktokAccount.
 
-:id1730387315524 a prof:GithubAccount; foaf:id "timbl".
+:id1730387315524 a soc:GithubAccount; foaf:id "timbl".
 
 :id1730387353050
-a prof:MatrixAccount; foaf:id " @timbl-54d26c98db8155e6700f7312:gitter.im".
+a soc:MatrixAccount; foaf:id " @timbl-54d26c98db8155e6700f7312:gitter.im".
 :me .
 
 

@@ -1,4 +1,4 @@
-export const profileFormText = `
+export const profileForm= `
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>.
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
 @prefix foaf: <http://xmlns.com/foaf/0.1/>.
@@ -13,10 +13,17 @@ export const profileFormText = `
 @prefix wd: <http://www.wikidata.org/entity/>.
 @prefix wdt: <http://www.wikidata.org/prop/direct/>.
 
-@prefix : <#>.
+@prefix : <https://solidos.github.io/profile-pane/src/ontology/profileForm.ttl#>.
+@prefix soc: <https://solidos.github.io/profile-pane/src/ontology/socialMedia.ttl#>.
+
+# was: https://solidos.github.io/solid-panes/dashboard/profileStyle.ttl#this
+# moved to:  https://solidos.github.io/profile-pane/src/ontology/profileForm.ttl#this
+
+
+
 
 # About forms: https://solidos.github.io/solid-ui/Documentation/forms-intro.html
-# About personal public data :
+# About personal public data:  https://www.w3.org/DesignIssues/PersonalPublic.html
 #
 
 :this
@@ -387,28 +394,6 @@ WHERE
  # Hope there are not any important ones which have three-letter codes.
  # Omitted: SERVICE wikibase:label { bd:serviceParam wikibase:language "$(languages)". }
 
-
-
-
-# ENDS
-@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>.
-@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
-@prefix foaf: <http://xmlns.com/foaf/0.1/>.
-@prefix owl: <http://www.w3.org/2002/07/owl#>.
-@prefix solid: <http://www.w3.org/ns/solid/terms#>.
-@prefix ui: <http://www.w3.org/ns/ui#>.
-@prefix schema: <http://schema.org/>.
-@prefix vcard: <http://www.w3.org/2006/vcard/ns#>.
-
-@prefix org: <http://www.w3.org/ns/org#>.
-@prefix esco: <http://data.europa.eu/esco/model#>.
-@prefix wd: <http://www.wikidata.org/entity/>.
-@prefix wdt: <http://www.wikidata.org/prop/direct/>.
-
-@prefix : <#>.
-
-
-
 ########### Social Media - other accounts
 #
 # Twitter, Linked In, Orkid, Mastodon, Matrix, Bluesky, Instagram, Facebook, Github,
@@ -560,7 +545,34 @@ WHERE
 
 
 
-##### Ontology of Accounts
+
+
+# ENDS
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+@prefix foaf: <http://xmlns.com/foaf/0.1/>.
+@prefix owl: <http://www.w3.org/2002/07/owl#>.
+@prefix solid: <http://www.w3.org/ns/solid/terms#>.
+@prefix ui: <http://www.w3.org/ns/ui#>.
+@prefix schema: <http://schema.org/>.
+@prefix vcard: <http://www.w3.org/2006/vcard/ns#>.
+
+@prefix org: <http://www.w3.org/ns/org#>.
+@prefix esco: <http://data.europa.eu/esco/model#>.
+@prefix wd: <http://www.wikidata.org/entity/>.
+@prefix wdt: <http://www.wikidata.org/prop/direct/>.
+
+@prefix : <https://solidos.github.io/profile-pane/src/ontology/socialMedia.ttl#>.
+@prefix soc: <https://solidos.github.io/profile-pane/src/ontology/socialMedia.ttl#>.
+
+
+
+# was: https://solidos.github.io/solid-panes/dashboard/profileStyle.ttl#this
+# moved to:  https://solidos.github.io/profile-pane/src/ontology/profileForm.ttl#this
+#  and        https://solidos.github.io/profile-pane/src/ontology/socialMedia.ttl
+
+
+##### Ontology of Online Accounts
 
 foaf:Account a rdfs:Class;
     rdfs:label "Online Account Provider";

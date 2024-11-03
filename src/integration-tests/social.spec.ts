@@ -5,10 +5,12 @@ import { findByTestId } from "@testing-library/dom";
 import { context, doc, subject } from "./setup";
 
 
-import exampleProfile from './examples/testingsolidos.ttl'
+// import exampleProfile from './examples/testingsolidos.ttl'
 
 
 // This was at testingsolidos.solidcommunity.net
+
+const exampleProfile = ``;
 
 // console.log('exampleProfile', exampleProfile)
 `
