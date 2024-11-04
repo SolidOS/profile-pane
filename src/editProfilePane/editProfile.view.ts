@@ -12,8 +12,7 @@ import { PaneDefinition } from 'pane-registry'
 import { NamedNode, parse, Store, sym } from 'rdflib'
 import { icons, login, ns, style, widgets } from 'solid-ui'
 import { paneDiv } from './profile.dom'
-// import profileFormText from './profileFormText.ttl'
-import { profileFormText } from './wrapped-profileFormText'
+import { profileForm } from './wrapped-profileFormText'
 
 const highlightColor = style.highlightColor || '#7C4DFF'
 
@@ -40,7 +39,7 @@ const editProfileView: PaneDefinition = {
       const preferencesFormDoc = preferencesForm.doc()
       if (!store.holds(undefined, undefined, undefined, preferencesFormDoc)) {
         // If not loaded already
-        parse(profileFormText, store, preferencesFormDoc.uri, 'text/turtle', () => null) // Load form directly
+        parse(profileForm, store, preferencesFormDoc.uri, 'text/turtle', () => null) // Load form directly
       }
 
       widgets.appendForm(

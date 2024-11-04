@@ -1,6 +1,6 @@
 import { LiveStore, NamedNode, Literal, Namespace, Collection, Node, parse, Store } from "rdflib";
 import { ns, utils, icons } from "solid-ui";
-import { profileFormText } from './editProfilePane/wrapped-profileFormText'
+import { profileForm } from './editProfilePane/wrapped-profileFormText'
 
 const DEFAULT_ICON_URI = icons.iconBase + 'noun_10636_grey.svg' // grey disc
 
@@ -10,7 +10,7 @@ export function loadProfileForm (store: LiveStore) {
   const preferencesFormDoc = preferencesForm.doc()
   if (!store.holds(undefined, undefined, undefined, preferencesFormDoc)) {
     // If not loaded already
-    parse(profileFormText, store, preferencesFormDoc.uri, 'text/turtle', () => null) // Load form directly
+    parse(profileForm, store, preferencesFormDoc.uri, 'text/turtle', () => null) // Load form directly
   }
 }
 export interface Account {
@@ -46,11 +46,13 @@ export function presentSocial(
     const acIcon = store.any(subject, ns.foaf('icon')) // on the account itself?
     if (acIcon) return acIcon.value;
     const classes = store.each(subject, ns.rdf('type'))
-    console.log('@@ classes[0].termType ', classes[0].termType)
-    for (const k of (classes as Node[])) {
-      const classIcon: Node | null  = store.any(k as any, ns.foaf('icon'))
-      if (classIcon !==  null)  {
-        return classIcon.value;
+    if (classes.length > 0) {
+      console.log('@@ classes[0].termType 2 ', classes[0].termType)
+      for (const k of (classes as Node[])) {
+        const classIcon: Node | null  = store.any(k as any, ns.foaf('icon'))
+        if (classIcon !==  null)  {
+          return classIcon.value;
+        }
       }
     }
     return DEFAULT_ICON_URI
@@ -84,8 +86,10 @@ export function presentSocial(
 
   const accountThings: Node[] = store.anyJS(subject, ns.foaf('account')) // load the collection
   if (!accountThings) return { accounts: []} // could have been undefined
-  console.log('Social: accounts', accountThings)
+  console.log('Social: accountThings', accountThings)
   const accounts: Account[] = accountThings.map(ac => accountAsObject(ac))
+  console.log('Social: account objects', accounts)
+
 
   return { accounts }
 }

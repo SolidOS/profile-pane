@@ -1,4 +1,5 @@
 export const profileForm= `
+@prefix os: <http://www.w3.org/2000/10/swap/os#> .
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>.
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
 @prefix foaf: <http://xmlns.com/foaf/0.1/>.
@@ -417,18 +418,18 @@ WHERE
 :AccountIdField a ui:Options . 
 
   :AccountIdField a ui:Options; ui:dependingOn rdf:type; ui:case
-     [ ui:for :BlueSkyAccount; ui:use :BlueSkyIdField ],
-     [ ui:for :FacebookAccount; ui:use :FacebookIdField ],
-     [ ui:for :GithubAccount; ui:use :GithubIdField ],
-     [ ui:for :InstagramAccount; ui:use :InstagramIdField ],
-     [ ui:for :LinkedInAccount; ui:use :LinkedInIdField ],
-     [ ui:for :MastodonAccount; ui:use :MastodonIdField ],
-     [ ui:for :MatrixAccount; ui:use :MatrixIdField ],
-     [ ui:for :RedditAccount; ui:use :RedditIdField ],
-     [ ui:for :SnapchatAccount; ui:use :SnapchatIdField ],
-     [ ui:for :TiktokAccount; ui:use :TiktokIdField ],
-     [ ui:for :TwitterAccount; ui:use :TwitterIdField ],
-     [ ui:for :OtherAccount; ui:use :OtherIdForm  ] .
+     [ ui:for soc:BlueSkyAccount; ui:use :BlueSkyIdField ],
+     [ ui:for soc:FacebookAccount; ui:use :FacebookIdField ],
+     [ ui:for soc:GithubAccount; ui:use :GithubIdField ],
+     [ ui:for soc:InstagramAccount; ui:use :InstagramIdField ],
+     [ ui:for soc:LinkedInAccount; ui:use :LinkedInIdField ],
+     [ ui:for soc:MastodonAccount; ui:use :MastodonIdField ],
+     [ ui:for soc:MatrixAccount; ui:use :MatrixIdField ],
+     [ ui:for soc:RedditAccount; ui:use :RedditIdField ],
+     [ ui:for soc:SnapchatAccount; ui:use :SnapchatIdField ],
+     [ ui:for soc:TiktokAccount; ui:use :TiktokIdField ],
+     [ ui:for soc:TwitterAccount; ui:use :TwitterIdField ],
+     [ ui:for soc:OtherAccount; ui:use :OtherIdForm  ] .
 
   :BlueSkyIdField
       a ui:SingleLineTextField ;
@@ -564,6 +565,8 @@ WHERE
 
 @prefix : <https://solidos.github.io/profile-pane/src/ontology/socialMedia.ttl#>.
 @prefix soc: <https://solidos.github.io/profile-pane/src/ontology/socialMedia.ttl#>.
+
+# was: https://solidos.github.io/solid-panes/dashboard/profileStyle.ttl#  <-- change old data
 
 
 

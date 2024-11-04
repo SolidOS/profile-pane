@@ -190,7 +190,7 @@ vcard:country-name "USA"; vcard:locality "Boston"; vcard:region "MA".
 :id1650058571308 org:member :me.
 
 :id1701074722576 a vcard:Work; vcard:value <mailto:Cos@timbl.com>.
-
+g
 :id1701074797745 a vcard:Work; vcard:value <tel:+447403372402>.
 
 :id1729675527480 a soc:BlueSkyAccount; foaf:id "timbl.bsky.social".
@@ -788,11 +788,7 @@ a soc:MatrixAccount; foaf:id " @timbl-54d26c98db8155e6700f7312:gitter.im".
     foaf:account
             ( :id1729675527480 :id1729912807298 :id1729912986863
             :id1730055928507 :id1730056125033 :id1730387315524 :id1730056175230
-            :id1730056248989 :id1730387353050 ),
-            ( :id1729675527480 :id1729912807298 :id1729912986863
-            :id1730055928507 :id1730056067040 :id1730056100390 :id1730056125033
-            :id1730056175230 :id1730056248989 :id1730058497607 :id1730059685809
-            );
+            :id1730056248989 :id1730387353050 );
     foaf:knows
         c4:me, c7:me, c36:me, c15:me, c16:me, c30:me, c23:me, c33:me, c25:me,
         c26:me, c53:me, c5:me, c27:me, c31:me, c9:me, c34:me, c10:me, c43:me,
