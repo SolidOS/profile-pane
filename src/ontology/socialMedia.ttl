@@ -100,7 +100,7 @@ foaf:Account a rdfs:Class;
 :SnapchatAccount rdfs:subClassOf foaf:Account ;
     rdfs:label "Snapchat";
     foaf:userProfilePrefix "https://www.snapchat.com/add/";
-    foaf:icon <https://upload.wikimedia.org/wikipedia/en/a/ad/Snapchat_logo.svg>;
+    foaf:icon <https://solidos.github.io/solid-ui/src/icons/social/snapchat-1.svg>;
     foaf:homepage <https://www.snapchat.com/> .
 
 :TiktokAccount rdfs:subClassOf foaf:Account ;
