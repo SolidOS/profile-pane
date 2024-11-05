@@ -48,3 +48,11 @@ npm run build
 ```
 
 The build is done by `tsc`, webpack is only used as dev server and not for production build.
+
+### Check before committing
+
+```
+npm run check
+```
+
+This does lint, build and test.
