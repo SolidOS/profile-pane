@@ -1,9 +1,10 @@
-import { LiveStore, NamedNode, Literal, Namespace, Collection, Node, parse, Store } from "rdflib";
+import { LiveStore, NamedNode, Node, parse } from "rdflib";
 import { ns, utils, icons } from "solid-ui";
 import { profileForm } from './editProfilePane/wrapped-profileFormText'
 
 const DEFAULT_ICON_URI = icons.iconBase + 'noun_10636_grey.svg' // grey disc
 
+/* eslint-disable  @typescript-eslint/no-explicit-any */
 
 export function loadProfileForm (store: LiveStore) {
   const preferencesForm = store.sym('https://solidos.github.io/profile-pane/src/ontology/profileForm.ttl#this')

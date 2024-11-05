@@ -4,14 +4,13 @@ import {
   heading,
   paddingSmall,
   textCenter,
-  textLeft, textRight,
+  textRight,
   textGray,
 } from "./baseStyles";
 import { ProfilePresentation } from "./presenter";
 import { SocialPresentation } from "./SocialPresenter";
 import { styleMap } from "lit-html/directives/style-map.js";
 import { card } from "./baseStyles";
-import { icons } from "solid-ui";
 
 
 const styles = {
@@ -65,18 +64,6 @@ function renderAccount(account) {
 function renderAccounts(accounts) {
     if (accounts.length > 0)
       return html`${renderAccount(accounts[0])}${accounts.length > 1 ? renderAccounts(accounts.slice(1)) : html``}`
-}
-
- function strToUpperCase(str) {
-  if (str && str[0] > "") {
-    const strCase = str.split(' ');
-    for (let i = 0; i < strCase.length; i++) {
-      strCase[i] = strCase[i].charAt(0).toUpperCase() +
-        strCase[i].substring(1);
-    }
-    return strCase.join(' ');
-  }
-  return '';
 }
 
 // ends
