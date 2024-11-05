@@ -78,12 +78,12 @@ describe("profile-pane", () => {
       store.removeDocument(doc);
       parse(exampleProfile, store, doc.uri);
       const result = pane.render(subject, context);
-      console.log('Pane rendered', result)
+      console.log('Pane rendered <<< ', result.innerHTML , '>>>')
       element = await findByTestId(result, "social-media");
     });
 
     it("renders the social networks", () => {
-      expect(element).toContainHTML("Folow me on");
+      expect(element).toContainHTML("Follow me on");
     });
 
     it("renders link to Facebook", () => {
