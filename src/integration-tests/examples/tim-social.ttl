@@ -72,19 +72,19 @@
 
 
 
-:id1729675527480 a soc:BlueSkyAccount; foaf:id "timbl.bsky.social".
+:id1729675527480 a soc:BlueSkyAccount; foaf:foaf:accountName "timbl.bsky.social".
 
-:id1729912807298 a soc:FacebookAccount; foaf:id "tim.bernerslee.9".
+:id1729912807298 a soc:FacebookAccount; foaf:foaf:accountName "tim.bernerslee.9".
 
-:id1729912986863 a soc:InstagramAccount; foaf:id "timblee".
+:id1729912986863 a soc:InstagramAccount; foaf:foaf:accountName "timblee".
 
-:id1730055928507 a soc:MastodonAccount; foaf:id "@timbl@w3c.social".
+:id1730055928507 a soc:MastodonAccount; foaf:foaf:accountName "@timbl@w3c.social".
 
 :id1730056067040 a soc:RedditAccount.
 
-:id1730056125033 a soc:RedditAccount; foaf:id "timbl".
+:id1730056125033 a soc:RedditAccount; foaf:foaf:accountName "timbl".
 
-:id1730056175230 a soc:TwitterAccount; foaf:id "@timberners_lee".
+:id1730056175230 a soc:TwitterAccount; foaf:foaf:accountName "@timberners_lee".
 
 :id1730056248989
     a soc:OtherAccount;
@@ -95,10 +95,10 @@
 
 :id1730059685809 a soc:TiktokAccount.
 
-:id1730387315524 a soc:GithubAccount; foaf:id "timbl".
+:id1730387315524 a soc:GithubAccount; foaf:foaf:accountName "timbl".
 
 :id1730387353050
-a soc:MatrixAccount; foaf:id " @timbl-54d26c98db8155e6700f7312:gitter.im".
+a soc:MatrixAccount; foaf:foaf:accountName " @timbl-54d26c98db8155e6700f7312:gitter.im".
 :me .
 
 

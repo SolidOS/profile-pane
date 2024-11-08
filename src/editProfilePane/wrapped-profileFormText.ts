@@ -435,7 +435,7 @@ WHERE
       a ui:SingleLineTextField ;
       ui:label "Bluesky Id";
       ui:maxLength "200" ;
-      ui:property foaf:id ; 
+      ui:property foaf:accountName ; 
       ui:pattern "@[a-z0-9A-Z_-](.[a-z0-9A-Z_-])*";  # @@
       ui:size    40 .
 
@@ -443,7 +443,7 @@ WHERE
       a ui:SingleLineTextField ;
       ui:label "Facebook Id";
       ui:maxLength "200" ;
-      ui:property foaf:id ; 
+      ui:property foaf:accountName ; 
       ui:pattern "[a-z0-9A-Z_-]*";  # @@
       ui:size    40 .
 
@@ -451,7 +451,7 @@ WHERE
       a ui:SingleLineTextField ;
       ui:label "Github Id";
       ui:maxLength "200" ;
-      ui:property foaf:id ; 
+      ui:property foaf:accountName ; 
       ui:pattern "[a-z0-9A-Z_-]*";  # @@
       ui:size    40 .
 
@@ -459,7 +459,7 @@ WHERE
       a ui:SingleLineTextField ;
       ui:label "Instagram Id";
       ui:maxLength "200" ;
-      ui:property foaf:id ; 
+      ui:property foaf:accountName ; 
       ui:pattern "[a-z0-9A-Z_-]*";  # @@
       ui:size    40 .
 
@@ -467,7 +467,7 @@ WHERE
       a ui:SingleLineTextField ;
       ui:label "Linked In Id";
       ui:maxLength "200" ;
-      ui:property foaf:id ; 
+      ui:property foaf:accountName ; 
       ui:pattern "[a-z0-9A-Z_-]*(.[a-z0-9A-Z_-])*";  # @@
       ui:size    40 .
 
@@ -475,7 +475,7 @@ WHERE
       a ui:SingleLineTextField ;
       ui:label "Mastodon (Activity Pub) Id";
       ui:maxLength "200" ;
-      ui:property foaf:id ; 
+      ui:property foaf:accountName ; 
       ui:pattern "@[a-z0-9A-Z_-]*(.[a-z0-9A-Z_-])*";  # @@
       ui:size    40 .
 
@@ -483,7 +483,7 @@ WHERE
       a ui:SingleLineTextField ;
       ui:label "Matrix Username";
       ui:maxLength "200" ;
-      ui:property foaf:id ; 
+      ui:property foaf:accountName ; 
       ui:pattern "@[a-z0-9A-Z_-]*(.[a-z0-9A-Z_-])*";  # @@
       ui:size    40 .
 
@@ -491,7 +491,7 @@ WHERE
       a ui:SingleLineTextField ;
       ui:label "Reddit Id";
       ui:maxLength "200" ;
-      ui:property foaf:id ; 
+      ui:property foaf:accountName ; 
       ui:pattern "[a-z0-9A-Z_-]*";  # @@
       ui:size    40 .
 
@@ -499,7 +499,7 @@ WHERE
       a ui:SingleLineTextField ;
       ui:label "Snapchat Id";
       ui:maxLength "200" ;
-      ui:property foaf:id ; 
+      ui:property foaf:accountName ; 
       ui:pattern "@[a-z0-9A-Z_-]*";  # @@
       ui:size    40 .
 
@@ -507,7 +507,7 @@ WHERE
       a ui:SingleLineTextField ;
       ui:label "Tiktok Id";
       ui:maxLength "200" ;
-      ui:property foaf:id ; 
+      ui:property foaf:accountName ; 
       ui:pattern "@[a-z0-9A-Z_-]*";  # @@
       ui:size    40 .
 
@@ -515,7 +515,7 @@ WHERE
       a ui:SingleLineTextField ;
       ui:label "Twitter Id";
       ui:maxLength "200" ;
-      ui:property foaf:id ; 
+      ui:property foaf:accountName ; 
       ui:pattern "@[a-z0-9A-Z_-]*";  # @@
       ui:size    40 .
 

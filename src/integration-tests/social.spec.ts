@@ -1,4 +1,4 @@
-import pane from "../index";
+oaf:accountNameimport pane from "../index";
 import { parse } from "rdflib";
 import { store } from "solid-logic";
 import { findByTestId } from "@testing-library/dom";
@@ -19,24 +19,24 @@ const exampleProfile = `#Processed by Id
     @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
     
     :id1729675527480     a prof:BlueSkyAccount;
-         foaf:id "timbl.bsky.social" .
+         foaf:accountName "timbl.bsky.social" .
     
     :id1729912807298     a prof:FacebookAccount;
-         foaf:id "tim.bernerslee.9" .
+         foaf:accountName "tim.bernerslee.9" .
     
     :id1729912986863     a prof:InstagramAccount;
-         foaf:id "timblee" .
+         foaf:accountName "timblee" .
     
     :id1730055928507     a prof:MastodonAccount;
-         foaf:id "@timbl@w3c.social" .
+         foaf:accountName "@timbl@w3c.social" .
     
     :id1730056067040     a prof:RedditAccount .
     
     :id1730056125033     a prof:RedditAccount;
-         foaf:id "timbl" .
+         foaf:accountName "timbl" .
     
     :id1730056175230     a prof:TwitterAccount;
-         foaf:id "@timberners_lee" .
+         foaf:accountName "@timberners_lee" .
     
     :id1730056248989     a prof:OtherAccount;
          rdfs:label "My homepage at W3C";
@@ -48,10 +48,10 @@ const exampleProfile = `#Processed by Id
     :id1730059685809     a prof:TiktokAccount .
     
     :id1730387315524     a prof:GithubAccount;
-         foaf:id "timbl" .
+         foaf:accountName "timbl" .
     
     :id1730387353050     a prof:MatrixAccount;
-         foaf:id " @timbl-54d26c98db8155e6700f7312:gitter.im" .
+         foaf:accountName " @timbl-54d26c98db8155e6700f7312:gitter.im" .
     
     :me     foaf:account  (
         :id1729675527480
