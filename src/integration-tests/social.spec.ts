@@ -1,4 +1,4 @@
-oaf:accountNameimport pane from "../index";
+import pane from "../index";
 import { parse } from "rdflib";
 import { store } from "solid-logic";
 import { findByTestId } from "@testing-library/dom";
