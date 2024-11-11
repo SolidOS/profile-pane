@@ -1,6 +1,6 @@
 import pane from "../index";
 import { parse } from "rdflib";
-import { store } from "solid-logic";
+import { store, authn } from "solid-logic";
 import { findByTestId } from "@testing-library/dom";
 import { context, doc, subject } from "./setup";
 
@@ -71,6 +71,8 @@ const exampleProfile = `#Processed by Id
  // console.log('exampleProfile', exampleProfile)
 
  const editorPane = pane.editor
+ const user = authn.currentUser()
+ console.log('Logged in user: ', user)
 
 describe("edit-profile-pane", () => {
   let element;
@@ -80,12 +82,13 @@ describe("edit-profile-pane", () => {
       store.removeDocument(doc);
       parse(exampleProfile, store, doc.uri);
       const result = editorPane.render(subject, context);
+      console.log('editorPane name ', editorPane.name )
       console.log('editorPane rendered <<< ', result.innerHTML , '>>>')
-      element = await findByTestId(result, "social-media");
+      element = await findByTestId(result, "profile-editor");
     });
 
     it("renders the social networks", () => {
-      expect(element).toContainHTML("Follow me on");
+      expect(element).toContainHTML("Social Networks");
     });
 
     it("renders link to Facebook", () => {

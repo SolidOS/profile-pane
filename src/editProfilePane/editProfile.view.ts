@@ -23,7 +23,7 @@ const editProfileView: PaneDefinition = {
 
   name: 'editProfile',
 
-  label: () => null,
+  label: () => null, // don't use this in the normal solid-panes dispatching
 
   render: function (subject, context) {
     const dom = context.dom
@@ -41,7 +41,8 @@ const editProfileView: PaneDefinition = {
         // If not loaded already
         parse(profileForm, store, preferencesFormDoc.uri, 'text/turtle', () => null) // Load form directly
       }
-
+      div.setAttribute('data-testid', 'profile-editor')
+      // @@ div.append?
       widgets.appendForm(
         dom,
         div,
