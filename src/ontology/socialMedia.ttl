@@ -8,9 +8,6 @@
 @prefix vcard: <http://www.w3.org/2006/vcard/ns#>.
 
 @prefix org: <http://www.w3.org/ns/org#>.
-@prefix esco: <http://data.europa.eu/esco/model#>.
-@prefix wd: <http://www.wikidata.org/entity/>.
-@prefix wdt: <http://www.wikidata.org/prop/direct/>.
 
 @prefix : <https://solidos.github.io/profile-pane/src/ontology/socialMedia.ttl#>.
 @prefix soc: <https://solidos.github.io/profile-pane/src/ontology/socialMedia.ttl#>.
@@ -29,7 +26,7 @@
 foaf:Account a rdfs:Class;
     rdfs:label "Online Account Provider";
     owl:disjointUnionOf ( :BlueSkyAccount :FacebookAccount :GithubAccount :InstagramAccount
-    :LinkedInAccount :MastodonAccount :MatrixAccount 
+    :LinkedInAccount :MastodonAccount :MatrixAccount :MediumAccount :NostrAccount :PinterestAccount
     :RedditAccount :SnapchatAccount :TiktokAccount  :TwitterAccount :OtherAccount) .
 
 :BlueSkyAccount rdfs:subClassOf foaf:Account ;
@@ -53,13 +50,13 @@ foaf:Account a rdfs:Class;
 :InstagramAccount rdfs:subClassOf foaf:Account ;
     rdfs:label "Instagram";
     foaf:userProfilePrefix "https://www.instagram.com/";
-    foaf:icon <https://solidos.github.io/solid-ui/src/icons/social/;
+    foaf:icon <https://solidos.github.io/solid-ui/src/icons/social/instagram-2016-5.svg>;
     foaf:homepage <https://www.instagram.com/> .
 
 :LinkedInAccount rdfs:subClassOf foaf:Account ;
     rdfs:label "Linked In";
     foaf:userProfilePrefix "https://www.linkedin.com/";
-    foaf:icon <https://solidos.github.io/solid-ui/src/icons/social/>;
+    foaf:icon <https://solidos.github.io/solid-ui/src/icons/social/linkedin-icon.svg>;
     foaf:homepage <https://linkedin.com/> .
 
 :MastodonAccount rdfs:subClassOf foaf:Account ;

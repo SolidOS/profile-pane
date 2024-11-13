@@ -62,9 +62,7 @@ export function presentSocial(
   function homepageForAccount (subject):string {
     const acHomepage = store.any(subject, ns.foaf('homepage')) // on the account itself?
     if (acHomepage) return acHomepage.value;
-    const id = store.anyJS(subject, ns.foaf('foaf:accountName')) // @@ account id 
-    if (!id) return "No id?"
-
+    const id = store.anyJS(subject, ns.foaf('accountName'), null, subject.doc()) || 'No_account_Name' 
     const classes = store.each(subject, ns.rdf('type'))
     for (const k of classes) {
       const userProfilePrefix: Node | null = store.any(k as any, ns.foaf('userProfilePrefix'))
