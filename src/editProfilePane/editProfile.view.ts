@@ -26,6 +26,7 @@ const editProfileView: PaneDefinition = {
   label: () => null, // don't use this in the normal solid-panes dispatching
 
   render: function (subject, context) {
+    console.log('@@@ render edit profile pane:  subject, context', subject, context)
     const dom = context.dom
     const store = context.session.store as Store
 
@@ -55,6 +56,7 @@ const editProfileView: PaneDefinition = {
     } // renderProfileForm
 
     const div = dom.createElement('div')
+    div.setAttribute('data-testid', 'profile-editor')
     let editableProfile: NamedNode | null
     div.setAttribute('style', `border: 0.3em solid ${highlightColor}; border-radius: 0.5em; padding: 0.7em; margin-top:0.7em;`)
 
@@ -151,7 +153,6 @@ const editProfileView: PaneDefinition = {
           noun: 'community'
         })
 
-        // heading('The style of your public profile') headings are in form now
         renderProfileForm(main, me)
 
         heading('Thank you for filling your profile.')

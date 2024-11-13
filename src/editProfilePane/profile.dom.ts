@@ -2,7 +2,7 @@ import { DataBrowserContext } from 'pane-registry'
 import { NamedNode } from 'rdflib'
 
 export function paneDiv (
-  context: DataBrowserContext,
+  context: DataBrowserContext, 
   subject: NamedNode,
   paneName: string
 ): HTMLElement {
@@ -13,6 +13,7 @@ export function paneDiv (
     return warning
   }
   const viewContainer = view.render(subject, context)
+  console.log('@@ viewContainer: ', viewContainer)
   viewContainer.setAttribute(
     'style', 'border: 0.3em solid #444; border-radius: 0.5em'
   )

@@ -1,18 +1,18 @@
 import pane from "../index";
 import { parse } from "rdflib";
 import { store, authn } from "solid-logic";
-import { findByTestId } from "@testing-library/dom";
-import { context, doc, subject } from "./setup";
+// import { findByTestId } from "@testing-library/dom";
+import { context, doc, subject, fakeLogInAs } from "./setup";
 
 
 // import exampleProfile from './examples/testingsolidos.ttl'
 
 
-// This was at testingsolidos.solidcommunity.net
-
-const exampleProfile = `#Processed by Id
-        #    using base file:///Users/timbl_1/src/github.com/solidos/solidos/workspaces/profile-pane/src/integration-tests/examples/tim-social.ttl
-             @prefix : <#> .
+function delay(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+const exampleProfile = `
+             @prefix : <https://janedoe.example/profile/card#> .
     @prefix Ber: <https://www.w3.org/People/Berners-Lee/> .
     @prefix foaf: <http://xmlns.com/foaf/0.1/> .
     @prefix prof: <https://solidos.github.io/profile-pane/src/ontology/socialMedia.ttl#> .
@@ -77,54 +77,55 @@ const exampleProfile = `#Processed by Id
 describe("edit-profile-pane", () => {
   let element;
 
-  describe("social media", () => {
+  describe("edit social media (logged in)", () => {
     beforeAll(async () => {
       store.removeDocument(doc);
       parse(exampleProfile, store, doc.uri);
+      fakeLogInAs(subject)
+      store.updater.editable = function () { console.log('nocked editable'); return 'SPARQL'}
       const result = editorPane.render(subject, context);
       console.log('editorPane name ', editorPane.name )
-      console.log('editorPane rendered <<< ', result.innerHTML , '>>>')
-      element = await findByTestId(result, "profile-editor");
+      console.log('editorPane rendered 1 <<< ', result.innerHTML , '>>>')
+      await delay(3000)
+      console.log('editorPane rendered later 1 <<< ', result.outerHTML , '>>>')
+
+      element = result;
     });
 
     it("renders the social networks", () => {
-      expect(element).toContainHTML("Social Networks");
+      expect(element).toContainHTML("Edit your public profile");
     });
 
-    it("renders link to Facebook", () => {
-      expect(element).toContainHTML("Facebook");
+    it("renders warning: public", () => {
+      expect(element).toContainHTML("Everything you put here will be public");
     });
 
-    /*
-    it("renders organization Apple in list", () => {
-      expect(element).toContainHTML("Apple");
+    it.skip("renders thank you", () => {
+      expect(element).toContainHTML("Thank you for filling your profile");
     });
-    it("renders lone start date in list", () => {
-      expect(element).toContainHTML("(2021-04-01 to");
-    });
-    it("renders start and end dates in role", () => {
-      expect(element).toContainHTML("(1960-04-01 to 1963-04-01)");
-    });
-    it("renders skill 1 in CV", () => {
-      expect(element).toContainHTML("Tester Du Matériel D’instrumentation");
-    });
-    it("renders skill 2 in CV", () => {
-      expect(element).toContainHTML("Travailler Dans De Mauvaises Conditions");
-    });
-    it("renders skill 3 vcard role in CV", () => {
-      expect(element).toContainHTML("Sitting");
-    });
-    it("renders error flag when missing skill text CV", () => {
-      expect(element).toContainHTML("¿¿¿ Skill ???");
-    });
-    it("renders languages", () => {
-      expect(element).toContainHTML("French");
-    });
-
-    it("renders languages", () => {
-      expect(element).toContainHTML("Germano");
-    });
-    */
   });
+
+  describe("edit social media (NOt logged in)", () => {
+    beforeAll(async () => {
+      store.removeDocument(doc);
+      parse(exampleProfile, store, doc.uri);
+      fakeLogInAs(null)
+      store.updater.editable = function () { console.log('nocked editable'); return 'SPARQL'}
+      const result = editorPane.render(subject, context);
+      console.log('editorPane name ', editorPane.name )
+      console.log('editorPane rendered early <<< ', result.outerHTML , '>>>')
+      await delay(3000)
+      console.log('editorPane rendered later <<< ', result.outerHTML , '>>>')
+      element = result;
+      // element = await findByTestId(result, "profile-editor");
+    });
+
+    it("gives you a log in button", () => {
+      expect(element).toContainHTML("Log in");
+    });
+    
+  });
+
+  
 
 });

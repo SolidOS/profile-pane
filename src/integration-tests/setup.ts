@@ -10,13 +10,12 @@ if (this && this.session && this.session.info && this.session.info.webId && this
 
 */
 
-(window as any).$SolidTestEnvironment = {  // This affects the way the solidos stack works
-
-       username: subject.value // assume logged in
-}
-// $SolidTestEnvironment.username = "https://timbl.inrupt.net/profile/card#me",
-// "https://www.w3.org/People/Berners-Lee/card#i"
-// "https://timbl.com/profile/card#me"
+export function fakeLogInAs (subject) {
+    // eslint-disable-next-line  @typescript-eslint/no-explicit-any
+    (window as any).$SolidTestEnvironment = {  // This affects the way the solidos stack work
+        username: subject ? subject.value : null // assume logged in if not null
+ }
+ }
 
 export const context = {
     dom: document,
