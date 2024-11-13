@@ -52,7 +52,7 @@ function renderAccount(account) {
   return account.homepage && account.name && account.icon
     ? html`<div class="textButton-0-1-3" style="margin-top: 0.3em; margin-bottom: 0.3em;">
 
-        <a href="${account.homepage}" target="social"> 
+        <a href="${account.homepage}" style="text-decoration: none;" target="social"> 
                 <img style="width: 2em; height: 2em; margin: 1em; vertical-align:middle;" src="${account.icon}" alt="${account.name}"> 
 
                 <span style="font-size: 1.2rem;">${account.name}</span> 
