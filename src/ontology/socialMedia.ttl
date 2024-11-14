@@ -89,7 +89,7 @@ foaf:Account a rdfs:Class;
 
 :PinterestAccount rdfs:subClassOf foaf:Account ;
     rdfs:label "Pinterest";
-    foaf:userProfilePrefix "https://pinterest.com/";
+    foaf:userProfilePrefix "https://pin.it/";
     foaf:icon <https://solidos.github.io/solid-ui/src/icons/social/pinterest-2-1.svg>;
     foaf:homepage <https://pinterest.com/> .
 
