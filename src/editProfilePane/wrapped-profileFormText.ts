@@ -649,15 +649,15 @@ foaf:Account a rdfs:Class;
 
 :MatrixAccount rdfs:subClassOf foaf:Account ;
     rdfs:label "Matrix" ;
-    foaf:icon <https://solidos.github.io/solid-ui/src/icons/social/matrix-logo-black.svg>;
-    foaf:userProfilePrefix "https://matrix.to/";
+    foaf:icon <https://solidos.github.io/solid-ui/src/icons/social/matrix-logo-black.svg> ;
+    foaf:userProfilePrefix "https://matrix.to/#/" ;
     foaf:homepage <https://matrix.org/> .
 
 :MediumAccount rdfs:subClassOf foaf:Account ;
     rdfs:label "Medium";
-    foaf:userProfilePrefix "https://www.linkedin.com/";
+    foaf:userProfilePrefix "https://medium.com/";
     foaf:icon <https://solidos.github.io/solid-ui/src/icons/social/medium-logo-wordmark-black.svg>;
-    foaf:homepage <https://linkedin.com/> .
+    foaf:homepage <https://medium.com/> .
 
 :NostrAccount rdfs:subClassOf foaf:Account ;
     rdfs:label "Nostr";
