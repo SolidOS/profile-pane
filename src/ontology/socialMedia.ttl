@@ -81,7 +81,7 @@ foaf:Account a rdfs:Class;
     foaf:icon <https://solidos.github.io/solid-ui/src/icons/social/medium-logo-wordmark-black.svg>;
     foaf:homepage <https://linkedin.com/> .
 
-:NostrAccount rdfs:subClassOf foaf:Account ; ### FEDERATED
+:NostrAccount rdfs:subClassOf foaf:Account ;
     rdfs:label "Nostr";
     foaf:userProfilePrefix "https://primal.net/p/";
     foaf:icon <https://solidos.github.io/solid-ui/src/icons/social/nostr-icon-purple-on-white.svg>;

@@ -422,8 +422,11 @@ WHERE
      [ ui:for soc:GithubAccount; ui:use :GithubIdField ],
      [ ui:for soc:InstagramAccount; ui:use :InstagramIdField ],
      [ ui:for soc:LinkedInAccount; ui:use :LinkedInIdField ],
+     [ ui:for soc:NostrAccount; ui:use :NostrIdField ],
      [ ui:for soc:MastodonAccount; ui:use :MastodonIdField ],
      [ ui:for soc:MatrixAccount; ui:use :MatrixIdField ],
+     [ ui:for soc:MediumAccount; ui:use :MediumIdField ],
+     [ ui:for soc:PinterestAccount; ui:use :PinterestIdField ],
      [ ui:for soc:RedditAccount; ui:use :RedditIdField ],
      [ ui:for soc:SnapchatAccount; ui:use :SnapchatIdField ],
      [ ui:for soc:TiktokAccount; ui:use :TiktokIdField ],
@@ -484,6 +487,30 @@ WHERE
       ui:maxLength "200" ;
       ui:property foaf:accountName ; 
       ui:pattern "@[a-z0-9A-Z_-]*(.[a-z0-9A-Z_-])*";  # @@
+      ui:size    40 .
+
+  :MediumIdField
+      a ui:SingleLineTextField ;
+      ui:label "Medium Username";
+      ui:maxLength "200" ;
+      ui:property foaf:accountName ; 
+      ui:pattern "@[a-z0-9A-Z_-]*(.[a-z0-9A-Z_-])*";  # @@
+      ui:size    40 .
+
+  :NostrIdField
+      a ui:SingleLineTextField ;
+      ui:label "Nostr public key";
+      ui:maxLength "200" ;
+      ui:property foaf:accountName ; 
+      ui:pattern "[a-z0-9A-Z_-]*(.[a-z0-9A-Z_-])*";  # @@
+      ui:size    70 .
+
+  :PinterestIdField
+      a ui:SingleLineTextField ;
+      ui:label "Pinterest id";
+      ui:maxLength "200" ;
+      ui:property foaf:accountName ; 
+      ui:pattern "[a-z0-9A-Z_-]*";  # @@
       ui:size    40 .
 
   :RedditIdField

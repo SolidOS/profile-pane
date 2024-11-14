@@ -423,8 +423,11 @@ WHERE
      [ ui:for soc:GithubAccount; ui:use :GithubIdField ],
      [ ui:for soc:InstagramAccount; ui:use :InstagramIdField ],
      [ ui:for soc:LinkedInAccount; ui:use :LinkedInIdField ],
+     [ ui:for soc:NostrAccount; ui:use :NostrIdField ],
      [ ui:for soc:MastodonAccount; ui:use :MastodonIdField ],
      [ ui:for soc:MatrixAccount; ui:use :MatrixIdField ],
+     [ ui:for soc:MediumAccount; ui:use :MediumIdField ],
+     [ ui:for soc:PinterestAccount; ui:use :PinterestIdField ],
      [ ui:for soc:RedditAccount; ui:use :RedditIdField ],
      [ ui:for soc:SnapchatAccount; ui:use :SnapchatIdField ],
      [ ui:for soc:TiktokAccount; ui:use :TiktokIdField ],
@@ -485,6 +488,30 @@ WHERE
       ui:maxLength "200" ;
       ui:property foaf:accountName ; 
       ui:pattern "@[a-z0-9A-Z_-]*(.[a-z0-9A-Z_-])*";  # @@
+      ui:size    40 .
+
+  :MediumIdField
+      a ui:SingleLineTextField ;
+      ui:label "Medium Username";
+      ui:maxLength "200" ;
+      ui:property foaf:accountName ; 
+      ui:pattern "@[a-z0-9A-Z_-]*(.[a-z0-9A-Z_-])*";  # @@
+      ui:size    40 .
+
+  :NostrIdField
+      a ui:SingleLineTextField ;
+      ui:label "Nostr public key";
+      ui:maxLength "200" ;
+      ui:property foaf:accountName ; 
+      ui:pattern "[a-z0-9A-Z_-]*(.[a-z0-9A-Z_-])*";  # @@
+      ui:size    70 .
+
+  :PinterestIdField
+      a ui:SingleLineTextField ;
+      ui:label "Pinterest id";
+      ui:maxLength "200" ;
+      ui:property foaf:accountName ; 
+      ui:pattern "[a-z0-9A-Z_-]*";  # @@
       ui:size    40 .
 
   :RedditIdField
@@ -632,11 +659,11 @@ foaf:Account a rdfs:Class;
     foaf:icon <https://solidos.github.io/solid-ui/src/icons/social/medium-logo-wordmark-black.svg>;
     foaf:homepage <https://linkedin.com/> .
 
-:NostrAccount rdfs:subClassOf foaf:Account ; ### FEDERATED
+:NostrAccount rdfs:subClassOf foaf:Account ;
     rdfs:label "Nostr";
     foaf:userProfilePrefix "https://primal.net/p/";
     foaf:icon <https://solidos.github.io/solid-ui/src/icons/social/nostr-icon-purple-on-white.svg>;
-    foaf:homepage <https://linkedin.com/> .
+    foaf:homepage <https://nostr.net/> .
 
 :PinterestAccount rdfs:subClassOf foaf:Account ;
     rdfs:label "Pinterest";
