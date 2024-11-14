@@ -614,9 +614,9 @@ foaf:Account a rdfs:Class;
     rdfs:label "Mastodon" ;
     foaf:userProfilePrefix "https://mastodon.social/";
 
-    foaf:userNamePattern "(@[a-ZA-Z0-9]*)@[a-ZA-Z0-9\\.]*)";
-    foaf:userNameTransform "https://$2/$1";
-    
+ #   foaf:userNamePattern "(@[a-ZA-Z0-9]*)@[a-ZA-Z0-9.]*)";
+ #   foaf:userNameTransform "https://$2/$1";
+
     foaf:icon <https://solidos.github.io/solid-ui/src/icons/social/mastodon-2.svg>;
     foaf:homepage <https://joinmastodon.org/> .
 
