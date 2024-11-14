@@ -85,7 +85,7 @@ foaf:Account a rdfs:Class;
     rdfs:label "Nostr";
     foaf:userProfilePrefix "https://primal.net/p/";
     foaf:icon <https://solidos.github.io/solid-ui/src/icons/social/nostr-icon-purple-on-white.svg>;
-    foaf:homepage <https://linkedin.com/> .
+    foaf:homepage <https://nostr.net/> .
 
 :PinterestAccount rdfs:subClassOf foaf:Account ;
     rdfs:label "Pinterest";
