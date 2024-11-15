@@ -67,7 +67,7 @@ export function presentSocial(
     for (const k of classes) {
       const userProfilePrefix: Node | null = store.any(k as any, ns.foaf('userProfilePrefix'))
       if (userProfilePrefix)  {
-        return userProfilePrefix.value + id ;
+        return userProfilePrefix.value + id.trim() ;
       }
     }
     return "no userProfilePrefix?"
