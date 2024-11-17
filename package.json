@@ -36,7 +36,7 @@
     "contacts-pane": "^2.6.12",
     "lit-html": "^3.1.2",
     "qrcode": "^1.5.3",
-    "solid-ui": "^2.4.33",
+    "solid-ui": "2.5",
     "validate-color": "^2.2.4"
   },
   "devDependencies": {
