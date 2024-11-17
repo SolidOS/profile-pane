@@ -1,0 +1,106 @@
+@prefix : <#>.
+@prefix acl: <http://www.w3.org/ns/auth/acl#>.
+@prefix foaf: <http://xmlns.com/foaf/0.1/>.
+@prefix ldp: <http://www.w3.org/ns/ldp#>.
+@prefix org: <http://www.w3.org/ns/org#>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+@prefix schema: <http://schema.org/>.
+@prefix solid: <http://www.w3.org/ns/solid/terms#>.
+@prefix space: <http://www.w3.org/ns/pim/space#>.
+@prefix vcard: <http://www.w3.org/2006/vcard/ns#>.
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#>.
+@prefix c43: <https://mats.inrupt.net/profile/card#>.
+@prefix c48: <https://stijntaelemans.inrupt.net/profile/card#>.
+@prefix c49: <https://techny.inrupt.net/profile/card#>.
+@prefix c50: <https://timojkankaanpaa.solidcommunity.net/profile/card#>.
+@prefix inr: <https://inrupt.com/>.
+@prefix mit: <https://mit.edu/>.
+@prefix w: <https://www.oxfordmartin.ox.ac.uk/>.
+@prefix c53: <https://jenni.inrupt.net/profile/card#>.
+@prefix c31: <https://jollyorc.solidcommunity.net/profile/card#>.
+@prefix c34: <https://karlhrichter.inrupt.net/profile/card#>.
+@prefix c30: <https://dimou.solidcommunity.net/profile/card#>.
+@prefix c33: <https://hindia.solidcommunity.net/profile/card#>.
+@prefix Ber: <https://www.w3.org/People/Berners-Lee/>.
+@prefix c28: <https://worrallp.inrupt.net/profile/card#>.
+@prefix c39: <https://testingsolidos.solidcommunity.net/profile/card#>.
+@prefix c5: <https://jholleran.inrupt.net/profile/card#>.
+@prefix c36: <https://bourgeoa.solidcommunity.net/profile/card#>.
+@prefix occup: <http://data.europa.eu/esco/occupation/>.
+@prefix l: <https://www.w3.org/ns/iana/language-code/>.
+@prefix c9: <https://justin.inrupt.net/profile/card#>.
+@prefix c10: <https://kellyo.inrupt.net/profile/card#>.
+@prefix c18: <https://nseydoux.inrupt.net/profile/card#>.
+@prefix c19: <https://oz.inrupt.net/profile/card#>.
+@prefix c22: <https://sharonstrats.inrupt.net/profile/card#>.
+@prefix c24: <https://solid.zwifi.eu/profile/card#>.
+@prefix c4: <https://acoburn.inrupt.net/profile/card#>.
+@prefix c7: <https://angelo.veltens.org/profile/card#>.
+@prefix c15: <https://csarven.inrupt.net/profile/card#>.
+@prefix c16: <https://davi.inrupt.net/profile/card#>.
+@prefix c23: <https://emmettownsend.inrupt.net/profile/card#>.
+@prefix c25: <https://jackson.solidcommunity.net/profile/card#>.
+@prefix c26: <https://janschill.net/profile/card#>.
+@prefix c27: <https://johnb.inrupt.net/profile/card#>.
+@prefix c29: <https://megoth.inrupt.net/profile/card#>.
+@prefix c32: <https://michielbdejong.inrupt.net/profile/card#>.
+@prefix c35: <https://rubenverborgh.inrupt.net/profile/card#>.
+@prefix c42: <https://solid.kjernsmo.net/profile/card#>.
+@prefix c44: <https://timea.solidcommunity.net/profile/card#>.
+@prefix c45: <https://vincentt.inrupt.net/profile/card#>.
+@prefix inbox: </inbox/>.
+@prefix pro: <./>.
+@prefix c0: <https://solidproject.solidcommunity.net/profile/card#>.
+@prefix ent: <http://www.wikidata.org/entity/>.
+@prefix skill: <http://data.europa.eu/esco/skill/>.
+@prefix tim: </>.
+@prefix ww: <https://www.cern.ch/>.
+@prefix soc: <https://solidos.github.io/profile-pane/src/ontology/socialMedia.ttl#>.
+@prefix n6: <https://>.
+@prefix c1: <https://solidos.solidcommunity.net/profile/card#>.
+
+
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+
+ <#me>   foaf:account
+          
+            ( :id1729675527480 :id1729912807298 :id1729912986863
+            :id1730055928507 :id1730056067040 :id1730056125033
+            :id1730056175230 :id1730056248989 :id1730058497607 :id1730059685809
+            ) .
+
+
+
+:id1729675527480 a soc:BlueSkyAccount; foaf:accountName "timbl.bsky.social".
+
+:id1729912807298 a soc:FacebookAccount; foaf:accountName "tim.bernerslee.9".
+
+:id1729912986863 a soc:InstagramAccount; foaf:accountName "timblee".
+
+:id1730055928507 a soc:MastodonAccount; foaf:accountName "@timbl@w3c.social".
+
+:id1730056067040 a soc:RedditAccount.
+
+:id1730056125033 a soc:RedditAccount; foaf:accountName "timbl".
+
+:id1730056175230 a soc:TwitterAccount; foaf:accountName "@timberners_lee".
+
+:id1730056248989
+    a soc:OtherAccount;
+    rdfs:label "My homepage at W3C";
+    foaf:homepage Ber:;
+    foaf:icon <https://www.w3.org/assets/logos/w3c/w3c-bars.svg>.
+:id1730058497607 a soc:SnapchatAccount.
+
+:id1730059685809 a soc:TiktokAccount.
+
+:id1730387315524 a soc:GithubAccount; foaf:accountName "timbl".
+
+:id1730387353050
+a soc:MatrixAccount; foaf:accountName " @timbl-54d26c98db8155e6700f7312:gitter.im".
+:me .
+
+
+
+

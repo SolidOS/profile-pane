@@ -1,0 +1,426 @@
+@prefix : <#>.
+@prefix acl: <http://www.w3.org/ns/auth/acl#>.
+@prefix foaf: <http://xmlns.com/foaf/0.1/>.
+@prefix ldp: <http://www.w3.org/ns/ldp#>.
+@prefix org: <http://www.w3.org/ns/org#>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+@prefix schema: <http://schema.org/>.
+@prefix solid: <http://www.w3.org/ns/solid/terms#>.
+@prefix space: <http://www.w3.org/ns/pim/space#>.
+@prefix vcard: <http://www.w3.org/2006/vcard/ns#>.
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#>.
+@prefix c43: <https://mats.inrupt.net/profile/card#>.
+@prefix c48: <https://stijntaelemans.inrupt.net/profile/card#>.
+@prefix c49: <https://techny.inrupt.net/profile/card#>.
+@prefix c50: <https://timojkankaanpaa.solidcommunity.net/profile/card#>.
+@prefix inr: <https://inrupt.com/>.
+@prefix mit: <https://mit.edu/>.
+@prefix w: <https://www.oxfordmartin.ox.ac.uk/>.
+@prefix c53: <https://jenni.inrupt.net/profile/card#>.
+@prefix c31: <https://jollyorc.solidcommunity.net/profile/card#>.
+@prefix c34: <https://karlhrichter.inrupt.net/profile/card#>.
+@prefix c30: <https://dimou.solidcommunity.net/profile/card#>.
+@prefix c33: <https://hindia.solidcommunity.net/profile/card#>.
+@prefix Ber: <https://www.w3.org/People/Berners-Lee/>.
+@prefix c28: <https://worrallp.inrupt.net/profile/card#>.
+@prefix c39: <https://testingsolidos.solidcommunity.net/profile/card#>.
+@prefix c5: <https://jholleran.inrupt.net/profile/card#>.
+@prefix c36: <https://bourgeoa.solidcommunity.net/profile/card#>.
+@prefix occup: <http://data.europa.eu/esco/occupation/>.
+@prefix l: <https://www.w3.org/ns/iana/language-code/>.
+@prefix c9: <https://justin.inrupt.net/profile/card#>.
+@prefix c10: <https://kellyo.inrupt.net/profile/card#>.
+@prefix c18: <https://nseydoux.inrupt.net/profile/card#>.
+@prefix c19: <https://oz.inrupt.net/profile/card#>.
+@prefix c22: <https://sharonstrats.inrupt.net/profile/card#>.
+@prefix c24: <https://solid.zwifi.eu/profile/card#>.
+@prefix c4: <https://acoburn.inrupt.net/profile/card#>.
+@prefix c7: <https://angelo.veltens.org/profile/card#>.
+@prefix c15: <https://csarven.inrupt.net/profile/card#>.
+@prefix c16: <https://davi.inrupt.net/profile/card#>.
+@prefix c23: <https://emmettownsend.inrupt.net/profile/card#>.
+@prefix c25: <https://jackson.solidcommunity.net/profile/card#>.
+@prefix c26: <https://janschill.net/profile/card#>.
+@prefix c27: <https://johnb.inrupt.net/profile/card#>.
+@prefix c29: <https://megoth.inrupt.net/profile/card#>.
+@prefix c32: <https://michielbdejong.inrupt.net/profile/card#>.
+@prefix c35: <https://rubenverborgh.inrupt.net/profile/card#>.
+@prefix c42: <https://solid.kjernsmo.net/profile/card#>.
+@prefix c44: <https://timea.solidcommunity.net/profile/card#>.
+@prefix c45: <https://vincentt.inrupt.net/profile/card#>.
+@prefix inbox: </inbox/>.
+@prefix pro: <./>.
+@prefix c0: <https://solidproject.solidcommunity.net/profile/card#>.
+@prefix ent: <http://www.wikidata.org/entity/>.
+@prefix skill: <http://data.europa.eu/esco/skill/>.
+@prefix tim: </>.
+@prefix ww: <https://www.cern.ch/>.
+@prefix soc: <https://solidos.github.io/profile-pane/src/ontology/socialMedia.ttl#>.
+@prefix n6: <https://>.
+@prefix c1: <https://solidos.solidcommunity.net/profile/card#>.
+
+occup:6f7c1e84-8162-4c20-a575-b57ff624eef5 schema:name "taxi driver".
+
+occup:7b1b5da8-573a-49bb-a38e-68725a949f4f schema:name "chief technology officer".
+
+occup:e3229e40-f571-4b26-baca-29edc8fe313e schema:name "computer scientist".
+
+occup:f2b15a0e-e65a-438a-affb-29b9d50b77d1 schema:name "software developer".
+
+skill:6c870993-9341-438b-91c0-c7fe4f96d8f5 schema:name "apply strategic thinking".
+
+skill:a72408af-b488-4ad4-801b-bbf16f7a7b57
+schema:name "install blinds drive systems".
+skill:a917fd91-866d-4ecf-a70e-894b755f9baf
+schema:name "develop mechatronic test procedures".
+skill:f28617ad-afdd-4041-814c-216153a38998
+schema:name "analyse software specifications".
+skill:f6868852-9bf6-4899-a5d6-5f9532fb877d
+schema:name "design component interfaces".
+ent:Q106746930 schema:name "Inrupt Inc."@en.
+
+ent:Q10853538 schema:name "".
+
+ent:Q16601665 schema:name "Principality of Masserano".
+
+ent:Q34433 schema:name "University of Oxford"@en.
+
+ent:Q42944 schema:name "CERN"@en.
+
+ent:Q49108 schema:name "Massachusetts Institute of Technology"@en.
+
+pro:card a foaf:PersonalProfileDocument; foaf:maker :me; foaf:primaryTopic :me.
+
+:id1618591080534
+    a solid:CurrentRole;
+    schema:description
+        "Technical strategic architecture for Inrupt. Leader of the Solid movement. Coordinate and contribute to Solid open source.";
+    schema:startDate "2018-04-05"^^xsd:date;
+    vcard:role "Cofounder and CTO";
+    org:member :me;
+    org:organization :id1619374832756;
+    org:role occup:7b1b5da8-573a-49bb-a38e-68725a949f4f;
+    solid:publicId ent:Q16601665 .
+:id1618785166805
+    a solid:CurrentRole;
+    schema:description
+        "The Decentralized Information Group (DIG) at MIT's Computer Science and Artificial Intelligence Laboratory (CSAIL) build all sorts of things using semantic web tech, and more recently started the Solid movement to allow people complete control of their data. ";
+    schema:endDate "2021-04-30"^^xsd:date;
+    schema:startDate "1994-09-01"^^xsd:date;
+    vcard:role "Professor of Engineering";
+    org:member :me;
+    org:organization :id1620393169135;
+    org:role occup:e3229e40-f571-4b26-baca-29edc8fe313e;
+    solid:publicId ent:Q10853538 .
+:id1619374832756
+    a schema:Corporation;
+    schema:name "Inrupt";
+    schema:uri inr:;
+    solid:publicId ent:Q106746930 .
+:id1619434605326
+vcard:role "Trainer"; solid:publicId skill:a917fd91-866d-4ecf-a70e-894b755f9baf.
+:id1619436441183 vcard:role "skil2".
+
+:id1619436866023
+vcard:role ""; solid:publicId skill:f28617ad-afdd-4041-814c-216153a38998 .
+:id1619530244336 solid:publicId l:en.
+
+:id1619532839375 solid:publicId l:de.
+
+:id1619532904680 solid:publicId l:fr.
+
+:id1619532994614 solid:publicId l:it.
+
+:id1619628182581
+    a solid:CurrentRole;
+    schema:description
+        """Our Oxford Martin School funded Project on "Ethical Web and Data Architectures" researches Data Autonomy, Data Privacy, Algorithmic Accountability, and Data Sharing and is hiring.""";
+    schema:startDate "2016-09-01"^^xsd:date;
+    vcard:role "Prof of Computer Science and Student at Christ Church";
+    org:member :me;
+    org:organization :id1620413454476;
+    org:role occup:e3229e40-f571-4b26-baca-29edc8fe313e.
+:id1619628257057 solid:publicId skill:a72408af-b488-4ad4-801b-bbf16f7a7b57 .
+
+:id1619628297228 solid:publicId l:ar.
+
+:id1619628398581 solid:publicId l:de.
+
+:id1620060965686
+vcard:country-name "USA"; vcard:locality "Boston"; vcard:region "MA".
+:id1620320324718 solid:publicId l:ar.
+
+:id1620383393470
+    a solid:CurrentRole;
+    schema:endDate "1994-09-01"^^xsd:date;
+    schema:startDate "1984-09-01"^^xsd:date;
+    vcard:role "web inventor";
+    org:member :me;
+    org:organization :id1620431912972;
+    org:role occup:f2b15a0e-e65a-438a-affb-29b9d50b77d1 .
+:id1620393169135
+    a schema:EducationalOrganization;
+    schema:name "MIT";
+    schema:uri mit:;
+    schema:url <https://solidproject.org>;
+    solid:publicId ent:Q49108 .
+:id1620413454476
+    a schema:EducationalOrganization;
+    schema:name "University of Oxford";
+    schema:uri w:ethical-web-and-data-architectures;
+    solid:publicId ent:Q34433 .
+:id1620431912972
+    a schema:ResearchOrganization;
+    schema:name "European Particle Physics Laboratory";
+    schema:uri ww:;
+    solid:publicId ent:Q42944 .
+:id1620576947065 solid:publicId skill:f6868852-9bf6-4899-a5d6-5f9532fb877d.
+
+:id1620576952960 solid:publicId skill:6c870993-9341-438b-91c0-c7fe4f96d8f5 .
+
+:id1620660148956
+    vcard:country-name "UK";
+    vcard:locality "Oxford";
+    vcard:postal-code "OX1 1DP";
+    vcard:street-address "Christ Church, St Aldates".
+:id1621523870701 a schema:Corporation; schema:name "University of Ghent  testing".
+
+:id1643222712160 solid:publicId l:el.
+
+:id1650058571308 org:member :me.
+
+:id1701074722576 a vcard:Work; vcard:value <mailto:Cos@timbl.com>.
+
+:id1701074797745 a vcard:Work; vcard:value <tel:+447403372402>.
+
+:id1729675527480 a soc:BlueSkyAccount; foaf:accountName "timbl.bsky.social".
+
+:id1729912807298 a soc:FacebookAccount; foaf:accountName "tim.bernerslee.9".
+
+:id1729912986863 a soc:InstagramAccount; foaf:accountName "timblee".
+
+:id1730055928507 a soc:MastodonAccount; foaf:accountName "@timbl@w3c.social".
+
+:id1730056067040 a soc:RedditAccount.
+
+:id1730056125033 a soc:RedditAccount; foaf:accountName "timbl".
+
+:id1730056175230 a soc:TwitterAccount; foaf:accountName "@timberners_lee".
+
+:id1730056248989
+    a soc:OtherAccount;
+    rdfs:label "My homepage at W3C";
+    foaf:homepage Ber:;
+    foaf:icon <https://www.w3.org/assets/logos/w3c/w3c-bars.svg>.
+:id1730058497607 a soc:SnapchatAccount.
+
+:id1730059685809 a soc:TiktokAccount.
+
+:id1730387315524 a soc:GithubAccount; foaf:accountName "timbl".
+
+:id1730387353050
+  a soc:MatrixAccount; foaf:accountName "@timbl-54d26c98db8155e6700f7312:gitter.im" .
+:me
+    a schema:Person, foaf:Person;
+    schema:knowsLanguage      
+        ( :id1619530244336 :id1619532904680 );
+    schema:skills :id1619436866023, :id1620576947065, :id1620576952960;
+    vcard:bday "1955-06-08"^^xsd:date;
+    vcard:fn "Tim Berners-Lee";
+    vcard:hasAddress :id1620060965686, :id1620660148956;
+    vcard:hasEmail :id1701074722576;
+    vcard:hasPhoto
+    <TBL%20by%20coz%20Inrupt%20blue.png>, <TBL%20by%20coz%20Inrupt%20blue.psd>;
+    vcard:hasTelephone :id1701074797745;
+    vcard:note
+        "Pescatarian Allergic to crustaceans,    Invented the Web in 1989. Started W3C and co-founded WebFoundation. Now CTO at Inrupt and leading the Solid Project to give people control of their own data.  Lets re-enable the web as a creative and collaborative (and compassionate!) place of individual empowerment. Check out or Oxford Martin School project. ";
+    vcard:organization-name "Inrupt";
+    vcard:role "Cofounder and CTO";
+    acl:trustedApp
+            [
+                acl:mode acl:Append, acl:Control, acl:Read, acl:Write;
+                acl:origin <http://localhost:3000>
+            ],
+            [
+                acl:mode acl:Append, acl:Control, acl:Read, acl:Write;
+                acl:origin <https://arquisoft.github.io>
+            ],
+            [
+                acl:mode acl:Append, acl:Control, acl:Read, acl:Write;
+                acl:origin <https://bourgeoa.github.io>
+            ],
+            [
+                acl:mode acl:Append, acl:Control, acl:Read, acl:Write;
+                acl:origin <https://drive.verborgh.org>
+            ],
+            [
+                acl:mode acl:Append, acl:Control, acl:Read, acl:Write;
+                acl:origin <https://noeldemartin.github.io>
+            ],
+            [
+                acl:mode acl:Append, acl:Control, acl:Read, acl:Write;
+                acl:origin <https://penny.vincenttunru.com>
+            ],
+            [
+                acl:mode acl:Append, acl:Control, acl:Read, acl:Write;
+                acl:origin <https://pod-os-browser.netlify.app>
+            ],
+            [
+                acl:mode acl:Append, acl:Control, acl:Read, acl:Write;
+                acl:origin n6:solid-node-client
+            ],
+            [
+                acl:mode acl:Append, acl:Control, acl:Read, acl:Write;
+                acl:origin <https://solid.github.io>
+            ],
+            [
+                acl:mode acl:Append, acl:Control, acl:Read, acl:Write;
+                acl:origin <https://solidcommunity.net:8443>
+            ],
+            [
+                acl:mode acl:Append, acl:Control, acl:Read, acl:Write;
+                acl:origin <https://solidcommunity.net>
+            ],
+            [
+                acl:mode acl:Append, acl:Control, acl:Read, acl:Write;
+                acl:origin <https://solidos.github.io>
+            ],
+            [
+                acl:mode acl:Append, acl:Control, acl:Read, acl:Write;
+                acl:origin <https://solidos.solidcommunity.net>
+            ],
+            [
+                acl:mode acl:Append, acl:Control, acl:Read, acl:Write;
+                acl:origin <https://solidos.solidcommunity.net>
+            ],
+            [
+                acl:mode acl:Append, acl:Control, acl:Read, acl:Write;
+                acl:origin <https://solidproject.solidcommunity.net>
+            ],
+            [
+                acl:mode acl:Append, acl:Control, acl:Read, acl:Write;
+                acl:origin <https://test-pod.solidcommunity.net:8443>
+            ],
+            [
+                acl:mode acl:Append, acl:Control, acl:Read, acl:Write;
+                acl:origin <https://testingsolidos.solidcommunity.net>
+            ],
+            [
+                acl:mode acl:Append, acl:Control, acl:Read, acl:Write;
+                acl:origin <https://testingsolidos.solidcommunity.net>
+            ],
+            [
+                acl:mode acl:Append, acl:Control, acl:Read, acl:Write;
+                acl:origin <https://timbl.com:8443>
+            ],
+            [
+                acl:mode acl:Append, acl:Control, acl:Read, acl:Write;
+                acl:origin <https://timbl.com>
+            ],
+            [
+                acl:mode acl:Append, acl:Control, acl:Read, acl:Write;
+                acl:origin <https://timbl.com>
+            ],
+            [
+                acl:mode acl:Append, acl:Control, acl:Read, acl:Write;
+                acl:origin <https://timbl.solidcommunity.net:8443>
+            ],
+            [
+                acl:mode acl:Append, acl:Control, acl:Read, acl:Write;
+                acl:origin <https://timbl.solidcommunity.net>
+            ],
+            [
+                acl:mode acl:Append, acl:Control, acl:Read, acl:Write;
+                acl:origin <https://timeatest.solidcommunity.net:8443>
+            ],
+            [
+                acl:mode acl:Append, acl:Read, acl:Write;
+                acl:origin <http://localhost:8080>
+            ],
+            [
+                acl:mode acl:Append, acl:Read, acl:Write;
+                acl:origin <https://gallant-lewin-6da032.netlify.app>
+            ],
+            [
+                acl:mode acl:Append, acl:Read, acl:Write;
+                acl:origin <https://ibex.darcy.is>
+            ],
+            [
+                acl:mode acl:Append, acl:Read, acl:Write;
+                acl:origin <https://jeff-zucker.solidcommunity.net:8443>
+            ],
+            [
+                acl:mode acl:Append, acl:Read, acl:Write;
+                acl:origin <https://knoodle.foaf:accountName.idlab.ugent.be>
+            ],
+            [
+                acl:mode acl:Append, acl:Read, acl:Write;
+                acl:origin <https://localhost:8443>
+            ],
+            [
+                acl:mode acl:Append, acl:Read, acl:Write;
+                acl:origin <https://mellonscholarlycommunication.github.io>
+            ],
+            [
+                acl:mode acl:Append, acl:Read, acl:Write;
+                acl:origin <https://oxfordhcc.github.io>
+            ],
+            [
+                acl:mode acl:Append, acl:Read, acl:Write;
+                acl:origin <https://ramen.noeldemartin.com>
+            ],
+            [
+                acl:mode acl:Append, acl:Read, acl:Write;
+                acl:origin <https://timea.solidcommunity.net>
+            ],
+            [
+                acl:mode acl:Append, acl:Read, acl:Write;
+                acl:origin <https://umai.noeldemartin.com>
+            ],
+            [
+                acl:mode acl:Append, acl:Read, acl:Write;
+                acl:origin <https://vincenttunru.gitlab.io>
+            ],
+            [
+                acl:mode acl:Append, acl:Read, acl:Write;
+                acl:origin <https://vincenttunru.gitlab.io>
+            ],
+            [
+                acl:mode acl:Append, acl:Read, acl:Write;
+                acl:origin <https://www.semantyk.com>
+            ];
+    ldp:inbox inbox:;
+    org:member ( :id1617461235730 ), :id1617528994661, :id1617529080361;
+    space:preferencesFile </settings/prefs.ttl>;
+    space:storage tim:;
+    solid:account tim:;
+    solid:community c1:me, c0:me;
+    solid:oidcIssuer <https://inrupt.net>;
+    solid:preferredObjectPronoun "him";
+    solid:preferredRelativePronoun "his";
+    solid:preferredSubjectPronoun "he";
+    solid:privateTypeIndex </settings/privateTypeIndex.ttl>;
+    solid:profileHighlightColor "#a356f0"^^xsd:color;
+    solid:publicTypeIndex </settings/publicTypeIndex.ttl>;
+    foaf:account
+            ( :id1729675527480 :id1729912807298 :id1729912986863
+            :id1730055928507 :id1730056125033 :id1730387315524 :id1730056175230
+            :id1730056248989 :id1730387353050 );
+    foaf:accountName
+        c4:me, c7:me, c36:me, c15:me, c16:me, c30:me, c23:me, c33:me, c25:me,
+        c26:me, c53:me, c5:me, c27:me, c31:me, c9:me, c34:me, c10:me, c43:me,
+        c29:me, c32:me, c18:me, c19:me, c35:me, c22:me, c42:me, c24:me, c48:me,
+        c49:me, c39:me, c44:me, c50:me, c45:me, c28:me;
+    foaf:name "Timothy J Berners-Lee";
+    foaf:nick "timbl".
+l:ar schema:name "Arabic"@en.
+
+l:de schema:name "Deutsch"@de, "German"@en.
+
+l:el schema:name "Modern Greek"@en.
+
+l:en schema:name "English"@en.
+
+l:fr schema:name "French"@en.
+
+l:it schema:name "italiano"@it.

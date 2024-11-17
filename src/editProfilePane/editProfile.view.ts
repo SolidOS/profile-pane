@@ -12,8 +12,7 @@ import { PaneDefinition } from 'pane-registry'
 import { NamedNode, parse, Store, sym } from 'rdflib'
 import { icons, login, ns, style, widgets } from 'solid-ui'
 import { paneDiv } from './profile.dom'
-// import profileFormText from './profileFormText.ttl'
-import { profileFormText } from './wrapped-profileFormText'
+import { profileForm } from './wrapped-profileFormText'
 
 const highlightColor = style.highlightColor || '#7C4DFF'
 
@@ -24,9 +23,10 @@ const editProfileView: PaneDefinition = {
 
   name: 'editProfile',
 
-  label: () => null,
+  label: () => null, // don't use this in the normal solid-panes dispatching
 
   render: function (subject, context) {
+    console.log('@@@ render edit profile pane:  subject, context', subject, context)
     const dom = context.dom
     const store = context.session.store as Store
 
@@ -36,13 +36,14 @@ const editProfileView: PaneDefinition = {
     }
 
     function renderProfileForm (div: HTMLElement, subject: NamedNode) {
-      const preferencesForm = sym('https://solidos.github.io/solid-panes/dashboard/profileStyle.ttl#this')
+      const preferencesForm = sym('https://solidos.github.io/profile-pane/src/ontology/profileForm.ttl#this')
       const preferencesFormDoc = preferencesForm.doc()
       if (!store.holds(undefined, undefined, undefined, preferencesFormDoc)) {
         // If not loaded already
-        parse(profileFormText, store, preferencesFormDoc.uri, 'text/turtle', () => null) // Load form directly
+        parse(profileForm, store, preferencesFormDoc.uri, 'text/turtle', () => null) // Load form directly
       }
-
+      div.setAttribute('data-testid', 'profile-editor')
+      // @@ div.append?
       widgets.appendForm(
         dom,
         div,
@@ -55,6 +56,7 @@ const editProfileView: PaneDefinition = {
     } // renderProfileForm
 
     const div = dom.createElement('div')
+    div.setAttribute('data-testid', 'profile-editor')
     let editableProfile: NamedNode | null
     div.setAttribute('style', `border: 0.3em solid ${highlightColor}; border-radius: 0.5em; padding: 0.7em; margin-top:0.7em;`)
 
@@ -151,7 +153,6 @@ const editProfileView: PaneDefinition = {
           noun: 'community'
         })
 
-        // heading('The style of your public profile') headings are in form now
         renderProfileForm(main, me)
 
         heading('Thank you for filling your profile.')

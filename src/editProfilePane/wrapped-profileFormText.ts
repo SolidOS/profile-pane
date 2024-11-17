@@ -1,5 +1,5 @@
-export const profileFormText = `
-# 20210404a
+export const profileForm= `
+@prefix os: <http://www.w3.org/2000/10/swap/os#> .
 @prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>.
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
 @prefix foaf: <http://xmlns.com/foaf/0.1/>.
@@ -14,7 +14,18 @@ export const profileFormText = `
 @prefix wd: <http://www.wikidata.org/entity/>.
 @prefix wdt: <http://www.wikidata.org/prop/direct/>.
 
-@prefix : <#>.
+@prefix : <https://solidos.github.io/profile-pane/src/ontology/profileForm.ttl#>.
+@prefix soc: <https://solidos.github.io/profile-pane/src/ontology/socialMedia.ttl#>.
+
+# was: https://solidos.github.io/solid-panes/dashboard/profileStyle.ttl#this
+# moved to:  https://solidos.github.io/profile-pane/src/ontology/profileForm.ttl#this
+
+
+
+
+# About forms: https://solidos.github.io/solid-ui/Documentation/forms-intro.html
+# About personal public data:  https://www.w3.org/DesignIssues/PersonalPublic.html
+#
 
 :this
     <http://purl.org/dc/elements/1.1/title> "Profile form" ;
@@ -25,6 +36,7 @@ export const profileFormText = `
       :nicknameField
       :pronounsForm
       :LanguagesPrompt :LanguagesForm
+      :SocialsPrompt :SocialsForm
       :CVGroup
       :SkillsPrompt :SkillsForm
       ).
@@ -383,6 +395,312 @@ WHERE
  # Hope there are not any important ones which have three-letter codes.
  # Omitted: SERVICE wikibase:label { bd:serviceParam wikibase:language "$(languages)". }
 
+########### Social Media - other accounts
+#
+# Twitter, Linked In, Orkid, Mastodon, Matrix, Bluesky, Instagram, Facebook, Github,
+# Snapchat, TikTok, etc
+
+:SocialsPrompt a ui:Heading; ui:contents  "Social Media etc?" .
+:SocialsPrompt a ui:Comment; ui:contents  "Link to accounts in social media sites, etc" .
+
+:SocialsForm a ui:Multiple;
+    ui:label "online account";
+    ui:property foaf:account;
+    ui:ordered true; # Allow user to order occounts most important first.
+    ui:part :AccountsForm.
+
+:AccountsForm a ui:Group; ui:weight 1; ui:parts ( :AccountField :AccountIdField ).
+
+:AccountField a ui:Classifier; ui:label "What sort of account?"@en;
+      ui:multiple false ; 
+      ui:category foaf:Account  .
+
+:AccountIdField a ui:Options . 
+
+  :AccountIdField a ui:Options; ui:dependingOn rdf:type; ui:case
+     [ ui:for soc:BlueSkyAccount; ui:use :BlueSkyIdField ],
+     [ ui:for soc:FacebookAccount; ui:use :FacebookIdField ],
+     [ ui:for soc:GithubAccount; ui:use :GithubIdField ],
+     [ ui:for soc:InstagramAccount; ui:use :InstagramIdField ],
+     [ ui:for soc:LinkedInAccount; ui:use :LinkedInIdField ],
+     [ ui:for soc:NostrAccount; ui:use :NostrIdField ],
+     [ ui:for soc:MastodonAccount; ui:use :MastodonIdField ],
+     [ ui:for soc:MatrixAccount; ui:use :MatrixIdField ],
+     [ ui:for soc:MediumAccount; ui:use :MediumIdField ],
+     [ ui:for soc:PinterestAccount; ui:use :PinterestIdField ],
+     [ ui:for soc:RedditAccount; ui:use :RedditIdField ],
+     [ ui:for soc:SnapchatAccount; ui:use :SnapchatIdField ],
+     [ ui:for soc:TiktokAccount; ui:use :TiktokIdField ],
+     [ ui:for soc:TwitterAccount; ui:use :TwitterIdField ],
+     [ ui:for soc:OtherAccount; ui:use :OtherIdForm  ] .
+
+  :BlueSkyIdField
+      a ui:SingleLineTextField ;
+      ui:label "Bluesky Id";
+      ui:maxLength "200" ;
+      ui:property foaf:accountName ; 
+      ui:pattern "@[a-z0-9A-Z_-](.[a-z0-9A-Z_-])*";  # @@
+      ui:size    40 .
+
+  :FacebookIdField
+      a ui:SingleLineTextField ;
+      ui:label "Facebook Id";
+      ui:maxLength "200" ;
+      ui:property foaf:accountName ; 
+      ui:pattern "[a-z0-9A-Z_-]*";  # @@
+      ui:size    40 .
+
+  :GithubIdField
+      a ui:SingleLineTextField ;
+      ui:label "Github Id";
+      ui:maxLength "200" ;
+      ui:property foaf:accountName ; 
+      ui:pattern "[a-z0-9A-Z_-]*";  # @@
+      ui:size    40 .
+
+  :InstagramIdField
+      a ui:SingleLineTextField ;
+      ui:label "Instagram Id";
+      ui:maxLength "200" ;
+      ui:property foaf:accountName ; 
+      ui:pattern "[a-z0-9A-Z_-]*";  # @@
+      ui:size    40 .
+
+  :LinkedInIdField
+      a ui:SingleLineTextField ;
+      ui:label "Linked In Id";
+      ui:maxLength "200" ;
+      ui:property foaf:accountName ; 
+      ui:pattern "[a-z0-9A-Z_-]*(.[a-z0-9A-Z_-])*";  # @@
+      ui:size    40 .
+
+  :MastodonIdField
+      a ui:SingleLineTextField ;
+      ui:label "Mastodon (Activity Pub) Id";
+      ui:maxLength "200" ;
+      ui:property foaf:accountName ; 
+      ui:pattern "@[a-z0-9A-Z_-]*(.[a-z0-9A-Z_-])*";  # @@
+      ui:size    40 .
+
+  :MatrixIdField
+      a ui:SingleLineTextField ;
+      ui:label "Matrix Username";
+      ui:maxLength "200" ;
+      ui:property foaf:accountName ; 
+      ui:pattern "@[a-z0-9A-Z_-]*(.[a-z0-9A-Z_-])*";  # @@
+      ui:size    40 .
+
+  :MediumIdField
+      a ui:SingleLineTextField ;
+      ui:label "Medium Username";
+      ui:maxLength "200" ;
+      ui:property foaf:accountName ; 
+      ui:pattern "@[a-z0-9A-Z_-]*(.[a-z0-9A-Z_-])*";  # @@
+      ui:size    40 .
+
+  :NostrIdField
+      a ui:SingleLineTextField ;
+      ui:label "Nostr public key";
+      ui:maxLength "200" ;
+      ui:property foaf:accountName ; 
+      ui:pattern "[a-z0-9A-Z_-]*(.[a-z0-9A-Z_-])*";  # @@
+      ui:size    70 .
+
+  :PinterestIdField
+      a ui:SingleLineTextField ;
+      ui:label "Pinterest id";
+      ui:maxLength "200" ;
+      ui:property foaf:accountName ; 
+      ui:pattern "[a-z0-9A-Z_-]*";  # @@
+      ui:size    40 .
+
+  :RedditIdField
+      a ui:SingleLineTextField ;
+      ui:label "Reddit Id";
+      ui:maxLength "200" ;
+      ui:property foaf:accountName ; 
+      ui:pattern "[a-z0-9A-Z_-]*";  # @@
+      ui:size    40 .
+
+  :SnapchatIdField
+      a ui:SingleLineTextField ;
+      ui:label "Snapchat Id";
+      ui:maxLength "200" ;
+      ui:property foaf:accountName ; 
+      ui:pattern "@[a-z0-9A-Z_-]*";  # @@
+      ui:size    40 .
+
+  :TiktokIdField
+      a ui:SingleLineTextField ;
+      ui:label "Tiktok Id";
+      ui:maxLength "200" ;
+      ui:property foaf:accountName ; 
+      ui:pattern "@[a-z0-9A-Z_-]*";  # @@
+      ui:size    40 .
+
+  :TwitterIdField
+      a ui:SingleLineTextField ;
+      ui:label "Twitter Id";
+      ui:maxLength "200" ;
+      ui:property foaf:accountName ; 
+      ui:pattern "@[a-z0-9A-Z_-]*";  # @@
+      ui:size    40 .
+
+# an unknown SN account needs more info
+
+  :OtherIdForm a ui:Group; ui:weight 0; ui:parts ( :OtherIdField :OtherIconField :OtherLabelield ).
+
+  :OtherIdField
+      a ui:NamedNodeURIField ;
+      ui:label "URL of account to link to";
+      ui:maxLength "200" ;
+      ui:property foaf:homepage ; 
+      ui:size    60 .
+
+  :OtherLabelield
+      a ui:SingleLineTextField ;
+      ui:label "Label";
+      ui:maxLength "200" ;
+      ui:property rdfs:label ; 
+      ui:size    40 .
+
+  :OtherIconField
+      a ui:NamedNodeURIField ;
+      ui:label "URL of icon to display";
+      ui:maxLength "200" ;
+      ui:property foaf:icon ;
+      ui:size    60 .
+
+
+
+
 
 # ENDS
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+@prefix foaf: <http://xmlns.com/foaf/0.1/>.
+@prefix owl: <http://www.w3.org/2002/07/owl#>.
+@prefix solid: <http://www.w3.org/ns/solid/terms#>.
+@prefix ui: <http://www.w3.org/ns/ui#>.
+@prefix schema: <http://schema.org/>.
+@prefix vcard: <http://www.w3.org/2006/vcard/ns#>.
+
+@prefix org: <http://www.w3.org/ns/org#>.
+
+@prefix : <https://solidos.github.io/profile-pane/src/ontology/socialMedia.ttl#>.
+@prefix soc: <https://solidos.github.io/profile-pane/src/ontology/socialMedia.ttl#>.
+
+# was: https://solidos.github.io/solid-panes/dashboard/profileStyle.ttl#  <-- change old data
+
+
+
+# was: https://solidos.github.io/solid-panes/dashboard/profileStyle.ttl#this
+# moved to:  https://solidos.github.io/profile-pane/src/ontology/profileForm.ttl#this
+#  and        https://solidos.github.io/profile-pane/src/ontology/socialMedia.ttl
+
+
+##### Ontology of Online Accounts
+
+foaf:Account a rdfs:Class;
+    rdfs:label "Online Account Provider";
+    owl:disjointUnionOf ( :BlueSkyAccount :FacebookAccount :GithubAccount :InstagramAccount
+    :LinkedInAccount :MastodonAccount :MatrixAccount :MediumAccount :NostrAccount :PinterestAccount
+    :RedditAccount :SnapchatAccount :TiktokAccount  :TwitterAccount :OtherAccount) .
+
+:BlueSkyAccount rdfs:subClassOf foaf:Account ;
+    rdfs:label "Bluesky";
+    foaf:userProfilePrefix "https://bsky.app/profile/";
+    foaf:icon <https://solidos.github.io/solid-ui/src/icons/social/bluesky-1.svg>;
+    foaf:homepage <https://bsky.app/> .
+
+:FacebookAccount rdfs:subClassOf foaf:Account ;
+    rdfs:label "Facebook";
+    foaf:userProfilePrefix "https://www.facebook.com/";
+    foaf:icon <https://solidos.github.io/solid-ui/src/icons/social/facebook-2020-2-1.svg>;
+    foaf:homepage <https://www.facebook.com/> .
+
+:GithubAccount rdfs:subClassOf foaf:Account ;
+    rdfs:label "Github";
+    foaf:userProfilePrefix "https://www.github.com/";
+    foaf:icon <https://solidos.github.io/solid-ui/src/icons/social/github-icon.svg>;
+    foaf:homepage <https://github.com/> .
+
+:InstagramAccount rdfs:subClassOf foaf:Account ;
+    rdfs:label "Instagram";
+    foaf:userProfilePrefix "https://www.instagram.com/";
+    foaf:icon <https://solidos.github.io/solid-ui/src/icons/social/instagram-2016-5.svg>;
+    foaf:homepage <https://www.instagram.com/> .
+
+:LinkedInAccount rdfs:subClassOf foaf:Account ;
+    rdfs:label "Linked In";
+    foaf:userProfilePrefix "https://www.linkedin.com/";
+    foaf:icon <https://solidos.github.io/solid-ui/src/icons/social/linkedin-icon.svg>;
+    foaf:homepage <https://linkedin.com/> .
+
+:MastodonAccount rdfs:subClassOf foaf:Account ;
+    rdfs:label "Mastodon" ;
+    foaf:userProfilePrefix "https://mastodon.social/";
+
+ #   foaf:userNamePattern "(@[a-ZA-Z0-9]*)@[a-ZA-Z0-9.]*)";
+ #   foaf:userNameTransform "https://$2/$1";
+
+    foaf:icon <https://solidos.github.io/solid-ui/src/icons/social/mastodon-2.svg>;
+    foaf:homepage <https://joinmastodon.org/> .
+
+:MatrixAccount rdfs:subClassOf foaf:Account ;
+    rdfs:label "Matrix" ;
+    foaf:icon <https://solidos.github.io/solid-ui/src/icons/social/matrix-logo-black.svg> ;
+    foaf:userProfilePrefix "https://matrix.to/#/" ;
+    foaf:homepage <https://matrix.org/> .
+
+:MediumAccount rdfs:subClassOf foaf:Account ;
+    rdfs:label "Medium";
+    foaf:userProfilePrefix "https://medium.com/";
+    foaf:icon <https://solidos.github.io/solid-ui/src/icons/social/medium-logo-wordmark-black.svg>;
+    foaf:homepage <https://medium.com/> .
+
+:NostrAccount rdfs:subClassOf foaf:Account ;
+    rdfs:label "Nostr";
+    foaf:userProfilePrefix "https://primal.net/p/";
+    foaf:icon <https://solidos.github.io/solid-ui/src/icons/social/nostr-icon-purple-on-white.svg>;
+    foaf:homepage <https://nostr.net/> .
+
+:PinterestAccount rdfs:subClassOf foaf:Account ;
+    rdfs:label "Pinterest";
+    foaf:userProfilePrefix "https://pin.it/";
+    foaf:icon <https://solidos.github.io/solid-ui/src/icons/social/pinterest-2-1.svg>;
+    foaf:homepage <https://pinterest.com/> .
+
+:RedditAccount rdfs:subClassOf foaf:Account ;
+    rdfs:label "Reddit";
+    foaf:userProfilePrefix "https://www.reddit.com/user/";
+    foaf:icon <https://solidos.github.io/solid-ui/src/icons/social/reddit-4.svg>;
+    foaf:homepage <https://reddit.com/> .
+
+:SnapchatAccount rdfs:subClassOf foaf:Account ;
+    rdfs:label "Snapchat";
+    foaf:userProfilePrefix "https://www.snapchat.com/add/";
+    foaf:icon <https://solidos.github.io/solid-ui/src/icons/social/snapchat-1.svg>;
+    foaf:homepage <https://www.snapchat.com/> .
+
+:TiktokAccount rdfs:subClassOf foaf:Account ;
+    rdfs:label "TikTok";
+    foaf:userProfilePrefix "https://www.tiktok.com/@";
+    foaf:icon <https://solidos.github.io/solid-ui/src/icons/social/tiktok-icon-2.svg>;
+    foaf:homepage <https://www.tiktok.com/> .
+
+
+:TwitterAccount rdfs:subClassOf foaf:Account ;
+    rdfs:label "X (formerly Twitter)";
+    foaf:userProfilePrefix "https://x.com/";
+    foaf:icon <https://solidos.github.io/solid-ui/src/icons/social/x-2.svg>;
+    foaf:homepage <https://x.com/> .
+
+
+:OtherAccount rdfs:subClassOf foaf:Account ;
+    rdfs:label "Other" ;
+    foaf:icon <https://solidos.github.io/solid-ui/src/icons/noun_1689339.svg> .
+
+# ends
+
 ` ;

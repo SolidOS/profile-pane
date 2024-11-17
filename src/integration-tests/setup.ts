@@ -4,11 +4,27 @@ import { SolidLogic, store } from "solid-logic";
 
 export const subject = sym("https://janedoe.example/profile/card#me");
 export const doc = subject.doc();
+/*
+if (this && this.session && this.session.info && this.session.info.webId && this.session.info.isLoggedIn) 
+{ return (0, rdflib_1.sym)(this.session.info.webId);
+
+*/
+
+export function fakeLogInAs (subject) {
+    // eslint-disable-next-line  @typescript-eslint/no-explicit-any
+    (window as any).$SolidTestEnvironment = {  // This affects the way the solidos stack work
+        username: subject ? subject.value : null // assume logged in if not null
+ }
+ }
 
 export const context = {
     dom: document,
     getOutliner: () => null,
     session: {
+        info: {
+            isLoggedIn: true,  // Added for editProofilepane
+            webId: subject.value,
+        },
         paneRegistry: {
             byName: (name: string) => {
                 return {
