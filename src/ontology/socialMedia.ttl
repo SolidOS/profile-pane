@@ -26,8 +26,8 @@
 foaf:Account a rdfs:Class;
     rdfs:label "Online Account Provider";
     owl:disjointUnionOf ( :BlueSkyAccount :FacebookAccount :GithubAccount :InstagramAccount
-    :LinkedInAccount :MastodonAccount :MatrixAccount :MediumAccount :NostrAccount :PinterestAccount
-    :RedditAccount :SnapchatAccount :TiktokAccount  :TwitterAccount :OtherAccount) .
+    :LinkedInAccount :MastodonAccount :MatrixAccount :MediumAccount :NostrAccount :OrcidAccount :PinterestAccount
+    :RedditAccount :SnapchatAccount :StravaAccount :TiktokAccount  :TumblrAccount  :TwitterAccount :OtherAccount) .
 
 :BlueSkyAccount rdfs:subClassOf foaf:Account ;
     rdfs:label "Bluesky";
@@ -87,6 +87,12 @@ foaf:Account a rdfs:Class;
     foaf:icon <https://solidos.github.io/solid-ui/src/icons/social/nostr-icon-purple-on-white.svg>;
     foaf:homepage <https://nostr.net/> .
 
+:OrcidAccount rdfs:subClassOf foaf:Account ;
+    rdfs:label "ORCiD";
+    foaf:userProfilePrefix "https://orcid.org/";
+    foaf:icon <https://solidos.github.io/solid-ui/src/icons/social/ORCID-1.svg>;
+    foaf:homepage <https://orcid.org/> .
+
 :PinterestAccount rdfs:subClassOf foaf:Account ;
     rdfs:label "Pinterest";
     foaf:userProfilePrefix "https://pin.it/";
@@ -105,11 +111,23 @@ foaf:Account a rdfs:Class;
     foaf:icon <https://solidos.github.io/solid-ui/src/icons/social/snapchat-1.svg>;
     foaf:homepage <https://www.snapchat.com/> .
 
+:StravaAccount rdfs:subClassOf foaf:Account ;
+    rdfs:label "Strava";
+    foaf:userProfilePrefix "https://www.strava.com/";
+    foaf:icon <https://solidos.github.io/solid-ui/src/icons/social/strava-2.svg>;
+    foaf:homepage <https://strava.com/> .
+
 :TiktokAccount rdfs:subClassOf foaf:Account ;
     rdfs:label "TikTok";
     foaf:userProfilePrefix "https://www.tiktok.com/@";
     foaf:icon <https://solidos.github.io/solid-ui/src/icons/social/tiktok-icon-2.svg>;
     foaf:homepage <https://www.tiktok.com/> .
+
+:TumblrAccount rdfs:subClassOf foaf:Account ;
+    rdfs:label "Tumblr";
+    foaf:userProfilePrefix "https://www.tumblr.com/";
+    foaf:icon <https://solidos.github.io/solid-ui/src/icons/social/tumblr-icon.svg>;
+    foaf:homepage <https://www.tumblr.com/> .
 
 
 :TwitterAccount rdfs:subClassOf foaf:Account ;

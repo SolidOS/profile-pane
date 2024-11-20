@@ -68,6 +68,7 @@ const Pane = {
         })
       }
       */
+     /*
       const editButtons = Array.from(target.getElementsByClassName('ProfilePaneCVEditButton'))
       if (editButtons.length) {
         const editButton = editButtons[0]
@@ -76,7 +77,7 @@ const Pane = {
         console.log('Profile pane: subject: ', subject, ', logged in as: ', authn.currentUser())
         // alert('No edit button')
       }
-
+*/
       const QRCodeEles = Array.from(target.getElementsByClassName('QRCode')) // was context.dom
       if (!QRCodeEles.length) return console.error("QRCode Ele missing")
       for (const QRCodeElement of QRCodeEles as HTMLElement[]) {
