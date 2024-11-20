@@ -13,7 +13,6 @@ import { styleMap } from "lit-html/directives/style-map.js";
 import { card } from "./baseStyles";
 import { icons } from "solid-ui";
 
-const editButtonURI = icons.iconBase + 'noun_253504.svg'
 
 const styles = {
   image: styleMap(fullWidth()),
@@ -38,21 +37,23 @@ export const CVCard = (
 
   if(renderRoles(rolesByType["FutureRole"]) || renderRoles(rolesByType["CurrentRole"]) || renderRoles(rolesByType["PastRole"]) || renderSkills(skills) || renderLanguages(languages)){
   return html`
-  <div data-testid="curriculum-vitae" style="${styles.card}">
-    <div style=${styles.info}>
-      <h3 style=${nameStyle}>Bio</h3>
-      <div style=${styles.info}>${renderRoles(rolesByType["FutureRole"])}</div>
-      <hr />
-      <div style=${styles.info}>${renderRoles(rolesByType["CurrentRole"])}</div>
-      <hr />
-      <div style=${styles.info}>${renderRoles(rolesByType["PastRole"])}</div>
-      <hr />
-      <h3 style=${nameStyle}>Skills</h3>
-      <div style=${styles.info}>${renderSkills(skills)}</div>
-      <h3 style=${nameStyle}>Languages</h3>
-      <div style=${styles.info}>${renderLanguages(languages)}</div>
-          <div style=${styles.tools}>${renderEditButton()}</div>
-    </div>
+  <div>
+    <div data-testid="curriculum-vitae" style="${styles.card}">
+      <div style=${styles.info}>
+        <h3 style=${nameStyle}>Bio</h3>
+        <div style=${styles.info}>${renderRoles(rolesByType["FutureRole"])}</div>
+        <hr />
+        <div style=${styles.info}>${renderRoles(rolesByType["CurrentRole"])}</div>
+        <hr />
+        <div style=${styles.info}>${renderRoles(rolesByType["PastRole"])}</div>
+        <hr />
+        <h3 style=${nameStyle}>Skills</h3>
+        <div style=${styles.info}>${renderSkills(skills)}</div>
+        <h3 style=${nameStyle}>Languages</h3>
+        <div style=${styles.info}>${renderLanguages(languages)}</div>
+            
+      </div>
+      </div>
     </div>
   `}
   return html``
@@ -111,11 +112,6 @@ function strToUpperCase(str) {
   return '';
 }
 
-function renderEditButton () {
-    return html `<button type="button" class="ProfilePaneCVEditButton">
-    <img  src="${editButtonURI}">
-    Edit</button>`
-}
 
 // ends
 

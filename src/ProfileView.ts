@@ -5,6 +5,8 @@ import { html, TemplateResult } from "lit-html";
 import { styleMap } from "lit-html/directives/style-map.js";
 import { DataBrowserContext } from "pane-registry";
 import { NamedNode, LiveStore } from "rdflib";
+import { authn } from "solid-logic";
+import { icons } from "solid-ui";
 import { card, padding, paddingSmall, responsiveGrid } from "./baseStyles";
 import { ChatWithMe } from "./ChatWithMe";
 import { FriendList } from "./FriendList";
@@ -18,6 +20,20 @@ import { SocialCard } from "./SocialCard";
 import { StuffCard } from "./StuffCard";
 import { QRCodeCard } from "./QRCodeCard";
 import { addMeToYourFriendsDiv } from "./addMeToYourFriends";
+
+const editButtonURI = icons.iconBase + 'noun_253504.svg'
+
+// The edit button switches to the editor pane
+/*
+function renderEditButton (subject) {
+  return 
+    authn.currentUser() && authn.currentUser().sameTerm(subject) ?
+        html `<button type="button" class="ProfilePaneCVEditButton">
+        <img  src="${editButtonURI}">
+        Edit</button>`
+    : html``;
+}
+*/
 
 export async function ProfileView (
   subject: NamedNode,
@@ -40,6 +56,8 @@ export async function ProfileView (
     }),
   };
 
+  // was: <div style=${styles.card}>${renderEditButton(subject)}</div>
+
   return html`
     <div style="${styles.grid}">
       <div>
@@ -55,6 +73,7 @@ export async function ProfileView (
       <div style="${styles.chat}">${ChatWithMe(subject, context)}</div>
       <div data-testid="qrcode-display" style="${styles.card}">
         ${QRCodeCard(profileBasics, subject)}
+         
       </div>
     </div>
   `;

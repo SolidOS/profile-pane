@@ -1,5 +1,6 @@
 import { DataBrowserContext } from "pane-registry";
 import { NamedNode, LiveStore } from "rdflib";
+import { authn } from "solid-logic";
 import { render } from "lit-html";
 import { ProfileView } from "./ProfileView";
 import editProfileView from './editProfilePane/editProfile.view'
@@ -17,6 +18,7 @@ async function loadExtendedProfile(store: LiveStore, subject: NamedNode) {
     await store.fetcher.load(otherProfiles);
   }
 }
+
 
 const Pane = {
   global: false,
@@ -71,7 +73,8 @@ const Pane = {
         const editButton = editButtons[0]
         editButton.addEventListener('click', switchToEditor)
       } else {
-        alert('No edit button')
+        console.log('Profile pane: subject: ', subject, ', logged in as: ', authn.currentUser())
+        // alert('No edit button')
       }
 
       const QRCodeEles = Array.from(target.getElementsByClassName('QRCode')) // was context.dom
