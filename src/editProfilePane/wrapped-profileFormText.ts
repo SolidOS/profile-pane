@@ -423,14 +423,17 @@ WHERE
      [ ui:for soc:GithubAccount; ui:use :GithubIdField ],
      [ ui:for soc:InstagramAccount; ui:use :InstagramIdField ],
      [ ui:for soc:LinkedInAccount; ui:use :LinkedInIdField ],
-     [ ui:for soc:NostrAccount; ui:use :NostrIdField ],
      [ ui:for soc:MastodonAccount; ui:use :MastodonIdField ],
      [ ui:for soc:MatrixAccount; ui:use :MatrixIdField ],
      [ ui:for soc:MediumAccount; ui:use :MediumIdField ],
+     [ ui:for soc:NostrAccount; ui:use :NostrIdField ],
+     [ ui:for soc:OrcidAccount; ui:use :OrcidIdField ],
      [ ui:for soc:PinterestAccount; ui:use :PinterestIdField ],
      [ ui:for soc:RedditAccount; ui:use :RedditIdField ],
+     [ ui:for soc:StravaAccount; ui:use :StravaIdField ],
      [ ui:for soc:SnapchatAccount; ui:use :SnapchatIdField ],
      [ ui:for soc:TiktokAccount; ui:use :TiktokIdField ],
+     [ ui:for soc:TumblrAccount; ui:use :TumblrIdField ],
      [ ui:for soc:TwitterAccount; ui:use :TwitterIdField ],
      [ ui:for soc:OtherAccount; ui:use :OtherIdForm  ] .
 
@@ -506,6 +509,14 @@ WHERE
       ui:pattern "[a-z0-9A-Z_-]*(.[a-z0-9A-Z_-])*";  # @@
       ui:size    70 .
 
+  :OrcidIdField
+      a ui:SingleLineTextField ;
+      ui:label "ORCiD id";
+      ui:maxLength "200" ;
+      ui:property foaf:accountName ; 
+      ui:pattern "[a-z0-9A-Z_-]*";  # @@
+      ui:size    40 .
+
   :PinterestIdField
       a ui:SingleLineTextField ;
       ui:label "Pinterest id";
@@ -522,6 +533,14 @@ WHERE
       ui:pattern "[a-z0-9A-Z_-]*";  # @@
       ui:size    40 .
 
+  :StravaIdField
+      a ui:SingleLineTextField ;
+      ui:label "Strava Id";
+      ui:maxLength "200" ;
+      ui:property foaf:accountName ; 
+      ui:pattern "[a-z0-9A-Z_-]*";  # @@
+      ui:size    40 .
+
   :SnapchatIdField
       a ui:SingleLineTextField ;
       ui:label "Snapchat Id";
@@ -533,6 +552,14 @@ WHERE
   :TiktokIdField
       a ui:SingleLineTextField ;
       ui:label "Tiktok Id";
+      ui:maxLength "200" ;
+      ui:property foaf:accountName ; 
+      ui:pattern "@[a-z0-9A-Z_-]*";  # @@
+      ui:size    40 .
+
+  :TumblIdField
+      a ui:SingleLineTextField ;
+      ui:label "Tumblr user name";
       ui:maxLength "200" ;
       ui:property foaf:accountName ; 
       ui:pattern "@[a-z0-9A-Z_-]*";  # @@
@@ -604,8 +631,8 @@ WHERE
 foaf:Account a rdfs:Class;
     rdfs:label "Online Account Provider";
     owl:disjointUnionOf ( :BlueSkyAccount :FacebookAccount :GithubAccount :InstagramAccount
-    :LinkedInAccount :MastodonAccount :MatrixAccount :MediumAccount :NostrAccount :PinterestAccount
-    :RedditAccount :SnapchatAccount :TiktokAccount  :TwitterAccount :OtherAccount) .
+    :LinkedInAccount :MastodonAccount :MatrixAccount :MediumAccount :NostrAccount :OrcidAccount :PinterestAccount
+    :RedditAccount :SnapchatAccount :StravaAccount :TiktokAccount  :TumblrAccount  :TwitterAccount :OtherAccount) .
 
 :BlueSkyAccount rdfs:subClassOf foaf:Account ;
     rdfs:label "Bluesky";
@@ -665,6 +692,12 @@ foaf:Account a rdfs:Class;
     foaf:icon <https://solidos.github.io/solid-ui/src/icons/social/nostr-icon-purple-on-white.svg>;
     foaf:homepage <https://nostr.net/> .
 
+:OrcidAccount rdfs:subClassOf foaf:Account ;
+    rdfs:label "ORCiD";
+    foaf:userProfilePrefix "https://orcid.org/";
+    foaf:icon <https://solidos.github.io/solid-ui/src/icons/social/ORCID-1.svg>;
+    foaf:homepage <https://orcid.org/> .
+
 :PinterestAccount rdfs:subClassOf foaf:Account ;
     rdfs:label "Pinterest";
     foaf:userProfilePrefix "https://pin.it/";
@@ -683,11 +716,23 @@ foaf:Account a rdfs:Class;
     foaf:icon <https://solidos.github.io/solid-ui/src/icons/social/snapchat-1.svg>;
     foaf:homepage <https://www.snapchat.com/> .
 
+:StravaAccount rdfs:subClassOf foaf:Account ;
+    rdfs:label "Strava";
+    foaf:userProfilePrefix "https://www.strava.com/";
+    foaf:icon <https://solidos.github.io/solid-ui/src/icons/social/strava-2.svg>;
+    foaf:homepage <https://strava.com/> .
+
 :TiktokAccount rdfs:subClassOf foaf:Account ;
     rdfs:label "TikTok";
     foaf:userProfilePrefix "https://www.tiktok.com/@";
     foaf:icon <https://solidos.github.io/solid-ui/src/icons/social/tiktok-icon-2.svg>;
     foaf:homepage <https://www.tiktok.com/> .
+
+:TumblrAccount rdfs:subClassOf foaf:Account ;
+    rdfs:label "Tumblr";
+    foaf:userProfilePrefix "https://www.tumblr.com/";
+    foaf:icon <https://solidos.github.io/solid-ui/src/icons/social/tumblr-icon.svg>;
+    foaf:homepage <https://www.tumblr.com/> .
 
 
 :TwitterAccount rdfs:subClassOf foaf:Account ;

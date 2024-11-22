@@ -38,14 +38,14 @@ export async function presentStuff(
 ): Promise<StuffPresentation> {
 
  const scopedItems = await getScopedAppInstances(null, subject)
- console.log('scopedItems', scopedItems)
+ // console.log('scopedItems', scopedItems)
 
  const stuff = scopedItems.map(item => { // work with old or new solid-logic
    const icon = getIconForClass((item as any).type || ns.rdf('Resource'))  // eslint-disable-line
    const href = item.instance.uri
    const name = utils.label(item.instance)
    const instance = item.instance
-   console.log(`   href=${href} name=${name} icon=${icon}`)
+   // console.log(`   href=${href} name=${name} icon=${icon}`)
    return { href, name, icon, instance }
  })
 

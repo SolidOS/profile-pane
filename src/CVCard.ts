@@ -11,7 +11,6 @@ import { ProfilePresentation } from "./presenter";
 import { CVPresentation } from "./CVPresenter";
 import { styleMap } from "lit-html/directives/style-map.js";
 import { card } from "./baseStyles";
-import { icons } from "solid-ui";
 
 
 const styles = {
