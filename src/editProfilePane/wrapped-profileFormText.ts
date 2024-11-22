@@ -557,7 +557,7 @@ WHERE
       ui:pattern "@[a-z0-9A-Z_-]*";  # @@
       ui:size    40 .
 
-  :TumblIdField
+  :TumblrIdField
       a ui:SingleLineTextField ;
       ui:label "Tumblr user name";
       ui:maxLength "200" ;
@@ -718,7 +718,7 @@ foaf:Account a rdfs:Class;
 
 :StravaAccount rdfs:subClassOf foaf:Account ;
     rdfs:label "Strava";
-    foaf:userProfilePrefix "https://www.strava.com/";
+    foaf:userProfilePrefix "https://www.strava.com/athletes/";
     foaf:icon <https://solidos.github.io/solid-ui/src/icons/social/strava-2.svg>;
     foaf:homepage <https://strava.com/> .
 

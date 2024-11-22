@@ -113,7 +113,7 @@ foaf:Account a rdfs:Class;
 
 :StravaAccount rdfs:subClassOf foaf:Account ;
     rdfs:label "Strava";
-    foaf:userProfilePrefix "https://www.strava.com/";
+    foaf:userProfilePrefix "https://www.strava.com/athletes/";
     foaf:icon <https://solidos.github.io/solid-ui/src/icons/social/strava-2.svg>;
     foaf:homepage <https://strava.com/> .
 
