@@ -56,3 +56,9 @@ npm run check
 ```
 
 This does lint, build and test.
+
+### Notes
+
+If suddenly many tests fail, it may be that the installation has ended up with 
+two different instances of solid-logic.  Run `npm list solid-logic` and make sure there is only one. 
+Otherwise `rm -rf node_modules package-lock.json && npm install` should fix it.
