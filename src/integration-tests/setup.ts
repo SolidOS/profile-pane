@@ -17,6 +17,9 @@ export function fakeLogInAs (subject) {
  }
  }
 
+export function delay(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
 export const context = {
     dom: document,
     getOutliner: () => null,

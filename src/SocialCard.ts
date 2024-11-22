@@ -37,13 +37,15 @@ export const SocialCard = (
   if(accounts.length){
 
   return html`
-  <div data-testid="social-media" style="${styles.card}">
-    <div style=${styles.info + "margin: auto;"}>
-      <h3 style=${nameStyle}>Follow me on</h3>
+  <div>
+    <div data-testid="social-media" style="${styles.card}">
+      <div style=${styles.info + "margin: auto;"}>
+        <h3 style=${nameStyle}>Follow me on</h3>
 
-      <div style=${styles.info}>${renderAccounts(accounts)}</div>
+        <div style=${styles.info}>${renderAccounts(accounts)}</div>
+      </div>
     </div>
-    </div>
+  </div>
   `}
   return html``
 }
