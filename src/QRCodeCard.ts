@@ -53,9 +53,11 @@ export const QRCodeCard = (
   // console.log(`@@ qrcodes colours highlightColor ${highlightColor}, backgroundColor ${backgroundColor}`)
    
   return html`
-    <div style=${styles.info}>
+  <div>
+    <div style=${styles.card}>
       <h3 style=${nameStyle}>${profileBasics.name}</h3>
       <div class="QRCode" style="${qrCodeCanvasStyle}" data-value="${vCard}" highlightColor="${highlightColor}" backgroundColor="${backgroundColor}"></div>
     </div>
+  </div>
   `;
 };

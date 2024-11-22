@@ -19,6 +19,18 @@ import { StuffCard } from "./StuffCard";
 import { QRCodeCard } from "./QRCodeCard";
 import { addMeToYourFriendsDiv } from "./addMeToYourFriends";
 
+// The edit button switches to the editor pane
+/*
+function renderEditButton (subject) {
+  return 
+    authn.currentUser() && authn.currentUser().sameTerm(subject) ?
+        html `<button type="button" class="ProfilePaneCVEditButton">
+        <img  src="${editButtonURI}">
+        Edit</button>`
+    : html``;
+}
+*/
+
 export async function ProfileView (
   subject: NamedNode,
   context: DataBrowserContext
@@ -40,6 +52,8 @@ export async function ProfileView (
     }),
   };
 
+  // was: <div style=${styles.card}>${renderEditButton(subject)}</div>
+
   return html`
     <div style="${styles.grid}">
       <div>
@@ -53,8 +67,9 @@ export async function ProfileView (
         ${StuffCard(profileBasics, context, subject, stuffData)}
         ${FriendList(profileBasics, subject, context)}
       <div style="${styles.chat}">${ChatWithMe(subject, context)}</div>
-      <div data-testid="qrcode-display" style="${styles.card}">
+      <div data-testid="qrcode-display" class="qrcode-display" style="${styles.card}">
         ${QRCodeCard(profileBasics, subject)}
+         
       </div>
     </div>
   `;

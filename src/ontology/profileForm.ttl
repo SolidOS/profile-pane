@@ -422,14 +422,17 @@ WHERE
      [ ui:for soc:GithubAccount; ui:use :GithubIdField ],
      [ ui:for soc:InstagramAccount; ui:use :InstagramIdField ],
      [ ui:for soc:LinkedInAccount; ui:use :LinkedInIdField ],
-     [ ui:for soc:NostrAccount; ui:use :NostrIdField ],
      [ ui:for soc:MastodonAccount; ui:use :MastodonIdField ],
      [ ui:for soc:MatrixAccount; ui:use :MatrixIdField ],
      [ ui:for soc:MediumAccount; ui:use :MediumIdField ],
+     [ ui:for soc:NostrAccount; ui:use :NostrIdField ],
+     [ ui:for soc:OrcidAccount; ui:use :OrcidIdField ],
      [ ui:for soc:PinterestAccount; ui:use :PinterestIdField ],
      [ ui:for soc:RedditAccount; ui:use :RedditIdField ],
+     [ ui:for soc:StravaAccount; ui:use :StravaIdField ],
      [ ui:for soc:SnapchatAccount; ui:use :SnapchatIdField ],
      [ ui:for soc:TiktokAccount; ui:use :TiktokIdField ],
+     [ ui:for soc:TumblrAccount; ui:use :TumblrIdField ],
      [ ui:for soc:TwitterAccount; ui:use :TwitterIdField ],
      [ ui:for soc:OtherAccount; ui:use :OtherIdForm  ] .
 
@@ -505,6 +508,14 @@ WHERE
       ui:pattern "[a-z0-9A-Z_-]*(.[a-z0-9A-Z_-])*";  # @@
       ui:size    70 .
 
+  :OrcidIdField
+      a ui:SingleLineTextField ;
+      ui:label "ORCiD id";
+      ui:maxLength "200" ;
+      ui:property foaf:accountName ; 
+      ui:pattern "[a-z0-9A-Z_-]*";  # @@
+      ui:size    40 .
+
   :PinterestIdField
       a ui:SingleLineTextField ;
       ui:label "Pinterest id";
@@ -521,6 +532,14 @@ WHERE
       ui:pattern "[a-z0-9A-Z_-]*";  # @@
       ui:size    40 .
 
+  :StravaIdField
+      a ui:SingleLineTextField ;
+      ui:label "Strava Id";
+      ui:maxLength "200" ;
+      ui:property foaf:accountName ; 
+      ui:pattern "[a-z0-9A-Z_-]*";  # @@
+      ui:size    40 .
+
   :SnapchatIdField
       a ui:SingleLineTextField ;
       ui:label "Snapchat Id";
@@ -532,6 +551,14 @@ WHERE
   :TiktokIdField
       a ui:SingleLineTextField ;
       ui:label "Tiktok Id";
+      ui:maxLength "200" ;
+      ui:property foaf:accountName ; 
+      ui:pattern "@[a-z0-9A-Z_-]*";  # @@
+      ui:size    40 .
+
+  :TumblrIdField
+      a ui:SingleLineTextField ;
+      ui:label "Tumblr user name";
       ui:maxLength "200" ;
       ui:property foaf:accountName ; 
       ui:pattern "@[a-z0-9A-Z_-]*";  # @@

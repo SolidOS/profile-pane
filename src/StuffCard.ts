@@ -37,15 +37,17 @@ export const StuffCard = (profileBasics: ProfilePresentation,
   });
   // return renderThings(stuff)
   return html`
-  <div data-testid="stuff" style="${styles.card}">
-    <div style=${styles.info}>
-      <h3 style=${nameStyle}>Stuff</h3>
+  <div>
+    <div data-testid="stuff" style="${styles.card}">
+      <div style=${styles.info}>
+        <h3 style=${nameStyle}>Stuff</h3>
 
-      <div style=${styles.info}><table data-testid="stuffTable">${renderThings(stuff)}</table></div>
-      <hr />
+        <div style=${styles.info}><table data-testid="stuffTable">${renderThings(stuff)}</table></div>
+        <hr />
 
+      </div>
     </div>
-    </div>
+  </div>
 `
 }
 
@@ -61,7 +63,7 @@ function renderThing (thing, dom) {
 }
 
 function renderThings(things) {
-    console.log('Renderthings: ', things)
+    // console.log('Renderthings: ', things)
     if (things.length === 0) return html``;
     return html`${renderThing(things[0], dom)}${things.length > 1 ? renderThings(things.slice(1)) : html``}`
 }

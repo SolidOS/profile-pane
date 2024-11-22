@@ -18,6 +18,7 @@ async function loadExtendedProfile(store: LiveStore, subject: NamedNode) {
   }
 }
 
+
 const Pane = {
   global: false,
   icon: icons.iconBase + "noun_15059.svg",
@@ -38,42 +39,11 @@ const Pane = {
   },
   editor: editProfileView,                                            
   render: (subject: NamedNode, context: DataBrowserContext): HTMLElement => {
-
-    async function switchToEditor () {
-      alert('switching to editor')
-      target.innerHTML = '' // Clear
-      const newPane = editProfileView.render(subject, context)
-      const parent = target.parentNode
-      parent.removeChild(target)
-      parent.appendChild(newPane)
-    }
-    
-
     const target = context.dom.createElement("div");
     const store = context.session.store;
 
     loadExtendedProfile(store, subject).then(async () => {
       render(await ProfileView(subject, context), target)
-/*  Not currently used as personTR does itself
-      const fillIns =  Array.from(target.getElementsByClassName('fillInLater'))
-      for (const ele of fillIns) {
-        const href = ele.getAttribute('href')
-        store.fetcher.load(href).then(()=> { // async
-          const label = utils.label(store.sym(href))
-          ele.children[1].textContent =  label // Relabel
-          console.log('   ele.children[0]',   ele.children[1])
-          console.log(` Relabelled  ${href} to "${label}"`)
-        })
-      }
-      */
-      const editButtons = Array.from(target.getElementsByClassName('ProfilePaneCVEditButton'))
-      if (editButtons.length) {
-        const editButton = editButtons[0]
-        editButton.addEventListener('click', switchToEditor)
-      } else {
-        alert('No edit button')
-      }
-
       const QRCodeEles = Array.from(target.getElementsByClassName('QRCode')) // was context.dom
       if (!QRCodeEles.length) return console.error("QRCode Ele missing")
       for (const QRCodeElement of QRCodeEles as HTMLElement[]) {
