@@ -4,7 +4,7 @@
   "description": "A SolidOS compatible pane to display a personal profile page",
   "repository": {
     "type": "git",
-    "url": "https://github.com/solidos/profile-pane.git"
+    "url": "git+https://github.com/solidos/profile-pane.git"
   },
   "main": "lib/index.js",
   "scripts": {
