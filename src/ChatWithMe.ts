@@ -2,16 +2,39 @@ import { html, TemplateResult } from "lit-html";
 import { DataBrowserContext } from "pane-registry";
 import { NamedNode } from "rdflib";
 import { widgets } from "solid-ui";
+import {
+  fullWidth,
+  heading,
+  paddingSmall,
+  textCenter,
+  textLeft,
+  textGray,
+} from "./baseStyles";
 import { asyncReplace } from "lit-html/directives/async-replace.js";
+import { styleMap } from "lit-html/directives/style-map.js";
+import { ProfilePresentation } from "./presenter";
 import { chatWithMeButtonText, loadingMessage } from "./texts";
+
+const styles = {
+  image: styleMap(fullWidth()),
+  intro: styleMap({ ...textGray(), ...textCenter() }),
+  info: styleMap({ ...paddingSmall(), ...textLeft() }),
+};
 
 export const ChatWithMe = (
   subject: NamedNode,
-  context: DataBrowserContext
+  context: DataBrowserContext,
+  profileBasics: ProfilePresentation
 ): TemplateResult => {
   const logic = context.session.logic;
   const longChatPane = context.session.paneRegistry.byName("long chat");
+  const nameStyle = styleMap({
+    ...heading(),
+    // "text-decoration": "underline",
+  // was "text-decoration-color"
+  color: profileBasics.highlightColor
 
+  });
   async function* chatContainer() {
     const chatContainer = context.dom.createElement("div");
 
@@ -47,5 +70,7 @@ export const ChatWithMe = (
     }
   }
 
-  return html` ${asyncReplace(chatContainer())} `;
+   return html`  <div style=${styles.info}>
+                    <h3 style=${nameStyle}>Chat</h3></div> ${asyncReplace(chatContainer())}`
+};
 };
