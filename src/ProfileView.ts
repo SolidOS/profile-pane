@@ -66,7 +66,7 @@ export async function ProfileView (
         ${SocialCard(profileBasics, accounts)}
         ${StuffCard(profileBasics, context, subject, stuffData)}
         ${FriendList(profileBasics, subject, context)}
-      <div style="${styles.chat}">${ChatWithMe(subject, context)}</div>
+      <div style="${styles.chat}">${ChatWithMe(subject, context, profileBasics)}</div>
       <div data-testid="qrcode-display" class="qrcode-display" style="${styles.card}">
         ${QRCodeCard(profileBasics, subject)}
          
