@@ -17,6 +17,7 @@ export const ChatWithMe = (
 
     let exists;
     try {
+      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
       yield loadingMessage, (exists = await logic.chat.getChat(subject, false));
     } catch (e) {
       exists = false;
@@ -36,7 +37,7 @@ export const ChatWithMe = (
             chatContainer.appendChild(longChatPane.render(chat, context, {}));
           } catch (e) {
             chatContainer.appendChild(
-              widgets.errorMessageBlock(context.dom, e.message)
+              widgets.errorMessageBlock(context.dom, message +" "+ e.message)
             );
           }
         },
