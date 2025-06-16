@@ -37,11 +37,11 @@ export const QRCodeCard = (
 
   const name = utils.label(subject);
 
-  const BEGIN:string = 'BEGIN:VCARD\r\n';
-  const END:string = 'END:VCARD\r\n';
-  const FN:string = 'FN:' + name + '\r\n';
-  const URL:string = 'URL:' + subject.uri + 'r\n';
-  const VERSIONV:string = 'VERSION:4.0\r\n';
+  const BEGIN = 'BEGIN:VCARD\r\n';
+  const END = 'END:VCARD\r\n';
+  const FN = 'FN:' + name + '\r\n';
+  const URL = 'URL:' + subject.uri + 'r\n';
+  const VERSIONV = 'VERSION:4.0\r\n';
 
 // find out how to import values from presenter.ts
 // once those values are imported, make sure any user input aligns
