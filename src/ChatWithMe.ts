@@ -38,7 +38,7 @@ export const ChatWithMe = (
             chatContainer.appendChild(longChatPane.render(chat, context, {}));
           } catch (e) {
             chatContainer.appendChild(
-              widgets.errorMessageBlock(context.dom, message +" "+ e.message)
+              widgets.errorMessageBlock(context.dom, e.message)
             );
           }
         },
