@@ -50,7 +50,7 @@ export const profileForm= `
 
 # Nickname
 
-:nicknameField a ui:SingleLineTextField; ui:size 12; ui:property foaf:nick;
+:nicknameField a ui:SingleLineTextField; ui:maxLength "20"; ui:size 12; ui:property foaf:nick;
       ui:label "Short name for chats, etc."@en, "nom court"@fr.
 
  # Pronouns
