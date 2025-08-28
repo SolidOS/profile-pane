@@ -34,10 +34,10 @@
   "license": "MIT",
   "dependencies": {
     "lit-html": "^3.2.1",
-    "pane-registry": "^2.4.27",
+    "pane-registry": "^2.5.0",
     "qrcode": "^1.5.4",
     "rdflib": "^2.2.37",
-    "solid-ui": "^2.4.22",
+    "solid-ui": "^2.6.0",
     "validate-color": "^2.2.4"
   },
   "devDependencies": {
@@ -61,7 +61,7 @@
     "jest-fetch-mock": "^3.0.3",
     "jsdom": "^26.1.0",
     "node-polyfill-webpack-plugin": "^4.1.0",
-    "solid-logic": "^3.0.8",
+    "solid-logic": "^3.0.9",
     "typescript": "^5.9.2",
     "webpack": "^5.99.9",
     "webpack-cli": "^6.0.1",
