@@ -21,7 +21,6 @@ describe("add-me-to-your-friends pane", () => {
       const errorMessage = await findByText(result, userNotLoggedInErrorMessage);
       expect(errorMessage).not.toBeNull(); 
       // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-      expect(button).toThrow; 
     });
   });
 });
