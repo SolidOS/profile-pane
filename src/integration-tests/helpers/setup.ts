@@ -1,8 +1,9 @@
 // import { error, log, trace, warn } from '../../src/util/debug'
 import fetchMock from "jest-fetch-mock";
 import { TextEncoder, TextDecoder } from 'util'
-global.TextEncoder = TextEncoder
-global.TextDecoder = TextDecoder
+
+global.TextEncoder = TextEncoder as any // eslint-disable-line
+global.TextDecoder = TextDecoder as any // eslint-disable-line
 
 
 fetchMock.enableMocks();

@@ -19,8 +19,8 @@ describe("add-me-to-your-friends pane", () => {
       const button = await findByText(result, logInAddMeToYourFriendsButtonText.toUpperCase());
       fireEvent.click(button);
       const errorMessage = await findByText(result, userNotLoggedInErrorMessage);
-      expect(errorMessage).not.toBeNull();
-      expect(button).toThrowError;
+      expect(errorMessage).not.toBeNull(); 
+      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
     });
   });
 });
