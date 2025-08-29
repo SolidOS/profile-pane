@@ -20,7 +20,6 @@ describe("add-me-to-your-friends pane", () => {
       fireEvent.click(button);
       const errorMessage = await findByText(result, userNotLoggedInErrorMessage);
       expect(errorMessage).not.toBeNull(); 
-      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
     });
   });
 });
