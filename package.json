@@ -1,6 +1,6 @@
 {
   "name": "profile-pane",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "A SolidOS compatible pane to display a personal profile page",
   "repository": {
     "type": "git",
@@ -37,7 +37,7 @@
     "pane-registry": "^2.5.0",
     "qrcode": "^1.5.4",
     "rdflib": "^2.2.37",
-    "solid-ui": "^2.6.0",
+    "solid-ui": "^2.6.1",
     "validate-color": "^2.2.4"
   },
   "devDependencies": {
@@ -61,7 +61,7 @@
     "jest-fetch-mock": "^3.0.3",
     "jsdom": "^27.0.0",
     "node-polyfill-webpack-plugin": "^4.1.0",
-    "solid-logic": "^3.0.9",
+    "solid-logic": "^3.1.1",
     "typescript": "^5.9.2",
     "webpack": "^5.99.9",
     "webpack-cli": "^6.0.1",
