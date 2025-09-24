@@ -59,7 +59,7 @@
     "jest": "^30.0.2",
     "jest-environment-jsdom": "^30.0.2",
     "jest-fetch-mock": "^3.0.3",
-    "jsdom": "^26.1.0",
+    "jsdom": "^27.0.0",
     "node-polyfill-webpack-plugin": "^4.1.0",
     "solid-logic": "^3.0.9",
     "typescript": "^5.9.2",
