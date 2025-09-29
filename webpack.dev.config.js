@@ -1,11 +1,13 @@
-import HtmlWebpackPlugin from "html-webpack-plugin"
+import HtmlWebpackPlugin from "html-webpack-plugin";
+import NodePolyfillPlugin from "node-polyfill-webpack-plugin";
 
 export default [
   {
     mode: "development",
     entry: ["./dev/index.ts"],
     plugins: [
-      new HtmlWebpackPlugin({ template: "./dev/index.html" })
+      new HtmlWebpackPlugin({ template: "./dev/index.html" }),
+      new NodePolyfillPlugin()
     ],
     module: {
       rules: [
