@@ -1,8 +1,8 @@
-import pane from "../index";
-import { parse } from "rdflib";
-import { store } from "solid-logic";
-import { findByTestId } from "@testing-library/dom";
-import { context, delay, doc, subject } from "./setup";
+import pane from '../src/index'
+import { parse } from 'rdflib'
+import { store } from 'solid-logic'
+import { findByTestId } from '@testing-library/dom'
+import { context, delay, doc, subject } from './setup'
 
 // This was at testingsolidos.solidcommunity.net
 const exampleProfile = `@prefix : <#>.
@@ -158,41 +158,41 @@ l:de schema:name "germano"@ia.
 l:fr schema:name "French"@en.
 
 `
-describe("profile-pane", () => {
-  let element;
+describe('profile-pane', () => {
+  let element
 
-  describe("qrcode", () => {
+  describe('qrcode', () => {
     beforeAll(async () => {
-      store.removeDocument(doc);
-      parse(exampleProfile, store, doc.uri);
-      const result = pane.render(subject, context);
+      store.removeDocument(doc)
+      parse(exampleProfile, store, doc.uri)
+      const result = pane.render(subject, context)
       console.log('qrcode result:', result)
       await delay(3000)
       console.log('qrcode result later:', result)
 
-      element = await findByTestId(result, "qrcode-display");
+      element = await findByTestId(result, 'qrcode-display')
       console.log('element: ', element)
       // console.log('element.outerHTML: ', element.outerHTML)
 
 
-    });
+    })
 
-    it("renders the name as a heading", () => {
+    it('renders the name as a heading', () => {
       expect(element.innerHTML).toContain('Testing SolidOS Test</h3>')
-    });
+    })
 
-    it("renders the QRCode element", () => {
+    it('renders the QRCode element', () => {
       expect(element.innerHTML).toContain('<svg')
       expect(element.innerHTML).toContain('FN:Testing SolidOS Test')
-    });
+    })
 
-    it("renders the right QRCode colors", () => {
+    it('renders the right QRCode colors', () => {
       // const ele = element.children[0].children[1].children[0]
       expect(element.innerHTML).toContain('stroke="#06b74a"')
       expect(element.innerHTML).toContain('fill="#f4f5c2"')
-    });
+    })
 
 
-  });
+  })
 
-});
+})

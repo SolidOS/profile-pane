@@ -1,5 +1,6 @@
 {
   "name": "profile-pane",
+  "type": "module",
   "version": "1.2.1",
   "description": "A SolidOS compatible pane to display a personal profile page",
   "repository": {
@@ -7,18 +8,21 @@
     "url": "git+https://github.com/solidos/profile-pane.git"
   },
   "main": "lib/index.js",
-  "scripts": {
-    "start": "webpack serve --config webpack.dev.config.js --open",
-    "build": "make && npm run clean && tsc",
-    "clean": "rm -rf lib",
-    "check": "npm run lint && npm run build && npm run test",
-    "test": "jest",
-    "lint": "eslint ./src",
-    "prepublishOnly": "npm run check"
-  },
   "files": [
-    "/lib"
+    "/lib",
+    "README.md",
+    "LICENSE"
   ],
+  "scripts": {
+    "clean": "rm -rf lib",
+    "build": "npm run clean && make && npm run build-js",
+    "build-js": "tsc",
+    "lint": "eslint",
+    "test": "jest --no-coverage",
+    "test-coverage": "jest --coverage",
+    "prepublishOnly": "npm run build && npm run lint && npm run test",
+    "start": "webpack serve --config webpack.dev.config.js --open"
+  },
   "keywords": [
     "solid",
     "profile",
@@ -44,8 +48,6 @@
     "@babel/core": "^7.26.7",
     "@babel/preset-env": "^7.27.2",
     "@babel/preset-typescript": "^7.27.1",
-    "@eslint/eslintrc": "^3.3.1",
-    "@eslint/js": "^9.33.0",
     "@testing-library/dom": "^10.4.1",
     "@testing-library/jest-dom": "^6.6.3",
     "@types/jest": "^30.0.0",
@@ -53,14 +55,13 @@
     "@typescript-eslint/parser": "^8.39.0",
     "babel-jest": "^30.0.0",
     "babel-loader": "^10.0.0",
-    "chat-pane": "^2.4.18",
+    "chat-pane": "^2.5.1",
     "eslint": "^9.33.0",
     "html-webpack-plugin": "^5.6.3",
     "jest": "^30.0.2",
     "jest-environment-jsdom": "^30.0.2",
     "jest-fetch-mock": "^3.0.3",
     "jsdom": "^27.0.0",
-    "node-polyfill-webpack-plugin": "^4.1.0",
     "solid-logic": "^3.1.1",
     "typescript": "^5.9.2",
     "webpack": "^5.99.9",

@@ -1,5 +1,5 @@
-import { LiveStore, NamedNode, Literal, Namespace, Node, Store } from "rdflib";
-import { ns, utils } from "solid-ui";
+import { LiveStore, NamedNode, Literal, Namespace, Node, Store } from 'rdflib'
+import { ns, utils } from 'solid-ui'
 
 export interface Role {
   startDate?: Literal,
@@ -21,9 +21,9 @@ export interface RolesByType {
   FutureRole: Role[];
 }
 
-const ORG = Namespace('http://www.w3.org/ns/org#');
+const ORG = Namespace('http://www.w3.org/ns/org#')
 
-export const typesOfRole = ['PastRole', 'CurrentRole', 'FutureRole'];
+export const typesOfRole = ['PastRole', 'CurrentRole', 'FutureRole']
 
 export function skillAsText (store: Store, sk: Node):string {
   if (sk.termType === 'Literal') return sk.value // Not normal but allow this
@@ -34,7 +34,7 @@ export function skillAsText (store: Store, sk: Node):string {
   }
 
   const manual = store.anyJS(sk as NamedNode, ns.vcard('role'))
-  if (manual && manual[0] > "") return manual
+  if (manual && manual[0] > '') return manual
   return '¿¿¿ skill ???'
 }
 
@@ -42,7 +42,7 @@ export function languageAsText (store: Store, lan: Node):string {
   if (lan.termType === 'Literal') return lan.value // Not normal but allow this
   const publicId = store.anyJS(lan as NamedNode, ns.solid('publicId'))
   if (publicId)
-    return utils.label(publicId, true); // @@ check language and get name in diff language if necessary
+    return utils.label(publicId, true) // @@ check language and get name in diff language if necessary
   return '-'                                                  
 }
 
@@ -92,11 +92,11 @@ function getRolesByType(
 
       for (const t of typesOfRole) {
         if (store.holds(membership, ns.rdf('type'), ns.solid(t))) {
-           rolesByType[t].push(item);
+           rolesByType[t].push(item)
         }
       }
    }
-   return rolesByType;
+   return rolesByType
 }
 
 export function presentCV(
