@@ -1,15 +1,15 @@
-import pane from "../index";
-import { parse } from "rdflib";
-import { store, authn } from "solid-logic";
+import pane from '../src/index'
+import { parse } from 'rdflib'
+import { store, authn } from 'solid-logic'
 // import { findByTestId } from "@testing-library/dom";
-import { context, doc, subject, fakeLogInAs } from "./setup";
+import { context, doc, subject, fakeLogInAs } from './setup'
 
 
 // import exampleProfile from './examples/testingsolidos.ttl'
 
 
 function delay(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
+  return new Promise(resolve => setTimeout(resolve, ms))
 }
 const exampleProfile = `
              @prefix : <https://janedoe.example/profile/card#> .
@@ -66,7 +66,7 @@ const exampleProfile = `
         :id1730058497607
         :id1730059685809 ) .
     
-`;
+`
 
  // console.log('exampleProfile', exampleProfile)
 
@@ -74,58 +74,58 @@ const exampleProfile = `
  const user = authn.currentUser()
  console.log('Logged in user: ', user)
 
-describe("edit-profile-pane", () => {
-  let element;
+describe('edit-profile-pane', () => {
+  let element
 
-  describe("edit social media (logged in)", () => {
+  describe('edit social media (logged in)', () => {
     beforeAll(async () => {
-      store.removeDocument(doc);
-      parse(exampleProfile, store, doc.uri);
+      store.removeDocument(doc)
+      parse(exampleProfile, store, doc.uri)
       fakeLogInAs(subject)
       store.updater.editable = function () { console.log('nocked editable'); return 'SPARQL'}
-      const result = editorPane.render(subject, context);
+      const result = editorPane.render(subject, context)
       console.log('editorPane name ', editorPane.name )
       console.log('editorPane rendered 1 <<< ', result.innerHTML , '>>>')
       await delay(3000)
       console.log('editorPane rendered later 1 <<< ', result.outerHTML , '>>>')
 
-      element = result;
-    });
+      element = result
+    })
 
-    it("renders the social networks", () => {
-      expect(element).toContainHTML("Edit your public profile");
-    });
+    it('renders the social networks', () => {
+      expect(element).toContainHTML('Edit your public profile')
+    })
 
-    it("renders warning: public", () => {
-      expect(element).toContainHTML("Everything you put here will be public");
-    });
+    it('renders warning: public', () => {
+      expect(element).toContainHTML('Everything you put here will be public')
+    })
 
-    it.skip("renders thank you", () => {
-      expect(element).toContainHTML("Thank you for filling your profile");
-    });
-  });
+    it.skip('renders thank you', () => {
+      expect(element).toContainHTML('Thank you for filling your profile')
+    })
+  })
 
-  describe("edit social media (NOt logged in)", () => {
+  describe('edit social media (NOt logged in)', () => {
     beforeAll(async () => {
-      store.removeDocument(doc);
-      parse(exampleProfile, store, doc.uri);
+      store.removeDocument(doc)
+      parse(exampleProfile, store, doc.uri)
       fakeLogInAs(null)
       store.updater.editable = function () { console.log('nocked editable'); return 'SPARQL'}
-      const result = editorPane.render(subject, context);
+      const result = editorPane.render(subject, context)
       console.log('editorPane name ', editorPane.name )
       console.log('editorPane rendered early <<< ', result.outerHTML , '>>>')
       await delay(3000)
       console.log('editorPane rendered later <<< ', result.outerHTML , '>>>')
-      element = result;
+      element = result
       // element = await findByTestId(result, "profile-editor");
-    });
+    })
 
-    it("gives you a log in button", () => {
-      expect(element).toContainHTML("Log in");
-    });
+    it('gives you a log in button', () => {
+      expect(element).toContainHTML('Log in')
+    })
     
-  });
+  })
 
   
 
-});
+})

@@ -1,35 +1,53 @@
-const {
-    defineConfig,
-} = require("eslint/config");
+import tsParser from "@typescript-eslint/parser"
+import tseslintPlugin from "@typescript-eslint/eslint-plugin"
 
-const tsParser = require("@typescript-eslint/parser");
-const typescriptEslint = require("@typescript-eslint/eslint-plugin");
-const js = require("@eslint/js");
-
-const {
-    FlatCompat,
-} = require("@eslint/eslintrc");
-
-const compat = new FlatCompat({
-    baseDirectory: __dirname,
-    recommendedConfig: js.configs.recommended,
-    allConfig: js.configs.all
-});
-
-module.exports = defineConfig([{
-    languageOptions: {
-        parser: tsParser,
+export default [
+    {
+        ignores: [
+            'lib/**',
+            'node_modules/**',
+            'coverage/**'
+        ],
     },
-
-    plugins: {
-        "@typescript-eslint": typescriptEslint,
-    },
-
-    extends: compat.extends("eslint:recommended", "plugin:@typescript-eslint/recommended"),
-
-    settings: {
-        react: {
-            version: "detect",
+    {
+        files: ['src/**/*.js', 'src/**/*.ts', 'src/**/*.cjs', 'src/**/*.mjs'],
+        languageOptions: {
+            parser: tsParser,
+            parserOptions: {
+                project: ['./tsconfig.json'],
+                sourceType: 'module',
+            },
+        },
+        plugins: {
+            "@typescript-eslint": tseslintPlugin,
+        },
+        rules: {
+            semi: ['error', 'never'],
+            quotes: ['error', 'single'],
+            'no-unused-vars': 'off', // handled by TS
+            '@typescript-eslint/no-unused-vars': ['warn'],
+            '@typescript-eslint/no-explicit-any': 'warn',
+        },
+        settings: {
+            react: {
+                version: "detect",
+            },
         },
     },
-}]);
+    {
+        files: ['test/**/*.js', 'test/**/*.ts'],
+        languageOptions: {
+            parser: tsParser,
+            parserOptions: {
+                project: ['./tsconfig.test.json'],
+            },
+        },
+        rules: {
+            semi: ['error', 'never'],
+            quotes: ['error', 'single'],
+            'no-console': 'off', // Allow console in tests
+            'no-undef': 'off', // Tests may define globals
+        }
+    }
+]
+

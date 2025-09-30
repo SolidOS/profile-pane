@@ -1,22 +1,8 @@
-import pane from "../index";
-import { parse } from "rdflib";
-import { store } from "solid-logic";
-import { findByTestId } from "@testing-library/dom";
-import { context, doc, subject } from "./setup";
-
-/*
-import { alice, bob, boby, club,
-AlicePhotoFolder, AlicePreferences, AlicePhotos, AlicePreferencesFile, AlicePrivateTypeIndex, AlicePrivateTypes, AliceProfile, AliceProfileFile, AlicePublicTypeIndex, AlicePublicTypes,
-BobProfile,
-ClubPreferences, ClubPreferencesFile, ClubPrivateTypeIndex, ClubPrivateTypes, ClubProfile, ClubPublicTypeIndex, ClubPublicTypes,
-clearLocalStore } from './helpers/dataSetup.ts'
-*/
-
-function waitforme(milisec) {
-    return new Promise(resolve => {
-        setTimeout(() => { resolve('') }, milisec);
-    })
-}
+import pane from '../src/index'
+import { parse } from 'rdflib'
+import { store } from 'solid-logic'
+import { findByTestId } from '@testing-library/dom'
+import { context, doc, subject } from './setup'
 
 // This was at testingsolidos.solidcommunity.net
 const exampleProfile = `@prefix : <#>.
@@ -40,8 +26,6 @@ const exampleProfile = `@prefix : <#>.
 @prefix c: <https://solidos.solidcommunity.net/profile/card#>.
 @prefix n0: <http://www.w3.org/ns/auth/acl#>.
 @prefix skill: <http://data.europa.eu/esco/skill/>.
-@prefix wf: <http://www.w3.org/2005/01/wf/flow#>.
-@prefix bookm: <https://bookm.example.com/foo#>.
 
 occup:50af07f0-7a75-424e-a66d-5a9deea10f4c
     schema:name
@@ -171,49 +155,54 @@ pro:card a foaf:PersonalProfileDocument; foaf:maker :me; foaf:primaryTopic :me.
     foaf:nick "tester1".
 l:de schema:name "germano"@ia.
 
-l:fr schema:name "French"@en;
-#########################################
-
-solid:publicTypeIndex <> .
-
-
-<> a solid:ListedDocument, solid:TypeIndex.
-
-:id1621776092316
-    a solid:TypeRegistration;
-    solid:forClass bookm:Bookmark;
-    solid:instance </profile/bookmarks.ttl>.
-
-:id1670695250649 solid:forClass wf:Tracker; solid:instance <#tracker1> .
-
-:id1670695314828 solid:forClass vcard:AddressBook; solid:instance <#book1>  .
-
-
-<#reg1> solid:forClass vcard:AddressBook; solid:instance <#book1> .
-
-<#book1> a vcard:AddressBook; vcard:fn "Alice's Contacts".
+l:fr schema:name "French"@en.
 
 `
-describe("profile-pane", () => {
-  let element;
+describe('profile-pane', () => {
+  let element
 
-  describe("stuff", () => {
+  describe('curriculum vitae', () => {
     beforeAll(async () => {
-      store.removeDocument(doc);
-      parse(exampleProfile, store, doc.uri);
-      const result = pane.render(subject, context);
-      element = await findByTestId(result, "stuff");
-    });
+      store.removeDocument(doc)
+      parse(exampleProfile, store, doc.uri)
+      const result = pane.render(subject, context)
+      element = await findByTestId(result, 'curriculum-vitae')
+    })
 
-    it("renders the stuff", () => {
-      expect(element).toContainHTML("Stuff");
-    });
-    it.skip("renders the three rows", async () => { // @@ How to test it after it has been filled in async?
-      const tableEle = await findByTestId(element, "stuffTable")
-      await waitforme(1000) // ms
-      expect(tableEle.children.length).toEqual(3);
-    });
+    it('renders the CV', () => {
+      expect(element).toContainHTML('Bio')
+    })
+    it('renders role testeuse d’accessibilité in bio', () => {
+      expect(element).toContainHTML('testeuse D’accessibilité')
+    })
+    it('renders organization Apple in list', () => {
+      expect(element).toContainHTML('Apple')
+    })
+    it('renders lone start date in list', () => {
+      expect(element).toContainHTML('(2021-04-01 to')
+    })
+    it('renders start and end dates in role', () => {
+      expect(element).toContainHTML('(1960-04-01 to 1963-04-01)')
+    })
+    it('renders skill 1 in CV', () => {
+      expect(element).toContainHTML('Tester Du Matériel D’instrumentation')
+    })
+    it('renders skill 2 in CV', () => {
+      expect(element).toContainHTML('Travailler Dans De Mauvaises Conditions')
+    })
+    it('renders skill 3 vcard role in CV', () => {
+      expect(element).toContainHTML('Sitting')
+    })
+    it('renders error flag when missing skill text CV', () => {
+      expect(element).toContainHTML('¿¿¿ Skill ???')
+    })
+    it('renders languages', () => {
+      expect(element).toContainHTML('French')
+    })
 
-  });
+    it('renders languages', () => {
+      expect(element).toContainHTML('Germano')
+    })
+  })
 
-});
+})

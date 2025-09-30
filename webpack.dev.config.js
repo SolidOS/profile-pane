@@ -1,7 +1,7 @@
-const HtmlWebpackPlugin = require("html-webpack-plugin");
-const NodePolyfillPlugin = require("node-polyfill-webpack-plugin");
+import HtmlWebpackPlugin from "html-webpack-plugin";
+import NodePolyfillPlugin from "node-polyfill-webpack-plugin";
 
-module.exports = [
+export default [
   {
     mode: "development",
     entry: ["./dev/index.ts"],
@@ -16,21 +16,19 @@ module.exports = [
           exclude: /node_modules/,
           use: ["babel-loader"],
         },
-
         {
           test: /\.ttl$/, // Target text  files
           type: 'asset/source', // Load the file's content as a string
         },
-  
       ],
     },
     resolve: {
       extensions: ["*", ".js", ".ts"]
     },
-
     devServer: {
       static: './dist'
     },
     devtool: "source-map",
   },
-];
+]
+

@@ -1,8 +1,7 @@
-import pane from "../index";
-import { parse } from "rdflib";
-import { store } from "solid-logic";
-import { findByTestId } from "@testing-library/dom";
-import { context, doc, subject } from "./setup";
+import pane from '../src/index'
+import { parse } from 'rdflib'
+import { store } from 'solid-logic'
+import { context, doc, subject } from './setup'
 
 // This was at testingsolidos.solidcommunity.net
 const exampleProfile = `@prefix : <#>.
@@ -62,7 +61,7 @@ pro:card a foaf:PersonalProfileDocument; foaf:maker :me; foaf:primaryTopic :me.
 :id1621182208190
     a solid:CurrentRole;
     schema:startDate "2021-04-01"^^xsd:date;
-    # schema:endDate "2022-04-01"^^xsd:date;
+    schema:endDate "2022-04-01"^^xsd:date;
 
     vcard:role "Testeuse des Apps Solid";
     org:member :me;
@@ -158,51 +157,22 @@ l:de schema:name "germano"@ia.
 l:fr schema:name "French"@en.
 
 `
-describe("profile-pane", () => {
-  let element;
+describe('profile-pane', () => {
 
-  describe("curriculum vitae", () => {
+  describe('curriculum vitae', () => {
     beforeAll(async () => {
-      store.removeDocument(doc);
-      parse(exampleProfile, store, doc.uri);
-      const result = pane.render(subject, context);
-      element = await findByTestId(result, "curriculum-vitae");
-    });
+      store.removeDocument(doc)
+      parse(exampleProfile, store, doc.uri)
+      // const label = pane.label(subject, context);
+    })
 
-    it("renders the CV", () => {
-      expect(element).toContainHTML("Bio");
-    });
-    it("renders role testeuse d’accessibilité in bio", () => {
-      expect(element).toContainHTML("testeuse D’accessibilité");
-    });
-    it("renders organization Apple in list", () => {
-      expect(element).toContainHTML("Apple");
-    });
-    it("renders lone start date in list", () => {
-      expect(element).toContainHTML("(2021-04-01 to");
-    });
-    it("renders start and end dates in role", () => {
-      expect(element).toContainHTML("(1960-04-01 to 1963-04-01)");
-    });
-    it("renders skill 1 in CV", () => {
-      expect(element).toContainHTML("Tester Du Matériel D’instrumentation");
-    });
-    it("renders skill 2 in CV", () => {
-      expect(element).toContainHTML("Travailler Dans De Mauvaises Conditions");
-    });
-    it("renders skill 3 vcard role in CV", () => {
-      expect(element).toContainHTML("Sitting");
-    });
-    it("renders error flag when missing skill text CV", () => {
-      expect(element).toContainHTML("¿¿¿ Skill ???");
-    });
-    it("renders languages", () => {
-      expect(element).toContainHTML("French");
-    });
+    it('returns a good label Profile if appropriate', () => {
+      expect(pane.label(subject, context)).toEqual('Profile')
+    })
+    it('returns a null label Profile if not a person', () => {
+      expect(pane.label(store.sym('https://random.example.com/'), context)).toEqual(null)
+    })
 
-    it("renders languages", () => {
-      expect(element).toContainHTML("Germano");
-    });
-  });
+  })
 
-});
+})

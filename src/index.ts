@@ -1,54 +1,54 @@
-import { DataBrowserContext } from "pane-registry";
-import { NamedNode, LiveStore } from "rdflib";
-import { render } from "lit-html";
-import { ProfileView } from "./ProfileView";
+import { DataBrowserContext } from 'pane-registry'
+import { NamedNode, LiveStore } from 'rdflib'
+import { render } from 'lit-html'
+import { ProfileView } from './ProfileView'
 import editProfileView from './editProfilePane/editProfile.view'
-import { icons, ns } from "solid-ui";
+import { icons, ns } from 'solid-ui'
 import * as qrcode from 'qrcode'
 
 async function loadExtendedProfile(store: LiveStore, subject: NamedNode) {
   const otherProfiles = store.each(
     subject,
-    ns.rdfs("seeAlso"),
+    ns.rdfs('seeAlso'),
     null,
     subject.doc()
-  ) as Array<NamedNode>;
+  ) as Array<NamedNode>
   if (otherProfiles.length > 0) {
-    await store.fetcher.load(otherProfiles);
+    await store.fetcher.load(otherProfiles)
   }
 }
 
 
 const Pane = {
   global: false,
-  icon: icons.iconBase + "noun_15059.svg",
-  name: "profile",
+  icon: icons.iconBase + 'noun_15059.svg',
+  name: 'profile',
   label: function (
     subject: NamedNode,
     context: DataBrowserContext
   ): string | null {
-    const t = context.session.store.findTypeURIs(subject);
+    const t = context.session.store.findTypeURIs(subject)
     if (
-      t[ns.vcard("Individual").uri] ||
-      t[ns.foaf("Person").uri] ||
-      t[ns.schema("Person").uri]
+      t[ns.vcard('Individual').uri] ||
+      t[ns.foaf('Person').uri] ||
+      t[ns.schema('Person').uri]
     ) {
-      return "Profile";
+      return 'Profile'
     }
-    return null;
+    return null
   },
   editor: editProfileView,                                            
   render: (subject: NamedNode, context: DataBrowserContext): HTMLElement => {
-    const target = context.dom.createElement("div");
-    const store = context.session.store;
+    const target = context.dom.createElement('div')
+    const store = context.session.store
 
     loadExtendedProfile(store, subject).then(async () => {
       render(await ProfileView(subject, context), target)
       const QRCodeEles = Array.from(target.getElementsByClassName('QRCode')) // was context.dom
-      if (!QRCodeEles.length) return console.error("QRCode Ele missing")
+      if (!QRCodeEles.length) return console.error('QRCode Ele missing')
       for (const QRCodeElement of QRCodeEles as HTMLElement[]) {
         const value = QRCodeElement.getAttribute('data-value')
-        if (!value) return console.error("QRCode data-value missing")
+        if (!value) return console.error('QRCode data-value missing')
         const highlightColor = QRCodeElement.getAttribute('highlightColor') || '#000000'
         const backgroundColor = QRCodeElement.getAttribute('backgroundColor') || '#ffffff'
         // console.log(`@@ qrcodes2 colours highlightColor ${highlightColor}, backgroundColor ${backgroundColor}`)
@@ -67,17 +67,17 @@ const Pane = {
           } else {
             // console.log('QRcode success.', svg);
             QRCodeElement.innerHTML = svg
-            QRCodeElement.style.width = "80%"
-            QRCodeElement.style.height = "80%"
-            QRCodeElement.style.margin = "10%"
+            QRCodeElement.style.width = '80%'
+            QRCodeElement.style.height = '80%'
+            QRCodeElement.style.margin = '10%'
           }
-        });
+        })
 
       }
     })
 
-    return target;
+    return target
   },
-};
+}
 
-export default Pane;
+export default Pane
