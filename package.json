@@ -15,7 +15,7 @@
   ],
   "scripts": {
     "clean": "rm -rf lib",
-    "build": "npm run clean && make && npm run build-js",
+    "build": "npm run clean && npm run build-js",
     "build-js": "tsc",
     "lint": "eslint",
     "test": "jest --no-coverage",
