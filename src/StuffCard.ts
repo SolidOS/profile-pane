@@ -1,65 +1,44 @@
 import { html, TemplateResult } from 'lit-html'
-import { asyncReplace } from 'lit-html/directives/async-replace.js'
+import { unsafeHTML } from 'lit-html/directives/unsafe-html.js'
 import { NamedNode } from 'rdflib'
 import { DataBrowserContext } from 'pane-registry'
 import { widgets } from 'solid-ui'
-
-import {
-  fullWidth,
-  heading,
-  paddingSmall,
-  textCenter,
-  textLeft,
-  textGray,
-} from './baseStyles'
+import * as styles from './styles/StuffCard.module.css'
 import { ProfilePresentation } from './presenter'
-import { styleMap } from 'lit-html/directives/style-map.js'
-import { card } from './baseStyles'
 
 const dom = document
-
-const styles = {
-  image: styleMap(fullWidth()),
-  intro: styleMap({ ...textGray(), ...textCenter() }),
-  card: styleMap(card()),
-  info: styleMap({ ...paddingSmall(), ...textLeft() }),
-}
 
 export const StuffCard = (profileBasics: ProfilePresentation,
   context: DataBrowserContext,
   subject: NamedNode, stuffData): TemplateResult => {
-
   const { stuff }  = stuffData
-  const nameStyle = styleMap({
-    ...heading(),
-    // "text-decoration": "underline",
-    color: profileBasics.highlightColor, // was "text-decoration-color"
-  })
-  // return renderThings(stuff)
+  if (!stuff.length) return html``
   return html`
-  <div>
-    <div data-testid="stuff" style="${styles.card}">
-      <div style=${styles.info}>
-        <h3 style=${nameStyle}>Stuff</h3>
-
-        <div style=${styles.info}><table data-testid="stuffTable">${renderThings(stuff)}</table></div>
-        <hr />
-
-      </div>
-    </div>
-  </div>
-`
+    <section
+      class="${styles.stuffCard}"
+      aria-labelledby="stuff-card-title"
+      role="region"
+      data-testid="stuff"
+    >
+      <header class="${styles.stuffHeader}" aria-label="Stuff Header">
+        <h3 id="stuff-card-title">Stuff</h3>
+      </header>
+      <table class="${styles.stuffTable}" data-testid="stuffTable" role="table">
+        ${renderThings(stuff)}
+      </table>
+    </section>
+  `
 }
 
 function renderThingAsDOM (thing, dom) {
   const options = {}
+  // widgets.personTR returns a DOM node, so we need to convert it to HTML string
   const row = widgets.personTR(dom, null, thing.instance, options)
-  return row
+  return unsafeHTML(row.outerHTML)
 }
 
 function renderThing (thing, dom) {
   return renderThingAsDOM(thing, dom)
-  return html` ${asyncReplace(renderThingAsDOM(thing, dom))} `
 }
 
 function renderThings(things) {
@@ -67,5 +46,3 @@ function renderThings(things) {
     if (things.length === 0) return html``
     return html`${renderThing(things[0], dom)}${things.length > 1 ? renderThings(things.slice(1)) : html``}`
 }
-
-// ENDS

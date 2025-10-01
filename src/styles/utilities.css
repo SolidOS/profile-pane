@@ -1,0 +1,39 @@
+/* Utility-first CSS classes for layout, spacing, and responsiveness */
+.flex {
+  display: flex;
+}
+.grid {
+  display: grid;
+}
+.center {
+  justify-content: center;
+  align-items: center;
+}
+.gap-md {
+  gap: 1em;
+}
+.gap-lg {
+  gap: 2em;
+}
+.mt-md {
+  margin-top: 1em;
+}
+.mb-md {
+  margin-bottom: 1em;
+}
+.p-md {
+  padding: 1em;
+}
+.rounded {
+  border-radius: var(--border-radius);
+}
+.shadow {
+  box-shadow: var(--box-shadow);
+}
+.bg-primary {
+  background: var(--primary-color);
+  color: #fff;
+}
+.bg-card {
+  background: var(--card-bg);
+}

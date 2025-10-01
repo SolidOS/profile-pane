@@ -1,103 +1,102 @@
-import { html, TemplateResult } from 'lit-html'
-import {
-  fullWidth,
-  heading,
-  paddingSmall,
-  textCenter,
-  textLeft, textRight,
-  textGray,
-} from './baseStyles'
+import { html } from 'lit-html'
 import { ProfilePresentation } from './presenter'
 import { CVPresentation } from './CVPresenter'
-import { styleMap } from 'lit-html/directives/style-map.js'
-import { card } from './baseStyles'
-
-
-const styles = {
-  image: styleMap(fullWidth()),
-  intro: styleMap({ ...textGray(), ...textCenter() }),
-  card: styleMap(card()),
-  info: styleMap({ ...paddingSmall(), ...textLeft() }),
-  tools: styleMap({ ...paddingSmall(), ...textRight() }),
-}
+import * as styles from './styles/CVCard.module.css'
 
 export const CVCard = (
   profileBasics: ProfilePresentation,
   cvData: CVPresentation
-): TemplateResult => {
- 
+) => {
   const { rolesByType, skills, languages } = cvData
-  
-  const nameStyle = styleMap({
-    ...heading(),
-    // "text-decoration": "underline",
-    color: profileBasics.highlightColor, // was "text-decoration-color"
-  })
+  const hasContent =
+    renderRoles(rolesByType['FutureRole']) ||
+    renderRoles(rolesByType['CurrentRole']) ||
+    renderRoles(rolesByType['PastRole']) ||
+    renderSkills(skills) ||
+    renderLanguages(languages)
 
-  if(renderRoles(rolesByType['FutureRole']) || renderRoles(rolesByType['CurrentRole']) || renderRoles(rolesByType['PastRole']) || renderSkills(skills) || renderLanguages(languages)){
+  if (!hasContent) return html``
+
   return html`
-  <div>
-    <div data-testid="curriculum-vitae" style="${styles.card}">
-      <div style=${styles.info}>
-        <h3 style=${nameStyle}>Bio</h3>
-        <div style=${styles.info}>${renderRoles(rolesByType['FutureRole'])}</div>
-        <hr />
-        <div style=${styles.info}>${renderRoles(rolesByType['CurrentRole'])}</div>
-        <hr />
-        <div style=${styles.info}>${renderRoles(rolesByType['PastRole'])}</div>
-        <hr />
-        <h3 style=${nameStyle}>Skills</h3>
-        <div style=${styles.info}>${renderSkills(skills)}</div>
-        <h3 style=${nameStyle}>Languages</h3>
-        <div style=${styles.info}>${renderLanguages(languages)}</div>
-            
-      </div>
-      </div>
-    </div>
-  `}
-  return html``
+    <section class="${styles.cvCard}" aria-label="Curriculum Vitae" data-testid="curriculum-vitae">
+      <header class="${styles.cvHeader}">
+        <h2>${profileBasics.name}</h2>
+        ${profileBasics.introduction ? html`<p>${profileBasics.introduction}</p>` : ''}
+      </header>
+      <section class="${styles.cvSection}" aria-labelledby="cv-future-heading">
+        <h3 id="cv-future-heading">Future Roles</h3>
+        <ul>
+          ${renderRoles(rolesByType['FutureRole'], true)}
+        </ul>
+      </section>
+      <section class="${styles.cvSection}" aria-labelledby="cv-current-heading">
+        <h3 id="cv-current-heading">Current Roles</h3>
+        <ul>
+          ${renderRoles(rolesByType['CurrentRole'], true)}
+        </ul>
+      </section>
+      <section class="${styles.cvSection}" aria-labelledby="cv-past-heading">
+        <h3 id="cv-past-heading">Past Roles</h3>
+        <ul>
+          ${renderRoles(rolesByType['PastRole'], true)}
+        </ul>
+      </section>
+      <section class="${styles.cvSection}" aria-labelledby="cv-skills-heading">
+        <h3 id="cv-skills-heading">Skills</h3>
+        <ul>
+          ${renderSkills(skills, true)}
+        </ul>
+      </section>
+      <section aria-labelledby="cv-languages-heading">
+        <h3 id="cv-languages-heading">Languages</h3>
+        <ul>
+          ${renderLanguages(languages, true)}
+        </ul>
+      </section>
+    </section>
+  `
 }
 
-function renderRole(role) {
-  return role
-    ? html`<div style="margin-top: 0.3em; margin-bottom: 0.3em;">
-        <b>${role.orgName}</b>
+
+function renderRole(role, asList = false) {
+  if (!role) return html``
+  return asList
+    ? html`<li class="${styles.cvRole}">
+        <span class="${styles.cvOrg}">${role.orgName}</span>
         <span>${strToUpperCase(role.roleText)}</span>
-        <span>${role.dates}</span>   
-      </div> `
+        <span>${role.dates}</span>
+      </li>`
     : html``
 }
 
-function renderRoles(roles) {
-    if (roles[0] > '')
-      return html`${renderRole(roles[0])}${roles.length > 1 ? renderRoles(roles.slice(1)) : html``}`
+function renderRoles(roles, asList = false) {
+  if (!roles || !roles.length || !roles[0]) return html``
+  return html`${renderRole(roles[0], asList)}${roles.length > 1 ? renderRoles(roles.slice(1), asList) : html``}`
 }
 
-function renderSkill(skill) {
-  return skill
-    ? html`<div style="margin: 0.5em;">
-        <p style="text-align: center;">${skill}</p>
-      </div> `
+function renderSkill(skill, asList = false) {
+  if (!skill) return html``
+  return asList
+    ? html`<li class="${styles.cvSkill}">${strToUpperCase(skill)}</li>`
     : html``
 }
 
-function renderSkills(skills) {
-  if(skills[0] > '')
-    return html`${renderSkill(strToUpperCase(skills[0]))} ${skills.length > 1 ? renderSkills(skills.slice(1)) : html``}`
+function renderSkills(skills, asList = false) {
+  if (!skills || !skills.length || !skills[0]) return html``
+  return html`${renderSkill(skills[0], asList)}${skills.length > 1 ? renderSkills(skills.slice(1), asList) : html``}`
 }
 
-function renderLan(language) {
-  return language
-    ? html`<div style="margin: 0.5em;">
-        <p style="text-align: center;">${language}</p>
-      </div> `
+function renderLan(language, asList = false) {
+  if (!language) return html``
+  return asList
+    ? html`<li class="${styles.cvLanguage}">${language}</li>`
     : html``
 }
 
-function renderLanguages(languages) {
-  if(languages[0] > '')
-    return html`${renderLan(languages[0])}${languages.length > 1 ? renderLanguages(languages.slice(1)) : html``}`
-} 
+function renderLanguages(languages, asList = false) {
+  if (!languages || !languages.length || !languages[0]) return html``
+  return html`${renderLan(languages[0], asList)}${languages.length > 1 ? renderLanguages(languages.slice(1), asList) : html``}`
+}
 
 function strToUpperCase(str) {
   if (str && str[0] > '') {
@@ -110,7 +109,3 @@ function strToUpperCase(str) {
   }
   return ''
 }
-
-
-// ends
-

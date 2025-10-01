@@ -1,0 +1,93 @@
+/* Global CSS: base styles, variables, and resets */
+/* Accessible color palette */
+
+:root {
+  --primary-color: #7C4DFF; /* Vivid Purple */
+  --secondary-color: #0077B6; /* Accessible Blue */
+  --background-color: #FFFFFF; /* White */
+  --card-bg: #F5F5F5; /* Light Gray */
+  --text-color: #1A1A1A; /* Near-black */
+  --accent-color: #FFD600; /* Bright Yellow */
+  --error-color: #B00020; /* Accessible Red */
+  --success-color: #00C853; /* Accessible Green */
+  --border-radius: 1em;
+  --box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+  --font-family: 'Inter', Arial, sans-serif;
+}
+
+
+html, body {
+  margin: 0;
+  padding: 0;
+  font-family: var(--font-family);
+  background: var(--background-color);
+  color: var(--text-color);
+}
+
+
+h1, h2, h3, h4, h5, h6 {
+  color: var(--primary-color);
+  font-weight: 600;
+}
+
+
+.accent {
+  color: var(--accent-color);
+}
+
+.secondary {
+  color: var(--secondary-color);
+}
+
+.error {
+  color: var(--error-color);
+}
+
+.success {
+  color: var(--success-color);
+}
+
+button, input, textarea {
+  font-family: inherit;
+}
+
+
+/* Accessibility: focus styles */
+:focus {
+  outline: 2px solid var(--accent-color);
+  outline-offset: 2px;
+}
+
+/* Utility classes */
+.u-flex {
+  display: flex;
+}
+.u-grid {
+  display: grid;
+}
+.u-center {
+  justify-content: center;
+  align-items: center;
+}
+.u-gap {
+  gap: 1em;
+}
+
+/* Card style */
+.card {
+  background: var(--card-bg);
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+  padding: 1em;
+}
+
+/* Responsive grid for profile */
+.profile-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+  gap: 1.5em;
+  background: var(--profile-grid-bg, var(--background-color));
+}
+.profile-header, .profile-footer {
+  grid-column: 1 / -1;
+}

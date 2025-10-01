@@ -1,19 +1,7 @@
-import { html, nothing, TemplateResult } from 'lit-html'
-import { styleMap } from 'lit-html/directives/style-map.js'
-import {
-  fullWidth,
-  heading,
-  padding,
-  textCenter,
-  textGray,
-} from './baseStyles'
+import { html, nothing } from 'lit-html'
+import * as styles from './styles/ProfileCard.module.css'
 import { ProfilePresentation } from './presenter'
 
-const styles = {
-  image: styleMap(fullWidth()),
-  intro: styleMap({ ...textGray(), ...textCenter() }),
-  info: styleMap(padding()),
-}
 
 export const ProfileCard = ({
   name,
@@ -22,25 +10,28 @@ export const ProfileCard = ({
   location,
   pronouns,
   highlightColor,
-}: ProfilePresentation): TemplateResult => {
-  const nameStyle = styleMap({
-    ...heading(),
-    'text-decoration': 'underline',
-    'text-decoration-color': highlightColor,
-  })
+}: ProfilePresentation) => {
   return html`
-    ${Image(imageSrc, name)}
-    <div style=${styles.info}>
-      <h3 style=${nameStyle}>${name}</h3>
-      <div style=${styles.intro}>
-        ${Line(introduction)} ${Line(location, '🌐')} ${Line(pronouns)}
-      </div>
-    </div>
+    <article class=${styles.profileCard} role="region" aria-labelledby="profile-card-title">
+      <header class=${styles.header}>
+        ${Image(imageSrc, name)}
+        <h3
+          id="profile-card-title"
+          class=${styles.name}
+          style="text-decoration-color: ${highlightColor};"
+        >${name}</h3>
+      </header>
+      <section class=${styles.intro} aria-label="Profile Details">
+        ${Line(introduction)}
+        ${Line(location, '🌐')}
+        ${Line(pronouns)}
+      </section>
+    </article>
   `
 }
 
 const Line = (value, prefix: symbol | string = nothing) =>
-  value ? html`<p>${prefix} ${value}</p>` : nothing
+  value ? html`<p class=${styles.details}>${prefix} ${value}</p>` : nothing
 
 const Image = (src, alt) =>
-  src ? html`<img style=${styles.image} src=${src} alt=${alt} />` : nothing
+  src ? html`<img class=${styles.image} src=${src} alt=${alt} />` : nothing

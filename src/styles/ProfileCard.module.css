@@ -1,0 +1,50 @@
+/* ProfileCard.module.css */
+
+.profileCard {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  padding: 1.5rem;
+  background: #fff;
+  border-radius: 1rem;
+  box-shadow: 0 2px 8px rgba(124,77,255,0.08);
+  margin-bottom: 1.5rem;
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.image {
+  width: 100%;
+  max-width: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 0.75rem;
+  box-shadow: 0 1px 4px rgba(124,77,255,0.12);
+}
+
+.name {
+  font-size: 1.5rem;
+  font-weight: 700;
+  text-align: center;
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+  margin: 0;
+}
+
+.intro {
+  color: #666;
+  text-align: center;
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.details {
+  color: #444;
+  text-align: center;
+  font-size: 1rem;
+}

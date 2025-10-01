@@ -1,40 +1,17 @@
-// A card in my profile to show yu a QRCode of my webid
-//
 import { html, TemplateResult } from 'lit-html'
 import { NamedNode } from 'rdflib'
-import {
-  fullWidth,
-  heading,
-  paddingSmall,
-  textCenter,
-  textLeft,
-  textGray,
-} from './baseStyles'
 import { ProfilePresentation } from './presenter'
-import { styleMap } from 'lit-html/directives/style-map.js'
 import { utils } from 'solid-ui'
+import * as styles from './styles/QRCodeCard.module.css'
 
-const styles = {
-  image: styleMap(fullWidth()),
-  intro: styleMap({ ...textGray(), ...textCenter() }),
-  card: styleMap({}),
-  info: styleMap({ ...paddingSmall(), ...textLeft() }),
-}
 
 export const QRCodeCard = (
   profileBasics: ProfilePresentation,
   subject: NamedNode
 ): TemplateResult => {
-  const nameStyle = styleMap({
-    ...heading(),
-    // "text-decoration": "underline",
-    color: profileBasics.highlightColor, // was "text-decoration-color"
-  })
-  const qrCodeCanvasStyle = 'width: 80%; margin:auto;'
   const highlightColor = profileBasics.highlightColor || '#000000'
   const backgroundColor = profileBasics.backgroundColor || '#ffffff'
-  // console.log(`@@ qrcodes colours highlightColor ${highlightColor}, backgroundColor ${backgroundColor}`)
-
+ 
   const name = utils.label(subject)
 
   const BEGIN = 'BEGIN:VCARD\r\n'
@@ -53,11 +30,23 @@ export const QRCodeCard = (
   // console.log(`@@ qrcodes colours highlightColor ${highlightColor}, backgroundColor ${backgroundColor}`)
    
   return html`
-  <div>
-    <div style=${styles.card}>
-      <h3 style=${nameStyle}>${profileBasics.name}</h3>
-      <div class="QRCode" style="${qrCodeCanvasStyle}" data-value="${vCard}" highlightColor="${highlightColor}" backgroundColor="${backgroundColor}"></div>
-    </div>
-  </div>
+    <section
+      class="${styles.qrCard}"
+      aria-labelledby="qr-card-title"
+      role="region"
+      data-testid="qrcode-card"
+    >
+      <header aria-label="QR Code Header">
+        <h3 id="qr-card-title" class="${styles.qrTitle}">${profileBasics.name}</h3>
+      </header>
+      <div class="${styles.qrCodeBox}" aria-label="QR Code" role="img">
+        <div class="QRCode"
+            style="width:80%;margin:auto;"
+            data-value="${vCard}"
+            highlightColor="${highlightColor}"
+            backgroundColor="${backgroundColor}">
+        </div>
+      </div>
+    </section>
   `
 }

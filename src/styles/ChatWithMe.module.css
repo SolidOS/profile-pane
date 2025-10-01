@@ -1,0 +1,43 @@
+/* ChatWithMe.module.css */
+
+.chatSection {
+  background: #fff;
+  border-radius: 1rem;
+  box-shadow: 0 2px 8px rgba(124,77,255,0.08);
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.chatHeader {
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.chatLoading {
+  color: #7C4DFF;
+  text-align: center;
+  margin: 1em 0;
+}
+
+.chatButton {
+  display: block;
+  margin: 1em auto;
+  padding: 0.5em 1.5em;
+  background: #7C4DFF;
+  color: #fff;
+  border: none;
+  border-radius: 0.5em;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.chatButton:hover {
+  background: #5e35b1;
+}
+
+.chatError {
+  color: #d32f2f;
+  text-align: center;
+  margin: 1em 0;
+}

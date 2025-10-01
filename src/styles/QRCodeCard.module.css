@@ -1,0 +1,25 @@
+/* QRCodeCard.module.css */
+
+.qrCard {
+  background: #fff;
+  border-radius: 1rem;
+  box-shadow: 0 2px 8px rgba(124,77,255,0.08);
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.qrTitle {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #7C4DFF;
+  margin-bottom: 1rem;
+}
+
+.qrCodeBox {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  margin: 0 auto 1em auto;
+}

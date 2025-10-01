@@ -1,0 +1,23 @@
+.profileSection {
+  background: var(--card-bg);
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+  padding: 1em;
+  margin-bottom: 1em;
+}
+
+.profileHeader {
+  text-align: center;
+  margin-bottom: 1em;
+}
+
+.profileFooter {
+  text-align: center;
+  margin-top: 1em;
+}
+
+@media (min-width: 900px) {
+  .profileSection {
+    margin-bottom: 0;
+  }
+}

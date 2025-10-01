@@ -1,9 +1,9 @@
 import { html, TemplateResult } from 'lit-html'
 import { DataBrowserContext } from 'pane-registry'
 import { NamedNode } from 'rdflib'
-import { widgets } from 'solid-ui'
 import { asyncReplace } from 'lit-html/directives/async-replace.js'
 import { chatWithMeButtonText, loadingMessage } from './texts'
+import * as styles from './styles/ChatWithMe.module.css'
 
 export const ChatWithMe = (
   subject: NamedNode,
@@ -13,41 +13,89 @@ export const ChatWithMe = (
   const longChatPane = context.session.paneRegistry.byName('long chat')
 
   async function* chatContainer() {
-    const chatContainer = context.dom.createElement('div')
-
     let exists
     try {
-       
-      yield loadingMessage, (exists = await logic.chat.getChat(subject, false))
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      yield html`<div class="${styles.chatLoading}" role="status">${loadingMessage}</div>`, (exists = await logic.chat.getChat(subject, false))
     } catch (e) {
       exists = false
     }
     if (exists) {
-      chatContainer.appendChild(longChatPane.render(exists, context, {}))
-      yield chatContainer
+      yield html`
+        <section class="${styles.chatSection}" aria-label="Chat Conversation">
+          <header class="${styles.chatHeader}">
+            <h2>Chat</h2>
+          </header>
+          <div>
+            ${longChatPane.render(exists, context, {})}
+          </div>
+        </section>
+      `
     } else {
-      const button = widgets.button(
-        context.dom,
-        undefined,
-        chatWithMeButtonText,
-        async () => {
-          try {
-            const chat: NamedNode = await logic.chat.getChat(subject, true)
-            chatContainer.innerHTML = ''
-            chatContainer.appendChild(longChatPane.render(chat, context, {}))
-          } catch (e) {
-            chatContainer.appendChild(
-              widgets.errorMessageBlock(context.dom, e.message)
-            )
-          }
-        },
-        { needsBorder: true }
-      )
-      chatContainer.appendChild(button)
-      yield chatContainer
+      let errorMsg = ''
+      let isLoading = false
+      let chat: NamedNode | null = null
+      let rerender: (() => void) | null = null
+
+      function renderButton() {
+        return html`
+          <section class="${styles.chatSection}" aria-label="Start Chat">
+            <header class="${styles.chatHeader}">
+              <h2>Chat</h2>
+            </header>
+            <button
+              class="${styles.chatButton}"
+              aria-label="${chatWithMeButtonText}"
+              @click=${handleClick}
+              ?disabled=${isLoading}
+            >
+              ${isLoading ? loadingMessage : chatWithMeButtonText}
+            </button>
+            ${errorMsg
+              ? html`<div class="${styles.chatError}" role="alert">${errorMsg}</div>`
+              : ''}
+          </section>
+        `
+      }
+
+      const handleClick = async (event: Event) => {
+        isLoading = true
+        if (rerender) rerender()
+        try {
+          chat = await logic.chat.getChat(subject, true)
+          errorMsg = ''
+          isLoading = false
+          if (rerender) rerender()
+        } catch (e) {
+          errorMsg = e.message
+          isLoading = false
+          if (rerender) rerender()
+        }
+      }
+
+      // Main generator loop for reactivity
+      let first = true
+      while (!chat) {
+        if (first) {
+          first = false
+          yield renderButton()
+        } else {
+          yield new Promise<unknown>(resolve => {
+            rerender = () => resolve(undefined)
+          }).then(() => renderButton())
+        }
+      }
+      yield html`
+        <section class="${styles.chatSection}" aria-label="Chat Conversation">
+          <header class="${styles.chatHeader}">
+            <h2>Chat</h2>
+          </header>
+          <div>
+            ${longChatPane.render(chat, context, {})}
+          </div>
+        </section>
+      `
     }
   }
 
-  return html` ${asyncReplace(chatContainer())} `
+  return html`${asyncReplace(chatContainer())}`
 }
