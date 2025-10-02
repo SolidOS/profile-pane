@@ -22,8 +22,7 @@
   "include": [
     "src/**/*",
      "**/*.ttl",
-     "declarations.d.ts",
-     "dev/**/*.ts"
+     "declarations.d.ts"
   ],
   "exclude": [
     "node_modules",

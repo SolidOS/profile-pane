@@ -10,7 +10,7 @@ export default [
         ],
     },
     {
-        files: ['src/**/*.js', 'src/**/*.ts', 'src/**/*.cjs', 'src/**/*.mjs', 'dev/**/*.ts'],
+        files: ['src/**/*.js', 'src/**/*.ts', 'src/**/*.cjs', 'src/**/*.mjs'],
         languageOptions: {
             parser: tsParser,
             parserOptions: {
@@ -32,6 +32,26 @@ export default [
             react: {
                 version: "detect",
             },
+        },
+    },
+    {
+        files: ['dev/**/*.ts'],
+        languageOptions: {
+            parser: tsParser,
+            parserOptions: {
+                project: ['./tsconfig.eslint.json'],
+                sourceType: 'module',
+            },
+        },
+        plugins: {
+            "@typescript-eslint": tseslintPlugin,
+        },
+        rules: {
+            semi: ['error', 'never'],
+            quotes: ['error', 'single'],
+            'no-unused-vars': 'off', // handled by TS
+            '@typescript-eslint/no-unused-vars': ['warn'],
+            '@typescript-eslint/no-explicit-any': 'warn',
         },
     },
     {
