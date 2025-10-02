@@ -10,7 +10,7 @@ export default [
         ],
     },
     {
-        files: ['src/**/*.js', 'src/**/*.ts', 'src/**/*.cjs', 'src/**/*.mjs'],
+        files: ['src/**/*.js', 'src/**/*.ts', 'src/**/*.cjs', 'src/**/*.mjs', 'dev/**/*.ts'],
         languageOptions: {
             parser: tsParser,
             parserOptions: {
