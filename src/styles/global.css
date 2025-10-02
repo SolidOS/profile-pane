@@ -1,4 +1,11 @@
 /* Global CSS: base styles, variables, and resets */
+
+.center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 /* Accessible color palette */
 
 :root {

@@ -9,7 +9,6 @@ function complain(
   buttonContainer.appendChild(widgets.errorMessageBlock(context.dom, error))
 }
 
-//TODO create positive frontend message component on UI
 function mention(buttonContainer: HTMLDivElement, message: string): void {
   const positiveFrontendMessageDiv = <HTMLDivElement>document.createElement('div')
   positiveFrontendMessageDiv.setAttribute(

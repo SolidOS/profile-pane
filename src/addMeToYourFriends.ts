@@ -1,24 +1,17 @@
 import { html, TemplateResult } from 'lit-html'
-import { styleMap } from 'lit-html/directives/style-map.js'
 import { DataBrowserContext } from 'pane-registry'
 import { authn } from 'solid-logic'
 import { LiveStore } from 'rdflib'
-import { ns, rdf, widgets } from 'solid-ui'
+import { ns, rdf, widgets, style } from 'solid-ui'
 import {
   clearPreviousMessage, complain,
   mention
-} from './addMeToYourFriendsHelper'
-import { padding, textCenter } from './baseStyles'
+} from './buttonsHelper'
 import {
   addMeToYourFriendsButtonText, friendExistsAlreadyButtonText, friendExistsMessage, friendWasAddedSuccesMessage, logInAddMeToYourFriendsButtonText, userNotLoggedInErrorMessage
 } from './texts'
 
 let buttonContainer = <HTMLDivElement>document.createElement('div')
-
-//panel local style
-const styles = {
-  button: styleMap({ ...textCenter(), ...padding() }),
-}
 
 const addMeToYourFriendsDiv = (
   subject: rdf.NamedNode,
@@ -27,7 +20,7 @@ const addMeToYourFriendsDiv = (
   buttonContainer = context.dom.createElement('div')
   const button = createAddMeToYourFriendsButton(subject, context)
   buttonContainer.appendChild(button)
-  return html` <div style="${styles.button}">${buttonContainer}</div> `
+  return html`<div class="center">${buttonContainer}</div>`
 }
 
 const createAddMeToYourFriendsButton = (
@@ -70,17 +63,20 @@ const createAddMeToYourFriendsButton = (
         if (friendExists) {
           //logged in and friend exists or friend was just added
           button.innerHTML = friendExistsAlreadyButtonText.toUpperCase()
-          button.setAttribute('class', 'textButton-0-1-3') //style of 'Primary' UI button with needsBorder=true
+          button.className = 'button'
+          button.setAttribute('class', style.primaryButton)
         } else {
           //logged in and friend does not exist yet
           button.innerHTML = addMeToYourFriendsButtonText.toUpperCase()
-          button.setAttribute('class', 'textButton-0-1-2') //style of 'Primary' UI button with needsBorder=false
+          button.className = 'button'
+          button.setAttribute('class', style.primaryButtonNoBorder)
         }
       })
     } else {
       //not logged in
-      button.innerHTML = logInAddMeToYourFriendsButtonText.toUpperCase()
-      button.setAttribute('class', 'textButton-0-1-3') //style of 'Primary' UI button with needsBorder=false
+    button.innerHTML = logInAddMeToYourFriendsButtonText.toUpperCase()
+    button.className = 'button'
+    button.setAttribute('class', style.primaryButton)
     }
   }
 
