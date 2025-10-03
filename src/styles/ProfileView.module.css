@@ -1,3 +1,7 @@
+/* Center all h2 headers in the profile view */
+h2 {
+  text-align: center;
+}
 .profileSection {
   background: var(--card-bg);
   border-radius: var(--border-radius);

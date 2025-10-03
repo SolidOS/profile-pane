@@ -2,6 +2,7 @@ import { html, TemplateResult } from 'lit-html'
 import { NamedNode } from 'rdflib'
 import { utils } from 'solid-ui'
 import * as styles from './styles/QRCodeCard.module.css'
+import { scanQrToConnectText } from './texts'
 
 
 export const QRCodeCard = (
@@ -33,12 +34,14 @@ export const QRCodeCard = (
       role="region"
       data-testid="qrcode-card"
     >
-        <div class="QRCode"
-            data-value="${vCard}"
-            highlightColor="${hC}"
-            backgroundColor="${bC}">
-          </div>
-      
-    </section>
+    <div class="QRCode"
+      data-value="${vCard}"
+      highlightColor="${hC}"
+      backgroundColor="${bC}">
+    </div>
+      <div class="${styles.qrCaption}">
+        ${scanQrToConnectText}
+      </div>
+  </section>
   `
 }

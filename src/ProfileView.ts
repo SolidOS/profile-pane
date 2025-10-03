@@ -42,6 +42,7 @@ export async function ProfileView (
       aria-label="User Profile"
     >
       <section aria-labelledby="profile-card-heading" class="${styles.profileSection}" role="region">
+        <h2 id="profile-card-heading">${profileBasics.name}</h2>
         ${ProfileCard(profileBasics, context, subject)}
       </section>
 

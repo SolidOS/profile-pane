@@ -13,14 +13,9 @@ export const ProfileCard = ({
 
   return html`
     <article class=${localStyles.profileCard} role="region" aria-labelledby="profile-card-title">
-      <header class=${localStyles.header}>
+      <section class=${localStyles.header} aria-label="Profile picture">
         ${Image(imageSrc, name)}
-        <h3
-          id="profile-card-title"
-          class=${localStyles.name}
-          style="text-decoration-color: ${highlightColor};"
-        >${name}</h3>
-      </header>
+      </section>
       <section class=${localStyles.intro} aria-label="Profile Details">
         ${Line(introduction)}
         ${Line(location, '🌐')}

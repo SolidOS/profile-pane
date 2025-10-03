@@ -1,5 +1,12 @@
 /* ProfileCard.module.css */
 
+.header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
 .profileCard {
   width: 100%;
   max-width: 100%;
@@ -11,20 +18,17 @@
   margin-bottom: 1.5rem;
 }
 
-.header {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-bottom: 1rem;
-}
-
 .image {
   width: 100%;
-  max-width: 120px;
+  max-width: 160px;
   border-radius: 50%;
   object-fit: cover;
   margin-bottom: 0.75rem;
   box-shadow: 0 1px 4px rgba(124,77,255,0.12);
+  border: 3px solid var(--profile-primary, #7C4DFF);
+  background: #fff;
+  padding: 6px;
+  box-sizing: border-box;
 }
 
 .name {

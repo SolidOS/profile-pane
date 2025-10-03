@@ -1,9 +1,25 @@
+/* Caption under the QR code */
+.qrCaption {
+  text-align: center;
+  margin-top: 0em;
+  font-size: 0.95em;
+  color: #827e7e;
+}
 /* QRCodeCard.module.css */
 
 .qrCard {
- display: flex;
+  display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   width: 100%;
   margin: 0 auto 1em auto;
+}
+
+.QRCode {
+  width: 60%;
+  height: 60%;
+  max-width: 100%;
+  margin: 0 auto;
+  display: block;
 }
