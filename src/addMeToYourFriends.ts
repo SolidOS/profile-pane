@@ -11,6 +11,7 @@ import {
 import {
   addMeToYourFriendsButtonText, friendExistsAlreadyButtonText, friendExistsMessage, friendWasAddedSuccesMessage, logInAddMeToYourFriendsButtonText, userNotLoggedInErrorMessage
 } from './texts'
+import * as localStyles from './styles/ProfileCard.module.css'
 
 let buttonContainer = <HTMLDivElement>document.createElement('div')
 
@@ -18,7 +19,13 @@ const addMeToYourFriendsDiv = (
   subject: rdf.NamedNode,
   context: DataBrowserContext
 ): TemplateResult => {
-  buttonContainer = context.dom.createElement('div')
+
+  buttonContainer = context.dom.createElement('section') as HTMLDivElement
+  buttonContainer.setAttribute('class', localStyles.buttonSubSection)
+  buttonContainer.setAttribute('aria-labelledby', 'add-me-to-your-friends-button-section')
+  buttonContainer.setAttribute('role', 'region')
+  buttonContainer.setAttribute('data-testid', 'button')
+
   const button = createAddMeToYourFriendsButton(subject, context)
   buttonContainer.appendChild(button)
   return html`<div class="center">${buttonContainer}</div>`

@@ -50,6 +50,20 @@
   margin-bottom: 0.5rem;
 }
 
+.buttonSubSection {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  width: 100%;
+  min-width: 0;
+  text-align: center;
+}
+
+.buttonSubSection button {
+  width: 100%;
+  min-width: 0;
+}
+
 .qrCodeSection {
   color: #666;
   text-align: center;
