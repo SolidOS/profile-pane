@@ -4,11 +4,13 @@ import { ProfilePresentation } from './presenter'
 import { addMeToYourFriendsDiv } from './addMeToYourFriends'
 import { DataBrowserContext } from 'pane-registry'
 import { NamedNode } from 'rdflib'
+import { QRCodeCard } from './QRCodeCard'
 
 
 export const ProfileCard = ({
-  name, imageSrc, introduction, location, pronouns, highlightColor,
+  name, imageSrc, introduction, location, pronouns, highlightColor, backgroundColor
 }: ProfilePresentation, context: DataBrowserContext, subject: NamedNode) => {
+
   return html`
     <article class=${localStyles.profileCard} role="region" aria-labelledby="profile-card-title">
       <header class=${localStyles.header}>
@@ -26,6 +28,9 @@ export const ProfileCard = ({
       </section>
       <section class=${localStyles.buttonSection} aria-label="Profile Actions">
         ${addMeToYourFriendsDiv(subject, context)}
+      </section>
+      <section class=${localStyles.qrCodeSection} aria-label="Friends">
+        ${QRCodeCard(highlightColor, backgroundColor, subject)}
       </section>
     </article>
   `

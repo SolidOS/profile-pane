@@ -159,26 +159,15 @@ l:fr schema:name "French"@en.
 
 `
 describe('profile-pane', () => {
-  let element
+  let element: HTMLElement
 
   describe('qrcode', () => {
     beforeAll(async () => {
       store.removeDocument(doc)
       parse(exampleProfile, store, doc.uri)
       const result = pane.render(subject, context)
-      console.log('qrcode result:', result)
       await delay(3000)
-      console.log('qrcode result later:', result)
-
-      element = await findByTestId(result, 'qrcode-display')
-      console.log('element: ', element)
-      // console.log('element.outerHTML: ', element.outerHTML)
-
-
-    })
-
-    it('renders the name as a heading', () => {
-      expect(element.innerHTML).toContain('Testing SolidOS Test</h3>')
+      element = await findByTestId(result, 'qrcode-card')
     })
 
     it('renders the QRCode element', () => {
@@ -187,7 +176,6 @@ describe('profile-pane', () => {
     })
 
     it('renders the right QRCode colors', () => {
-      // const ele = element.children[0].children[1].children[0]
       expect(element.innerHTML).toContain('stroke="#06b74a"')
       expect(element.innerHTML).toContain('fill="#f4f5c2"')
     })

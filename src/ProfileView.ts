@@ -12,8 +12,6 @@ import { ProfileCard } from './ProfileCard'
 import { CVCard } from './CVCard'
 import { SocialCard } from './SocialCard'
 import { StuffCard } from './StuffCard'
-import { QRCodeCard } from './QRCodeCard'
-import { addMeToYourFriendsDiv } from './addMeToYourFriends'
 
 // The edit button switches to the editor pane
 /*
@@ -44,43 +42,32 @@ export async function ProfileView (
       aria-label="User Profile"
     >
       <section aria-labelledby="profile-card-heading" class="${styles.profileSection}" role="region">
-        <header class="${styles.profileHeader}" aria-label="Profile Header">
-          <h1 id="profile-card-heading">User Profile</h1>
-        </header>
         ${ProfileCard(profileBasics, context, subject)}
       </section>
 
       <section aria-labelledby="cv-heading" class="${styles.profileSection}" role="region">
-        <h2 id="cv-heading">Professional & Education</h2>
+        <h2 id="cv-heading">Professional & education</h2>
         ${CVCard(profileBasics, rolesByType)}
       </section>
 
       <section aria-labelledby="social-heading" class="${styles.profileSection}" role="region">
-        <h2 id="social-heading">Social Accounts</h2>
+        <h2 id="social-heading">Social accounts</h2>
         ${SocialCard(profileBasics, accounts)}
       </section>
 
       <section aria-labelledby="stuff-heading" class="${styles.profileSection}" role="region">
-        <h2 id="stuff-heading">Stuff You Share</h2>
+        <h2 id="stuff-heading">To share</h2>
         ${StuffCard(profileBasics, context, subject, stuffData)}
       </section>
 
       <section aria-labelledby="friends-heading" class="${styles.profileSection}" role="region">
-        <h2 id="friends-heading">People You Know</h2>
+        <h2 id="friends-heading">Friends</h2>
         ${FriendList(profileBasics, subject, context)}
       </section>
 
       <section aria-labelledby="chat-heading" class="${styles.profileSection}" role="region">
-        <h2 id="chat-heading">Chat With Me</h2>
+        <h2 id="chat-heading">Chat with me</h2>
         ${ChatWithMe(subject, context)}
-      </section>
-
-      <section aria-label="Profile Footer" class="${styles.profileSection}" role="region">
-        <footer class="${styles.profileFooter}">
-          <div data-testid="qrcode-display" class="qrcode-display" role="region" aria-label="QR Code">
-            ${QRCodeCard(profileBasics, subject)}
-          </div>
-        </footer>
       </section>
     </main>
   `
