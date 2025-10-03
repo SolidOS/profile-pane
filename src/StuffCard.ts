@@ -33,7 +33,7 @@ function renderThingAsDOM (thing, dom) {
   const options = {}
   // widgets.personTR returns a DOM node, so we need to convert it to HTML string
   const row = widgets.personTR(dom, null, thing.instance, options)
-  return unsafeHTML(row.outerHTML)
+  return row
 }
 
 function renderThing (thing, dom) {
