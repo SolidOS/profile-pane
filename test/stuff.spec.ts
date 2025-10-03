@@ -195,7 +195,7 @@ solid:publicTypeIndex <> .
 
 `
 describe('profile-pane', () => {
-  let element
+  let element: HTMLElement
 
   describe('stuff', () => {
     beforeAll(async () => {

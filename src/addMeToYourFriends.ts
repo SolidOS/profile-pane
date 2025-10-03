@@ -4,6 +4,7 @@ import { authn } from 'solid-logic'
 import { LiveStore } from 'rdflib'
 import { ns, rdf, widgets, style } from 'solid-ui'
 import {
+  checkIfAnyUserLoggedIn,
   clearPreviousMessage, complain,
   mention
 } from './buttonsHelper'
@@ -27,10 +28,12 @@ const createAddMeToYourFriendsButton = (
   subject: rdf.NamedNode,
   context: DataBrowserContext
 ): HTMLButtonElement => {
+  const me = authn.currentUser()
+  let label = checkIfAnyUserLoggedIn(me) ? addMeToYourFriendsButtonText.toUpperCase() : logInAddMeToYourFriendsButtonText.toUpperCase()
   const button = widgets.button(
     context.dom,
     undefined,
-    logInAddMeToYourFriendsButtonText,
+    label,
     setButtonHandler, //sets an onclick event listener
     {
       needsBorder: true,
@@ -59,7 +62,7 @@ const createAddMeToYourFriendsButton = (
     const store: LiveStore = context.session.store
 
     if (checkIfAnyUserLoggedIn(me)) {
-      checkIfFriendExists(store , me, subject).then((friendExists) => {
+      checkIfFriendExists(store, me, subject).then((friendExists) => {
         if (friendExists) {
           //logged in and friend exists or friend was just added
           button.innerHTML = friendExistsAlreadyButtonText.toUpperCase()
@@ -74,9 +77,9 @@ const createAddMeToYourFriendsButton = (
       })
     } else {
       //not logged in
-    button.innerHTML = logInAddMeToYourFriendsButtonText.toUpperCase()
-    button.className = 'button'
-    button.setAttribute('class', style.primaryButton)
+      button.innerHTML = logInAddMeToYourFriendsButtonText.toUpperCase()
+      button.className = 'button'
+      button.setAttribute('class', style.primaryButton)
     }
   }
 
@@ -108,11 +111,6 @@ async function saveNewFriend(
   } else throw new Error(userNotLoggedInErrorMessage)
 }
 
-function checkIfAnyUserLoggedIn(me: rdf.NamedNode): boolean {
-  if (me) return true
-  else return false
-}
-
 async function checkIfFriendExists(
   store: LiveStore,
   me: rdf.NamedNode,
@@ -128,6 +126,5 @@ export {
   addMeToYourFriendsDiv,
   createAddMeToYourFriendsButton,
   saveNewFriend,
-  checkIfAnyUserLoggedIn,
   checkIfFriendExists,
 }

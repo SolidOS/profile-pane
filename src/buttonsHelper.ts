@@ -1,5 +1,6 @@
 import { DataBrowserContext } from 'pane-registry'
 import { widgets } from 'solid-ui'
+import { NamedNode } from 'rdflib'
 
 function complain(
   buttonContainer: HTMLDivElement,
@@ -26,4 +27,9 @@ function clearPreviousMessage(buttonContainer: HTMLDivElement): void {
   }
 }
 
-export { complain, mention, clearPreviousMessage }
+function checkIfAnyUserLoggedIn(me: NamedNode): boolean {
+  if (me) return true
+  else return false
+}
+
+export { complain, mention, clearPreviousMessage, checkIfAnyUserLoggedIn }

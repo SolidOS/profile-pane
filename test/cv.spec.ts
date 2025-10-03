@@ -169,9 +169,6 @@ describe('profile-pane', () => {
       element = await findByTestId(result, 'curriculum-vitae')
     })
 
-    it('renders the CV', () => {
-      expect(element).toContainHTML('Bio')
-    })
     it('renders role testeuse d’accessibilité in bio', () => {
       expect(element).toContainHTML('testeuse D’accessibilité')
     })

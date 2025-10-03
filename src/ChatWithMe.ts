@@ -1,13 +1,11 @@
 import { html, TemplateResult } from 'lit-html'
 import { DataBrowserContext } from 'pane-registry'
-import { NamedNode } from 'rdflib'
+import { NamedNode, LiveStore } from 'rdflib'
+import { widgets, style } from 'solid-ui'
+import { authn } from 'solid-logic'
 import { asyncReplace } from 'lit-html/directives/async-replace.js'
 import { chatWithMeButtonText, logInToChatWithMeButtonText, loadingMessage } from './texts'
-import { authn } from 'solid-logic'
-import { checkIfAnyUserLoggedIn } from './addMeToYourFriends'
-import { clearPreviousMessage, complain } from './buttonsHelper'
-import { widgets } from 'solid-ui'
-import * as styles from './styles/ChatWithMe.module.css'
+import { checkIfAnyUserLoggedIn, complain } from './buttonsHelper'
 
 export const ChatWithMe = (
   subject: NamedNode,
@@ -15,93 +13,65 @@ export const ChatWithMe = (
 ): TemplateResult => {
   const logic = context.session.logic
   const longChatPane = context.session.paneRegistry.byName('long chat')
-  let buttonContainer = context.dom.createElement('div')
-  let errorMsg = ''
-  let isLoading = false
-  let chat: NamedNode | null = null
-  let rerender: (() => void) | null = null
-
-  function setButtonHandler(event) {
-    event.preventDefault()
-    isLoading = true
-    rerender && rerender()
-    logic.chat.getChat(subject, true)
-      .then((result) => {
-        chat = result
-        errorMsg = ''
-        isLoading = false
-        rerender && rerender()
-      })
-      .catch((e) => {
-        errorMsg = e.message
-        isLoading = false
-        rerender && rerender()
-      })
-  }
-
-  function renderButton() {
-    clearPreviousMessage(buttonContainer)
-    const me = authn.currentUser()
-    const label = checkIfAnyUserLoggedIn(me) ? chatWithMeButtonText : logInToChatWithMeButtonText
-    const button = widgets.button(
-      context.dom,
-      undefined,
-      label,
-      setButtonHandler,
-      { needsBorder: true }
-    )
-    button.disabled = isLoading
-    if (isLoading) button.innerHTML = loadingMessage
-    buttonContainer.appendChild(button)
-    if (errorMsg) {
-      clearPreviousMessage(buttonContainer)
-      complain(buttonContainer, context, errorMsg)
-    }
-    return html`<div class="center">${buttonContainer}</div>`
-  }
 
   async function* chatContainer() {
+    const chatContainer = context.dom.createElement('div')
+
     let exists
     try {
-      yield html`<div class="${styles.chatLoading}" role="status">${loadingMessage}</div>`, (exists = await logic.chat.getChat(subject, false))
+       
+      yield loadingMessage.toUpperCase(), (exists = await logic.chat.getChat(subject, false))
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (e) {
       exists = false
     }
     if (exists) {
-      yield html`
-        <section class="${styles.chatSection}" aria-label="Chat Conversation">
-          <header class="${styles.chatHeader}">
-            <h2>Chat</h2>
-          </header>
-          <div>
-            ${longChatPane.render(exists, context, {})}
-          </div>
-        </section>
-      `
+      chatContainer.appendChild(longChatPane.render(exists, context, {}))
+      yield chatContainer
     } else {
-      let first = true
-      while (!chat) {
-        if (first) {
-          first = false
-          yield renderButton()
-        } else {
-          yield new Promise<unknown>(resolve => {
-            rerender = () => resolve(undefined)
-          }).then(() => renderButton())
+      const me = authn.currentUser()
+      let label = checkIfAnyUserLoggedIn(me) ? chatWithMeButtonText.toUpperCase() : logInToChatWithMeButtonText.toUpperCase()
+      const button = widgets.button(
+        context.dom,
+        undefined,
+        label,
+        setButtonHandler,
+        { needsBorder: true }
+      )
+
+      async function setButtonHandler(event) {
+        event.preventDefault()
+        try {
+            const chat: NamedNode = await logic.chat.getChat(subject, true)
+            chatContainer.innerHTML = ''
+            chatContainer.appendChild(longChatPane.render(chat, context, {}))
+        } catch (error) {
+            complain(chatContainer, context, error)
         }
       }
-      yield html`
-        <section class="${styles.chatSection}" aria-label="Chat Conversation">
-          <header class="${styles.chatHeader}">
-            <h2>Chat</h2>
-          </header>
-          <div>
-            ${longChatPane.render(chat, context, {})}
-          </div>
-        </section>
-      `
+
+      button.refresh = refreshButton()
+
+      function refreshButton() {
+        const me = authn.currentUser()
+        const store: LiveStore = context.session.store
+    
+        if (checkIfAnyUserLoggedIn(me)) {
+          button.innerHTML = chatWithMeButtonText.toUpperCase()
+          button.className = 'button'
+          button.setAttribute('class', style.primaryButton)
+        } else {
+          //not logged in
+          button.innerHTML = logInToChatWithMeButtonText.toUpperCase()
+          button.className = 'button'
+          button.setAttribute('class', style.primaryButton)
+        }
+      }
+
+      chatContainer.appendChild(button)
+      yield chatContainer
     }
   }
 
-  return html`${asyncReplace(chatContainer())}`
+  return html` ${asyncReplace(chatContainer())} `
 }

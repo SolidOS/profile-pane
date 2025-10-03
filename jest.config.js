@@ -11,6 +11,10 @@ export default {
   testPathIgnorePatterns: ['/node_modules/', '/lib/'],
   moduleNameMapper: {
     '^[./a-zA-Z0-9$_-]+\\.ttl$': '<rootDir>/__mocks__/fileMock.js',    // '\\.ttl$'
+    // Mock CSS modules
+    '\\.module\\.css$': 'identity-obj-proxy',
+    // Mock other style files (optional)
+    '\\.(css|less|sass|scss)$': 'identity-obj-proxy'
   },
   roots: ['<rootDir>/src', '<rootDir>/test', '<rootDir>/__mocks__'],
 }

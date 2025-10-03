@@ -19,10 +19,6 @@ export const CVCard = (
 
   return html`
     <section class="${styles.cvCard}" aria-label="Curriculum Vitae" data-testid="curriculum-vitae">
-      <header class="${styles.cvHeader}">
-        <h2>${profileBasics.name}</h2>
-        ${profileBasics.introduction ? html`<p>${profileBasics.introduction}</p>` : ''}
-      </header>
       <section class="${styles.cvSection}" aria-labelledby="cv-future-heading">
         <h3 id="cv-future-heading">Future Roles</h3>
         <ul>

@@ -12,7 +12,6 @@ export const StuffCard = (profileBasics: ProfilePresentation,
   context: DataBrowserContext,
   subject: NamedNode, stuffData): TemplateResult => {
   const { stuff }  = stuffData
-  if (!stuff.length) return html``
   return html`
     <section
       class="${styles.stuffCard}"

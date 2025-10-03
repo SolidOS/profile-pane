@@ -77,7 +77,7 @@ export async function ProfileView (
       </section>
 
       <section aria-label="Profile Footer" class="${styles.profileSection}" role="region">
-        <footer class="{styles.profileFooter}">
+        <footer class="${styles.profileFooter}">
           <div data-testid="qrcode-display" class="qrcode-display" role="region" aria-label="QR Code">
             ${QRCodeCard(profileBasics, subject)}
           </div>

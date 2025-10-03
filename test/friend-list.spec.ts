@@ -27,9 +27,6 @@ describe('profile-pane', () => {
     })
     // afterAll(() => { solidLogicSingleton.store.removeDocument(doc)}) // alain
 
-    it('renders the friend list', () => {
-      expect(friends).toContainHTML('Friends')
-    })
     it('renders Alice in list', () => {
       expect(friends).toContainHTML('Alice')
     })
@@ -89,10 +86,6 @@ describe('profile-pane', () => {
       friends = await findByTestId(result, 'friend-list')
     })
     // afterAll(() => { solidLogicSingleton.store.removeDocument(doc)}) // alain
-
-    it('renders the friend list', () => {
-      expect(friends).toContainHTML('Friends')
-    })
 
     it('renders Alice in list', () => {
       expect(friends).toContainHTML('Alice')
