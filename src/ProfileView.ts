@@ -47,8 +47,7 @@ export async function ProfileView (
         <header class="${styles.profileHeader}" aria-label="Profile Header">
           <h1 id="profile-card-heading">User Profile</h1>
         </header>
-        ${ProfileCard(profileBasics)}
-        ${addMeToYourFriendsDiv(subject, context)}
+        ${ProfileCard(profileBasics, context, subject)}
       </section>
 
       <section aria-labelledby="cv-heading" class="${styles.profileSection}" role="region">

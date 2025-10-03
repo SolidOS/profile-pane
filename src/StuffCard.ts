@@ -1,5 +1,4 @@
 import { html, TemplateResult } from 'lit-html'
-import { unsafeHTML } from 'lit-html/directives/unsafe-html.js'
 import { NamedNode } from 'rdflib'
 import { DataBrowserContext } from 'pane-registry'
 import { widgets } from 'solid-ui'

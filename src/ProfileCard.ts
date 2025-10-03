@@ -1,16 +1,14 @@
 import { html, nothing } from 'lit-html'
 import * as localStyles from './styles/ProfileCard.module.css'
 import { ProfilePresentation } from './presenter'
+import { addMeToYourFriendsDiv } from './addMeToYourFriends'
+import { DataBrowserContext } from 'pane-registry'
+import { NamedNode } from 'rdflib'
 
 
 export const ProfileCard = ({
-  name,
-  imageSrc,
-  introduction,
-  location,
-  pronouns,
-  highlightColor,
-}: ProfilePresentation) => {
+  name, imageSrc, introduction, location, pronouns, highlightColor,
+}: ProfilePresentation, context: DataBrowserContext, subject: NamedNode) => {
   return html`
     <article class=${localStyles.profileCard} role="region" aria-labelledby="profile-card-title">
       <header class=${localStyles.header}>
@@ -25,6 +23,9 @@ export const ProfileCard = ({
         ${Line(introduction)}
         ${Line(location, '🌐')}
         ${Line(pronouns)}
+      </section>
+      <section class=${localStyles.buttonSection} aria-label="Profile Actions">
+        ${addMeToYourFriendsDiv(subject, context)}
       </section>
     </article>
   `

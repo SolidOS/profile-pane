@@ -6,6 +6,7 @@ import { authn } from 'solid-logic'
 import { asyncReplace } from 'lit-html/directives/async-replace.js'
 import { chatWithMeButtonText, logInToChatWithMeButtonText, loadingMessage } from './texts'
 import { checkIfAnyUserLoggedIn, complain } from './buttonsHelper'
+import * as localStyles from './styles/ChatWithMe.module.css'
 
 export const ChatWithMe = (
   subject: NamedNode,
@@ -15,11 +16,14 @@ export const ChatWithMe = (
   const longChatPane = context.session.paneRegistry.byName('long chat')
 
   async function* chatContainer() {
-    const chatContainer = context.dom.createElement('div')
+    const chatContainer = context.dom.createElement('section') as HTMLDivElement
+    chatContainer.setAttribute('class', localStyles.chatSection)
+    chatContainer.setAttribute('aria-labelledby', 'chat-card-title')
+    chatContainer.setAttribute('role', 'region')
+    chatContainer.setAttribute('data-testid', 'chat')
 
     let exists
     try {
-       
       yield loadingMessage.toUpperCase(), (exists = await logic.chat.getChat(subject, false))
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (e) {
