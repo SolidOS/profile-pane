@@ -18,9 +18,6 @@ export const StuffCard = (profileBasics: ProfilePresentation,
       role="region"
       data-testid="stuff"
     >
-      <header class="${styles.stuffHeader}" aria-label="Stuff Header">
-        <h3 id="stuff-card-title">Stuff</h3>
-      </header>
       <table class="${styles.stuffTable}" data-testid="stuffTable" role="table">
         ${renderThings(stuff)}
       </table>

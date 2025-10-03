@@ -46,25 +46,41 @@ export async function ProfileView (
         ${ProfileCard(profileBasics, context, subject)}
       </section>
 
-      <section aria-labelledby="cv-heading" class="${styles.profileSection}" role="region">
-        <h2 id="cv-heading">Professional & education</h2>
-        ${CVCard(profileBasics, rolesByType)}
-      </section>
 
-      <section aria-labelledby="social-heading" class="${styles.profileSection}" role="region">
-        <h2 id="social-heading">Social accounts</h2>
-        ${SocialCard(profileBasics, accounts)}
-      </section>
+      ${(() => {
+        const cv = CVCard(profileBasics, rolesByType)
+        return cv && cv.strings && cv.strings.join('').trim() !== '' ? html`
+          <section aria-labelledby="cv-heading" class="${styles.profileSection}" role="region">
+            <h2 id="cv-heading">Professional & education</h2>
+            ${cv}
+          </section>
+        ` : ''
+      })()}
 
-      <section aria-labelledby="stuff-heading" class="${styles.profileSection}" role="region">
-        <h2 id="stuff-heading">To share</h2>
-        ${StuffCard(profileBasics, context, subject, stuffData)}
-      </section>
+      ${accounts.accounts && accounts.accounts.length > 0 ? html`
+        <section aria-labelledby="social-heading" class="${styles.profileSection}" role="region">
+          <h2 id="social-heading">Social accounts</h2>
+          ${SocialCard(profileBasics, accounts)}
+        </section>
+      ` : ''}
 
-      <section aria-labelledby="friends-heading" class="${styles.profileSection}" role="region">
-        <h2 id="friends-heading">Friends</h2>
-        ${FriendList(profileBasics, subject, context)}
-      </section>
+      ${stuffData.stuff && stuffData.stuff.length > 0 ? html`
+        <section aria-labelledby="stuff-heading" class="${styles.profileSection}" role="region">
+          <h2 id="stuff-heading">To share</h2>
+          ${StuffCard(profileBasics, context, subject, stuffData)}
+        </section>
+      ` : ''}
+
+
+      ${(() => {
+        const friends = FriendList(profileBasics, subject, context)
+        return friends && friends.strings && friends.strings.join('').trim() !== '' ? html`
+          <section aria-labelledby="friends-heading" class="${styles.profileSection}" role="region">
+            <h2 id="friends-heading">Friends</h2>
+            ${friends}
+          </section>
+        ` : ''
+      })()}
 
       <section aria-labelledby="chat-heading" class="${styles.profileSection}" role="region">
         <h2 id="chat-heading">Chat with me</h2>
