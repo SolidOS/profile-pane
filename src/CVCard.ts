@@ -1,5 +1,4 @@
 import { html } from 'lit-html'
-import { ProfilePresentation } from './presenter'
 import { CVPresentation } from './CVPresenter'
 import * as styles from './styles/CVCard.module.css'
 

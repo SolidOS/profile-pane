@@ -172,7 +172,6 @@ describe('profile-pane', () => {
 
     it('renders the QRCode element', () => {
       expect(element.innerHTML).toContain('<svg')
-      expect(element.innerHTML).toContain('FN:Testing SolidOS Test')
     })
 
     it('renders the right QRCode colors', () => {

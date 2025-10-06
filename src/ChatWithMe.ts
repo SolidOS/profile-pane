@@ -58,7 +58,6 @@ export const ChatWithMe = (
 
       function refreshButton() {
         const me = authn.currentUser()
-        const store: LiveStore = context.session.store
     
         if (checkIfAnyUserLoggedIn(me)) {
           button.innerHTML = chatWithMeButtonText.toUpperCase()

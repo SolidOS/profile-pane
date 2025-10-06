@@ -32,7 +32,10 @@ export const QRCodeCard = (
     <div class="QRCode"
       data-value="${vCard}"
       highlightColor="${hC}"
-      backgroundColor="${bC}">
+      backgroundColor="${bC}"
+      data-testid="qrcode-card"
+      aria-labelledby="qr-card-title"
+      role="region">
     </div>
       <div class="${styles.qrCaption}">
         ${scanQrToConnectText}

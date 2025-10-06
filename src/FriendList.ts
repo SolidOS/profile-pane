@@ -2,8 +2,7 @@ import { ns, widgets } from 'solid-ui'
 import { DataBrowserContext } from 'pane-registry'
 import { NamedNode } from 'rdflib'
 import { html } from 'lit-html'
-import * as styles from './styles/FriendList.module.css'
-import { ProfilePresentation } from './presenter'
+import * as localStyles from './styles/FriendList.module.css'
 
 
 export const FriendList = (
@@ -15,11 +14,11 @@ export const FriendList = (
 
   return html`
     <section
-      class="${styles.friendListSection}"
+      class="${localStyles.friendListSection}"
       role="region"
       data-testid="friend-list"
     >
-      <ul class="${styles.friendList}" role="list">
+      <ul class="${localStyles.friendList}" role="list">
         ${friends}
       </ul>
     </section>
