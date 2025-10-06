@@ -26,6 +26,15 @@
   font-size: 1.1rem;
 }
 
+.socialItem a {
+  color: var(--primary-color);
+  text-decoration: none;
+}
+
+.socialItem a:hover {
+  text-decoration: underline;
+}
+
 .socialIcon {
   width: 2.5em;
   height: 2.5em;
