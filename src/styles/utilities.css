@@ -41,3 +41,150 @@
 .bg-card {
   background: var(--card-bg);
 }
+
+/* Accessibility utilities */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.min-touch-target {
+  min-height: var(--min-touch-target);
+  min-width: var(--min-touch-target);
+}
+
+/* Enhanced accessibility utilities */
+.visually-hidden {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+.visually-hidden.focusable:focus,
+.visually-hidden.focusable:active {
+  position: static !important;
+  width: auto !important;
+  height: auto !important;
+  padding: inherit !important;
+  margin: inherit !important;
+  overflow: visible !important;
+  clip: auto !important;
+  white-space: inherit !important;
+}
+
+/* Skip links utility */
+.skip-links {
+  position: absolute;
+  top: -100px;
+  left: 0;
+  z-index: 1000;
+}
+
+.skip-links a {
+  position: absolute;
+  left: 6px;
+  top: 6px;
+  padding: var(--spacing-sm);
+  background: var(--primary-color);
+  color: white;
+  text-decoration: none;
+  border-radius: var(--border-radius-sm);
+}
+
+.skip-links a:focus {
+  top: 6px;
+}
+
+/* Color contrast utilities */
+.high-contrast {
+  background: white;
+  color: black;
+  border: 2px solid black;
+}
+
+.reduced-motion {
+  animation: none !important;
+  transition: none !important;
+}
+
+/* Focus management */
+.focus-ring {
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
+}
+
+.no-focus-ring {
+  outline: none;
+}
+
+/* ARIA live regions */
+.live-region {
+  position: absolute;
+  left: -10000px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+.live-region.polite {
+  aria-live: polite;
+}
+
+.live-region.assertive {
+  aria-live: assertive;
+}
+
+/* Text scaling utilities */
+.text-scale-friendly {
+  line-height: 1.5;
+  max-width: 70ch; /* Optimal reading length */
+}
+
+/* Text accessibility utilities */
+.text-readable {
+  line-height: var(--line-height-base);
+  max-width: 65ch;
+}
+
+.text-large {
+  font-size: var(--font-size-lg);
+  line-height: var(--line-height-base);
+}
+
+.text-small {
+  font-size: max(var(--font-size-sm), var(--min-font-size));
+  line-height: var(--min-line-height);
+}
+
+.text-contrast-high {
+  color: var(--text-color);
+  font-weight: 600;
+}
+
+/* Better focus for text elements */
+.focusable-text:focus {
+  background-color: rgba(124, 77, 255, 0.1);
+  outline: 2px solid var(--primary-color);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+/* High contrast text */
+.high-contrast {
+  color: var(--text-color);
+  background: var(--background-color);
+  border: 1px solid var(--border-light);
+}

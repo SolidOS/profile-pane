@@ -1,6 +1,6 @@
 import { html, TemplateResult } from 'lit-html'
 import { DataBrowserContext } from 'pane-registry'
-import { NamedNode, LiveStore } from 'rdflib'
+import { NamedNode } from 'rdflib'
 import { widgets, style } from 'solid-ui'
 import { authn } from 'solid-logic'
 import { asyncReplace } from 'lit-html/directives/async-replace.js'
@@ -18,19 +18,35 @@ export const ChatWithMe = (
   async function* chatContainer() {
     const chatContainer = context.dom.createElement('section') as HTMLDivElement
     chatContainer.setAttribute('class', localStyles.chatSection)
-    chatContainer.setAttribute('aria-labelledby', 'chat-card-title')
+    chatContainer.setAttribute('aria-labelledby', 'chat-section-title')
     chatContainer.setAttribute('role', 'region')
     chatContainer.setAttribute('data-testid', 'chat')
 
+    // Add hidden title for screen readers
+    const title = context.dom.createElement('h3')
+    title.id = 'chat-section-title'
+    title.className = 'sr-only'
+    title.textContent = 'Communication'
+    chatContainer.appendChild(title)
+
     let exists
     try {
-      yield loadingMessage.toUpperCase(), (exists = await logic.chat.getChat(subject, false))
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      yield html`
+        <div class="${localStyles.chatLoading}" role="status" aria-live="polite">
+          ${loadingMessage.toUpperCase()}
+        </div>
+      `
+      exists = await logic.chat.getChat(subject, false)
     } catch (e) {
       exists = false
     }
+    
     if (exists) {
-      chatContainer.appendChild(longChatPane.render(exists, context, {}))
+      const chatArea = context.dom.createElement('div')
+      chatArea.setAttribute('role', 'log')
+      chatArea.setAttribute('aria-label', 'Chat conversation')
+      chatArea.appendChild(longChatPane.render(exists, context, {}))
+      chatContainer.appendChild(chatArea)
       yield chatContainer
     } else {
       const me = authn.currentUser()
@@ -71,7 +87,16 @@ export const ChatWithMe = (
         }
       }
 
+      button.setAttribute('type', 'button')
+      button.setAttribute('aria-describedby', 'chat-button-description')
+      
+      const description = context.dom.createElement('span')
+      description.id = 'chat-button-description'
+      description.className = 'sr-only'
+      description.textContent = 'Start a new conversation or sign in to continue existing chat'
+      
       chatContainer.appendChild(button)
+      chatContainer.appendChild(description)
       yield chatContainer
     }
   }

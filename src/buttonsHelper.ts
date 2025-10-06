@@ -7,17 +7,35 @@ function complain(
   context: DataBrowserContext,
   error: string
 ): void {
-  buttonContainer.appendChild(widgets.errorMessageBlock(context.dom, error))
+  const errorBlock = widgets.errorMessageBlock(context.dom, error)
+  errorBlock.setAttribute('role', 'alert')
+  errorBlock.setAttribute('aria-live', 'assertive')
+  errorBlock.setAttribute('tabindex', '0')
+
+  // Focus the error message for screen readers
+  setTimeout(() => {
+    errorBlock.focus()
+  }, 100)
+
+  buttonContainer.appendChild(errorBlock)
 }
 
 function mention(buttonContainer: HTMLDivElement, message: string): void {
   const positiveFrontendMessageDiv = <HTMLDivElement>document.createElement('div')
+  positiveFrontendMessageDiv.setAttribute('role', 'status')
+  positiveFrontendMessageDiv.setAttribute('aria-live', 'polite')
+  positiveFrontendMessageDiv.setAttribute('tabindex', '0')
   positiveFrontendMessageDiv.setAttribute(
     'style',
     'margin: 0.1em; padding: 0.5em; border: 0.05em solid gray; background-color: #efe; color:black;'
   )
-  //positiveFrontendMessageDiv.setAttribute('style', UI.style.messageBodyStyle) -> using UI but missing green backgroung color
   positiveFrontendMessageDiv.innerHTML = message
+
+  // Focus the success message for screen readers
+  setTimeout(() => {
+    positiveFrontendMessageDiv.focus()
+  }, 100)
+
   buttonContainer.appendChild(positiveFrontendMessageDiv)
 }
 

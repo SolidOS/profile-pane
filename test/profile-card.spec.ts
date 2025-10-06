@@ -59,7 +59,7 @@ describe('profile-pane', () => { // alain
     })
 
     it('renders the image', () => {
-      const image = getByAltText(result, 'Jane Doe')
+      const image = getByAltText(result, 'Profile photo of Jane Doe')
       expect(image).toHaveAttribute(
         'src',
         'https://janedoe.example/profile/me.jgp'
@@ -148,7 +148,7 @@ describe('profile-pane', () => { // alain
     ))
 
     it('renders the image', async () => {
-      const image = await findByAltText(result, 'Jane Doe')
+      const image = await findByAltText(result, 'Profile photo of Jane Doe')
       expect(image).toHaveAttribute(
         'src',
         'https://janedoe.example/profile/me.jgp'

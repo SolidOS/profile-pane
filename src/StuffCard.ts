@@ -18,9 +18,17 @@ export const StuffCard = (profileBasics: ProfilePresentation,
       role="region"
       data-testid="stuff"
     >
-      <table class="${localStyles.stuffTable}" data-testid="stuffTable" role="table">
-        ${renderThings(stuff)}
-      </table>
+      <header>
+        <h3 id="stuff-card-title" class="sr-only">Shared Resources</h3>
+      </header>
+      <div role="table" aria-label="List of shared files and resources">
+        <table class="${localStyles.stuffTable}" data-testid="stuffTable">
+          <caption class="sr-only">Files and resources shared by ${profileBasics.name}</caption>
+          <tbody>
+            ${renderThings(stuff)}
+          </tbody>
+        </table>
+      </div>
     </section>
   `
 }

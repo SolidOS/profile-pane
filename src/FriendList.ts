@@ -16,11 +16,17 @@ export const FriendList = (
     <section
       class="${localStyles.friendListSection}"
       role="region"
+      aria-labelledby="friends-section-title"
       data-testid="friend-list"
     >
-      <ul class="${localStyles.friendList}" role="list">
-        ${friends}
-      </ul>
+      <header>
+        <h3 id="friends-section-title" class="sr-only">Friend Connections</h3>
+      </header>
+      <nav aria-label="Friend profiles">
+        <ul class="${localStyles.friendList}" role="list">
+          ${friends}
+        </ul>
+      </nav>
     </section>
   `
 }

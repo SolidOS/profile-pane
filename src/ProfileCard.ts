@@ -12,27 +12,44 @@ export const ProfileCard = ({
 }: ProfilePresentation, context: DataBrowserContext, subject: NamedNode) => {
 
   return html`
-    <article class=${localStyles.profileCard} role="region" aria-labelledby="profile-card-title">
-      <section class=${localStyles.header} aria-label="Profile picture">
+    <article class=${localStyles.profileCard} role="main" aria-labelledby="profile-name">
+      <header class=${localStyles.header} aria-label="Profile information">
         ${Image(imageSrc, name)}
+        <h1 id="profile-name" class=${localStyles.name}>${name}</h1>
+      </header>
+      
+      <section class=${localStyles.intro} aria-label="About">
+        ${Line(introduction, '', 'About')}
+        ${Line(location, '🌐', 'Location')}
+        ${Line(pronouns, '', 'Pronouns')}
       </section>
-      <section class=${localStyles.intro} aria-label="Profile Details">
-        ${Line(introduction)}
-        ${Line(location, '🌐')}
-        ${Line(pronouns)}
-      </section>
-      <section class=${localStyles.buttonSection} aria-label="Profile Actions">
+      
+      <section class=${localStyles.buttonSection} aria-label="Actions" role="complementary">
         ${addMeToYourFriendsDiv(subject, context)}
       </section>
-      <section class=${localStyles.qrCodeSection} aria-label="Friends">
+      
+      <aside class=${localStyles.qrCodeSection} aria-label="Contact QR Code" role="complementary">
         ${QRCodeCard(highlightColor, backgroundColor, subject)}
-      </section>
+      </aside>
     </article>
   `
 }
 
-const Line = (value, prefix: symbol | string = nothing) =>
-  value ? html`<p class=${localStyles.details}>${prefix} ${value}</p>` : nothing
+const Line = (value, prefix: symbol | string = nothing, label: string = '') =>
+  value ? html`
+    <div class=${localStyles.details} role="text" ${label ? `aria-label="${label}: ${value}"` : ''}>
+      ${prefix} ${value}
+    </div>
+  ` : nothing
 
 const Image = (src, alt) =>
-  src ? html`<img class=${localStyles.image} src=${src} alt=${alt} />` : nothing
+  src ? html`
+    <img 
+      class=${localStyles.image} 
+      src=${src} 
+      alt="Profile photo of ${alt}"
+      width="160"
+      height="160"
+      loading="eager"
+    />
+  ` : nothing

@@ -22,59 +22,63 @@ export const CVCard = (
   if (!(hasFutureRole || hasCurrentRole || hasPastRole || hasSkills || hasLanguages)) return html``
 
   return html`
-    <section class="${styles.cvCard}" aria-label="Curriculum Vitae" data-testid="curriculum-vitae">
+    <article class="${styles.cvCard}" aria-label="Professional Experience" data-testid="curriculum-vitae">
       ${hasFutureRole ? html`
         <section class="${styles.cvSection}" aria-labelledby="cv-future-heading">
           <h3 id="cv-future-heading">Future Roles</h3>
-          <ul>
+          <ul role="list" aria-label="Upcoming professional roles">
             ${renderRoles(futureRolesArr, true)}
           </ul>
         </section>
       ` : ''}
+      
       ${hasCurrentRole ? html`
         <section class="${styles.cvSection}" aria-labelledby="cv-current-heading">
           <h3 id="cv-current-heading">Current Roles</h3>
-          <ul>
+          <ul role="list" aria-label="Current professional positions">
             ${renderRoles(currentRolesArr, true)}
           </ul>
         </section>
       ` : ''}
+      
       ${hasPastRole ? html`
         <section class="${styles.cvSection}" aria-labelledby="cv-past-heading">
           <h3 id="cv-past-heading">Past Roles</h3>
-          <ul>
+          <ul role="list" aria-label="Previous work experience">
             ${renderRoles(pastRolesArr, true)}
           </ul>
         </section>
       ` : ''}
+      
       ${hasSkills ? html`
         <section class="${styles.cvSection}" aria-labelledby="cv-skills-heading">
           <h3 id="cv-skills-heading">Skills</h3>
-          <ul>
+          <ul role="list" aria-label="Professional skills and competencies">
             ${renderSkills(skillsArr, true)}
           </ul>
         </section>
       ` : ''}
+      
       ${hasLanguages ? html`
-        <section aria-labelledby="cv-languages-heading">
+        <section class="${styles.cvSection}" aria-labelledby="cv-languages-heading">
           <h3 id="cv-languages-heading">Languages</h3>
-          <ul>
+          <ul role="list" aria-label="Known languages">
             ${renderLanguages(languagesArr, true)}
           </ul>
         </section>
       ` : ''}
-    </section>
+    </article>
   `
 }
-
 
 function renderRole(role, asList = false) {
   if (!role) return html``
   return asList
-    ? html`<li class="${styles.cvRole}">
-        <span class="${styles.cvOrg}">${role.orgName}</span>
-        <span>${strToUpperCase(role.roleText)}</span>
-        <span>${role.dates}</span>
+    ? html`
+      <li class="${styles.cvRole}" role="listitem">
+        <strong class="${styles.cvOrg}" aria-label="Organization">${role.orgName}</strong>
+        <span aria-label="Role title">${strToUpperCase(role.roleText)}</span>
+        <time aria-label="Employment period">${role.dates}</time>
       </li>`
     : html``
 }

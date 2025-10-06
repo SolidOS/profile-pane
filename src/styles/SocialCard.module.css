@@ -29,10 +29,30 @@
 .socialItem a {
   color: var(--primary-color);
   text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  min-height: var(--min-touch-target);
+  padding: var(--spacing-xs);
+  border-radius: var(--border-radius-sm);
+  transition: background-color var(--animation-duration) ease;
+  /* Add external link indication */
+  position: relative;
 }
 
-.socialItem a:hover {
+.socialItem a:hover,
+.socialItem a:focus {
   text-decoration: underline;
+  background-color: rgba(124, 77, 255, 0.1);
+}
+
+.socialItem a[href^="http"]:after {
+  content: " (external link)";
+  position: absolute;
+  left: -10000px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
 }
 
 .socialIcon {
@@ -41,4 +61,5 @@
   border-radius: var(--border-radius-sm);
   background: var(--card-internal-bg);
   object-fit: contain;
+  flex-shrink: 0; /* Prevent icon squishing */
 }

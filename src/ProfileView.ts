@@ -35,56 +35,142 @@ export async function ProfileView (
   const stuffData = await presentStuff(subject)
 
   return html`
+    <!-- Enhanced skip links -->
+    <div class="skip-links" role="navigation" aria-label="Skip navigation">
+      <a href="#main-content" class="skip-link">Skip to main content</a>
+      <a href="#profile-nav" class="skip-link">Skip to profile navigation</a>
+      <a href="#social-accounts" class="skip-link">Skip to social accounts</a>
+      <a href="#contact-section" class="skip-link">Skip to contact</a>
+    </div>
+    
+    <!-- Live region for dynamic updates -->
+    <div 
+      id="live-region" 
+      class="visually-hidden" 
+      aria-live="polite" 
+      aria-atomic="true"
+      role="status"
+    ></div>
+    
     <main
+      id="main-content"
       class="profile-grid"
       style="--profile-grid-bg: radial-gradient(circle, ${profileBasics.backgroundColor} 80%, ${profileBasics.highlightColor} 100%)"
       role="main"
-      aria-label="User Profile"
+      aria-label="Profile for ${profileBasics.name}"
+      tabindex="-1"
     >
-      <section aria-labelledby="profile-card-heading" class="${localStyles.profileSection}" role="region">
-        <h2 id="profile-card-heading">${profileBasics.name}</h2>
-        ${ProfileCard(profileBasics, context, subject)}
-      </section>
+      <!-- Enhanced breadcrumb navigation -->
+      <nav id="profile-nav" aria-label="Profile sections" class="visually-hidden">
+        <ol>
+          <li><a href="#profile-card-heading">Personal Information</a></li>
+          ${(() => {
+            const cv = CVCard(rolesByType)
+            return cv && cv.strings && cv.strings.join('').trim() !== '' 
+              ? html`<li><a href="#cv-heading">Professional Experience</a></li>` 
+              : ''
+          })()}
+          ${accounts.accounts && accounts.accounts.length > 0 
+            ? html`<li><a href="#social-heading" id="social-accounts">Social Accounts</a></li>` 
+            : ''}
+          <li><a href="#chat-heading" id="contact-section">Contact</a></li>
+        </ol>
+      </nav>
 
+      <article 
+        aria-labelledby="profile-card-heading" 
+        class="${localStyles.profileSection}" 
+        role="region"
+        tabindex="-1"
+      >
+        <header>
+          <h2 id="profile-card-heading" tabindex="-1">${profileBasics.name}</h2>
+        </header>
+        ${ProfileCard(profileBasics, context, subject)}
+      </article>
 
       ${(() => {
         const cv = CVCard(rolesByType)
         return cv && cv.strings && cv.strings.join('').trim() !== '' ? html`
-          <section aria-labelledby="cv-heading" class="${localStyles.profileSection}" role="region">
-            <h2 id="cv-heading">Professional & education</h2>
-            ${cv}
+          <section 
+            aria-labelledby="cv-heading" 
+            class="${localStyles.profileSection}" 
+            role="region"
+            tabindex="-1"
+          >
+            <header>
+              <h2 id="cv-heading" tabindex="-1">Professional & Education</h2>
+            </header>
+            <div role="complementary" aria-label="Career and education information">
+              ${cv}
+            </div>
           </section>
         ` : ''
       })()}
 
       ${accounts.accounts && accounts.accounts.length > 0 ? html`
-        <section aria-labelledby="social-heading" class="${localStyles.profileSection}" role="region">
-          <h2 id="social-heading">Social accounts</h2>
-          ${SocialCard(accounts)}
-        </section>
+        <aside 
+          aria-labelledby="social-heading" 
+          class="${localStyles.profileSection}" 
+          role="complementary"
+          tabindex="-1"
+        >
+          <header>
+            <h2 id="social-heading" tabindex="-1">Social Accounts</h2>
+          </header>
+          <nav aria-label="Social media links">
+            ${SocialCard(accounts)}
+          </nav>
+        </aside>
       ` : ''}
 
       ${stuffData.stuff && stuffData.stuff.length > 0 ? html`
-        <section aria-labelledby="stuff-heading" class="${localStyles.profileSection}" role="region">
-          <h2 id="stuff-heading">To share</h2>
-          ${StuffCard(profileBasics, context, subject, stuffData)}
+        <section 
+          aria-labelledby="stuff-heading" 
+          class="${localStyles.profileSection}" 
+          role="region"
+          tabindex="-1"
+        >
+          <header>
+            <h2 id="stuff-heading" tabindex="-1">Shared Items</h2>
+          </header>
+          <div role="complementary" aria-label="Shared files and resources">
+            ${StuffCard(profileBasics, context, subject, stuffData)}
+          </div>
         </section>
       ` : ''}
-
 
       ${(() => {
         const friends = FriendList(subject, context)
         return friends && friends.strings && friends.strings.join('').trim() !== '' ? html`
-          <section aria-labelledby="friends-heading" class="${localStyles.profileSection}" role="region">
-            <h2 id="friends-heading">Friends</h2>
-            ${friends}
-          </section>
+          <aside 
+            aria-labelledby="friends-heading" 
+            class="${localStyles.profileSection}" 
+            role="complementary"
+            tabindex="-1"
+          >
+            <header>
+              <h2 id="friends-heading" tabindex="-1">Friends</h2>
+            </header>
+            <div role="list" aria-label="Friend connections">
+              ${friends}
+            </div>
+          </aside>
         ` : ''
       })()}
 
-      <section aria-labelledby="chat-heading" class="${localStyles.profileSection}" role="region">
-        <h2 id="chat-heading">Chat with me</h2>
-        ${ChatWithMe(subject, context)}
+      <section 
+        aria-labelledby="chat-heading" 
+        class="${localStyles.profileSection}" 
+        role="region"
+        tabindex="-1"
+      >
+        <header>
+          <h2 id="chat-heading" tabindex="-1">Contact</h2>
+        </header>
+        <div role="complementary" aria-label="Communication options">
+          ${ChatWithMe(subject, context)}
+        </div>
       </section>
     </main>
   `

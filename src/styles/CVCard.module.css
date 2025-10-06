@@ -14,7 +14,8 @@
 
 .cvRole {
   margin: var(--spacing-xs) 0;
-  font-size: 1.05rem;
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-base);
   display: flex;
   flex-direction: column;
   gap: 0.2em;
@@ -28,10 +29,16 @@
 .cvSkill, .cvLanguage {
   text-align: left;
   margin: var(--spacing-xs) 0;
-  font-size: 1rem;
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-base);
 }
-.cvSkill, .cvLanguage {
-  text-align: left;
-  margin: 0.5em 0;
-  font-size: 1rem;
+
+.cvSection h3 {
+  color: var(--text-color);
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  line-height: var(--line-height-tight);
+  margin-bottom: var(--spacing-xs);
+  border-bottom: 1px solid var(--border-light);
+  padding-bottom: var(--spacing-xs);
 }

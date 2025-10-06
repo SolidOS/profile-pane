@@ -12,16 +12,32 @@
   width: 100%;
   border-collapse: collapse;
   margin-bottom: var(--spacing-md);
+  caption-side: top; /* Improve table semantics */
+}
+
+.stuffTable caption {
+  font-weight: 600;
+  padding: var(--spacing-sm);
+  text-align: left;
+  color: var(--text-color);
 }
 
 .stuffTable th,
 .stuffTable td {
   padding: var(--spacing-sm) var(--spacing-md);
-  border-bottom: 1px solid var(--border-light);
   text-align: left;
+  line-height: 1.4; /* Better readability */
 }
 
-.stuffTable th {
+.stuffTable td {
   background: var(--card-internal-bg);
-  font-weight: 600;
+}
+
+/* Zebra striping for better readability */
+.stuffTable tbody tr:nth-child(even) {
+  background-color: rgba(0, 0, 0, 0.02);
+}
+/* Zebra striping for better readability */
+.stuffTable tbody tr:nth-child(even) {
+  background-color: rgba(0, 0, 0, 0.02);
 }

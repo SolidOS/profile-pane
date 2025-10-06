@@ -18,12 +18,14 @@ export const SocialCard = (
         role="region"
         data-testid="social-media"
       >
-        <header class="${localStyles.socialHeader}" aria-label="Social Media Header">
+        <header class="${localStyles.socialHeader}">
           <h3 id="social-card-title">Follow me on</h3>
         </header>
-        <ul class="${localStyles.socialList}" role="list">
-          ${accounts.map(account => renderAccount(account))}
-        </ul>
+        <nav aria-label="Social media profiles">
+          <ul class="${localStyles.socialList}" role="list">
+            ${accounts.map(account => renderAccount(account))}
+          </ul>
+        </nav>
       </section>
     `
   }
@@ -32,8 +34,21 @@ export const SocialCard = (
     return account.homepage && account.name && account.icon
       ? html`
           <li class="${localStyles.socialItem}" role="listitem">
-            <a href="${account.homepage}" target="_blank" rel="noopener noreferrer" aria-label="${account.name}" style="display: flex; align-items: center; gap: 0.5em; text-decoration: none;">
-              <img class="${localStyles.socialIcon}" src="${account.icon}" alt="${account.name} icon" />
+            <a 
+              href="${account.homepage}" 
+              target="_blank" 
+              rel="noopener noreferrer" 
+              aria-label="Visit ${account.name} profile (opens in new tab)"
+              style="display: flex; align-items: center; gap: 0.5em; text-decoration: none;"
+            >
+              <img 
+                class="${localStyles.socialIcon}" 
+                src="${account.icon}" 
+                alt="${account.name} icon"
+                width="40"
+                height="40"
+                loading="lazy"
+              />
               <span>${account.name}</span>
             </a>
           </li>

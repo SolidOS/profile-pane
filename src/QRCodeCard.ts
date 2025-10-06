@@ -12,7 +12,6 @@ export const QRCodeCard = (
 ): TemplateResult => {
   const hC = highlightColor || '#000000'
   const bC = backgroundColor || '#ffffff'
- 
   const name = utils.label(subject)
 
   const BEGIN = 'BEGIN:VCARD\r\n'
@@ -29,17 +28,32 @@ export const QRCodeCard = (
   // console.log(`@@ qrcodes colours highlightColor ${highlightColor}, backgroundColor ${backgroundColor}`)
    
   return html`
-    <div class="QRCode"
+    <figure 
+      class="QRCode"
       data-value="${vCard}"
       highlightColor="${hC}"
       backgroundColor="${bC}"
       data-testid="qrcode-card"
-      aria-labelledby="qr-card-title"
-      role="region">
-    </div>
-      <div class="${styles.qrCaption}">
+      aria-labelledby="qr-code-caption"
+      role="img"
+      aria-describedby="qr-code-description"
+    >
+      <div 
+        aria-label="QR code containing contact information for ${name}"
+        role="img"
+      ></div>
+      <figcaption 
+        id="qr-code-caption" 
+        class="${styles.qrCaption}"
+      >
         ${scanQrToConnectText}
+      </figcaption>
+      <div 
+        id="qr-code-description" 
+        class="sr-only"
+      >
+        QR code contains vCard information for ${name} including profile URL ${subject.uri}
       </div>
- 
+    </figure>
   `
 }
