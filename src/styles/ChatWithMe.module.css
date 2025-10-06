@@ -1,22 +1,15 @@
 /* ChatWithMe.module.css */
 
 .chatSection {
-  background: #fff;
-  border-radius: 1rem;
-  box-shadow: 0 2px 8px rgba(124,77,255,0.08);
-  padding: 1.5rem;
-  margin-bottom: 1.5rem;
+  composes: module-card from '../styles/global.css';
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 100%;
-  max-width: 100%;
   overflow-x: auto;
-  box-sizing: border-box;
 }
 
 .chatLoading {
-  color: #7C4DFF;
+  color: var(--primary-color);
   text-align: center;
-  margin: 1em 0;
+  margin: var(--spacing-md) 0;
 }

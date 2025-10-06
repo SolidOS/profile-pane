@@ -6,7 +6,8 @@ import { scanQrToConnectText } from './texts'
 
 
 export const QRCodeCard = (
-  highlightColor: string, backgroundColor: string,
+  highlightColor: string, 
+  backgroundColor: string,
   subject: NamedNode
 ): TemplateResult => {
   const hC = highlightColor || '#000000'
@@ -28,12 +29,6 @@ export const QRCodeCard = (
   // console.log(`@@ qrcodes colours highlightColor ${highlightColor}, backgroundColor ${backgroundColor}`)
    
   return html`
-    <section
-      class="${styles.qrCard}"
-      aria-labelledby="qr-card-title"
-      role="region"
-      data-testid="qrcode-card"
-    >
     <div class="QRCode"
       data-value="${vCard}"
       highlightColor="${hC}"
@@ -42,6 +37,6 @@ export const QRCodeCard = (
       <div class="${styles.qrCaption}">
         ${scanQrToConnectText}
       </div>
-  </section>
+ 
   `
 }

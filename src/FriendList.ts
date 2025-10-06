@@ -7,7 +7,6 @@ import { ProfilePresentation } from './presenter'
 
 
 export const FriendList = (
-  profileBasics: ProfilePresentation,
   subject: NamedNode,
   context: DataBrowserContext
 ) => {

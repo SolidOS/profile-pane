@@ -1,24 +1,20 @@
 /* FriendList.module.css */
 
 .friendListSection {
-  background: #fff;
-  border-radius: 1rem;
-  box-shadow: 0 2px 8px rgba(124,77,255,0.08);
-  padding: 1.5rem;
-  margin-bottom: 1.5rem;
+  composes: module-card from '../styles/global.css';
 }
 
 .friendListHeader {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  margin-bottom: 1rem;
+  gap: var(--spacing-xs);
+  margin-bottom: var(--spacing-md);
 }
 
 .friendListTitle {
   font-size: 1.25rem;
   font-weight: 600;
-  color: #7C4DFF;
+  color: var(--primary-color);
   margin: 0;
 }
 
@@ -29,10 +25,10 @@
 }
 
 .friendItem {
-  padding: 0.5rem 0;
-  border-bottom: 1px solid #eee;
+  padding: var(--spacing-xs) 0;
+  border-bottom: 1px solid var(--border-light);
   font-size: 1rem;
-  color: #444;
+  color: var(--text-muted);
 }
 
 .friendItem:last-child {

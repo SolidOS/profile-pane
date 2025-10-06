@@ -1,7 +1,7 @@
 import { html, TemplateResult } from 'lit-html'
 import { DataBrowserContext } from 'pane-registry'
 import { NamedNode, LiveStore } from 'rdflib'
-import * as styles from './styles/ProfileView.module.css'
+import * as localStyles from './styles/ProfileView.module.css'
 import { ChatWithMe } from './ChatWithMe'
 import { FriendList } from './FriendList'
 import { presentProfile } from './presenter'
@@ -41,16 +41,16 @@ export async function ProfileView (
       role="main"
       aria-label="User Profile"
     >
-      <section aria-labelledby="profile-card-heading" class="${styles.profileSection}" role="region">
+      <section aria-labelledby="profile-card-heading" class="${localStyles.profileSection}" role="region">
         <h2 id="profile-card-heading">${profileBasics.name}</h2>
         ${ProfileCard(profileBasics, context, subject)}
       </section>
 
 
       ${(() => {
-        const cv = CVCard(profileBasics, rolesByType)
+        const cv = CVCard(rolesByType)
         return cv && cv.strings && cv.strings.join('').trim() !== '' ? html`
-          <section aria-labelledby="cv-heading" class="${styles.profileSection}" role="region">
+          <section aria-labelledby="cv-heading" class="${localStyles.profileSection}" role="region">
             <h2 id="cv-heading">Professional & education</h2>
             ${cv}
           </section>
@@ -58,14 +58,14 @@ export async function ProfileView (
       })()}
 
       ${accounts.accounts && accounts.accounts.length > 0 ? html`
-        <section aria-labelledby="social-heading" class="${styles.profileSection}" role="region">
+        <section aria-labelledby="social-heading" class="${localStyles.profileSection}" role="region">
           <h2 id="social-heading">Social accounts</h2>
-          ${SocialCard(profileBasics, accounts)}
+          ${SocialCard(accounts)}
         </section>
       ` : ''}
 
       ${stuffData.stuff && stuffData.stuff.length > 0 ? html`
-        <section aria-labelledby="stuff-heading" class="${styles.profileSection}" role="region">
+        <section aria-labelledby="stuff-heading" class="${localStyles.profileSection}" role="region">
           <h2 id="stuff-heading">To share</h2>
           ${StuffCard(profileBasics, context, subject, stuffData)}
         </section>
@@ -73,16 +73,16 @@ export async function ProfileView (
 
 
       ${(() => {
-        const friends = FriendList(profileBasics, subject, context)
+        const friends = FriendList(subject, context)
         return friends && friends.strings && friends.strings.join('').trim() !== '' ? html`
-          <section aria-labelledby="friends-heading" class="${styles.profileSection}" role="region">
+          <section aria-labelledby="friends-heading" class="${localStyles.profileSection}" role="region">
             <h2 id="friends-heading">Friends</h2>
             ${friends}
           </section>
         ` : ''
       })()}
 
-      <section aria-labelledby="chat-heading" class="${styles.profileSection}" role="region">
+      <section aria-labelledby="chat-heading" class="${localStyles.profileSection}" role="region">
         <h2 id="chat-heading">Chat with me</h2>
         ${ChatWithMe(subject, context)}
       </section>

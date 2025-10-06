@@ -5,7 +5,6 @@ import * as styles from './styles/SocialCard.module.css'
 
 
 export const SocialCard = (
-  profileBasics: ProfilePresentation,
   SocialData: SocialPresentation
 ): TemplateResult => {
  

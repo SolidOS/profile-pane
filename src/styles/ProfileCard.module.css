@@ -4,18 +4,12 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-bottom: 1rem;
+  margin-bottom: var(--spacing-md);
 }
 
 .profileCard {
-  width: 100%;
-  max-width: 100%;
-  box-sizing: border-box;
-  padding: 1.5rem;
-  background: #fff;
-  border-radius: 1rem;
-  box-shadow: 0 2px 8px rgba(124,77,255,0.08);
-  margin-bottom: 1.5rem;
+  /* Use global card styles */
+  composes: module-card from '../styles/global.css';
 }
 
 .image {
@@ -23,10 +17,10 @@
   height: 160px;
   border-radius: 50%;
   object-fit: cover;
-  margin-bottom: 0.75rem;
-  box-shadow: 0 1px 4px rgba(124,77,255,0.12);
-  border: 3px solid var(--profile-primary, #7C4DFF);
-  background: #fff;
+  margin-bottom: var(--spacing-sm);
+  box-shadow: var(--box-shadow-sm);
+  border: 3px solid var(--primary-color);
+  background: var(--card-internal-bg);
   padding: 6px;
   box-sizing: border-box;
 }
@@ -41,17 +35,17 @@
 }
 
 .intro {
-  color: #666;
+  color: var(--text-secondary);
   text-align: center;
   font-size: 1rem;
-  margin-bottom: 0.5rem;
+  margin-bottom: var(--spacing-xs);
 }
 
 .buttonSection {
-  color: #666;
+  color: var(--text-secondary);
   text-align: center;
   font-size: 1rem;
-  margin-bottom: 0.5rem;
+  margin-bottom: var(--spacing-xs);
 }
 
 .buttonSubSection {
@@ -69,14 +63,14 @@
 }
 
 .qrCodeSection {
-  color: #666;
+  color: var(--text-secondary);
   text-align: center;
   font-size: 1rem;
-  margin-bottom: 0.5rem;
+  margin-bottom: var(--spacing-xs);
 }
 
 .details {
-  color: #444;
+  color: var(--text-muted);
   text-align: center;
   font-size: 1rem;
 }

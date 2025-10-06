@@ -4,7 +4,6 @@ import { CVPresentation } from './CVPresenter'
 import * as styles from './styles/CVCard.module.css'
 
 export const CVCard = (
-  profileBasics: ProfilePresentation,
   cvData: CVPresentation
 ) => {
   const { rolesByType, skills, languages } = cvData
@@ -82,8 +81,6 @@ function renderRole(role, asList = false) {
 }
 
 function renderRoles(roles, asList = false) {
-  console.log('roles', roles)
-  console.log(roles)
   if (!roles || !roles.length || !roles[0]) return html``
   return html`${renderRole(roles[0], asList)}${roles.length > 1 ? renderRoles(roles.slice(1), asList) : html``}`
 }

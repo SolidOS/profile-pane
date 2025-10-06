@@ -1,18 +1,23 @@
-/* Center all h2 headers in the profile view */
+/* ProfileView.module.css */
+
 h2 {
   text-align: center;
 }
+
 .profileSection {
-  background: var(--card-bg);
+  background: var(--section-bg);
   border-radius: var(--border-radius);
   box-shadow: var(--box-shadow);
-  padding: 1em;
-  margin-bottom: 1em;
+  padding: var(--spacing-md);
+  margin-bottom: var(--spacing-md);
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 .profileHeader {
   text-align: center;
-  margin-bottom: 1em;
+  margin-bottom: var(--spacing-md);
 }
 
 @media (min-width: 900px) {

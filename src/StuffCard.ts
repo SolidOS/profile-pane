@@ -2,7 +2,7 @@ import { html, TemplateResult } from 'lit-html'
 import { NamedNode } from 'rdflib'
 import { DataBrowserContext } from 'pane-registry'
 import { widgets } from 'solid-ui'
-import * as styles from './styles/StuffCard.module.css'
+import * as localStyles from './styles/StuffCard.module.css'
 import { ProfilePresentation } from './presenter'
 
 const dom = document
@@ -13,12 +13,12 @@ export const StuffCard = (profileBasics: ProfilePresentation,
   const { stuff }  = stuffData
   return html`
     <section
-      class="${styles.stuffCard}"
+      class="${localStyles.stuffCard}"
       aria-labelledby="stuff-card-title"
       role="region"
       data-testid="stuff"
     >
-      <table class="${styles.stuffTable}" data-testid="stuffTable" role="table">
+      <table class="${localStyles.stuffTable}" data-testid="stuffTable" role="table">
         ${renderThings(stuff)}
       </table>
     </section>

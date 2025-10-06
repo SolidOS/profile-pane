@@ -12,13 +12,25 @@
   --primary-color: #7C4DFF; /* Vivid Purple */
   --secondary-color: #0077B6; /* Accessible Blue */
   --background-color: #FFFFFF; /* White */
-  --card-bg: #F5F5F5; /* Light Gray */
+  --card-bg: #FFFFFF; /* White for inner cards */
+  --section-bg: #F5F5F5; /* Light grey for outer sections */
+  --card-internal-bg: #FFFFFF; /* White for internal components */
   --text-color: #1A1A1A; /* Near-black */
+  --text-secondary: #666; /* Added for repeated usage */
+  --text-muted: #444; /* Added for repeated usage */
+  --border-light: #eee; /* Added for repeated borders */
   --accent-color: #FFD600; /* Bright Yellow */
   --error-color: #B00020; /* Accessible Red */
   --success-color: #00C853; /* Accessible Green */
-  --border-radius: 1em;
-  --box-shadow: 0 2px 8px rgba(0,0,0,0.07);
+  --border-radius: 1rem; /* Matches module usage */
+  --border-radius-sm: 0.5rem;
+  --box-shadow: 0 2px 8px rgba(124,77,255,0.08); /* Matches module usage */
+  --box-shadow-sm: 0 1px 4px rgba(124,77,255,0.12);
+  --spacing-xs: 0.5rem;
+  --spacing-sm: 0.75rem;
+  --spacing-md: 1rem;
+  --spacing-lg: 1.5rem;
+  --spacing-xl: 2rem;
   --font-family: 'Inter', Arial, sans-serif;
 }
 
@@ -80,12 +92,53 @@ button, input, textarea {
   gap: 1em;
 }
 
-/* Card style */
-.card {
+/* Common card component - used across all modules */
+.module-card {
   background: var(--card-bg);
   border-radius: var(--border-radius);
   box-shadow: var(--box-shadow);
-  padding: 1em;
+  padding: var(--spacing-lg);
+  margin-bottom: var(--spacing-lg);
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+/* Common header styles */
+.module-header {
+  text-align: center;
+  margin-bottom: var(--spacing-md);
+}
+
+/* Common flex patterns */
+.flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.flex-column {
+  display: flex;
+  flex-direction: column;
+}
+
+.flex-column-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Text utilities */
+.text-center {
+  text-align: center;
+}
+
+.text-secondary {
+  color: var(--text-secondary);
+}
+
+.text-muted {
+  color: var(--text-muted);
 }
 
 /* Responsive grid for profile */

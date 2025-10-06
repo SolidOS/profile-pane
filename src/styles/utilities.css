@@ -5,31 +5,35 @@
 .grid {
   display: grid;
 }
-.center {
-  justify-content: center;
-  align-items: center;
-}
-.gap-md {
-  gap: 1em;
-}
-.gap-lg {
-  gap: 2em;
-}
-.mt-md {
-  margin-top: 1em;
-}
-.mb-md {
-  margin-bottom: 1em;
-}
-.p-md {
-  padding: 1em;
-}
-.rounded {
-  border-radius: var(--border-radius);
-}
-.shadow {
-  box-shadow: var(--box-shadow);
-}
+
+/* Spacing utilities using CSS variables */
+.gap-xs { gap: var(--spacing-xs); }
+.gap-sm { gap: var(--spacing-sm); }
+.gap-md { gap: var(--spacing-md); }
+.gap-lg { gap: var(--spacing-lg); }
+.gap-xl { gap: var(--spacing-xl); }
+
+.mt-xs { margin-top: var(--spacing-xs); }
+.mt-sm { margin-top: var(--spacing-sm); }
+.mt-md { margin-top: var(--spacing-md); }
+.mt-lg { margin-top: var(--spacing-lg); }
+
+.mb-xs { margin-bottom: var(--spacing-xs); }
+.mb-sm { margin-bottom: var(--spacing-sm); }
+.mb-md { margin-bottom: var(--spacing-md); }
+.mb-lg { margin-bottom: var(--spacing-lg); }
+
+.p-xs { padding: var(--spacing-xs); }
+.p-sm { padding: var(--spacing-sm); }
+.p-md { padding: var(--spacing-md); }
+.p-lg { padding: var(--spacing-lg); }
+
+.rounded { border-radius: var(--border-radius); }
+.rounded-sm { border-radius: var(--border-radius-sm); }
+
+.shadow { box-shadow: var(--box-shadow); }
+.shadow-sm { box-shadow: var(--box-shadow-sm); }
+
 .bg-primary {
   background: var(--primary-color);
   color: #fff;
