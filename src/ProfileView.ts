@@ -1,23 +1,23 @@
 /*  Profile View
 */
 
-import { html, TemplateResult } from "lit-html";
-import { styleMap } from "lit-html/directives/style-map.js";
-import { DataBrowserContext } from "pane-registry";
-import { NamedNode, LiveStore } from "rdflib";
-import { card, padding, paddingSmall, responsiveGrid } from "./baseStyles";
-import { ChatWithMe } from "./ChatWithMe";
-import { FriendList } from "./FriendList";
-import { presentProfile } from "./presenter";
+import { html, TemplateResult } from 'lit-html'
+import { styleMap } from 'lit-html/directives/style-map.js'
+import { DataBrowserContext } from 'pane-registry'
+import { NamedNode, LiveStore } from 'rdflib'
+import { card, padding, paddingSmall, responsiveGrid } from './baseStyles'
+import { ChatWithMe } from './ChatWithMe'
+import { FriendList } from './FriendList'
+import { presentProfile } from './presenter'
 import { presentCV } from './CVPresenter' // 20210527
 import { presentSocial } from './SocialPresenter' // 20210527
 import { presentStuff } from './StuffPresenter' // 20210527
-import { ProfileCard } from "./ProfileCard";
-import { CVCard } from "./CVCard";
-import { SocialCard } from "./SocialCard";
-import { StuffCard } from "./StuffCard";
-import { QRCodeCard } from "./QRCodeCard";
-import { addMeToYourFriendsDiv } from "./addMeToYourFriends";
+import { ProfileCard } from './ProfileCard'
+import { CVCard } from './CVCard'
+import { SocialCard } from './SocialCard'
+import { StuffCard } from './StuffCard'
+import { QRCodeCard } from './QRCodeCard'
+import { addMeToYourFriendsDiv } from './addMeToYourFriends'
 
 // The edit button switches to the editor pane
 /*
@@ -35,7 +35,7 @@ export async function ProfileView (
   subject: NamedNode,
   context: DataBrowserContext
 ): Promise <TemplateResult> {
-  const profileBasics = presentProfile(subject, context.session.store as LiveStore); // rdflib rdfs type problems
+  const profileBasics = presentProfile(subject, context.session.store as LiveStore) // rdflib rdfs type problems
   const rolesByType = presentCV (subject, context.session.store as LiveStore)
   const accounts = presentSocial(subject, context.session.store as LiveStore)
   const stuffData = await presentStuff(subject)
@@ -50,7 +50,7 @@ export async function ProfileView (
       ...card(),
       ...padding(),
     }),
-  };
+  }
 
   // was: <div style=${styles.card}>${renderEditButton(subject)}</div>
 
@@ -72,5 +72,5 @@ export async function ProfileView (
          
       </div>
     </div>
-  `;
+  `
 }

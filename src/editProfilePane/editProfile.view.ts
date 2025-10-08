@@ -136,7 +136,7 @@ const editProfileView: PaneDefinition = {
 
         heading('Communities you participate in')
 
-        comment(`These are organizations and projects (etc) whose stuff you share`)
+        comment('These are organizations and projects (etc) whose stuff you share')
 
         // TODO: would be useful to explain what it means to "drag organizations"
         //       what is it that is being dragged?
