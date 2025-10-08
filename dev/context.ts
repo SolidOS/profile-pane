@@ -1,6 +1,6 @@
-import { longChatPane } from "chat-pane";
-import { DataBrowserContext, PaneRegistry } from "pane-registry";
-import { LiveStore, solidLogicSingleton, store } from "solid-logic";
+import { longChatPane } from 'chat-pane'
+import { DataBrowserContext, PaneRegistry } from 'pane-registry'
+import { LiveStore, solidLogicSingleton, store } from 'solid-logic'
 
 export const context: DataBrowserContext = {
   session: {
@@ -14,6 +14,6 @@ export const context: DataBrowserContext = {
   },
   dom: document,
   getOutliner: () => null,
-};
+}
 
-export const fetcher = store.fetcher;
+export const fetcher = store.fetcher

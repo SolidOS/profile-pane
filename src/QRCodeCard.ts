@@ -1,63 +1,45 @@
-// A card in my profile to show yu a QRCode of my webid
-//
-import { html, TemplateResult } from "lit-html";
+import { html, TemplateResult } from 'lit-html'
 import { NamedNode } from 'rdflib'
-import {
-  fullWidth,
-  heading,
-  paddingSmall,
-  textCenter,
-  textLeft,
-  textGray,
-} from "./baseStyles";
-import { ProfilePresentation } from "./presenter";
-import { styleMap } from "lit-html/directives/style-map.js";
-import { utils } from "solid-ui";
+import { utils } from 'solid-ui'
+import * as styles from './styles/QRCodeCard.module.css'
+import { scanQrToConnectText } from './texts'
 
-const styles = {
-  image: styleMap(fullWidth()),
-  intro: styleMap({ ...textGray(), ...textCenter() }),
-  card: styleMap({}),
-  info: styleMap({ ...paddingSmall(), ...textLeft() }),
-};
 
 export const QRCodeCard = (
-  profileBasics: ProfilePresentation,
+  highlightColor: string, 
+  backgroundColor: string,
   subject: NamedNode
 ): TemplateResult => {
-  const nameStyle = styleMap({
-    ...heading(),
-    // "text-decoration": "underline",
-    color: profileBasics.highlightColor, // was "text-decoration-color"
-  });
-  const qrCodeCanvasStyle = 'width: 80%; margin:auto;'
-  const highlightColor = profileBasics.highlightColor || '#000000'
-  const backgroundColor = profileBasics.backgroundColor || '#ffffff'
-  // console.log(`@@ qrcodes colours highlightColor ${highlightColor}, backgroundColor ${backgroundColor}`)
+  const hC = highlightColor || '#000000'
+  const bC = backgroundColor || '#ffffff'
+ 
+  const name = utils.label(subject)
 
-  const name = utils.label(subject);
-
-  const BEGIN = 'BEGIN:VCARD\r\n';
-  const END = 'END:VCARD\r\n';
-  const FN = 'FN:' + name + '\r\n';
-  const URL = 'URL:' + subject.uri + 'r\n';
-  const VERSIONV = 'VERSION:4.0\r\n';
+  const BEGIN = 'BEGIN:VCARD\r\n'
+  const END = 'END:VCARD\r\n'
+  const FN = 'FN:' + name + '\r\n'
+  const URL = 'URL:' + subject.uri + 'r\n'
+  const VERSIONV = 'VERSION:4.0\r\n'
 
 // find out how to import values from presenter.ts
 // once those values are imported, make sure any user input aligns
 
-
-  const vCard: string = BEGIN + FN + URL + END + VERSIONV;
-
+  const vCard: string = BEGIN + FN + URL + END + VERSIONV
 
   // console.log(`@@ qrcodes colours highlightColor ${highlightColor}, backgroundColor ${backgroundColor}`)
    
   return html`
-  <div>
-    <div style=${styles.card}>
-      <h3 style=${nameStyle}>${profileBasics.name}</h3>
-      <div class="QRCode" style="${qrCodeCanvasStyle}" data-value="${vCard}" highlightColor="${highlightColor}" backgroundColor="${backgroundColor}"></div>
+    <div class="QRCode"
+      data-value="${vCard}"
+      highlightColor="${hC}"
+      backgroundColor="${bC}"
+      data-testid="qrcode-card"
+      aria-labelledby="qr-card-title"
+      role="region">
     </div>
-  </div>
-  `;
-};
+      <div class="${styles.qrCaption}">
+        ${scanQrToConnectText}
+      </div>
+ 
+  `
+}

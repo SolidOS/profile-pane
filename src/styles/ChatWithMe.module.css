@@ -1,0 +1,15 @@
+/* ChatWithMe.module.css */
+
+.chatSection {
+  composes: module-card from '../styles/global.css';
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow-x: auto;
+}
+
+.chatLoading {
+  color: var(--primary-color);
+  text-align: center;
+  margin: var(--spacing-md) 0;
+}

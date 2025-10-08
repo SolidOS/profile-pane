@@ -1,53 +1,39 @@
-import { ns, widgets } from "solid-ui";
-import { DataBrowserContext } from "pane-registry";
-import { NamedNode } from "rdflib";
-import { html, TemplateResult } from "lit-html";
-import { styleMap } from "lit-html/directives/style-map.js";
-import { card, headingLight, padding } from "./baseStyles";
-import { ProfilePresentation } from "./presenter";
+import { ns, widgets } from 'solid-ui'
+import { DataBrowserContext } from 'pane-registry'
+import { NamedNode } from 'rdflib'
+import { html } from 'lit-html'
+import * as localStyles from './styles/FriendList.module.css'
 
-import {
-  heading
-} from "./baseStyles";
 
-const styles = {
-  root: styleMap(padding()),
-  heading: styleMap(headingLight()),
-  card: styleMap(card()),
-};
-
-export const FriendList = ( profileBasics: ProfilePresentation,
+export const FriendList = (
   subject: NamedNode,
   context: DataBrowserContext
-): TemplateResult => {
-  const nameStyle = styleMap({
-    ...heading(),
-    // "text-decoration": "underline",
-    color: profileBasics.highlightColor, // was "text-decoration-color"
-  });
+) => {
+  const friends = extractFriends(subject, context)
+  if (!friends || !friends.textContent?.trim()) return html``
 
-  if (createList(subject, context)) {
-    return html`
-    <div data-testid="friend-list" style="${styles.card}">
-      <div style=${styles.root}>
-        <h3 style=${nameStyle}>Friends</h3>
-        ${createList(subject, context)}
-      </div>
-    </div>
-    `
-  }
-  return html``
-};
+  return html`
+    <section
+      class="${localStyles.friendListSection}"
+      role="region"
+      data-testid="friend-list"
+    >
+      <ul class="${localStyles.friendList}" role="list">
+        ${friends}
+      </ul>
+    </section>
+  `
+}
 
-const createList = (subject: NamedNode, { dom }: DataBrowserContext) => {
-  const target = dom.createElement("div");
+const extractFriends = (subject: NamedNode, { dom }: DataBrowserContext) => {
+  const target = dom.createElement('div')
   widgets.attachmentList(dom, subject, target, {
     doc: subject.doc(),
     modify: false,
-    predicate: ns.foaf("knows"),
-    noun: "friend",
-  });
-  if (target.textContent === "")
+    predicate: ns.foaf('knows'),
+    noun: 'friend',
+  })
+  if (target.textContent === '')
     return null
-  else return target;
-};
+  else return target
+}

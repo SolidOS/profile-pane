@@ -1,15 +1,32 @@
 {
   "compilerOptions": {
-    "target": "es5",
-    "module": "commonjs",
+    "target": "es6",
+    "module": "CommonJS",
+    "moduleResolution": "node",
+    "allowSyntheticDefaultImports": true,
+    "lib": [
+      "dom",
+      "es2015",
+      "es2019"
+    ],
+    "plugins": [{ "name": "typescript-plugin-css-modules" }],
     "strict": false,
     "outDir": "lib",
+    "rootDir": "src/",
     "sourceMap": true,
-    "skipLibCheck": true // otherwise it takes *.d.ts from node_modules see: https://stackoverflow.com/questions/51634361/how-to-force-tsc-to-ignore-node-modules-folder
+    "skipLibCheck": true, // otherwise it takes *.d.ts from node_modules see: https://stackoverflow.com/questions/51634361/how-to-force-tsc-to-ignore-node-modules-folder
+    "typeRoots": [
+      "declarations.d.ts",
+      "node_modules/@types"
+    ]
   },
   "include": [
-    "./src/**/*",
+    "src/**/*",
+    "declarations.d.ts",
      "**/*.ttl"
   ],
-  "exclude": ["node_modules/rdflib/src/update-manager.ts", "src/editProfilePane/profileFormText.ttl", "**/*.spec.ts", "**/*.test.ts"]
+  "exclude": [
+    "node_modules",
+    "lib"
+  ]
 }

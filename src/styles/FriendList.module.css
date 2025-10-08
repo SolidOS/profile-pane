@@ -1,0 +1,36 @@
+/* FriendList.module.css */
+
+.friendListSection {
+  composes: module-card from '../styles/global.css';
+}
+
+.friendListHeader {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  margin-bottom: var(--spacing-md);
+}
+
+.friendListTitle {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--primary-color);
+  margin: 0;
+}
+
+.friendList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.friendItem {
+  padding: var(--spacing-xs) 0;
+  border-bottom: 1px solid var(--border-light);
+  font-size: 1rem;
+  color: var(--text-muted);
+}
+
+.friendItem:last-child {
+  border-bottom: none;
+}

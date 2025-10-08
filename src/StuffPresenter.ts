@@ -1,12 +1,10 @@
-import { NamedNode, uri } from "rdflib";
-import { ns, utils, widgets, icons } from "solid-ui";
+import { NamedNode, uri } from 'rdflib'
+import { ns, utils, widgets, icons } from 'solid-ui'
 import { solidLogicSingleton } from 'solid-logic'
 
 const { iconForClass } = widgets
 const { typeIndex } = solidLogicSingleton
-const {
-  getScopedAppInstances
-} = typeIndex
+const { getScopedAppInstances } = typeIndex
 
 
 export interface Item {

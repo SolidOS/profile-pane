@@ -1,0 +1,44 @@
+/* SocialCard.module.css */
+
+.socialCard {
+  /* Use global card styles */
+  composes: module-card from '../styles/global.css';
+}
+
+.socialHeader {
+  composes: module-header from '../styles/global.css';
+}
+
+.socialList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--spacing-lg);
+  justify-content: center;
+}
+
+.socialItem {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  font-size: 1.1rem;
+}
+
+.socialItem a {
+  color: var(--primary-color);
+  text-decoration: none;
+}
+
+.socialItem a:hover {
+  text-decoration: underline;
+}
+
+.socialIcon {
+  width: 2.5em;
+  height: 2.5em;
+  border-radius: var(--border-radius-sm);
+  background: var(--card-internal-bg);
+  object-fit: contain;
+}

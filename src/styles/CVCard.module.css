@@ -1,0 +1,37 @@
+/* CVCard.module.css */
+
+.cvCard {
+  composes: module-card from '../styles/global.css';
+}
+
+.cvHeader {
+  composes: module-header from '../styles/global.css';
+}
+
+.cvSection {
+  margin-bottom: 1.25em;
+}
+
+.cvRole {
+  margin: var(--spacing-xs) 0;
+  font-size: 1.05rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2em;
+}
+
+.cvOrg {
+  font-weight: 600;
+  color: var(--primary-color);
+}
+
+.cvSkill, .cvLanguage {
+  text-align: left;
+  margin: var(--spacing-xs) 0;
+  font-size: 1rem;
+}
+.cvSkill, .cvLanguage {
+  text-align: left;
+  margin: 0.5em 0;
+  font-size: 1rem;
+}

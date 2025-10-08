@@ -1,53 +1,80 @@
-import { html, TemplateResult } from "lit-html";
-import { DataBrowserContext } from "pane-registry";
-import { NamedNode } from "rdflib";
-import { widgets } from "solid-ui";
-import { asyncReplace } from "lit-html/directives/async-replace.js";
-import { chatWithMeButtonText, loadingMessage } from "./texts";
+import { html, TemplateResult } from 'lit-html'
+import { DataBrowserContext } from 'pane-registry'
+import { NamedNode, LiveStore } from 'rdflib'
+import { widgets, style } from 'solid-ui'
+import { authn } from 'solid-logic'
+import { asyncReplace } from 'lit-html/directives/async-replace.js'
+import { chatWithMeButtonText, logInToChatWithMeButtonText, loadingMessage } from './texts'
+import { checkIfAnyUserLoggedIn, complain } from './buttonsHelper'
+import * as localStyles from './styles/ChatWithMe.module.css'
 
 export const ChatWithMe = (
   subject: NamedNode,
   context: DataBrowserContext
 ): TemplateResult => {
-  const logic = context.session.logic;
-  const longChatPane = context.session.paneRegistry.byName("long chat");
+  const logic = context.session.logic
+  const longChatPane = context.session.paneRegistry.byName('long chat')
 
   async function* chatContainer() {
-    const chatContainer = context.dom.createElement("div");
+    const chatContainer = context.dom.createElement('section') as HTMLDivElement
+    chatContainer.setAttribute('class', localStyles.chatSection)
+    chatContainer.setAttribute('aria-labelledby', 'chat-card-title')
+    chatContainer.setAttribute('role', 'region')
+    chatContainer.setAttribute('data-testid', 'chat')
 
-    let exists;
+    let exists
     try {
-      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-      yield loadingMessage, (exists = await logic.chat.getChat(subject, false));
+      yield loadingMessage.toUpperCase(), (exists = await logic.chat.getChat(subject, false))
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (e) {
-      exists = false;
+      exists = false
     }
     if (exists) {
-      chatContainer.appendChild(longChatPane.render(exists, context, {}));
-      yield chatContainer;
+      chatContainer.appendChild(longChatPane.render(exists, context, {}))
+      yield chatContainer
     } else {
+      const me = authn.currentUser()
+      let label = checkIfAnyUserLoggedIn(me) ? chatWithMeButtonText.toUpperCase() : logInToChatWithMeButtonText.toUpperCase()
       const button = widgets.button(
         context.dom,
         undefined,
-        chatWithMeButtonText,
-        async () => {
-          try {
-            const chat: NamedNode = await logic.chat.getChat(subject, true);
-            chatContainer.innerHTML = "";
-            chatContainer.appendChild(longChatPane.render(chat, context, {}));
-          } catch (e) {
-            chatContainer.appendChild(
-              widgets.errorMessageBlock(context.dom, e.message)
-            );
-          }
-        },
+        label,
+        setButtonHandler,
         { needsBorder: true }
-      );
-      chatContainer.appendChild(button);
-      yield chatContainer;
+      )
+
+      async function setButtonHandler(event) {
+        event.preventDefault()
+        try {
+            const chat: NamedNode = await logic.chat.getChat(subject, true)
+            chatContainer.innerHTML = ''
+            chatContainer.appendChild(longChatPane.render(chat, context, {}))
+        } catch (error) {
+            complain(chatContainer, context, error)
+        }
+      }
+
+      button.refresh = refreshButton()
+
+      function refreshButton() {
+        const me = authn.currentUser()
+    
+        if (checkIfAnyUserLoggedIn(me)) {
+          button.innerHTML = chatWithMeButtonText.toUpperCase()
+          button.className = 'button'
+          button.setAttribute('class', style.primaryButton)
+        } else {
+          //not logged in
+          button.innerHTML = logInToChatWithMeButtonText.toUpperCase()
+          button.className = 'button'
+          button.setAttribute('class', style.primaryButton)
+        }
+      }
+
+      chatContainer.appendChild(button)
+      yield chatContainer
     }
   }
 
-  return html` ${asyncReplace(chatContainer())} `;
-};
+  return html` ${asyncReplace(chatContainer())} `
+}
