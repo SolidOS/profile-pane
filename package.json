@@ -42,7 +42,7 @@
     "pane-registry": "^2.5.1-0c3d1cb",
     "qrcode": "^1.5.4",
     "rdflib": "^2.2.37",
-    "solid-ui": "^2.6.1-45faa7b",
+    "solid-ui": "^2.6.1",
     "validate-color": "^2.2.4"
   },
   "devDependencies": {

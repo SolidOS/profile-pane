@@ -15,7 +15,7 @@ describe('profile-pane', () => { // alain
   let result
 
   describe('with full profile', () => {
-    beforeAll(() => {
+    beforeAll(async () => {
       const turtle = `
       @prefix : <#>.
       @prefix foaf: <http://xmlns.com/foaf/0.1/> .
@@ -36,6 +36,8 @@ describe('profile-pane', () => { // alain
   `
       parse(turtle, solidLogicSingleton.store, doc.uri)
       result = pane.render(subject, context)
+      // Wait for async rendering to complete
+      await new Promise(resolve => setTimeout(resolve, 100))
     })
     // afterAll(() => { solidLogicSingleton.store.removeDocument(doc)})
 
@@ -85,7 +87,7 @@ describe('profile-pane', () => { // alain
   })
 
   describe('with extended profile', () => {
-    beforeAll(() => {
+    beforeAll(async () => {
       const turtle = `
       @prefix : <#>.
       @prefix foaf: <http://xmlns.com/foaf/0.1/> .
@@ -129,6 +131,8 @@ describe('profile-pane', () => { // alain
         }
       )
       result = pane.render(subject, context)
+      // Wait for async rendering to complete
+      await new Promise(resolve => setTimeout(resolve, 100))
     })
     // afterAll(() => { solidLogicSingleton.store.removeDocument(doc)})
 

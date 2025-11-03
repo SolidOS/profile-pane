@@ -1,6 +1,6 @@
 import { DataBrowserContext, PaneRegistry } from 'pane-registry'
 import { sym } from 'rdflib'
-import { SolidLogic, store } from 'solid-logic'
+import { SolidLogic, solidLogicSingleton } from 'solid-logic'
 
 export const subject = sym('https://janedoe.example/profile/card#me')
 export const doc = subject.doc()
@@ -39,7 +39,7 @@ export const context = {
                 }
             }
         } as PaneRegistry,
-        store,
+        store: solidLogicSingleton.store,
         logic: {} as SolidLogic,
     },
 } as unknown as DataBrowserContext
