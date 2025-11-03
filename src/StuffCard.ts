@@ -59,7 +59,6 @@ function renderThingAsDOM (thing, dom) {
 
 function renderThing (thing, dom) {
   return renderThingAsDOM(thing, dom)
-  return html` ${asyncReplace(renderThingAsDOM(thing, dom))} `
 }
 
 function renderThings(things) {
