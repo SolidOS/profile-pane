@@ -1,8 +1,10 @@
 import pane from '../src/index'
 import { parse } from 'rdflib'
-import { store } from 'solid-logic'
 import { findByTestId } from '@testing-library/dom'
+import { solidLogicSingleton } from 'solid-logic'
 import { context, doc, subject } from './setup'
+
+const store = solidLogicSingleton.store
 
 // This was at testingsolidos.solidcommunity.net
 const exampleProfile = `@prefix : <#>.
