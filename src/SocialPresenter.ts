@@ -1,6 +1,6 @@
 import { LiveStore, NamedNode, Node, parse } from 'rdflib'
 import { ns, utils, icons } from 'solid-ui'
-import { profileForm } from './editProfilePane/wrapped-profileFormText'
+import profileForm from './ontology/profileForm.ttl'
 
 const DEFAULT_ICON_URI = icons.iconBase + 'noun_10636_grey.svg' // grey disc
 
