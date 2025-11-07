@@ -15,7 +15,6 @@ export const ProfileCard = ({
     <article class=${localStyles.profileCard} role="main" aria-labelledby="profile-name">
       <header class=${localStyles.header} aria-label="Profile information">
         ${Image(imageSrc, name)}
-        <h1 id="profile-name" class=${localStyles.name}>${name}</h1>
       </header>
       
       <section class=${localStyles.intro} aria-label="About">
