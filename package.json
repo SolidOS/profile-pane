@@ -1,7 +1,6 @@
 {
   "name": "profile-pane",
-  "type": "module",
-  "version": "1.2.1",
+  "version": "1.2.1-newStyle",
   "description": "A SolidOS compatible pane to display a personal profile page",
   "repository": {
     "type": "git",
@@ -65,7 +64,7 @@
     "jest-fetch-mock": "^3.0.3",
     "jsdom": "^27.0.0",
     "node-polyfill-webpack-plugin": "^4.1.0",
-    "solid-logic": "^3.1.1",
+    "solid-logic": "^3.1.1-1d92309",
     "style-loader": "^4.0.0",
     "typescript": "^5.9.2",
     "typescript-plugin-css-modules": "^5.2.0",
