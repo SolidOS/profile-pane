@@ -41,14 +41,14 @@
   "license": "MIT",
   "dependencies": {
     "lit-html": "^3.2.1",
-    "pane-registry": "^2.5.1-0c3d1cb",
+    "pane-registry": "2.5.1-ee1545f",
     "qrcode": "^1.5.4",
     "validate-color": "^2.2.4"
   },
   "peerDependencies": {
-    "rdflib": "^2.2.37",
-    "solid-logic": "3.1.1-d167ace",
-    "solid-ui": "^2.6.1-6458d4e"
+    "rdflib": "^2.3.0",
+    "solid-logic": "3.1.1-3343cc7",
+    "solid-ui": "^2.6.1-c6fc7fe"
   },
   "devDependencies": {
     "@babel/cli": "^7.28.3",
@@ -63,7 +63,7 @@
     "babel-jest": "^30.0.0",
     "babel-loader": "^10.0.0",
     "babel-plugin-inline-import": "^3.0.0",
-    "chat-pane": "^2.5.1-c9500d87",
+    "chat-pane": "2.5.1-1110d9b4",
     "eslint": "^9.33.0",
     "html-webpack-plugin": "^5.6.3",
     "jest": "^30.0.2",
@@ -71,9 +71,9 @@
     "jest-fetch-mock": "^3.0.3",
     "jsdom": "^27.0.0",
     "node-polyfill-webpack-plugin": "^4.1.0",
-    "rdflib": "^2.2.37",
-    "solid-logic": "^3.1.1-d167ace",
-    "solid-ui": "^2.6.1-6458d4e",
+    "rdflib": "^2.3.0",
+    "solid-logic": "^3.1.1-3343cc7",
+    "solid-ui": "^2.6.1-c6fc7fe",
     "typescript": "^5.9.2",
     "webpack": "^5.99.9",
     "webpack-cli": "^6.0.1",

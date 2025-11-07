@@ -2,8 +2,8 @@ import { html, TemplateResult } from 'lit-html'
 import { styleMap } from 'lit-html/directives/style-map.js'
 import { DataBrowserContext } from 'pane-registry'
 import { authn } from 'solid-logic'
-import { LiveStore } from 'rdflib'
-import { ns, rdf, widgets } from 'solid-ui'
+import { LiveStore, NamedNode, st } from 'rdflib'
+import { ns, widgets } from 'solid-ui'
 import {
   clearPreviousMessage, complain,
   mention
@@ -21,7 +21,7 @@ const styles = {
 }
 
 const addMeToYourFriendsDiv = (
-  subject: rdf.NamedNode,
+  subject: NamedNode,
   context: DataBrowserContext
 ): TemplateResult => {
   buttonContainer = context.dom.createElement('div')
@@ -31,7 +31,7 @@ const addMeToYourFriendsDiv = (
 }
 
 const createAddMeToYourFriendsButton = (
-  subject: rdf.NamedNode,
+  subject: NamedNode,
   context: DataBrowserContext
 ): HTMLButtonElement => {
   const button = widgets.button(
@@ -88,7 +88,7 @@ const createAddMeToYourFriendsButton = (
 }
 
 async function saveNewFriend(
-  subject: rdf.NamedNode,
+  subject: NamedNode,
   context: DataBrowserContext
 ): Promise<void> {
   const me = authn.currentUser()
@@ -99,7 +99,7 @@ async function saveNewFriend(
       //if friend does not exist, we add her/him
       await store.fetcher.load(me)
       const updater = store.updater
-      const toBeInserted = [rdf.st(me, ns.foaf('knows'), subject, me.doc())]
+      const toBeInserted = [st(me, ns.foaf('knows'), subject, me.doc())]
       try {
         await updater.update([], toBeInserted)
       } catch (error) {
@@ -112,15 +112,15 @@ async function saveNewFriend(
   } else throw new Error(userNotLoggedInErrorMessage)
 }
 
-function checkIfAnyUserLoggedIn(me: rdf.NamedNode): boolean {
+function checkIfAnyUserLoggedIn(me: NamedNode): boolean {
   if (me) return true
   else return false
 }
 
 async function checkIfFriendExists(
   store: LiveStore,
-  me: rdf.NamedNode,
-  subject: rdf.NamedNode
+  me: NamedNode,
+  subject: NamedNode
 ): Promise<boolean> {
   await store.fetcher.load(me)
   if (store.whether(me, ns.foaf('knows'), subject, me.doc()) === 0)
