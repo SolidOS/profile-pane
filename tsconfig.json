@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "target": "es6",
-    "module": "ESNext",
+    "module": "commonjs",
     "moduleResolution": "node",
     "allowSyntheticDefaultImports": true,
     "lib": [
@@ -13,11 +13,17 @@
     "outDir": "lib",
     "rootDir": "src/",
     "sourceMap": true,
-    "skipLibCheck": true // otherwise it takes *.d.ts from node_modules see: https://stackoverflow.com/questions/51634361/how-to-force-tsc-to-ignore-node-modules-folder
+    "declaration": true,
+    "skipLibCheck": true, // otherwise it takes *.d.ts from node_modules see: https://stackoverflow.com/questions/51634361/how-to-force-tsc-to-ignore-node-modules-folder
+    "typeRoots": [
+      "declarations.d.ts",
+      "node_modules/@types"
+    ]
   },
   "include": [
     "src/**/*",
-     "**/*.ttl"
+     "**/*.ttl",
+     "declarations.d.ts"
   ],
   "exclude": [
     "node_modules",

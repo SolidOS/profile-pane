@@ -1,6 +1,5 @@
 {
   "name": "profile-pane",
-  "type": "module",
   "version": "1.2.1",
   "description": "A SolidOS compatible pane to display a personal profile page",
   "repository": {
@@ -15,12 +14,16 @@
   ],
   "scripts": {
     "clean": "rm -rf lib",
-    "build": "npm run clean && make && npm run build-js",
-    "build-js": "tsc",
+    "build": "npm run clean && npm run typecheck && npm run build-js && npm run build-types",
+    "typecheck": "tsc --noEmit",
+    "build-js": "babel src --out-dir lib --extensions .ts,.js",
+    "build-types": "tsc --emitDeclarationOnly",
     "lint": "eslint",
     "test": "jest --no-coverage",
     "test-coverage": "jest --coverage",
-    "prepublishOnly": "npm run build && npm run lint && npm run test",
+    "prepublishOnly": "npm run test && npm run build",
+    "preversion": "npm run lint && npm test",
+    "postpublish": "git push origin main --follow-tags",
     "start": "webpack serve --config webpack.dev.config.js --open"
   },
   "keywords": [
@@ -38,13 +41,14 @@
   "license": "MIT",
   "dependencies": {
     "lit-html": "^3.2.1",
-    "pane-registry": "^2.5.0",
+    "pane-registry": "^2.5.1-0c3d1cb",
     "qrcode": "^1.5.4",
     "rdflib": "^2.2.37",
-    "solid-ui": "^2.6.1",
+    "solid-ui": "^2.6.1-45faa7b",
     "validate-color": "^2.2.4"
   },
   "devDependencies": {
+    "@babel/cli": "^7.28.3",
     "@babel/core": "^7.26.7",
     "@babel/preset-env": "^7.27.2",
     "@babel/preset-typescript": "^7.27.1",
@@ -55,7 +59,8 @@
     "@typescript-eslint/parser": "^8.39.0",
     "babel-jest": "^30.0.0",
     "babel-loader": "^10.0.0",
-    "chat-pane": "^2.5.1",
+    "babel-plugin-inline-import": "^3.0.0",
+    "chat-pane": "^2.5.1-c9500d87",
     "eslint": "^9.33.0",
     "html-webpack-plugin": "^5.6.3",
     "jest": "^30.0.2",
@@ -63,7 +68,6 @@
     "jest-fetch-mock": "^3.0.3",
     "jsdom": "^27.0.0",
     "node-polyfill-webpack-plugin": "^4.1.0",
-    "solid-logic": "^3.1.1",
     "typescript": "^5.9.2",
     "webpack": "^5.99.9",
     "webpack-cli": "^6.0.1",

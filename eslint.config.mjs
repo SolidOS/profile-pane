@@ -35,6 +35,26 @@ export default [
         },
     },
     {
+        files: ['dev/**/*.ts'],
+        languageOptions: {
+            parser: tsParser,
+            parserOptions: {
+                project: ['./tsconfig.eslint.json'],
+                sourceType: 'module',
+            },
+        },
+        plugins: {
+            "@typescript-eslint": tseslintPlugin,
+        },
+        rules: {
+            semi: ['error', 'never'],
+            quotes: ['error', 'single'],
+            'no-unused-vars': 'off', // handled by TS
+            '@typescript-eslint/no-unused-vars': ['warn'],
+            '@typescript-eslint/no-explicit-any': 'warn',
+        },
+    },
+    {
         files: ['test/**/*.js', 'test/**/*.ts'],
         languageOptions: {
             parser: tsParser,

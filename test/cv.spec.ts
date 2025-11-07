@@ -1,8 +1,9 @@
 import pane from '../src/index'
 import { parse } from 'rdflib'
-import { store } from 'solid-logic'
 import { findByTestId } from '@testing-library/dom'
+import { store } from 'solid-logic'
 import { context, doc, subject } from './setup'
+
 
 // This was at testingsolidos.solidcommunity.net
 const exampleProfile = `@prefix : <#>.

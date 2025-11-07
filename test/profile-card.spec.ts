@@ -1,6 +1,5 @@
 import pane from '../src/index'
 import { parse } from 'rdflib'
-import { solidLogicSingleton } from 'solid-logic'
 import {
   findByAltText,
   findByTestId,
@@ -10,12 +9,13 @@ import {
 } from '@testing-library/dom'
 import { context, doc, subject } from './setup'
 import fetchMock from 'jest-fetch-mock'
+import { store } from 'solid-logic'
 
 describe('profile-pane', () => { // alain
   let result
 
   describe('with full profile', () => {
-    beforeAll(() => {
+    beforeAll(async () => {
       const turtle = `
       @prefix : <#>.
       @prefix foaf: <http://xmlns.com/foaf/0.1/> .
@@ -34,10 +34,12 @@ describe('profile-pane', () => { // alain
           ];
       .
   `
-      parse(turtle, solidLogicSingleton.store, doc.uri)
+      parse(turtle, store, doc.uri)
       result = pane.render(subject, context)
+      // Wait for async rendering to complete
+      await new Promise(resolve => setTimeout(resolve, 100))
     })
-    // afterAll(() => { solidLogicSingleton.store.removeDocument(doc)})
+    // afterAll(() => { store.removeDocument(doc)})
 
     it('renders the name', () =>
       waitFor(() =>
@@ -85,7 +87,7 @@ describe('profile-pane', () => { // alain
   })
 
   describe('with extended profile', () => {
-    beforeAll(() => {
+    beforeAll(async () => {
       const turtle = `
       @prefix : <#>.
       @prefix foaf: <http://xmlns.com/foaf/0.1/> .
@@ -93,7 +95,7 @@ describe('profile-pane', () => { // alain
       :me foaf:name "Jane Doe";
           rdfs:seeAlso <./more.ttl>, <./address.ttl>;
       .`
-      parse(turtle, solidLogicSingleton.store, doc.uri)
+      parse(turtle, store, doc.uri)
       fetchMock.mockOnceIf(
         'https://janedoe.example/profile/more.ttl',
         `
@@ -129,8 +131,10 @@ describe('profile-pane', () => { // alain
         }
       )
       result = pane.render(subject, context)
+      // Wait for async rendering to complete
+      await new Promise(resolve => setTimeout(resolve, 100))
     })
-    // afterAll(() => { solidLogicSingleton.store.removeDocument(doc)})
+    // afterAll(() => { store.removeDocument(doc)})
 
     it('renders the name', () =>
       waitFor(() => expect(result).toContainHTML('Jane Doe')))
