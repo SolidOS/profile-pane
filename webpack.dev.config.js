@@ -22,11 +22,21 @@ export default [
         },
       ],
     },
+    externals: {
+      'solid-ui': 'UI',
+      'solid-logic': 'SolidLogic',
+      rdflib: '$rdf',
+    },
     resolve: {
       extensions: ["*", ".js", ".ts"]
     },
     devServer: {
-      static: './dist'
+      static: ['./dev',
+        {
+          directory: './node_modules',
+          publicPath: '/node_modules'
+        }
+      ]
     },
     devtool: "source-map",
   },

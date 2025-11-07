@@ -43,9 +43,12 @@
     "lit-html": "^3.2.1",
     "pane-registry": "^2.5.1-0c3d1cb",
     "qrcode": "^1.5.4",
-    "rdflib": "^2.2.37",
-    "solid-ui": "^2.6.1-45faa7b",
     "validate-color": "^2.2.4"
+  },
+  "peerDependencies": {
+    "rdflib": "^2.2.37",
+    "solid-logic": "3.1.1-d167ace",
+    "solid-ui": "^2.6.1-6458d4e"
   },
   "devDependencies": {
     "@babel/cli": "^7.28.3",
@@ -68,6 +71,9 @@
     "jest-fetch-mock": "^3.0.3",
     "jsdom": "^27.0.0",
     "node-polyfill-webpack-plugin": "^4.1.0",
+    "rdflib": "^2.2.37",
+    "solid-logic": "^3.1.1-d167ace",
+    "solid-ui": "^2.6.1-6458d4e",
     "typescript": "^5.9.2",
     "webpack": "^5.99.9",
     "webpack-cli": "^6.0.1",

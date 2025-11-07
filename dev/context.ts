@@ -1,6 +1,7 @@
 import { longChatPane } from 'chat-pane'
 import { DataBrowserContext, PaneRegistry } from 'pane-registry'
-import { LiveStore, solidLogicSingleton, store } from 'solid-logic'
+import { solidLogicSingleton, store } from 'solid-logic'
+import { LiveStore } from 'rdflib'
 
 export const context: DataBrowserContext = {
   session: {
