@@ -3,7 +3,7 @@ export default {
   collectCoverage: true,
   coverageDirectory: 'coverage',
   testEnvironment: 'jsdom',
-   testEnvironmentOptions: {
+  testEnvironmentOptions: {
     customExportConditions: ['node'],
   },
   setupFilesAfterEnv: ["./test/helpers/jest.setup.ts"],
