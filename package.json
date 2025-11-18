@@ -15,15 +15,15 @@
   "scripts": {
     "clean": "rm -rf lib",
     "build": "npm run clean && npm run typecheck && npm run build-js && npm run build-types",
-    "typecheck": "tsc --noEmit",
     "build-js": "babel src --out-dir lib --extensions .ts,.js",
     "build-types": "tsc --emitDeclarationOnly",
     "lint": "eslint",
     "lint-fix": "eslint --fix",
     "test": "jest --no-coverage",
     "test-coverage": "jest --coverage",
+    "typecheck": "tsc --noEmit",
     "prepublishOnly": "npm run test && npm run build",
-    "preversion": "npm run lint && npm test",
+    "preversion": "npm run lint && npm run typecheck && npm test",
     "postpublish": "git push origin main --follow-tags",
     "start": "webpack serve --config webpack.dev.config.js --open"
   },
@@ -42,14 +42,14 @@
   "license": "MIT",
   "dependencies": {
     "lit-html": "^3.2.1",
-    "pane-registry": "2.5.1-ee1545f",
+    "pane-registry": "^2.5.1-cfba46d",
     "qrcode": "^1.5.4",
     "validate-color": "^2.2.4"
   },
   "peerDependencies": {
     "rdflib": "^2.3.0",
-    "solid-logic": "3.1.1-3343cc7",
-    "solid-ui": "^2.6.1-c6fc7fe"
+    "solid-logic": "3.1.1-a44ca66",
+    "solid-ui": "^2.6.1-e78cbe5"
   },
   "devDependencies": {
     "@babel/cli": "^7.28.3",
@@ -64,7 +64,7 @@
     "babel-jest": "^30.0.0",
     "babel-loader": "^10.0.0",
     "babel-plugin-inline-import": "^3.0.0",
-    "chat-pane": "2.5.1-1110d9b4",
+    "chat-pane": "^2.5.1-8a75927f",
     "eslint": "^9.33.0",
     "html-webpack-plugin": "^5.6.3",
     "jest": "^30.0.2",
@@ -73,8 +73,8 @@
     "jsdom": "^27.0.0",
     "node-polyfill-webpack-plugin": "^4.1.0",
     "rdflib": "^2.3.0",
-    "solid-logic": "^3.1.1-3343cc7",
-    "solid-ui": "^2.6.1-c6fc7fe",
+    "solid-logic": "^3.1.1-a44ca66",
+    "solid-ui": "^2.6.1-e78cbe5",
     "typescript": "^5.9.2",
     "webpack": "^5.99.9",
     "webpack-cli": "^6.0.1",
