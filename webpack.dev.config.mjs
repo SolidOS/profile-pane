@@ -58,6 +58,12 @@ export default [
         umdNamedDefine: true
       }
     },
+    optimization: {
+      usedExports: true,
+      sideEffects: false,
+      // Tree shaking in development (normally disabled for faster builds)
+      providedExports: true,
+    },
     devServer: {
       static: [
         './dev',
