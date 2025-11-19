@@ -1,13 +1,26 @@
 import HtmlWebpackPlugin from "html-webpack-plugin";
 import NodePolyfillPlugin from "node-polyfill-webpack-plugin";
+import webpack from "webpack";
 
 export default [
   {
     mode: "development",
     entry: ["./dev/index.ts"],
     plugins: [
-      new HtmlWebpackPlugin({ template: "./dev/index.html" }),
-      new NodePolyfillPlugin()
+      new HtmlWebpackPlugin({ 
+        template: "./dev/index.html",
+        inject: 'head'
+      }),
+      new NodePolyfillPlugin(),
+      new webpack.ProvidePlugin({
+        $rdf: 'rdflib',
+        SolidLogic: 'solid-logic',
+        UI: 'solid-ui'
+      }),
+      new webpack.DefinePlugin({
+        'global': 'globalThis',
+        'process.env.NODE_ENV': JSON.stringify('development')
+      })
     ],
     module: {
       rules: [
@@ -22,6 +35,11 @@ export default [
         },
       ],
     },
+    externals: {
+      'rdflib': '$rdf',
+      'solid-logic': 'SolidLogic', 
+      'solid-ui': 'UI'
+    },
     resolve: {
       extensions: [".js", ".ts"],
       alias: {
@@ -33,8 +51,21 @@ export default [
         'solid-ui': 'solid-ui'
       }
     },
+    output: {
+      globalObject: 'globalThis',
+      library: {
+        type: 'umd',
+        umdNamedDefine: true
+      }
+    },
     devServer: {
-      static: './dev',
+      static: [
+        './dev',
+        {
+          directory: './node_modules',
+          publicPath: '/node_modules'
+        }
+      ],
     },
     devtool: "source-map",
   },
