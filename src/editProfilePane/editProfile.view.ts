@@ -12,7 +12,7 @@ import { PaneDefinition } from 'pane-registry'
 import { NamedNode, parse, Store, sym } from 'rdflib'
 import { icons, login, ns, style, widgets } from 'solid-ui'
 import { paneDiv } from './profile.dom'
-import { profileForm } from './wrapped-profileFormText'
+import profileForm from '../ontology/profileForm.ttl'
 
 const highlightColor = style.highlightColor || '#7C4DFF'
 

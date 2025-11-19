@@ -3,8 +3,11 @@ export default {
   collectCoverage: true,
   coverageDirectory: 'coverage',
   testEnvironment: 'jsdom',
-   testEnvironmentOptions: {
+  testEnvironmentOptions: {
     customExportConditions: ['node'],
+  },
+  transform: {
+    '^.+\\.[tj]sx?$': ['babel-jest', { configFile: './babel.config.mjs' }],
   },
   setupFilesAfterEnv: ["./test/helpers/jest.setup.ts"],
   transformIgnorePatterns: ["/node_modules/(?!lit-html).+\\.js"],
@@ -14,8 +17,10 @@ export default {
     // Mock CSS modules
     '\\.module\\.css$': 'identity-obj-proxy',
     // Mock other style files (optional)
-    '\\.(css|less|sass|scss)$': 'identity-obj-proxy'
+    '\\.(css|less|sass|scss)$': 'identity-obj-proxy',
+    '^SolidLogic$': 'solid-logic',
+    '^\\$rdf$': 'rdflib'
   },
-  roots: ['<rootDir>/src', '<rootDir>/test', '<rootDir>/__mocks__'],
+  roots: ['<rootDir>/src', '<rootDir>/test', '<rootDir>/__mocks__']
 }
 

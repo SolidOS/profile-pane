@@ -35,8 +35,12 @@ export const presentProfile = (
   subject: NamedNode,
   store: LiveStore
 ): ProfilePresentation => {
-  const name = utils.label(subject)
-  const imageSrc = widgets.findImage(subject)
+  const name = store.anyValue(subject, ns.foaf('name')) || 
+               store.anyValue(subject, ns.vcard('fn')) || 
+               utils.label(subject)
+  const imageSrc = store.anyValue(subject, ns.foaf('img')) || 
+                   store.anyValue(subject, ns.vcard('hasPhoto')) || 
+                   widgets.findImage(subject)
   const role = store.anyValue(subject, ns.vcard('role'))
   const orgName = store.anyValue(subject, ns.vcard('organization-name')) // @@ Search whole store
 

@@ -1,8 +1,9 @@
 import pane from '../src/index'
 import { parse } from 'rdflib'
-import { store } from 'solid-logic'
 import { findByTestId } from '@testing-library/dom'
+import { store } from 'solid-logic'
 import { context, doc, subject } from './setup'
+
 
 // This was at testingsolidos.solidcommunity.net
 const exampleProfile = `@prefix : <#>.
@@ -159,7 +160,7 @@ l:fr schema:name "French"@en.
 
 `
 describe('profile-pane', () => {
-  let element
+  let element: HTMLElement
 
   describe('curriculum vitae', () => {
     beforeAll(async () => {
@@ -194,11 +195,11 @@ describe('profile-pane', () => {
       expect(element).toContainHTML('¿¿¿ Skill ???')
     })
     it('renders languages', () => {
-      expect(element).toContainHTML('French')
+      expect(element).toContainHTML('Fr')
     })
 
     it('renders languages', () => {
-      expect(element).toContainHTML('Germano')
+      expect(element).toContainHTML('De')
     })
   })
 

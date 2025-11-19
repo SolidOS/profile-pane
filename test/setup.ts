@@ -39,7 +39,7 @@ export const context = {
                 }
             }
         } as PaneRegistry,
-        store,
+        store: store,
         logic: {} as SolidLogic,
     },
 } as unknown as DataBrowserContext
