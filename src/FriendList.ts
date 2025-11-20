@@ -10,7 +10,7 @@ export const FriendList = (
   context: DataBrowserContext
 ) => {
   const friends = extractFriends(subject, context)
-  if (!friends || !friends.textContent?.trim()) return html``
+  if (!friends || !friends.textContent?.trim()) return null
 
   return html`
     <section

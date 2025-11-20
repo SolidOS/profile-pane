@@ -54,6 +54,8 @@ describe('profile-pane', () => {
 
   describe('without friends', () => {
     beforeAll(async () => {
+      // Clear the store from previous test
+      store.removeDocument(doc)
       const result = pane.render(subject, context)
       // Wait for async rendering
       await new Promise(resolve => setTimeout(resolve, 100))

@@ -142,7 +142,7 @@ export async function ProfileView (
 
       ${(() => {
         const friends = FriendList(subject, context)
-        return friends && friends.strings && friends.strings.join('').trim() !== '' ? html`
+        return friends ? html`
           <aside 
             aria-labelledby="friends-heading" 
             class="${localStyles.profileSection}" 
