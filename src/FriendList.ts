@@ -1,14 +1,14 @@
 import { ns, widgets } from 'solid-ui'
 import { DataBrowserContext } from 'pane-registry'
 import { NamedNode } from 'rdflib'
-import { html } from 'lit-html'
+import { html, TemplateResult } from 'lit-html'
 import * as localStyles from './styles/FriendList.module.css'
 
 
 export const FriendList = (
   subject: NamedNode,
   context: DataBrowserContext
-) => {
+): TemplateResult | null => {
   const friends = extractFriends(subject, context)
   if (!friends || !friends.textContent?.trim()) return null
 
