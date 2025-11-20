@@ -24,6 +24,7 @@
     "test": "jest --no-coverage",
     "test-coverage": "jest --coverage",
     "typecheck": "tsc --noEmit",
+    "prepare": "npm run build",
     "prepublishOnly": "npm run test && npm run build",
     "preversion": "npm run lint && npm run typecheck && npm test",
     "postpublish": "git push origin main --follow-tags",
