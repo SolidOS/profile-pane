@@ -1,6 +1,5 @@
 import { NamedNode, LiveStore } from 'rdflib'
 import { ns, utils, widgets } from 'solid-ui'
-import { store } from 'solid-logic'
 import { Node } from 'rdflib'
 import { validateHTMLColorHex } from 'validate-color'
 
@@ -15,7 +14,7 @@ export interface ProfilePresentation {
   highlightColor: string;
 }
 
-export function pronounsAsText (subject:NamedNode): string {
+export function pronounsAsText (subject:NamedNode, store:LiveStore): string {
   let pronouns = store.anyJS(subject, ns.solid('preferredSubjectPronoun')) || ''
   if (pronouns) {
     const them = store.anyJS(subject, ns.solid('preferredObjectPronoun'))
@@ -35,12 +34,8 @@ export const presentProfile = (
   subject: NamedNode,
   store: LiveStore
 ): ProfilePresentation => {
-  const name = store.anyValue(subject, ns.foaf('name')) || 
-               store.anyValue(subject, ns.vcard('fn')) || 
-               utils.label(subject)
-  const imageSrc = store.anyValue(subject, ns.foaf('img')) || 
-                   store.anyValue(subject, ns.vcard('hasPhoto')) || 
-                   widgets.findImage(subject)
+  const name = utils.label(subject)
+  const imageSrc = widgets.findImage(subject)
   const role = store.anyValue(subject, ns.vcard('role'))
   const orgName = store.anyValue(subject, ns.vcard('organization-name')) // @@ Search whole store
 
@@ -54,7 +49,7 @@ export const presentProfile = (
       ? store.anyValue(address as NamedNode, ns.vcard('locality'))
       : null
   const { backgroundColor, highlightColor } = getColors(subject, store)
-  const pronouns = pronounsAsText(subject)
+  const pronouns = pronounsAsText(subject, store)
   return {
     name,
     imageSrc,
