@@ -1,11 +1,9 @@
 /* StuffCard.module.css */
 
 .stuffCard {
-  composes: module-card from '../styles/global.css';
 }
 
 .stuffHeader {
-  composes: module-header from '../styles/global.css';
 }
 
 .stuffTable {

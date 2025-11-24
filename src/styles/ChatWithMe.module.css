@@ -1,7 +1,6 @@
 /* ChatWithMe.module.css */
 
 .chatSection {
-  composes: module-card from '../styles/global.css';
   display: flex;
   flex-direction: column;
   align-items: center;

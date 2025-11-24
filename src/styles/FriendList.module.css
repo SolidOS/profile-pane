@@ -1,7 +1,6 @@
 /* FriendList.module.css */
 
 .friendListSection {
-  composes: module-card from '../styles/global.css';
 }
 
 .friendListHeader {

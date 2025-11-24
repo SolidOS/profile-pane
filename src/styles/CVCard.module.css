@@ -1,11 +1,9 @@
 /* CVCard.module.css */
 
 .cvCard {
-  composes: module-card from '../styles/global.css';
 }
 
 .cvHeader {
-  composes: module-header from '../styles/global.css';
 }
 
 .cvSection {

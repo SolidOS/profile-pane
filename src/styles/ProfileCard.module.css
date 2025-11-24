@@ -9,7 +9,6 @@
 
 .profileCard {
   /* Use global card styles */
-  composes: module-card from '../styles/global.css';
 }
 
 .profileCard div button {

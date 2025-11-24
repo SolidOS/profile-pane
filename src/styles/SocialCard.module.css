@@ -2,11 +2,9 @@
 
 .socialCard {
   /* Use global card styles */
-  composes: module-card from '../styles/global.css';
 }
 
 .socialHeader {
-  composes: module-header from '../styles/global.css';
 }
 
 .socialList {
