@@ -1,7 +1,9 @@
 import { NamedNode, LiveStore } from 'rdflib'
 import { ns, utils, widgets } from 'solid-ui'
 import { Node } from 'rdflib'
-import { validateHTMLColorHex } from 'validate-color'
+import { createRequire } from 'node:module'
+const require = createRequire(import.meta.url)
+const { validateHTMLColorHex } = require('validate-color')
 
 export interface ProfilePresentation {
   name: string;

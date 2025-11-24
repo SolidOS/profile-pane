@@ -4,6 +4,7 @@ import {ChatLogic} from 'solid-logic'
 import pane from '../src'
 import {context, doc, subject} from './setup'
 import {logInToChatWithMeButtonText, userNotLoggedInErrorMessage, loadingMessage} from '../src/texts'
+import {jest} from '@jest/globals'
 
 describe('chat with me', () => {
 

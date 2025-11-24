@@ -7,20 +7,18 @@ export default {
     customExportConditions: ['node'],
   },
   transform: {
-    '^.+\\.[tj]sx?$': ['babel-jest', { configFile: './babel.config.mjs' }],
+    '^.+\\.[tj]sx?$': ['babel-jest', { configFile: './babel.config.mjs' }]
   },
-  setupFilesAfterEnv: ["./test/helpers/jest.setup.ts"],
-  transformIgnorePatterns: ["/node_modules/(?!lit-html).+\\.js"],
-  testPathIgnorePatterns: ['/node_modules/', '/lib/'],
-  moduleNameMapper: {
-    '^[./a-zA-Z0-9$_-]+\\.ttl$': '<rootDir>/__mocks__/fileMock.js',    // '\\.ttl$'
-    // Mock CSS modules
-    '\\.module\\.css$': 'identity-obj-proxy',
-    // Mock other style files (optional)
-    '\\.(css|less|sass|scss)$': 'identity-obj-proxy',
-    '^SolidLogic$': 'solid-logic',
-    '^\\$rdf$': 'rdflib'
-  },
-  roots: ['<rootDir>/src', '<rootDir>/test', '<rootDir>/__mocks__']
+  transformIgnorePatterns: [],
+  extensionsToTreatAsEsm: ['.ts'],
+    setupFilesAfterEnv: ['<rootDir>/test/helpers/jest.setup.ts'],
+
+    testPathIgnorePatterns: ['/node_modules/', '/lib/'],
+    moduleNameMapper: {
+      '^[./a-zA-Z0-9$_-]+\\.ttl$': '<rootDir>/__mocks__/fileMock.js',
+      '\\.module\\.css$': 'identity-obj-proxy',
+      '\\.(css|less|sass|scss)$': 'identity-obj-proxy'
+    },
+    roots: ['<rootDir>/src', '<rootDir>/test', '<rootDir>/__mocks__']
 }
 
