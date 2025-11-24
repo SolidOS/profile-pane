@@ -43,7 +43,6 @@ const common = {
     'isomorphic-fetch': 'fetch',
     'text-encoding': 'TextEncoder',
     '@trust/webcrypto': 'crypto',
-    'lit-html': 'lit-html',
     'rdflib': 'rdflib',
     'solid-logic': 'SolidLogic',
     'solid-ui': 'UI'
