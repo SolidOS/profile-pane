@@ -54,7 +54,6 @@ export default [
     },
     externals: {
       'rdflib': '$rdf',
-      'solid-logic': 'SolidLogic', 
       'solid-ui': 'UI'
     },
     resolve: {

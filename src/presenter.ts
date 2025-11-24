@@ -1,9 +1,8 @@
 import { NamedNode, LiveStore } from 'rdflib'
 import { ns, utils, widgets } from 'solid-ui'
+import { store } from 'solid-logic'
 import { Node } from 'rdflib'
-import { createRequire } from 'node:module'
-const require = createRequire(import.meta.url)
-const { validateHTMLColorHex } = require('validate-color')
+import { validateHTMLColorHex } from 'validate-color'
 
 export interface ProfilePresentation {
   name: string;
@@ -16,7 +15,7 @@ export interface ProfilePresentation {
   highlightColor: string;
 }
 
-export function pronounsAsText (subject:NamedNode, store:LiveStore): string {
+export function pronounsAsText (subject:NamedNode): string {
   let pronouns = store.anyJS(subject, ns.solid('preferredSubjectPronoun')) || ''
   if (pronouns) {
     const them = store.anyJS(subject, ns.solid('preferredObjectPronoun'))
@@ -51,7 +50,7 @@ export const presentProfile = (
       ? store.anyValue(address as NamedNode, ns.vcard('locality'))
       : null
   const { backgroundColor, highlightColor } = getColors(subject, store)
-  const pronouns = pronounsAsText(subject, store)
+  const pronouns = pronounsAsText(subject)
   return {
     name,
     imageSrc,
