@@ -34,24 +34,7 @@ export async function ProfileView (
   const accounts = presentSocial(subject, context.session.store as LiveStore)
   const stuffData = await presentStuff(subject)
 
-  return html`
-    <!-- Enhanced skip links -->
-    <div class="skip-links" role="navigation" aria-label="Skip navigation">
-      <a href="#main-content" class="skip-link">Skip to main content</a>
-      <a href="#profile-nav" class="skip-link">Skip to profile navigation</a>
-      <a href="#social-accounts" class="skip-link">Skip to social accounts</a>
-      <a href="#contact-section" class="skip-link">Skip to contact</a>
-    </div>
-    
-    <!-- Live region for dynamic updates -->
-    <div 
-      id="live-region" 
-      class="visually-hidden" 
-      aria-live="polite" 
-      aria-atomic="true"
-      role="status"
-    ></div>
-    
+  return html` 
     <main
       id="main-content"
       class="profile-grid"

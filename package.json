@@ -15,10 +15,9 @@
   ],
   "scripts": {
     "clean": "rm -rf lib",
-    "build": "npm run clean && npm run typecheck && npm run build-js && npm run build-types && npm run copy-css",
-    "copy-css": "mkdir -p lib/styles && cp src/styles/*.css lib/styles/",
-    "build-js": "babel src --out-dir lib --extensions .ts,.js",
-    "build-types": "tsc --emitDeclarationOnly",
+    "build": "npm run clean && npm run typecheck && npm run build-dist && npm run build-js",
+    "build-js": "tsc",
+    "build-dist": "webpack --progress",
     "lint": "eslint",
     "lint-fix": "eslint --fix",
     "test": "jest --no-coverage",
@@ -82,9 +81,11 @@
     "solid-logic": "^3.1.1-a44ca66",
     "solid-ui": "^2.6.1-e78cbe5",
     "style-loader": "^4.0.0",
+    "terser-webpack-plugin": "^5.3.14",
+    "ts-loader": "^9.5.4",
     "typescript": "^5.9.2",
     "typescript-plugin-css-modules": "^5.2.0",
-    "webpack": "^5.99.9",
+    "webpack": "^5.103.0",
     "webpack-cli": "^6.0.1",
     "webpack-dev-server": "^5.2.2"
   }
