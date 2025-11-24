@@ -15,7 +15,8 @@
   ],
   "scripts": {
     "clean": "rm -rf lib",
-    "build": "npm run clean && npm run typecheck && npm run build-js && npm run build-types",
+    "build": "npm run clean && npm run typecheck && npm run build-js && npm run build-types && npm run copy-css",
+    "copy-css": "mkdir -p lib/styles && cp src/styles/*.css lib/styles/",
     "build-js": "babel src --out-dir lib --extensions .ts,.js",
     "build-types": "tsc --emitDeclarationOnly",
     "lint": "eslint",
