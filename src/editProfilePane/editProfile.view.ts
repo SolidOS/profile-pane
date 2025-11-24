@@ -12,7 +12,7 @@ import { PaneDefinition } from 'pane-registry'
 import { NamedNode, parse, Store, sym } from 'rdflib'
 import { icons, login, ns, style, widgets } from 'solid-ui'
 import { paneDiv } from './profile.dom'
-import { profileForm } from './wrapped-profileFormText'
+import profileForm from '../ontology/profileForm.ttl'
 
 const highlightColor = style.highlightColor || '#7C4DFF'
 
@@ -26,7 +26,7 @@ const editProfileView: PaneDefinition = {
   label: () => null, // don't use this in the normal solid-panes dispatching
 
   render: function (subject, context) {
-    console.log('@@@ render edit profile pane:  subject, context', subject, context)
+    //console.log('@@@ render edit profile pane:  subject, context', subject, context)
     const dom = context.dom
     const store = context.session.store as Store
 
@@ -136,7 +136,7 @@ const editProfileView: PaneDefinition = {
 
         heading('Communities you participate in')
 
-        comment(`These are organizations and projects (etc) whose stuff you share`)
+        comment('These are organizations and projects (etc) whose stuff you share')
 
         // TODO: would be useful to explain what it means to "drag organizations"
         //       what is it that is being dragged?
