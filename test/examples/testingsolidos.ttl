@@ -19,7 +19,7 @@
 @prefix prof: <./>.
 @prefix inb: </inbox/>.
 @prefix c: <https://solidos.solidcommunity.net/profile/card#>.
-@prefix c0: <https://timbl.inrupt.net/profile/card#>.
+@prefix c0: <https://timbl.solidcommunity.net/profile/card#>.
 
 occup:50af07f0-7a75-424e-a66d-5a9deea10f4c
     schema:name

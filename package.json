@@ -1,13 +1,14 @@
 {
   "name": "profile-pane",
-  "version": "1.2.1",
+  "version": "1.2.1-newStyle",
   "description": "A SolidOS compatible pane to display a personal profile page",
   "sideEffects": false,
   "repository": {
     "type": "git",
     "url": "git+https://github.com/solidos/profile-pane.git"
   },
-  "main": "lib/index.js",
+  "main": "lib/profile-pane.js",
+  "types": "lib/index.d.ts",
   "files": [
     "/lib",
     "README.md",
@@ -15,15 +16,15 @@
   ],
   "scripts": {
     "clean": "rm -rf lib",
-    "build": "npm run clean && npm run typecheck && npm run build-js && npm run build-types",
-    "build-js": "babel src --out-dir lib --extensions .ts,.js",
-    "build-types": "tsc --emitDeclarationOnly",
+    "build": "npm run clean && npm run typecheck && npm run build-dist && npm run build-js",
+    "build-js": "tsc",
+    "build-dist": "webpack --progress",
     "lint": "eslint",
     "lint-fix": "eslint --fix",
     "test": "jest --no-coverage",
     "test-coverage": "jest --coverage",
     "typecheck": "tsc --noEmit",
-    "prepublishOnly": "npm run test && npm run build",
+    "prepublishOnly": "npm run build && npm run lint && npm run test",
     "preversion": "npm run lint && npm run typecheck && npm test",
     "postpublish": "git push origin main --follow-tags",
     "start": "webpack serve --config webpack.dev.config.mjs --open"
@@ -52,6 +53,9 @@
     "solid-logic": "3.1.1-a44ca66",
     "solid-ui": "^2.6.1-e78cbe5"
   },
+  "overrides": {
+    "solid-logic": "^3.1.1-a44ca66"
+  },
   "devDependencies": {
     "@babel/cli": "^7.28.3",
     "@babel/core": "^7.26.7",
@@ -65,8 +69,10 @@
     "babel-loader": "^10.0.0",
     "babel-plugin-inline-import": "^3.0.0",
     "chat-pane": "^2.5.1-8a75927f",
+    "css-loader": "^7.1.2",
     "eslint": "^9.33.0",
     "html-webpack-plugin": "^5.6.3",
+    "identity-obj-proxy": "^3.0.0",
     "jest": "^30.0.2",
     "jest-environment-jsdom": "^30.0.2",
     "jest-fetch-mock": "^3.0.3",
@@ -75,8 +81,12 @@
     "rdflib": "^2.3.0",
     "solid-logic": "^3.1.1-a44ca66",
     "solid-ui": "^2.6.1-e78cbe5",
+    "style-loader": "^4.0.0",
+    "terser-webpack-plugin": "^5.3.14",
+    "ts-loader": "^9.5.4",
     "typescript": "^5.9.2",
-    "webpack": "^5.99.9",
+    "typescript-plugin-css-modules": "^5.2.0",
+    "webpack": "^5.103.0",
     "webpack-cli": "^6.0.1",
     "webpack-dev-server": "^5.2.2"
   }

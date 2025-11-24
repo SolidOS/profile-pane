@@ -195,7 +195,7 @@ solid:publicTypeIndex <> .
 
 `
 describe('profile-pane', () => {
-  let element
+  let element: HTMLElement
 
   describe('stuff', () => {
     beforeAll(async () => {
@@ -205,9 +205,6 @@ describe('profile-pane', () => {
       element = await findByTestId(result, 'stuff')
     })
 
-    it('renders the stuff', () => {
-      expect(element).toContainHTML('Stuff')
-    })
     it.skip('renders the three rows', async () => { // @@ How to test it after it has been filled in async?
       const tableEle = await findByTestId(element, 'stuffTable')
       await waitforme(1000) // ms

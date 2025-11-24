@@ -1,11 +1,7 @@
-/*  Profile View
-*/
-
 import { html, TemplateResult } from 'lit-html'
-import { styleMap } from 'lit-html/directives/style-map.js'
 import { DataBrowserContext } from 'pane-registry'
 import { NamedNode, LiveStore } from 'rdflib'
-import { card, padding, paddingSmall, responsiveGrid } from './baseStyles'
+import * as localStyles from './styles/ProfileView.module.css'
 import { ChatWithMe } from './ChatWithMe'
 import { FriendList } from './FriendList'
 import { presentProfile } from './presenter'
@@ -16,8 +12,6 @@ import { ProfileCard } from './ProfileCard'
 import { CVCard } from './CVCard'
 import { SocialCard } from './SocialCard'
 import { StuffCard } from './StuffCard'
-import { QRCodeCard } from './QRCodeCard'
-import { addMeToYourFriendsDiv } from './addMeToYourFriends'
 
 // The edit button switches to the editor pane
 /*
@@ -35,42 +29,132 @@ export async function ProfileView (
   subject: NamedNode,
   context: DataBrowserContext
 ): Promise <TemplateResult> {
-  const profileBasics = presentProfile(subject, context.session.store as LiveStore) // rdflib rdfs type problems
-  const rolesByType = presentCV (subject, context.session.store as LiveStore)
+  const profileBasics = presentProfile(subject, context.session.store as LiveStore)
+  const rolesByType = presentCV(subject, context.session.store as LiveStore)
   const accounts = presentSocial(subject, context.session.store as LiveStore)
   const stuffData = await presentStuff(subject)
-  const styles = {
-    grid: styleMap({
-      ...responsiveGrid(),
-      ...paddingSmall(),
-      background: `radial-gradient(circle, ${profileBasics.backgroundColor} 80%, ${profileBasics.highlightColor} 100%)`,
-    }),
-    card: styleMap(card()),
-    chat: styleMap({
-      ...card(),
-      ...padding(),
-    }),
-  }
 
-  // was: <div style=${styles.card}>${renderEditButton(subject)}</div>
+  return html` 
+    <main
+      id="main-content"
+      class="profile-grid"
+      style="--profile-grid-bg: radial-gradient(circle, ${profileBasics.backgroundColor} 80%, ${profileBasics.highlightColor} 100%)"
+      role="main"
+      aria-label="Profile for ${profileBasics.name}"
+      tabindex="-1"
+    >
+      <!-- Enhanced breadcrumb navigation -->
+      <nav id="profile-nav" aria-label="Profile sections" class="visually-hidden">
+        <ol>
+          <li><a href="#profile-card-heading">Personal Information</a></li>
+          ${(() => {
+            const cv = CVCard(rolesByType)
+            return cv && cv.strings && cv.strings.join('').trim() !== '' 
+              ? html`<li><a href="#cv-heading">Professional Experience</a></li>` 
+              : ''
+          })()}
+          ${accounts.accounts && accounts.accounts.length > 0 
+            ? html`<li><a href="#social-heading" id="social-accounts">Social Accounts</a></li>` 
+            : ''}
+          <li><a href="#chat-heading" id="contact-section">Contact</a></li>
+        </ol>
+      </nav>
 
-  return html`
-    <div style="${styles.grid}">
-      <div>
-        <div data-testid="profile-card" style="${styles.card}">
-          ${ProfileCard(profileBasics)}
-          ${addMeToYourFriendsDiv(subject, context)}
+      <article 
+        aria-labelledby="profile-card-heading" 
+        class="${localStyles.profileSection}" 
+        role="region"
+        tabindex="-1"
+      >
+        <header>
+          <h2 id="profile-card-heading" tabindex="-1">${profileBasics.name}</h2>
+        </header>
+        ${ProfileCard(profileBasics, context, subject)}
+      </article>
+
+      ${(() => {
+        const cv = CVCard(rolesByType)
+        return cv && cv.strings && cv.strings.join('').trim() !== '' ? html`
+          <section 
+            aria-labelledby="cv-heading" 
+            class="${localStyles.profileSection}" 
+            role="region"
+            tabindex="-1"
+          >
+            <header>
+              <h2 id="cv-heading" tabindex="-1">Professional & Education</h2>
+            </header>
+            <div role="complementary" aria-label="Career and education information">
+              ${cv}
+            </div>
+          </section>
+        ` : ''
+      })()}
+
+      ${accounts.accounts && accounts.accounts.length > 0 ? html`
+        <aside 
+          aria-labelledby="social-heading" 
+          class="${localStyles.profileSection}" 
+          role="complementary"
+          tabindex="-1"
+        >
+          <header>
+            <h2 id="social-heading" tabindex="-1">Social Accounts</h2>
+          </header>
+          <nav aria-label="Social media links">
+            ${SocialCard(accounts)}
+          </nav>
+        </aside>
+      ` : ''}
+
+      ${stuffData.stuff && stuffData.stuff.length > 0 ? html`
+        <section 
+          aria-labelledby="stuff-heading" 
+          class="${localStyles.profileSection}" 
+          role="region"
+          tabindex="-1"
+        >
+          <header>
+            <h2 id="stuff-heading" tabindex="-1">Shared Items</h2>
+          </header>
+          <div role="complementary" aria-label="Shared files and resources">
+            ${StuffCard(profileBasics, context, subject, stuffData)}
+          </div>
+        </section>
+      ` : ''}
+
+      ${(() => {
+        const friends = FriendList(subject, context)
+        return friends ? html`
+          <aside 
+            aria-labelledby="friends-heading" 
+            class="${localStyles.profileSection}" 
+            role="complementary"
+            tabindex="-1"
+          >
+            <header>
+              <h2 id="friends-heading" tabindex="-1">Friends</h2>
+            </header>
+            <div role="list" aria-label="Friend connections">
+              ${friends}
+            </div>
+          </aside>
+        ` : ''
+      })()}
+
+      <section 
+        aria-labelledby="chat-heading" 
+        class="${localStyles.profileSection}" 
+        role="region"
+        tabindex="-1"
+      >
+        <header>
+          <h2 id="chat-heading" tabindex="-1">Contact</h2>
+        </header>
+        <div role="complementary" aria-label="Communication options">
+          ${ChatWithMe(subject, context)}
         </div>
-      </div>
-        ${CVCard(profileBasics, rolesByType)}
-        ${SocialCard(profileBasics, accounts)}
-        ${StuffCard(profileBasics, context, subject, stuffData)}
-        ${FriendList(profileBasics, subject, context)}
-      <div style="${styles.chat}">${ChatWithMe(subject, context)}</div>
-      <div data-testid="qrcode-display" class="qrcode-display" style="${styles.card}">
-        ${QRCodeCard(profileBasics, subject)}
-         
-      </div>
-    </div>
+      </section>
+    </main>
   `
 }

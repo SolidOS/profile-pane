@@ -2,44 +2,36 @@ import { ns, widgets } from 'solid-ui'
 import { DataBrowserContext } from 'pane-registry'
 import { NamedNode } from 'rdflib'
 import { html, TemplateResult } from 'lit-html'
-import { styleMap } from 'lit-html/directives/style-map.js'
-import { card, headingLight, padding } from './baseStyles'
-import { ProfilePresentation } from './presenter'
+import * as localStyles from './styles/FriendList.module.css'
 
-import {
-  heading
-} from './baseStyles'
 
-const styles = {
-  root: styleMap(padding()),
-  heading: styleMap(headingLight()),
-  card: styleMap(card()),
-}
-
-export const FriendList = ( profileBasics: ProfilePresentation,
+export const FriendList = (
   subject: NamedNode,
   context: DataBrowserContext
-): TemplateResult => {
-  const nameStyle = styleMap({
-    ...heading(),
-    // "text-decoration": "underline",
-    color: profileBasics.highlightColor, // was "text-decoration-color"
-  })
+): TemplateResult | null => {
+  const friends = extractFriends(subject, context)
+  if (!friends || !friends.textContent?.trim()) return null
 
-  if (createList(subject, context)) {
-    return html`
-    <div data-testid="friend-list" style="${styles.card}">
-      <div style=${styles.root}>
-        <h3 style=${nameStyle}>Friends</h3>
-        ${createList(subject, context)}
-      </div>
-    </div>
-    `
-  }
-  return html``
+  return html`
+    <section
+      class="${localStyles.friendListSection}"
+      role="region"
+      aria-labelledby="friends-section-title"
+      data-testid="friend-list"
+    >
+      <header>
+        <h3 id="friends-section-title" class="sr-only">Friend Connections</h3>
+      </header>
+      <nav aria-label="Friend profiles">
+        <ul class="${localStyles.friendList}" role="list">
+          ${friends}
+        </ul>
+      </nav>
+    </section>
+  `
 }
 
-const createList = (subject: NamedNode, { dom }: DataBrowserContext) => {
+const extractFriends = (subject: NamedNode, { dom }: DataBrowserContext) => {
   const target = dom.createElement('div')
   widgets.attachmentList(dom, subject, target, {
     doc: subject.doc(),

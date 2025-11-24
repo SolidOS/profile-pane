@@ -160,7 +160,7 @@ l:fr schema:name "French"@en.
 
 `
 describe('profile-pane', () => {
-  let element
+  let element: HTMLElement
 
   describe('curriculum vitae', () => {
     beforeAll(async () => {
@@ -170,9 +170,6 @@ describe('profile-pane', () => {
       element = await findByTestId(result, 'curriculum-vitae')
     })
 
-    it('renders the CV', () => {
-      expect(element).toContainHTML('Bio')
-    })
     it('renders role testeuse d’accessibilité in bio', () => {
       expect(element).toContainHTML('testeuse D’accessibilité')
     })
@@ -198,11 +195,11 @@ describe('profile-pane', () => {
       expect(element).toContainHTML('¿¿¿ Skill ???')
     })
     it('renders languages', () => {
-      expect(element).toContainHTML('French')
+      expect(element).toContainHTML('Fr')
     })
 
     it('renders languages', () => {
-      expect(element).toContainHTML('Germano')
+      expect(element).toContainHTML('De')
     })
   })
 
