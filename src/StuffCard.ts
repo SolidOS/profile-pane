@@ -1,5 +1,4 @@
 import { html, TemplateResult } from 'lit-html'
-import { asyncReplace } from 'lit-html/directives/async-replace.js'
 import { NamedNode } from 'rdflib'
 import { DataBrowserContext } from 'pane-registry'
 import { widgets } from 'solid-ui'
@@ -59,7 +58,6 @@ function renderThingAsDOM (thing, dom) {
 
 function renderThing (thing, dom) {
   return renderThingAsDOM(thing, dom)
-  return html` ${asyncReplace(renderThingAsDOM(thing, dom))} `
 }
 
 function renderThings(things) {

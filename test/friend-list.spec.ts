@@ -1,9 +1,9 @@
 import pane from '../src/index'
 import { parse } from 'rdflib'
-import { solidLogicSingleton } from 'solid-logic'
 import { findByTestId, queryByText } from '@testing-library/dom'
 import { context, doc, subject } from './setup'
 import fetchMock from 'jest-fetch-mock'
+import { store } from 'solid-logic'
 
 describe('profile-pane', () => {
   let friends
@@ -21,11 +21,11 @@ describe('profile-pane', () => {
           ];
       .
   `
-      parse(turtle, solidLogicSingleton.store, doc.uri)
+      parse(turtle, store, doc.uri)
       const result = pane.render(subject, context)
       friends = await findByTestId(result, 'friend-list')
     })
-    // afterAll(() => { solidLogicSingleton.store.removeDocument(doc)}) // alain
+    // afterAll(() => { store.removeDocument(doc)}) // alain
 
     it('renders the friend list', () => {
       expect(friends).toContainHTML('Friends')
@@ -65,7 +65,7 @@ describe('profile-pane', () => {
           rdfs:seeAlso <./friends.ttl>;
       .
   `
-      parse(turtle, solidLogicSingleton.store, doc.uri)
+      parse(turtle, store, doc.uri)
       fetchMock.mockOnceIf(
         'https://janedoe.example/profile/friends.ttl',
         `
@@ -88,7 +88,7 @@ describe('profile-pane', () => {
       const result = pane.render(subject, context)
       friends = await findByTestId(result, 'friend-list')
     })
-    // afterAll(() => { solidLogicSingleton.store.removeDocument(doc)}) // alain
+    // afterAll(() => { store.removeDocument(doc)}) // alain
 
     it('renders the friend list', () => {
       expect(friends).toContainHTML('Friends')
@@ -101,10 +101,10 @@ describe('profile-pane', () => {
       expect(friends).toContainHTML('Bob')
     })
     it('renders Claire in list', () => {
-      expect(friends).toContainHTML('Bob')
+      expect(friends).toContainHTML('Claire')
     })
     it('renders Dave in list', () => {
-      expect(friends).toContainHTML('Bob')
+      expect(friends).toContainHTML('Dave')
     })
   })
 })

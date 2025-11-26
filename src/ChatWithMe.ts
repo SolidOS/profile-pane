@@ -17,9 +17,7 @@ export const ChatWithMe = (
 
     let exists
     try {
-       
       yield loadingMessage, (exists = await logic.chat.getChat(subject, false))
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (e) {
       exists = false
     }

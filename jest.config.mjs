@@ -3,8 +3,11 @@ export default {
   collectCoverage: true,
   coverageDirectory: 'coverage',
   testEnvironment: 'jsdom',
-   testEnvironmentOptions: {
+  testEnvironmentOptions: {
     customExportConditions: ['node'],
+  },
+  transform: {
+    '^.+\\.[tj]sx?$': ['babel-jest', { configFile: './babel.config.mjs' }],
   },
   setupFilesAfterEnv: ["./test/helpers/jest.setup.ts"],
   transformIgnorePatterns: ["/node_modules/(?!lit-html).+\\.js"],
@@ -13,5 +16,9 @@ export default {
     '^[./a-zA-Z0-9$_-]+\\.ttl$': '<rootDir>/__mocks__/fileMock.js',    // '\\.ttl$'
   },
   roots: ['<rootDir>/src', '<rootDir>/test', '<rootDir>/__mocks__'],
+  moduleNameMapper: {
+    '^SolidLogic$': 'solid-logic',
+    '^\\$rdf$': 'rdflib'
+  }
 }
 
