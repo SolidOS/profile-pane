@@ -15,12 +15,17 @@
   ],
   "scripts": {
     "clean": "rm -rf lib",
-    "build": "npm run clean && npm run build-js",
+    "build": "npm run clean && npm run typecheck && npm run build-js",
     "build-js": "tsc",
     "lint": "eslint",
+    "lint-fix": "eslint --fix",
+    "typecheck": "tsc --noEmit",
+    "typecheck-test": "tsc --noEmit -p tsconfig.test.json",
     "test": "jest --no-coverage",
     "test-coverage": "jest --coverage",
     "prepublishOnly": "npm run build && npm run lint && npm run test",
+    "preversion": "npm run lint && npm run typecheck && npm test",
+    "postpublish": "git push origin main --follow-tags",
     "start": "webpack serve --config webpack.dev.config.js --open"
   },
   "keywords": [
@@ -38,10 +43,10 @@
   "license": "MIT",
   "dependencies": {
     "lit-html": "^3.2.1",
-    "pane-registry": "^2.5.0",
+    "pane-registry": "^2.5.1-7862710",
     "qrcode": "^1.5.4",
     "rdflib": "^2.2.37",
-    "solid-ui": "^2.6.1",
+    "solid-ui": "^2.6.1-5ad23f4",
     "validate-color": "^2.2.4"
   },
   "devDependencies": {
@@ -63,7 +68,7 @@
     "jest-fetch-mock": "^3.0.3",
     "jsdom": "^27.0.0",
     "node-polyfill-webpack-plugin": "^4.1.0",
-    "solid-logic": "^3.1.1",
+    "solid-logic": "^3.1.1-8dffdcb",
     "typescript": "^5.9.2",
     "webpack": "^5.99.9",
     "webpack-cli": "^6.0.1",
