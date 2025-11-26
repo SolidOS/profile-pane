@@ -35,26 +35,16 @@ export default [
         },
         {
           test: /\.css$/,
-          exclude: /\.module\.css$/,
-          use: ['style-loader', 'css-loader'],
-        },
-        {
-          test: /\.module\.css$/,
           use: [
-            'style-loader',
             {
-              loader: 'css-loader',
-              options: {
-                modules: true
-              }
-            }
-          ]
-        }
+              loader: 'raw-loader',
+            },
+          ],
+        },
       ],
     },
     externals: {
-      'rdflib': '$rdf',
-      'solid-ui': 'UI'
+      'fs': 'null',
     },
     resolve: {
       extensions: [".js", ".ts"],
@@ -68,6 +58,7 @@ export default [
       }
     },
     output: {
+      filename: 'bundle.js',
       globalObject: 'globalThis',
       library: {
         type: 'umd',

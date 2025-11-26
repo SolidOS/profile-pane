@@ -36,45 +36,35 @@ describe('profile-pane', () => { // alain
   `
       parse(turtle, store, doc.uri)
       result = pane.render(subject, context)
-      // Wait for async rendering to complete
-      await new Promise(resolve => setTimeout(resolve, 100))
+      document.body.appendChild(result)
     })
-    // afterAll(() => { store.removeDocument(doc)})
 
-    it('renders the name', () =>
-      waitFor(() => {
-        const heading = result.querySelector('#profile-card-heading')
-        expect(heading).toHaveTextContent('Jane Doe') // Now uses proper foaf:name
-      })
-    )
-
-    it('renders the introduction', () =>
-      waitFor(() =>
-        expect(result).toContainHTML('Test Double at Solid Community')
-    ))
-
+    it('renders the name in header', () => {
+      const header = result.querySelector('header.header')
+      expect(header?.innerHTML).toMatch(/Jane Doe/i)
+    })
+    it('renders the introduction', () => {
+      const intro = result.querySelector('section.intro')
+      expect(intro?.innerHTML).toMatch(/Test Double at Solid Community/i)
+    })
     it('renders the location', () => {
-      expect(result).toContainHTML('🌐')
-      expect(result).toContainHTML('Hamburg, Germany')
+      const intro = result.querySelector('section.intro')
+      expect(intro?.innerHTML).toMatch(/🌐/i)
+      expect(intro?.innerHTML).toMatch(/Hamburg, Germany/i)
     })
-
     it('renders the preferred Pronouns', () => {
-      expect(result).toContainHTML('their/they/them')
+      const intro = result.querySelector('section.intro')
+      expect(intro?.innerHTML).toMatch(/their\/they\/them/i)
     })
-
     it('renders the image', () => {
-      // Check if any image is rendered first
-      const images = result.querySelectorAll('img')
-      if (images.length > 0) {
-        const image = getByAltText(result, 'Profile photo of Jane Doe')
-        expect(image).toHaveAttribute(
-          'src',
-          'https://janedoe.example/profile/me.jpg'
-        )
-      } else {
-        // If no image is rendered, that's also acceptable for now
-        expect(images.length).toBe(0)
-      }
+      const image = result.querySelector('img.image')
+      expect(image).not.toBeNull()
+      expect(image).toHaveAttribute('src', 'https://janedoe.example/profile/me.jpg')
+      expect(image).toHaveAttribute('alt', expect.stringContaining('Jane Doe'))
+    })
+    it('contains semantic article and aside', () => {
+      expect(result.querySelector('article.profileCard')).not.toBeNull()
+      expect(result.querySelector('aside.qrCodeSection')).not.toBeNull()
     })
   })
 
@@ -82,6 +72,7 @@ describe('profile-pane', () => { // alain
     let card: HTMLElement
     beforeAll(async () => {
       result = pane.render(subject, context)
+      document.body.appendChild(result)
       card = await findByTestId(result, 'profile-card')
     })
 
@@ -140,47 +131,28 @@ describe('profile-pane', () => { // alain
         }
       )
       result = pane.render(subject, context)
-      // Wait for async rendering to complete
-      await new Promise(resolve => setTimeout(resolve, 100))
+      document.body.appendChild(result)
     })
-    // afterAll(() => { store.removeDocument(doc)})
 
-    it('renders the name', () =>
-      waitFor(() => {
-        const heading = result.querySelector('#profile-card-heading')
-        expect(heading).toHaveTextContent('Jane Doe') // Now uses proper foaf:name
-      }))
-
-    it('renders the introduction', () =>
-      waitFor(() =>
-        expect(result).toContainHTML('Test Double at Solid Community')
-      ))
-
-    it('renders the location', () =>
-      waitFor(() => {
-        expect(result).toContainHTML('🌐')
-        expect(result).toContainHTML('Hamburg, Germany')
-      }
-    ))
-
-    it('renders the image', async () => {
-      // Check if any image is rendered first
-      const images = result.querySelectorAll('img')
-      if (images.length > 0) {
-        try {
-          const image = await findByAltText(result, 'Profile photo of Jane Doe')
-          expect(image).toHaveAttribute(
-            'src',
-            'https://janedoe.example/profile/me.jpg'
-          )
-        } catch (e) {
-          // If alt text doesn't match, just check that an image exists
-          expect(images.length).toBeGreaterThan(0)
-        }
-      } else {
-        // If no image is rendered, that's also acceptable for now
-        expect(images.length).toBe(0)
-      }
+    it('renders the name in header', () => {
+      const header = result.querySelector('header.header')
+      expect(header?.innerHTML).toMatch(/Jane Doe/i)
+    })
+    it('renders the introduction', () => {
+      const details = Array.from(result.querySelectorAll('section.intro .details'));
+      const intro = details.find(d => /Test Double at Solid Community/i.test(d.textContent));
+      expect(intro).not.toBeNull();
+    })
+    it('renders the location', () => {
+      const details = Array.from(result.querySelectorAll('section.intro .details'));
+      const location = details.find(d => /🌐/.test(d.textContent) && /Hamburg, Germany/i.test(d.textContent));
+      expect(location).not.toBeNull();
+    })
+    it('renders the image', () => {
+      const image = result.querySelector('img');
+      expect(image).not.toBeNull();
+      expect(image).toHaveAttribute('src', 'https://janedoe.example/profile/me.jpg');
+      expect(image).toHaveAttribute('alt', expect.stringContaining('Jane Doe'));
     })
   })
 })

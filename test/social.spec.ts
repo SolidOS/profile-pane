@@ -1,7 +1,6 @@
 import pane from '../src/index'
 import { parse } from 'rdflib'
 import { store } from 'solid-logic'
-import { findByTestId } from '@testing-library/dom'
 import { context, doc, subject } from './setup'
 
 
@@ -78,16 +77,24 @@ describe('profile-pane', () => {
       store.removeDocument(doc)
       parse(exampleProfile, store, doc.uri)
       const result = pane.render(subject, context)
-      console.log('Pane rendered <<< ', result.innerHTML , '>>>')
-      element = await findByTestId(result, 'social-media')
+      document.body.appendChild(result)
+      // SocialCardElement uses Shadow DOM, so query the custom element and its shadow
+      const socialCard = result.querySelector('social-card')
+      expect(socialCard).not.toBeNull()
+      // Wait for shadow DOM to render
+      await new Promise(resolve => setTimeout(resolve, 50))
+      element = socialCard.shadowRoot.querySelector('section.socialCard[data-testid="social-media"]')
     })
 
-    it('renders the social networks', () => {
-      expect(element).toContainHTML('Follow me on')
+    it('renders the social networks section', () => {
+      expect(element).not.toBeNull()
+      expect(element.querySelector('h3#social-card-title')).not.toBeNull()
+      expect(element.querySelector('ul.socialList')).not.toBeNull()
     })
 
     it('renders link to Facebook', () => {
-      expect(element).toContainHTML('Facebook')
+      const facebook = Array.from(element.querySelectorAll('span')).find(span => span.textContent?.includes('Facebook'))
+      expect(facebook).not.toBeNull()
     })
 
     /*

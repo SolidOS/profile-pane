@@ -1,5 +1,5 @@
-/* ChatWithMe.module.css */
-
+/* Card frame for secondary background/border */
+/* ChatWithMe styles migrated from module CSS */
 .chatSection {
   display: flex;
   flex-direction: column;

@@ -1,4 +1,5 @@
-/* ProfileCard.module.css */
+/* Card frame for secondary background/border */
+/* ProfileCard.css (ported from ProfileCard.module.css) */
 
 .header {
   display: flex;

@@ -195,22 +195,34 @@ solid:publicTypeIndex <> .
 
 `
 describe('profile-pane', () => {
-  let element: HTMLElement
+    let element: HTMLElement
 
-  describe('stuff', () => {
-    beforeAll(async () => {
-      store.removeDocument(doc)
-      parse(exampleProfile, store, doc.uri)
-      const result = pane.render(subject, context)
-      element = await findByTestId(result, 'stuff')
+    describe('stuff', () => {
+        beforeAll(async () => {
+            store.removeDocument(doc)
+            parse(exampleProfile, store, doc.uri)
+            const result = pane.render(subject, context)
+            document.body.appendChild(result)
+            // StuffCardElement uses Shadow DOM, so query the custom element and its shadow
+            const stuffCard = result.querySelector('stuff-card')
+            expect(stuffCard).not.toBeNull()
+            await new Promise(resolve => setTimeout(resolve, 50))
+            element = stuffCard.shadowRoot.querySelector('section[role="region"][data-testid="stuff"]')
+        })
+
+        it('renders the stuff section and table', () => {
+            expect(element).not.toBeNull()
+            const table = element.querySelector('table.profileTable[data-testid="stuffTable"]')
+            expect(table).not.toBeNull()
+            expect(table.querySelector('caption')).not.toBeNull()
+            expect(table.querySelector('tbody')).not.toBeNull()
+        })
+        // Optionally, check for at least one row
+        it('renders at least one stuff row', () => {
+            const table = element.querySelector('table.profileTable[data-testid="stuffTable"]')
+            const rows = table.querySelectorAll('tbody tr')
+            expect(rows.length).toBeGreaterThan(0)
+        })
     })
-
-    it.skip('renders the three rows', async () => { // @@ How to test it after it has been filled in async?
-      const tableEle = await findByTestId(element, 'stuffTable')
-      await waitforme(1000) // ms
-      expect(tableEle.children.length).toEqual(3)
-    })
-
-  })
 
 })

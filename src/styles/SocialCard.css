@@ -1,11 +1,6 @@
-/* SocialCard.module.css */
+/* Card frame for secondary background/border */
+/* SocialCard styles migrated from module CSS */
 
-.socialCard {
-  /* Use global card styles */
-}
-
-.socialHeader {
-}
 
 .socialList {
   list-style: none;

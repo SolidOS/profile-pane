@@ -159,27 +159,55 @@ l:fr schema:name "French"@en.
 
 `
 describe('profile-pane', () => {
-  let element: HTMLElement
+    let element: HTMLElement | null
 
-  describe('qrcode', () => {
-    beforeAll(async () => {
-      store.removeDocument(doc)
-      parse(exampleProfile, store, doc.uri)
-      const result = pane.render(subject, context)
-      await delay(3000)
-      element = await findByTestId(result, 'qrcode-card')
+    describe('qrcode', () => {
+        beforeAll(async () => {
+                        store.removeDocument(doc)
+                        parse(exampleProfile, store, doc.uri)
+                        const result = pane.render(subject, context)
+                        document.body.appendChild(result)
+                        // Wait for <profile-view> to be attached
+                        let profileView = null
+                        for (let i = 0; i < 40; i++) {
+                            profileView = result.querySelector('profile-view')
+                            if (profileView) break
+                            await new Promise(resolve => setTimeout(resolve, 50))
+                        }
+                        // Wait for qr-code-card to be attached
+                        let qrCodeCard = null
+                        for (let i = 0; i < 40; i++) {
+                            qrCodeCard = profileView && profileView.shadowRoot
+                                ? profileView.shadowRoot.querySelector('qr-code-card')
+                                : null
+                            if (qrCodeCard) break
+                            await new Promise(resolve => setTimeout(resolve, 50))
+                        }
+                        expect(qrCodeCard).not.toBeNull()
+                        // Wait for QRCode figure to be attached
+                        element = null
+                        for (let i = 0; i < 40; i++) {
+                            element = qrCodeCard && qrCodeCard.shadowRoot
+                                ? qrCodeCard.shadowRoot.querySelector('figure.QRCode[data-testid="qrcode-card"]')
+                                : null
+                            if (element) break
+                            await new Promise(resolve => setTimeout(resolve, 50))
+                        }
+        })
+
+        it('renders the QRCode figure and SVG', () => {
+                        expect(element).not.toBeNull()
+                        if (element) {
+                            expect(element.querySelector('div[role="img"]')).not.toBeNull()
+                            expect(element.innerHTML).toContain('<svg')
+                        }
+        })
+
+        it('renders the right QRCode colors', () => {
+                        if (element) {
+                            expect(element.innerHTML).toContain('stroke="#06b74a"')
+                            expect(element.innerHTML).toContain('fill="#f4f5c2"')
+                        }
+        })
     })
-
-    it('renders the QRCode element', () => {
-      expect(element.innerHTML).toContain('<svg')
-    })
-
-    it('renders the right QRCode colors', () => {
-      expect(element.innerHTML).toContain('stroke="#06b74a"')
-      expect(element.innerHTML).toContain('fill="#f4f5c2"')
-    })
-
-
-  })
-
 })

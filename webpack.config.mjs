@@ -14,22 +14,12 @@ const common = {
         exclude: /node_modules/,
       },
       {
-        test: /\.module\.css$/,
+        test: /\.css$/,
         use: [
-          'style-loader',
           {
-            loader: 'css-loader',
-            options: {
-              modules: true,
-              importLoaders: 1,
-            },
+            loader: 'raw-loader',
           },
         ],
-      },
-      {
-        test: /\.css$/,
-        exclude: /\.module\.css$/,
-        use: ['style-loader', 'css-loader'],
       },
       {
         test: /\.ttl$/i,

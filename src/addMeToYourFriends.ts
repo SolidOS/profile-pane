@@ -10,7 +10,7 @@ import {
 import {
   addMeToYourFriendsButtonText, friendExistsAlreadyButtonText, friendExistsMessage, friendWasAddedSuccesMessage, logInAddMeToYourFriendsButtonText, userNotLoggedInErrorMessage
 } from './texts'
-import * as localStyles from './styles/ProfileCard.module.css'
+import './styles/ProfileCard.css'
 
 let buttonContainer = <HTMLDivElement>document.createElement('div')
 
@@ -20,7 +20,7 @@ const addMeToYourFriendsDiv = (
 ): TemplateResult => {
 
   buttonContainer = context.dom.createElement('section') as HTMLDivElement
-  buttonContainer.setAttribute('class', localStyles.buttonSubSection)
+  buttonContainer.setAttribute('class', 'buttonSubSection')
   buttonContainer.setAttribute('aria-labelledby', 'add-me-to-your-friends-button-section')
   buttonContainer.setAttribute('role', 'region')
   buttonContainer.setAttribute('data-testid', 'button')

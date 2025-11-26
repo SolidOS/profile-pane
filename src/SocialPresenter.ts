@@ -46,7 +46,6 @@ export function presentSocial(
     if (acIcon) return acIcon.value
     const classes = store.each(subject, ns.rdf('type'))
     if (classes.length > 0) {
-      console.log('@@ classes[0].termType 2 ', classes[0].termType)
       for (const k of (classes as Node[])) {
         const classIcon: Node | null  = store.any(k as any, ns.foaf('icon'))
         if (classIcon !==  null)  {

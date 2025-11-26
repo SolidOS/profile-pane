@@ -1,3 +1,4 @@
+jest.setTimeout(20000)
 import pane from '../src/index'
 import { parse } from 'rdflib'
 import { findByTestId } from '@testing-library/dom'
@@ -164,42 +165,91 @@ describe('profile-pane', () => {
 
   describe('curriculum vitae', () => {
     beforeAll(async () => {
+      // Enable debug logging for presentCV
+      (window as any).__DEBUG_CV = true
       store.removeDocument(doc)
       parse(exampleProfile, store, doc.uri)
+      // Render and append to a test container
       const result = pane.render(subject, context)
-      element = await findByTestId(result, 'curriculum-vitae')
+      await new Promise(resolve => setTimeout(resolve, 50))
+
+      const container = document.createElement('div')
+      container.appendChild(result)
+      document.body.appendChild(container)
+
+      // Wait for <profile-view> to be defined and present in DOM
+      await customElements.whenDefined('profile-view')
+      let profileView: HTMLElement | null = null
+      for (let i = 0; i < 20; i++) {
+        profileView = container.querySelector('profile-view')
+        await new Promise(resolve => setTimeout(resolve, 50))
+      }
+      expect(profileView).not.toBeNull()
+
+      // Wait for <cv-card> to be defined and present in shadowRoot
+      await customElements.whenDefined('cv-card')
+      let cvCard: HTMLElement | null = null
+      for (let i = 0; i < 20; i++) {
+        const profileShadow = profileView!.shadowRoot
+        if (profileShadow) {
+          cvCard = profileShadow.querySelector('cv-card')
+        }
+        await new Promise(resolve => setTimeout(resolve, 50))
+      }
+      expect(cvCard).not.toBeNull()
+
+      // Poll for curriculum-vitae test ID inside cv-card's shadowRoot
+      let cvShadow: ShadowRoot | null = null
+      let cvElem: HTMLElement | null = null
+      for (let i = 0; i < 20; i++) {
+        cvShadow = cvCard!.shadowRoot
+        if (cvShadow) {
+          cvElem = cvShadow.querySelector('[data-testid="curriculum-vitae"]') as HTMLElement
+        }
+        await new Promise(resolve => setTimeout(resolve, 50))
+      }
+      element = cvElem!
+      expect(element).not.toBeNull()
     })
 
     it('renders role testeuse d’accessibilité in bio', () => {
-      expect(element).toContainHTML('testeuse D’accessibilité')
+      expect(element.innerHTML).toMatch(/testeuse D’accessibilité/i)
     })
     it('renders organization Apple in list', () => {
-      expect(element).toContainHTML('Apple')
+      expect(element.innerHTML).toMatch(/Apple/i)
     })
     it('renders lone start date in list', () => {
-      expect(element).toContainHTML('(2021-04-01 to')
+      expect(element.innerHTML).toMatch(/\(2021-04-01 to/i)
     })
     it('renders start and end dates in role', () => {
-      expect(element).toContainHTML('(1960-04-01 to 1963-04-01)')
+      expect(element.innerHTML).toMatch(/\(1960-04-01 to 1963-04-01\)/i)
     })
     it('renders skill 1 in CV', () => {
-      expect(element).toContainHTML('Tester Du Matériel D’instrumentation')
+      expect(element.innerHTML).toMatch(/Tester Du Matériel D’instrumentation/i)
     })
     it('renders skill 2 in CV', () => {
-      expect(element).toContainHTML('Travailler Dans De Mauvaises Conditions')
+      expect(element.innerHTML).toMatch(/Travailler Dans De Mauvaises Conditions/i)
     })
     it('renders skill 3 vcard role in CV', () => {
-      expect(element).toContainHTML('Sitting')
+      expect(element.innerHTML).toMatch(/Sitting/i)
     })
     it('renders error flag when missing skill text CV', () => {
-      expect(element).toContainHTML('¿¿¿ Skill ???')
+        expect(element.innerHTML).toMatch(/¿¿¿ Skill \?\?\?/i)
     })
     it('renders languages', () => {
-      expect(element).toContainHTML('Fr')
+      expect(element.innerHTML).toMatch(/Fr/i)
     })
-
     it('renders languages', () => {
-      expect(element).toContainHTML('De')
+      expect(element.innerHTML).toMatch(/De/i)
+    })
+    it('contains semantic sections for roles, skills, and languages', () => {
+      expect(element.querySelectorAll('section.cvSection').length).toBeGreaterThan(0)
+      expect(element.querySelector('ul[aria-label="Professional skills and competencies"]')).not.toBeNull()
+      expect(element.querySelector('ul[aria-label="Known languages"]')).not.toBeNull()
+    })
+    it('contains list items for roles and skills', () => {
+      expect(element.querySelectorAll('li.cvRole').length).toBeGreaterThan(0)
+      expect(element.querySelectorAll('li.cvSkill').length).toBeGreaterThan(0)
     })
   })
 

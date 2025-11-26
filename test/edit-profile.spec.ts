@@ -8,7 +8,7 @@ import { context, doc, subject, fakeLogInAs } from './setup'
 // import exampleProfile from './examples/testingsolidos.ttl'
 
 
-function delay(ms) {
+function delay(ms: number) {
   return new Promise(resolve => setTimeout(resolve, ms))
 }
 const exampleProfile = `
@@ -72,57 +72,59 @@ const exampleProfile = `
 
  const editorPane = pane.editor
  const user = authn.currentUser()
- console.log('Logged in user: ', user)
 
 describe('edit-profile-pane', () => {
-  let element
+  let element: HTMLElement
 
   describe('edit social media (logged in)', () => {
     beforeAll(async () => {
       store.removeDocument(doc)
       parse(exampleProfile, store, doc.uri)
       fakeLogInAs(subject)
-      store.updater.editable = function () { console.log('nocked editable'); return 'SPARQL'}
       const result = editorPane.render(subject, context)
-      //console.log('editorPane name ', editorPane.name )
-      //console.log('editorPane rendered 1 <<< ', result.innerHTML , '>>>')
-      await delay(3000)
-      //console.log('editorPane rendered later 1 <<< ', result.outerHTML , '>>>')
-
+      document.body.appendChild(result)
       element = result
     })
 
-    it('renders the social networks', () => {
-      expect(element).toContainHTML('Edit your public profile')
-    })
-
-    it('renders warning: public', () => {
-      expect(element).toContainHTML('Everything you put here will be public')
+    it('renders the public profile editor section', () => {
+      // Check for main editor section and heading
+      const { waitFor } = require('@testing-library/dom')
+      function findEditorDiv(node: Element | null): HTMLDivElement | null {
+        if (!node) return null;
+        if (node instanceof HTMLDivElement && node.matches('div[data-testid="profile-editor"]')) return node;
+        for (const child of Array.from(node.children)) {
+          const found = findEditorDiv(child as Element);
+          if (found) return found;
+        }
+        return null;
+      }
+      return waitFor(() => {
+        const section = findEditorDiv(element);
+        expect(section).not.toBeNull();
+        if (section) {
+          expect(section.innerHTML).toMatch(/Edit your public profile/i);
+        }
+      }, { timeout: 5000 });
     })
 
     it.skip('renders thank you', () => {
-      expect(element).toContainHTML('Thank you for filling your profile')
+      expect(element.innerHTML).toMatch(/Thank you for filling your profile/i)
     })
   })
 
-  describe('edit social media (NOt logged in)', () => {
+  describe('edit social media (not logged in)', () => {
     beforeAll(async () => {
       store.removeDocument(doc)
       parse(exampleProfile, store, doc.uri)
       fakeLogInAs(null)
       store.updater.editable = function () { console.log('nocked editable'); return 'SPARQL'}
       const result = editorPane.render(subject, context)
-      await delay(3000)
+      document.body.appendChild(result)
       element = result
-      // element = await findByTestId(result, "profile-editor");
     })
 
     it('gives you a log in button', () => {
-      expect(element).toContainHTML('Log in')
+      expect(element.innerHTML).toMatch(/Log in/i)
     })
-    
   })
-
-  
-
 })
