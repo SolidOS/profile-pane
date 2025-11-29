@@ -1,10 +1,8 @@
-import { LiveStore, NamedNode, Node, parse } from "rdflib";
-import { ns, utils, icons } from "solid-ui";
-import { profileForm } from './editProfilePane/wrapped-profileFormText'
+import { LiveStore, NamedNode, Node, parse } from 'rdflib'
+import { ns, utils, icons } from 'solid-ui'
+import profileForm from './ontology/profileForm.ttl'
 
 const DEFAULT_ICON_URI = icons.iconBase + 'noun_10636_grey.svg' // grey disc
-
-/* eslint-disable  @typescript-eslint/no-explicit-any */
 
 export function loadProfileForm (store: LiveStore) {
   const preferencesForm = store.sym('https://solidos.github.io/profile-pane/src/ontology/profileForm.ttl#this')
@@ -31,12 +29,12 @@ export function presentSocial(
   function nameForAccount (subject):string {
     const acIcon = store.any(subject, ns.foaf('name')) ||
                    store.any(subject, ns.rdfs('label')) // on the account itself?
-    if (acIcon) return acIcon.value;
+    if (acIcon) return acIcon.value
     const classes = store.each(subject, ns.rdf('type')) as NamedNode[]
     for (const k of classes) {
       const classIcon: Node = store.any(k as NamedNode, ns.rdfs('label'))
       if (classIcon)  {
-        return classIcon.value;
+        return classIcon.value
       }
       return utils.label(k)
     }
@@ -45,14 +43,14 @@ export function presentSocial(
 
   function iconForAccount (subject):string {
     const acIcon = store.any(subject, ns.foaf('icon')) // on the account itself?
-    if (acIcon) return acIcon.value;
+    if (acIcon) return acIcon.value
     const classes = store.each(subject, ns.rdf('type'))
     if (classes.length > 0) {
       console.log('@@ classes[0].termType 2 ', classes[0].termType)
       for (const k of (classes as Node[])) {
         const classIcon: Node | null  = store.any(k as any, ns.foaf('icon'))
         if (classIcon !==  null)  {
-          return classIcon.value;
+          return classIcon.value
         }
       }
     }
@@ -61,16 +59,16 @@ export function presentSocial(
 
   function homepageForAccount (subject):string {
     const acHomepage = store.any(subject, ns.foaf('homepage')) // on the account itself?
-    if (acHomepage) return acHomepage.value;
+    if (acHomepage) return acHomepage.value
     const id = store.anyJS(subject, ns.foaf('accountName'), null, subject.doc()) || 'No_account_Name' 
     const classes = store.each(subject, ns.rdf('type'))
     for (const k of classes) {
       const userProfilePrefix: Node | null = store.any(k as any, ns.foaf('userProfilePrefix'))
       if (userProfilePrefix)  {
-        return userProfilePrefix.value + id.trim() ;
+        return userProfilePrefix.value + id.trim() 
       }
     }
-    return "no userProfilePrefix?"
+    return 'no userProfilePrefix?'
   }
 
   function accountAsObject (ac) {

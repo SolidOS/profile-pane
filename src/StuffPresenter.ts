@@ -1,5 +1,5 @@
-import { NamedNode, uri } from "rdflib";
-import { ns, utils, widgets, icons } from "solid-ui";
+import { NamedNode, uri } from 'rdflib'
+import { ns, utils, widgets, icons } from 'solid-ui'
 import { solidLogicSingleton } from 'solid-logic'
 
 const { iconForClass } = widgets
@@ -41,7 +41,7 @@ export async function presentStuff(
  // console.log('scopedItems', scopedItems)
 
  const stuff = scopedItems.map(item => { // work with old or new solid-logic
-   const icon = getIconForClass((item as any).type || ns.rdf('Resource'))  // eslint-disable-line
+   const icon = getIconForClass((item as any).type || ns.rdf('Resource'))   
    const href = item.instance.uri
    const name = utils.label(item.instance)
    const instance = item.instance

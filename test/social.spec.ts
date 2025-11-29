@@ -1,8 +1,8 @@
-import pane from "../index";
-import { parse } from "rdflib";
-import { store } from "solid-logic";
-import { findByTestId } from "@testing-library/dom";
-import { context, doc, subject } from "./setup";
+import pane from '../src/index'
+import { parse } from 'rdflib'
+import { store } from 'solid-logic'
+import { findByTestId } from '@testing-library/dom'
+import { context, doc, subject } from './setup'
 
 
 // import exampleProfile from './examples/testingsolidos.ttl'
@@ -66,29 +66,29 @@ const exampleProfile = `#Processed by Id
         :id1730058497607
         :id1730059685809 ) .
     
-`;
+`
 
  // console.log('exampleProfile', exampleProfile)
 
-describe("profile-pane", () => {
-  let element;
+describe('profile-pane', () => {
+  let element
 
-  describe("social media", () => {
+  describe('social media', () => {
     beforeAll(async () => {
-      store.removeDocument(doc);
-      parse(exampleProfile, store, doc.uri);
-      const result = pane.render(subject, context);
+      store.removeDocument(doc)
+      parse(exampleProfile, store, doc.uri)
+      const result = pane.render(subject, context)
       console.log('Pane rendered <<< ', result.innerHTML , '>>>')
-      element = await findByTestId(result, "social-media");
-    });
+      element = await findByTestId(result, 'social-media')
+    })
 
-    it("renders the social networks", () => {
-      expect(element).toContainHTML("Follow me on");
-    });
+    it('renders the social networks', () => {
+      expect(element).toContainHTML('Follow me on')
+    })
 
-    it("renders link to Facebook", () => {
-      expect(element).toContainHTML("Facebook");
-    });
+    it('renders link to Facebook', () => {
+      expect(element).toContainHTML('Facebook')
+    })
 
     /*
     it("renders organization Apple in list", () => {
@@ -120,6 +120,6 @@ describe("profile-pane", () => {
       expect(element).toContainHTML("Germano");
     });
     */
-  });
+  })
 
-});
+})

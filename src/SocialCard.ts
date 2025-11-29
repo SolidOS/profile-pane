@@ -1,4 +1,4 @@
-import { html, TemplateResult } from "lit-html";
+import { html, TemplateResult } from 'lit-html'
 import {
   fullWidth,
   heading,
@@ -6,11 +6,11 @@ import {
   textCenter,
   textRight,
   textGray,
-} from "./baseStyles";
-import { ProfilePresentation } from "./presenter";
-import { SocialPresentation } from "./SocialPresenter";
-import { styleMap } from "lit-html/directives/style-map.js";
-import { card } from "./baseStyles";
+} from './baseStyles'
+import { ProfilePresentation } from './presenter'
+import { SocialPresentation } from './SocialPresenter'
+import { styleMap } from 'lit-html/directives/style-map.js'
+import { card } from './baseStyles'
 
 
 const styles = {
@@ -19,27 +19,27 @@ const styles = {
   card: styleMap(card()),
   info: styleMap({ ...paddingSmall(), ...textCenter() }),
   tools: styleMap({ ...paddingSmall(), ...textRight() }),
-};
+}
 
 export const SocialCard = (
   profileBasics: ProfilePresentation,
   SocialData: SocialPresentation
 ): TemplateResult => {
  
-  const { accounts } = SocialData;
+  const { accounts } = SocialData
   
   const nameStyle = styleMap({
     ...heading(),
     // "text-decoration": "underline",
     color: profileBasics.highlightColor, // was "text-decoration-color"
-  });
+  })
 
   if(accounts.length){
 
   return html`
   <div>
     <div data-testid="social-media" style="${styles.card}">
-      <div style=${styles.info + "margin: auto;"}>
+      <div style=${styles.info + 'margin: auto;'}>
         <h3 style=${nameStyle}>Follow me on</h3>
 
         <div style=${styles.info}>${renderAccounts(accounts)}</div>
@@ -60,7 +60,7 @@ function renderAccount(account) {
                 <span style="font-size: 1.2rem;">${account.name}</span> 
         </a>
       </div> ` 
-    : html``;
+    : html``
 }
 
 function renderAccounts(accounts) {

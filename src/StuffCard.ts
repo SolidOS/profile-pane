@@ -1,7 +1,6 @@
-import { html, TemplateResult } from "lit-html";
-import { asyncReplace } from "lit-html/directives/async-replace.js";
-import { NamedNode } from "rdflib";
-import { DataBrowserContext } from "pane-registry";
+import { html, TemplateResult } from 'lit-html'
+import { NamedNode } from 'rdflib'
+import { DataBrowserContext } from 'pane-registry'
 import { widgets } from 'solid-ui'
 
 import {
@@ -11,10 +10,10 @@ import {
   textCenter,
   textLeft,
   textGray,
-} from "./baseStyles";
-import { ProfilePresentation } from "./presenter";
-import { styleMap } from "lit-html/directives/style-map.js";
-import { card } from "./baseStyles";
+} from './baseStyles'
+import { ProfilePresentation } from './presenter'
+import { styleMap } from 'lit-html/directives/style-map.js'
+import { card } from './baseStyles'
 
 const dom = document
 
@@ -23,18 +22,18 @@ const styles = {
   intro: styleMap({ ...textGray(), ...textCenter() }),
   card: styleMap(card()),
   info: styleMap({ ...paddingSmall(), ...textLeft() }),
-};
+}
 
 export const StuffCard = (profileBasics: ProfilePresentation,
   context: DataBrowserContext,
   subject: NamedNode, stuffData): TemplateResult => {
 
-  const { stuff }  = stuffData;
+  const { stuff }  = stuffData
   const nameStyle = styleMap({
     ...heading(),
     // "text-decoration": "underline",
     color: profileBasics.highlightColor, // was "text-decoration-color"
-  });
+  })
   // return renderThings(stuff)
   return html`
   <div>
@@ -59,12 +58,11 @@ function renderThingAsDOM (thing, dom) {
 
 function renderThing (thing, dom) {
   return renderThingAsDOM(thing, dom)
-  return html` ${asyncReplace(renderThingAsDOM(thing, dom))} `;
 }
 
 function renderThings(things) {
     // console.log('Renderthings: ', things)
-    if (things.length === 0) return html``;
+    if (things.length === 0) return html``
     return html`${renderThing(things[0], dom)}${things.length > 1 ? renderThings(things.slice(1)) : html``}`
 }
 
