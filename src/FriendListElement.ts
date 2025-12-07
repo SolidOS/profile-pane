@@ -14,8 +14,8 @@ class FriendListElement extends HTMLElement {
   static sheet: CSSStyleSheet | null = null
   shadow: ShadowRoot
   constructor() {
-    super();
-    this.shadow = this.attachShadow({ mode: 'open' });
+    super()
+    this.shadow = this.attachShadow({ mode: 'open' })
   }
   async connectedCallback() {
     let globalSheet: CSSStyleSheet | null = null

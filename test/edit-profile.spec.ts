@@ -90,21 +90,21 @@ describe('edit-profile-pane', () => {
       // Check for main editor section and heading
       const { waitFor } = require('@testing-library/dom')
       function findEditorDiv(node: Element | null): HTMLDivElement | null {
-        if (!node) return null;
-        if (node instanceof HTMLDivElement && node.matches('div[data-testid="profile-editor"]')) return node;
+        if (!node) return null
+        if (node instanceof HTMLDivElement && node.matches('div[data-testid="profile-editor"]')) return node
         for (const child of Array.from(node.children)) {
-          const found = findEditorDiv(child as Element);
-          if (found) return found;
+          const found = findEditorDiv(child as Element)
+          if (found) return found
         }
-        return null;
+        return null
       }
       return waitFor(() => {
-        const section = findEditorDiv(element);
-        expect(section).not.toBeNull();
+        const section = findEditorDiv(element)
+        expect(section).not.toBeNull()
         if (section) {
-          expect(section.innerHTML).toMatch(/Edit your public profile/i);
+          expect(section.innerHTML).toMatch(/Edit your public profile/i)
         }
-      }, { timeout: 5000 });
+      }, { timeout: 5000 })
     })
 
     it.skip('renders thank you', () => {

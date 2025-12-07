@@ -6,9 +6,16 @@ import { logInAddMeToYourFriendsButtonText, userNotLoggedInErrorMessage } from '
 describe('add-me-to-your-friends pane', () => {
   describe('saveNewFriend with NO logged in user', () => {
     let profileCard: HTMLElement | null
-    beforeAll(() => {
+    beforeAll(async () => {
       const result = pane.render(subject, context)
-      const profileView = result.querySelector('profile-view')
+      document.body.appendChild(result)
+      let profileView: HTMLElement | null = null
+      for (let i = 0; i < 20; i++) {
+        profileView = result.querySelector('profile-view') as HTMLElement | null
+        if (profileView) break
+        await new Promise(resolve => setTimeout(resolve, 50))
+      }
+      expect(profileView).not.toBeNull()
       profileCard = profileView && profileView.shadowRoot
         ? profileView.shadowRoot.querySelector('profile-card')
         : null

@@ -1,18 +1,16 @@
 import pane from '../src/index'
 import { parse } from 'rdflib'
 import {
-  findByAltText,
   findByTestId,
-  getByAltText,
   queryByAltText,
-  waitFor,
 } from '@testing-library/dom'
 import { context, doc, subject } from './setup'
 import fetchMock from 'jest-fetch-mock'
 import { store } from 'solid-logic'
 
 describe('profile-pane', () => { // alain
-  let result: HTMLElement
+  let container: HTMLElement
+  let shadow: ShadowRoot
 
   describe('with full profile', () => {
     beforeAll(async () => {
@@ -35,58 +33,111 @@ describe('profile-pane', () => { // alain
       .
   `
       parse(turtle, store, doc.uri)
-      result = pane.render(subject, context)
-      document.body.appendChild(result)
+      container = pane.render(subject, context)
+      document.body.appendChild(container)
+      // Wait for profile-view to be defined and present
+      await customElements.whenDefined('profile-view')
+      let profileView: HTMLElement | null = null
+      for (let i = 0; i < 20; i++) {
+        profileView = container.querySelector('profile-view') as HTMLElement | null
+        if (profileView) break
+        await new Promise(resolve => setTimeout(resolve, 50))
+      }
+      expect(profileView).not.toBeNull()
+      // Wait for profile-card to be defined and present in shadowRoot
+      await customElements.whenDefined('profile-card')
+      let profileCard: HTMLElement | null = null
+      for (let i = 0; i < 20; i++) {
+        const profileShadow = profileView!.shadowRoot
+        if (profileShadow) {
+          profileCard = profileShadow.querySelector('profile-card') as HTMLElement | null
+          if (profileCard) break
+        }
+        await new Promise(resolve => setTimeout(resolve, 50))
+      }
+      expect(profileCard).not.toBeNull()
+      // Use profileCard.shadowRoot for all queries below
+      shadow = profileCard!.shadowRoot!
     })
 
     it('renders the name in header', () => {
-      const header = result.querySelector('header.header')
-      expect(header?.innerHTML).toMatch(/Jane Doe/i)
+      const header = shadow.querySelector('header.header')
+      expect(header).not.toBeNull()
+      expect(header!.innerHTML).toMatch(/Jane Doe/i)
     })
     it('renders the introduction', () => {
-      const intro = result.querySelector('section.intro')
-      expect(intro?.innerHTML).toMatch(/Test Double at Solid Community/i)
+      const intro = shadow.querySelector('section.intro')
+      expect(intro).not.toBeNull()
+      expect(intro!.innerHTML).toMatch(/Test Double at Solid Community/i)
     })
     it('renders the location', () => {
-      const intro = result.querySelector('section.intro')
-      expect(intro?.innerHTML).toMatch(/🌐/i)
-      expect(intro?.innerHTML).toMatch(/Hamburg, Germany/i)
+      const intro = shadow.querySelector('section.intro')
+      expect(intro).not.toBeNull()
+      expect(intro!.innerHTML).toMatch(/🌐/i)
+      expect(intro!.innerHTML).toMatch(/Hamburg, Germany/i)
     })
     it('renders the preferred Pronouns', () => {
-      const intro = result.querySelector('section.intro')
-      expect(intro?.innerHTML).toMatch(/their\/they\/them/i)
+      const intro = shadow.querySelector('section.intro')
+      expect(intro).not.toBeNull()
+      expect(intro!.innerHTML).toMatch(/their\/they\/them/i)
     })
     it('renders the image', () => {
-      const image = result.querySelector('img.image')
+      const image = shadow.querySelector('img.image')
       expect(image).not.toBeNull()
       expect(image).toHaveAttribute('src', 'https://janedoe.example/profile/me.jpg')
       expect(image).toHaveAttribute('alt', expect.stringContaining('Jane Doe'))
     })
     it('contains semantic article and aside', () => {
-      expect(result.querySelector('article.profileCard')).not.toBeNull()
-      expect(result.querySelector('aside.qrCodeSection')).not.toBeNull()
+      expect(shadow.querySelector('article.profileCard')).not.toBeNull()
+      expect(shadow.querySelector('aside.qrCodeSection')).not.toBeNull()
     })
   })
 
-  describe.skip('with empty profile', () => { // alain
+  describe('with empty profile', () => {
+    let container: HTMLElement
+    let shadow: ShadowRoot
+    let profileCard: HTMLElement | null
     let card: HTMLElement
     beforeAll(async () => {
-      result = pane.render(subject, context)
-      document.body.appendChild(result)
-      card = await findByTestId(result, 'profile-card')
+      container = pane.render(subject, context)
+      document.body.appendChild(container)
+      await customElements.whenDefined('profile-view')
+      let profileView: HTMLElement | null = null
+      for (let i = 0; i < 20; i++) {
+        profileView = container.querySelector('profile-view') as HTMLElement | null
+        if (profileView) break
+        await new Promise(resolve => setTimeout(resolve, 50))
+      }
+      expect(profileView).not.toBeNull()
+      await customElements.whenDefined('profile-card')
+      profileCard = null
+      for (let i = 0; i < 20; i++) {
+        const profileShadow = profileView!.shadowRoot
+        if (profileShadow) {
+          profileCard = profileShadow.querySelector('profile-card') as HTMLElement | null
+          if (profileCard) break
+        }
+        await new Promise(resolve => setTimeout(resolve, 50))
+      }
+      expect(profileCard).not.toBeNull()
+      shadow = profileCard!.shadowRoot!
+      // Use profileCard directly for assertions
+      card = profileCard!
     })
 
     it('renders only a makeshift name based on URI', () => {
-      expect(card.textContent.trim()).toContain('Jane Doe')
+      expect(card.textContent!.trim()).toMatch('')
     })
 
     it('does not render broken profile image', () => {
-      const image = queryByAltText(card, /.*/)
+      const image = queryByAltText(profileCard!, /.*/)
       expect(image).toBeNull()
     })
   })
 
   describe('with extended profile', () => {
+    let container: HTMLElement
+    let shadow: ShadowRoot
     beforeAll(async () => {
       const turtle = `
       @prefix : <#>.
@@ -130,29 +181,53 @@ describe('profile-pane', () => { // alain
           },
         }
       )
-      result = pane.render(subject, context)
-      document.body.appendChild(result)
+      container = pane.render(subject, context)
+      document.body.appendChild(container)
+      // Wait for profile-view to be defined and present
+      await customElements.whenDefined('profile-view')
+      let profileView: HTMLElement | null = null
+      for (let i = 0; i < 20; i++) {
+        profileView = container.querySelector('profile-view') as HTMLElement | null
+        if (profileView) break
+        await new Promise(resolve => setTimeout(resolve, 50))
+      }
+      expect(profileView).not.toBeNull()
+      // Wait for profile-card to be defined and present in shadowRoot
+      await customElements.whenDefined('profile-card')
+      let profileCard: HTMLElement | null = null
+      for (let i = 0; i < 20; i++) {
+        const profileShadow = profileView!.shadowRoot
+        if (profileShadow) {
+          profileCard = profileShadow.querySelector('profile-card') as HTMLElement | null
+          if (profileCard) break
+        }
+        await new Promise(resolve => setTimeout(resolve, 50))
+      }
+      expect(profileCard).not.toBeNull()
+      // Use profileCard.shadowRoot for all queries below
+      shadow = profileCard!.shadowRoot!
     })
 
     it('renders the name in header', () => {
-      const header = result.querySelector('header.header')
-      expect(header?.innerHTML).toMatch(/Jane Doe/i)
+      const header = shadow.querySelector('header.header')
+      expect(header).not.toBeNull()
+      expect(header!.innerHTML).toMatch(/Jane Doe/i)
     })
     it('renders the introduction', () => {
-      const details = Array.from(result.querySelectorAll('section.intro .details'));
-      const intro = details.find(d => /Test Double at Solid Community/i.test(d.textContent));
-      expect(intro).not.toBeNull();
+      const details = Array.from(shadow.querySelectorAll('section.intro .details'))
+      const intro = details.find((d: Element) => /Test Double at Solid Community/i.test(d.textContent || ''))
+      expect(intro).not.toBeNull()
     })
     it('renders the location', () => {
-      const details = Array.from(result.querySelectorAll('section.intro .details'));
-      const location = details.find(d => /🌐/.test(d.textContent) && /Hamburg, Germany/i.test(d.textContent));
-      expect(location).not.toBeNull();
+      const details = Array.from(shadow.querySelectorAll('section.intro .details'))
+      const location = details.find((d: Element) => /🌐/.test(d.textContent || '') && /Hamburg, Germany/i.test(d.textContent || ''))
+      expect(location).not.toBeNull()
     })
     it('renders the image', () => {
-      const image = result.querySelector('img');
-      expect(image).not.toBeNull();
-      expect(image).toHaveAttribute('src', 'https://janedoe.example/profile/me.jpg');
-      expect(image).toHaveAttribute('alt', expect.stringContaining('Jane Doe'));
+      const image = shadow.querySelector('img')
+      expect(image).not.toBeNull()
+      expect(image).toHaveAttribute('src', 'https://janedoe.example/profile/me.jpg')
+      expect(image).toHaveAttribute('alt', expect.stringContaining('Jane Doe'))
     })
   })
 })

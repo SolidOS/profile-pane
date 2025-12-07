@@ -20,7 +20,7 @@ describe('profile-pane', () => {
       :bob vcard:fn "Bob" .
       `
       parse(turtle, store, doc.uri)
-      const result = pane.render(subject, context);
+      const result = pane.render(subject, context)
       document.body.appendChild(result)
       // Wait for <profile-view> to be attached
       let profileViewEl = null

@@ -175,7 +175,7 @@ export class ProfileViewElement extends HTMLElement {
           </div>
         </section>
       </main>
-    `;
+    `
     render(template, shadow)
   }
 }

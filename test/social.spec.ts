@@ -1,7 +1,8 @@
 import pane from '../src/index'
 import { parse } from 'rdflib'
 import { store } from 'solid-logic'
-import { context, doc, subject } from './setup'
+import { context, doc } from './setup'
+import { NamedNode } from 'rdflib'
 
 
 // import exampleProfile from './examples/testingsolidos.ttl'
@@ -70,63 +71,51 @@ const exampleProfile = `#Processed by Id
  // console.log('exampleProfile', exampleProfile)
 
 describe('profile-pane', () => {
-  let element
+  let element: HTMLElement | null = null
 
   describe('social media', () => {
     beforeAll(async () => {
       store.removeDocument(doc)
-      parse(exampleProfile, store, doc.uri)
+      parse(exampleProfile, store, 'https://example.org/profile')
+      const meUri = 'https://example.org/profile#me'
+      const subject = new NamedNode(meUri)
       const result = pane.render(subject, context)
       document.body.appendChild(result)
-      // SocialCardElement uses Shadow DOM, so query the custom element and its shadow
-      const socialCard = result.querySelector('social-card')
+      // Poll for <profile-view>
+      let profileView: HTMLElement | null = null
+      for (let i = 0; i < 20; i++) {
+        profileView = result.querySelector('profile-view') as HTMLElement | null
+        if (profileView) break
+        await new Promise(resolve => setTimeout(resolve, 50))
+      }
+      expect(profileView).not.toBeNull()
+      // Poll for <social-card> inside <profile-view>'s shadow DOM
+      let socialCard: HTMLElement | null = null
+      for (let i = 0; i < 20; i++) {
+        if (profileView!.shadowRoot) {
+          socialCard = profileView!.shadowRoot.querySelector('social-card') as HTMLElement | null
+        }
+        if (socialCard) break
+        await new Promise(resolve => setTimeout(resolve, 50))
+      }
       expect(socialCard).not.toBeNull()
       // Wait for shadow DOM to render
       await new Promise(resolve => setTimeout(resolve, 50))
-      element = socialCard.shadowRoot.querySelector('section.socialCard[data-testid="social-media"]')
+      const shadow = socialCard!.shadowRoot
+      expect(shadow).not.toBeNull()
+      element = shadow!.querySelector('section.socialCard[data-testid="social-media"]') as HTMLElement | null
     })
 
     it('renders the social networks section', () => {
       expect(element).not.toBeNull()
-      expect(element.querySelector('h3#social-card-title')).not.toBeNull()
-      expect(element.querySelector('ul.socialList')).not.toBeNull()
+      expect(element!.querySelector('h3#social-card-title')).not.toBeNull()
+      expect(element!.querySelector('ul.socialList')).not.toBeNull()
     })
 
     it('renders link to Facebook', () => {
-      const facebook = Array.from(element.querySelectorAll('span')).find(span => span.textContent?.includes('Facebook'))
+      const facebook = Array.from(element!.querySelectorAll('span')).find(span => (span as HTMLElement).textContent?.includes('Facebook'))
       expect(facebook).not.toBeNull()
     })
-
-    /*
-    it("renders organization Apple in list", () => {
-      expect(element).toContainHTML("Apple");
-    });
-    it("renders lone start date in list", () => {
-      expect(element).toContainHTML("(2021-04-01 to");
-    });
-    it("renders start and end dates in role", () => {
-      expect(element).toContainHTML("(1960-04-01 to 1963-04-01)");
-    });
-    it("renders skill 1 in CV", () => {
-      expect(element).toContainHTML("Tester Du Matériel D’instrumentation");
-    });
-    it("renders skill 2 in CV", () => {
-      expect(element).toContainHTML("Travailler Dans De Mauvaises Conditions");
-    });
-    it("renders skill 3 vcard role in CV", () => {
-      expect(element).toContainHTML("Sitting");
-    });
-    it("renders error flag when missing skill text CV", () => {
-      expect(element).toContainHTML("¿¿¿ Skill ???");
-    });
-    it("renders languages", () => {
-      expect(element).toContainHTML("French");
-    });
-
-    it("renders languages", () => {
-      expect(element).toContainHTML("Germano");
-    });
-    */
   })
 
 })
