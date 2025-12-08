@@ -24,7 +24,8 @@
     "test": "jest --no-coverage",
     "test-coverage": "jest --coverage",
     "typecheck": "tsc --noEmit",
-    "prepublishOnly": "npm run build && npm run lint && npm run test",
+    "typecheck-test": "tsc --noEmit -p tsconfig.test.json",
+    "prepublishOnly": "npm run test && npm run build",
     "preversion": "npm run lint && npm run typecheck && npm test",
     "postpublish": "git push origin main --follow-tags",
     "start": "webpack serve --config webpack.dev.config.mjs --open"
@@ -52,9 +53,6 @@
     "rdflib": "^2.3.0",
     "solid-logic": "^4.0.1",
     "solid-ui": "^3.0.1"
-  },
-  "overrides": {
-    "solid-logic": "^4.0.1"
   },
   "devDependencies": {
     "@babel/cli": "^7.28.3",
