@@ -1,6 +1,6 @@
 {
   "name": "profile-pane",
-  "version": "1.2.1-newStyle",
+  "version": "2.0.0-newStyle",
   "description": "A SolidOS compatible pane to display a personal profile page",
   "sideEffects": false,
   "repository": {
@@ -44,17 +44,17 @@
   "license": "MIT",
   "dependencies": {
     "lit-html": "^3.2.1",
-    "pane-registry": "^2.5.1-cfba46d",
+    "pane-registry": "^3.0.0",
     "qrcode": "^1.5.4",
     "validate-color": "^2.2.4"
   },
   "peerDependencies": {
     "rdflib": "^2.3.0",
-    "solid-logic": "3.1.1-a44ca66",
-    "solid-ui": "^2.6.1-e78cbe5"
+    "solid-logic": "^4.0.1",
+    "solid-ui": "^3.0.1"
   },
   "overrides": {
-    "solid-logic": "^3.1.1-a44ca66"
+    "solid-logic": "^4.0.1"
   },
   "devDependencies": {
     "@babel/cli": "^7.28.3",
@@ -68,7 +68,7 @@
     "babel-jest": "^30.0.0",
     "babel-loader": "^10.0.0",
     "babel-plugin-inline-import": "^3.0.0",
-    "chat-pane": "^2.5.1-8a75927f",
+    "chat-pane": "^3.0.0",
     "css-loader": "^7.1.2",
     "eslint": "^9.33.0",
     "html-webpack-plugin": "^5.6.3",
@@ -79,8 +79,8 @@
     "jsdom": "^27.0.0",
     "node-polyfill-webpack-plugin": "^4.1.0",
     "rdflib": "^2.3.0",
-    "solid-logic": "^3.1.1-a44ca66",
-    "solid-ui": "^2.6.1-e78cbe5",
+    "solid-logic": "^4.0.1",
+    "solid-ui": "^3.0.1",
     "style-loader": "^4.0.0",
     "terser-webpack-plugin": "^5.3.14",
     "ts-loader": "^9.5.4",
