@@ -16,8 +16,9 @@
   ],
   "scripts": {
     "clean": "rm -rf lib",
-    "build": "npm run clean && npm run typecheck && npm run build-js && npm run copy-css",
-    "build-js": "tsc",
+    "build": "npm run clean && npm run typecheck && npm run build-js && npm run copy-css && npm run build-types",
+    "build-js": "babel src --out-dir lib --extensions .ts,.js",
+    "build-types": "tsc --emitDeclarationOnly",
     "copy-css": "mkdir -p lib/styles && cp src/styles/*.css lib/styles/",
     "lint": "eslint",
     "lint-fix": "eslint --fix",
@@ -25,7 +26,7 @@
     "test-coverage": "jest --coverage",
     "typecheck": "tsc --noEmit",
     "typecheck-test": "tsc --noEmit -p tsconfig.test.json",
-    "prepublishOnly": "npm run build && npm run lint && npm run test",
+    "prepublishOnly": "npm run test && npm run build",
     "preversion": "npm run lint && npm run typecheck && npm test",
     "postpublish": "git push origin main --follow-tags",
     "start": "webpack serve --config webpack.dev.config.mjs --open"
