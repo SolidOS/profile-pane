@@ -1,5 +1,5 @@
-import glob from 'glob'
-import path from 'path'
+import glob from 'glob';
+import path from 'path';
 
 const entries = Object.fromEntries(
   glob.sync('./src/**/*.ts').map(file => [
@@ -8,26 +8,8 @@ const entries = Object.fromEntries(
   ])
 );
 
-const externalsBase = {
-  fs: 'null',
-  'node-fetch': 'fetch',
-  'isomorphic-fetch': 'fetch',
-  'text-encoding': 'TextEncoder',
-  '@trust/webcrypto': 'crypto',
-  rdflib: '$rdf',
-  'solid-logic': 'SolidLogic',
-  'solid-ui': 'UI'
-}
-
-export default {
-  mode: 'production',
+const commonConfig = {
   entry: entries,
-  output: {
-    path: path.resolve('./lib'),
-    filename: '[name].js',
-    clean: true,
-  },
-  externals: externalsBase,
   resolve: {
     extensions: ['.ts', '.js', '.json'],
     alias: {
@@ -55,5 +37,36 @@ export default {
         ],
       },
     ],
-  }
+  },
+  // No externals: bundle all dependencies
 };
+
+export default [
+  {
+    ...commonConfig,
+    mode: 'production',
+    output: {
+      path: path.resolve('./lib/esm'),
+      filename: '[name].mjs',
+      library: {
+        type: 'module',
+      },
+      clean: true,
+    },
+    experiments: {
+      outputModule: true,
+    },
+  },
+  {
+    ...commonConfig,
+    mode: 'production',
+    output: {
+      path: path.resolve('./lib/cjs'),
+      filename: '[name].js',
+      library: {
+        type: 'commonjs2',
+      },
+      clean: true,
+    },
+  }
+];
