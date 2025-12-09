@@ -13,13 +13,10 @@ module.exports = {
   transformIgnorePatterns: ["/node_modules/(?!lit-html).+\\.js"],
   testPathIgnorePatterns: ['/node_modules/', '/lib/'],
   moduleNameMapper: {
-    '^[./a-zA-Z0-9$_-]+\\.ttl$': '<rootDir>/__mocks__/fileMock.js',    // '\\.ttl$'
-  },
-  roots: ['<rootDir>/src', '<rootDir>/test', '<rootDir>/__mocks__'],
-  moduleNameMapper: {
-    '\\.module\\.css$': 'identity-obj-proxy',
-    '\\.css$': '<rootDir>/__mocks__/fileMock.js',
+    '^[./a-zA-Z0-9$_-]+\\.css$': '<rootDir>/__mocks__/fileMock.js',
+    '^[./a-zA-Z0-9$_-]+\\.ttl$': '<rootDir>/__mocks__/fileMock.js',
     '^SolidLogic$': 'solid-logic',
     '^\\$rdf$': 'rdflib'
-  }
+  },
+  roots: ['<rootDir>/src', '<rootDir>/test', '<rootDir>/__mocks__'],
 }
