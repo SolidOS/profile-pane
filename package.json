@@ -23,8 +23,8 @@
   ],
   "scripts": {
     "clean": "rm -rf lib",
-    "build": "npm run clean && npm run typecheck && npm run build-webpack && npm run build-types",
-    "build-webpack": "webpack --config webpack.config.mjs --progress",
+    "build": "npm run clean && npm run typecheck && npm run build-js && npm run build-types",
+    "build-js": "webpack --progress",
     "build-types": "tsc --emitDeclarationOnly",
     "lint": "eslint",
     "lint-fix": "eslint --fix",

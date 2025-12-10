@@ -1,6 +1,6 @@
-import HtmlWebpackPlugin from "html-webpack-plugin";
-import NodePolyfillPlugin from "node-polyfill-webpack-plugin";
-import webpack from "webpack";
+import HtmlWebpackPlugin from "html-webpack-plugin"
+import NodePolyfillPlugin from "node-polyfill-webpack-plugin"
+import webpack from "webpack"
 
 export default [
   {
@@ -82,4 +82,4 @@ export default [
     },
     devtool: "source-map",
   },
-];
+]

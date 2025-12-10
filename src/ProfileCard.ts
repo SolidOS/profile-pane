@@ -2,7 +2,7 @@ import profileCardCss from './styles/ProfileCard.css'
 import { html, render, nothing } from 'lit-html'
 import { addMeToYourFriendsDiv } from './addMeToYourFriends'
 import globalCssText from './styles/global.css'
-import './QRCodeCardElement'
+import './QRCodeCard'
 
 
 class ProfileCardElement extends HTMLElement {

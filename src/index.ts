@@ -1,6 +1,6 @@
 import { DataBrowserContext } from 'pane-registry'
 import { NamedNode, LiveStore } from 'rdflib'
-import './ProfileViewElement'
+import './ProfileView'
 import editProfileView from './editProfilePane/editProfile.view'
 import { icons, ns } from 'solid-ui'
 

@@ -1,12 +1,12 @@
-import glob from 'glob';
-import path from 'path';
+import glob from 'glob'
+import path from 'path'
 
 const entries = Object.fromEntries(
   glob.sync('./src/**/*.ts').map(file => [
     path.relative('./src', file).replace(/\.ts$/, ''),
     file
   ])
-);
+)
 
 const commonConfig = {
   entry: entries,
@@ -69,4 +69,4 @@ export default [
       clean: true,
     },
   }
-];
+]
