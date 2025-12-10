@@ -1,53 +1,99 @@
-import { ns, widgets } from 'solid-ui'
-import { DataBrowserContext } from 'pane-registry'
-import { NamedNode } from 'rdflib'
-import { html, TemplateResult } from 'lit-html'
-import { styleMap } from 'lit-html/directives/style-map.js'
-import { card, headingLight, padding } from './baseStyles'
-import { ProfilePresentation } from './presenter'
-
-import {
-  heading
-} from './baseStyles'
-
-const styles = {
-  root: styleMap(padding()),
-  heading: styleMap(headingLight()),
-  card: styleMap(card()),
-}
-
-export const FriendList = ( profileBasics: ProfilePresentation,
-  subject: NamedNode,
-  context: DataBrowserContext
-): TemplateResult => {
-  const nameStyle = styleMap({
-    ...heading(),
-    // "text-decoration": "underline",
-    color: profileBasics.highlightColor, // was "text-decoration-color"
-  })
-
-  if (createList(subject, context)) {
-    return html`
-    <div data-testid="friend-list" style="${styles.card}">
-      <div style=${styles.root}>
-        <h3 style=${nameStyle}>Friends</h3>
-        ${createList(subject, context)}
-      </div>
-    </div>
-    `
+declare global {
+  interface Window {
+    __DEBUG_FRIENDS?: boolean;
   }
-  return html``
+}
+import { html, render } from 'lit-html'
+import globalCssText from './styles/global.css'
+import { FriendsPresentation } from './FriendsPresenter'
+import { widgets } from 'solid-ui'
+
+
+class FriendListElement extends HTMLElement {
+  private _friendsData: FriendsPresentation | null = null
+  static sheet: CSSStyleSheet | null = null
+  shadow: ShadowRoot
+  constructor() {
+    super()
+    this.shadow = this.attachShadow({ mode: 'open' })
+  }
+  async connectedCallback() {
+    let globalSheet: CSSStyleSheet | null = null
+    let canUseSheets = typeof CSSStyleSheet !== 'undefined' && typeof globalCssText === 'string'
+    try {
+      if (canUseSheets) {
+        globalSheet = new CSSStyleSheet()
+        globalSheet.replaceSync(globalCssText)
+      }
+    } catch (e) {
+      globalSheet = null
+    }
+    if ('adoptedStyleSheets' in Document.prototype && globalSheet) {
+      this.shadow.adoptedStyleSheets = [globalSheet]
+    } else {
+      // Fallback for browsers or test environments without adoptedStyleSheets or CSSStyleSheet
+      if (typeof globalCssText === 'string') {
+        const styleGlobal = document.createElement('style')
+        styleGlobal.textContent = globalCssText
+        this.shadow.appendChild(styleGlobal)
+      }
+    }
+    this.render()
+  }
+  render() {
+    const friendsData = this.friendsData
+    if (!friendsData || !friendsData.friends || friendsData.friends.length === 0) {
+      render(html``, this.shadow)
+      return
+    }
+    render(html`
+      <div class="cardFrame">
+        <section
+          class="friendListSection"
+          role="region"
+          aria-labelledby="friends-section-title"
+          data-testid="friend-list"
+        >
+          <header>
+            <h3 id="friends-section-title" class="sr-only">Friend Connections</h3>
+          </header>
+          <div role="table" aria-label="List of shared files and resources">
+            <table class="profileTable" data-testid="friendsTable">
+              <caption class="sr-only">Friends List</caption>
+              <tbody>
+                ${renderThings(friendsData.friends, document)}
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </div>
+    `, this.shadow)
+  }
+  get friendsData() {
+    return this._friendsData
+  }
+  set friendsData(val) {
+    this._friendsData = val
+    this.render()
+  }
+}
+if (!customElements.get('friend-list')) {
+  customElements.define('friend-list', FriendListElement)
 }
 
-const createList = (subject: NamedNode, { dom }: DataBrowserContext) => {
-  const target = dom.createElement('div')
-  widgets.attachmentList(dom, subject, target, {
-    doc: subject.doc(),
-    modify: false,
-    predicate: ns.foaf('knows'),
-    noun: 'friend',
-  })
-  if (target.textContent === '')
-    return null
-  else return target
+function renderThingAsDOM (thing, dom) {
+  const options = {}
+  // widgets.personTR returns a DOM node, so we need to convert it to HTML string
+  const row = widgets.personTR(dom, null, thing.instance, options)
+  return row
 }
+
+function renderThing (thing, dom) {
+  return renderThingAsDOM(thing, dom)
+}
+
+function renderThings(things, dom) {
+  if (!things || things.length === 0) return html``
+  return html`${renderThing(things[0], dom)}${things.length > 1 ? renderThings(things.slice(1), dom) : html``}`
+}
+

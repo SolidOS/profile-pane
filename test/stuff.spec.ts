@@ -1,22 +1,7 @@
 import pane from '../src/index'
 import { parse } from 'rdflib'
 import { store } from 'solid-logic'
-import { findByTestId } from '@testing-library/dom'
 import { context, doc, subject } from './setup'
-
-/*
-import { alice, bob, boby, club,
-AlicePhotoFolder, AlicePreferences, AlicePhotos, AlicePreferencesFile, AlicePrivateTypeIndex, AlicePrivateTypes, AliceProfile, AliceProfileFile, AlicePublicTypeIndex, AlicePublicTypes,
-BobProfile,
-ClubPreferences, ClubPreferencesFile, ClubPrivateTypeIndex, ClubPrivateTypes, ClubProfile, ClubPublicTypeIndex, ClubPublicTypes,
-clearLocalStore } from './helpers/dataSetup.ts'
-*/
-
-function waitforme(milisec) {
-    return new Promise(resolve => {
-        setTimeout(() => { resolve('') }, milisec)
-    })
-}
 
 // This was at testingsolidos.solidcommunity.net
 const exampleProfile = `@prefix : <#>.
@@ -188,6 +173,14 @@ solid:publicTypeIndex <> .
 
 :id1670695314828 solid:forClass vcard:AddressBook; solid:instance <#book1>  .
 
+:id202512070001 solid:forClass schema:DigitalDocument; solid:instance <#doc1> .
+
+<#doc1> a schema:DigitalDocument; schema:name "Test Document".
+
+<#reg1> solid:forClass vcard:AddressBook; solid:instance <#book1> .
+
+<#book1> a vcard:AddressBook; vcard:fn "Alice's Contacts".
+
 
 <#reg1> solid:forClass vcard:AddressBook; solid:instance <#book1> .
 
@@ -195,25 +188,53 @@ solid:publicTypeIndex <> .
 
 `
 describe('profile-pane', () => {
-  let element
+    let element: HTMLElement
 
-  describe('stuff', () => {
-    beforeAll(async () => {
-      store.removeDocument(doc)
-      parse(exampleProfile, store, doc.uri)
-      const result = pane.render(subject, context)
-      element = await findByTestId(result, 'stuff')
-    })
+    describe('stuff', () => {
+        beforeAll(async () => {
+            store.removeDocument(doc)
+            parse(exampleProfile, store, doc.uri)
+            const publicTypeIndexUri = 'https://janedoe.example/settings/publicTypeIndex.ttl'
+            const publicTypeIndexTurtle = '@prefix solid: <http://www.w3.org/ns/solid/terms#> .\n@prefix schema: <http://schema.org/> .\n\n<#regStuff> a solid:TypeRegistration;\n  solid:forClass schema:DigitalDocument;\n  solid:instance <https://janedoe.example/profile/card#doc1> .\n\n<https://janedoe.example/settings/publicTypeIndex.ttl> a solid:ListedDocument, solid:TypeIndex .\n'
+            parse(publicTypeIndexTurtle, store, publicTypeIndexUri)
+            const result = pane.render(subject, context)
+            document.body.appendChild(result)
+            // Robust shadow DOM query sequence
+            let profileView: HTMLElement | null = null
+            for (let i = 0; i < 20; i++) {
+                profileView = result.querySelector('profile-view') as HTMLElement | null
+                if (profileView && profileView.shadowRoot) break
+                await new Promise(resolve => setTimeout(resolve, 50))
+            }
+            expect(profileView).not.toBeNull()
+            const profileShadow = profileView!.shadowRoot
+            expect(profileShadow).not.toBeNull()
+            let stuffCard: HTMLElement | null = null
+            for (let i = 0; i < 20; i++) {
+                stuffCard = profileShadow!.querySelector('stuff-card') as HTMLElement | null
+                if (stuffCard && stuffCard.shadowRoot) break
+                await new Promise(resolve => setTimeout(resolve, 50))
+            }
+            expect(stuffCard).not.toBeNull()
+            const stuffShadow = stuffCard!.shadowRoot
+            expect(stuffShadow).not.toBeNull()
+            element = stuffShadow!.querySelector('section[role="region"][data-testid="stuff"]') as HTMLElement | null
+            expect(element).not.toBeNull()
+        })
 
-    it('renders the stuff', () => {
-      expect(element).toContainHTML('Stuff')
+        it('renders the stuff section and table', () => {
+            expect(element).not.toBeNull()
+            const table = element.querySelector('table.profileTable[data-testid="stuffTable"]')
+            expect(table).not.toBeNull()
+            expect(table.querySelector('caption')).not.toBeNull()
+            expect(table.querySelector('tbody')).not.toBeNull()
+        })
+        // Optionally, check for at least one row
+        it('renders at least one stuff row', () => {
+            const table = element.querySelector('table.profileTable[data-testid="stuffTable"]')
+            const rows = table.querySelectorAll('tbody tr')
+            expect(rows.length).toBeGreaterThan(0)
+        })
     })
-    it.skip('renders the three rows', async () => { // @@ How to test it after it has been filled in async?
-      const tableEle = await findByTestId(element, 'stuffTable')
-      await waitforme(1000) // ms
-      expect(tableEle.children.length).toEqual(3)
-    })
-
-  })
 
 })

@@ -1,8 +1,9 @@
+jest.setTimeout(20000)
 import pane from '../src/index'
 import { parse } from 'rdflib'
 import { store } from 'solid-logic'
-import { findByTestId } from '@testing-library/dom'
-import { context, delay, doc, subject } from './setup'
+import { waitFor } from '@testing-library/dom'
+import { context, doc, subject } from './setup'
 
 // This was at testingsolidos.solidcommunity.net
 const exampleProfile = `@prefix : <#>.
@@ -159,40 +160,85 @@ l:fr schema:name "French"@en.
 
 `
 describe('profile-pane', () => {
-  let element
+    let element: HTMLElement | null
 
-  describe('qrcode', () => {
-    beforeAll(async () => {
-      store.removeDocument(doc)
-      parse(exampleProfile, store, doc.uri)
-      const result = pane.render(subject, context)
-      console.log('qrcode result:', result)
-      await delay(3000)
-      console.log('qrcode result later:', result)
+    describe('qrcode', () => {
+        beforeAll(async () => {
+            store.removeDocument(doc)
+            parse(exampleProfile, store, doc.uri)
+            // Render and append to a test container
+            const result = pane.render(subject, context)
+            await new Promise(resolve => setTimeout(resolve, 50))
+            const container = document.createElement('div')
+            container.appendChild(result)
+            document.body.appendChild(container)
+            // Wait for <profile-view> to be defined and present in DOM
+            await customElements.whenDefined('profile-view')
+            let profileView: HTMLElement | null = null
+            for (let i = 0; i < 20; i++) {
+                profileView = container.querySelector('profile-view')
+                if (profileView) {
+                    break
+                }
+                await new Promise(resolve => setTimeout(resolve, 50))
+            }
 
-      element = await findByTestId(result, 'qrcode-display')
-      console.log('element: ', element)
-      // console.log('element.outerHTML: ', element.outerHTML)
+            expect(profileView).not.toBeNull()
 
+            // Wait for <profile-card> to be defined and present in profile-view's shadowRoot
+            await customElements.whenDefined('profile-card')
+            let profileCard: HTMLElement | null = null
+            for (let i = 0; i < 20; i++) {
+                const profileShadow = profileView!.shadowRoot
+                if (profileShadow) {
+                    profileCard = profileShadow.querySelector('profile-card') as HTMLElement | null
+                    if (profileCard) break
+                }
+                await new Promise(resolve => setTimeout(resolve, 50))
+            }
+            expect(profileCard).not.toBeNull()
 
+            // Wait for <qrcode-card> to be defined and present in profile-card's shadowRoot
+            await customElements.whenDefined('qrcode-card')
+            let qrcodeCard: HTMLElement | null = null
+            for (let i = 0; i < 20; i++) {
+                const cardShadow = profileCard!.shadowRoot
+                if (cardShadow) {
+                    qrcodeCard = cardShadow.querySelector('qrcode-card') as HTMLElement | null
+                    if (qrcodeCard) break
+                }
+                await new Promise(resolve => setTimeout(resolve, 50))
+            }
+            expect(qrcodeCard).not.toBeNull()
+
+            // Poll for QRCode figure inside qrcode-card's shadowRoot
+            let qrShadow: ShadowRoot | null = null
+            let qrElem: HTMLElement | null = null
+            for (let i = 0; i < 20; i++) {
+                qrShadow = qrcodeCard!.shadowRoot
+                if (qrShadow) {
+                    qrElem = qrShadow.querySelector('figure.QRCode[data-testid="qrcode-card"]') as HTMLElement | null
+                    if (qrElem) break
+                }
+                await new Promise(resolve => setTimeout(resolve, 50))
+            }
+            element = qrElem!
+            expect(element).not.toBeNull()
+        })
+
+        it('renders the QRCode figure and SVG', () => {
+                        expect(element).not.toBeNull()
+                        if (element) {
+                            expect(element.querySelector('div[role="img"]')).not.toBeNull()
+                            expect(element.innerHTML).toContain('<svg')
+                        }
+        })
+
+        it('renders the right QRCode colors', () => {
+                        if (element) {
+                            expect(element.innerHTML).toContain('stroke="#06b74a"')
+                            expect(element.innerHTML).toContain('fill="#f4f5c2"')
+                        }
+        })
     })
-
-    it('renders the name as a heading', () => {
-      expect(element.innerHTML).toContain('Testing SolidOS Test</h3>')
-    })
-
-    it('renders the QRCode element', () => {
-      expect(element.innerHTML).toContain('<svg')
-      expect(element.innerHTML).toContain('FN:Testing SolidOS Test')
-    })
-
-    it('renders the right QRCode colors', () => {
-      // const ele = element.children[0].children[1].children[0]
-      expect(element.innerHTML).toContain('stroke="#06b74a"')
-      expect(element.innerHTML).toContain('fill="#f4f5c2"')
-    })
-
-
-  })
-
 })

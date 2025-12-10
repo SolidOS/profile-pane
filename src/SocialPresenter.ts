@@ -46,7 +46,6 @@ export function presentSocial(
     if (acIcon) return acIcon.value
     const classes = store.each(subject, ns.rdf('type'))
     if (classes.length > 0) {
-      console.log('@@ classes[0].termType 2 ', classes[0].termType)
       for (const k of (classes as Node[])) {
         const classIcon: Node | null  = store.any(k as any, ns.foaf('icon'))
         if (classIcon !==  null)  {
@@ -83,9 +82,9 @@ export function presentSocial(
 
   const accountThings: Node[] = store.anyJS(subject, ns.foaf('account')) // load the collection
   if (!accountThings) return { accounts: []} // could have been undefined
-  console.log('Social: accountThings', accountThings)
+  //console.log('Social: accountThings', accountThings)
   const accounts: Account[] = accountThings.map(ac => accountAsObject(ac))
-  console.log('Social: account objects', accounts)
+  //console.log('Social: account objects', accounts)
 
 
   return { accounts }

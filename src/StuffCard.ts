@@ -1,57 +1,92 @@
-import { html, TemplateResult } from 'lit-html'
-import { NamedNode } from 'rdflib'
-import { DataBrowserContext } from 'pane-registry'
+import { html, render } from 'lit-html'
 import { widgets } from 'solid-ui'
-
-import {
-  fullWidth,
-  heading,
-  paddingSmall,
-  textCenter,
-  textLeft,
-  textGray,
-} from './baseStyles'
-import { ProfilePresentation } from './presenter'
-import { styleMap } from 'lit-html/directives/style-map.js'
-import { card } from './baseStyles'
+import globalCssText from './styles/global.css'
 
 const dom = document
 
-const styles = {
-  image: styleMap(fullWidth()),
-  intro: styleMap({ ...textGray(), ...textCenter() }),
-  card: styleMap(card()),
-  info: styleMap({ ...paddingSmall(), ...textLeft() }),
-}
-
-export const StuffCard = (profileBasics: ProfilePresentation,
-  context: DataBrowserContext,
-  subject: NamedNode, stuffData): TemplateResult => {
-
-  const { stuff }  = stuffData
-  const nameStyle = styleMap({
-    ...heading(),
-    // "text-decoration": "underline",
-    color: profileBasics.highlightColor, // was "text-decoration-color"
-  })
-  // return renderThings(stuff)
-  return html`
-  <div>
-    <div data-testid="stuff" style="${styles.card}">
-      <div style=${styles.info}>
-        <h3 style=${nameStyle}>Stuff</h3>
-
-        <div style=${styles.info}><table data-testid="stuffTable">${renderThings(stuff)}</table></div>
-        <hr />
-
+class StuffCardElement extends HTMLElement {
+    private _stuffData: any
+    private _profileBasics: any
+  static sheet: CSSStyleSheet | null = null
+  shadow: ShadowRoot
+  constructor() {
+    super()
+    this.shadow = this.attachShadow({ mode: 'open' })
+  }
+  async connectedCallback() {
+    let globalSheet: CSSStyleSheet | null = null
+    let canUseSheets = typeof CSSStyleSheet !== 'undefined' && typeof globalCssText === 'string'
+    try {
+      if (canUseSheets) {
+        globalSheet = new CSSStyleSheet()
+        globalSheet.replaceSync(globalCssText)
+      }
+    } catch (e) {
+      globalSheet = null
+    }
+    if ('adoptedStyleSheets' in Document.prototype && globalSheet) {
+      this.shadow.adoptedStyleSheets = [globalSheet]
+    } else {
+      // Fallback for browsers or test environments without adoptedStyleSheets or CSSStyleSheet
+      if (typeof globalCssText === 'string') {
+        const styleGlobal = document.createElement('style')
+        styleGlobal.textContent = globalCssText
+        this.shadow.appendChild(styleGlobal)
+      }
+    }
+    this.render()
+  }
+  render() {
+    const stuffData = this.stuffData
+    const profileBasics = this.profileBasics
+    if (!stuffData || !stuffData.stuff || !profileBasics) {
+      render(html``, this.shadow)
+      return
+    }
+    render(html`
+      <div class="cardFrame">
+        <section
+          aria-labelledby="stuff-card-title"
+          role="region"
+          data-testid="stuff"
+        >
+          <header>
+            <h3 id="stuff-card-title" class="sr-only">Shared Resources</h3>
+          </header>
+          <div role="table" aria-label="List of shared files and resources">
+            <table class="profileTable" data-testid="stuffTable">
+              <caption class="sr-only">Files and resources shared by ${profileBasics.name}</caption>
+              <tbody>
+                ${renderThings(stuffData.stuff)}
+              </tbody>
+            </table>
+          </div>
+        </section>
       </div>
-    </div>
-  </div>
-`
+    `, this.shadow)
+  }
+  get stuffData() {
+    return this._stuffData
+  }
+  set stuffData(val) {
+    this._stuffData = val
+    this.render()
+  }
+  get profileBasics() {
+    return this._profileBasics
+  }
+  set profileBasics(val) {
+    this._profileBasics = val
+    this.render()
+  }
+}
+if (!customElements.get('stuff-card')) {
+  customElements.define('stuff-card', StuffCardElement)
 }
 
 function renderThingAsDOM (thing, dom) {
   const options = {}
+  // widgets.personTR returns a DOM node, so we need to convert it to HTML string
   const row = widgets.personTR(dom, null, thing.instance, options)
   return row
 }
@@ -61,9 +96,6 @@ function renderThing (thing, dom) {
 }
 
 function renderThings(things) {
-    // console.log('Renderthings: ', things)
-    if (things.length === 0) return html``
-    return html`${renderThing(things[0], dom)}${things.length > 1 ? renderThings(things.slice(1)) : html``}`
+  if (!things || things.length === 0) return html``
+  return html`${renderThing(things[0], dom)}${things.length > 1 ? renderThings(things.slice(1)) : html``}`
 }
-
-// ENDS

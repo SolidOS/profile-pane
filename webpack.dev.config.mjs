@@ -1,6 +1,6 @@
-import HtmlWebpackPlugin from "html-webpack-plugin";
-import NodePolyfillPlugin from "node-polyfill-webpack-plugin";
-import webpack from "webpack";
+import HtmlWebpackPlugin from "html-webpack-plugin"
+import NodePolyfillPlugin from "node-polyfill-webpack-plugin"
+import webpack from "webpack"
 
 export default [
   {
@@ -33,12 +33,18 @@ export default [
           test: /\.ttl$/, // Target text  files
           type: 'asset/source', // Load the file's content as a string
         },
+        {
+          test: /\.css$/,
+          use: [
+            {
+              loader: 'raw-loader',
+            },
+          ],
+        },
       ],
     },
     externals: {
-      'rdflib': '$rdf',
-      'solid-logic': 'SolidLogic', 
-      'solid-ui': 'UI'
+      'fs': 'null',
     },
     resolve: {
       extensions: [".js", ".ts"],
@@ -52,6 +58,7 @@ export default [
       }
     },
     output: {
+      filename: 'bundle.js',
       globalObject: 'globalThis',
       library: {
         type: 'umd',
@@ -75,4 +82,4 @@ export default [
     },
     devtool: "source-map",
   },
-];
+]

@@ -11,7 +11,6 @@ SolidOS pane that displays a personal profile page
 - lit-html
 - Jest
 - Eslint
-- SolidOS
 
 ### Tests
 

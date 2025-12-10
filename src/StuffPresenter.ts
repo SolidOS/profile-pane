@@ -4,9 +4,7 @@ import { solidLogicSingleton } from 'solid-logic'
 
 const { iconForClass } = widgets
 const { typeIndex } = solidLogicSingleton
-const {
-  getScopedAppInstances
-} = typeIndex
+const { getScopedAppInstances } = typeIndex
 
 
 export interface Item {
@@ -38,7 +36,6 @@ export async function presentStuff(
 ): Promise<StuffPresentation> {
 
  const scopedItems = await getScopedAppInstances(null, subject)
- // console.log('scopedItems', scopedItems)
 
  const stuff = scopedItems.map(item => { // work with old or new solid-logic
    const icon = getIconForClass((item as any).type || ns.rdf('Resource'))   

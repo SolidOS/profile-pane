@@ -1,3 +1,3 @@
 
-module.exports = '// mocked-file-content';
+module.exports = {};
 
