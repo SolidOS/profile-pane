@@ -2,7 +2,7 @@ import { ns, widgets } from 'solid-ui'
 import { DataBrowserContext } from 'pane-registry'
 import { NamedNode } from 'rdflib'
 import { html, TemplateResult } from 'lit-html'
-import * as localStyles from './styles/FriendList.module.css'
+import './styles/FriendList.css'
 
 
 export const FriendList = (
@@ -14,7 +14,7 @@ export const FriendList = (
 
   return html`
     <section
-      class="${localStyles.friendListSection}"
+      class="friendListSection"
       role="region"
       aria-labelledby="friends-section-title"
       data-testid="friend-list"
@@ -23,7 +23,7 @@ export const FriendList = (
         <h3 id="friends-section-title" class="sr-only">Friend Connections</h3>
       </header>
       <nav aria-label="Friend profiles">
-        <ul class="${localStyles.friendList}" role="list">
+        <ul class="friendList" role="list">
           ${friends}
         </ul>
       </nav>
@@ -41,5 +41,7 @@ const extractFriends = (subject: NamedNode, { dom }: DataBrowserContext) => {
   })
   if (target.textContent === '')
     return null
-  else return target
+  // Add 'friendItem' class to each <li> for zebra striping
+  target.querySelectorAll('li').forEach(li => li.classList.add('friendItem'))
+  return target
 }

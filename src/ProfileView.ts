@@ -1,7 +1,7 @@
 import { html, TemplateResult } from 'lit-html'
 import { DataBrowserContext } from 'pane-registry'
 import { NamedNode, LiveStore } from 'rdflib'
-import * as localStyles from './styles/ProfileView.module.css'
+import './styles/ProfileView.css'
 import { ChatWithMe } from './ChatWithMe'
 import { FriendList } from './FriendList'
 import { presentProfile } from './presenter'
@@ -62,7 +62,7 @@ export async function ProfileView (
 
       <article 
         aria-labelledby="profile-card-heading" 
-        class="${localStyles.profileSection}" 
+        class="profileSection" 
         role="region"
         tabindex="-1"
       >
@@ -77,7 +77,7 @@ export async function ProfileView (
         return cv && cv.strings && cv.strings.join('').trim() !== '' ? html`
           <section 
             aria-labelledby="cv-heading" 
-            class="${localStyles.profileSection}" 
+            class="profileSection" 
             role="region"
             tabindex="-1"
           >
@@ -94,7 +94,7 @@ export async function ProfileView (
       ${accounts.accounts && accounts.accounts.length > 0 ? html`
         <aside 
           aria-labelledby="social-heading" 
-          class="${localStyles.profileSection}" 
+          class="profileSection" 
           role="complementary"
           tabindex="-1"
         >
@@ -110,7 +110,7 @@ export async function ProfileView (
       ${stuffData.stuff && stuffData.stuff.length > 0 ? html`
         <section 
           aria-labelledby="stuff-heading" 
-          class="${localStyles.profileSection}" 
+          class="profileSection" 
           role="region"
           tabindex="-1"
         >
@@ -128,7 +128,7 @@ export async function ProfileView (
         return friends ? html`
           <aside 
             aria-labelledby="friends-heading" 
-            class="${localStyles.profileSection}" 
+            class="profileSection" 
             role="complementary"
             tabindex="-1"
           >
@@ -144,7 +144,7 @@ export async function ProfileView (
 
       <section 
         aria-labelledby="chat-heading" 
-        class="${localStyles.profileSection}" 
+        class="profileSection" 
         role="region"
         tabindex="-1"
       >

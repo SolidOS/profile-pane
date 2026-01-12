@@ -1,7 +1,5 @@
-/* FriendList.module.css */
+/* FriendList.css  */
 
-.friendListSection {
-}
 
 .friendListHeader {
   display: flex;
@@ -21,6 +19,11 @@
   list-style: none;
   padding: 0;
   margin: 0;
+}
+
+/* Zebra striping for tables in FriendList */
+.friendList table tr:nth-child(even) {
+  background-color: rgba(0, 0, 0, 0.02);
 }
 
 .friendItem {

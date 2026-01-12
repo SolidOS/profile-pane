@@ -1,6 +1,6 @@
 import { html, TemplateResult } from 'lit-html'
 import { SocialPresentation } from './SocialPresenter'
-import * as localStyles from './styles/SocialCard.module.css'
+import './styles/SocialCard.css'
 
 
 export const SocialCard = (
@@ -13,16 +13,16 @@ export const SocialCard = (
 
     return html`
       <section
-        class="${localStyles.socialCard}"
+        class="socialCard"
         aria-labelledby="social-card-title"
         role="region"
         data-testid="social-media"
       >
-        <header class="${localStyles.socialHeader}">
+        <header class="socialHeader">
           <h3 id="social-card-title">Follow me on</h3>
         </header>
         <nav aria-label="Social media profiles">
-          <ul class="${localStyles.socialList}" role="list">
+          <ul class="socialList" role="list">
             ${accounts.map(account => renderAccount(account))}
           </ul>
         </nav>
@@ -33,7 +33,7 @@ export const SocialCard = (
   function renderAccount(account) {
     return account.homepage && account.name && account.icon
       ? html`
-          <li class="${localStyles.socialItem}" role="listitem">
+          <li class="socialItem" role="listitem">
             <a 
               href="${account.homepage}" 
               target="_blank" 
@@ -42,7 +42,7 @@ export const SocialCard = (
               style="display: flex; align-items: center; gap: 0.5em; text-decoration: none;"
             >
               <img 
-                class="${localStyles.socialIcon}" 
+                class="socialIcon" 
                 src="${account.icon}" 
                 alt="${account.name} icon"
                 width="40"

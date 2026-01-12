@@ -1,7 +1,7 @@
 import { html, TemplateResult } from 'lit-html'
 import { NamedNode } from 'rdflib'
 import { utils } from 'solid-ui'
-import * as styles from './styles/QRCodeCard.module.css'
+import './styles/QRCodeCard.css'
 import { scanQrToConnectText } from './texts'
 
 
@@ -44,7 +44,7 @@ export const QRCodeCard = (
       ></div>
       <figcaption 
         id="qr-code-caption" 
-        class="${styles.qrCaption}"
+        class="qrCaption"
       >
         ${scanQrToConnectText}
       </figcaption>

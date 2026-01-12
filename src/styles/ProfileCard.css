@@ -1,5 +1,3 @@
-/* ProfileCard.module.css */
-
 .header {
   display: flex;
   flex-direction: column;
@@ -114,4 +112,10 @@
   max-width: 45ch;
   margin-left: auto;
   margin-right: auto;
+}
+/* ProfileCard styles as regular CSS */
+.profile-card {
+  border: 1px solid #ccc;
+  padding: 16px;
+  background: white;
 }

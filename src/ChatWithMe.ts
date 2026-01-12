@@ -6,7 +6,7 @@ import { authn } from 'solid-logic'
 import { asyncReplace } from 'lit-html/directives/async-replace.js'
 import { chatWithMeButtonText, logInToChatWithMeButtonText, loadingMessage } from './texts'
 import { checkIfAnyUserLoggedIn, complain } from './buttonsHelper'
-import * as localStyles from './styles/ChatWithMe.module.css'
+import './styles/ChatWithMe.css'
 
 export const ChatWithMe = (
   subject: NamedNode,
@@ -17,7 +17,7 @@ export const ChatWithMe = (
 
   async function* chatContainer() {
     const chatContainer = context.dom.createElement('section') as HTMLDivElement
-    chatContainer.setAttribute('class', localStyles.chatSection)
+    chatContainer.setAttribute('class', 'chatSection')
     chatContainer.setAttribute('aria-labelledby', 'chat-section-title')
     chatContainer.setAttribute('role', 'region')
     chatContainer.setAttribute('data-testid', 'chat')
@@ -32,7 +32,7 @@ export const ChatWithMe = (
     let exists
     try {
       yield html`
-        <div class="${localStyles.chatLoading}" role="status" aria-live="polite">
+        <div class="chatLoading" role="status" aria-live="polite">
           ${loadingMessage.toUpperCase()}
         </div>
       `

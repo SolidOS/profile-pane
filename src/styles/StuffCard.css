@@ -1,10 +1,5 @@
-/* StuffCard.module.css */
+/* StuffCard.css  */
 
-.stuffCard {
-}
-
-.stuffHeader {
-}
 
 .stuffTable {
   width: 100%;
@@ -27,14 +22,8 @@
   line-height: 1.4; /* Better readability */
 }
 
-.stuffTable td {
-  background: var(--card-internal-bg);
-}
 
-/* Zebra striping for better readability */
-.stuffTable tbody tr:nth-child(even) {
-  background-color: rgba(0, 0, 0, 0.02);
-}
+
 /* Zebra striping for better readability */
 .stuffTable tbody tr:nth-child(even) {
   background-color: rgba(0, 0, 0, 0.02);

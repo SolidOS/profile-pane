@@ -1,5 +1,6 @@
 import path from 'path'
 import TerserPlugin from 'terser-webpack-plugin'
+import MiniCssExtractPlugin from 'mini-css-extract-plugin'
 
 const common = {
   entry: './src/index.ts',
@@ -14,22 +15,8 @@ const common = {
         exclude: /node_modules/,
       },
       {
-        test: /\.module\.css$/,
-        use: [
-          'style-loader',
-          {
-            loader: 'css-loader',
-            options: {
-              modules: true,
-              importLoaders: 1,
-            },
-          },
-        ],
-      },
-      {
         test: /\.css$/,
-        exclude: /\.module\.css$/,
-        use: ['style-loader', 'css-loader'],
+        use: [MiniCssExtractPlugin.loader, 'css-loader'],
       },
       {
         test: /\.ttl$/i,
@@ -37,6 +24,9 @@ const common = {
       }
     ],
   },
+  plugins: [
+    new MiniCssExtractPlugin({ filename: 'profile-pane.css' }),
+  ],
   externals: {
     'fs': 'null',
     'node-fetch': 'fetch',
@@ -50,24 +40,6 @@ const common = {
   devtool: 'source-map',
 }
 
-const normalConfig = {
-  ...common,
-  mode: 'production',
-  output: {
-    path: path.resolve(process.cwd(), 'lib'),
-    filename: 'profile-pane.js',
-    library: {
-      type: 'umd',
-      name: 'ProfilePane',
-      export: 'default',
-    },
-    globalObject: 'this',
-    clean: true,
-  },
-  optimization: {
-    minimize: false,
-  },
-}
 
 const minConfig = {
   ...common,
@@ -96,6 +68,9 @@ const minConfig = {
       })
     ],
   },
+  plugins: [
+    new MiniCssExtractPlugin({ filename: 'profile-pane.min.css' }),
+  ],
 }
 
-export default [normalConfig, minConfig]
+export default [minConfig]

@@ -2,7 +2,7 @@ import { html, TemplateResult } from 'lit-html'
 import { NamedNode } from 'rdflib'
 import { DataBrowserContext } from 'pane-registry'
 import { widgets } from 'solid-ui'
-import * as localStyles from './styles/StuffCard.module.css'
+import './styles/StuffCard.css'
 import { ProfilePresentation } from './presenter'
 
 const dom = document
@@ -13,7 +13,7 @@ export const StuffCard = (profileBasics: ProfilePresentation,
   const { stuff }  = stuffData
   return html`
     <section
-      class="${localStyles.stuffCard}"
+      class="stuffCard"
       aria-labelledby="stuff-card-title"
       role="region"
       data-testid="stuff"
@@ -22,7 +22,7 @@ export const StuffCard = (profileBasics: ProfilePresentation,
         <h3 id="stuff-card-title" class="sr-only">Shared Resources</h3>
       </header>
       <div role="table" aria-label="List of shared files and resources">
-        <table class="${localStyles.stuffTable}" data-testid="stuffTable">
+        <table class="stuffTable" data-testid="stuffTable">
           <caption class="sr-only">Files and resources shared by ${profileBasics.name}</caption>
           <tbody>
             ${renderThings(stuff)}
