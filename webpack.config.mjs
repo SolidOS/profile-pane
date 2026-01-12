@@ -1,6 +1,5 @@
 import path from 'path'
 import TerserPlugin from 'terser-webpack-plugin'
-import MiniCssExtractPlugin from 'mini-css-extract-plugin'
 
 const common = {
   entry: './src/index.ts',
@@ -16,7 +15,7 @@ const common = {
       },
       {
         test: /\.css$/,
-        use: [MiniCssExtractPlugin.loader, 'css-loader'],
+        use: ['style-loader', 'css-loader'],
       },
       {
         test: /\.ttl$/i,
@@ -24,9 +23,6 @@ const common = {
       }
     ],
   },
-  plugins: [
-    new MiniCssExtractPlugin({ filename: 'profile-pane.css' }),
-  ],
   externals: {
     'fs': 'null',
     'node-fetch': 'fetch',
@@ -58,10 +54,7 @@ const normalConfig = {
   },
   optimization: {
     minimize: false,
-  },
-  plugins: [
-    new MiniCssExtractPlugin({ filename: 'profile-pane.css' }),
-  ],
+  }
 }
 
 const minConfig = {
@@ -90,10 +83,7 @@ const minConfig = {
         extractComments: false,
       })
     ],
-  },
-  plugins: [
-    new MiniCssExtractPlugin({ filename: 'profile-pane.min.css' }),
-  ],
+  }
 }
 
 export default [normalConfig, minConfig]
