@@ -1,5 +1,6 @@
 import path from 'path'
 import TerserPlugin from 'terser-webpack-plugin'
+import CopyPlugin from 'copy-webpack-plugin'
 
 const common = {
   entry: './src/index.ts',
@@ -52,6 +53,17 @@ const normalConfig = {
     globalObject: 'this',
     clean: true,
   },
+  plugins: [
+    ...(common.plugins || []),
+    new CopyPlugin({
+      patterns: [
+        {
+          from: path.resolve('src/styles'),
+          to: path.resolve('lib/styles'),
+        },
+      ],
+    }),
+  ],
   optimization: {
     minimize: false,
   }
@@ -71,6 +83,17 @@ const minConfig = {
     globalObject: 'this',
     clean: false,
   },
+  plugins: [
+    ...(common.plugins || []),
+    new CopyPlugin({
+      patterns: [
+        {
+          from: path.resolve('src/styles'),
+          to: path.resolve('lib/styles'),
+        },
+      ],
+    }),
+  ],
   optimization: {
     minimize: true,
     minimizer: [
