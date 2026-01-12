@@ -41,6 +41,29 @@ const common = {
 }
 
 
+
+const normalConfig = {
+  ...common,
+  mode: 'production',
+  output: {
+    path: path.resolve(process.cwd(), 'lib'),
+    filename: 'profile-pane.js',
+    library: {
+      type: 'umd',
+      name: 'ProfilePane',
+      export: 'default',
+    },
+    globalObject: 'this',
+    clean: true,
+  },
+  optimization: {
+    minimize: false,
+  },
+  plugins: [
+    new MiniCssExtractPlugin({ filename: 'profile-pane.css' }),
+  ],
+}
+
 const minConfig = {
   ...common,
   mode: 'production',
@@ -73,4 +96,4 @@ const minConfig = {
   ],
 }
 
-export default [minConfig]
+export default [normalConfig, minConfig]
