@@ -7,9 +7,9 @@
 }
 
 .QRCode {
-  width: 60%;
-  height: 60%;
-  max-width: 100%;
+  width: 100%;
+  max-width: 320px;
+  min-width: 180px;
   margin: 0 auto;
   display: block;
 }

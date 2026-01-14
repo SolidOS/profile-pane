@@ -1,3 +1,10 @@
+.actionButton {
+  width: 100%;
+  min-width: 180px;
+  max-width: 320px;
+  box-sizing: border-box;
+  display: inline-block;
+}
 .header {
   display: flex;
   flex-direction: column;
@@ -26,7 +33,6 @@
   box-shadow: var(--box-shadow-sm);
   border: 3px solid var(--primary-color);
   background: var(--card-internal-bg);
-  padding: 6px;
   box-sizing: border-box;
   text-align: center;
   font-size: 1rem;
@@ -46,7 +52,6 @@
   box-shadow: var(--box-shadow-sm);
   border: 3px solid var(--primary-color);
   background: var(--card-internal-bg);
-  padding: 6px;
   box-sizing: border-box;
   text-align: center;
   font-size: 1rem;
@@ -125,9 +130,12 @@
 
 .qrCodeSection {
   color: var(--text-secondary);
-  text-align: center;
   font-size: 1rem;
   margin-bottom: var(--spacing-xs);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
 .details {

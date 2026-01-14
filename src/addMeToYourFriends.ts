@@ -26,6 +26,7 @@ const addMeToYourFriendsDiv = (
   buttonContainer.setAttribute('data-testid', 'button')
 
   const button = createAddMeToYourFriendsButton(subject, context)
+  button.classList.add('actionButton')
   buttonContainer.appendChild(button)
   return html`<div class="center">${buttonContainer}</div>`
 }

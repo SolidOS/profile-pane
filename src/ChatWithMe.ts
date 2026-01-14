@@ -95,6 +95,7 @@ export const ChatWithMe = (
       description.className = 'sr-only'
       description.textContent = 'Start a new conversation or sign in to continue existing chat'
       
+      button.classList.add('actionButton')
       chatContainer.appendChild(button)
       chatContainer.appendChild(description)
       yield chatContainer
