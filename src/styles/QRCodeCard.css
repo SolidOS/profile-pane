@@ -13,3 +13,9 @@
   margin: 0 auto;
   display: block;
 }
+
+.QRCode [role="img"]:focus {
+  outline: 2px solid var(--primary-color, #7C4DFF);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 2px rgba(124,77,255,0.2);
+}

@@ -46,7 +46,7 @@
   },
   "license": "MIT",
   "dependencies": {
-    "lit-html": "^3.2.1",
+    "lit-html": "^3.3.2",
     "pane-registry": "^3.0.0",
     "qrcode": "^1.5.4",
     "validate-color": "^2.2.4"
@@ -65,6 +65,7 @@
     "@testing-library/jest-dom": "^6.6.3",
     "@types/jest": "^30.0.0",
     "@typescript-eslint/parser": "^8.39.0",
+    "axe-core": "^4.11.1",
     "babel-jest": "^30.0.0",
     "babel-loader": "^10.0.0",
     "babel-plugin-inline-import": "^3.0.0",
