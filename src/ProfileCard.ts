@@ -42,13 +42,19 @@ const Line = (value, prefix: symbol | string = nothing, label: string = '') =>
   ` : nothing
 
 const Image = (src, alt) =>
-  src ? html`
-    <img 
-      class="image" 
-      src=${src} 
-      alt="Profile photo of ${alt}"
-      width="160"
-      height="160"
-      loading="eager"
-    />
-  ` : nothing
+  src
+    ? html`
+        <img
+          class="image"
+          src=${src}
+          alt="Profile photo of ${alt}"
+          width="160"
+          height="160"
+          loading="eager"
+        />
+      `
+    : html`
+        <div class="image-alt" role="img" aria-label="${alt}" tabindex="0">
+          ${alt}
+        </div>
+      `

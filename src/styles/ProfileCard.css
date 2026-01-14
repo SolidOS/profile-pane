@@ -28,6 +28,32 @@
   background: var(--card-internal-bg);
   padding: 6px;
   box-sizing: border-box;
+  text-align: center;
+  font-size: 1rem;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  overflow: hidden;
+}
+
+.image-alt {
+  width: 160px;
+  height: 160px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  margin-bottom: var(--spacing-sm);
+  box-shadow: var(--box-shadow-sm);
+  border: 3px solid var(--primary-color);
+  background: var(--card-internal-bg);
+  padding: 6px;
+  box-sizing: border-box;
+  text-align: center;
+  font-size: 1rem;
+  color: var(--text-secondary);
+  overflow-wrap: break-word;
+  word-break: break-word;
+  overflow: hidden;
 }
 
 .name {
