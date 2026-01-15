@@ -13,6 +13,7 @@ export const ProfileCard = ({
 
   return html`
     <article class="profileCard" role="main" aria-labelledby="profile-name">
+      <h2 id="profile-name" class="sr-only">${name}</h2>
       <header class="header" aria-label="Profile information">
         ${Image(imageSrc, name)}
       </header>

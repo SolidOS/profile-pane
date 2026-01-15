@@ -22,7 +22,6 @@ const addMeToYourFriendsDiv = (
   buttonContainer = context.dom.createElement('section') as HTMLDivElement
   buttonContainer.setAttribute('class', 'buttonSubSection')
   buttonContainer.setAttribute('aria-labelledby', 'add-me-to-your-friends-button-section')
-  buttonContainer.setAttribute('role', 'region')
   buttonContainer.setAttribute('data-testid', 'button')
 
   const button = createAddMeToYourFriendsButton(subject, context)
