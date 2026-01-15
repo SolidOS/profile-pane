@@ -11,8 +11,9 @@ describe('FriendList accessibility', () => {
       return div
     })
 
-    const subject = { uri: 'https://example.com', value: 'https://example.com', doc: () => ({}) }
-    const context = { dom: document.implementation.createHTMLDocument() }
+    const { sym } = require('rdflib')
+    const subject = sym('https://example.com')
+    const { context } = require('./setup')
     const container = document.createElement('div')
     document.body.appendChild(container)
     render(FriendListModule.FriendList(subject, context), container)

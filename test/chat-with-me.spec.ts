@@ -1,9 +1,9 @@
-import {findByText, fireEvent,} from '@testing-library/dom'
+import {findByText} from '@testing-library/dom'
 import {parse} from 'rdflib'
 import {ChatLogic} from 'solid-logic'
 import pane from '../src'
 import {context, doc, subject} from './setup'
-import {logInToChatWithMeButtonText, userNotLoggedInErrorMessage, loadingMessage} from '../src/texts'
+import {logInToChatWithMeButtonText, loadingMessage} from '../src/texts'
 import {jest} from '@jest/globals'
 
 describe('chat with me', () => {

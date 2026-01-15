@@ -1,31 +1,13 @@
 import { ProfileView } from '../src/ProfileView'
 import { render } from 'lit-html'
 import axe from 'axe-core'
-import { NamedNode, sym } from 'rdflib'
 
 describe('ProfileView accessibility', () => {
   it('has no accessibility violations', async () => {
     const container = document.createElement('div')
     document.body.appendChild(container)
-    // Use a real NamedNode for subject
-    const subject: NamedNode = sym('https://janedoe.example/profile/card#me')
-    const context = {
-      dom: document,
-      session: {
-        store: {
-          anyValue: () => undefined,
-          any: () => undefined,
-          each: () => [],
-          anyJS: () => [],
-          sym: () => ({ doc: () => ({}) }),
-          holds: () => false,
-        },
-        paneRegistry: {
-          byName: () => ({ render: () => document.createElement('div') })
-        },
-        logic: {},
-      }
-    }
+    // Use shared context and subject mocks
+    const { context, subject } = require('./setup')
     // Render ProfileView (returns a Promise<TemplateResult>)
     const result = await ProfileView(subject, context)
     render(result, container)

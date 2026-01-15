@@ -15,12 +15,8 @@ describe('ProfileCard accessibility', () => {
       highlightColor: '#7C4DFF',
       backgroundColor: '#FFFFFF',
     }
-    // Minimal context and subject mocks
-    const context = {
-      dom: document,
-      session: { store: {} }
-    }
-    const subject = { value: 'https://janedoe.example/profile/card#me' }
+    // Use shared context and subject mocks
+    const { context, subject } = require('./setup')
     render(ProfileCard(profile, context, subject), container)
     const results = await axe.run(container)
     expect(results.violations.length).toBe(0)
