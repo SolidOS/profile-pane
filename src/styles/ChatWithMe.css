@@ -1,3 +1,9 @@
+.actionButton:focus, .actionButton:focus-visible {
+  outline: 3px solid var(--primary-color) !important;
+  outline-offset: 2px !important;
+  box-shadow: 0 0 0 2px var(--background-color), 0 0 0 5px rgba(124, 77, 255, 0.25) !important;
+  z-index: 1;
+}
 /* ChatWithMe.css  */
 .chatSection {
   display: flex;

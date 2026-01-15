@@ -24,6 +24,13 @@ const addMeToYourFriendsDiv = (
   buttonContainer.setAttribute('aria-labelledby', 'add-me-to-your-friends-button-section')
   buttonContainer.setAttribute('data-testid', 'button')
 
+  // Add a visually hidden heading for accessibility
+  const heading = context.dom.createElement('h3')
+  heading.setAttribute('id', 'add-me-to-your-friends-button-section')
+  heading.setAttribute('class', 'sr-only')
+  heading.textContent = 'Add me to your friends actions'
+  buttonContainer.appendChild(heading)
+
   const button = createAddMeToYourFriendsButton(subject, context)
   button.classList.add('actionButton')
   buttonContainer.appendChild(button)
