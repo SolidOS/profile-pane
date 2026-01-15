@@ -108,13 +108,6 @@
   top: 6px;
 }
 
-/* Color contrast utilities */
-.high-contrast {
-  background: white;
-  color: black;
-  border: 2px solid black;
-}
-
 .reduced-motion {
   animation: none !important;
   transition: none !important;
