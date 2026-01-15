@@ -31,7 +31,7 @@ export const FriendList = (
   `
 }
 
-const extractFriends = (subject: NamedNode, { dom }: DataBrowserContext) => {
+export const extractFriends = (subject: NamedNode, { dom }: DataBrowserContext) => {
   const target = dom.createElement('div')
   widgets.attachmentList(dom, subject, target, {
     doc: subject.doc(),
@@ -41,7 +41,18 @@ const extractFriends = (subject: NamedNode, { dom }: DataBrowserContext) => {
   })
   if (target.textContent === '')
     return null
-  // Add 'friendItem' class to each <li> for zebra striping
-  target.querySelectorAll('li').forEach(li => li.classList.add('friendItem'))
+  // Add 'friendItem' class and unique aria-label to each <li> for accessibility
+  target.querySelectorAll('li').forEach((li, idx) => {
+    li.classList.add('friendItem')
+    // Try to find a link or text to use as a label
+    const link = li.querySelector('a')
+    if (link && link.textContent) {
+      li.setAttribute('aria-label', `Friend: ${link.textContent.trim()}`)
+    } else if (li.textContent) {
+      li.setAttribute('aria-label', `Friend: ${li.textContent.trim()}`)
+    } else {
+      li.setAttribute('aria-label', `Friend ${idx + 1}`)
+    }
+  })
   return target
 }
