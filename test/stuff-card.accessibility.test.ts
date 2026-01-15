@@ -1,11 +1,11 @@
 
 
-import axe from 'axe-core';
+import axe from 'axe-core'
 
 describe('StuffCard accessibility', () => {
   it('has no accessibility violations (static table)', async () => {
-    const container = document.createElement('div');
-    document.body.appendChild(container);
+    const container = document.createElement('div')
+    document.body.appendChild(container)
     container.innerHTML = `
       <section class="stuffCard" aria-labelledby="stuff-card-title" role="region" data-testid="stuff">
         <header>
@@ -20,8 +20,8 @@ describe('StuffCard accessibility', () => {
           </table>
         </div>
       </section>
-    `;
-    const results = await axe.run(container);
-    expect(results.violations.length).toBe(0);
-  });
-});
+    `
+    const results = await axe.run(container)
+    expect(results.violations.length).toBe(0)
+  })
+})

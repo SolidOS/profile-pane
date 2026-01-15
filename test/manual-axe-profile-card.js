@@ -1,5 +1,5 @@
 // This script runs axe-core on a static ProfileCard-like HTML snippet and prints the violations for debugging.
-const { JSDOM } = require('jsdom');
+const { JSDOM } = require('jsdom')
 const axe = require('axe-core');
 
 (async () => {
@@ -21,17 +21,17 @@ const axe = require('axe-core');
         <div>QR code here</div>
       </aside>
     </article>
-  `, { runScripts: "dangerously", resources: "usable" });
+  `, { runScripts: 'dangerously', resources: 'usable' })
 
-  global.window = dom.window;
-  global.document = dom.window.document;
+  global.window = dom.window
+  global.document = dom.window.document
 
-  const script = dom.window.document.createElement('script');
-  script.textContent = axe.source;
-  dom.window.document.body.appendChild(script);
+  const script = dom.window.document.createElement('script')
+  script.textContent = axe.source
+  dom.window.document.body.appendChild(script)
 
-  await new Promise(resolve => setTimeout(resolve, 100));
+  await new Promise(resolve => setTimeout(resolve, 100))
 
-  const results = await axe.run(dom.window.document.body);
-  console.log(JSON.stringify(results.violations, null, 2));
-})();
+  const results = await axe.run(dom.window.document.body)
+  console.log(JSON.stringify(results.violations, null, 2))
+})()

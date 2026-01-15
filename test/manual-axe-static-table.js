@@ -1,5 +1,5 @@
 // This script runs axe-core on a static HTML snippet and prints the violations.
-const { JSDOM } = require('jsdom');
+const { JSDOM } = require('jsdom')
 const axe = require('axe-core');
 
 (async () => {
@@ -17,21 +17,21 @@ const axe = require('axe-core');
         </table>
       </div>
     </section>
-  `, { runScripts: "dangerously", resources: "usable" });
+  `, { runScripts: 'dangerously', resources: 'usable' })
 
   // Axe expects a global window and document
-  global.window = dom.window;
-  global.document = dom.window.document;
+  global.window = dom.window
+  global.document = dom.window.document
 
   // Inject axe-core into the DOM
-  const script = dom.window.document.createElement('script');
-  script.textContent = axe.source;
-  dom.window.document.body.appendChild(script);
+  const script = dom.window.document.createElement('script')
+  script.textContent = axe.source
+  dom.window.document.body.appendChild(script)
 
   // Wait for axe to be available
-  await new Promise(resolve => setTimeout(resolve, 100));
+  await new Promise(resolve => setTimeout(resolve, 100))
 
   // Run axe
-  const results = await axe.run(dom.window.document.body);
-  console.log(JSON.stringify(results.violations, null, 2));
-})();
+  const results = await axe.run(dom.window.document.body)
+  console.log(JSON.stringify(results.violations, null, 2))
+})()

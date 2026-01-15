@@ -1,6 +1,6 @@
-import { render } from 'lit-html';
-import { SocialCard } from '../src/SocialCard';
-import axe from 'axe-core';
+import { render } from 'lit-html'
+import { SocialCard } from '../src/SocialCard'
+import axe from 'axe-core'
 
 describe('SocialCard accessibility', () => {
   it('has no accessibility violations', async () => {
@@ -17,12 +17,12 @@ describe('SocialCard accessibility', () => {
           icon: 'https://example.com/github-icon.svg'
         }
       ]
-    };
-    const container = document.createElement('div');
-    document.body.appendChild(container);
-    render(SocialCard(SocialData), container);
+    }
+    const container = document.createElement('div')
+    document.body.appendChild(container)
+    render(SocialCard(SocialData), container)
 
-    const results = await axe.run(container);
-    expect(results.violations.length).toBe(0);
-  });
-});
+    const results = await axe.run(container)
+    expect(results.violations.length).toBe(0)
+  })
+})
