@@ -84,7 +84,7 @@ export async function ProfileView (
             <header>
               <h2 id="cv-heading" tabindex="-1">Professional & Education</h2>
             </header>
-            <div role="complementary" aria-label="Career and education information">
+            <div>
               ${cv}
             </div>
           </section>
@@ -117,7 +117,7 @@ export async function ProfileView (
           <header>
             <h2 id="stuff-heading" tabindex="-1">Shared Items</h2>
           </header>
-          <div role="complementary" aria-label="Shared files and resources">
+          <div>
             ${StuffCard(profileBasics, context, subject, stuffData)}
           </div>
         </section>
@@ -151,7 +151,7 @@ export async function ProfileView (
         <header>
           <h2 id="chat-heading" tabindex="-1">Contact</h2>
         </header>
-        <div role="complementary" aria-label="Communication options">
+        <div>
           ${ChatWithMe(subject, context)}
         </div>
       </section>

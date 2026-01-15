@@ -12,7 +12,7 @@ export const ProfileCard = ({
 }: ProfilePresentation, context: DataBrowserContext, subject: NamedNode) => {
 
   return html`
-    <article class="profileCard" role="main" aria-labelledby="profile-name">
+    <article class="profileCard" aria-labelledby="profile-name">
       <h2 id="profile-name" class="sr-only">${name}</h2>
       <header class="header" aria-label="Profile information">
         ${Image(imageSrc, name)}
@@ -24,13 +24,13 @@ export const ProfileCard = ({
         ${Line(pronouns, '', 'Pronouns')}
       </section>
       
-      <section class="buttonSection" aria-label="Actions" role="complementary">
+      <section class="buttonSection" aria-label="Actions">
         ${addMeToYourFriendsDiv(subject, context)}
       </section>
       
-      <aside class="qrCodeSection" aria-label="Contact QR Code" role="complementary">
+      <div class="qrCodeSection">
         ${QRCodeCard(highlightColor, backgroundColor, subject)}
-      </aside>
+      </div>
     </article>
   `
 }
