@@ -5,12 +5,12 @@ import { widgets } from 'solid-ui'
 import './styles/StuffCard.css'
 import { ProfilePresentation } from './presenter'
 
-const dom = document
 
 export const StuffCard = (profileBasics: ProfilePresentation,
   context: DataBrowserContext,
   subject: NamedNode, stuffData): TemplateResult => {
   const { stuff }  = stuffData
+  const dom = context.dom || document
   return html`
     <section
       class="stuffCard"
@@ -21,11 +21,11 @@ export const StuffCard = (profileBasics: ProfilePresentation,
       <header>
         <h3 id="stuff-card-title" class="sr-only">Shared Resources</h3>
       </header>
-      <div role="table" aria-label="List of shared files and resources">
+      <div>
         <table class="stuffTable" data-testid="stuffTable">
           <caption class="sr-only">Files and resources shared by ${profileBasics.name}</caption>
           <tbody>
-            ${renderThings(stuff)}
+            ${renderThings(stuff, dom)}
           </tbody>
         </table>
       </div>
@@ -33,19 +33,18 @@ export const StuffCard = (profileBasics: ProfilePresentation,
   `
 }
 
-function renderThingAsDOM (thing, dom) {
+export function renderThingAsDOM (thing, dom) {
   const options = {}
   // widgets.personTR returns a DOM node, so we need to convert it to HTML string
   const row = widgets.personTR(dom, null, thing.instance, options)
   return row
 }
 
-function renderThing (thing, dom) {
+export function renderThing (thing, dom) {
   return renderThingAsDOM(thing, dom)
 }
 
-function renderThings(things) {
-    // console.log('Renderthings: ', things)
-    if (things.length === 0) return html``
-    return html`${renderThing(things[0], dom)}${things.length > 1 ? renderThings(things.slice(1)) : html``}`
+export function renderThings(things, dom) {
+  if (things.length === 0) return html``
+  return html`${renderThing(things[0], dom)}${things.length > 1 ? renderThings(things.slice(1), dom) : html``}`
 }
