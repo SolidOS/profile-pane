@@ -1,11 +1,11 @@
-/* StuffCard.css  */
-
+/* StuffCard.css */
+/* Uses utilities: .zebra-stripe */
 
 .stuffTable {
   width: 100%;
   border-collapse: collapse;
   margin-bottom: var(--spacing-md);
-  caption-side: top; /* Improve table semantics */
+  caption-side: top;
 }
 
 .stuffTable caption {
@@ -19,12 +19,5 @@
 .stuffTable td {
   padding: var(--spacing-sm) var(--spacing-md);
   text-align: left;
-  line-height: 1.4; /* Better readability */
-}
-
-
-
-/* Zebra striping for better readability */
-.stuffTable tbody tr:nth-child(even) {
-  background-color: rgba(0, 0, 0, 0.02);
+  line-height: 1.4;
 }

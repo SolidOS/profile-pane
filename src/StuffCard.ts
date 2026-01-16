@@ -24,7 +24,7 @@ export const StuffCard = (profileBasics: ProfilePresentation,
       <div>
         <table class="stuffTable" data-testid="stuffTable">
           <caption class="sr-only">Files and resources shared by ${profileBasics.name}</caption>
-          <tbody>
+          <tbody class="zebra-stripe">
             ${renderThings(stuff, dom)}
           </tbody>
         </table>

@@ -20,7 +20,7 @@ const addMeToYourFriendsDiv = (
 ): TemplateResult => {
 
   buttonContainer = context.dom.createElement('section') as HTMLDivElement
-  buttonContainer.setAttribute('class', 'buttonSubSection')
+  buttonContainer.setAttribute('class', 'buttonSubSection text-truncate text-center')
   buttonContainer.setAttribute('aria-labelledby', 'add-me-to-your-friends-button-section')
   buttonContainer.setAttribute('data-testid', 'button')
 
@@ -32,7 +32,7 @@ const addMeToYourFriendsDiv = (
   buttonContainer.appendChild(heading)
 
   const button = createAddMeToYourFriendsButton(subject, context)
-  button.classList.add('actionButton')
+  button.classList.add('actionButton', 'btn-primary', 'action-button-focus')
   buttonContainer.appendChild(button)
   return html`<div class="center">${buttonContainer}</div>`
 }

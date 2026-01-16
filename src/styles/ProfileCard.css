@@ -1,9 +1,6 @@
-.actionButton:focus, .actionButton:focus-visible {
-  outline: 3px solid var(--color-primary) !important;
-  outline-offset: 2px !important;
-  box-shadow: 0 0 0 2px var(--color-background), 0 0 0 5px rgba(124, 77, 255, 0.25) !important;
-  z-index: 1;
-}
+/* ProfileCard.css */
+/* Uses utilities: .action-button-focus, .btn-primary, .flex-column-center, .text-truncate, .text-center, .text-wrap-anywhere, .section-centered, .btn-transparent */
+
 .actionButton {
   width: 100%;
   min-width: 180px;
@@ -11,23 +8,9 @@
   box-sizing: border-box;
   display: inline-block;
 }
-.header {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-bottom: var(--spacing-md);
-}
 
 .profileCard {
-  /* Use global card styles */
-}
-
-.profileCard div button {
-  background-color: transparent;
-}
-
-.profileCard div button:hover {
-  background-color: transparent;
+  /* Component container */
 }
 
 .image {
@@ -40,11 +23,6 @@
   border: 3px solid var(--color-primary);
   background: var(--color-card-bg);
   box-sizing: border-box;
-  text-align: center;
-  font-size: 1rem;
-  overflow-wrap: break-word;
-  word-break: break-word;
-  overflow: hidden;
 }
 
 .image-alt {
@@ -59,19 +37,13 @@
   border: 3px solid var(--color-primary);
   background: var(--color-card-bg);
   box-sizing: border-box;
-  text-align: center;
-  font-size: 1rem;
   color: var(--color-text-secondary);
-  overflow-wrap: break-word;
-  word-break: break-word;
-  overflow: hidden;
 }
 
 .name {
   font-size: var(--font-size-xl);
   font-weight: 700;
   line-height: var(--line-height-tight);
-  text-align: center;
   text-decoration: underline;
   text-underline-offset: 0.2em;
   margin: 0;
@@ -80,7 +52,6 @@
 
 .intro {
   color: var(--color-text-secondary);
-  text-align: center;
   font-size: var(--font-size-base);
   line-height: var(--line-height-base);
   margin-bottom: var(--spacing-xs);
@@ -91,68 +62,35 @@
 
 .buttonSection {
   color: var(--color-text-secondary);
-  text-align: center;
   font-size: 1rem;
   margin-bottom: var(--spacing-xs);
 }
 
 .buttonSubSection {
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  overflow: hidden;
   width: 100%;
   min-width: 0;
-  text-align: center;
 }
 
 .buttonSubSection button {
   width: 100%;
   min-width: 0;
-  min-height: var(--min-touch-target);
-  padding: var(--spacing-sm) var(--spacing-md);
-  border: 1px solid var(--color-primary);
-  border-radius: var(--border-radius-sm);
-  background: var(--color-primary);
-  color: white;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all var(--animation-duration) ease;
-}
-
-.buttonSubSection button:hover {
-  background: color-mix(in srgb, var(--color-primary) 90%, black);
-  box-shadow: 0 2px 4px rgba(124, 77, 255, 0.2);
-}
-
-.buttonSubSection button:active {
-  box-shadow: 0 1px 2px rgba(124, 77, 255, 0.2);
-}
-
-.buttonSubSection button:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-  transform: none;
 }
 
 .qrCodeSection {
   color: var(--color-text-secondary);
   font-size: 1rem;
   margin-bottom: var(--spacing-xs);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
 }
 
 .details {
   color: var(--color-text-muted);
-  text-align: center;
   font-size: var(--font-size-base);
   line-height: var(--line-height-base);
   max-width: 45ch;
   margin-left: auto;
   margin-right: auto;
 }
+
 /* ProfileCard styles as regular CSS */
 .profile-card {
   border: 1px solid #ccc;

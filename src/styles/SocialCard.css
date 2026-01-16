@@ -1,15 +1,7 @@
 /* SocialCard.css */
-.socialItem span {
-  min-width: 0;
-  display: block;
-  overflow-wrap: anywhere;
-}
-
+/* Uses utilities: .list-reset, .text-wrap-anywhere, .flex, .gap-sm, .gap-lg, .rounded-sm */
 
 .socialList {
-  list-style: none;
-  padding: 0;
-  margin: 0;
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
@@ -24,6 +16,11 @@
   font-size: 1.1rem;
 }
 
+.socialItem span {
+  min-width: 0;
+  display: block;
+}
+
 .socialItem a {
   color: var(--color-primary);
   text-decoration: none;
@@ -34,7 +31,6 @@
   padding: var(--spacing-xs);
   border-radius: var(--border-radius-sm);
   transition: background-color var(--animation-duration) ease;
-  /* Add external link indication */
   position: relative;
   flex: 1;
   min-width: 0;
@@ -46,6 +42,7 @@
   background-color: rgba(124, 77, 255, 0.1);
 }
 
+/* Screen reader only external link indication */
 .socialItem a[href^="http"]:after {
   content: " (external link)";
   position: absolute;

@@ -1,3 +1,6 @@
+/* QRCodeCard.css */
+/* Note: Uses utilities: .text-center */
+
 /* Caption under the QR code */
 .qrCaption {
   text-align: center;

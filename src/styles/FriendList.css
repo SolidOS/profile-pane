@@ -1,30 +1,5 @@
-/* FriendList.css  */
-
-
-.friendListHeader {
-  display: flex;
-  align-items: center;
-  gap: var(--spacing-xs);
-  margin-bottom: var(--spacing-md);
-}
-
-.friendListTitle {
-  font-size: 1.25rem;
-  font-weight: 600;
-  color: var(--color-primary);
-  margin: 0;
-}
-
-.friendList {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-/* Zebra striping for tables in FriendList */
-.friendList table tr:nth-child(even) {
-  background-color: rgba(0, 0, 0, 0.02);
-}
+/* FriendList.css */
+/* Uses utilities: .list-reset, .section-title, .zebra-stripe, .flex, .gap-xs, .mb-md */
 
 .friendItem {
   padding: var(--spacing-xs) 0;

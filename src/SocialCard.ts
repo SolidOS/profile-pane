@@ -22,7 +22,7 @@ export const SocialCard = (
           <h3 id="social-card-title">Follow me on</h3>
         </header>
         <nav aria-label="Social media profiles">
-          <ul class="socialList" role="list">
+          <ul class="socialList list-reset" role="list">
             ${accounts.map(account => renderAccount(account))}
           </ul>
         </nav>
@@ -49,7 +49,7 @@ export const SocialCard = (
                 height="40"
                 loading="lazy"
               />
-              <span>${account.name}</span>
+              <span class="text-wrap-anywhere">${account.name}</span>
             </a>
           </li>
         `

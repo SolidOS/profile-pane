@@ -62,11 +62,11 @@ export async function ProfileView (
 
       <article 
         aria-labelledby="profile-card-heading" 
-        class="profileSection" 
+        class="profileSection section-bg" 
         role="region"
         tabindex="-1"
       >
-        <header>
+        <header class="text-center mb-md">
           <h2 id="profile-card-heading" tabindex="-1">${profileBasics.name}</h2>
         </header>
         ${ProfileCard(profileBasics, context, subject)}
@@ -77,11 +77,11 @@ export async function ProfileView (
         return cv && cv.strings && cv.strings.join('').trim() !== '' ? html`
           <section 
             aria-labelledby="cv-heading" 
-            class="profileSection" 
+            class="profileSection section-bg" 
             role="region"
             tabindex="-1"
           >
-            <header>
+            <header class="text-center mb-md">
               <h2 id="cv-heading" tabindex="-1">Professional & Education</h2>
             </header>
             <div>
@@ -94,11 +94,11 @@ export async function ProfileView (
       ${accounts.accounts && accounts.accounts.length > 0 ? html`
         <aside 
           aria-labelledby="social-heading" 
-          class="profileSection" 
+          class="profileSection section-bg" 
           role="complementary"
           tabindex="-1"
         >
-          <header>
+          <header class="text-center mb-md">
             <h2 id="social-heading" tabindex="-1">Social Accounts</h2>
           </header>
           <nav aria-label="Social media links">
@@ -110,11 +110,11 @@ export async function ProfileView (
       ${stuffData.stuff && stuffData.stuff.length > 0 ? html`
         <section 
           aria-labelledby="stuff-heading" 
-          class="profileSection" 
+          class="profileSection section-bg" 
           role="region"
           tabindex="-1"
         >
-          <header>
+          <header class="text-center mb-md">
             <h2 id="stuff-heading" tabindex="-1">Shared Items</h2>
           </header>
           <div>
@@ -128,11 +128,11 @@ export async function ProfileView (
         return friends ? html`
           <aside 
             aria-labelledby="friends-heading" 
-            class="profileSection" 
+            class="profileSection section-bg" 
             role="complementary"
             tabindex="-1"
           >
-            <header>
+            <header class="text-center mb-md">
               <h2 id="friends-heading" tabindex="-1">Friends</h2>
             </header>
             <div role="list" aria-label="Friend connections">
@@ -144,11 +144,11 @@ export async function ProfileView (
 
       <section 
         aria-labelledby="chat-heading" 
-        class="profileSection" 
+        class="profileSection section-bg" 
         role="region"
         tabindex="-1"
       >
-        <header>
+        <header class="text-center mb-md">
           <h2 id="chat-heading" tabindex="-1">Contact</h2>
         </header>
         <div>

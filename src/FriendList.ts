@@ -19,11 +19,11 @@ export const FriendList = (
       aria-labelledby="friends-section-title"
       data-testid="friend-list"
     >
-      <header>
-        <h3 id="friends-section-title" class="sr-only">Friend Connections</h3>
+      <header class="flex gap-xs mb-md">
+        <h3 id="friends-section-title" class="section-title">Friend Connections</h3>
       </header>
       <nav aria-label="Friend profiles">
-        <ul class="friendList" role="list">
+        <ul class="list-reset zebra-stripe" role="list">
           ${friends}
         </ul>
       </nav>

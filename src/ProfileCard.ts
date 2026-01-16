@@ -14,21 +14,21 @@ export const ProfileCard = ({
   return html`
     <article class="profileCard" aria-labelledby="profile-name">
       <h2 id="profile-name" class="sr-only">${name}</h2>
-      <header class="header" aria-label="Profile information">
+      <header class="header flex-column-center mb-md" aria-label="Profile information">
         ${Image(imageSrc, name)}
       </header>
       
-      <section class="intro" aria-label="About">
+      <section class="intro text-center" aria-label="About">
         ${Line(introduction, '', 'About')}
         ${Line(location, '🌐', 'Location')}
         ${Line(pronouns, '', 'Pronouns')}
       </section>
       
-      <section class="buttonSection" aria-label="Actions">
+      <section class="buttonSection text-center" aria-label="Actions">
         ${addMeToYourFriendsDiv(subject, context)}
       </section>
       
-      <div class="qrCodeSection">
+      <div class="qrCodeSection section-centered">
         ${QRCodeCard(highlightColor, backgroundColor, subject)}
       </div>
     </article>

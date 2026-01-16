@@ -1,21 +1,10 @@
-/* ProfileView.css  */
-h2 {
-  text-align: center;
-}
+/* ProfileView.css */
+/* Uses utilities: .section-bg, .text-center */
 
 .profileSection {
-  background: var(--color-section-bg);
-  border-radius: var(--border-radius);
-  box-shadow: var(--box-shadow);
-  padding: var(--spacing-md);
-  margin-bottom: var(--spacing-md);
   width: 100%;
   max-width: 100%;
   box-sizing: border-box;
-}
-
-.profileHeader {
-  text-align: center;
   margin-bottom: var(--spacing-md);
 }
 

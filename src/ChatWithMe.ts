@@ -17,7 +17,7 @@ export const ChatWithMe = (
 
   async function* chatContainer() {
     const chatContainer = context.dom.createElement('section') as HTMLDivElement
-    chatContainer.setAttribute('class', 'chatSection')
+    chatContainer.setAttribute('class', 'chatSection section-centered')
     chatContainer.setAttribute('aria-labelledby', 'chat-section-title')
     chatContainer.setAttribute('role', 'region')
     chatContainer.setAttribute('data-testid', 'chat')
@@ -32,7 +32,7 @@ export const ChatWithMe = (
     let exists
     try {
       yield html`
-        <div class="chatLoading" role="status" aria-live="polite">
+        <div class="chatLoading loading-text" role="status" aria-live="polite">
           ${loadingMessage.toUpperCase()}
         </div>
       `
@@ -95,7 +95,7 @@ export const ChatWithMe = (
       description.className = 'sr-only'
       description.textContent = 'Start a new conversation or sign in to continue existing chat'
       
-      button.classList.add('actionButton')
+      button.classList.add('actionButton', 'btn-primary', 'action-button-focus')
       chatContainer.appendChild(button)
       chatContainer.appendChild(description)
       yield chatContainer

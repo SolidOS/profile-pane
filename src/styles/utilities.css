@@ -139,13 +139,7 @@
   overflow: hidden;
 }
 
-.live-region.polite {
-  aria-live: polite;
-}
-
-.live-region.assertive {
-  aria-live: assertive;
-}
+/* Note: Use aria-live="polite" or aria-live="assertive" HTML attributes with .live-region */
 
 /* Text scaling utilities */
 .text-scale-friendly {
@@ -187,4 +181,109 @@
   color: var(--text-color);
   background: var(--color-background);
   border: 1px solid var(--border-light);
+}
+
+/* ===========================================
+   CONSOLIDATED COMPONENT PATTERNS
+   =========================================== */
+
+/* Primary Button - used by ChatWithMe, ProfileCard */
+.btn-primary {
+  min-height: var(--min-touch-target);
+  padding: var(--spacing-sm) var(--spacing-md);
+  border: 1px solid var(--color-primary);
+  border-radius: var(--border-radius-sm);
+  background: var(--color-primary);
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--animation-duration) ease;
+}
+
+.btn-primary:hover {
+  background: color-mix(in srgb, var(--color-primary) 90%, black);
+  box-shadow: 0 2px 4px rgba(124, 77, 255, 0.2);
+}
+
+.btn-primary:active {
+  box-shadow: 0 1px 2px rgba(124, 77, 255, 0.2);
+}
+
+.btn-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Action Button Focus - used by ChatWithMe, ProfileCard */
+.action-button-focus:focus,
+.action-button-focus:focus-visible {
+  outline: 3px solid var(--color-primary) !important;
+  outline-offset: 2px !important;
+  box-shadow: 0 0 0 2px var(--color-background), 0 0 0 5px rgba(124, 77, 255, 0.25) !important;
+  z-index: 1;
+}
+
+/* List Reset - used by FriendList, SocialCard, nav */
+.list-reset {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+/* Zebra Striping - used by FriendList, StuffCard tables */
+.zebra-stripe tr:nth-child(even),
+.zebra-stripe > *:nth-child(even) {
+  background-color: rgba(0, 0, 0, 0.02);
+}
+
+/* Section Title - primary colored heading */
+.section-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--color-primary);
+  margin: 0;
+}
+
+/* Text Overflow - used by ProfileCard, SocialCard */
+.text-truncate {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
+.text-wrap-anywhere {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+/* Loading Text - primary colored centered loading indicator */
+.loading-text {
+  color: var(--color-primary);
+  text-align: center;
+  margin: var(--spacing-md) 0;
+}
+
+/* Centered Section - flex column with center alignment */
+.section-centered {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Card Section Background */
+.section-bg {
+  background: var(--color-section-bg);
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+  padding: var(--spacing-md);
+}
+
+/* Transparent button override (for solid-ui integration) */
+.btn-transparent {
+  background-color: transparent;
+}
+
+.btn-transparent:hover {
+  background-color: transparent;
 }
