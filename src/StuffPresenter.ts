@@ -4,9 +4,7 @@ import { solidLogicSingleton } from 'solid-logic'
 
 const { iconForClass } = widgets
 const { typeIndex } = solidLogicSingleton
-const {
-  getScopedAppInstances
-} = typeIndex
+const { getScopedAppInstances } = typeIndex
 
 
 export interface Item {

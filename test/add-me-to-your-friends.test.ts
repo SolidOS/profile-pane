@@ -5,7 +5,7 @@ import { logInAddMeToYourFriendsButtonText, userNotLoggedInErrorMessage } from '
 
 describe('add-me-to-your-friends pane', () => {
   describe('saveNewFriend with NO logged in user', () => {
-    let result
+    let result: HTMLElement
     beforeAll(() => {
       result = pane.render(subject, context)
     })

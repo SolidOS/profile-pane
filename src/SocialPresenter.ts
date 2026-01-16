@@ -83,9 +83,9 @@ export function presentSocial(
 
   const accountThings: Node[] = store.anyJS(subject, ns.foaf('account')) // load the collection
   if (!accountThings) return { accounts: []} // could have been undefined
-  console.log('Social: accountThings', accountThings)
+  //console.log('Social: accountThings', accountThings)
   const accounts: Account[] = accountThings.map(ac => accountAsObject(ac))
-  console.log('Social: account objects', accounts)
+  //console.log('Social: account objects', accounts)
 
 
   return { accounts }

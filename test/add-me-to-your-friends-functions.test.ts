@@ -1,5 +1,5 @@
 import { context, subject } from './setup'
-import { addMeToYourFriendsDiv, checkIfAnyUserLoggedIn, checkIfFriendExists, createAddMeToYourFriendsButton, saveNewFriend } from '../src/addMeToYourFriends'
+import { addMeToYourFriendsDiv, checkIfFriendExists, createAddMeToYourFriendsButton, saveNewFriend } from '../src/addMeToYourFriends'
 
 describe('add-me-to-your-friends functions', () => {
     describe('addMeToYourFriendsDiv', () => {
@@ -27,18 +27,6 @@ describe('add-me-to-your-friends functions', () => {
         expect(saveNewFriend).toBeInstanceOf(Function)
       })
   
-    })
-  
-    describe('checkIfAnyUserLoggedIn', () => {
-      it('exists', () => {
-        expect(checkIfAnyUserLoggedIn).toBeInstanceOf(Function)
-      })
-  
-      it('runs', () => {
-        expect(checkIfAnyUserLoggedIn(subject)).toBe(true)
-        expect(checkIfAnyUserLoggedIn(null)).toBe(false)
-        expect(checkIfAnyUserLoggedIn(undefined)).toBe(false)
-      })
     })
   
     describe('checkIfFriendExists', () => {

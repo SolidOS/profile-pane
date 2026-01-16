@@ -1,5 +1,5 @@
-import { clearPreviousMessage, complain, mention } from '../src/addMeToYourFriendsHelper'
-import { context } from './setup'
+import { checkIfAnyUserLoggedIn, clearPreviousMessage, complain, mention } from '../src/buttonsHelper'
+import { context, subject } from './setup'
 
 describe('add me to your friends helper functions', () => {
   let buttonContainer: HTMLDivElement
@@ -43,4 +43,17 @@ describe('add me to your friends helper functions', () => {
       expect(buttonContainer.childNodes.length).toBe(1)
     })
   })
+
+   describe('checkIfAnyUserLoggedIn', () => {
+      it('exists', () => {
+        expect(checkIfAnyUserLoggedIn).toBeInstanceOf(Function)
+      })
+  
+      it('runs', () => {
+        expect(checkIfAnyUserLoggedIn(subject)).toBe(true)
+        expect(checkIfAnyUserLoggedIn(null)).toBe(false)
+        expect(checkIfAnyUserLoggedIn(undefined)).toBe(false)
+      })
+    })
+  
 })
