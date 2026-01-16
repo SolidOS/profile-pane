@@ -1,27 +1,23 @@
 /* Global CSS: base styles, variables, and resets */
-
-.center {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
 /* Accessible color palette */
 
 :root {
-  --primary-color: #7C4DFF; /* Vivid Purple */
-  --secondary-color: #0077B6; /* Accessible Blue */
-  --background-color: #FFFFFF; /* White */
-  --card-bg: #FFFFFF; /* White for inner cards */
-  --section-bg: #F5F5F5; /* Light grey for outer sections */
-  --card-internal-bg: #FFFFFF; /* White for internal components */
+  /* Primary/Accent colors (profile-pane specific) */
+  --color-primary: #7C4DFF; /* Vivid Purple */
+  --color-secondary: #0077B6; /* Accessible Blue */
+  --color-accent: #FFD600; /* Bright Yellow */
+  --color-error: #B00020; /* Accessible Red */
+  --color-success: #00C853; /* Accessible Green */
+
+  /* Card/Section backgrounds */
+  --color-background: #FFFFFF; /* White */
+  --color-card-bg: #FFFFFF; /* White for inner cards */
+  --color-section-bg: #F5F5F5; /* Light grey for outer sections */
+
   --text-color: #1A1A1A; /* Near-black */
-  --text-secondary: #666; /* Added for repeated usage */
-  --text-muted: #444; /* Added for repeated usage */
+  --color-text-secondary: #666; /* Added for repeated usage */
+  --color-text-muted: #444; /* Added for repeated usage */
   --border-light: #eee; /* Added for repeated borders */
-  --accent-color: #FFD600; /* Bright Yellow */
-  --error-color: #B00020; /* Accessible Red */
-  --success-color: #00C853; /* Accessible Green */
   --border-radius: 1rem; /* Matches module usage */
   --border-radius-sm: 0.5rem;
   --box-shadow: 0 2px 8px rgba(124,77,255,0.08); /* Matches module usage */
@@ -64,7 +60,7 @@ html, body {
   font-family: var(--font-family);
   font-size: var(--font-size-base);
   line-height: var(--line-height-base);
-  background: var(--background-color);
+  background: var(--color-background);
   color: var(--text-color);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -73,7 +69,7 @@ html, body {
 
 /* Improved heading hierarchy */
 h1, h2, h3, h4, h5, h6 {
-  color: var(--primary-color);
+  color: var(--color-primary);
   font-weight: 600;
   line-height: var(--line-height-tight);
   margin-top: 0;
@@ -95,7 +91,7 @@ p {
 
 /* Improved link accessibility */
 a {
-  color: var(--primary-color);
+  color: var(--color-primary);
   text-decoration: underline;
   text-underline-offset: 0.125em;
   text-decoration-thickness: 0.0625em;
@@ -121,9 +117,9 @@ a:hover, a:focus {
 
 /* Accessibility: focus styles */
 :focus {
-  outline: 2px solid var(--primary-color);
+  outline: 2px solid var(--color-primary);
   outline-offset: 1px;
-  box-shadow: 0 0 0 1px var(--background-color);
+  box-shadow: 0 0 0 1px var(--color-background);
 }
 
 /* Accessibility: Respect user motion preferences */
@@ -147,9 +143,9 @@ a:hover, a:focus {
 
 /* Accessibility: Improved focus management */
 :focus-visible {
-  outline: var(--focus-ring-width) solid var(--primary-color);
+  outline: var(--focus-ring-width) solid var(--color-primary);
   outline-offset: 2px;
-  box-shadow: 0 0 0 1px var(--background-color);
+  box-shadow: 0 0 0 1px var(--color-background);
 }
 
 :focus:not(:focus-visible) {
@@ -161,7 +157,7 @@ a:hover, a:focus {
   position: absolute;
   top: -40px;
   left: 6px;
-  background: var(--primary-color);
+  background: var(--color-primary);
   color: white;
   padding: var(--spacing-sm) var(--spacing-md);
   text-decoration: none;
@@ -199,9 +195,9 @@ nav ul {
 
 /* Enhanced keyboard navigation */
 *:focus-visible {
-  outline: var(--focus-indicator-width) solid var(--primary-color);
+  outline: var(--focus-indicator-width) solid var(--color-primary);
   outline-offset: 2px;
-  box-shadow: 0 0 0 1px var(--background-color), 0 0 0 4px rgba(124, 77, 255, 0.2);
+  box-shadow: 0 0 0 1px var(--color-background), 0 0 0 4px rgba(124, 77, 255, 0.2);
   border-radius: 2px;
   transition: none; /* Remove transitions on focus for immediate feedback */
 }
@@ -211,15 +207,15 @@ nav ul {
 [role="link"]:focus,
 button:focus,
 a:focus {
-  outline: 2px solid var(--primary-color);
+  outline: 2px solid var(--color-primary);
   outline-offset: 2px;
-  box-shadow: 0 0 0 1px var(--background-color);
+  box-shadow: 0 0 0 1px var(--color-background);
 }
 
 /* Enhanced error message accessibility */
 [role="alert"] {
   padding: var(--spacing-md);
-  border: 2px solid var(--error-color);
+  border: 2px solid var(--color-error);
   border-radius: var(--border-radius-sm);
   background-color: rgba(176, 0, 32, 0.1);
   margin: var(--spacing-md) 0;
@@ -228,7 +224,7 @@ a:focus {
 /* Success message styling */
 [role="status"] {
   padding: var(--spacing-md);
-  border: 2px solid var(--success-color);
+  border: 2px solid var(--color-success);
   border-radius: var(--border-radius-sm);
   background-color: rgba(0, 200, 83, 0.1);
   margin: var(--spacing-md) 0;
@@ -241,7 +237,7 @@ table {
 }
 
 th {
-  background-color: var(--section-bg);
+  background-color: var(--color-section-bg);
   font-weight: 600;
   text-align: left;
   padding: var(--spacing-sm);
@@ -290,7 +286,7 @@ button:disabled, [role="button"][aria-disabled="true"] {
   width: 40px;
   height: 40px;
   border: 3px solid var(--border-light);
-  border-top: 3px solid var(--primary-color);
+  border-top: 3px solid var(--color-primary);
   border-radius: 50%;
   animation: spin 1s linear infinite;
 }
@@ -303,7 +299,7 @@ button:disabled, [role="button"][aria-disabled="true"] {
 @media (prefers-reduced-motion: reduce) {
   .loading-spinner {
     animation: none;
-    border-top-color: var(--primary-color);
+    border-top-color: var(--color-primary);
   }
 }
 
@@ -324,7 +320,7 @@ button:disabled, [role="button"][aria-disabled="true"] {
 
 /* Common card component - used across all modules */
 .module-card {
-  background: var(--card-bg);
+  background: var(--color-card-bg);
   border-radius: var(--border-radius);
   box-shadow: var(--box-shadow);
   padding: var(--spacing-lg);
@@ -364,11 +360,11 @@ button:disabled, [role="button"][aria-disabled="true"] {
 }
 
 .text-secondary {
-  color: var(--text-secondary);
+  color: var(--color-text-secondary);
 }
 
 .text-muted {
-  color: var(--text-muted);
+  color: var(--color-text-muted);
 }
 
 /* Responsive grid for profile */
@@ -376,7 +372,7 @@ button:disabled, [role="button"][aria-disabled="true"] {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
   gap: 1.5em;
-  background: var(--profile-grid-bg, var(--background-color));
+  background: var(--profile-grid-bg, var(--color-background));
 }
 .profile-header, .profile-footer {
   grid-column: 1 / -1;
@@ -394,6 +390,6 @@ button:disabled, [role="button"][aria-disabled="true"] {
 .errorMessageBlock .close:hover,
 .errorMessageBlock button[type="button"]:hover,
 .errorMessageBlock .button:hover {
-  background: var(--text-secondary) !important;
-  color: var(--background-color) !important;
+  background: var(--color-text-secondary) !important;
+  color: var(--color-background) !important;
 }

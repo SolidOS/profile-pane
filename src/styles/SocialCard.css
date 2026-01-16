@@ -25,7 +25,7 @@
 }
 
 .socialItem a {
-  color: var(--primary-color);
+  color: var(--color-primary);
   text-decoration: none;
   display: flex;
   align-items: center;
@@ -59,6 +59,6 @@
   width: 2.5em;
   height: 2.5em;
   border-radius: var(--border-radius-sm);
-  background: var(--card-internal-bg);
+  background: var(--color-card-bg);
   flex-shrink: 0;
 }

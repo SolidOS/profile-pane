@@ -1,4 +1,11 @@
 /* Utility-first CSS classes for layout, spacing, and responsiveness */
+
+.center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 .flex {
   display: flex;
 }
@@ -35,11 +42,11 @@
 .shadow-sm { box-shadow: var(--box-shadow-sm); }
 
 .bg-primary {
-  background: var(--primary-color);
+  background: var(--color-primary);
   color: #fff;
 }
 .bg-card {
-  background: var(--card-bg);
+  background: var(--color-card-bg);
 }
 
 /* Accessibility utilities */
@@ -98,7 +105,7 @@
   left: 6px;
   top: 6px;
   padding: var(--spacing-sm);
-  background: var(--primary-color);
+  background: var(--color-primary);
   color: white;
   text-decoration: none;
   border-radius: var(--border-radius-sm);
@@ -115,7 +122,7 @@
 
 /* Focus management */
 .focus-ring {
-  outline: 2px solid var(--primary-color);
+  outline: 2px solid var(--color-primary);
   outline-offset: 2px;
 }
 
@@ -170,7 +177,7 @@
 /* Better focus for text elements */
 .focusable-text:focus {
   background-color: rgba(124, 77, 255, 0.1);
-  outline: 2px solid var(--primary-color);
+  outline: 2px solid var(--color-primary);
   outline-offset: 2px;
   border-radius: 2px;
 }
@@ -178,6 +185,6 @@
 /* High contrast text */
 .high-contrast {
   color: var(--text-color);
-  background: var(--background-color);
+  background: var(--color-background);
   border: 1px solid var(--border-light);
 }

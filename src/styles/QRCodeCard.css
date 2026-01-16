@@ -3,7 +3,7 @@
   text-align: center;
   margin-top: 0;
   font-size: 0.95em;
-  color: var(--text-secondary);
+  color: var(--color-text-secondary);
 }
 
 .QRCode {
@@ -15,7 +15,7 @@
 }
 
 .QRCode [role="img"]:focus {
-  outline: 2px solid var(--primary-color, #7C4DFF);
+  outline: 2px solid var(--color-primary, #7C4DFF);
   outline-offset: 2px;
   box-shadow: 0 0 0 2px rgba(124,77,255,0.2);
 }

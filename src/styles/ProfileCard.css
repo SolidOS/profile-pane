@@ -1,7 +1,7 @@
 .actionButton:focus, .actionButton:focus-visible {
-  outline: 3px solid var(--primary-color) !important;
+  outline: 3px solid var(--color-primary) !important;
   outline-offset: 2px !important;
-  box-shadow: 0 0 0 2px var(--background-color), 0 0 0 5px rgba(124, 77, 255, 0.25) !important;
+  box-shadow: 0 0 0 2px var(--color-background), 0 0 0 5px rgba(124, 77, 255, 0.25) !important;
   z-index: 1;
 }
 .actionButton {
@@ -37,8 +37,8 @@
   object-fit: cover;
   margin-bottom: var(--spacing-sm);
   box-shadow: var(--box-shadow-sm);
-  border: 3px solid var(--primary-color);
-  background: var(--card-internal-bg);
+  border: 3px solid var(--color-primary);
+  background: var(--color-card-bg);
   box-sizing: border-box;
   text-align: center;
   font-size: 1rem;
@@ -56,12 +56,12 @@
   border-radius: 50%;
   margin-bottom: var(--spacing-sm);
   box-shadow: var(--box-shadow-sm);
-  border: 3px solid var(--primary-color);
-  background: var(--card-internal-bg);
+  border: 3px solid var(--color-primary);
+  background: var(--color-card-bg);
   box-sizing: border-box;
   text-align: center;
   font-size: 1rem;
-  color: var(--text-secondary);
+  color: var(--color-text-secondary);
   overflow-wrap: break-word;
   word-break: break-word;
   overflow: hidden;
@@ -79,7 +79,7 @@
 }
 
 .intro {
-  color: var(--text-secondary);
+  color: var(--color-text-secondary);
   text-align: center;
   font-size: var(--font-size-base);
   line-height: var(--line-height-base);
@@ -90,7 +90,7 @@
 }
 
 .buttonSection {
-  color: var(--text-secondary);
+  color: var(--color-text-secondary);
   text-align: center;
   font-size: 1rem;
   margin-bottom: var(--spacing-xs);
@@ -110,9 +110,9 @@
   min-width: 0;
   min-height: var(--min-touch-target);
   padding: var(--spacing-sm) var(--spacing-md);
-  border: 1px solid var(--primary-color);
+  border: 1px solid var(--color-primary);
   border-radius: var(--border-radius-sm);
-  background: var(--primary-color);
+  background: var(--color-primary);
   color: white;
   font-weight: 600;
   cursor: pointer;
@@ -120,7 +120,7 @@
 }
 
 .buttonSubSection button:hover {
-  background: color-mix(in srgb, var(--primary-color) 90%, black);
+  background: color-mix(in srgb, var(--color-primary) 90%, black);
   box-shadow: 0 2px 4px rgba(124, 77, 255, 0.2);
 }
 
@@ -135,7 +135,7 @@
 }
 
 .qrCodeSection {
-  color: var(--text-secondary);
+  color: var(--color-text-secondary);
   font-size: 1rem;
   margin-bottom: var(--spacing-xs);
   display: flex;
@@ -145,7 +145,7 @@
 }
 
 .details {
-  color: var(--text-muted);
+  color: var(--color-text-muted);
   text-align: center;
   font-size: var(--font-size-base);
   line-height: var(--line-height-base);
