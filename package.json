@@ -19,7 +19,7 @@
   "scripts": {
     "clean": "rm -rf lib",
     "build": "npm run clean && npm run typecheck && npm run build-dist && npm run build-js",
-    "build-js": "tsc",
+    "build-js": "babel src --out-dir lib --extensions '.ts' && tsc --emitDeclarationOnly",
     "build-dist": "webpack --progress",
     "lint": "eslint",
     "lint-fix": "eslint --fix",
