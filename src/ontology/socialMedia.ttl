@@ -25,7 +25,7 @@
 
 foaf:Account a rdfs:Class;
     rdfs:label "Online Account Provider";
-    owl:disjointUnionOf ( :BlueSkyAccount :FacebookAccount :GithubAccount :InstagramAccount
+    owl:disjointUnionOf ( :BlueSkyAccount :Digg :FacebookAccount :GithubAccount :InstagramAccount
     :LinkedInAccount :MastodonAccount :MatrixAccount :MediumAccount :NostrAccount :OrcidAccount :PinterestAccount
     :RedditAccount :SnapchatAccount :StravaAccount :TiktokAccount  :TumblrAccount  :TwitterAccount :OtherAccount) .
 
@@ -34,6 +34,12 @@ foaf:Account a rdfs:Class;
     foaf:userProfilePrefix "https://bsky.app/profile/";
     foaf:icon <https://solidos.github.io/solid-ui/src/icons/social/bluesky-1.svg>;
     foaf:homepage <https://bsky.app/> .
+
+:Digg rdfs:subClassOf foaf:Account ;
+    rdfs:label "Digg";
+    foaf:userProfilePrefix "https://www.digg.com/";
+    foaf:icon <https://solidos.github.io/solid-ui/src/icons/social/digg-icon.svg>;
+    foaf:homepage <https://www.digg.com/> .
 
 :FacebookAccount rdfs:subClassOf foaf:Account ;
     rdfs:label "Facebook";
@@ -142,4 +148,3 @@ foaf:Account a rdfs:Class;
     foaf:icon <https://solidos.github.io/solid-ui/src/icons/noun_1689339.svg> .
 
 # ends
-
