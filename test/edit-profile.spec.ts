@@ -84,10 +84,10 @@ describe('edit-profile-pane', () => {
       fakeLogInAs(subject)
       store.updater.editable = function () { console.log('nocked editable'); return 'SPARQL'}
       const result = editorPane.render(subject, context)
-      console.log('editorPane name ', editorPane.name )
-      console.log('editorPane rendered 1 <<< ', result.innerHTML , '>>>')
+      //console.log('editorPane name ', editorPane.name )
+      //console.log('editorPane rendered 1 <<< ', result.innerHTML , '>>>')
       await delay(3000)
-      console.log('editorPane rendered later 1 <<< ', result.outerHTML , '>>>')
+      //console.log('editorPane rendered later 1 <<< ', result.outerHTML , '>>>')
 
       element = result
     })
@@ -112,10 +112,7 @@ describe('edit-profile-pane', () => {
       fakeLogInAs(null)
       store.updater.editable = function () { console.log('nocked editable'); return 'SPARQL'}
       const result = editorPane.render(subject, context)
-      console.log('editorPane name ', editorPane.name )
-      console.log('editorPane rendered early <<< ', result.outerHTML , '>>>')
       await delay(3000)
-      console.log('editorPane rendered later <<< ', result.outerHTML , '>>>')
       element = result
       // element = await findByTestId(result, "profile-editor");
     })

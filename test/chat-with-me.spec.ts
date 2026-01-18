@@ -3,6 +3,8 @@ import {parse} from 'rdflib'
 import {ChatLogic} from 'solid-logic'
 import pane from '../src'
 import {context, doc, subject} from './setup'
+import {logInToChatWithMeButtonText, userNotLoggedInErrorMessage, loadingMessage} from '../src/texts'
+import {jest} from '@jest/globals'
 
 describe('chat with me', () => {
 
@@ -18,8 +20,8 @@ describe('chat with me', () => {
         parse(turtle, context.session.store, doc.uri)
     })
 
-    describe('without a started chat', () => {
-        let result
+    describe('without a started chat and not logged in', () => {
+        let result: HTMLElement
         beforeAll(() => {
             context.session.logic.chat = {
                 getChat: jest.fn().mockReturnValue(null),
@@ -27,21 +29,16 @@ describe('chat with me', () => {
             result = pane.render(subject, context)
         })
 
-        it('renders a chat button', async () => {
-            const button = await findByText(result, 'CHAT WITH ME')
-            expect(button).not.toBeNull()
-        })
+         it('renders the Login to chat with me button', async () => {
+              const button = await findByText(result, logInToChatWithMeButtonText.toUpperCase())
+              expect(button).not.toBeNull()
+         })
 
-        it('shows the chat when button is clicked', async () => {
-            const button = await findByText(result, 'CHAT WITH ME')
-            fireEvent.click(button)
-            const chatPane = await findByText(result,'mock long chat pane')
-            expect(chatPane).not.toBeNull()
-        })
     })
 
+
     describe('while chat loading', () => {
-        let result
+        let result: HTMLElement
         beforeAll(() => {
             context.session.logic.chat = {
                 getChat: jest.fn().mockReturnValue(new Promise(() => null)),
@@ -50,14 +47,14 @@ describe('chat with me', () => {
         })
 
         it('renders a loading text', async () => {
-            const button = await findByText(result, 'Loading...')
+            const button = await findByText(result, loadingMessage.toUpperCase())
             expect(button).not.toBeNull()
         })
 
     })
 
     describe('with a started chat', () => {
-        let result
+        let result: HTMLElement
         beforeAll(() => {
             context.session.logic.chat = {
                 getChat: jest.fn().mockReturnValue('https://pod.example/chat'),

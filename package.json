@@ -1,13 +1,14 @@
 {
   "name": "profile-pane",
-  "version": "2.0.0",
+  "version": "2.0.0-newStyle",
   "description": "A SolidOS compatible pane to display a personal profile page",
   "sideEffects": false,
   "repository": {
     "type": "git",
     "url": "git+https://github.com/solidos/profile-pane.git"
   },
-  "main": "lib/index.js",
+  "main": "lib/profile-pane.js",
+  "types": "lib/index.d.ts",
   "files": [
     "/lib",
     "README.md",
@@ -15,9 +16,9 @@
   ],
   "scripts": {
     "clean": "rm -rf lib",
-    "build": "npm run clean && npm run typecheck && npm run build-js && npm run build-types",
-    "build-js": "babel src --out-dir lib --extensions .ts,.js",
-    "build-types": "tsc --emitDeclarationOnly",
+    "build": "npm run clean && npm run typecheck && npm run build-dist && npm run build-js",
+    "build-js": "tsc",
+    "build-dist": "webpack --progress",
     "lint": "eslint",
     "lint-fix": "eslint --fix",
     "test": "jest --no-coverage",
@@ -49,9 +50,9 @@
     "validate-color": "^2.2.4"
   },
   "peerDependencies": {
-    "rdflib": "^2.3.0",
-    "solid-logic": "^4.0.0",
-    "solid-ui": "^3.0.0"
+    "rdflib": "^2.3.5",
+    "solid-logic": "^4.0.1",
+    "solid-ui": "^3.0.1-11be53b"
   },
   "devDependencies": {
     "@babel/cli": "^7.28.3",
@@ -65,19 +66,25 @@
     "babel-jest": "^30.0.0",
     "babel-loader": "^10.0.0",
     "babel-plugin-inline-import": "^3.0.0",
-    "chat-pane": "^3.0.0",
+    "chat-pane": "^3.0.0-013148ba",
+    "css-loader": "^7.1.2",
     "eslint": "^9.33.0",
     "html-webpack-plugin": "^5.6.3",
+    "identity-obj-proxy": "^3.0.0",
     "jest": "^30.0.2",
     "jest-environment-jsdom": "^30.0.2",
     "jest-fetch-mock": "^3.0.3",
     "jsdom": "^27.0.0",
     "node-polyfill-webpack-plugin": "^4.1.0",
-    "rdflib": "^2.3.0",
-    "solid-logic": "^4.0.0",
-    "solid-ui": "^3.0.0",
+    "rdflib": "^2.3.5",
+    "solid-logic": "^4.0.1",
+    "solid-ui": "^3.0.1-11be53b",
+    "style-loader": "^4.0.0",
+    "terser-webpack-plugin": "^5.3.14",
+    "ts-loader": "^9.5.4",
     "typescript": "^5.9.2",
-    "webpack": "^5.99.9",
+    "typescript-plugin-css-modules": "^5.2.0",
+    "webpack": "^5.103.0",
     "webpack-cli": "^6.0.1",
     "webpack-dev-server": "^5.2.2"
   }

@@ -1,0 +1,15 @@
+/* Caption under the QR code */
+.qrCaption {
+  text-align: center;
+  margin-top: 0;
+  font-size: 0.95em;
+  color: var(--text-secondary);
+}
+
+.QRCode {
+  width: 60%;
+  height: 60%;
+  max-width: 100%;
+  margin: 0 auto;
+  display: block;
+}

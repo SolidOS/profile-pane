@@ -1,0 +1,117 @@
+/* ProfileCard.module.css */
+
+.header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: var(--spacing-md);
+}
+
+.profileCard {
+  /* Use global card styles */
+}
+
+.profileCard div button {
+  background-color: transparent;
+}
+
+.profileCard div button:hover {
+  background-color: transparent;
+}
+
+.image {
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: var(--spacing-sm);
+  box-shadow: var(--box-shadow-sm);
+  border: 3px solid var(--primary-color);
+  background: var(--card-internal-bg);
+  padding: 6px;
+  box-sizing: border-box;
+}
+
+.name {
+  font-size: var(--font-size-xl);
+  font-weight: 700;
+  line-height: var(--line-height-tight);
+  text-align: center;
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+  margin: 0;
+  letter-spacing: var(--letter-spacing-wide);
+}
+
+.intro {
+  color: var(--text-secondary);
+  text-align: center;
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-base);
+  margin-bottom: var(--spacing-xs);
+  max-width: 40ch;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.buttonSection {
+  color: var(--text-secondary);
+  text-align: center;
+  font-size: 1rem;
+  margin-bottom: var(--spacing-xs);
+}
+
+.buttonSubSection {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  width: 100%;
+  min-width: 0;
+  text-align: center;
+}
+
+.buttonSubSection button {
+  width: 100%;
+  min-width: 0;
+  min-height: var(--min-touch-target);
+  padding: var(--spacing-sm) var(--spacing-md);
+  border: 1px solid var(--primary-color);
+  border-radius: var(--border-radius-sm);
+  background: var(--primary-color);
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--animation-duration) ease;
+}
+
+.buttonSubSection button:hover {
+  background: color-mix(in srgb, var(--primary-color) 90%, black);
+  box-shadow: 0 2px 4px rgba(124, 77, 255, 0.2);
+}
+
+.buttonSubSection button:active {
+  box-shadow: 0 1px 2px rgba(124, 77, 255, 0.2);
+}
+
+.buttonSubSection button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.qrCodeSection {
+  color: var(--text-secondary);
+  text-align: center;
+  font-size: 1rem;
+  margin-bottom: var(--spacing-xs);
+}
+
+.details {
+  color: var(--text-muted);
+  text-align: center;
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-base);
+  max-width: 45ch;
+  margin-left: auto;
+  margin-right: auto;
+}
