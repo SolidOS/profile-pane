@@ -1,5 +1,4 @@
 import { DataBrowserContext } from 'pane-registry'
-import './styles/global.css'
 import './styles/CVCard.css'
 import './styles/ChatWithMe.css'
 import './styles/FriendList.css'
