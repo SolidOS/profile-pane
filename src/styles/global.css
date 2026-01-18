@@ -14,24 +14,24 @@
   --color-card-bg: #FFFFFF; /* White for inner cards */
   --color-section-bg: #F5F5F5; /* Light grey for outer sections */
 
-  --text-color: #1A1A1A; /* Near-black */
+  --color-text: #1A1A1A; /* Near-black */
   --color-text-secondary: #666; /* Added for repeated usage */
   --color-text-muted: #444; /* Added for repeated usage */
-  --border-light: #eee; /* Added for repeated borders */
-  --border-radius: 1rem; /* Matches module usage */
-  --border-radius-sm: 0.5rem;
+  --color-border-pale: #eee; /* Added for repeated borders */
+  --border-radius-full: 1em; /* Matches module usage */
+  --border-radius-base: 0.5em;
   --box-shadow: 0 2px 8px rgba(124,77,255,0.08); /* Matches module usage */
   --box-shadow-sm: 0 1px 4px rgba(124,77,255,0.12);
-  --spacing-xs: 0.5rem;
-  --spacing-sm: 0.75rem;
-  --spacing-md: 1rem;
-  --spacing-lg: 1.5rem;
-  --spacing-xl: 2rem;
-  --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-  --font-size-base: 1rem; /* 16px default */
-  --font-size-sm: 0.875rem; /* 14px */
-  --font-size-lg: 1.125rem; /* 18px */
-  --font-size-xl: 1.25rem; /* 20px */
+  --spacing-xs: 0.5em;
+  --spacing-sm: 0.75em;
+  --spacing-md: 1em;
+  --spacing-lg: 1.5em;
+  --spacing-xl: 2em;
+  --font-family-base: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  --font-size-base: 1em; /* 16px default */
+  --font-size-sm: 0.875em; /* 14px */
+  --font-size-lg: 1.125em; /* 18px */
+  --font-size-xl: 1.25em; /* 20px */
   --line-height-base: 1.5; /* WCAG recommended */
   --line-height-tight: 1.4;
   --line-height-loose: 1.6;
@@ -57,7 +57,7 @@
 html, body {
   margin: 0;
   padding: 0;
-  font-family: var(--font-family);
+  font-family: var(--font-family-base);
   font-size: var(--font-size-base);
   line-height: var(--line-height-base);
   background: var(--color-background);
@@ -76,11 +76,11 @@ h1, h2, h3, h4, h5, h6 {
   margin-bottom: var(--spacing-sm);
 }
 
-h1 { font-size: 2rem; }    /* 32px */
-h2 { font-size: 1.5rem; }  /* 24px */
-h3 { font-size: 1.25rem; } /* 20px */
-h4 { font-size: 1.125rem; }/* 18px */
-h5, h6 { font-size: 1rem; }/* 16px */
+h1 { font-size: 2em; }    /* 32px */
+h2 { font-size: 1.5em; }  /* 24px */
+h3 { font-size: 1.25em; } /* 20px */
+h4 { font-size: 1.125em; }/* 18px */
+h5, h6 { font-size: 1em; }/* 16px */
 
 /* Better paragraph spacing */
 p {
@@ -135,7 +135,7 @@ a:hover, a:focus {
 /* Accessibility: High contrast mode support */
 @media (prefers-contrast: high) {
   :root {
-    --border-light: #000;
+    --color-border-pale: #000;
     --box-shadow: 0 2px 4px rgba(0,0,0,0.5);
     --box-shadow-sm: 0 1px 2px rgba(0,0,0,0.3);
   }
@@ -161,7 +161,7 @@ a:hover, a:focus {
   color: white;
   padding: var(--spacing-sm) var(--spacing-md);
   text-decoration: none;
-  border-radius: var(--border-radius-sm);
+  border-radius: var(--border-radius-base);
   z-index: 1000;
   font-weight: 600;
   font-size: var(--font-size-base);
@@ -216,7 +216,7 @@ a:focus {
 [role="alert"] {
   padding: var(--spacing-md);
   border: 2px solid var(--color-error);
-  border-radius: var(--border-radius-sm);
+  border-radius: var(--border-radius-base);
   background-color: rgba(176, 0, 32, 0.1);
   margin: var(--spacing-md) 0;
 }
@@ -225,7 +225,7 @@ a:focus {
 [role="status"] {
   padding: var(--spacing-md);
   border: 2px solid var(--color-success);
-  border-radius: var(--border-radius-sm);
+  border-radius: var(--border-radius-base);
   background-color: rgba(0, 200, 83, 0.1);
   margin: var(--spacing-md) 0;
 }
@@ -265,7 +265,7 @@ td {
 button, [role="button"] {
   cursor: pointer;
   border: none;
-  border-radius: var(--border-radius-sm);
+  border-radius: var(--border-radius-base);
   padding: var(--spacing-sm) var(--spacing-md);
   min-height: var(--min-touch-target);
   min-width: var(--min-touch-target);
@@ -285,7 +285,7 @@ button:disabled, [role="button"][aria-disabled="true"] {
 .loading-spinner {
   width: 40px;
   height: 40px;
-  border: 3px solid var(--border-light);
+  border: 3px solid var(--color-border-pale);
   border-top: 3px solid var(--color-primary);
   border-radius: 50%;
   animation: spin 1s linear infinite;
@@ -382,9 +382,9 @@ button:disabled, [role="button"][aria-disabled="true"] {
 .errorMessageBlock .close,
 .errorMessageBlock button[type="button"],
 .errorMessageBlock .button {
-  background: var(--border-light) !important;
+  background: var(--color-border-pale) !important;
   color: var(--text-color) !important;
-  border: 1px solid var(--border-light) !important;
+  border: 1px solid var(--color-border-pale) !important;
 }
 
 .errorMessageBlock .close:hover,

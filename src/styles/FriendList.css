@@ -3,7 +3,7 @@
 
 .friendItem {
   padding: var(--spacing-xs) 0;
-  font-size: 1rem;
+  font-size: 1em;
   color: var(--color-text-muted);
 }
 

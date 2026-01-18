@@ -62,7 +62,7 @@
 
 .buttonSection {
   color: var(--color-text-secondary);
-  font-size: 1rem;
+  font-size: 1em;
   margin-bottom: var(--spacing-xs);
 }
 
@@ -78,7 +78,7 @@
 
 .qrCodeSection {
   color: var(--color-text-secondary);
-  font-size: 1rem;
+  font-size: 1em;
   margin-bottom: var(--spacing-xs);
 }
 

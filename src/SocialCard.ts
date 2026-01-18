@@ -15,12 +15,8 @@ export const SocialCard = (
       <section
         class="socialCard"
         aria-labelledby="social-card-title"
-        role="region"
         data-testid="social-media"
       >
-        <header class="socialHeader">
-          <h3 id="social-card-title">Follow me on</h3>
-        </header>
         <nav aria-label="Social media profiles">
           <ul class="socialList list-reset" role="list">
             ${accounts.map(account => renderAccount(account))}

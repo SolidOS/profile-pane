@@ -82,10 +82,6 @@ describe('profile-pane', () => {
       element = await findByTestId(result, 'social-media')
     })
 
-    it('renders the social networks', () => {
-      expect(element).toContainHTML('Follow me on')
-    })
-
     it('renders link to Facebook', () => {
       expect(element).toContainHTML('Facebook')
     })
