@@ -64,7 +64,7 @@ html, body {
   font-size: var(--font-size-base);
   line-height: var(--line-height-base);
   background: var(--color-background);
-  color: var(--text-color);
+  color: var(--color-text);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
@@ -375,7 +375,7 @@ button:disabled, [role="button"][aria-disabled="true"] {
 .errorMessageBlock button[type="button"],
 .errorMessageBlock .button {
   background: var(--color-border-pale) !important;
-  color: var(--text-color) !important;
+  color: var(--color-text) !important;
   border: 1px solid var(--color-border-pale) !important;
 }
 
