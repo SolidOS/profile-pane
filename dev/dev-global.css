@@ -370,17 +370,6 @@ button:disabled, [role="button"][aria-disabled="true"] {
   color: var(--color-text-muted);
 }
 
-/* Responsive grid for profile */
-.profile-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-  gap: 1.5em;
-  background: var(--profile-grid-bg, var(--color-background));
-}
-.profile-header, .profile-footer {
-  grid-column: 1 / -1;
-}
-
 /* Override solid-ui error message close button styling */
 .errorMessageBlock .close,
 .errorMessageBlock button[type="button"],

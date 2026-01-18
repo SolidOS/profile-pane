@@ -1,4 +1,4 @@
-import './global.css'
+import './dev-global.css'
 import { sym } from 'rdflib'
 import { default as pane } from '../src'
 import { context, fetcher } from './context'

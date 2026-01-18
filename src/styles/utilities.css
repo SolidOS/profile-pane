@@ -1,5 +1,21 @@
 /* Utility-first CSS classes for layout, spacing, and responsiveness */
 
+/* ===========================================
+   PROFILE GRID LAYOUT
+   =========================================== */
+
+.profile-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(var(--grid-min-column), 1fr));
+  gap: var(--spacing-lg);
+  background: var(--color-background);
+}
+
+.profile-header,
+.profile-footer {
+  grid-column: 1 / -1;
+}
+
 .center {
   display: flex;
   justify-content: center;
