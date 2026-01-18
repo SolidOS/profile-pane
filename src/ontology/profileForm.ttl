@@ -418,6 +418,7 @@ WHERE
 
   :AccountIdField a ui:Options; ui:dependingOn rdf:type; ui:case
      [ ui:for soc:BlueSkyAccount; ui:use :BlueSkyIdField ],
+     [ ui:for soc:DiggAccount; ui:use :DiggIdField],
      [ ui:for soc:FacebookAccount; ui:use :FacebookIdField ],
      [ ui:for soc:GithubAccount; ui:use :GithubIdField ],
      [ ui:for soc:InstagramAccount; ui:use :InstagramIdField ],
@@ -442,6 +443,14 @@ WHERE
       ui:maxLength "200" ;
       ui:property foaf:accountName ; 
       ui:pattern "@[a-z0-9A-Z_-](.[a-z0-9A-Z_-])*";  # @@
+      ui:size    40 .
+
+  :DiggIdField
+      a ui:SingleLineTextField ;
+      ui:label "Digg Id";
+      ui:maxLength "200" ;
+      ui:property foaf:accountName ; 
+      ui:pattern "@[a-z0-9A-Z_-]*";  # @@
       ui:size    40 .
 
   :FacebookIdField
