@@ -1,43 +1,45 @@
 import { html, TemplateResult } from 'lit-html'
-import { styleMap } from 'lit-html/directives/style-map.js'
 import { DataBrowserContext } from 'pane-registry'
 import { authn } from 'solid-logic'
 import { LiveStore, NamedNode, st } from 'rdflib'
-import { ns, widgets } from 'solid-ui'
+import { ns, widgets, style } from 'solid-ui'
 import {
   clearPreviousMessage, complain,
   mention
-} from './addMeToYourFriendsHelper'
-import { padding, textCenter } from './baseStyles'
+} from './buttonsHelper'
 import {
   addMeToYourFriendsButtonText, friendExistsAlreadyButtonText, friendExistsMessage, friendWasAddedSuccesMessage, logInAddMeToYourFriendsButtonText, userNotLoggedInErrorMessage
 } from './texts'
+import * as localStyles from './styles/ProfileCard.module.css'
 
 let buttonContainer = <HTMLDivElement>document.createElement('div')
-
-//panel local style
-const styles = {
-  button: styleMap({ ...textCenter(), ...padding() }),
-}
 
 const addMeToYourFriendsDiv = (
   subject: NamedNode,
   context: DataBrowserContext
 ): TemplateResult => {
-  buttonContainer = context.dom.createElement('div')
+
+  buttonContainer = context.dom.createElement('section') as HTMLDivElement
+  buttonContainer.setAttribute('class', localStyles.buttonSubSection)
+  buttonContainer.setAttribute('aria-labelledby', 'add-me-to-your-friends-button-section')
+  buttonContainer.setAttribute('role', 'region')
+  buttonContainer.setAttribute('data-testid', 'button')
+
   const button = createAddMeToYourFriendsButton(subject, context)
   buttonContainer.appendChild(button)
-  return html` <div style="${styles.button}">${buttonContainer}</div> `
+  return html`<div class="center">${buttonContainer}</div>`
 }
 
 const createAddMeToYourFriendsButton = (
   subject: NamedNode,
   context: DataBrowserContext
 ): HTMLButtonElement => {
+  const me = authn.currentUser()
+  let label = checkIfAnyUserLoggedIn(me) ? addMeToYourFriendsButtonText.toUpperCase() : logInAddMeToYourFriendsButtonText.toUpperCase()
   const button = widgets.button(
     context.dom,
     undefined,
-    logInAddMeToYourFriendsButtonText,
+    label,
     setButtonHandler, //sets an onclick event listener
     {
       needsBorder: true,
@@ -66,21 +68,24 @@ const createAddMeToYourFriendsButton = (
     const store: LiveStore = context.session.store
 
     if (checkIfAnyUserLoggedIn(me)) {
-      checkIfFriendExists(store , me, subject).then((friendExists) => {
+      checkIfFriendExists(store, me, subject).then((friendExists) => {
         if (friendExists) {
           //logged in and friend exists or friend was just added
           button.innerHTML = friendExistsAlreadyButtonText.toUpperCase()
-          button.setAttribute('class', 'textButton-0-1-3') //style of 'Primary' UI button with needsBorder=true
+          button.className = 'button'
+          button.setAttribute('class', style.primaryButton)
         } else {
           //logged in and friend does not exist yet
           button.innerHTML = addMeToYourFriendsButtonText.toUpperCase()
-          button.setAttribute('class', 'textButton-0-1-2') //style of 'Primary' UI button with needsBorder=false
+          button.className = 'button'
+          button.setAttribute('class', style.primaryButtonNoBorder)
         }
       })
     } else {
       //not logged in
       button.innerHTML = logInAddMeToYourFriendsButtonText.toUpperCase()
-      button.setAttribute('class', 'textButton-0-1-3') //style of 'Primary' UI button with needsBorder=false
+      button.className = 'button'
+      button.setAttribute('class', style.primaryButton)
     }
   }
 
@@ -132,6 +137,5 @@ export {
   addMeToYourFriendsDiv,
   createAddMeToYourFriendsButton,
   saveNewFriend,
-  checkIfAnyUserLoggedIn,
   checkIfFriendExists,
 }

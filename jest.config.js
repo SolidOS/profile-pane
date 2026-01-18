@@ -1,4 +1,4 @@
-export default {
+module.exports = {
   // verbose: true, // Uncomment for detailed test output
   collectCoverage: true,
   coverageDirectory: 'coverage',
@@ -7,7 +7,7 @@ export default {
     customExportConditions: ['node'],
   },
   transform: {
-    '^.+\\.[tj]sx?$': ['babel-jest', { configFile: './babel.config.mjs' }],
+    '^.+\\.(ts|js)$': ['babel-jest'],
   },
   setupFilesAfterEnv: ["./test/helpers/jest.setup.ts"],
   transformIgnorePatterns: ["/node_modules/(?!lit-html).+\\.js"],
@@ -17,8 +17,9 @@ export default {
   },
   roots: ['<rootDir>/src', '<rootDir>/test', '<rootDir>/__mocks__'],
   moduleNameMapper: {
+    '\\.module\\.css$': 'identity-obj-proxy',
+    '\\.css$': '<rootDir>/__mocks__/fileMock.js',
     '^SolidLogic$': 'solid-logic',
     '^\\$rdf$': 'rdflib'
   }
 }
-
