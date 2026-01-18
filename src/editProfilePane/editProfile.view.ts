@@ -10,11 +10,9 @@
 
 import { PaneDefinition } from 'pane-registry'
 import { NamedNode, parse, Store, sym } from 'rdflib'
-import { icons, login, ns, style, widgets } from 'solid-ui'
+import { icons, login, ns, widgets } from 'solid-ui'
 import { paneDiv } from './profile.dom'
 import profileForm from '../ontology/profileForm.ttl'
-
-const highlightColor = style.highlightColor || '#7C4DFF'
 
 const editProfileView: PaneDefinition = {
   global: true,
@@ -58,25 +56,25 @@ const editProfileView: PaneDefinition = {
     const div = dom.createElement('div')
     div.setAttribute('data-testid', 'profile-editor')
     let editableProfile: NamedNode | null
-    div.setAttribute('style', `border: 0.3em solid ${highlightColor}; border-radius: 0.5em; padding: 0.7em; margin-top:0.7em;`)
+    div.setAttribute('style', 'border: 0.3em solid var(--sui-primary, #7C4DFF); border-radius: var(--sui-border-radius, 0.5em); padding: var(--sui-space-md, 0.7em); margin-top: var(--sui-space-md, 0.7em);')
 
     const table = div.appendChild(dom.createElement('table'))
     // const top = table.appendChild(dom.createElement('tr'))
     const main = table.appendChild(dom.createElement('tr'))
     const bottom = table.appendChild(dom.createElement('tr'))
     const statusArea = bottom.appendChild(dom.createElement('div'))
-    statusArea.setAttribute('style', 'padding: 0.7em;')
+    statusArea.setAttribute('style', 'padding: var(--sui-space-md, 0.7em);')
 
     function comment (str: string) {
       const p = main.appendChild(dom.createElement('p'))
-      p.setAttribute('style', 'padding: 1em;')
+      p.setAttribute('style', 'padding: var(--sui-space-md, 1em);')
       p.textContent = str
       return p
     }
 
     function heading (str: string) {
       const h = main.appendChild(dom.createElement('h3'))
-      h.setAttribute('style', 'color:' + highlightColor + ';')
+      h.setAttribute('style', 'color: var(--sui-primary, #7C4DFF);')
       h.textContent = str
       return h
     }

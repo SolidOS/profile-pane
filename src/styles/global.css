@@ -6,36 +6,38 @@
   align-items: center;
 }
 
-/* Accessible color palette */
+/* Accessible color palette - aligned with solid-ui theme system */
 
 :root {
-  --primary-color: #7C4DFF; /* Vivid Purple */
-  --secondary-color: #0077B6; /* Accessible Blue */
-  --background-color: #FFFFFF; /* White */
-  --card-bg: #FFFFFF; /* White for inner cards */
-  --section-bg: #F5F5F5; /* Light grey for outer sections */
-  --card-internal-bg: #FFFFFF; /* White for internal components */
-  --text-color: #1A1A1A; /* Near-black */
-  --text-secondary: #666; /* Added for repeated usage */
-  --text-muted: #444; /* Added for repeated usage */
-  --border-light: #eee; /* Added for repeated borders */
-  --accent-color: #FFD600; /* Bright Yellow */
-  --error-color: #B00020; /* Accessible Red */
-  --success-color: #00C853; /* Accessible Green */
-  --border-radius: 1rem; /* Matches module usage */
-  --border-radius-sm: 0.5rem;
-  --box-shadow: 0 2px 8px rgba(124,77,255,0.08); /* Matches module usage */
-  --box-shadow-sm: 0 1px 4px rgba(124,77,255,0.12);
-  --spacing-xs: 0.5rem;
-  --spacing-sm: 0.75rem;
-  --spacing-md: 1rem;
-  --spacing-lg: 1.5rem;
-  --spacing-xl: 2rem;
-  --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-  --font-size-base: 1rem; /* 16px default */
-  --font-size-sm: 0.875rem; /* 14px */
-  --font-size-lg: 1.125rem; /* 18px */
-  --font-size-xl: 1.25rem; /* 20px */
+  /* Use solid-ui theme variables where available, fall back to profile-pane defaults */
+  --primary-color: var(--sui-primary, #7C4DFF); /* Vivid Purple */
+  --color-primary: var(--sui-primary, #7C4DFF); /* Alias for consistency */
+  --secondary-color: var(--sui-secondary, #0077B6); /* Accessible Blue */
+  --background-color: var(--sui-bg, #FFFFFF); /* White */
+  --card-bg: var(--sui-bg-panel, #FFFFFF); /* White for inner cards */
+  --section-bg: var(--sui-bg-secondary, #F5F5F5); /* Light grey for outer sections */
+  --card-internal-bg: var(--sui-bg-panel, #FFFFFF); /* White for internal components */
+  --text-color: var(--sui-text, #1A1A1A); /* Near-black */
+  --text-secondary: var(--sui-text-secondary, #666); /* Added for repeated usage */
+  --text-muted: var(--sui-text-muted, #444); /* Added for repeated usage */
+  --border-light: var(--sui-border-light, #eee); /* Added for repeated borders */
+  --accent-color: var(--sui-accent, #FFD600); /* Bright Yellow */
+  --error-color: var(--sui-error, #B00020); /* Accessible Red */
+  --success-color: var(--sui-success, #00C853); /* Accessible Green */
+  --border-radius: var(--sui-border-radius-lg, 1rem); /* Matches module usage */
+  --border-radius-sm: var(--sui-border-radius-sm, 0.5rem);
+  --box-shadow: var(--sui-shadow, 0 2px 8px rgba(124,77,255,0.08)); /* Matches module usage */
+  --box-shadow-sm: var(--sui-shadow-sm, 0 1px 4px rgba(124,77,255,0.12));
+  --spacing-xs: var(--sui-spacing-xs, 0.5rem);
+  --spacing-sm: var(--sui-spacing-sm, 0.75rem);
+  --spacing-md: var(--sui-spacing-md, 1rem);
+  --spacing-lg: var(--sui-spacing-lg, 1.5rem);
+  --spacing-xl: var(--sui-spacing-xl, 2rem);
+  --font-family: var(--sui-font-family, 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif);
+  --font-size-base: var(--sui-font-size-base, 1rem); /* 16px default */
+  --font-size-sm: var(--sui-font-size-sm, 0.875rem); /* 14px */
+  --font-size-lg: var(--sui-font-size-lg, 1.125rem); /* 18px */
+  --font-size-xl: var(--sui-font-size-xl, 1.25rem); /* 20px */
   --line-height-base: 1.5; /* WCAG recommended */
   --line-height-tight: 1.4;
   --line-height-loose: 1.6;
