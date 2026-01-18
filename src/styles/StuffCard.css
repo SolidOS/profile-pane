@@ -12,7 +12,7 @@
   font-weight: 600;
   padding: var(--spacing-sm);
   text-align: left;
-  color: var(--text-color);
+  color: var(--color-text);
 }
 
 .stuffTable th,

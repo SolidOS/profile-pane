@@ -1,12 +1,11 @@
 /* Utility-first CSS classes for layout, spacing, and responsiveness */
-
 /* ===========================================
    PROFILE GRID LAYOUT
    =========================================== */
 
 .profile-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(var(--grid-min-column), 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(30em, 1fr));
   gap: var(--spacing-lg);
   background: var(--color-background);
 }
@@ -180,7 +179,7 @@
 }
 
 .text-contrast-high {
-  color: var(--text-color);
+  color: var(--color-text);
   font-weight: 600;
 }
 
@@ -194,7 +193,7 @@
 
 /* High contrast text */
 .high-contrast {
-  color: var(--text-color);
+  color: var(--color-text);
   background: var(--color-background);
   border: 1px solid var(--color-border-pale);
 }

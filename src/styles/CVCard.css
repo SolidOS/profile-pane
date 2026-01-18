@@ -27,7 +27,7 @@
 }
 
 .cvSection h3 {
-  color: var(--text-color);
+  color: var(--color-text);
   font-size: var(--font-size-lg);
   font-weight: 600;
   line-height: var(--line-height-tight);
