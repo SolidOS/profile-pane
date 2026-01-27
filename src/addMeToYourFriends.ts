@@ -2,7 +2,7 @@ import { html, TemplateResult } from 'lit-html'
 import { DataBrowserContext } from 'pane-registry'
 import { authn } from 'solid-logic'
 import { LiveStore, NamedNode, st } from 'rdflib'
-import { ns, widgets, style } from 'solid-ui'
+import { ns, widgets } from 'solid-ui'
 import {
   clearPreviousMessage, complain,
   mention
@@ -12,7 +12,7 @@ import {
 } from './texts'
 import './styles/ProfileCard.css'
 
-let buttonContainer = <HTMLDivElement>document.createElement('div')
+let buttonContainer = <HTMLDivElement>document.createElement('section')
 
 const addMeToYourFriendsDiv = (
   subject: NamedNode,
@@ -20,7 +20,7 @@ const addMeToYourFriendsDiv = (
 ): TemplateResult => {
 
   buttonContainer = context.dom.createElement('section') as HTMLDivElement
-  buttonContainer.setAttribute('class', 'buttonSubSection text-truncate text-center')
+  buttonContainer.setAttribute('class', 'buttonSubSection text-truncate text-center center')
   buttonContainer.setAttribute('aria-labelledby', 'add-me-to-your-friends-button-section')
   buttonContainer.setAttribute('data-testid', 'button')
 
@@ -79,20 +79,14 @@ const createAddMeToYourFriendsButton = (
         if (friendExists) {
           //logged in and friend exists or friend was just added
           button.innerHTML = friendExistsAlreadyButtonText.toUpperCase()
-          button.className = 'button'
-          button.setAttribute('class', style.primaryButton)
         } else {
           //logged in and friend does not exist yet
           button.innerHTML = addMeToYourFriendsButtonText.toUpperCase()
-          button.className = 'button'
-          button.setAttribute('class', style.primaryButtonNoBorder)
         }
       })
     } else {
       //not logged in
       button.innerHTML = logInAddMeToYourFriendsButtonText.toUpperCase()
-      button.className = 'button'
-      button.setAttribute('class', style.primaryButton)
     }
   }
 

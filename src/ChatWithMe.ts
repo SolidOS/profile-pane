@@ -1,7 +1,7 @@
 import { html, TemplateResult } from 'lit-html'
 import { DataBrowserContext } from 'pane-registry'
 import { NamedNode } from 'rdflib'
-import { widgets, style } from 'solid-ui'
+import { widgets } from 'solid-ui'
 import { authn } from 'solid-logic'
 import { asyncReplace } from 'lit-html/directives/async-replace.js'
 import { chatWithMeButtonText, logInToChatWithMeButtonText, loadingMessage } from './texts'
@@ -32,9 +32,11 @@ export const ChatWithMe = (
     let exists
     try {
       yield html`
-        <div class="chatLoading loading-text" role="status" aria-live="polite">
+      <div class="buttonSubSection center">
+        <div class="actionButton loading-text center" role="status" aria-live="polite">
           ${loadingMessage.toUpperCase()}
         </div>
+      </div>
       `
       exists = await logic.chat.getChat(subject, false)
     } catch (e) {
@@ -77,13 +79,9 @@ export const ChatWithMe = (
     
         if (checkIfAnyUserLoggedIn(me)) {
           button.innerHTML = chatWithMeButtonText.toUpperCase()
-          button.className = 'button'
-          button.setAttribute('class', style.primaryButton)
         } else {
           //not logged in
           button.innerHTML = logInToChatWithMeButtonText.toUpperCase()
-          button.className = 'button'
-          button.setAttribute('class', style.primaryButton)
         }
       }
 

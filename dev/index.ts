@@ -19,13 +19,13 @@ async function finishLogin() {
   } else {
     webId.innerHTML = ''
   }
+  fetcher.load(webIdToShow).then(() => {
+  const app = pane.render(sym(webIdToShow), context)
+  document.getElementById('app').replaceWith(app)
+})
 }
 
 finishLogin()
 
 const webIdToShow = 'https://testingsolidos.solidcommunity.net/profile/card#me'
 
-fetcher.load(webIdToShow).then(() => {
-  const app = pane.render(sym(webIdToShow), context)
-  document.getElementById('app').replaceWith(app)
-})

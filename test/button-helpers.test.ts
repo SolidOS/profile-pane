@@ -40,7 +40,7 @@ describe('add me to your friends helper functions', () => {
 
     it('runs', () => {
       expect(clearPreviousMessage(buttonContainer)).toEqual(undefined)
-      expect(buttonContainer.childNodes.length).toBe(1)
+      expect(buttonContainer.childNodes.length).toBe(2)
     })
   })
 

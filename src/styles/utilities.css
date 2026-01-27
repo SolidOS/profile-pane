@@ -1,4 +1,13 @@
 /* Utility-first CSS classes for layout, spacing, and responsiveness */
+
+.actionButton {
+  width: 100%;
+  min-width: 180px;
+  max-width: 320px;
+  box-sizing: border-box;
+  display: inline-block;
+}
+
 /* ===========================================
    PROFILE GRID LAYOUT
    =========================================== */
@@ -16,7 +25,6 @@
 }
 
 .center {
-  display: flex;
   justify-content: center;
   align-items: center;
 }

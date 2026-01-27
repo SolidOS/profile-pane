@@ -25,10 +25,7 @@ function mention(buttonContainer: HTMLDivElement, message: string): void {
   positiveFrontendMessageDiv.setAttribute('role', 'status')
   positiveFrontendMessageDiv.setAttribute('aria-live', 'polite')
   positiveFrontendMessageDiv.setAttribute('tabindex', '0')
-  positiveFrontendMessageDiv.setAttribute(
-    'style',
-    'margin: 0.1em; padding: 0.5em; border: 0.05em solid gray; background-color: #efe; color:black;'
-  )
+  positiveFrontendMessageDiv.classList.add('actionButton', 'licOkay')
   positiveFrontendMessageDiv.innerHTML = message
 
   // Focus the success message for screen readers
@@ -40,7 +37,7 @@ function mention(buttonContainer: HTMLDivElement, message: string): void {
 }
 
 function clearPreviousMessage(buttonContainer: HTMLDivElement): void {
-  while (buttonContainer.childNodes.length > 1) {
+  while (buttonContainer.childNodes.length > 2) {
     buttonContainer.removeChild(buttonContainer.lastChild)
   }
 }

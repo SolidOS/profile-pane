@@ -1,14 +1,6 @@
 /* ProfileCard.css */
 /* Uses utilities: .action-button-focus, .btn-primary, .flex-column-center, .text-truncate, .text-center, .text-wrap-anywhere, .section-centered, .btn-transparent */
 
-.actionButton {
-  width: 100%;
-  min-width: 180px;
-  max-width: 320px;
-  box-sizing: border-box;
-  display: inline-block;
-}
-
 .profileCard {
   /* Component container */
 }
@@ -69,6 +61,7 @@
 .buttonSubSection {
   width: 100%;
   min-width: 0;
+  display: grid;
 }
 
 .buttonSubSection button {
