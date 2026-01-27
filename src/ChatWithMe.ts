@@ -32,7 +32,7 @@ export const ChatWithMe = (
     let exists
     try {
       yield html`
-      <div class="buttonSubSection center">
+      <div class="buttonSubSection">
         <div class="actionButton loading-text center" role="status" aria-live="polite">
           ${loadingMessage.toUpperCase()}
         </div>

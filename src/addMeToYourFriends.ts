@@ -20,7 +20,7 @@ const addMeToYourFriendsDiv = (
 ): TemplateResult => {
 
   buttonContainer = context.dom.createElement('section') as HTMLDivElement
-  buttonContainer.setAttribute('class', 'buttonSubSection text-truncate text-center center')
+  buttonContainer.setAttribute('class', 'buttonSubSection text-truncate text-center')
   buttonContainer.setAttribute('aria-labelledby', 'add-me-to-your-friends-button-section')
   buttonContainer.setAttribute('data-testid', 'button')
 
