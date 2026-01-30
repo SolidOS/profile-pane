@@ -1,5 +1,6 @@
 import { sym } from 'rdflib'
 import { default as pane } from '../src'
+import './dev-global.css' // Import after src to override component styles
 import { context, fetcher } from './context'
 import { authn, authSession } from 'solid-logic'
 import * as UI from 'solid-ui'
@@ -18,13 +19,13 @@ async function finishLogin() {
   } else {
     webId.innerHTML = ''
   }
+  fetcher.load(webIdToShow).then(() => {
+  const app = pane.render(sym(webIdToShow), context)
+  document.getElementById('app').replaceWith(app)
+})
 }
 
 finishLogin()
 
 const webIdToShow = 'https://testingsolidos.solidcommunity.net/profile/card#me'
 
-fetcher.load(webIdToShow).then(() => {
-  const app = pane.render(sym(webIdToShow), context)
-  document.getElementById('app').replaceWith(app)
-})

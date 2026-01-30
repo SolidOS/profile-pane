@@ -1,0 +1,61 @@
+/* SocialCard.css */
+/* Uses utilities: .list-reset, .text-wrap-anywhere, .flex, .gap-sm, .gap-lg, .rounded-sm */
+
+.socialList {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: var(--spacing-lg);
+  justify-content: center;
+}
+
+.socialItem {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  font-size: 1.1em;
+}
+
+.socialItem span {
+  min-width: 0;
+  display: block;
+}
+
+.socialItem a {
+  color: var(--color-primary);
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  min-height: var(--min-touch-target);
+  padding: var(--spacing-xs);
+  border-radius: var(--border-radius-base);
+  transition: background-color var(--animation-duration) ease;
+  position: relative;
+  flex: 1;
+  min-width: 0;
+}
+
+.socialItem a:hover,
+.socialItem a:focus {
+  text-decoration: underline;
+  background-color: rgba(124, 77, 255, 0.1);
+}
+
+/* Screen reader only external link indication */
+.socialItem a[href^="http"]:after {
+  content: " (external link)";
+  position: absolute;
+  left: -10000px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+.socialIcon {
+  width: 2.5em;
+  height: 2.5em;
+  border-radius: var(--border-radius-base);
+  background: var(--color-card-bg);
+  flex-shrink: 0;
+}

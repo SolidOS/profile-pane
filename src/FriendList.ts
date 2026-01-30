@@ -2,44 +2,33 @@ import { ns, widgets } from 'solid-ui'
 import { DataBrowserContext } from 'pane-registry'
 import { NamedNode } from 'rdflib'
 import { html, TemplateResult } from 'lit-html'
-import { styleMap } from 'lit-html/directives/style-map.js'
-import { card, headingLight, padding } from './baseStyles'
-import { ProfilePresentation } from './presenter'
+import './styles/FriendList.css'
 
-import {
-  heading
-} from './baseStyles'
 
-const styles = {
-  root: styleMap(padding()),
-  heading: styleMap(headingLight()),
-  card: styleMap(card()),
-}
-
-export const FriendList = ( profileBasics: ProfilePresentation,
+export const FriendList = (
   subject: NamedNode,
   context: DataBrowserContext
-): TemplateResult => {
-  const nameStyle = styleMap({
-    ...heading(),
-    // "text-decoration": "underline",
-    color: profileBasics.highlightColor, // was "text-decoration-color"
-  })
+): TemplateResult | null => {
+  const friends = extractFriends(subject, context)
+  if (!friends || !friends.textContent?.trim()) return null
 
-  if (createList(subject, context)) {
-    return html`
-    <div data-testid="friend-list" style="${styles.card}">
-      <div style=${styles.root}>
-        <h3 style=${nameStyle}>Friends</h3>
-        ${createList(subject, context)}
-      </div>
-    </div>
-    `
-  }
-  return html``
+  return html`
+    <section
+      class="friendListSection"
+      role="region"
+      aria-labelledby="friends-section-title"
+      data-testid="friend-list"
+    >
+      <nav aria-label="Friend profiles">
+        <ul class="list-reset zebra-stripe" role="list">
+          ${friends}
+        </ul>
+      </nav>
+    </section>
+  `
 }
 
-const createList = (subject: NamedNode, { dom }: DataBrowserContext) => {
+export const extractFriends = (subject: NamedNode, { dom }: DataBrowserContext) => {
   const target = dom.createElement('div')
   widgets.attachmentList(dom, subject, target, {
     doc: subject.doc(),
@@ -49,5 +38,18 @@ const createList = (subject: NamedNode, { dom }: DataBrowserContext) => {
   })
   if (target.textContent === '')
     return null
-  else return target
+  // Add 'friendItem' class and unique aria-label to each <li> for accessibility
+  target.querySelectorAll('li').forEach((li, idx) => {
+    li.classList.add('friendItem')
+    // Try to find a link or text to use as a label
+    const link = li.querySelector('a')
+    if (link && link.textContent) {
+      li.setAttribute('aria-label', `Friend: ${link.textContent.trim()}`)
+    } else if (li.textContent) {
+      li.setAttribute('aria-label', `Friend: ${li.textContent.trim()}`)
+    } else {
+      li.setAttribute('aria-label', `Friend ${idx + 1}`)
+    }
+  })
+  return target
 }

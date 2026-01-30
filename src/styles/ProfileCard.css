@@ -1,0 +1,92 @@
+/* ProfileCard.css */
+/* Uses utilities: .action-button-focus, .btn-primary, .flex-column-center, .text-truncate, .text-center, .text-wrap-anywhere, .section-centered, .btn-transparent */
+
+.profileCard {
+  /* Component container */
+}
+
+.image {
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: var(--spacing-sm);
+  box-shadow: var(--box-shadow-sm);
+  border: 3px solid var(--color-primary);
+  background: var(--color-card-bg);
+  box-sizing: border-box;
+}
+
+.image-alt {
+  width: 160px;
+  height: 160px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  margin-bottom: var(--spacing-sm);
+  box-shadow: var(--box-shadow-sm);
+  border: 3px solid var(--color-primary);
+  background: var(--color-card-bg);
+  box-sizing: border-box;
+  color: var(--color-text-secondary);
+}
+
+.name {
+  font-size: var(--font-size-xl);
+  font-weight: 700;
+  line-height: var(--line-height-tight);
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+  margin: 0;
+  letter-spacing: var(--letter-spacing-wide);
+}
+
+.intro {
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-base);
+  margin-bottom: var(--spacing-xs);
+  max-width: 40ch;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.buttonSection {
+  color: var(--color-text-secondary);
+  font-size: 1em;
+  margin-bottom: var(--spacing-xs);
+}
+
+.buttonSubSection {
+  width: 100%;
+  min-width: 0;
+  display: grid;
+}
+
+.buttonSubSection button {
+  width: 100%;
+  min-width: 0;
+}
+
+.qrCodeSection {
+  color: var(--color-text-secondary);
+  font-size: 1em;
+  margin-bottom: var(--spacing-xs);
+}
+
+.details {
+  color: var(--color-text-muted);
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-base);
+  max-width: 45ch;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* ProfileCard styles as regular CSS */
+.profile-card {
+  border: 1px solid #ccc;
+  padding: 16px;
+  background: white;
+}

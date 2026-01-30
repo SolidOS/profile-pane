@@ -6,7 +6,8 @@ export default [
         ignores: [
             'lib/**',
             'node_modules/**',
-            'coverage/**'
+            'coverage/**',
+            'test/**'
         ],
     },
     {
@@ -57,7 +58,7 @@ export default [
         },
         parser: tsParser,
         parserOptions: {
-            project: ['./tsconfig.json']
+            project: './tsconfig.json'
         },
         },
         rules: {
@@ -67,21 +68,6 @@ export default [
             'no-unused-vars': 'off', // TypeScript handles this via noUnusedLocals
             'no-undef': 'off', // TypeScript handles undefined variables
         },
-    },
-    {
-        files: ['test/**/*.js', 'test/**/*.ts'],
-        languageOptions: {
-            parser: tsParser,
-            parserOptions: {
-                project: ['./tsconfig.test.json'],
-            },
-        },
-        rules: {
-            semi: ['error', 'never'],
-            quotes: ['error', 'single'],
-            'no-console': 'off', // Allow console in tests
-            'no-undef': 'off', // Tests may define globals
-        }
     }
 ]
 

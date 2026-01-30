@@ -1,46 +1,61 @@
-import { html, nothing, TemplateResult } from 'lit-html'
-import { styleMap } from 'lit-html/directives/style-map.js'
-import {
-  fullWidth,
-  heading,
-  padding,
-  textCenter,
-  textGray,
-} from './baseStyles'
+import { html, nothing } from 'lit-html'
+import './styles/ProfileCard.css'
 import { ProfilePresentation } from './presenter'
+import { addMeToYourFriendsDiv } from './addMeToYourFriends'
+import { DataBrowserContext } from 'pane-registry'
+import { NamedNode } from 'rdflib'
+import { QRCodeCard } from './QRCodeCard'
 
-const styles = {
-  image: styleMap(fullWidth()),
-  intro: styleMap({ ...textGray(), ...textCenter() }),
-  info: styleMap(padding()),
-}
 
 export const ProfileCard = ({
-  name,
-  imageSrc,
-  introduction,
-  location,
-  pronouns,
-  highlightColor,
-}: ProfilePresentation): TemplateResult => {
-  const nameStyle = styleMap({
-    ...heading(),
-    'text-decoration': 'underline',
-    'text-decoration-color': highlightColor,
-  })
+  name, imageSrc, introduction, location, pronouns, highlightColor, backgroundColor
+}: ProfilePresentation, context: DataBrowserContext, subject: NamedNode) => {
+
   return html`
-    ${Image(imageSrc, name)}
-    <div style=${styles.info}>
-      <h3 style=${nameStyle}>${name}</h3>
-      <div style=${styles.intro}>
-        ${Line(introduction)} ${Line(location, '🌐')} ${Line(pronouns)}
+    <article class="profileCard" aria-labelledby="profile-name">
+      <h2 id="profile-name" class="sr-only">${name}</h2>
+      <header class="header flex-column-center mb-md" aria-label="Profile information">
+        ${Image(imageSrc, name)}
+      </header>
+      
+      <section class="intro text-center" aria-label="About">
+        ${Line(introduction, '', 'About')}
+        ${Line(location, '🌐', 'Location')}
+        ${Line(pronouns, '', 'Pronouns')}
+      </section>
+      
+      <section class="buttonSection text-center" aria-label="Actions">
+        ${addMeToYourFriendsDiv(subject, context)}
+      </section>
+      
+      <div class="qrCodeSection section-centered">
+        ${QRCodeCard(highlightColor, backgroundColor, subject)}
       </div>
-    </div>
+    </article>
   `
 }
 
-const Line = (value, prefix: symbol | string = nothing) =>
-  value ? html`<p>${prefix} ${value}</p>` : nothing
+const Line = (value, prefix: symbol | string = nothing, label: string = '') =>
+  value ? html`
+    <div class="details" role="text" ${label ? `aria-label="${label}: ${value}"` : ''}>
+      ${prefix} ${value}
+    </div>
+  ` : nothing
 
 const Image = (src, alt) =>
-  src ? html`<img style=${styles.image} src=${src} alt=${alt} />` : nothing
+  src
+    ? html`
+        <img
+          class="image"
+          src=${src}
+          alt="Profile photo of ${alt}"
+          width="160"
+          height="160"
+          loading="eager"
+        />
+      `
+    : html`
+        <div class="image-alt" role="img" aria-label="${alt}" tabindex="0">
+          ${alt}
+        </div>
+      `

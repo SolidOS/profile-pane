@@ -2,68 +2,49 @@ import { html, TemplateResult } from 'lit-html'
 import { NamedNode } from 'rdflib'
 import { DataBrowserContext } from 'pane-registry'
 import { widgets } from 'solid-ui'
-
-import {
-  fullWidth,
-  heading,
-  paddingSmall,
-  textCenter,
-  textLeft,
-  textGray,
-} from './baseStyles'
+import './styles/StuffCard.css'
 import { ProfilePresentation } from './presenter'
-import { styleMap } from 'lit-html/directives/style-map.js'
-import { card } from './baseStyles'
 
-const dom = document
-
-const styles = {
-  image: styleMap(fullWidth()),
-  intro: styleMap({ ...textGray(), ...textCenter() }),
-  card: styleMap(card()),
-  info: styleMap({ ...paddingSmall(), ...textLeft() }),
-}
 
 export const StuffCard = (profileBasics: ProfilePresentation,
   context: DataBrowserContext,
   subject: NamedNode, stuffData): TemplateResult => {
-
   const { stuff }  = stuffData
-  const nameStyle = styleMap({
-    ...heading(),
-    // "text-decoration": "underline",
-    color: profileBasics.highlightColor, // was "text-decoration-color"
-  })
-  // return renderThings(stuff)
+  const dom = context.dom || document
   return html`
-  <div>
-    <div data-testid="stuff" style="${styles.card}">
-      <div style=${styles.info}>
-        <h3 style=${nameStyle}>Stuff</h3>
-
-        <div style=${styles.info}><table data-testid="stuffTable">${renderThings(stuff)}</table></div>
-        <hr />
-
+    <section
+      class="stuffCard"
+      aria-labelledby="stuff-card-title"
+      role="region"
+      data-testid="stuff"
+    >
+      <header>
+        <h3 id="stuff-card-title" class="sr-only">Shared Resources</h3>
+      </header>
+      <div>
+        <table class="stuffTable" data-testid="stuffTable">
+          <caption class="sr-only">Files and resources shared by ${profileBasics.name}</caption>
+          <tbody class="zebra-stripe">
+            ${renderThings(stuff, dom)}
+          </tbody>
+        </table>
       </div>
-    </div>
-  </div>
-`
+    </section>
+  `
 }
 
-function renderThingAsDOM (thing, dom) {
+export function renderThingAsDOM (thing, dom) {
   const options = {}
+  // widgets.personTR returns a DOM node, so we need to convert it to HTML string
   const row = widgets.personTR(dom, null, thing.instance, options)
   return row
 }
 
-function renderThing (thing, dom) {
+export function renderThing (thing, dom) {
   return renderThingAsDOM(thing, dom)
 }
 
-function renderThings(things) {
-    // console.log('Renderthings: ', things)
-    if (things.length === 0) return html``
-    return html`${renderThing(things[0], dom)}${things.length > 1 ? renderThings(things.slice(1)) : html``}`
+export function renderThings(things, dom) {
+  if (things.length === 0) return html``
+  return html`${renderThing(things[0], dom)}${things.length > 1 ? renderThings(things.slice(1), dom) : html``}`
 }
-
-// ENDS

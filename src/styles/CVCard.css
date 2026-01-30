@@ -1,0 +1,37 @@
+/* CVCard.css */
+/* Note: Uses utilities: .section-title for cvOrg styling */
+
+.cvSection {
+  margin-bottom: 1.25em;
+}
+
+.cvRole {
+  margin: var(--spacing-xs) 0;
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-base);
+  display: flex;
+  flex-direction: column;
+  gap: 0.2em;
+}
+
+.cvOrg {
+  font-weight: 600;
+  color: var(--color-primary);
+}
+
+.cvSkill, .cvLanguage {
+  text-align: left;
+  margin: var(--spacing-xs) 0;
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-base);
+}
+
+.cvSection h3 {
+  color: var(--color-text);
+  font-size: var(--font-size-lg);
+  font-weight: 600;
+  line-height: var(--line-height-tight);
+  margin-bottom: var(--spacing-xs);
+  border-bottom: 1px solid var(--color-border-pale);
+  padding-bottom: var(--spacing-xs);
+}
