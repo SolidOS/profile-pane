@@ -11,9 +11,11 @@
 import { PaneDefinition } from 'pane-registry'
 import { NamedNode, parse, Store, sym } from 'rdflib'
 import { icons, login, ns, widgets } from 'solid-ui'
-import { paneDiv } from './profile.dom'
+import { EditProfileContactSection } from './EditProfileCard'
+import { EditProfileSocialSection } from './EditFriendsCard'
+import { EditProfileCommunitiesSection } from './EditCommunitiesCard'
 import profileForm from '../ontology/profileForm.ttl'
-import './styles/EditProfile.css'
+import '../styles/utilities.css'
 
 const editProfileView: PaneDefinition = {
   global: true,
@@ -54,31 +56,25 @@ const editProfileView: PaneDefinition = {
       )
     } // renderProfileForm
 
-    const div = dom.createElement('div')
+    // Use <section> as the main container for better semantics
+    const div = dom.createElement('section')
     div.setAttribute('data-testid', 'profile-editor')
+    div.setAttribute('role', 'region')
+    div.setAttribute('aria-label', 'Edit your profile')
     let editableProfile: NamedNode | null
-    div.classList.add('profile-editor')
 
-    const table = div.appendChild(dom.createElement('table'))
-    // const top = table.appendChild(dom.createElement('tr'))
-    const main = table.appendChild(dom.createElement('tr'))
-    const bottom = table.appendChild(dom.createElement('tr'))
-    const statusArea = bottom.appendChild(dom.createElement('div'))
-    statusArea.classList.add('profile-status-area')
 
-    function comment (str: string) {
-      const p = main.appendChild(dom.createElement('p'))
-      p.classList.add('profile-comment')
-      p.textContent = str
-      return p
-    }
+    // Use <main> for the main content area, styled as a grid like ProfileView
+    const main = dom.createElement('main')
+    main.setAttribute('id', 'profile-edit-main-content')
+    main.classList.add('profile-grid')
+    div.appendChild(main)
 
-    function heading (str: string) {
-      const h = main.appendChild(dom.createElement('h3'))
-      h.classList.add('profile-heading')
-      h.textContent = str
-      return h
-    }
+    // Use <aside> for the status area
+    const statusArea = dom.createElement('aside')
+    statusArea.classList.add('p-sm')
+    statusArea.setAttribute('aria-live', 'polite')
+    div.appendChild(statusArea)
 
     const profileContext = {
       dom: dom,
@@ -89,8 +85,6 @@ const editProfileView: PaneDefinition = {
     login.ensureLoadedProfile(profileContext)
       .then(theContext => {
         const me = theContext.me!
-
-        heading('Edit your public profile')
 
         const profile = me.doc()
         if (!store.updater) {
@@ -105,56 +99,33 @@ const editProfileView: PaneDefinition = {
           return
         }
 
-        comment(`Everything you put here will be public.
-        There will be other places to record private things.`)
+        // Render each section as a card with consistent classes
+        // Your contact information Section
+        main.appendChild(EditProfileContactSection(context, me))
 
-        heading('Your contact information')
+         // Edit socials, CV, Skills
+        // Render the editable profile form as a card/section
+        const formSection = dom.createElement('section')
+        formSection.classList.add('profileSection', 'section-bg')
+        formSection.setAttribute('aria-labelledby', 'edit-profile-form-heading')
+        const formHeader = dom.createElement('header')
+        formHeader.classList.add('text-center', 'mb-md')
+        const formHeading = dom.createElement('h2')
+        formHeading.id = 'edit-profile-form-heading'
+        formHeading.classList.add('section-title')
+        formHeading.textContent = 'Edit preferences, pronouns, bio'
+        formHeader.appendChild(formHeading)
+        formSection.appendChild(formHeader)
+        
+        renderProfileForm(formSection, me)
+        main.appendChild(formSection)
 
-        main.appendChild(paneDiv(context, me, 'contact'))
+        // People you know Section
+        main.appendChild(EditProfileSocialSection(context, me, editableProfile, profile))
+        // Communities you participate in Section
+        main.appendChild(EditProfileCommunitiesSection(context, me, editableProfile, profile))
 
-
-        heading('People you know who have WebIDs')
-
-        comment(`This is your public social network.
-        Only put people here to whom you are happy to be publicly connected.
-        (You can always keep private track of friends and family in your contacts.)`)
-
-        // TODO: would be useful to explain what it means to "drag people"
-        //       what is it that is being dragged?
-        //       is there a way to search for people (or things to drag) on this page?
-        if (editableProfile) {
-          comment('Drag people onto the target below to add people.')
-        }
-
-        widgets.attachmentList(dom, me, main, {
-          doc: profile,
-          modify: !!editableProfile,
-          predicate: ns.foaf('knows'),
-          noun: 'friend'
-        })
-
-        heading('Communities you participate in')
-
-        comment('These are organizations and projects (etc) whose stuff you share')
-
-        // TODO: would be useful to explain what it means to "drag organizations"
-        //       what is it that is being dragged?
-        //       is there a way to search for people (or things to drag) on this page?
-        //  Also provide a way of using cut and paste
-        if (editableProfile) {
-          comment('Drag organizations onto the target below to add organizations.')
-        }
-
-        widgets.attachmentList(dom, me, main, {
-          doc: profile,
-          modify: !!editableProfile,
-          predicate: ns.solid('community'),
-          noun: 'community'
-        })
-
-        renderProfileForm(main, me)
-
-        heading('Thank you for filling your profile.')
+       
       }).catch(error => {
         statusArea.appendChild(widgets.errorMessageBlock(dom, error, '#fee'))
       })
