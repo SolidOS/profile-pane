@@ -4,17 +4,16 @@
  * Unlike view panes, this is available any place whatever the real subject,
  * and allows the user to edit their own profile.
  *
- * Usage: paneRegistry.register('profile/profilePane')
+ * Usage: paneRegistry.register('/profile/editProfile.view)
  * or standalone script adding onto existing mashlib.
  */
 
 import { PaneDefinition } from 'pane-registry'
 import { NamedNode, parse, Store, sym } from 'rdflib'
-import { icons, login, ns, style, widgets } from 'solid-ui'
+import { icons, login, ns, widgets } from 'solid-ui'
 import { paneDiv } from './profile.dom'
 import profileForm from '../ontology/profileForm.ttl'
-
-const highlightColor = style.highlightColor || '#7C4DFF'
+import './styles/EditProfile.css'
 
 const editProfileView: PaneDefinition = {
   global: true,
@@ -58,25 +57,25 @@ const editProfileView: PaneDefinition = {
     const div = dom.createElement('div')
     div.setAttribute('data-testid', 'profile-editor')
     let editableProfile: NamedNode | null
-    div.setAttribute('style', `border: 0.3em solid ${highlightColor}; border-radius: 0.5em; padding: 0.7em; margin-top:0.7em;`)
+    div.classList.add('profile-editor')
 
     const table = div.appendChild(dom.createElement('table'))
     // const top = table.appendChild(dom.createElement('tr'))
     const main = table.appendChild(dom.createElement('tr'))
     const bottom = table.appendChild(dom.createElement('tr'))
     const statusArea = bottom.appendChild(dom.createElement('div'))
-    statusArea.setAttribute('style', 'padding: 0.7em;')
+    statusArea.classList.add('profile-status-area')
 
     function comment (str: string) {
       const p = main.appendChild(dom.createElement('p'))
-      p.setAttribute('style', 'padding: 1em;')
+      p.classList.add('profile-comment')
       p.textContent = str
       return p
     }
 
     function heading (str: string) {
       const h = main.appendChild(dom.createElement('h3'))
-      h.setAttribute('style', 'color:' + highlightColor + ';')
+      h.classList.add('profile-heading')
       h.textContent = str
       return h
     }

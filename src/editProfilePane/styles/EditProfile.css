@@ -1,0 +1,22 @@
+.profile-pane-container {
+  border: 0.3em solid var(--color-text-muted);
+  border-radius: var(--border-radius-base);
+}
+.profile-editor {
+  border: 0.3em solid var(--color-primary);
+  border-radius: var(--border-radius-base);
+  padding: var(--spacing-sm);
+  margin-top: var(--spacing-sm);
+}
+
+.profile-status-area {
+  padding: var(--spacing-sm);
+}
+
+.profile-comment {
+  padding: var(--spacing-md);
+}
+
+.profile-heading {
+  color: var(--color-primary);
+}

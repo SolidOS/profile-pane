@@ -30,8 +30,6 @@ export function paneDiv (
     container.innerText = `View render did not return a valid Node for: ${paneName}`
   }
   
-  container.setAttribute(
-    'style', 'border: 0.3em solid #444; border-radius: 0.5em'
-  )
+  container.classList.add('profile-pane-container')
   return container
 }
