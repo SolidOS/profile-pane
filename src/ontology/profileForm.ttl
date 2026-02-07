@@ -601,26 +601,26 @@ WHERE
 
 
 
-# Subclass definitions for foaf:OnlineAccount (embedded for UI category selector)
-soc:BlueSkyAccount rdfs:subClassOf foaf:OnlineAccount; rdfs:label "Bluesky" .
-soc:Digg rdfs:subClassOf foaf:OnlineAccount; rdfs:label "Digg" .
-soc:FacebookAccount rdfs:subClassOf foaf:OnlineAccount; rdfs:label "Facebook" .
-soc:GithubAccount rdfs:subClassOf foaf:OnlineAccount; rdfs:label "Github" .
-soc:InstagramAccount rdfs:subClassOf foaf:OnlineAccount; rdfs:label "Instagram" .
-soc:LinkedInAccount rdfs:subClassOf foaf:OnlineAccount; rdfs:label "Linked In" .
-soc:MastodonAccount rdfs:subClassOf foaf:OnlineAccount; rdfs:label "Mastodon" .
-soc:MatrixAccount rdfs:subClassOf foaf:OnlineAccount; rdfs:label "Matrix" .
-soc:MediumAccount rdfs:subClassOf foaf:OnlineAccount; rdfs:label "Medium" .
-soc:NostrAccount rdfs:subClassOf foaf:OnlineAccount; rdfs:label "Nostr" .
-soc:OrcidAccount rdfs:subClassOf foaf:OnlineAccount; rdfs:label "ORCiD" .
-soc:PinterestAccount rdfs:subClassOf foaf:OnlineAccount; rdfs:label "Pinterest" .
-soc:RedditAccount rdfs:subClassOf foaf:OnlineAccount; rdfs:label "Reddit" .
-soc:SnapchatAccount rdfs:subClassOf foaf:OnlineAccount; rdfs:label "Snapchat" .
-soc:StravaAccount rdfs:subClassOf foaf:OnlineAccount; rdfs:label "Strava" .
-soc:TiktokAccount rdfs:subClassOf foaf:OnlineAccount; rdfs:label "TikTok" .
-soc:TumblrAccount rdfs:subClassOf foaf:OnlineAccount; rdfs:label "Tumblr" .
-soc:TwitterAccount rdfs:subClassOf foaf:OnlineAccount; rdfs:label "X (formerly Twitter)" .
-soc:OtherAccount rdfs:subClassOf foaf:OnlineAccount; rdfs:label "Other" .
+# Subclass definitions for foaf:Account (embedded for UI category selector)
+soc:BlueSkyAccount rdfs:subClassOf foaf:Account; rdfs:label "Bluesky" .
+soc:Digg rdfs:subClassOf foaf:Account; rdfs:label "Digg" .
+soc:FacebookAccount rdfs:subClassOf foaf:Account; rdfs:label "Facebook" .
+soc:GithubAccount rdfs:subClassOf foaf:Account; rdfs:label "Github" .
+soc:InstagramAccount rdfs:subClassOf foaf:Account; rdfs:label "Instagram" .
+soc:LinkedInAccount rdfs:subClassOf foaf:Account; rdfs:label "Linked In" .
+soc:MastodonAccount rdfs:subClassOf foaf:Account; rdfs:label "Mastodon" .
+soc:MatrixAccount rdfs:subClassOf foaf:Account; rdfs:label "Matrix" .
+soc:MediumAccount rdfs:subClassOf foaf:Account; rdfs:label "Medium" .
+soc:NostrAccount rdfs:subClassOf foaf:Account; rdfs:label "Nostr" .
+soc:OrcidAccount rdfs:subClassOf foaf:Account; rdfs:label "ORCiD" .
+soc:PinterestAccount rdfs:subClassOf foaf:Account; rdfs:label "Pinterest" .
+soc:RedditAccount rdfs:subClassOf foaf:Account; rdfs:label "Reddit" .
+soc:SnapchatAccount rdfs:subClassOf foaf:Account; rdfs:label "Snapchat" .
+soc:StravaAccount rdfs:subClassOf foaf:Account; rdfs:label "Strava" .
+soc:TiktokAccount rdfs:subClassOf foaf:Account; rdfs:label "TikTok" .
+soc:TumblrAccount rdfs:subClassOf foaf:Account; rdfs:label "Tumblr" .
+soc:TwitterAccount rdfs:subClassOf foaf:Account; rdfs:label "X (formerly Twitter)" .
+soc:OtherAccount rdfs:subClassOf foaf:Account; rdfs:label "Other" .
 
 
 
