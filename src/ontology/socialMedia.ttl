@@ -14,123 +14,123 @@
 
 ##### Ontology of Online Accounts
 
-foaf:Account a rdfs:Class;
+foaf:OnlineAccount a rdfs:Class;
     rdfs:label "Online Account Provider";
     owl:disjointUnionOf ( :BlueSkyAccount :Digg :FacebookAccount :GithubAccount :InstagramAccount
     :LinkedInAccount :MastodonAccount :MatrixAccount :MediumAccount :NostrAccount :OrcidAccount :PinterestAccount
     :RedditAccount :SnapchatAccount :StravaAccount :TiktokAccount  :TumblrAccount  :TwitterAccount :OtherAccount) .
 
-:BlueSkyAccount rdfs:subClassOf foaf:Account ;
+:BlueSkyAccount rdfs:subClassOf foaf:OnlineAccount ;
     rdfs:label "Bluesky";
     foaf:userProfilePrefix "https://bsky.app/profile/";
     foaf:icon <https://solidos.github.io/solid-ui/src/icons/social/bluesky-1.svg>;
     foaf:homepage <https://bsky.app/> .
 
-:Digg rdfs:subClassOf foaf:Account ;
+:Digg rdfs:subClassOf foaf:OnlineAccount ;
     rdfs:label "Digg";
     foaf:userProfilePrefix "https://www.digg.com/";
     foaf:icon <https://solidos.github.io/solid-ui/src/icons/social/digg-icon.svg>;
     foaf:homepage <https://www.digg.com/> .
 
-:FacebookAccount rdfs:subClassOf foaf:Account ;
+:FacebookAccount rdfs:subClassOf foaf:OnlineAccount ;
     rdfs:label "Facebook";
     foaf:userProfilePrefix "https://www.facebook.com/";
     foaf:icon <https://solidos.github.io/solid-ui/src/icons/social/facebook-2020-2-1.svg>;
     foaf:homepage <https://www.facebook.com/> .
 
-:GithubAccount rdfs:subClassOf foaf:Account ;
+:GithubAccount rdfs:subClassOf foaf:OnlineAccount ;
     rdfs:label "Github";
     foaf:userProfilePrefix "https://www.github.com/";
     foaf:icon <https://solidos.github.io/solid-ui/src/icons/social/github-icon.svg>;
     foaf:homepage <https://github.com/> .
 
-:InstagramAccount rdfs:subClassOf foaf:Account ;
+:InstagramAccount rdfs:subClassOf foaf:OnlineAccount ;
     rdfs:label "Instagram";
     foaf:userProfilePrefix "https://www.instagram.com/";
     foaf:icon <https://solidos.github.io/solid-ui/src/icons/social/instagram-2016-5.svg>;
     foaf:homepage <https://www.instagram.com/> .
 
-:LinkedInAccount rdfs:subClassOf foaf:Account ;
+:LinkedInAccount rdfs:subClassOf foaf:OnlineAccount ;
     rdfs:label "Linked In";
     foaf:userProfilePrefix "https://www.linkedin.com/";
     foaf:icon <https://solidos.github.io/solid-ui/src/icons/social/linkedin-icon.svg>;
     foaf:homepage <https://linkedin.com/> .
 
-:MastodonAccount rdfs:subClassOf foaf:Account ;
+:MastodonAccount rdfs:subClassOf foaf:OnlineAccount ;
     rdfs:label "Mastodon" ;
     foaf:userProfilePrefix "https://mastodon.social/";
     foaf:icon <https://solidos.github.io/solid-ui/src/icons/social/mastodon-2.svg>;
     foaf:homepage <https://joinmastodon.org/> .
 
-:MatrixAccount rdfs:subClassOf foaf:Account ;
+:MatrixAccount rdfs:subClassOf foaf:OnlineAccount ;
     rdfs:label "Matrix" ;
     foaf:icon <https://solidos.github.io/solid-ui/src/icons/social/matrix-logo-black.svg> ;
     foaf:userProfilePrefix "https://matrix.to/#/" ;
     foaf:homepage <https://matrix.org/> .
 
-:MediumAccount rdfs:subClassOf foaf:Account ;
+:MediumAccount rdfs:subClassOf foaf:OnlineAccount ;
     rdfs:label "Medium";
     foaf:userProfilePrefix "https://medium.com/";
     foaf:icon <https://solidos.github.io/solid-ui/src/icons/social/medium-logo-wordmark-black.svg>;
     foaf:homepage <https://medium.com/> .
 
-:NostrAccount rdfs:subClassOf foaf:Account ;
+:NostrAccount rdfs:subClassOf foaf:OnlineAccount ;
     rdfs:label "Nostr";
     foaf:userProfilePrefix "https://primal.net/p/";
     foaf:icon <https://solidos.github.io/solid-ui/src/icons/social/nostr-icon-purple-on-white.svg>;
     foaf:homepage <https://nostr.net/> .
 
-:OrcidAccount rdfs:subClassOf foaf:Account ;
+:OrcidAccount rdfs:subClassOf foaf:OnlineAccount ;
     rdfs:label "ORCiD";
     foaf:userProfilePrefix "https://orcid.org/";
     foaf:icon <https://solidos.github.io/solid-ui/src/icons/social/ORCID-1.svg>;
     foaf:homepage <https://orcid.org/> .
 
-:PinterestAccount rdfs:subClassOf foaf:Account ;
+:PinterestAccount rdfs:subClassOf foaf:OnlineAccount ;
     rdfs:label "Pinterest";
     foaf:userProfilePrefix "https://pin.it/";
     foaf:icon <https://solidos.github.io/solid-ui/src/icons/social/pinterest-2-1.svg>;
     foaf:homepage <https://pinterest.com/> .
 
-:RedditAccount rdfs:subClassOf foaf:Account ;
+:RedditAccount rdfs:subClassOf foaf:OnlineAccount ;
     rdfs:label "Reddit";
     foaf:userProfilePrefix "https://www.reddit.com/user/";
     foaf:icon <https://solidos.github.io/solid-ui/src/icons/social/reddit-4.svg>;
     foaf:homepage <https://reddit.com/> .
 
-:SnapchatAccount rdfs:subClassOf foaf:Account ;
+:SnapchatAccount rdfs:subClassOf foaf:OnlineAccount ;
     rdfs:label "Snapchat";
     foaf:userProfilePrefix "https://www.snapchat.com/add/";
     foaf:icon <https://solidos.github.io/solid-ui/src/icons/social/snapchat-1.svg>;
     foaf:homepage <https://www.snapchat.com/> .
 
-:StravaAccount rdfs:subClassOf foaf:Account ;
+:StravaAccount rdfs:subClassOf foaf:OnlineAccount ;
     rdfs:label "Strava";
     foaf:userProfilePrefix "https://www.strava.com/athletes/";
     foaf:icon <https://solidos.github.io/solid-ui/src/icons/social/strava-2.svg>;
     foaf:homepage <https://strava.com/> .
 
-:TiktokAccount rdfs:subClassOf foaf:Account ;
+:TiktokAccount rdfs:subClassOf foaf:OnlineAccount ;
     rdfs:label "TikTok";
     foaf:userProfilePrefix "https://www.tiktok.com/@";
     foaf:icon <https://solidos.github.io/solid-ui/src/icons/social/tiktok-icon-2.svg>;
     foaf:homepage <https://www.tiktok.com/> .
 
-:TumblrAccount rdfs:subClassOf foaf:Account ;
+:TumblrAccount rdfs:subClassOf foaf:OnlineAccount ;
     rdfs:label "Tumblr";
     foaf:userProfilePrefix "https://www.tumblr.com/";
     foaf:icon <https://solidos.github.io/solid-ui/src/icons/social/tumblr-icon.svg>;
     foaf:homepage <https://www.tumblr.com/> .
 
 
-:TwitterAccount rdfs:subClassOf foaf:Account ;
+:TwitterAccount rdfs:subClassOf foaf:OnlineAccount ;
     rdfs:label "X (formerly Twitter)";
     foaf:userProfilePrefix "https://x.com/";
     foaf:icon <https://solidos.github.io/solid-ui/src/icons/social/x-2.svg>;
     foaf:homepage <https://x.com/> .
 
 
-:OtherAccount rdfs:subClassOf foaf:Account ;
+:OtherAccount rdfs:subClassOf foaf:OnlineAccount ;
     rdfs:label "Other" ;
     foaf:icon <https://solidos.github.io/solid-ui/src/icons/noun_1689339.svg> .
 

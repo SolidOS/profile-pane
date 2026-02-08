@@ -397,7 +397,7 @@ WHERE
 
 :SocialsForm a ui:Multiple;
     ui:label "online account";
-    ui:property foaf:account;
+    ui:property foaf:OnlineAccount;
     ui:ordered true; # Allow user to order occounts most important first.
     ui:part :AccountsForm.
 
@@ -405,7 +405,7 @@ WHERE
 
 :AccountField a ui:Classifier; ui:label "What sort of account?"@en;
       ui:multiple false ; 
-      ui:category foaf:Account  .
+      ui:category foaf:OnlineAccount  .
 
 :AccountIdField a ui:Options . 
 
