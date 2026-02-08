@@ -1,15 +1,21 @@
 import { LiveStore, NamedNode, Node, parse } from 'rdflib'
 import { ns, utils, icons } from 'solid-ui'
 import profileForm from './ontology/profileForm.ttl'
+import socialMedia from './ontology/socialMedia.ttl'
 
 const DEFAULT_ICON_URI = icons.iconBase + 'noun_10636_grey.svg' // grey disc
 
 export function loadProfileForm (store: LiveStore) {
   const preferencesForm = store.sym('https://solidos.github.io/profile-pane/src/ontology/profileForm.ttl#this')
   const preferencesFormDoc = preferencesForm.doc()
+  const socialMediaDoc = store.sym('https://solidos.github.io/profile-pane/src/ontology/socialMedia.ttl').doc()
   if (!store.holds(undefined, undefined, undefined, preferencesFormDoc)) {
     // If not loaded already
     parse(profileForm, store, preferencesFormDoc.uri, 'text/turtle', () => null) // Load form directly
+  }
+  if (!store.holds(undefined, undefined, undefined, socialMediaDoc)) {
+    // Load socialMedia ontology for icons, userProfilePrefix, etc.
+    parse(socialMedia, store, socialMediaDoc.uri, 'text/turtle', () => null)
   }
 }
 export interface Account {
