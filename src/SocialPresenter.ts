@@ -31,7 +31,11 @@ export function loadProfileForm (store: LiveStore): Promise<void> {
       }))
     }
     
-    Promise.all(promises).then(() => resolve()).catch(reject)
+    if (promises.length === 0) {
+      resolve()
+    } else {
+      Promise.all(promises).then(() => resolve()).catch(reject)
+    }
   })
 }
 export interface Account {

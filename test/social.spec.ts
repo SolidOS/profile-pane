@@ -79,7 +79,8 @@ describe('profile-pane', () => {
       parse(exampleProfile, store, doc.uri)
       const result = pane.render(subject, context)
       console.log('Pane rendered <<< ', result.innerHTML , '>>>')
-      element = await findByTestId(result, 'social-media')
+      // Wait for async rendering to complete
+      element = await findByTestId(result, 'social-media', {}, { timeout: 5000 })
     })
 
     it('renders link to Facebook', () => {
