@@ -6,7 +6,7 @@ import { ChatWithMe } from './ChatWithMe'
 import { FriendList } from './FriendList'
 import { presentProfile } from './presenter'
 import { presentCV } from './CVPresenter' // 20210527
-import { presentSocial } from './SocialPresenter' // 20210527
+import { presentSocial, loadProfileForm } from './SocialPresenter' // 20210527
 import { presentStuff } from './StuffPresenter' // 20210527
 import { ProfileCard } from './ProfileCard'
 import { CVCard } from './CVCard'
@@ -29,9 +29,14 @@ export async function ProfileView (
   subject: NamedNode,
   context: DataBrowserContext
 ): Promise <TemplateResult> {
-  const profileBasics = presentProfile(subject, context.session.store as LiveStore)
-  const rolesByType = presentCV(subject, context.session.store as LiveStore)
-  const accounts = await presentSocial(subject, context.session.store as LiveStore)
+  const store = context.session.store as LiveStore
+  
+  // Load ontologies first
+  await loadProfileForm(store)
+  
+  const profileBasics = presentProfile(subject, store)
+  const rolesByType = presentCV(subject, store)
+  const accounts = await presentSocial(subject, store)
   const stuffData = await presentStuff(subject)
 
   return html` 
