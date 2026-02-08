@@ -5,18 +5,34 @@ import socialMedia from './ontology/socialMedia.ttl'
 
 const DEFAULT_ICON_URI = icons.iconBase + 'noun_10636_grey.svg' // grey disc
 
-export function loadProfileForm (store: LiveStore) {
+export function loadProfileForm (store: LiveStore): Promise<void> {
   const preferencesForm = store.sym('https://solidos.github.io/profile-pane/src/ontology/profileForm.ttl#this')
   const preferencesFormDoc = preferencesForm.doc()
   const socialMediaDoc = store.sym('https://solidos.github.io/profile-pane/src/ontology/socialMedia.ttl').doc()
-  if (!store.holds(undefined, undefined, undefined, preferencesFormDoc)) {
-    // If not loaded already
-    parse(profileForm, store, preferencesFormDoc.uri, 'text/turtle', () => null) // Load form directly
-  }
-  if (!store.holds(undefined, undefined, undefined, socialMediaDoc)) {
-    // Load socialMedia ontology for icons, userProfilePrefix, etc.
-    parse(socialMedia, store, socialMediaDoc.uri, 'text/turtle', () => null)
-  }
+  
+  return new Promise((resolve, reject) => {
+    const promises: Promise<void>[] = []
+    
+    if (!store.holds(undefined, undefined, undefined, preferencesFormDoc)) {
+      promises.push(new Promise<void>((res, rej) => {
+        parse(profileForm, store, preferencesFormDoc.uri, 'text/turtle', (err) => {
+          if (err) rej(err)
+          else res()
+        })
+      }))
+    }
+    
+    if (!store.holds(undefined, undefined, undefined, socialMediaDoc)) {
+      promises.push(new Promise<void>((res, rej) => {
+        parse(socialMedia, store, socialMediaDoc.uri, 'text/turtle', (err) => {
+          if (err) rej(err)
+          else res()
+        })
+      }))
+    }
+    
+    Promise.all(promises).then(() => resolve()).catch(reject)
+  })
 }
 export interface Account {
   name: string,
@@ -27,10 +43,10 @@ export interface SocialPresentation {
   accounts: Account[];
 }
 
-export function presentSocial(
+export async function presentSocial(
   subject: NamedNode,
   store: LiveStore
-): SocialPresentation {
+): Promise<SocialPresentation> {
   
   function nameForAccount (subject):string {
     const acIcon = store.any(subject, ns.foaf('name')) ||
@@ -85,7 +101,7 @@ export function presentSocial(
     }
 
   }
-  loadProfileForm(store) // get ontology info
+  await loadProfileForm(store) // get ontology info
 
   const accountThings: Node[] = store.anyJS(subject, ns.foaf('account')) // load the collection
   if (!accountThings) return { accounts: []} // could have been undefined

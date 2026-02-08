@@ -31,7 +31,7 @@ export async function ProfileView (
 ): Promise <TemplateResult> {
   const profileBasics = presentProfile(subject, context.session.store as LiveStore)
   const rolesByType = presentCV(subject, context.session.store as LiveStore)
-  const accounts = presentSocial(subject, context.session.store as LiveStore)
+  const accounts = await presentSocial(subject, context.session.store as LiveStore)
   const stuffData = await presentStuff(subject)
 
   return html` 
