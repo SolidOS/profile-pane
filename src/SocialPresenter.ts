@@ -6,6 +6,7 @@ import socialMedia from './ontology/socialMedia.ttl'
 const DEFAULT_ICON_URI = icons.iconBase + 'noun_10636_grey.svg' // grey disc
 
 export function loadProfileForm (store: LiveStore): Promise<void> {
+  console.log('[loadProfileForm] Starting ontology load...')
   const preferencesForm = store.sym('https://solidos.github.io/profile-pane/src/ontology/profileForm.ttl#this')
   const preferencesFormDoc = preferencesForm.doc()
   const socialMediaDoc = store.sym('https://solidos.github.io/profile-pane/src/ontology/socialMedia.ttl').doc()
@@ -14,27 +15,47 @@ export function loadProfileForm (store: LiveStore): Promise<void> {
     const promises: Promise<void>[] = []
     
     if (!store.holds(undefined, undefined, undefined, preferencesFormDoc)) {
+      console.log('[loadProfileForm] Loading profileForm.ttl...')
       promises.push(new Promise<void>((res, rej) => {
         parse(profileForm, store, preferencesFormDoc.uri, 'text/turtle', (err) => {
-          if (err) rej(err)
-          else res()
+          if (err) {
+            console.error('[loadProfileForm] Error loading profileForm:', err)
+            rej(err)
+          } else {
+            console.log('[loadProfileForm] profileForm.ttl loaded successfully')
+            res()
+          }
         })
       }))
+    } else {
+      console.log('[loadProfileForm] profileForm.ttl already loaded')
     }
     
     if (!store.holds(undefined, undefined, undefined, socialMediaDoc)) {
+      console.log('[loadProfileForm] Loading socialMedia.ttl...')
       promises.push(new Promise<void>((res, rej) => {
         parse(socialMedia, store, socialMediaDoc.uri, 'text/turtle', (err) => {
-          if (err) rej(err)
-          else res()
+          if (err) {
+            console.error('[loadProfileForm] Error loading socialMedia:', err)
+            rej(err)
+          } else {
+            console.log('[loadProfileForm] socialMedia.ttl loaded successfully')
+            res()
+          }
         })
       }))
+    } else {
+      console.log('[loadProfileForm] socialMedia.ttl already loaded')
     }
     
     if (promises.length === 0) {
+      console.log('[loadProfileForm] All ontologies already loaded, resolving immediately')
       resolve()
     } else {
-      Promise.all(promises).then(() => resolve()).catch(reject)
+      Promise.all(promises).then(() => {
+        console.log('[loadProfileForm] All ontologies loaded successfully')
+        resolve()
+      }).catch(reject)
     }
   })
 }
@@ -47,10 +68,11 @@ export interface SocialPresentation {
   accounts: Account[];
 }
 
-export async function presentSocial(
+export function presentSocial(
   subject: NamedNode,
   store: LiveStore
-): Promise<SocialPresentation> {
+): SocialPresentation {
+  console.log('[presentSocial] Starting to present social data for', subject.uri)
   
   function nameForAccount (subject):string {
     const acIcon = store.any(subject, ns.foaf('name')) ||
@@ -88,12 +110,15 @@ export async function presentSocial(
     if (acHomepage) return acHomepage.value
     const id = store.anyJS(subject, ns.foaf('accountName'), null, subject.doc()) || 'No_account_Name' 
     const classes = store.each(subject, ns.rdf('type'))
+    console.log('[homepageForAccount] Account classes:', classes.map(c => c.value))
     for (const k of classes) {
       const userProfilePrefix: Node | null = store.any(k as any, ns.foaf('userProfilePrefix'))
+      console.log('[homepageForAccount] Checking class', k.value, 'for userProfilePrefix:', userProfilePrefix?.value)
       if (userProfilePrefix)  {
         return userProfilePrefix.value + id.trim() 
       }
     }
+    console.warn('[homepageForAccount] No userProfilePrefix found for any class')
     return 'no userProfilePrefix?'
   }
 
@@ -105,7 +130,7 @@ export async function presentSocial(
     }
 
   }
-  await loadProfileForm(store) // get ontology info
+  // Ontology should be pre-loaded by caller via loadProfileForm(store)
 
   const accountThings: Node[] = store.anyJS(subject, ns.foaf('account')) // load the collection
   if (!accountThings) return { accounts: []} // could have been undefined

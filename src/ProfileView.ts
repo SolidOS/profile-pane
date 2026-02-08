@@ -29,14 +29,18 @@ export async function ProfileView (
   subject: NamedNode,
   context: DataBrowserContext
 ): Promise <TemplateResult> {
+  console.log('[ProfileView] Starting ProfileView for', subject.uri)
   const store = context.session.store as LiveStore
   
   // Load ontologies first
+  console.log('[ProfileView] Loading ontologies...')
   await loadProfileForm(store)
+  console.log('[ProfileView] Ontologies loaded, presenting data...')
   
   const profileBasics = presentProfile(subject, store)
   const rolesByType = presentCV(subject, store)
-  const accounts = await presentSocial(subject, store)
+  const accounts = presentSocial(subject, store)
+  console.log('[ProfileView] Social accounts:', accounts)
   const stuffData = await presentStuff(subject)
 
   return html` 
