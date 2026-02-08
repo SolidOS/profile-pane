@@ -48,14 +48,11 @@ const Pane = {
   },
   editor: editProfileView,                                            
   render: (subject: NamedNode, context: DataBrowserContext): HTMLElement => {
-    console.log('[Pane.render] Called for', subject.uri)
     const target = context.dom.createElement('div')
     const store = context.session.store
 
     loadExtendedProfile(store, subject).then(async () => {
-      console.log('[Pane.render] Extended profile loaded, rendering ProfileView...')
       render(await ProfileView(subject, context), target)
-      console.log('[Pane.render] ProfileView rendered')
       const QRCodeEles = Array.from(target.getElementsByClassName('QRCode')) // was context.dom
       if (!QRCodeEles.length) return console.error('QRCode Ele missing')
       for (const QRCodeElement of QRCodeEles as HTMLElement[]) {
