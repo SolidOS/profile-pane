@@ -9,7 +9,7 @@
  */
 
 import { PaneDefinition } from 'pane-registry'
-import { NamedNode, parse, Store, sym } from 'rdflib'
+import { NamedNode, Namespace, parse, Store, sym } from 'rdflib'
 import { icons, login, ns, widgets } from 'solid-ui'
 import { EditProfileContactSection } from './EditProfileCard'
 import { EditProfileSocialSection } from './EditFriendsCard'
@@ -37,20 +37,25 @@ const editProfileView: PaneDefinition = {
     }
 
     function renderProfileForm (div: HTMLElement, subject: NamedNode) {
-      const preferencesForm = sym('https://solidos.github.io/profile-pane/src/ontology/profileForm.ttl#this')
-      const preferencesFormDoc = preferencesForm.doc()
-      if (!store.holds(undefined, undefined, undefined, preferencesFormDoc)) {
-        // If not loaded already
-        parse(profileForm, store, preferencesFormDoc.uri, 'text/turtle', () => null) // Load form directly
+      // --- Profile form resource setup ---
+      const baseUri = window.location.href.slice(0, window.location.href.lastIndexOf('/') + 1)
+      const formUri = baseUri + 'profileForm.ttl' // Full URI to the form file
+      const formDoc = sym(formUri)                // rdflib NamedNode for the document
+      const formSource = profileForm              // The imported Turtle source
+      const formThis = Namespace(formUri + "#")("this") // NamedNode for #this in the form
+
+      // Load the form if not already in the store
+      if (!store.holds(undefined, undefined, undefined, formDoc)) {
+        parse(formSource, store, formUri, 'text/turtle', () => null)
       }
+
       div.setAttribute('data-testid', 'profile-editor')
-      // @@ div.append?
       widgets.appendForm(
         dom,
         div,
         {},
         subject,
-        preferencesForm,
+        formThis,
         editableProfile,
         complainIfBad
       )
@@ -103,7 +108,7 @@ const editProfileView: PaneDefinition = {
         // Your contact information Section
         main.appendChild(EditProfileContactSection(context, me))
 
-         // Edit socials, CV, Skills
+         // Edit preferences, pronouns, bio
         // Render the editable profile form as a card/section
         const formSection = dom.createElement('section')
         formSection.classList.add('profileSection', 'section-bg')

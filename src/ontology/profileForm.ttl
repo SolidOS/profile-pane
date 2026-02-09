@@ -13,7 +13,7 @@
 @prefix wd: <http://www.wikidata.org/entity/>.
 @prefix wdt: <http://www.wikidata.org/prop/direct/>.
 
-@prefix : <https://solidos.github.io/profile-pane/src/ontology/profileForm.ttl#>.
+@prefix : <#>.
 @prefix soc: <https://solidos.github.io/profile-pane/src/ontology/socialMedia.ttl#>.
 
 # was: https://solidos.github.io/solid-panes/dashboard/profileStyle.ttl#this
