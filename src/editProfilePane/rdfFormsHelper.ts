@@ -14,7 +14,7 @@ export default function renderForm(
     // --- Form resource setup ---
     const formUri = baseUri + formName                // Full URI to the form file
     const formDoc = sym(formUri)                      // rdflib NamedNode for the document             
-    const formThis = Namespace(formUri + "#")("this") // NamedNode for #this in the form
+    const formThis = Namespace(formUri + '#')('this') // NamedNode for #this in the form
 
     // Load the form if not already in the store
     if (!store.holds(undefined, undefined, undefined, formDoc)) {

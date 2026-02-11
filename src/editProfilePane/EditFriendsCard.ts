@@ -21,7 +21,7 @@ export function EditFriendsSection(context: DataBrowserContext, me: NamedNode, e
 
   const comment1 = context.dom.createElement('p')
   comment1.classList.add('p-md')
-  comment1.textContent = `This is your public social network. Only put people here to whom you are happy to be publicly connected. (You can always keep private track of friends and family in your contacts.)`
+  comment1.textContent = 'This is your public social network. Only put people here to whom you are happy to be publicly connected. (You can always keep private track of friends and family in your contacts.)'
   section.appendChild(comment1)
 
   if (editableProfile) {
