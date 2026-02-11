@@ -42,23 +42,7 @@ export async function ProfileView (
       role="main"
       aria-label="Profile for ${profileBasics.name}"
       tabindex="-1"
-    >
-      <!-- Enhanced breadcrumb navigation -->
-      <nav id="profile-nav" aria-label="Profile sections" class="visually-hidden">
-        <ol>
-          <li><a href="#profile-card-heading">Personal Information</a></li>
-          ${(() => {
-            const cv = CVCard(rolesByType)
-            return cv && cv.strings && cv.strings.join('').trim() !== '' 
-              ? html`<li><a href="#cv-heading">Professional Experience</a></li>` 
-              : ''
-          })()}
-          ${accounts.accounts && accounts.accounts.length > 0 
-            ? html`<li><a href="#social-heading" id="social-accounts">Social Accounts</a></li>` 
-            : ''}
-          <li><a href="#chat-heading" id="contact-section">Contact</a></li>
-        </ol>
-      </nav>
+    > 
 
       <article 
         aria-labelledby="profile-card-heading" 
@@ -82,7 +66,7 @@ export async function ProfileView (
             tabindex="-1"
           >
             <header class="text-center mb-md">
-              <h2 id="cv-heading" tabindex="-1">Professional & Education</h2>
+              <h2 id="cv-heading" tabindex="-1">Resume</h2>
             </header>
             <div>
               ${cv}

@@ -15,9 +15,9 @@ import { EditContactsSection } from './EditContactsCard'
 import { EditFriendsSection } from './EditFriendsCard'
 import { EditSocialSection } from './EditSocialCard'
 import { EditProfileCommunitiesSection } from './EditCommunitiesCard'
-import profileForm from '../ontology/profileForm.ttl'
 import '../styles/utilities.css'
-import renderForm from './rdfFormsHelper'
+import { EditCVSection } from './EditCVCard'
+import { EditOtherPreferencesSection } from './EditOtherPreferences'
 
 const editProfileView: PaneDefinition = {
   global: true,
@@ -83,26 +83,15 @@ const editProfileView: PaneDefinition = {
         // Social Accounts Section
         main.appendChild(EditSocialSection(context, me, editableProfile, store))
 
-         // Edit preferences, pronouns, bio
-        // Render the editable profile form as a card/section
-        const formSection = dom.createElement('section')
-        formSection.classList.add('profileSection', 'section-bg')
-        formSection.setAttribute('aria-labelledby', 'edit-profile-form-heading')
-        const formHeader = dom.createElement('header')
-        formHeader.classList.add('text-center', 'mb-md')
-        const formHeading = dom.createElement('h2')
-        formHeading.id = 'edit-profile-form-heading'
-        formHeading.classList.add('section-title')
-        formHeading.textContent = 'Edit preferences, pronouns, bio'
-        formHeader.appendChild(formHeading)
-        formSection.appendChild(formHeader)
-        
-        const profileFormName = 'profileForm.ttl' // Full URI to the form file
-        renderForm(formSection, me, profileForm, profileFormName, store, context.dom, editableProfile)
-        main.appendChild(formSection)
+        // Resume Section
+        main.appendChild(EditCVSection(context, me, editableProfile, store))
+
+        // Other preferences Section
+        main.appendChild(EditOtherPreferencesSection(context, me, editableProfile, store))
       
         // People you know Section
         main.appendChild(EditFriendsSection(context, me, editableProfile, profile))
+        
         // Communities you participate in Section
         main.appendChild(EditProfileCommunitiesSection(context, me, editableProfile, profile))
        
