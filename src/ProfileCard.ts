@@ -2,6 +2,7 @@ import { html, nothing } from 'lit-html'
 import './styles/ProfileCard.css'
 import { ProfilePresentation } from './presenter'
 import { addMeToYourFriendsDiv } from './addMeToYourFriends'
+import { addMeToYourContactsDiv } from './addMeToYourContacts'
 import { DataBrowserContext } from 'pane-registry'
 import { NamedNode } from 'rdflib'
 import { QRCodeCard } from './QRCodeCard'
@@ -28,6 +29,10 @@ export const ProfileCard = ({
         ${addMeToYourFriendsDiv(subject, context)}
       </section>
       
+      <section class="buttonSection text-center" aria-label="Actions">
+        ${addMeToYourContactsDiv(subject, context)}
+      </section>
+
       <div class="qrCodeSection section-centered">
         ${QRCodeCard(highlightColor, backgroundColor, subject)}
       </div>
