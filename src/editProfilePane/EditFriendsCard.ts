@@ -2,16 +2,16 @@ import { DataBrowserContext } from 'pane-registry'
 import { NamedNode } from 'rdflib'
 import { ns, widgets } from 'solid-ui'
 
-export function EditProfileSocialSection(context: DataBrowserContext, me: NamedNode, editableProfile: NamedNode | null, profile: NamedNode) {
+export function EditFriendsSection(context: DataBrowserContext, me: NamedNode, editableProfile: NamedNode | null, profile: NamedNode) {
   const section = context.dom.createElement('section')
-  section.setAttribute('aria-labelledby', 'edit-profile-social-heading')
+  section.setAttribute('aria-labelledby', 'edit-profile-friends-heading')
   section.classList.add('profileSection', 'section-bg')
 
   const header = context.dom.createElement('header')
   header.classList.add('text-center', 'mb-md')
 
   const heading = context.dom.createElement('h2')
-  heading.id = 'edit-profile-social-heading'
+  heading.id = 'edit-profile-friends-heading'
   heading.classList.add('section-title')
   heading.textContent = 'Friends'
 

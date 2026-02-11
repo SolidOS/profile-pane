@@ -1,15 +1,20 @@
-import { LiveStore, NamedNode, Node, parse } from 'rdflib'
+import { LiveStore, NamedNode, Node, parse, sym} from 'rdflib'
 import { ns, utils, icons } from 'solid-ui'
-import profileForm from './ontology/profileForm.ttl'
+import socialMediaForm from './ontology/socialMedia.ttl'
 
 const DEFAULT_ICON_URI = icons.iconBase + 'noun_10636_grey.svg' // grey disc
 
-export function loadProfileForm (store: LiveStore) {
-  const preferencesForm = store.sym('https://solidos.github.io/profile-pane/src/ontology/profileForm.ttl#this')
-  const preferencesFormDoc = preferencesForm.doc()
-  if (!store.holds(undefined, undefined, undefined, preferencesFormDoc)) {
-    // If not loaded already
-    parse(profileForm, store, preferencesFormDoc.uri, 'text/turtle', () => null) // Load form directly
+const baseUri = window.location.href.slice(0, window.location.href.lastIndexOf('/') + 1)
+const socialMediaFormName = 'socialMedia.ttl' // The name of the file to upload
+
+// we need to load into the store some additional information about Social Media accounts
+export function loadSocialMediaForm (store: LiveStore) {
+  const socialMediaUri = baseUri + socialMediaFormName   // Full URI to the file
+  const socialMediaDoc = sym(socialMediaUri)             // rdflib NamedNode for the document    
+  if (!store.holds(undefined, undefined, undefined, socialMediaDoc)) {
+    // we are using the social media form because it contains the information we need
+    // the form can be used for both use cases: create UI  for edit and render UI for display
+    parse(socialMediaForm, store, socialMediaUri, 'text/turtle', () => null) // Load doc directly
   }
 }
 export interface Account {
@@ -27,9 +32,9 @@ export function presentSocial(
 ): SocialPresentation {
   
   function nameForAccount (subject):string {
-    const acIcon = store.any(subject, ns.foaf('name')) ||
+    const acName = store.any(subject, ns.foaf('name')) ||
                    store.any(subject, ns.rdfs('label')) // on the account itself?
-    if (acIcon) return acIcon.value
+    if (acName) return acName.value
     const classes = store.each(subject, ns.rdf('type')) as NamedNode[]
     for (const k of classes) {
       const classIcon: Node = store.any(k as NamedNode, ns.rdfs('label'))
@@ -38,7 +43,7 @@ export function presentSocial(
       }
       return utils.label(k)
     }
-    return ''
+    return 'Unknown Account'
   }
 
   function iconForAccount (subject):string {
@@ -46,7 +51,7 @@ export function presentSocial(
     if (acIcon) return acIcon.value
     const classes = store.each(subject, ns.rdf('type'))
     if (classes.length > 0) {
-      console.log('@@ classes[0].termType 2 ', classes[0].termType)
+      
       for (const k of (classes as Node[])) {
         const classIcon: Node | null  = store.any(k as any, ns.foaf('icon'))
         if (classIcon !==  null)  {
@@ -58,9 +63,7 @@ export function presentSocial(
   }
 
   function homepageForAccount (subject):string {
-    const acHomepage = store.any(subject, ns.foaf('homepage')) // on the account itself?
-    if (acHomepage) return acHomepage.value
-    const id = store.anyJS(subject, ns.foaf('accountName'), null, subject.doc()) || 'No_account_Name' 
+    const id = store.anyJS(subject, ns.foaf('accountName'), null, subject.doc()) || '' 
     const classes = store.each(subject, ns.rdf('type'))
     for (const k of classes) {
       const userProfilePrefix: Node | null = store.any(k as any, ns.foaf('userProfilePrefix'))
@@ -68,7 +71,7 @@ export function presentSocial(
         return userProfilePrefix.value + id.trim() 
       }
     }
-    return 'no userProfilePrefix?'
+    return store.anyJS(subject, ns.foaf('homepage'), null, subject.doc()) || ''
   }
 
   function accountAsObject (ac) {
@@ -79,14 +82,25 @@ export function presentSocial(
     }
 
   }
-  loadProfileForm(store) // get ontology info
+ 
+  loadSocialMediaForm(store)
 
-  const accountThings: Node[] = store.anyJS(subject, ns.foaf('account')) // load the collection
-  if (!accountThings) return { accounts: []} // could have been undefined
-  //console.log('Social: accountThings', accountThings)
-  const accounts: Account[] = accountThings.map(ac => accountAsObject(ac))
-  //console.log('Social: account objects', accounts)
-
+  const accountThings: Node[] = store.anyJS(subject, ns.foaf('Account')) || [] // load the collection
+  // in the past the foaf:Account was lowercase, so we also check for that
+  const accountThings2: Node[] = store.anyJS(subject, ns.foaf('account')) || [] // load the collection
+  const allAccountThings: Node[] = [...accountThings, ...accountThings2]
+  if (allAccountThings.length === 0) return { accounts: []}
+  // console.log('.....Social: accountThings', accountThings)
+  const accountsAll: Account[] = allAccountThings.map(ac => accountAsObject(ac))
+  const accountsByName = new Map<string, Account>()
+  for (const account of accountsAll) {
+    const accountName = account.name.trim()
+    if (!accountsByName.has(accountName)) {
+      accountsByName.set(accountName, { ...account, name: accountName })
+    }
+  }
+  const accounts: Account[] = Array.from(accountsByName.values())
+  // console.log('Social: account objects', accounts) 
 
   return { accounts }
 }

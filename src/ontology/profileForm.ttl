@@ -16,11 +16,6 @@
 @prefix : <#>.
 @prefix soc: <https://solidos.github.io/profile-pane/src/ontology/socialMedia.ttl#>.
 
-# was: https://solidos.github.io/solid-panes/dashboard/profileStyle.ttl#this
-# moved to:  https://solidos.github.io/profile-pane/src/ontology/profileForm.ttl#this
-
-
-
 
 # About forms: https://solidos.github.io/solid-ui/Documentation/forms-intro.html
 # About personal public data:  https://www.w3.org/DesignIssues/PersonalPublic.html
@@ -35,7 +30,6 @@
       :nicknameField
       :pronounsForm
       :LanguagesPrompt :LanguagesForm
-      :SocialsPrompt :SocialsForm
       :CVGroup
       :SkillsPrompt :SkillsForm
       ).
@@ -49,7 +43,7 @@
 
 # Nickname
 
-:nicknameField a ui:SingleLineTextField; ui:size 12; ui:property foaf:nick;
+:nicknameField a ui:SingleLineTextField; ui:property foaf:nick;
       ui:label "Short name for chats, etc."@en, "nom court"@fr.
 
  # Pronouns

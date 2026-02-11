@@ -4,56 +4,49 @@ import { store } from 'solid-logic'
 import { findByTestId } from '@testing-library/dom'
 import { context, doc, subject } from './setup'
 
-
-// import exampleProfile from './examples/testingsolidos.ttl'
-
-
-// This was at testingsolidos.solidcommunity.net
-
-const exampleProfile = `#Processed by Id
-        #    using base file:///Users/timbl_1/src/github.com/solidos/solidos/workspaces/profile-pane/src/integration-tests/examples/tim-social.ttl
-             @prefix : <#> .
+const exampleProfile = `
+    @prefix : <#> .
     @prefix Ber: <https://www.w3.org/People/Berners-Lee/> .
     @prefix foaf: <http://xmlns.com/foaf/0.1/> .
-    @prefix prof: <https://solidos.github.io/profile-pane/src/ontology/socialMedia.ttl#> .
     @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+    @prefix owl: <http://www.w3.org/2002/07/owl#>.
     
-    :id1729675527480     a prof:BlueSkyAccount;
+    :id1729675527480     a :BlueSkyAccount;
          foaf:accountName "timbl.bsky.social" .
     
-    :id1729912807298     a prof:FacebookAccount;
+    :id1729912807298     a :FacebookAccount;
          foaf:accountName "tim.bernerslee.9" .
     
-    :id1729912986863     a prof:InstagramAccount;
+    :id1729912986863     a :InstagramAccount;
          foaf:accountName "timblee" .
     
-    :id1730055928507     a prof:MastodonAccount;
+    :id1730055928507     a :MastodonAccount;
          foaf:accountName "@timbl@w3c.social" .
     
-    :id1730056067040     a prof:RedditAccount .
+    :id1730056067040     a :RedditAccount .
     
-    :id1730056125033     a prof:RedditAccount;
+    :id1730056125033     a :RedditAccount;
          foaf:accountName "timbl" .
     
-    :id1730056175230     a prof:TwitterAccount;
+    :id1730056175230     a :TwitterAccount;
          foaf:accountName "@timberners_lee" .
     
-    :id1730056248989     a prof:OtherAccount;
+    :id1730056248989     a :OtherAccount;
          rdfs:label "My homepage at W3C";
          foaf:homepage Ber:;
          foaf:icon <https://www.w3.org/assets/logos/w3c/w3c-bars.svg> .
     
-    :id1730058497607     a prof:SnapchatAccount .
+    :id1730058497607     a :SnapchatAccount .
     
-    :id1730059685809     a prof:TiktokAccount .
+    :id1730059685809     a :TiktokAccount .
     
-    :id1730387315524     a prof:GithubAccount;
+    :id1730387315524     a :GithubAccount;
          foaf:accountName "timbl" .
     
-    :id1730387353050     a prof:MatrixAccount;
+    :id1730387353050     a :MatrixAccount;
          foaf:accountName " @timbl-54d26c98db8155e6700f7312:gitter.im" .
     
-    :me     foaf:account  (
+    :me     foaf:Account  (
         :id1729675527480
         :id1729912807298
         :id1729912986863
@@ -65,7 +58,20 @@ const exampleProfile = `#Processed by Id
         :id1730056248989
         :id1730058497607
         :id1730059685809 ) .
-    
+
+    foaf:account a rdfs:Class;
+      rdfs:label "Online Account Provider";
+      owl:disjointUnionOf ( 
+          :BlueSkyAccount :DiggAccount :FacebookAccount :GithubAccount :InstagramAccount
+          :LinkedInAccount :MastodonAccount :MatrixAccount :MediumAccount :NostrAccount 
+          :OrcidAccount :PinterestAccount :RedditAccount :SnapchatAccount :StravaAccount 
+          :TiktokAccount  :TumblrAccount  :TwitterAccount :OtherAccount) .
+          
+    :FacebookAccount rdfs:subClassOf foaf:account ;
+      rdfs:label "Facebook";
+      foaf:userProfilePrefix "https://www.facebook.com/";
+      foaf:icon <https://solidos.github.io/solid-ui/src/icons/social/facebook-2020-2-1.svg>;
+      foaf:homepage <https://www.facebook.com/> .
 `
 
  // console.log('exampleProfile', exampleProfile)

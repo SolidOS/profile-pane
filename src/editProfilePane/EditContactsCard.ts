@@ -2,7 +2,7 @@ import { DataBrowserContext } from 'pane-registry'
 import { NamedNode } from 'rdflib'
 import { yourContactInformationHeading } from '../texts'
 
-export function EditProfileContactSection(context: DataBrowserContext, me: NamedNode): HTMLElement {
+export function EditContactsSection(context: DataBrowserContext, me: NamedNode): HTMLElement {
   const section = context.dom.createElement('section')
   section.setAttribute('aria-labelledby', 'edit-profile-contact-heading')
   section.classList.add('profileSection', 'section-bg')

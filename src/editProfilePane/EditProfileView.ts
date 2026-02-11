@@ -9,13 +9,15 @@
  */
 
 import { PaneDefinition } from 'pane-registry'
-import { NamedNode, Namespace, parse, Store, sym } from 'rdflib'
+import { NamedNode, Store } from 'rdflib'
 import { icons, login, ns, widgets } from 'solid-ui'
-import { EditProfileContactSection } from './EditProfileCard'
-import { EditProfileSocialSection } from './EditFriendsCard'
+import { EditContactsSection } from './EditContactsCard'
+import { EditFriendsSection } from './EditFriendsCard'
+import { EditSocialSection } from './EditSocialCard'
 import { EditProfileCommunitiesSection } from './EditCommunitiesCard'
 import profileForm from '../ontology/profileForm.ttl'
 import '../styles/utilities.css'
+import renderForm from './rdfFormsHelper'
 
 const editProfileView: PaneDefinition = {
   global: true,
@@ -31,43 +33,12 @@ const editProfileView: PaneDefinition = {
     const dom = context.dom
     const store = context.session.store as Store
 
-    function complainIfBad (ok: boolean, mess: string) {
-      if (ok) return
-      div.appendChild(widgets.errorMessageBlock(dom, mess, '#fee'))
-    }
-
-    function renderProfileForm (div: HTMLElement, subject: NamedNode) {
-      // --- Profile form resource setup ---
-      const baseUri = window.location.href.slice(0, window.location.href.lastIndexOf('/') + 1)
-      const formUri = baseUri + 'profileForm.ttl' // Full URI to the form file
-      const formDoc = sym(formUri)                // rdflib NamedNode for the document
-      const formSource = profileForm              // The imported Turtle source
-      const formThis = Namespace(formUri + "#")("this") // NamedNode for #this in the form
-
-      // Load the form if not already in the store
-      if (!store.holds(undefined, undefined, undefined, formDoc)) {
-        parse(formSource, store, formUri, 'text/turtle', () => null)
-      }
-
-      div.setAttribute('data-testid', 'profile-editor')
-      widgets.appendForm(
-        dom,
-        div,
-        {},
-        subject,
-        formThis,
-        editableProfile,
-        complainIfBad
-      )
-    } // renderProfileForm
-
     // Use <section> as the main container for better semantics
     const div = dom.createElement('section')
     div.setAttribute('data-testid', 'profile-editor')
     div.setAttribute('role', 'region')
     div.setAttribute('aria-label', 'Edit your profile')
     let editableProfile: NamedNode | null
-
 
     // Use <main> for the main content area, styled as a grid like ProfileView
     const main = dom.createElement('main')
@@ -87,6 +58,7 @@ const editProfileView: PaneDefinition = {
       statusArea: statusArea,
       me: null
     }
+
     login.ensureLoadedProfile(profileContext)
       .then(theContext => {
         const me = theContext.me!
@@ -106,7 +78,10 @@ const editProfileView: PaneDefinition = {
 
         // Render each section as a card with consistent classes
         // Your contact information Section
-        main.appendChild(EditProfileContactSection(context, me))
+        main.appendChild(EditContactsSection(context, me))
+
+        // Social Accounts Section
+        main.appendChild(EditSocialSection(context, me, editableProfile, store))
 
          // Edit preferences, pronouns, bio
         // Render the editable profile form as a card/section
@@ -122,14 +97,14 @@ const editProfileView: PaneDefinition = {
         formHeader.appendChild(formHeading)
         formSection.appendChild(formHeader)
         
-        renderProfileForm(formSection, me)
+        const profileFormName = 'profileForm.ttl' // Full URI to the form file
+        renderForm(formSection, me, profileForm, profileFormName, store, context.dom, editableProfile)
         main.appendChild(formSection)
-
+      
         // People you know Section
-        main.appendChild(EditProfileSocialSection(context, me, editableProfile, profile))
+        main.appendChild(EditFriendsSection(context, me, editableProfile, profile))
         // Communities you participate in Section
         main.appendChild(EditProfileCommunitiesSection(context, me, editableProfile, profile))
-
        
       }).catch(error => {
         statusArea.appendChild(widgets.errorMessageBlock(dom, error, '#fee'))
