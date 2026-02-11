@@ -2,6 +2,7 @@ import { DataBrowserContext } from 'pane-registry'
 import { NamedNode, Store} from 'rdflib'
 import socialMediaForm from '../ontology/socialMediaForm.ttl'
 import renderForm from './rdfFormsHelper'
+import { socialAccountsHeadingText } from '../texts'
 
 const socialMediaFormName = 'socialMediaForm.ttl' // The name of the form file
 
@@ -16,7 +17,7 @@ export function EditSocialSection(context: DataBrowserContext, me: NamedNode, ed
   const heading = context.dom.createElement('h2')
   heading.id = 'edit-profile-social-heading'
   heading.classList.add('section-title')
-  heading.textContent = 'Social Accounts'
+  heading.textContent = socialAccountsHeadingText
 
   header.appendChild(heading)
   section.appendChild(header)

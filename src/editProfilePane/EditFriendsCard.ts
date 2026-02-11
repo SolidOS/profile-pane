@@ -1,6 +1,7 @@
 import { DataBrowserContext } from 'pane-registry'
 import { NamedNode } from 'rdflib'
 import { ns, widgets } from 'solid-ui'
+import { friendsHeadingText } from '../texts'
 
 export function EditFriendsSection(context: DataBrowserContext, me: NamedNode, editableProfile: NamedNode | null, profile: NamedNode) {
   const section = context.dom.createElement('section')
@@ -13,7 +14,7 @@ export function EditFriendsSection(context: DataBrowserContext, me: NamedNode, e
   const heading = context.dom.createElement('h2')
   heading.id = 'edit-profile-friends-heading'
   heading.classList.add('section-title')
-  heading.textContent = 'Friends'
+  heading.textContent = friendsHeadingText
 
   header.appendChild(heading)
   section.appendChild(header)

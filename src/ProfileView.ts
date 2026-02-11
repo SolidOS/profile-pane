@@ -12,6 +12,13 @@ import { ProfileCard } from './ProfileCard'
 import { CVCard } from './CVCard'
 import { SocialCard } from './SocialCard'
 import { StuffCard } from './StuffCard'
+import {
+  resumeHeadingText,
+  socialAccountsHeadingText,
+  sharedItemsHeadingText,
+  friendsHeadingText,
+  contactHeadingText
+} from './texts'
 
 // The edit button switches to the editor pane
 /*
@@ -66,7 +73,7 @@ export async function ProfileView (
             tabindex="-1"
           >
             <header class="text-center mb-md">
-              <h2 id="cv-heading" tabindex="-1">Resume</h2>
+              <h2 id="cv-heading" tabindex="-1">${resumeHeadingText}</h2>
             </header>
             <div>
               ${cv}
@@ -83,7 +90,7 @@ export async function ProfileView (
           tabindex="-1"
         >
           <header class="text-center mb-md">
-            <h2 id="social-heading" tabindex="-1">Social Accounts</h2>
+            <h2 id="social-heading" tabindex="-1">${socialAccountsHeadingText}</h2>
           </header>
           <nav aria-label="Social media links">
             ${SocialCard(accounts)}
@@ -99,7 +106,7 @@ export async function ProfileView (
           tabindex="-1"
         >
           <header class="text-center mb-md">
-            <h2 id="stuff-heading" tabindex="-1">Shared Items</h2>
+            <h2 id="stuff-heading" tabindex="-1">${sharedItemsHeadingText}</h2>
           </header>
           <div>
             ${StuffCard(profileBasics, context, subject, stuffData)}
@@ -117,7 +124,7 @@ export async function ProfileView (
             tabindex="-1"
           >
             <header class="text-center mb-md">
-              <h2 id="friends-heading" tabindex="-1">Friends</h2>
+              <h2 id="friends-heading" tabindex="-1">${friendsHeadingText}</h2>
             </header>
             <div role="list" aria-label="Friend connections">
               ${friends}
@@ -133,7 +140,7 @@ export async function ProfileView (
         tabindex="-1"
       >
         <header class="text-center mb-md">
-          <h2 id="chat-heading" tabindex="-1">Contact</h2>
+          <h2 id="chat-heading" tabindex="-1">${contactHeadingText}</h2>
         </header>
         <div>
           ${ChatWithMe(subject, context)}

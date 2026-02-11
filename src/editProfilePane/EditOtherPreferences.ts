@@ -2,6 +2,7 @@ import { DataBrowserContext } from 'pane-registry'
 import { NamedNode, Store} from 'rdflib'
 import otherPreferencesForm from '../ontology/otherPreferencesForm.ttl'
 import renderForm from './rdfFormsHelper'
+import { otherPreferencesHeadingText } from '../texts'
 
 const otherPreferencesFormName = 'otherPreferencesForm.ttl' // The name of the form file
 
@@ -16,7 +17,7 @@ export function EditOtherPreferencesSection(context: DataBrowserContext, me: Nam
   const heading = context.dom.createElement('h2')
   heading.id = 'edit-profile-other-preferences-heading'
   heading.classList.add('section-title')
-  heading.textContent = 'Other Preferences'
+  heading.textContent = otherPreferencesHeadingText
 
   header.appendChild(heading)
   section.appendChild(header)

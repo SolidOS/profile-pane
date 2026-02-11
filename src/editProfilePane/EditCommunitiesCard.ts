@@ -1,6 +1,7 @@
 import { DataBrowserContext } from 'pane-registry'
 import { NamedNode } from 'rdflib'
 import { ns, widgets } from 'solid-ui'
+import { communitiesHeadingText } from '../texts'
 
 export function EditProfileCommunitiesSection(context: DataBrowserContext, me: NamedNode, editableProfile: NamedNode | null, profile: NamedNode) {
   const section = context.dom.createElement('section')
@@ -13,7 +14,7 @@ export function EditProfileCommunitiesSection(context: DataBrowserContext, me: N
   const heading = context.dom.createElement('h2')
   heading.id = 'edit-profile-communities-heading'
   heading.classList.add('section-title')
-  heading.textContent = 'Communities you participate in'
+  heading.textContent = communitiesHeadingText
   header.appendChild(heading)
   section.appendChild(header)
 

@@ -17,7 +17,14 @@ export const logInToChatWithMeButtonText = 'Login to chat with me'
 export const friendExistsAlreadyButtonText = 'Already part of friends'
 export const chatWithMeButtonText = 'Chat with me'
 
-// Edit profile texts 
-export const yourContactInformationHeading = 'Your contact information'
+// Profile & Edit profile texts 
+export const yourContactInformationHeading = 'Contact Information'
+export const otherPreferencesHeadingText = 'Other Preferences'
+export const communitiesHeadingText = 'Communities You Participate In'
+export const resumeHeadingText = 'Resume'
+export const socialAccountsHeadingText = 'Social Accounts'
+export const sharedItemsHeadingText = 'Shared Items'
+export const friendsHeadingText = 'Friends'
+export const contactHeadingText = 'Contact'
 
 

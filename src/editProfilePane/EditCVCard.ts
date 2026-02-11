@@ -2,6 +2,7 @@ import { DataBrowserContext } from 'pane-registry'
 import { NamedNode, Store} from 'rdflib'
 import resumeForm from '../ontology/resumeForm.ttl'
 import renderForm from './rdfFormsHelper'
+import { resumeHeadingText } from '../texts'
 
 const resumeFormName = 'resumeForm.ttl' // The name of the form file
 
@@ -16,7 +17,7 @@ export function EditCVSection(context: DataBrowserContext, me: NamedNode, editab
   const heading = context.dom.createElement('h2')
   heading.id = 'edit-profile-cv-heading'
   heading.classList.add('section-title')
-  heading.textContent = 'Resume'
+  heading.textContent = resumeHeadingText
 
   header.appendChild(heading)
   section.appendChild(header)
