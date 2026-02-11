@@ -1,9 +1,9 @@
 import { DataBrowserContext } from 'pane-registry'
 import { NamedNode, Store} from 'rdflib'
-import socialMediaForm from '../ontology/socialMedia.ttl'
+import socialMediaForm from '../ontology/socialMediaForm.ttl'
 import renderForm from './rdfFormsHelper'
 
-const socialMediaFormName = 'socialMedia.ttl' // The name of the form file
+const socialMediaFormName = 'socialMediaForm.ttl' // The name of the form file
 
 export function EditSocialSection(context: DataBrowserContext, me: NamedNode, editableProfile: NamedNode | null, store: Store) {
   const section = context.dom.createElement('section')

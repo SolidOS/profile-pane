@@ -1,11 +1,11 @@
 import { LiveStore, NamedNode, Node, parse, sym} from 'rdflib'
 import { ns, utils, icons } from 'solid-ui'
-import socialMediaForm from './ontology/socialMedia.ttl'
+import socialMediaForm from './ontology/socialMediaForm.ttl'
 
 const DEFAULT_ICON_URI = icons.iconBase + 'noun_10636_grey.svg' // grey disc
 
 const baseUri = window.location.href.slice(0, window.location.href.lastIndexOf('/') + 1)
-const socialMediaFormName = 'socialMedia.ttl' // The name of the file to upload
+const socialMediaFormName = 'socialMediaForm.ttl' // The name of the file to upload
 
 // we need to load into the store some additional information about Social Media accounts
 export function loadSocialMediaForm (store: LiveStore) {
