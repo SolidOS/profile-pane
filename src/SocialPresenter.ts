@@ -1,16 +1,36 @@
 import { LiveStore, NamedNode, Node, parse } from 'rdflib'
 import { ns, utils, icons } from 'solid-ui'
 import profileForm from './ontology/profileForm.ttl'
+import socialMedia from './ontology/socialMedia.ttl'
 
 const DEFAULT_ICON_URI = icons.iconBase + 'noun_10636_grey.svg' // grey disc
 
-export function loadProfileForm (store: LiveStore) {
+export function loadProfileForm (store: LiveStore): Promise<void> {
   const preferencesForm = store.sym('https://solidos.github.io/profile-pane/src/ontology/profileForm.ttl#this')
   const preferencesFormDoc = preferencesForm.doc()
+  const socialMediaDoc = store.sym('https://solidos.github.io/profile-pane/src/ontology/socialMedia.ttl').doc()
+  
+  const promises: Promise<void>[] = []
+  
   if (!store.holds(undefined, undefined, undefined, preferencesFormDoc)) {
-    // If not loaded already
-    parse(profileForm, store, preferencesFormDoc.uri, 'text/turtle', () => null) // Load form directly
+    promises.push(new Promise<void>((resolve, reject) => {
+      parse(profileForm, store, preferencesFormDoc.uri, 'text/turtle', (err) => {
+        if (err) reject(err)
+        else resolve()
+      })
+    }))
   }
+  
+  if (!store.holds(undefined, undefined, undefined, socialMediaDoc)) {
+    promises.push(new Promise<void>((resolve, reject) => {
+      parse(socialMedia, store, socialMediaDoc.uri, 'text/turtle', (err) => {
+        if (err) reject(err)
+        else resolve()
+      })
+    }))
+  }
+  
+  return Promise.all(promises).then(() => undefined)
 }
 export interface Account {
   name: string,
@@ -79,7 +99,7 @@ export function presentSocial(
     }
 
   }
-  loadProfileForm(store) // get ontology info
+  // Ontology should be pre-loaded by caller via loadProfileForm(store)
 
   const accountThings: Node[] = store.anyJS(subject, ns.foaf('account')) // load the collection
   if (!accountThings) return { accounts: []} // could have been undefined

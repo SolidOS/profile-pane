@@ -13,6 +13,7 @@ import { NamedNode, parse, Store, sym } from 'rdflib'
 import { icons, login, ns, style, widgets } from 'solid-ui'
 import { paneDiv } from './profile.dom'
 import profileForm from '../ontology/profileForm.ttl'
+import socialMedia from '../ontology/socialMedia.ttl'
 
 const highlightColor = style.highlightColor || '#7C4DFF'
 
@@ -38,9 +39,14 @@ const editProfileView: PaneDefinition = {
     function renderProfileForm (div: HTMLElement, subject: NamedNode) {
       const preferencesForm = sym('https://solidos.github.io/profile-pane/src/ontology/profileForm.ttl#this')
       const preferencesFormDoc = preferencesForm.doc()
+      const socialMediaDoc = sym('https://solidos.github.io/profile-pane/src/ontology/socialMedia.ttl').doc()
       if (!store.holds(undefined, undefined, undefined, preferencesFormDoc)) {
         // If not loaded already
         parse(profileForm, store, preferencesFormDoc.uri, 'text/turtle', () => null) // Load form directly
+      }
+      if (!store.holds(undefined, undefined, undefined, socialMediaDoc)) {
+        // Load socialMedia ontology for the classifier
+        parse(socialMedia, store, socialMediaDoc.uri, 'text/turtle', () => null)
       }
       div.setAttribute('data-testid', 'profile-editor')
       // @@ div.append?
