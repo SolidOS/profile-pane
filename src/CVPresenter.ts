@@ -35,7 +35,7 @@ export function skillAsText (store: Store, sk: Node):string {
 
   const manual = store.anyJS(sk as NamedNode, ns.vcard('role'))
   if (manual && manual[0] > '') return manual
-  return '¿¿¿ skill ???'
+  return 'cannot find skill name'
 }
 
 export function languageAsText (store: Store, lan: Node):string {
@@ -43,7 +43,7 @@ export function languageAsText (store: Store, lan: Node):string {
   const publicId = store.anyJS(lan as NamedNode, ns.solid('publicId'))
   if (publicId)
     return utils.label(publicId, true) // @@ check language and get name in diff language if necessary
-  return '-'                                                  
+  return 'cannot find language name'                                                  
 }
 
 export function datesAsText (startDate?:Literal, endDate?:Literal):string {
