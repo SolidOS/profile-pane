@@ -4,7 +4,7 @@
  * Unlike view panes, this is available any place whatever the real subject,
  * and allows the user to edit their own profile.
  *
- * Usage: paneRegistry.register('/profile/editProfile.view)
+ * Usage: paneRegistry.register('/profile/editProfile.view')
  * or standalone script adding onto existing mashlib.
  */
 
