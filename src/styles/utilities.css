@@ -191,6 +191,17 @@
   font-weight: 600;
 }
 
+:focus-visible {
+  outline: var(--focus-ring-width) solid var(--color-primary);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 1px var(--color-background);
+}
+
+:focus:not(:focus-visible) {
+  outline: none;
+  box-shadow: none;
+}
+
 /* Better focus for text elements */
 .focusable-text:focus {
   background-color: rgba(124, 77, 255, 0.1);
@@ -301,6 +312,7 @@
   box-shadow: var(--box-shadow);
   padding: var(--spacing-md);
 }
+
 
 /* Transparent button override (for solid-ui integration) */
 .btn-transparent {

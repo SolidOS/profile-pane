@@ -191,8 +191,10 @@ describe('profile-pane', () => {
     it('renders skill 3 vcard role in CV', () => {
       expect(element).toContainHTML('Sitting')
     })
-    it('renders error flag when missing skill text CV', () => {
-      expect(element).toContainHTML('¿¿¿ Skill ???')
+    // If we have an empty skill node we do not display it at all ANYMORE
+    it('renders three skills in CV', () => {
+      const skills = element.querySelectorAll('.cvSkill')
+      expect(skills.length).toBe(3)
     })
     it('renders languages', () => {
       expect(element).toContainHTML('Fr')
