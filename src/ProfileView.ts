@@ -36,9 +36,11 @@ export async function ProfileView (
   subject: NamedNode,
   context: DataBrowserContext
 ): Promise <TemplateResult> {
-  const profileBasics = presentProfile(subject, context.session.store as LiveStore)
-  const rolesByType = presentCV(subject, context.session.store as LiveStore)
-  const accounts = presentSocial(subject, context.session.store as LiveStore)
+  const store = context.session.store as LiveStore
+  
+  const profileBasics = presentProfile(subject, store)
+  const rolesByType = presentCV(subject, store)
+  const accounts = presentSocial(subject, store)
   const stuffData = await presentStuff(subject)
 
   return html` 

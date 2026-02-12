@@ -8,9 +8,10 @@ const baseUri = window.location.href.slice(0, window.location.href.lastIndexOf('
 const socialMediaFormName = 'socialMediaForm.ttl' // The name of the file to upload
 
 // we need to load into the store some additional information about Social Media accounts
-export function loadSocialMediaForm (store: LiveStore) {
+export function loadSocialMediaForm(store: LiveStore) {
   const socialMediaUri = baseUri + socialMediaFormName   // Full URI to the file
   const socialMediaDoc = sym(socialMediaUri)             // rdflib NamedNode for the document    
+  
   if (!store.holds(undefined, undefined, undefined, socialMediaDoc)) {
     // we are using the social media form because it contains the information we need
     // the form can be used for both use cases: create UI  for edit and render UI for display
