@@ -189,144 +189,125 @@ foaf:Account a rdfs:Class;
     ui:label "Username";
     ui:maxLength "200" ;
     ui:property foaf:accountName ; 
-    ui:pattern "@[a-z0-9A-Z_-](.[a-z0-9A-Z_-])*";  
-    ui:size    20 .
+    ui:pattern "@[a-z0-9A-Z_-](.[a-z0-9A-Z_-])*".
 
 :DiggIdField
     a ui:SingleLineTextField ;
     ui:label "Username";
     ui:maxLength "200" ;
     ui:property foaf:accountName ; 
-    ui:pattern "@[a-z0-9A-Z_-](.[a-z0-9A-Z_-])*"; 
-    ui:size    20 .
+    ui:pattern "@[a-z0-9A-Z_-](.[a-z0-9A-Z_-])*".
 
 :FacebookIdField
     a ui:SingleLineTextField ;
     ui:label "Username";
-    ui:maxLength "200" ;
     ui:property foaf:accountName ; 
-    ui:pattern "[a-z0-9A-Z_-]*";  
-    ui:size    20 .
+    ui:pattern "[a-z0-9A-Z_-]*".
 
 :GithubIdField
     a ui:SingleLineTextField ;
     ui:label "Username";
     ui:maxLength "200" ;
     ui:property foaf:accountName ; 
-    ui:pattern "[a-z0-9A-Z_-]*";  
-    ui:size    20 .
+    ui:pattern "[a-z0-9A-Z_-]*".
 
 :InstagramIdField
     a ui:SingleLineTextField ;
     ui:label "Username";
     ui:maxLength "200" ;
     ui:property foaf:accountName ; 
-    ui:pattern "[a-z0-9A-Z_-]*";  
-    ui:size    20 .
+    ui:pattern "[a-z0-9A-Z_-]*".
 
 :LinkedInIdField
     a ui:SingleLineTextField ;
     ui:label "Username";
     ui:maxLength "200" ;
     ui:property foaf:accountName ; 
-    ui:pattern "[a-z0-9A-Z_-]*(.[a-z0-9A-Z_-])*";  
-    ui:size    20 .
+    ui:pattern "[a-z0-9A-Z_-]*(.[a-z0-9A-Z_-])*".
 
 :MastodonIdField
     a ui:SingleLineTextField ;
     ui:label "Username";
     ui:maxLength "200" ;
     ui:property foaf:accountName ; 
-    ui:pattern "@[a-z0-9A-Z_-]*(.[a-z0-9A-Z_-])*";  
-    ui:size    20 .
+    ui:pattern "@[a-z0-9A-Z_-]*(.[a-z0-9A-Z_-])*".
 
 :MatrixIdField
     a ui:SingleLineTextField ;
     ui:label "Username";
     ui:maxLength "200" ;
     ui:property foaf:accountName ; 
-    ui:pattern "@[a-z0-9A-Z_-]*(.[a-z0-9A-Z_-])*";  
-    ui:size    20 .
+    ui:pattern "@[a-z0-9A-Z_-]*(.[a-z0-9A-Z_-])*".
 
 :MediumIdField
     a ui:SingleLineTextField ;
     ui:label "Username";
     ui:maxLength "200" ;
     ui:property foaf:accountName ; 
-    ui:pattern "@[a-z0-9A-Z_-]*(.[a-z0-9A-Z_-])*";  
-    ui:size    20 .
+    ui:pattern "@[a-z0-9A-Z_-]*(.[a-z0-9A-Z_-])*".
 
 :NostrIdField
     a ui:SingleLineTextField ;
     ui:label "Username";
     ui:maxLength "200" ;
     ui:property foaf:accountName ; 
-    ui:pattern "[a-z0-9A-Z_-]*(.[a-z0-9A-Z_-])*";  
-    ui:size    70 .
+    ui:pattern "[a-z0-9A-Z_-]*(.[a-z0-9A-Z_-])*".
 
 :OrcidIdField
     a ui:SingleLineTextField ;
     ui:label "Username";
     ui:maxLength "200" ;
     ui:property foaf:accountName ; 
-    ui:pattern "[a-z0-9A-Z_-]*";  
-    ui:size    20 .
+    ui:pattern "[a-z0-9A-Z_-]*".
 
 :PinterestIdField
     a ui:SingleLineTextField ;
     ui:label "Username";
     ui:maxLength "200" ;
     ui:property foaf:accountName ; 
-    ui:pattern "[a-z0-9A-Z_-]*";  
-    ui:size    20 .
+    ui:pattern "[a-z0-9A-Z_-]*".
 
 :RedditIdField
     a ui:SingleLineTextField ;
     ui:label "Username";
     ui:maxLength "200" ;
     ui:property foaf:accountName ; 
-    ui:pattern "[a-z0-9A-Z_-]*";  
-    ui:size    20 .
+    ui:pattern "[a-z0-9A-Z_-]*".
 
 :StravaIdField
     a ui:SingleLineTextField ;
     ui:label "Username";
     ui:maxLength "200" ;
     ui:property foaf:accountName ; 
-    ui:pattern "[a-z0-9A-Z_-]*";  
-    ui:size    20 .
+    ui:pattern "[a-z0-9A-Z_-]*".
 
 :SnapchatIdField
     a ui:SingleLineTextField ;
     ui:label "Username";
     ui:maxLength "200" ;
     ui:property foaf:accountName ; 
-    ui:pattern "@[a-z0-9A-Z_-]*";  
-    ui:size    20 .
+    ui:pattern "@[a-z0-9A-Z_-]*".
 
 :TiktokIdField
     a ui:SingleLineTextField ;
     ui:label "Username";
     ui:maxLength "200" ;
     ui:property foaf:accountName ; 
-    ui:pattern "@[a-z0-9A-Z_-]*";  
-    ui:size    20 .
+    ui:pattern "@[a-z0-9A-Z_-]*".
 
 :TumblrIdField
     a ui:SingleLineTextField ;
     ui:label "Username";
     ui:maxLength "200" ;
     ui:property foaf:accountName ; 
-    ui:pattern "@[a-z0-9A-Z_-]*";  
-    ui:size    20 .
+    ui:pattern "@[a-z0-9A-Z_-]*".
 
 :TwitterIdField
     a ui:SingleLineTextField ;
     ui:label "Username";
     ui:maxLength "200" ;
     ui:property foaf:accountName ; 
-    ui:pattern "@[a-z0-9A-Z_-]*";  
-    ui:size    20 .
+    ui:pattern "@[a-z0-9A-Z_-]*".
 
 # an unknown online account needs more info
 
@@ -341,21 +322,18 @@ foaf:Account a rdfs:Class;
     a ui:NamedNodeURIField ;
     ui:label "Account link";
     ui:maxLength "200" ;
-    ui:property foaf:homepage ; 
-    ui:size    20 .
+    ui:property foaf:homepage.
 
 :OtherIconField
     a ui:NamedNodeURIField ;
     ui:label "Icon link";
     ui:maxLength "200" ;
-    ui:property foaf:icon ;
-    ui:size    20 .
+    ui:property foaf:icon.
 
 :OtherLabelField
     a ui:SingleLineTextField ;
     ui:label "Name";
     ui:maxLength "200" ;
-    ui:property rdfs:label ; 
-    ui:size    20 .
+    ui:property rdfs:label.
 
 # ends

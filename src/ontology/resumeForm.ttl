@@ -25,19 +25,23 @@
 
 # Curriculum Vitae: membership of organizations
 
-:CVGroup a ui:Group; ui:weight 1; ui:parts ( :CVPrompt :involvementWithOrganizationsForm ).
+:CVGroup a ui:Group; ui:weight 1; 
+    ui:parts ( 
+        :CVPrompt 
+        :involvementWithOrganizationsForm 
+    ).
 
 :CVPrompt a ui:Comment; ui:contents  "What organizations have you been involved with?" .
-
-solid:Role a rdfs:Class; owl:oneOf ( solid:CurrentRole solid:FormerRole solid:FutureRole ). # Future Role too?
-
-org:member owl:inverse [ ui:label "involvement with company, org etc" ]. # timelimited involvement
 
 :involvementWithOrganizationsForm a ui:Multiple;
     ui:label "Involvement with Organization";
     ui:property org:member; ui:reverse true; # link back from role to member
     ui:ordered false; # Allow user to order CV secions rather than force date order? No.
     ui:part :RoleMembershipForm.
+
+solid:Role a rdfs:Class; owl:oneOf ( solid:CurrentRole solid:FormerRole solid:FutureRole ). # Future Role too?
+
+org:member owl:inverse [ ui:label "involvement with company, org etc" ]. # timelimited involvement
 
 # This is a big important form for one of a series of roles in the list.
 
@@ -50,10 +54,10 @@ org:member owl:inverse [ ui:label "involvement with company, org etc" ]. # timel
         ui:canMintNew true; ui:use :OrganizationCreationForm ;
         ui:property org:organization;
         ui:from vcard:Organization .
-    :roleNameField a ui:SingleLineTextField; ui:property vcard:role; ui:size 60 .
+    :roleNameField a ui:SingleLineTextField; ui:property vcard:role .
 
 :escoOccupationField a ui:AutocompleteField;
-        ui:label "occupation"; ui:size 60;
+        ui:label "occupation";
         ui:property org:role;
         ui:dataSource :ESCO_Occupation_DataSource;
         ui:targetClass schema:Occupation .
@@ -65,7 +69,6 @@ org:member owl:inverse [ ui:label "involvement with company, org etc" ]. # timel
         ui:searchByNameURI "https://ec.europa.eu/esco/api/search?language=$(language)&type=occupation&text=$(name)".
 
     :instituteIdentityField a ui:AutocompleteField; ui:label "in wikidata";
-        ui:size 60;
         ui:property solid:publicId; ui:dataSource :WikidataOnOrganizations.
 
     :WikidataOnOrganizations a ui:DataSource ;
@@ -158,10 +161,9 @@ schema:ResearchOrganization a rdfs:Class; rdfs:label "Research Organization"@en,
       a ui:SingleLineTextField ;
       ui:label "Organization Name";
       ui:maxLength "200" ;
-      ui:property schema:name ;
-      ui:size    80 .
+      ui:property schema:name .
 
-   :homePageURIField a ui:NamedNodeURIField; ui:size 80;
+   :homePageURIField a ui:NamedNodeURIField;
       ui:label "Home page URI"@en;
       ui:property  schema:uri . # @@ ??
 
@@ -190,7 +192,6 @@ ui:case
 
     :CorporationAutocomplete a ui:AutocompleteField;
     a ui:AutocompleteField; ui:label "Corporation in wikidata";
-        ui:size 60;
         ui:targetClass  <http://www.wikidata.org/entity/Q6881511>; # Enterprise
         ui:property solid:publicId; ui:dataSource :WikidataInstancesByName.
 
@@ -218,7 +219,6 @@ ui:case
 
     :GovernmentOrganizationAutocomplete
     a ui:AutocompleteField; ui:label "GovernmentOrganization in wikidata";
-        ui:size 60;
         ui:targetClass  <http://www.wikidata.org/entity/Q327333>; # GovernmentOrganization
         ui:property solid:publicId; ui:dataSource :WikidataInstancesByName.
 
@@ -228,7 +228,6 @@ ui:case
 
     :EducationalOrganizationAutocomplete
     a ui:AutocompleteField; ui:label "Educational Organization in wikidata";
-            ui:size 60;
             ui:targetClass  <http://www.wikidata.org/entity/Q2385804>; # EducationalOrganization
             ui:property solid:publicId; ui:dataSource :WikidataInstancesByName.
 
@@ -239,7 +238,6 @@ ui:case
 
     :ResearchOrganizationAutocomplete
     a ui:AutocompleteField; ui:label "Research Insitute in wikidata";
-            ui:size 60;
             ui:targetClass  <http://www.wikidata.org/entity/Q31855>; # research institute
             ui:property solid:publicId; ui:dataSource :WikidataInstancesByName.
 
@@ -250,7 +248,6 @@ ui:case
 
       :NGOAutocomplete
       a ui:AutocompleteField; ui:label "NGO in wikidata";
-           ui:size 60;
            ui:targetClass  <http://www.wikidata.org/entity/Q163740>; # Non-profit org
            ui:property solid:publicId; ui:dataSource :WikidataInstancesByName.
 
@@ -260,7 +257,6 @@ ui:case
 
       :PerformingGroupAutocomplete
       a ui:AutocompleteField; ui:label "PerformingGroup in wikidata";
-           ui:size 60;
            ui:targetClass  <http://www.wikidata.org/entity/Q32178211>; # Music Org
            ui:property solid:publicId; ui:dataSource :WikidataInstancesByName.
 
@@ -271,7 +267,6 @@ ui:case
 
       :ProjectAutocomplete
       a ui:AutocompleteField; ui:label "Project in wikidata";
-           ui:size 60;
            ui:targetClass  <http://www.wikidata.org/entity/Q170584>; # Project
            ui:property solid:publicId; ui:dataSource :WikidataInstancesByName.
 
@@ -281,7 +276,6 @@ ui:case
 
     :SportsOrganizationAutocomplete
     a ui:AutocompleteField; ui:label "SportsOrganization in wikidata";
-        ui:size 60;
         ui:targetClass  <http://www.wikidata.org/entity/Q4438121>; # SportsOrganization
         ui:property solid:publicId; ui:dataSource :WikidataInstancesByName.
 
@@ -299,10 +293,10 @@ ui:case
 
 :SkillForm a ui:Group; ui:weight 1; ui:parts ( :escoSkillField ).
 
-    # :skillNameField a ui:SingleLineTextField; ui:property vcard:role; ui:size 30 .
+    # :skillNameField a ui:SingleLineTextField; ui:property vcard:role.
 
     :escoSkillField a ui:AutocompleteField;
-            ui:label "skill"; ui:size 30;
+            ui:label "skill";
             ui:property solid:publicId;
             ui:dataSource :ESCO_Skill_DataSource;
             ui:targetClass schema:Skill .
@@ -326,7 +320,7 @@ ui:case
 :LanguageForm a ui:Group; ui:weight 1; ui:parts ( :WikidataLanguageField ).
 
     :WikidataLanguageField a ui:AutocompleteField;
-          ui:label "Language"; ui:size 30;
+          ui:label "Language";
           ui:property solid:publicId; # @@
           ui:dataSource :WikidataLanguageDataSource;
            ui:targetClass schema:Language .
