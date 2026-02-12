@@ -55,7 +55,7 @@ export async function ProfileView (
           ${(() => {
             const cv = CVCard(rolesByType)
             return cv && cv.strings && cv.strings.join('').trim() !== '' 
-              ? html`<li><a href="#cv-heading">Professional Experience</a></li>` 
+              ? html`<li><a href="#cv-heading">Resume</a></li>` 
               : ''
           })()}
           ${accounts.accounts && accounts.accounts.length > 0 
@@ -87,7 +87,7 @@ export async function ProfileView (
             tabindex="-1"
           >
             <header class="text-center mb-md">
-              <h2 id="cv-heading" tabindex="-1">Professional & Education</h2>
+              <h2 id="cv-heading" tabindex="-1">Resume</h2>
             </header>
             <div>
               ${cv}
