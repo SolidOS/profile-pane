@@ -25,14 +25,11 @@ export default function renderForm(
       subject,
       formThis,
       editableProfile,
-      complainIfBad
+      (ok, mes) => {
+        if (!ok) widgets.errorMessageBlock(dom, mes)
+      }
     )
   } // renderForm
-
-function complainIfBad (div: HTMLElement, ok: boolean, mess: string, dom: Document) {
-    if (ok) return
-    div.appendChild(widgets.errorMessageBlock(dom, mess, '#fee'))
-}
 
 // we need to load into the store some additional information about Social Media accounts
 export function loadDocument(
