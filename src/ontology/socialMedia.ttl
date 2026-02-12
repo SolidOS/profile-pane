@@ -9,6 +9,8 @@
 @prefix org: <http://www.w3.org/ns/org#>.
 @prefix : <#>.
 
+########### ATTENTION - we cannot rename this ontology file name without migrating existing data on existing accounts
+
 ########### Social Media - other accounts
 #
 # Twitter, linked In, Orkid, Mastodon, Matrix, Bluesky, Instagram, Facebook, Github,
@@ -23,7 +25,7 @@
 
 :SocialsForm a ui:Multiple;
     ui:label "online account";
-    ui:property foaf:Account;
+    ui:property foaf:account; # the triple is created with the foaf:acccounts predicate
     ui:ordered true; # Allow user to order occounts most important first.
     ui:part :AccountsForm.
 
@@ -36,7 +38,7 @@
 :AccountField a ui:Classifier; 
     ui:label "Choose account"@en;
     ui:multiple false ; 
-    ui:category foaf:Account.
+    ui:category foaf:Account. # the accounts are described by the foaf:Account predicate
 
 # this is what is needed to make a dropdown box
 foaf:Account a rdfs:Class;

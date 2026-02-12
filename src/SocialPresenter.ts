@@ -1,11 +1,11 @@
 import { LiveStore, NamedNode, Node, parse, sym} from 'rdflib'
 import { ns, utils, icons } from 'solid-ui'
-import socialMediaForm from './ontology/socialMediaForm.ttl'
+import socialMediaForm from './ontology/socialMedia.ttl'
 
 const DEFAULT_ICON_URI = icons.iconBase + 'noun_10636_grey.svg' // grey disc
 
-const baseUri = window.location.href.slice(0, window.location.href.lastIndexOf('/') + 1)
-const socialMediaFormName = 'socialMediaForm.ttl' // The name of the file to upload
+const baseUri = 'https://solidos.github.io/profile-pane/src/ontology/'
+const socialMediaFormName = 'socialMedia.ttl' // The name of the file to upload
 
 // we need to load into the store some additional information about Social Media accounts
 export function loadSocialMediaForm(store: LiveStore) {
@@ -86,22 +86,12 @@ export function presentSocial(
  
   loadSocialMediaForm(store)
 
-  const accountThings: Node[] = store.anyJS(subject, ns.foaf('Account')) || [] // load the collection
-  // in the past the foaf:Account was lowercase, so we also check for that
-  const accountThings2: Node[] = store.anyJS(subject, ns.foaf('account')) || [] // load the collection
-  const allAccountThings: Node[] = [...accountThings, ...accountThings2]
-  if (allAccountThings.length === 0) return { accounts: []}
-  // console.log('.....Social: accountThings', accountThings)
-  const accountsAll: Account[] = allAccountThings.map(ac => accountAsObject(ac))
-  const accountsByName = new Map<string, Account>()
-  for (const account of accountsAll) {
-    const accountName = account.name.trim()
-    if (!accountsByName.has(accountName)) {
-      accountsByName.set(accountName, { ...account, name: accountName })
-    }
-  }
-  const accounts: Account[] = Array.from(accountsByName.values())
-  // console.log('Social: account objects', accounts) 
+  const accountThings: Node[] = store.anyJS(subject, ns.foaf('account')) // load the collection
+  if (!accountThings) return { accounts: []} // could have been undefined
+  //console.log('Social: accountThings', accountThings)
+  const accounts: Account[] = accountThings.map(ac => accountAsObject(ac))
+  //console.log('Social: account objects', accounts)
+
 
   return { accounts }
 }

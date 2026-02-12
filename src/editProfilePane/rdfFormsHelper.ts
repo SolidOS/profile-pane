@@ -1,7 +1,7 @@
 import { NamedNode, Store, Namespace, sym, parse } from 'rdflib'
 import { widgets } from 'solid-ui'
 
-const baseUri = window.location.href.slice(0, window.location.href.lastIndexOf('/') + 1)
+const baseUri = 'https://solidos.github.io/profile-pane/src/ontology/'
 
 export default function renderForm(
   div: HTMLElement,
