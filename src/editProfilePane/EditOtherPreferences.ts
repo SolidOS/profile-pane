@@ -1,7 +1,7 @@
 import { DataBrowserContext } from 'pane-registry'
 import { NamedNode, Store} from 'rdflib'
 import otherPreferencesForm from '../ontology/otherPreferencesForm.ttl'
-import renderForm from './rdfFormsHelper'
+import renderForm from '../rdfFormsHelper'
 import { otherPreferencesHeadingText } from '../texts'
 
 const otherPreferencesFormName = 'otherPreferencesForm.ttl' // The name of the form file

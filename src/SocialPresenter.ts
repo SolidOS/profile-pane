@@ -1,23 +1,11 @@
-import { LiveStore, NamedNode, Node, parse, sym} from 'rdflib'
+import { LiveStore, NamedNode, Node } from 'rdflib'
 import { ns, utils, icons } from 'solid-ui'
 import socialMediaForm from './ontology/socialMedia.ttl'
+import { loadDocument } from './rdfFormsHelper'
 
-const DEFAULT_ICON_URI = icons.iconBase + 'noun_10636_grey.svg' // grey disc
-
-const baseUri = 'https://solidos.github.io/profile-pane/src/ontology/'
 const socialMediaFormName = 'socialMedia.ttl' // The name of the file to upload
 
-// we need to load into the store some additional information about Social Media accounts
-export function loadSocialMediaForm(store: LiveStore) {
-  const socialMediaUri = baseUri + socialMediaFormName   // Full URI to the file
-  const socialMediaDoc = sym(socialMediaUri)             // rdflib NamedNode for the document    
-  
-  if (!store.holds(undefined, undefined, undefined, socialMediaDoc)) {
-    // we are using the social media form because it contains the information we need
-    // the form can be used for both use cases: create UI  for edit and render UI for display
-    parse(socialMediaForm, store, socialMediaUri, 'text/turtle', () => null) // Load doc directly
-  }
-}
+const DEFAULT_ICON_URI = icons.iconBase + 'noun_10636_grey.svg' // grey disc
 export interface Account {
   name: string,
   icon: string,
@@ -84,14 +72,14 @@ export function presentSocial(
 
   }
  
-  loadSocialMediaForm(store)
+  // we need to load the social media accounts ontology to be able to query all data needed
+  loadDocument(socialMediaFormName, socialMediaForm, store)
 
   const accountThings: Node[] = store.anyJS(subject, ns.foaf('account')) // load the collection
   if (!accountThings) return { accounts: []} // could have been undefined
   //console.log('Social: accountThings', accountThings)
   const accounts: Account[] = accountThings.map(ac => accountAsObject(ac))
   //console.log('Social: account objects', accounts)
-
 
   return { accounts }
 }

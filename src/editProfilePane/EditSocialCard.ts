@@ -1,7 +1,7 @@
 import { DataBrowserContext } from 'pane-registry'
 import { NamedNode, Store} from 'rdflib'
 import socialMediaForm from '../ontology/socialMedia.ttl'
-import renderForm from './rdfFormsHelper'
+import renderForm from '../rdfFormsHelper'
 import { socialAccountsHeadingText } from '../texts'
 
 const socialMediaFormName = 'socialMedia.ttl' // The name of the form file

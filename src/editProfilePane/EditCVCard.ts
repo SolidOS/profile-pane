@@ -1,7 +1,7 @@
 import { DataBrowserContext } from 'pane-registry'
 import { NamedNode, Store} from 'rdflib'
 import resumeForm from '../ontology/resumeForm.ttl'
-import renderForm from './rdfFormsHelper'
+import renderForm from '../rdfFormsHelper'
 import { resumeHeadingText } from '../texts'
 
 const resumeFormName = 'resumeForm.ttl' // The name of the form file
