@@ -16,6 +16,7 @@ import { EditFriendsSection } from './EditFriendsCard'
 import { EditSocialSection } from './EditSocialCard'
 import { EditProfileCommunitiesSection } from './EditCommunitiesCard'
 import '../styles/utilities.css'
+import '../styles/rdfFormsEnforced.css'
 import { EditCVSection } from './EditCVCard'
 import { EditOtherPreferencesSection } from './EditOtherPreferences'
 

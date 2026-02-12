@@ -5,7 +5,7 @@ import { yourContactInformationHeading } from '../texts'
 export function EditContactsSection(context: DataBrowserContext, me: NamedNode): HTMLElement {
   const section = context.dom.createElement('section')
   section.setAttribute('aria-labelledby', 'edit-profile-contact-heading')
-  section.classList.add('profileSection', 'section-bg')
+  section.classList.add('profileSection', 'section-bg', 'profile-form')
 
   const header = context.dom.createElement('header')
   header.classList.add('text-center', 'mb-md')

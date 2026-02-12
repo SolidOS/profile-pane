@@ -19,8 +19,8 @@
     a ui:Form ;
     ui:parts (
       :CVGroup
-      :SkillsPrompt :SkillsForm
-      :LanguagesPrompt :LanguagesForm
+      :SkillsHeading :SkillsForm
+      :LanguagesHeading :LanguagesForm
       ).
 
 # Curriculum Vitae: membership of organizations
@@ -312,7 +312,8 @@ schema:ResearchOrganization a rdfs:Class;
 
 #################### Skills
 
-:SkillsPrompt a ui:Comment; ui:contents  "Add your skills" .
+:SkillsHeading a ui:Heading; 
+    ui:contents  "Add your skills" .
 
 :SkillsForm a ui:Multiple;
     ui:label "Skills";
@@ -336,7 +337,7 @@ schema:ResearchOrganization a rdfs:Class;
 
 #################### Languages
 
-:LanguagesPrompt a ui:Comment; ui:contents  "Add your languages" .
+:LanguagesHeading a ui:Heading; ui:contents  "Add your languages" .
 
 :LanguagesForm a ui:Multiple;
     ui:label "Languages";

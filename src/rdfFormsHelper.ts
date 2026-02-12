@@ -18,6 +18,7 @@ export default function renderForm(
     loadDocument(formName, formSource, store)
 
     div.setAttribute('data-testid', 'profile-editor')
+    div.classList.add('profile-form')
     widgets.appendForm(
       dom,
       div,
