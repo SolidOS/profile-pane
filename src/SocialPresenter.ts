@@ -41,6 +41,27 @@ export interface SocialPresentation {
   accounts: Account[];
 }
 
+function expandRdfList(store: LiveStore, node: Node): Node[] {
+  const collectionElements = (node as { termType?: string; elements?: Node[] }).elements
+  if (Array.isArray(collectionElements)) {
+    return collectionElements.flatMap(element => expandRdfList(store, element))
+  }
+
+  const first = store.any(node as NamedNode, ns.rdf('first'))
+  if (!first) return [node]
+
+  const items: Node[] = []
+  let current: Node | null = node
+  while (current) {
+    const value = store.any(current as NamedNode, ns.rdf('first')) as Node | null
+    if (value) items.push(...expandRdfList(store, value))
+    const rest = store.any(current as NamedNode, ns.rdf('rest')) as Node | null
+    if (!rest || (rest.termType === 'NamedNode' && rest.value === ns.rdf('nil').value)) break
+    current = rest
+  }
+  return items
+}
+
 export function presentSocial(
   subject: NamedNode,
   store: LiveStore
@@ -101,8 +122,9 @@ export function presentSocial(
   }
   // Ontology should be pre-loaded by caller via loadProfileForm(store)
 
-  const accountThings: Node[] = store.anyJS(subject, ns.foaf('account')) // load the collection
-  if (!accountThings) return { accounts: []} // could have been undefined
+  const accountNodes = store.each(subject, ns.foaf('account'))
+  const accountThings = accountNodes.flatMap(node => expandRdfList(store, node))
+  if (!accountThings.length) return { accounts: [] }
   //console.log('Social: accountThings', accountThings)
   const accounts: Account[] = accountThings.map(ac => accountAsObject(ac))
   //console.log('Social: account objects', accounts)
