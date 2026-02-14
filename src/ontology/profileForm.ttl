@@ -603,7 +603,7 @@ WHERE
 
 # Subclass definitions for foaf:Account (embedded for UI category selector)
 soc:BlueSkyAccount rdfs:subClassOf foaf:Account; rdfs:label "Bluesky" .
-soc:Digg rdfs:subClassOf foaf:Account; rdfs:label "Digg" .
+soc:DiggAccount rdfs:subClassOf foaf:Account; rdfs:label "Digg" .
 soc:FacebookAccount rdfs:subClassOf foaf:Account; rdfs:label "Facebook" .
 soc:GithubAccount rdfs:subClassOf foaf:Account; rdfs:label "Github" .
 soc:InstagramAccount rdfs:subClassOf foaf:Account; rdfs:label "Instagram" .

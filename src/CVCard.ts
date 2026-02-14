@@ -22,11 +22,11 @@ export const CVCard = (
   if (!(hasFutureRole || hasCurrentRole || hasPastRole || hasSkills || hasLanguages)) return html``
 
   return html`
-    <article class="cvCard" aria-label="Professional Experience" data-testid="curriculum-vitae">
+    <article class="cvCard" aria-label="Resume" data-testid="curriculum-vitae">
       ${hasFutureRole ? html`
         <section class="cvSection" aria-labelledby="cv-future-heading">
           <h3 id="cv-future-heading">Future Roles</h3>
-          <ul role="list" aria-label="Upcoming professional roles">
+          <ul role="list" aria-label="Upcoming work experience">
             ${renderRoles(futureRolesArr, true)}
           </ul>
         </section>
@@ -35,7 +35,7 @@ export const CVCard = (
       ${hasCurrentRole ? html`
         <section class="cvSection" aria-labelledby="cv-current-heading">
           <h3 id="cv-current-heading">Current Roles</h3>
-          <ul role="list" aria-label="Current professional positions">
+          <ul role="list" aria-label="Current work experience">
             ${renderRoles(currentRolesArr, true)}
           </ul>
         </section>
