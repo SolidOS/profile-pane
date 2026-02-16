@@ -52,6 +52,27 @@ export function datesAsText (startDate?:Literal, endDate?:Literal):string {
     : ''                                
 }
 
+function expandRdfList(store: Store, node: Node): Node[] {
+  const collectionElements = (node as { termType?: string; elements?: Node[] }).elements
+  if (Array.isArray(collectionElements)) {
+    return collectionElements.flatMap(element => expandRdfList(store, element))
+  }
+
+  const first = store.any(node as NamedNode, ns.rdf('first'))
+  if (!first) return [node]
+
+  const items: Node[] = []
+  let current: Node | null = node
+  while (current) {
+    const value = store.any(current as NamedNode, ns.rdf('first')) as Node | null
+    if (value) items.push(...expandRdfList(store, value))
+    const rest = store.any(current as NamedNode, ns.rdf('rest')) as Node | null
+    if (!rest || (rest.termType === 'NamedNode' && rest.value === ns.rdf('nil').value)) break
+    current = rest
+  }
+  return items
+}
+
 function getRolesByType(
   store: LiveStore,
   subject: NamedNode
@@ -120,13 +141,11 @@ export function presentCV(
     .map((sk) => skillAsText(store, sk))
     .filter((skill) => skill !== '')
 
-  const languagesInStore = store.anyJS(subject, ns.schema('knowsLanguage'))
-  let languages = []
-  if (languagesInStore) {
-    languages = languagesInStore
-      .map((lan) => languageAsText(store, lan))
-      .filter((language) => language !== '')
-  }
+ const languageNodes = store.each(subject, ns.schema('knowsLanguage'))
+  const languages = languageNodes
+    .flatMap(node => expandRdfList(store, node))
+    .map(lan => languageAsText(store, lan))
+    .filter((language) => language !== '')
 
   return { rolesByType, skills, languages }
 }
