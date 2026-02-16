@@ -46,6 +46,7 @@
   },
   "license": "MIT",
   "dependencies": {
+    "@solid-data-modules/contacts-rdflib": "^0.7.1",
     "lit-html": "^3.3.2",
     "pane-registry": "^3.0.1",
     "qrcode": "^1.5.4",

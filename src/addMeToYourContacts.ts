@@ -7,10 +7,12 @@ import {
   clearPreviousMessage, complain,
   mention
 } from './buttonsHelper'
+import { getSelectedAddressBookUris, getContactData } from './contactsHelpers'
 import {
   addMeToYourContactsButtonText, contactExistsMessage, contactWasAddedSuccesMessage, logInAddMeToYourContactsButtonText, userNotLoggedInErrorMessage
 } from './texts'
 import './styles/ProfileCard.css'
+import ContactsModuleRdfLib, { NewContact } from '@solid-data-modules/contacts-rdflib'
 
 let buttonContainer = <HTMLDivElement>document.createElement('section')
 
@@ -57,7 +59,7 @@ const createAddMeToYourContactsButton = (
     event.preventDefault()
     saveNewContact(subject, context)
       .then(() => {
-        clearPreviousMessage(buttonContainer)
+        // clearPreviousMessage(buttonContainer)
         mention(buttonContainer, contactWasAddedSuccesMessage)
         refreshButton()
       })
@@ -72,7 +74,8 @@ const createAddMeToYourContactsButton = (
 
   function refreshButton() {
     const me = authn.currentUser()
-    const store: LiveStore = context.session.store
+    // will need store if use check if Contact Exists
+    // const store: LiveStore = context.session.store
 
     if (checkIfAnyUserLoggedIn(me)) {
       button.innerHTML = addMeToYourContactsButtonText.toUpperCase()
@@ -89,16 +92,25 @@ async function saveNewContact(
   context: DataBrowserContext
 ): Promise<void> {
   const me = authn.currentUser()
+
   const store: LiveStore = context.session.store
+  const fetcher = store.fetcher
+  const updater = store.updater
+  const contacts = new ContactsModuleRdfLib({ store, fetcher, updater})
 // need to find out where the user wants to add the Contact
   if (checkIfAnyUserLoggedIn(me)) {
     if (!(await checkIfContactExists(store , me, subject))) {
       //if friend does not exist, we add her/him
       await store.fetcher.load(me)
-      const updater = store.updater
-      const toBeInserted = [st(me, ns.foaf('knows'), subject, me.doc())]
       try {
-        await updater.update([], toBeInserted)
+        const uris = await getSelectedAddressBookUris(contacts, context, me.toString(), buttonContainer)
+        // const contactData: NewContact = await getContactData(store, subject)
+        
+        console.log("uris: " + JSON.stringify(uris))
+        // console.log("contact Data: " + JSON.stringify(contactData))
+        
+        // const contact = await contacts.createNewContact({addressBookUri: uris.addressBookUri, contact: { name: "Sally", email: "testing@gmail.com", phoneNumber: "5555-5555"}, groupUris: uris.groupUris}) 
+        
       } catch (error) {
         let errorMessage = error
         if (errorMessage.toString().includes('Unauthenticated'))
@@ -121,6 +133,7 @@ async function checkIfContactExists(
   subject: NamedNode
 ): Promise<boolean> {
   await store.fetcher.load(me)
+  return false // need to remove
   // need to search through and find the
   // logged in users AddressBook files
   // traverse through and look for subject

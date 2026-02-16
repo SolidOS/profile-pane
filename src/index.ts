@@ -37,6 +37,7 @@ const Pane = {
     context: DataBrowserContext
   ): string | null {
     const t = context.session.store.findTypeURIs(subject)
+    
     if (
       t[ns.vcard('Individual').uri] ||
       t[ns.foaf('Person').uri] ||

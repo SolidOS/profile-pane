@@ -1,0 +1,16 @@
+.addressSelector {
+  width: 100%;
+  min-width: 80px;
+  max-width: 180px;
+  box-sizing: border-box;
+  display: inline-block;
+}
+
+.addressList {
+  width: 100%;
+  min-width: 80px;
+  max-width: 180px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+}
