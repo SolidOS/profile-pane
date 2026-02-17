@@ -8,8 +8,9 @@ const resumeFormName = 'resumeForm.ttl' // The name of the form file
 
 export function EditCVSection(context: DataBrowserContext, me: NamedNode, editableProfile: NamedNode | null, store: Store) {
   const section = context.dom.createElement('section')
+  section.setAttribute('data-testid', 'edit-cv-section')
   section.setAttribute('aria-labelledby', 'edit-profile-cv-heading')
-  section.classList.add('profileSection', 'section-bg')
+  section.classList.add('profileSection', 'section-bg', 'profile-form')
 
   const header = context.dom.createElement('header')
   header.classList.add('text-center', 'mb-md')

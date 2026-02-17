@@ -94,7 +94,7 @@ export function presentSocial(
   }
  
   // we need to load the social media accounts ontology to be able to query all data needed
-  loadDocument(socialMediaFormName, socialMediaForm, store)
+  loadDocument(store, socialMediaForm, socialMediaFormName)
 
   const accountNodes = store.each(subject, ns.foaf('account'))
   const accountThings = accountNodes.flatMap(node => expandRdfList(store, node))
