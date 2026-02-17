@@ -7,7 +7,7 @@ export default function renderForm(
   div: HTMLElement,
   subject: NamedNode, // Represents the RDF that fills the form
   formSource: string, // The imported form Turtle source
-  formName: string,   // The name of the form file (e.g., 'profileForm.ttl')
+  formName: string,   // The name of the form file (e.g., 'socialMedia.ttl')
   store: Store,
   dom: Document,
   editableProfile: NamedNode | null ) {

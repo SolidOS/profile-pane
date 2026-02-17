@@ -20,25 +20,33 @@ export function EditFriendsSection(context: DataBrowserContext, me: NamedNode, e
   section.appendChild(header)
 
   const comment1 = context.dom.createElement('p')
+  comment1.id = 'edit-profile-friends-description'
   comment1.classList.add('p-md')
   comment1.textContent = 'This is your public social network. Only put people here to whom you are happy to be publicly connected. (You can always keep private track of friends and family in your contacts.)'
   section.appendChild(comment1)
 
+  let comment2: HTMLParagraphElement | null = null
   if (editableProfile) {
-    const comment2 = context.dom.createElement('p')
+    comment2 = context.dom.createElement('p')
+    comment2.id = 'edit-profile-friends-help'
     comment2.classList.add('p-md')
     comment2.textContent = 'Drag people onto the target below to add people.'
     section.appendChild(comment2)
   }
 
-  section.appendChild(
-    widgets.attachmentList(context.dom, me, section, {
-      doc: profile,
-      modify: !!editableProfile,
-      predicate: ns.foaf('knows'),
-      noun: 'friend'
-    })
-  )
+  const attachmentList = widgets.attachmentList(context.dom, me, section, {
+    doc: profile,
+    modify: !!editableProfile,
+    predicate: ns.foaf('knows'),
+    noun: 'friend'
+  })
+
+  const descriptions = [comment1.id]
+  if (comment2?.id) {
+    descriptions.push(comment2.id)
+  }
+  attachmentList.setAttribute('aria-describedby', descriptions.join(' '))
+  section.appendChild(attachmentList)
 
   return section
 }

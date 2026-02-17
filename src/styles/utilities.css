@@ -153,6 +153,11 @@
   outline: none;
 }
 
+.no-focus-ring:focus-visible {
+  outline: none;
+  box-shadow: none;
+}
+
 /* ARIA live regions */
 .live-region {
   position: absolute;

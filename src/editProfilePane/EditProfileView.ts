@@ -44,14 +44,26 @@ const editProfileView: PaneDefinition = {
     // Use <main> for the main content area, styled as a grid like ProfileView
     const main = dom.createElement('main')
     main.setAttribute('id', 'profile-edit-main-content')
-    main.classList.add('profile-grid')
+    main.setAttribute('aria-busy', 'true')
+    main.setAttribute('tabindex', '-1')
+    main.classList.add('profile-grid', 'no-focus-ring')
+    const mainHeading = dom.createElement('h1')
+    mainHeading.classList.add('visually-hidden')
+    mainHeading.textContent = 'Edit Profile'
+    main.appendChild(mainHeading)
     div.appendChild(main)
 
     // Use <aside> for the status area
     const statusArea = dom.createElement('aside')
     statusArea.classList.add('p-sm')
+    statusArea.setAttribute('role', 'status')
     statusArea.setAttribute('aria-live', 'polite')
-    div.appendChild(statusArea)
+    statusArea.setAttribute('aria-atomic', 'true')
+    const ensureStatusArea = () => {
+      if (!statusArea.isConnected) {
+        div.appendChild(statusArea)
+      }
+    }
 
     const profileContext = {
       dom: dom,
@@ -73,6 +85,7 @@ const editProfileView: PaneDefinition = {
         } else if (store.updater.editable(profile.uri, store)) {
           editableProfile = profile
         } else {
+          ensureStatusArea()
           statusArea.appendChild(widgets.errorMessageBlock(dom, `⚠️ Your profile ${profile} is not editable, so we cannot do much here.`, 'straw'))
           return
         }
@@ -81,12 +94,13 @@ const editProfileView: PaneDefinition = {
         // Your contact information Section
         main.appendChild(EditContactsSection(context, me))
 
-        // Social Accounts Section
-        main.appendChild(EditSocialSection(context, me, editableProfile, store))
-
         // Resume Section
         main.appendChild(EditCVSection(context, me, editableProfile, store))
 
+        // Social Accounts Section
+        main.appendChild(EditSocialSection(context, me, editableProfile, store))
+
+      
         // Other preferences Section
         main.appendChild(EditOtherPreferencesSection(context, me, editableProfile, store))
       
@@ -95,9 +109,14 @@ const editProfileView: PaneDefinition = {
         
         // Communities you participate in Section
         main.appendChild(EditProfileCommunitiesSection(context, me, editableProfile, profile))
+
+        main.setAttribute('aria-busy', 'false')
+        main.focus()
        
       }).catch(error => {
+        ensureStatusArea()
         statusArea.appendChild(widgets.errorMessageBlock(dom, error, '#fee'))
+        main.setAttribute('aria-busy', 'false')
       })
     return div
   }
