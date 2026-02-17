@@ -61,6 +61,8 @@
   max-width: 100%;
   min-width: 0;
   box-sizing: border-box ;
+  background-color: #eef !important;
+  border: .05em solid #88c
 }
 
 .profile-form input[type="url"] {
@@ -169,3 +171,16 @@ section[aria-labelledby="edit-profile-contact-heading"] .profile-form > div:firs
   margin-right: 0 !important;
 }
 
+/* Remove padding from table cells within webidControl */
+.webidControl table td {
+  padding: 0 !important;
+}
+
+/* Remove padding from contactPane divs inside webidControl table cells */
+.webidControl table td div.contactPane.namedPane.fullWidth.individualPane {
+  padding: 0 !important;
+}
+
+.webidControl table td div.contactPane.namedPane {
+  border: none !important;
+}
