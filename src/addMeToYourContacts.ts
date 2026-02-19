@@ -7,12 +7,13 @@ import {
   clearPreviousMessage, complain,
   mention
 } from './buttonsHelper'
-import { getContactData, AddressBooksData, getAddressBooksData, ContactData, addContactToAddressBook } from './contactsHelpers'
+import { getContactData, getAddressBooksData, addContactToAddressBook } from './contactsHelpers'
+import { AddressBooksData, ContactData } from './contactsTypes'
 import {
   addMeToYourContactsButtonText, contactExistsAlreadyButtonText, contactExistsMessage, contactWasAddedSuccesMessage, logInAddMeToYourContactsButtonText, userNotLoggedInErrorMessage
 } from './texts'
 import './styles/ProfileCard.css'
-import ContactsModuleRdfLib, { NewContact } from '@solid-data-modules/contacts-rdflib'
+import ContactsModuleRdfLib from '@solid-data-modules/contacts-rdflib'
 
 let buttonContainer = <HTMLDivElement>document.createElement('section')
 

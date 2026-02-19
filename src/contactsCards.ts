@@ -1,6 +1,7 @@
 import { DataBrowserContext } from "pane-registry"
 import { widgets } from "solid-ui"
-import { AddressBookDetails, AddressBooksData, ContactData, createContactInAddressBook, GroupData } from "./contactsHelpers"
+import { createContactInAddressBook } from "./contactsHelpers"
+import { AddressBookDetails, AddressBooksData, ContactData, GroupData } from "./contactsTypes"
 import ContactsModuleRdfLib from "@solid-data-modules/contacts-rdflib"
 
 export const createAddressBookUriSelectorDiv = (context: DataBrowserContext): HTMLDivElement => {
