@@ -6,12 +6,19 @@ import { ChatWithMe } from './ChatWithMe'
 import { FriendList } from './FriendList'
 import { presentProfile } from './presenter'
 import { presentCV } from './CVPresenter' // 20210527
-import { presentSocial, loadProfileForm } from './SocialPresenter' // 20210527
+import { presentSocial } from './SocialPresenter' // 20210527
 import { presentStuff } from './StuffPresenter' // 20210527
 import { ProfileCard } from './ProfileCard'
 import { CVCard } from './CVCard'
 import { SocialCard } from './SocialCard'
 import { StuffCard } from './StuffCard'
+import {
+  resumeHeadingText,
+  socialAccountsHeadingText,
+  sharedItemsHeadingText,
+  friendsHeadingText,
+  contactHeadingText
+} from './texts'
 
 // The edit button switches to the editor pane
 /*
@@ -31,9 +38,6 @@ export async function ProfileView (
 ): Promise <TemplateResult> {
   const store = context.session.store as LiveStore
   
-  // Load ontologies first
-  await loadProfileForm(store)
-  
   const profileBasics = presentProfile(subject, store)
   const rolesByType = presentCV(subject, store)
   const accounts = presentSocial(subject, store)
@@ -47,23 +51,7 @@ export async function ProfileView (
       role="main"
       aria-label="Profile for ${profileBasics.name}"
       tabindex="-1"
-    >
-      <!-- Enhanced breadcrumb navigation -->
-      <nav id="profile-nav" aria-label="Profile sections" class="visually-hidden">
-        <ol>
-          <li><a href="#profile-card-heading">Personal Information</a></li>
-          ${(() => {
-            const cv = CVCard(rolesByType)
-            return cv && cv.strings && cv.strings.join('').trim() !== '' 
-              ? html`<li><a href="#cv-heading">Resume</a></li>` 
-              : ''
-          })()}
-          ${accounts.accounts && accounts.accounts.length > 0 
-            ? html`<li><a href="#social-heading" id="social-accounts">Social Accounts</a></li>` 
-            : ''}
-          <li><a href="#chat-heading" id="contact-section">Contact</a></li>
-        </ol>
-      </nav>
+    > 
 
       <article 
         aria-labelledby="profile-card-heading" 
@@ -87,7 +75,7 @@ export async function ProfileView (
             tabindex="-1"
           >
             <header class="text-center mb-md">
-              <h2 id="cv-heading" tabindex="-1">Resume</h2>
+              <h2 id="cv-heading" tabindex="-1">${resumeHeadingText}</h2>
             </header>
             <div>
               ${cv}
@@ -104,7 +92,7 @@ export async function ProfileView (
           tabindex="-1"
         >
           <header class="text-center mb-md">
-            <h2 id="social-heading" tabindex="-1">Social Accounts</h2>
+            <h2 id="social-heading" tabindex="-1">${socialAccountsHeadingText}</h2>
           </header>
           <nav aria-label="Social media links">
             ${SocialCard(accounts)}
@@ -120,7 +108,7 @@ export async function ProfileView (
           tabindex="-1"
         >
           <header class="text-center mb-md">
-            <h2 id="stuff-heading" tabindex="-1">Shared Items</h2>
+            <h2 id="stuff-heading" tabindex="-1">${sharedItemsHeadingText}</h2>
           </header>
           <div>
             ${StuffCard(profileBasics, context, subject, stuffData)}
@@ -138,7 +126,7 @@ export async function ProfileView (
             tabindex="-1"
           >
             <header class="text-center mb-md">
-              <h2 id="friends-heading" tabindex="-1">Friends</h2>
+              <h2 id="friends-heading" tabindex="-1">${friendsHeadingText}</h2>
             </header>
             <div role="list" aria-label="Friend connections">
               ${friends}
@@ -154,7 +142,7 @@ export async function ProfileView (
         tabindex="-1"
       >
         <header class="text-center mb-md">
-          <h2 id="chat-heading" tabindex="-1">Contact</h2>
+          <h2 id="chat-heading" tabindex="-1">${contactHeadingText}</h2>
         </header>
         <div>
           ${ChatWithMe(subject, context)}

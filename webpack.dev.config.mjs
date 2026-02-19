@@ -77,7 +77,6 @@ export default [
     },
     optimization: {
       usedExports: true,
-      sideEffects: false,
       // Tree shaking in development (normally disabled for faster builds)
       providedExports: true,
     },

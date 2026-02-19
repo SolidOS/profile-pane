@@ -1,4 +1,5 @@
 import { longChatPane } from 'chat-pane'
+//import { contact } from 'contact-pane' //uncomment for profileEditor
 import { DataBrowserContext, PaneRegistry } from 'pane-registry'
 import { solidLogicSingleton, store } from 'solid-logic'
 import { LiveStore } from 'rdflib'
@@ -16,6 +17,7 @@ export const context: DataBrowserContext = {
     paneRegistry: {
       byName: (name: string) => {
         return longChatPane
+        //return contact //uncomment for profile editor
       }
     } as PaneRegistry,
     logic: solidLogicSingleton

@@ -11,7 +11,7 @@ import './styles/utilities.css'
 import { NamedNode, LiveStore } from 'rdflib'
 import { render } from 'lit-html'
 import { ProfileView } from './ProfileView'
-import editProfileView from './editProfilePane/editProfile.view'
+import editProfileView from './editProfilePane/EditProfileView'
 import { icons, ns } from 'solid-ui'
 import * as qrcode from 'qrcode'
 
