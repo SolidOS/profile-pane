@@ -7,7 +7,7 @@ import {
   clearPreviousMessage, complain,
   mention
 } from './buttonsHelper'
-import { getSelectedAddressBookUris, getContactData, AddressBooksData, getAddressBooksData } from './contactsHelpers'
+import { getContactData, AddressBooksData, getAddressBooksData, ContactData, addContactToAddressBook } from './contactsHelpers'
 import {
   addMeToYourContactsButtonText, contactExistsAlreadyButtonText, contactExistsMessage, contactWasAddedSuccesMessage, logInAddMeToYourContactsButtonText, userNotLoggedInErrorMessage
 } from './texts'
@@ -122,8 +122,8 @@ async function saveNewContact(
       //if contact does not exist, we add her/him
       await store.fetcher.load(me)
       try {
-        const uris = await getSelectedAddressBookUris(context, contactsModule, addressBooksData, buttonContainer)
-        // const contactData: NewContact = await getContactData(store, subject)
+        const contactData: ContactData = await getContactData(store, subject)
+        const uris = await addContactToAddressBook(context, contactsModule, contactData, addressBooksData, buttonContainer)
         
         console.log("uris: " + JSON.stringify(uris))
         // console.log("contact Data: " + JSON.stringify(contactData))

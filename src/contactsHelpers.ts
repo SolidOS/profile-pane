@@ -5,9 +5,9 @@ import { DataBrowserContext } from "pane-registry";
 import { createAddressBookListDiv, createAddressBookUriSelectorDiv } from "./contactsCards";
 import './styles/contactCards.css'
 import { authn } from "solid-logic";
-interface SelectedAddressBookUris {
+export interface SelectedAddressBookUris {
   addressBookUri: string,
-  groupUris: string[] | null
+  groupUris: string []
 }
 export type GroupData = {
   name: string,
@@ -24,16 +24,17 @@ interface AddressBooksData {
   contacts: Map<string,string>
 }
 
-interface ContactData {
+export interface ContactData {
     name: string,
     email: string[],
     phoneNumber: string[],
     webID: string
 }
 
-async function getSelectedAddressBookUris(
+async function addContactToAddressBook(
   context: DataBrowserContext,
   contactsModule: ContactsModuleRdfLib,
+  contactData: ContactData,
   addressBooksData: AddressBooksData,
   container: HTMLDivElement
 ): Promise<SelectedAddressBookUris> {
@@ -44,7 +45,7 @@ async function getSelectedAddressBookUris(
   addressBookUriSelectorDiv.setAttribute('class', 'module-card')
   try {
       
-    const addressBookListDiv = createAddressBookListDiv(context, addressBooksData, addressBookUriSelectorDiv)
+    const addressBookListDiv = createAddressBookListDiv(context, contactsModule, contactData, addressBooksData, addressBookUriSelectorDiv)
     addressBookUriSelectorDiv.appendChild(addressBookListDiv)
 
     container.appendChild(addressBookUriSelectorDiv)
@@ -161,7 +162,7 @@ async function getAddressBooksData(
 async function getContactData(
   store: LiveStore,
   subject: NamedNode
-): Promise<NewContact> {
+): Promise<ContactData> {
   let email = null
   let phoneNumber = null
 
@@ -178,11 +179,12 @@ async function getContactData(
     return {
     name,
     email,
-    phoneNumber
+    phoneNumber,
+    webID: subject.value
   }
 }
 
-async function addContactToAddressBook(
+async function createContactInAddressBook(
   contactsModule: ContactsModuleRdfLib,
   contactData: ContactData,
   selectedAddressBookUris: SelectedAddressBookUris
@@ -198,8 +200,8 @@ async function addContactToAddressBook(
 export {
   AddressBooksData,
   AddressBookDetails,
-  getSelectedAddressBookUris,
   getAddressBooksData,
   getContactData,
-  addContactToAddressBook
+  addContactToAddressBook,
+  createContactInAddressBook
 }

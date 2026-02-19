@@ -1,6 +1,7 @@
 import { DataBrowserContext } from "pane-registry"
 import { widgets } from "solid-ui"
-import { AddressBookDetails, AddressBooksData, GroupData } from "./contactsHelpers"
+import { AddressBookDetails, AddressBooksData, ContactData, createContactInAddressBook, GroupData } from "./contactsHelpers"
+import ContactsModuleRdfLib from "@solid-data-modules/contacts-rdflib"
 
 export const createAddressBookUriSelectorDiv = (context: DataBrowserContext): HTMLDivElement => {
   const addressBookUriSelectorDiv = context.dom.createElement('div')
@@ -15,6 +16,8 @@ export const createAddressBookUriSelectorDiv = (context: DataBrowserContext): HT
 
 export const createAddressBookListDiv = (
   context: DataBrowserContext,
+  contactsModule: ContactsModuleRdfLib,
+  contactData: ContactData,
   addressBooksData: AddressBooksData,
   addressBookUriSelectorDiv: HTMLDivElement
 ): HTMLDivElement => {
@@ -22,21 +25,26 @@ export const createAddressBookListDiv = (
   const addressBookListDiv = context.dom.createElement('div')
   addressBookListDiv.setAttribute('class', 'addressList')
   addressBookListDiv.innerHTML = "Pick an address book:"
-  const setButtonOnClickHandler = (event) => {
+  const setButtonOnClickHandler =  (event) => {
     const selectedAddressBookUri = event.target.id
     console.log("Selected addressBook: " + selectedAddressBookUri)
+    
     const addressBook = addressBooksData.public.get(selectedAddressBookUri)
-    const setGroupButtonOnClickHandler = (event) => {
-      console.log("Groups: " + event.target.value)
+    const setGroupButtonOnClickHandler = async (event) => {
+      const selectedGroupUri = event.target.id
+      const selectedAddressBookUris = { 
+        addressBookUri: selectedAddressBookUri,
+        groupUris: [selectedGroupUri] 
+      }
+      const contact = await createContactInAddressBook(contactsModule, contactData, selectedAddressBookUris)
+      console.log("contact: " + contact)
     }
     const groupListDiv = context.dom.createElement('div')
     addressBook.groups.map((group) => {
       groupListDiv.appendChild(createGroupButton(context, group, setGroupButtonOnClickHandler))
     })
     addressBookUriSelectorDiv.appendChild(groupListDiv)
-    
   }
-
   addressBooksData.public.forEach((addressBook, addressBookUri) => {
     addressBookListDiv.appendChild(createAddressBookButton(context, addressBook, addressBookUri, 'public', setButtonOnClickHandler))
   })
