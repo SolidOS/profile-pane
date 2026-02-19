@@ -9,6 +9,8 @@
   margin: 0 !important;
   border-radius: 0 !important;
   padding: 0.7em !important;
+  min-height: var(--min-touch-target);
+  min-width: var(--min-touch-target);
   cursor: pointer;
   display: inline-flex;
   align-items: center;
@@ -52,7 +54,8 @@
 }
 
 .profile-form button {
-
+  min-height: var(--min-touch-target);
+  min-width: var(--min-touch-target);
 }
 
 .profile-form input:not([type="color"]),
@@ -61,8 +64,32 @@
   max-width: 100%;
   min-width: 0;
   box-sizing: border-box ;
-  background-color: #eef !important;
-  border: .05em solid #88c
+  font: inherit;
+  color: var(--color-text);
+  background-color: var(--color-card-bg) !important;
+  border: 1px solid var(--color-border-pale);
+}
+
+.profile-form textarea {
+  border-color: var(--color-border-pale) !important;
+}
+
+.profile-form input[type="date"],
+.profile-form input[type="month"],
+.profile-form input[type="week"],
+.profile-form input[type="time"],
+.profile-form input[type="datetime-local"] {
+  min-height: var(--min-touch-target);
+}
+
+.profile-form .hoverControl:has(> img:first-child):focus-visible,
+.profile-form button:focus-visible,
+.profile-form input:not([type="color"]):focus-visible,
+.profile-form textarea:focus-visible,
+.profile-form select:focus-visible {
+  outline: var(--focus-ring-width) solid var(--color-primary) !important;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 1px var(--color-background);
 }
 
 .profile-form input[type="url"] {
@@ -101,6 +128,12 @@
 .profile-form span select {
   max-width: 96% !important;
   box-sizing: border-box;
+  margin: 0 !important;
+}
+
+.profile-form .formFieldValue span select {
+  margin-left: 0 !important;
+  margin-right: 0 !important;
 }
 
 /* Remove border/padding from the first wrapper div (and its first child wrapper). */
@@ -123,6 +156,16 @@ section[aria-labelledby="edit-profile-contact-heading"] .profile-form > div:firs
 }
 
 /* Align schema.org, solid terms, FOAF, vCard, and org field labels with their input values. */
+.profile-form :not(.choiceBox):has(> .formFieldName):has(> .formFieldValue) {
+  display: flex;
+  align-items: baseline;
+  margin-bottom: var(--spacing-sm);
+}
+
+.profile-form :not(.choiceBox):has(> .formFieldName):has(> .formFieldValue) > .formFieldValue {
+  margin-bottom: 0;
+}
+
 .profile-form :not(.choiceBox) > .formFieldName:has(a[href*="http://schema.org/"]),
 .profile-form :not(.choiceBox) > .formFieldName:has(a[href*="http://www.w3.org/ns/solid/terms#"]),
 .profile-form :not(.choiceBox) > .formFieldName:has(a[href*="http://xmlns.com/foaf/0.1/"]),
@@ -141,9 +184,19 @@ section[aria-labelledby="edit-profile-contact-heading"] .profile-form > div:firs
   display: inline-flex;
   align-items: center;
   vertical-align: middle;
+  flex: 1;
+  min-width: 0;
 }
 
-.profile-form textarea {
+.profile-form textarea,
+.profile-form .formFieldValue textarea {
+  appearance: none;
+  -webkit-appearance: none;
+  border: .05em solid #88c !important;
+  border-style: solid !important;
+  border-width: .05em !important;
+  border-color: #88c !important;
+  border-radius: 0.2em !important;
   width: 100%;
   box-sizing: border-box;
   margin-top: var(--spacing-xs);
@@ -162,7 +215,30 @@ section[aria-labelledby="edit-profile-contact-heading"] .profile-form > div:firs
 }
 
 .profile-form div[style*="display: flex"][style*="flex-direction: row"]:has(textarea) > div:has(> a) {
-  padding-top: var(--spacing-xs);
+  padding-left: var(--spacing-xs);
+  padding-top: var(--spacing-sm);
+}
+
+/* Keep autocomplete/table-based fields (e.g. Occupation) aligned to label text baseline. */
+.profile-form :not(.choiceBox):has(> .formFieldValue input[data-testid="autocomplete-input"]) {
+  align-items: flex-start;
+}
+
+.profile-form :not(.choiceBox):has(> .formFieldValue input[data-testid="autocomplete-input"]) > .formFieldName {
+  padding-top: 0.55em !important;
+}
+
+.profile-form .formFieldValue:has(input[data-testid="autocomplete-input"]) {
+  align-self: flex-start;
+}
+
+.profile-form .formFieldValue table[data-testid="autocomplete-table"],
+.profile-form .formFieldValue input[data-testid="autocomplete-input"] {
+  margin: 0 !important;
+}
+
+.profile-form .formFieldValue table[data-testid="autocomplete-table"] {
+  vertical-align: baseline;
 }
 
 .profile-form input:not([type="color"]) {
@@ -171,14 +247,17 @@ section[aria-labelledby="edit-profile-contact-heading"] .profile-form > div:firs
   margin-right: 0 !important;
 }
 
-/* Remove padding from table cells within webidControl */
-.webidControl table td {
-  padding: 0 !important;
-}
-
-/* Remove padding from contactPane divs inside webidControl table cells */
-.webidControl table td div.contactPane.namedPane.fullWidth.individualPane {
-  padding: 0 !important;
+.profile-form input:disabled,
+.profile-form textarea:disabled,
+.profile-form select:disabled,
+.profile-form input[readonly],
+.profile-form textarea[readonly],
+.profile-form input:read-only,
+.profile-form textarea:read-only {
+  background-color: var(--color-background) !important;
+  cursor: not-allowed;
+  opacity: 0.75;
+  border: 0.05em solid white !important;
 }
 
 .webidControl table td div.contactPane.namedPane {
