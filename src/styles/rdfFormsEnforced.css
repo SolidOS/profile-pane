@@ -125,12 +125,6 @@
   margin-right: 0 !important;
 }
 
-.profile-form span select {
-  max-width: 96% !important;
-  box-sizing: border-box;
-  margin: 0 !important;
-}
-
 .profile-form .formFieldValue span select {
   margin-left: 0 !important;
   margin-right: 0 !important;
@@ -160,6 +154,51 @@ section[aria-labelledby="edit-profile-contact-heading"] .profile-form > div:firs
   display: flex;
   align-items: baseline;
   margin-bottom: var(--spacing-sm);
+}
+
+/* for the Resume inside corporation choice */
+/* Add space between classifierBox label and select box */
+.profile-form .choiceBox .classifierBox-label {
+  /* Optional: ensure label doesn't have extra margin */
+  margin-right: 0;
+  padding-left: 0.3em;
+}
+.profile-form .choiceBox .choiceBox-selectBox select {
+  margin-left: 2.1em !important;
+}
+
+/* for the Resume orga details */
+/* Add space between classifierBox label and select box */
+.profile-form .classifierBox .classifierBox-label {
+  /* Optional: ensure label doesn't have extra margin */
+  margin-right: 0;
+  padding-left: 0.3em;
+}
+.profile-form .classifierBox .classifierBox-selectBox {
+  margin-left: 4.0em !important;
+}
+
+
+/* for the contact pane */
+/* Add space between classifierBox label and select box */
+.profile-form .individualPane .classifierBox-label {
+  /* Optional: ensure label doesn't have extra margin */
+  margin-right: 0;
+  padding-left: 0.3em;
+}
+.profile-form .individualPane .classifierBox-selectBox select{
+  margin-left: 2.2em !important;
+}
+
+/* for the social media */
+/* Add space between classifierBox label and select box */
+section[data-testid="edit-social-section"] .classifierBox-label {
+  /* Optional: ensure label doesn't have extra margin */
+  margin-right: 0;
+  padding-left: 0.3em;
+}
+section[data-testid="edit-social-section"] .classifierBox-selectBox select {
+  margin-left: 0.7em !important;
 }
 
 .profile-form :not(.choiceBox):has(> .formFieldName):has(> .formFieldValue) > .formFieldValue {

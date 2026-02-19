@@ -54,7 +54,7 @@
   "peerDependencies": {
     "rdflib": "^2.3.5",
     "solid-logic": "^4.0.2",
-    "solid-ui": "^3.0.4"
+    "solid-ui": "3.0.4-5b6f345"
   },
   "devDependencies": {
     "@babel/cli": "^7.28.6",
@@ -83,7 +83,7 @@
     "node-polyfill-webpack-plugin": "^4.1.0",
     "rdflib": "^2.3.5",
     "solid-logic": "^4.0.3",
-    "solid-ui": "^3.0.4",
+    "solid-ui": "3.0.4-5b6f345",
     "style-loader": "^4.0.0",
     "terser-webpack-plugin": "^5.3.16",
     "ts-loader": "^9.5.4",

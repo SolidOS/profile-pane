@@ -86,7 +86,7 @@ vcard:Organization ui:creationForm :OrganizationCreationForm  .
 ###### eposodes in one's career - Roles
 
 :RoleClassifier a ui:Classifier; 
-    ui:label "What sort of role?"@en;
+    ui:label "Role type"@en;
     ui:category solid:Role .
 
 :RoleDatesForm a ui:Options; 
@@ -129,7 +129,7 @@ solid:FutureRole a rdfs:Class; rdfs:label "Future role"@en, "Rôle à venir"@fr,
         :homePageURIField  ) .
 
 :OrgClassifier a ui:Classifier; 
-    ui:label "Type of organization?"@en;
+    ui:label "Type"@en;
     ui:category solid:InterestingOrganization .
 
 :OrgSwitch a ui:Options; 

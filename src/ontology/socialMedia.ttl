@@ -36,7 +36,7 @@
         :AccountIdField ).
 
 :AccountField a ui:Classifier; 
-    ui:label "Choose account"@en;
+    ui:label "Account"@en;
     ui:multiple false ; 
     ui:category foaf:Account. # the accounts are described by the foaf:Account predicate
 
