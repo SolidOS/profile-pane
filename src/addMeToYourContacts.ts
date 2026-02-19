@@ -128,8 +128,7 @@ async function saveNewContact(
         console.log("uris: " + JSON.stringify(uris))
         // console.log("contact Data: " + JSON.stringify(contactData))
         
-        // const contact = await contacts.createNewContact({addressBookUri: uris.addressBookUri, contact: { name: "Sally", email: "testing@gmail.com", phoneNumber: "5555-5555"}, groupUris: uris.groupUris}) 
-        
+       
       } catch (error) {
         let errorMessage = error
         if (errorMessage.toString().includes('Unauthenticated'))
@@ -150,16 +149,7 @@ async function checkIfContactExists(
   subject: NamedNode,
   addressBooksData: AddressBooksData
 ): Promise<boolean> {
-    if (addressBooksData) {
-    addressBooksData.contacts.forEach((key,value) => {
-      console.log('hello')
-      console.log('key: ' + key)
-      console.log(value)
-      console.log('to string ' + subject.value)
-  })
-}
-  console.log("check if contact exists: " + addressBooksData.contacts.has(subject.value))
-  if (addressBooksData.contacts.has(subject.value)) return true
+ if (addressBooksData.contacts.has(subject.value)) return true
   return false
 }
 

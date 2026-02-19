@@ -20,6 +20,13 @@ interface AddressBooksData {
   contacts: Map<string,string>
 }
 
+interface ContactData {
+    name: string,
+    email: string[],
+    phoneNumber: string[],
+    webID: string
+}
+
 async function getSelectedAddressBookUris(
   context: DataBrowserContext,
   contactsModule: ContactsModuleRdfLib,
@@ -178,9 +185,23 @@ async function getContactData(
   }
 }
 
+async function addContactToAddressBook(
+  contactsModule: ContactsModuleRdfLib,
+  contactData: ContactData,
+  selectedAddressBookUris: SelectedAddressBookUris
+): Promise<string>{
+  try { 
+    const contact = await contactsModule.createNewContact({addressBookUri: selectedAddressBookUris.addressBookUri, contact: { name: "Sally", email: "testing@gmail.com", phoneNumber: "5555-5555"}, groupUris: selectedAddressBookUris.groupUris}) 
+    return contact
+  } catch (error) {
+    throw new Error(error)
+  }      
+}
+
 export {
   AddressBooksData,
   getSelectedAddressBookUris,
   getAddressBooksData,
-  getContactData
+  getContactData,
+  addContactToAddressBook
 }
