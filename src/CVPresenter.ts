@@ -142,6 +142,8 @@ export function presentCV(
   const languages = languageNodes
     .flatMap(node => expandRdfList(store, node))
     .map(lan => languageAsText(store, lan))
+  // Deduplicate languages
+  const uniqueLanguages = Array.from(new Set(languages))
 
-  return { rolesByType, skills, languages }
+  return { rolesByType, skills, languages: uniqueLanguages }
 }
