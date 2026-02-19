@@ -19,6 +19,7 @@ export const addMeToYourContactsButtonText = 'Add me to your contacts'
 export const logInAddMeToYourContactsButtonText = 'Login to add me to your contacts'
 export const logInToChatWithMeButtonText = 'Login to chat with me'
 export const friendExistsAlreadyButtonText = 'Already part of friends'
+export const contactExistsAlreadyButtonText = 'Already part of contacts'
 export const chatWithMeButtonText = 'Chat with me'
 
 

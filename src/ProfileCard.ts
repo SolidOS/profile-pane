@@ -7,8 +7,7 @@ import { DataBrowserContext } from 'pane-registry'
 import { NamedNode } from 'rdflib'
 import { QRCodeCard } from './QRCodeCard'
 
-
-export const ProfileCard = ({
+export const ProfileCard = async ({
   name, imageSrc, introduction, location, pronouns, highlightColor, backgroundColor
 }: ProfilePresentation, context: DataBrowserContext, subject: NamedNode) => {
 
@@ -28,9 +27,9 @@ export const ProfileCard = ({
       <section class="buttonSection text-center" aria-label="Actions">
         ${addMeToYourFriendsDiv(subject, context)}
       </section>
-      
+
       <section class="buttonSection text-center" aria-label="Actions">
-        ${addMeToYourContactsDiv(subject, context)}
+        ${await addMeToYourContactsDiv(subject, context)}
       </section>
 
       <div class="qrCodeSection section-centered">

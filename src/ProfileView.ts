@@ -69,7 +69,7 @@ export async function ProfileView (
         <header class="text-center mb-md">
           <h2 id="profile-card-heading" tabindex="-1">${profileBasics.name}</h2>
         </header>
-        ${ProfileCard(profileBasics, context, subject)}
+        ${await ProfileCard(profileBasics, context, subject)}
       </article>
 
       ${(() => {

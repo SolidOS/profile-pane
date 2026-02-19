@@ -1,9 +1,21 @@
 import { DataBrowserContext } from "pane-registry"
 import { widgets } from "solid-ui"
-// import './styles/contactCards.css'
+import { AddressBooksData } from "./contactsHelpers"
+
+export const createAddressBookUriSelectorDiv = (context: DataBrowserContext): HTMLDivElement => {
+  const addressBookUriSelectorDiv = context.dom.createElement('div')
+    addressBookUriSelectorDiv.setAttribute('role', 'addressBookList')
+    addressBookUriSelectorDiv.setAttribute('aria-live', 'polite')
+    addressBookUriSelectorDiv.setAttribute('tabindex', '0')
+    addressBookUriSelectorDiv.classList.add('addressSelector')
+    addressBookUriSelectorDiv.setAttribute('draggable', 'true')
+    
+    return addressBookUriSelectorDiv
+}
 
 export const createAddressBookListDiv = (
   context: DataBrowserContext,
+  addressBooksData: AddressBookDetails,
   addressBookList: string[]
 ): HTMLDivElement => {
 
