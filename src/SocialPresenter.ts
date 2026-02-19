@@ -111,12 +111,15 @@ export function presentSocial(
   function homepageForAccount (subject):string {
     const acHomepage = store.any(subject, ns.foaf('homepage')) // on the account itself?
     if (acHomepage) return acHomepage.value
-    const id = store.anyJS(subject, ns.foaf('accountName'), null, subject.doc()) || 'No_account_Name' 
+    const id = store.anyJS(subject, ns.foaf('accountName'), null, subject.doc()) || 'No_account_Name'
     const classes = store.each(subject, ns.rdf('type'))
     for (const k of classes) {
-      const userProfilePrefix: Node | null = store.any(k as any, ns.foaf('userProfilePrefix'))
-      if (userProfilePrefix)  {
-        return userProfilePrefix.value + id.trim() 
+      // Fix: ensure k is a NamedNode for store.any
+      if (k.termType === 'NamedNode') {
+        const userProfilePrefix: Node | null = store.any(k as NamedNode, ns.foaf('userProfilePrefix'))
+        if (userProfilePrefix) {
+          return userProfilePrefix.value + id.trim()
+        }
       }
     }
     return 'no userProfilePrefix?'
@@ -138,11 +141,13 @@ export function presentSocial(
   const accountNameSet = new Set<string>()
   const accounts: Account[] = []
   for (const ac of accountThings) {
-    const accountNameNode = store.any(ac, ns.foaf('accountName'))
-    const accountName = accountNameNode ? accountNameNode.value : ''
-    if (!accountNameSet.has(accountName)) {
-      accountNameSet.add(accountName)
-      accounts.push(accountAsObject(ac))
+    if (ac.termType === 'NamedNode') {
+      const accountNameNode = store.any(ac as NamedNode, ns.foaf('accountName'))
+      const accountName = accountNameNode ? accountNameNode.value : ''
+      if (!accountNameSet.has(accountName)) {
+        accountNameSet.add(accountName)
+        accounts.push(accountAsObject(ac))
+      }
     }
   }
   if (!accounts.length) return { accounts: [] }
