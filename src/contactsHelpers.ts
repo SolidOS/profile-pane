@@ -9,9 +9,13 @@ interface SelectedAddressBookUris {
   addressBookUri: string,
   groupUris: string[] | null
 }
+export type GroupData = {
+  name: string,
+  uri: string
+}
 interface AddressBookDetails {
   name: string,
-  groups: Map<string, string>
+  groups: GroupData[]
 }
 
 interface AddressBooksData {
@@ -40,13 +44,7 @@ async function getSelectedAddressBookUris(
   addressBookUriSelectorDiv.setAttribute('class', 'module-card')
   try {
       
-    const addressBookList = [
-      "Friend",
-      "Co-Workers",
-      "Solid"
-    ]
-
-    const addressBookListDiv = createAddressBookListDiv(context, addressBooksData, addressBookList)
+    const addressBookListDiv = createAddressBookListDiv(context, addressBooksData, addressBookUriSelectorDiv)
     addressBookUriSelectorDiv.appendChild(addressBookListDiv)
 
     container.appendChild(addressBookUriSelectorDiv)
@@ -63,8 +61,7 @@ async function getSelectedAddressBookUris(
 
 async function getAddressBooks(
   context: DataBrowserContext, 
-  contactModule: ContactsModuleRdfLib,
-  me: string
+  contactModule: ContactsModuleRdfLib
 ): Promise<AddressBooksData>  {
 
   let webID = null
@@ -152,7 +149,7 @@ async function getAddressBooksData(
 
   try {
   
-    addressBooksData = await getAddressBooks(context, contactModule, me.toString())
+    addressBooksData = await getAddressBooks(context, contactModule)
 
   } catch (error) {
     throw new Error(error)
@@ -200,6 +197,7 @@ async function addContactToAddressBook(
 
 export {
   AddressBooksData,
+  AddressBookDetails,
   getSelectedAddressBookUris,
   getAddressBooksData,
   getContactData,

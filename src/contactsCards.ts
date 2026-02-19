@@ -1,6 +1,6 @@
 import { DataBrowserContext } from "pane-registry"
 import { widgets } from "solid-ui"
-import { AddressBooksData } from "./contactsHelpers"
+import { AddressBookDetails, AddressBooksData, GroupData } from "./contactsHelpers"
 
 export const createAddressBookUriSelectorDiv = (context: DataBrowserContext): HTMLDivElement => {
   const addressBookUriSelectorDiv = context.dom.createElement('div')
@@ -15,21 +15,35 @@ export const createAddressBookUriSelectorDiv = (context: DataBrowserContext): HT
 
 export const createAddressBookListDiv = (
   context: DataBrowserContext,
-  addressBooksData: AddressBookDetails,
-  addressBookList: string[]
+  addressBooksData: AddressBooksData,
+  addressBookUriSelectorDiv: HTMLDivElement
 ): HTMLDivElement => {
 
   const addressBookListDiv = context.dom.createElement('div')
   addressBookListDiv.setAttribute('class', 'addressList')
   addressBookListDiv.innerHTML = "Pick an address book:"
   const setButtonOnClickHandler = (event) => {
-    const selectedAddressBook = event.target.value
-    console.log("Selected addressBook: " + selectedAddressBook)
+    const selectedAddressBookUri = event.target.id
+    console.log("Selected addressBook: " + selectedAddressBookUri)
+    const addressBook = addressBooksData.public.get(selectedAddressBookUri)
+    const setGroupButtonOnClickHandler = (event) => {
+      console.log("Groups: " + event.target.value)
+    }
+    const groupListDiv = context.dom.createElement('div')
+    addressBook.groups.map((group) => {
+      groupListDiv.appendChild(createGroupButton(context, group, setGroupButtonOnClickHandler))
+    })
+    addressBookUriSelectorDiv.appendChild(groupListDiv)
+    
   }
-  addressBookList.map((addressBook => {
-    addressBookListDiv.appendChild(createAddressBookButton(context, addressBook, setButtonOnClickHandler))
-  }))
 
+  addressBooksData.public.forEach((addressBook, addressBookUri) => {
+    addressBookListDiv.appendChild(createAddressBookButton(context, addressBook, addressBookUri, 'public', setButtonOnClickHandler))
+  })
+
+  addressBooksData.private.forEach((addressBook, addressBookUri) => {
+    addressBookListDiv.appendChild(createAddressBookButton(context, addressBook, addressBookUri, 'private', setButtonOnClickHandler))
+  })
   addressBookListDiv.appendChild(createAddNewAddressBookButton(context))
 
   return addressBookListDiv
@@ -37,20 +51,42 @@ export const createAddressBookListDiv = (
 
 const createAddressBookButton = (
   context: DataBrowserContext,
-  addressBook: string,
+  addressBook: AddressBookDetails,
+  addressBookUri: string,
+  index: string,
   setButtonOnClickHandler: Function
 ): HTMLButtonElement => {
-
+  const options = (index === 'private') ? { needsBorder: true, buttonColor: 'Secondary'} : { needsBorder: true }
   const button = widgets.button(
     context.dom,
     undefined,
-    addressBook,
+    addressBook.name + " (" + index + ")",
     setButtonOnClickHandler, //sets an onclick event listener
-    {
-      needsBorder: true,
-    }
+    options
   )
   button.setAttribute('value', addressBook)
+  button.setAttribute('id', addressBookUri)
+
+  return button
+}
+
+const createGroupButton = (
+  context: DataBrowserContext,
+  group: GroupData,
+  setButtonOnClickHandler: Function
+): HTMLButtonElement => {
+ 
+  const button = widgets.button(
+    context.dom,
+    undefined,
+    group.name,
+    setButtonOnClickHandler, //sets an onclick event listener
+    {
+      needsBorder: true
+    }
+  )
+  button.setAttribute('value', group.name)
+  button.setAttribute('id', group.uri)
 
   return button
 }
