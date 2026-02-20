@@ -22,22 +22,7 @@ export const createAddressBookListDiv = (
   addressBooksData: AddressBooksData,
   addressBookUriSelectorDiv: HTMLDivElement
 ): HTMLDivElement => {
-
-  const addressBookListDiv = context.dom.createElement('div')
-  addressBookListDiv.setAttribute('class', 'contactsAddressBookList')
-  addressBookListDiv.setAttribute('role', 'addressBooksList')
-  addressBookListDiv.setAttribute('aria-live', 'polite')
-  addressBookListDiv.setAttribute('tabindex', '0')
-  // check if I need below  
-  addressBookListDiv.setAttribute('aria-labelledby', 'address-book-list-div')
-  addressBookListDiv.setAttribute('data-testid', 'div')
-
-  addressBookListDiv.innerHTML = "Pick an address book:"
   const setButtonOnClickHandler =  (event) => {
-    const selectedAddressBookUri = event.target.id
-    console.log("Selected addressBook: " + selectedAddressBookUri)
-    
-    const addressBook = addressBooksData.public.get(selectedAddressBookUri)
     const setGroupButtonOnClickHandler = async (event) => {
       const selectedGroupUri = event.target.id
       const selectedAddressBookUris = { 
@@ -48,9 +33,22 @@ export const createAddressBookListDiv = (
       console.log("contact: " + contact)
     }
     
+    const setSubmitButtonOnClickHandler = (event) => {
+
+    }
+
+    const setAddNewGroupButtonOnClickHandler = (event) => {
+
+    }
+    // selected address book code
+    const selectedAddressBookUri = event.target.id
+    console.log("Selected addressBook: " + selectedAddressBookUri)
+      
+    const addressBook = addressBooksData.public.get(selectedAddressBookUri)
+      
     const groupDivToRemove = context.dom.getElementById('group-list')
     if (groupDivToRemove) groupDivToRemove.remove()
-      
+        
     const groupListDiv = context.dom.createElement('div')
     groupListDiv.setAttribute('class', 'contactsGroupList')
     groupListDiv.setAttribute('role', 'groupList')
@@ -64,9 +62,23 @@ export const createAddressBookListDiv = (
     addressBook.groups.map((group) => {
       groupListDiv.appendChild(createGroupButton(context, group, setGroupButtonOnClickHandler))
     })
+    groupListDiv.appendChild(createAddNewGroupButton(context, setAddNewGroupButtonOnClickHandler))
+    groupListDiv.appendChild(createSubmitButton(context, setSubmitButtonOnClickHandler))
+    
     addressBookUriSelectorDiv.appendChild(groupListDiv)
   }
-  addressBooksData.public.forEach((addressBook, addressBookUri) => {
+    
+  const addressBookListDiv = context.dom.createElement('div')
+  addressBookListDiv.setAttribute('class', 'contactsAddressBookList')
+  addressBookListDiv.setAttribute('role', 'addressBooksList')
+  addressBookListDiv.setAttribute('aria-live', 'polite')
+  addressBookListDiv.setAttribute('tabindex', '0')
+  // check if I need below  
+  addressBookListDiv.setAttribute('aria-labelledby', 'address-book-list-div')
+  addressBookListDiv.setAttribute('data-testid', 'div')
+
+  addressBookListDiv.innerHTML = "Select an address book:"
+    addressBooksData.public.forEach((addressBook, addressBookUri) => {
     addressBookListDiv.appendChild(createAddressBookButton(context, addressBook, addressBookUri, 'public', setButtonOnClickHandler))
   })
 
@@ -78,6 +90,28 @@ export const createAddressBookListDiv = (
   return addressBookListDiv
 }
 
+const createSubmitButton = (
+  context: DataBrowserContext,
+  setButtonOnClickHandler: Function
+): HTMLButtonElement => {
+ 
+  const button = widgets.button(
+    context.dom,
+    undefined,
+    'Add Contact',
+    setButtonOnClickHandler, //sets an onclick event listener
+    {
+      needsBorder: true,
+      buttonColor: 'Secondary'
+    }
+  )
+  
+  button.setAttribute('id', 'add-contact')
+  button.classList.add('contactsSubmitButton', 'actionButton', 'btn-primary', 'action-button-focus')
+  
+  return button
+}
+
 const createAddressBookButton = (
   context: DataBrowserContext,
   addressBook: AddressBookDetails,
@@ -85,6 +119,8 @@ const createAddressBookButton = (
   index: string,
   setButtonOnClickHandler: Function
 ): HTMLButtonElement => {
+  
+
   const options = (index === 'private') ? { needsBorder: true, buttonColor: 'Secondary'} : { needsBorder: true }
   const button = widgets.button(
     context.dom,
@@ -100,11 +136,33 @@ const createAddressBookButton = (
   return button
 }
 
+const createAddNewGroupButton = (
+  context: DataBrowserContext,
+  setButtonOnClickHandler: Function
+): HTMLButtonElement => {
+
+  const button = widgets.button(
+    context.dom,
+    undefined,
+    'Add New Group',
+    setButtonOnClickHandler, //sets an onclick event listener
+    {
+      needsBorder: true
+    }
+  )
+  
+  button.setAttribute('id', 'add-new-group')
+  button.classList.add('actionButton', 'btn-primary', 'action-button-focus')
+  
+  return button
+}
+
 const createGroupButton = (
   context: DataBrowserContext,
   group: GroupData,
   setButtonOnClickHandler: Function
 ): HTMLButtonElement => {
+
  
   const button = widgets.button(
     context.dom,

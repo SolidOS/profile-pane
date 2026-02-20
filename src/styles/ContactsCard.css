@@ -1,8 +1,10 @@
 .contactsAddressBookSelector {
   width: 100%;
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
   color: white;
   max-width: 500px;
-  padding: 1em;
+  padding: var(--spacing-md);
   justify-content: center;
   align-items: center;
   background-color: var(--color-primary);
@@ -28,4 +30,20 @@
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
+}
+
+.contactsSubmitButton {
+  margin-top: var(--spacing-md);
+  background-color: var(--color-secondary) !important;
+  color: white !important;
+}
+
+.contactsPrimaryButtonSelected {
+  background-color: var(--color-primary) !important;
+  color: white !important;
+}
+
+.contactsSecondaryButtonSelected {
+  background-color: var(--color-secondary) !important;
+  color: white !important;
 }
