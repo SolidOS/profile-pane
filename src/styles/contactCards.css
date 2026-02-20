@@ -1,15 +1,30 @@
-.addressSelector {
+.contactsAddressBookSelector {
   width: 100%;
-  min-width: 80px;
-  max-width: 180px;
+  color: white;
+  max-width: 500px;
+  padding: 1em;
+  justify-content: center;
+  align-items: center;
+  background-color: var(--color-primary);
+  gap: 10px;
   box-sizing: border-box;
-  display: inline-block;
+  display: flex;
+  flex-direction: row;
 }
 
-.addressList {
+.contactsAddressBookList {
   width: 100%;
   min-width: 80px;
-  max-width: 180px;
+  max-width: 250px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+}
+
+.contactsGroupList {
+  width: 100%;
+  min-width: 80px;
+  max-width: 250px;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;

@@ -13,27 +13,14 @@ async function addContactToAddressBook(
   contactData: ContactData,
   addressBooksData: AddressBooksData,
   container: HTMLDivElement
-): Promise<SelectedAddressBookUris> {
-  const addressBookUri = ''
-  const groupUris = null
-    
+) {
+   
   const addressBookUriSelectorDiv = createAddressBookUriSelectorDiv(context)
-  addressBookUriSelectorDiv.setAttribute('class', 'module-card')
-  try {
-      
-    const addressBookListDiv = createAddressBookListDiv(context, contactsModule, contactData, addressBooksData, addressBookUriSelectorDiv)
-    addressBookUriSelectorDiv.appendChild(addressBookListDiv)
+       
+  const addressBookListDiv = createAddressBookListDiv(context, contactsModule, contactData, addressBooksData, addressBookUriSelectorDiv)
+  addressBookUriSelectorDiv.appendChild(addressBookListDiv)
 
-    container.appendChild(addressBookUriSelectorDiv)
-    
-  } catch (error) {
-    throw new Error(error)
-  }
-
-  return { 
-    addressBookUri, 
-    groupUris
-  }
+  container.appendChild(addressBookUriSelectorDiv)   
 }
 
 async function getAddressBooks(

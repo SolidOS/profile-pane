@@ -6,11 +6,11 @@ import ContactsModuleRdfLib from "@solid-data-modules/contacts-rdflib"
 
 export const createAddressBookUriSelectorDiv = (context: DataBrowserContext): HTMLDivElement => {
   const addressBookUriSelectorDiv = context.dom.createElement('div')
-    addressBookUriSelectorDiv.setAttribute('role', 'addressBookList')
+    addressBookUriSelectorDiv.setAttribute('role', 'addressBookSelector')
     addressBookUriSelectorDiv.setAttribute('aria-live', 'polite')
     addressBookUriSelectorDiv.setAttribute('tabindex', '0')
-    addressBookUriSelectorDiv.classList.add('addressSelector')
-    addressBookUriSelectorDiv.setAttribute('draggable', 'true')
+    addressBookUriSelectorDiv.classList.add('contactsAddressBookSelector')
+    // addressBookUriSelectorDiv.setAttribute('draggable', 'true')
     
     return addressBookUriSelectorDiv
 }
@@ -24,7 +24,14 @@ export const createAddressBookListDiv = (
 ): HTMLDivElement => {
 
   const addressBookListDiv = context.dom.createElement('div')
-  addressBookListDiv.setAttribute('class', 'addressList')
+  addressBookListDiv.setAttribute('class', 'contactsAddressBookList')
+  addressBookListDiv.setAttribute('role', 'addressBooksList')
+  addressBookListDiv.setAttribute('aria-live', 'polite')
+  addressBookListDiv.setAttribute('tabindex', '0')
+  // check if I need below  
+  addressBookListDiv.setAttribute('aria-labelledby', 'address-book-list-div')
+  addressBookListDiv.setAttribute('data-testid', 'div')
+
   addressBookListDiv.innerHTML = "Pick an address book:"
   const setButtonOnClickHandler =  (event) => {
     const selectedAddressBookUri = event.target.id
@@ -40,7 +47,20 @@ export const createAddressBookListDiv = (
       const contact = await createContactInAddressBook(contactsModule, contactData, selectedAddressBookUris)
       console.log("contact: " + contact)
     }
+    
+    const groupDivToRemove = context.dom.getElementById('group-list')
+    if (groupDivToRemove) groupDivToRemove.remove()
+      
     const groupListDiv = context.dom.createElement('div')
+    groupListDiv.setAttribute('class', 'contactsGroupList')
+    groupListDiv.setAttribute('role', 'groupList')
+    groupListDiv.setAttribute('aria-live', 'polite')
+    groupListDiv.setAttribute('tabindex', '0')
+    // check if I need below
+    groupListDiv.setAttribute('aria-labelledby', 'group-list-div')
+    groupListDiv.setAttribute('data-testid', 'div')
+    groupListDiv.setAttribute('id', 'group-list')
+
     addressBook.groups.map((group) => {
       groupListDiv.appendChild(createGroupButton(context, group, setGroupButtonOnClickHandler))
     })
@@ -73,9 +93,10 @@ const createAddressBookButton = (
     setButtonOnClickHandler, //sets an onclick event listener
     options
   )
-  button.setAttribute('value', addressBook)
+  button.setAttribute('value', addressBook.name)
   button.setAttribute('id', addressBookUri)
-
+  button.classList.add('actionButton', 'btn-primary', 'action-button-focus')
+  
   return button
 }
 
@@ -96,7 +117,8 @@ const createGroupButton = (
   )
   button.setAttribute('value', group.name)
   button.setAttribute('id', group.uri)
-
+  button.classList.add('actionButton', 'btn-primary', 'action-button-focus')
+  
   return button
 }
 
@@ -135,5 +157,8 @@ await contacts.createAddressBook({
       needsBorder: true,
     }
   )
+  button.setAttribute('value', 'new-address-book')
+  button.classList.add('actionButton', 'btn-primary', 'action-button-focus')
+  
   return button
 }
