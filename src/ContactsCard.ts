@@ -46,9 +46,7 @@ export const createAddressBookListDiv = (
 ): HTMLDivElement => {
   const setButtonOnClickHandler =  (event) => {
     event.preventDefault()
-    const setGroupButtonOnClickHandler = async (event) => {
-      event.preventDefault()
-    } 
+
     // selected address book code
     const selectedAddressBookUri = event.target.id
     console.log("Selected addressBook: " + selectedAddressBookUri)
@@ -69,7 +67,7 @@ export const createAddressBookListDiv = (
     groupListDiv.setAttribute('id', 'group-list')
 
     addressBook.groups.map((group) => {
-      groupListDiv.appendChild(createGroupButton(context, group, setGroupButtonOnClickHandler))
+      groupListDiv.appendChild(createGroupButton(context, group))
     })
     
     addressBookUriSelectorDiv.appendChild(groupListDiv)
@@ -260,10 +258,11 @@ const createGroupNameSubmitButton = (
 
 const createGroupButton = (
   context: DataBrowserContext,
-  group: GroupData,
-  setButtonOnClickHandler: Function
+  group: GroupData
 ): HTMLButtonElement => {
-
+  const setButtonOnClickHandler = async (event) => {
+    event.preventDefault()
+  } 
   const button = widgets.button(
     context.dom,
     undefined,
