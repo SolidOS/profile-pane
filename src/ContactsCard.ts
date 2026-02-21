@@ -46,24 +46,23 @@ export const createAddressBookListDiv = (
 ): HTMLDivElement => {
   const setButtonOnClickHandler =  (event) => {
     event.preventDefault()
-
+    const selectedAddressBookButton = event.target
+    const previouslySelected = selectedAddressBookButton.classList.contains('selectedButton');
+    
     // remove the previous groups
     const groupDivToRemove = context.dom.getElementById('group-list')
     if (groupDivToRemove) groupDivToRemove.remove()
     
-    const selectedAddressBookButton = event.target
-    const previouslySelected = selectedAddressBookButton.classList.contains('selectedButton');
+    // remove presious address book selection bc you can only have one
+    const selectedAddressBookElements = context.dom.querySelectorAll('.selectedAddressBook')
+    selectedAddressBookElements.forEach((addressBookButton) => {
+      addressBookButton.classList.remove("selectedButton", "selectedAddressBook")
+    })
     
     if (previouslySelected) {
       selectedAddressBookButton.classList.remove("selectedButton", "selectedAddressBook");
     
     } else {
-      // remove presious address book selection bc you can only have one
-      const selectedAddressBookElements = context.dom.querySelectorAll('selectedAddressBook')
-      selectedAddressBookElements.forEach((addressBookButton) => {
-        addressBookButton.classList.remove("selectedButton", "selectedAddressBook");
-      })
-      
       selectedAddressBookButton.classList.add("selectedButton", "selectedAddressBook");
       // selected address book code
       const selectedAddressBookUri = event.target.id
@@ -142,8 +141,8 @@ const createSubmitButton = (
     let selectedAddressBookUri = null 
     let selectedGroupUris = []
 
-    const selectedAddressBookElement = context.dom.querySelectorAll('selectedAddressBook')
-    const selectedGroupElements = context.dom.querySelectorAll('selectedGroup')
+    const selectedAddressBookElement = context.dom.querySelectorAll('.selectedAddressBook')
+    const selectedGroupElements = context.dom.querySelectorAll('.selectedGroup')
   
     selectedAddressBookElement.forEach((addressBookButton) => {
       selectedAddressBookUri = addressBookButton.getAttribute('id')
@@ -153,6 +152,9 @@ const createSubmitButton = (
        selectedGroupUris.push(groupButtons.getAttribute('id'))
     })
 
+    console.log("address book uris: " + selectedAddressBookUri)
+    console.log("group uris: " + selectedGroupUris)
+    
     const selectedAddressBookUris = { 
         addressBookUri: selectedAddressBookUri,
         groupUris: selectedGroupUris 

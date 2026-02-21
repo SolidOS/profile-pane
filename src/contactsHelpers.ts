@@ -68,8 +68,8 @@ try {
     // console.log("AddressBooks: " + JSON.stringify(addressBookUris))
    
     const addressBookUris = {
-      publicUris:['https://sstratsianis.solidcommunity.net/EFHmoi/index.ttl'],
-      privateUris: []
+      publicUris:['https://sstratsianis.solidcommunity.net/EFHmoi/index.ttl', 'https://sstratsianis.solidcommunity.net/QKXBP7/index.ttl'],
+      privateUris: ['https://sstratsianis.solidcommunity.net/QKXBP7/index.ttl']
     } 
       
     const publicAddressBookPromises = await addressBookUris.publicUris.map(getAddressData)
