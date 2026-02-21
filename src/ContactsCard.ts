@@ -47,19 +47,32 @@ export const createAddressBookListDiv = (
   const setButtonOnClickHandler =  (event) => {
     event.preventDefault()
 
-    // selected address book code
-    const selectedAddressBookUri = event.target.id
-    console.log("Selected addressBook: " + selectedAddressBookUri)
-      
-    const addressBook = addressBooksData.public.get(selectedAddressBookUri)
-      
+    // remove the previous groups
     const groupDivToRemove = context.dom.getElementById('group-list')
     if (groupDivToRemove) groupDivToRemove.remove()
     
-    const groupListDiv = createGroupListDiv(context, addressBook)  
-
-    addressBookUriSelectorDiv.appendChild(groupListDiv)
+    const selectedAddressBookButton = event.target
+    const previouslySelected = selectedAddressBookButton.classList.contains('selectedButton');
     
+    if (previouslySelected) {
+      selectedAddressBookButton.classList.remove("selectedButton", "selectedAddressBook");
+    
+    } else {
+      // remove presious address book selection bc you can only have one
+      const selectedAddressBookElements = context.dom.querySelectorAll('selectedAddressBook')
+      selectedAddressBookElements.forEach((addressBookButton) => {
+        addressBookButton.classList.remove("selectedButton", "selectedAddressBook");
+      })
+      
+      selectedAddressBookButton.classList.add("selectedButton", "selectedAddressBook");
+      // selected address book code
+      const selectedAddressBookUri = event.target.id
+      const addressBook = addressBooksData.public.get(selectedAddressBookUri) 
+     
+      // add groups for addressbook  
+      const groupListDiv = createGroupListDiv(context, addressBook)  
+      addressBookUriSelectorDiv.appendChild(groupListDiv)
+    }
   }    
   const addressBookListDiv = context.dom.createElement('div')
   addressBookListDiv.setAttribute('class', 'contactsAddressBookList')
@@ -271,6 +284,16 @@ const createGroupButton = (
 ): HTMLButtonElement => {
   const setButtonOnClickHandler = async (event) => {
     event.preventDefault()
+    
+    const selectedGroupButton = event.target
+    const previouslySelected = selectedGroupButton.classList.contains('selectedButton');
+    
+    if (previouslySelected) {
+      selectedGroupButton.classList.remove("selectedButton", "selectedGroup")
+    
+    } else {
+      selectedGroupButton.classList.add("selectedButton", "selectedGroup");
+    }
   } 
   const button = widgets.button(
     context.dom,
