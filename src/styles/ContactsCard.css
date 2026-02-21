@@ -3,7 +3,6 @@
   border-radius: var(--border-radius);
   box-shadow: var(--box-shadow);
   color: white;
-  max-width: 750px;
   padding: var(--spacing-md);
   justify-content: center;
   align-items: center;
@@ -15,9 +14,10 @@
 }
 
 .contactsAddressBookDetails {
+  border-radius: var(--border-radius);
   padding: var(--spacing-md);
   justify-content: center;
-  align-items: center;
+  
   gap: 10px;
   box-sizing: border-box;
   display: flex;
@@ -25,6 +25,7 @@
 }
 
 .contactsCreateNewAddressBook {
+  border-radius: var(--border-radius);
   color: white;
   padding: var(--spacing-md);
   justify-content: center;
@@ -36,6 +37,8 @@
 
 .contactsAddressBookList {
   width: 100%;
+  min-width: 80px;
+  max-width: 250px;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
