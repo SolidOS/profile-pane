@@ -83,15 +83,25 @@ try {
         allContacts.push(contact)
       })
     })
+    const privateAddressBookPromises = await addressBookUris.privateUris.map(getAddressData)
+    const privateAddressBooksData = await Promise.all(privateAddressBookPromises)
+    privateAddressBooksData.map((addressBook) => {
+      addressBooksData.private.set(addressBook.uri, {
+        name: addressBook.title,
+        groups: addressBook.groups
+      })
+      addressBook.contacts.map((contact) => {
+        allContacts.push(contact)
+      })
+    })
     const contactPromises = await allContacts.map(getWebID)
     const results = await Promise.all(contactPromises)
     
     results.map((contact) => {
       if (contact) addressBooksData.contacts.set(contact.webID, contact.uri)  
     })
-    const privateAddressBookPromises = await addressBookUris.privateUris.map(getAddressData)
-    const privateAddressBooksData = await Promise.all(privateAddressBookPromises)
-   
+    
+
   } catch (error) {
     throw new Error(error)
   }
