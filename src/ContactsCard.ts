@@ -55,21 +55,9 @@ export const createAddressBookListDiv = (
       
     const groupDivToRemove = context.dom.getElementById('group-list')
     if (groupDivToRemove) groupDivToRemove.remove()
-        
-    const groupListDiv = context.dom.createElement('div')
-    groupListDiv.setAttribute('class', 'contactsGroupList')
-    groupListDiv.setAttribute('role', 'groupList')
-    groupListDiv.setAttribute('aria-live', 'polite')
-    groupListDiv.setAttribute('tabindex', '0')
-    // check if I need below
-    groupListDiv.setAttribute('aria-labelledby', 'group-list-div')
-    groupListDiv.setAttribute('data-testid', 'div')
-    groupListDiv.setAttribute('id', 'group-list')
-
-    addressBook.groups.map((group) => {
-      groupListDiv.appendChild(createGroupButton(context, group))
-    })
     
+    const groupListDiv = createGroupListDiv(context, addressBook)  
+
     addressBookUriSelectorDiv.appendChild(groupListDiv)
     
   }    
@@ -92,6 +80,27 @@ export const createAddressBookListDiv = (
   })
   
   return addressBookListDiv
+}
+
+const createGroupListDiv = (
+  context: DataBrowserContext,
+  addressBook: AddressBookDetails
+): HTMLDivElement => {
+
+  const groupListDiv = context.dom.createElement('div')
+  groupListDiv.setAttribute('class', 'contactsGroupList')
+  groupListDiv.setAttribute('role', 'groupList')
+  groupListDiv.setAttribute('aria-live', 'polite')
+  groupListDiv.setAttribute('tabindex', '0')
+  // check if I need below
+  groupListDiv.setAttribute('aria-labelledby', 'group-list-div')
+  groupListDiv.setAttribute('data-testid', 'div')
+  groupListDiv.setAttribute('id', 'group-list')
+
+  addressBook.groups.map((group) => {
+    groupListDiv.appendChild(createGroupButton(context, group))
+  })
+  return groupListDiv
 }
 
 export const createNewAddressBookDiv = (context: DataBrowserContext,
