@@ -8,6 +8,11 @@
   display: inline-block;
 }
 
+.selectedButton {
+  background-color: var(--color-primary) !important;
+  color: white !important;
+  border: 1px solid white !important;
+}
 /* ===========================================
    PROFILE GRID LAYOUT
    =========================================== */
