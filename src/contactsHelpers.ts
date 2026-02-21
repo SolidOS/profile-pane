@@ -15,11 +15,7 @@ async function addContactToAddressBook(
   container: HTMLDivElement
 ) {
    
-  const addressBookUriSelectorDiv = createAddressBookUriSelectorDiv(context)
-       
-  const addressBookListDiv = createAddressBookListDiv(context, contactsModule, contactData, addressBooksData, addressBookUriSelectorDiv)
-  addressBookUriSelectorDiv.appendChild(addressBookListDiv)
-
+  const addressBookUriSelectorDiv = createAddressBookUriSelectorDiv(context, contactsModule, contactData, addressBooksData)
   container.appendChild(addressBookUriSelectorDiv)   
 }
 

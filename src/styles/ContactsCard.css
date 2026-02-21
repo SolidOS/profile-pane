@@ -1,9 +1,9 @@
 .contactsAddressBookSelector {
-  width: 100%;
+  width: fit-content;
   border-radius: var(--border-radius);
   box-shadow: var(--box-shadow);
   color: white;
-  max-width: 500px;
+  max-width: 750px;
   padding: var(--spacing-md);
   justify-content: center;
   align-items: center;
@@ -14,10 +14,28 @@
   flex-direction: row;
 }
 
+.contactsAddressBookDetails {
+  padding: var(--spacing-md);
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: row;
+}
+
+.contactsCreateNewAddressBook {
+  color: white;
+  padding: var(--spacing-md);
+  justify-content: center;
+  align-items: center;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+}
+
 .contactsAddressBookList {
   width: 100%;
-  min-width: 80px;
-  max-width: 250px;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
