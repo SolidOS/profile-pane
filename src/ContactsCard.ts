@@ -109,7 +109,7 @@ export const createAddressBookListDiv = (
   addressBookListDiv.setAttribute('aria-labelledby', 'address-book-list-div')
   addressBookListDiv.setAttribute('data-testid', 'div')
 
-  addressBookListDiv.innerHTML = "Select an address book:"
+  addressBookListDiv.innerHTML = "Select an address book"
   addressBooksData.public.forEach((addressBook, addressBookUri) => {
     addressBookListDiv.appendChild(createAddressBookButton(context, addressBook, addressBookUri, 'public', setButtonOnClickHandler))
   })
@@ -136,7 +136,7 @@ const createGroupListDiv = (
   groupListDiv.setAttribute('data-testid', 'div')
   groupListDiv.setAttribute('id', 'group-list')
 
-  groupListDiv.innerHTML = "Select a group (optional):"
+  groupListDiv.innerHTML = "Select a group (optional)"
   addressBook.groups.map((group) => {
     groupListDiv.appendChild(createGroupButton(context, group))
   })
@@ -185,7 +185,7 @@ const createSubmitButton = (
       buttonColor: 'Secondary'
     }
   )
-  
+  button.setAttribute('type', 'submit')
   button.setAttribute('id', 'add-contact')
   button.classList.add('contactsSubmitButton', 'actionButton', 'btn-primary', 'action-button-focus')
   
@@ -226,7 +226,7 @@ const createNewAddressBookForm = (
   
 
   const newAddressBookForm = context.dom.createElement('form')
-  newAddressBookForm.innerHTML = 'Create a new address book:'
+  newAddressBookForm.innerHTML = 'Create a new address book'
   newAddressBookForm.setAttribute('id', 'new-addressbook-form')
   newAddressBookForm.classList.add('contactsNewAddressForm')
   const addressBookNameLabel = context.dom.createElement('label')
@@ -301,7 +301,7 @@ const createGroupNameForm = (
   contactData: ContactData
 ): HTMLFormElement => {
   const newGroupForm = context.dom.createElement('form')
-  newGroupForm.innerHTML = 'Create a new group (optional):'
+  newGroupForm.innerHTML = 'Create a new group (optional)'
   newGroupForm.setAttribute('id', 'new-group-form')
   newGroupForm.classList.add('contactsNewAddressForm')
   

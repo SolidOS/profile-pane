@@ -4,6 +4,7 @@
   box-shadow: var(--box-shadow);
   color: white;
   padding: var(--spacing-md);
+  padding-top: 3em;
   justify-content: center;
   align-items: center;
   background-color: var(--color-primary);
@@ -11,6 +12,8 @@
   display: flex;
   flex-direction: row;
   margin: 0px;
+  font-weight: 600;
+  position: relative;
 }
 
 .contactsAddressBookDetails {
@@ -38,6 +41,7 @@
   width: 100%;
   min-width: 80px;
   max-width: 250px;
+  gap: 5px;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
@@ -47,6 +51,7 @@
   width: 100%;
   min-width: 80px;
   max-width: 250px;
+  gap: 5px;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
@@ -56,6 +61,25 @@
   margin-top: var(--spacing-md);
   background-color: var(--color-secondary) !important;
   color: white !important;
+}
+
+.contactsSubmitButton:hover {
+  background: color-mix(in srgb, white 90%, black) !important; 
+  box-shadow: 0 2px 4px var(--color-secondary) !important;
+  color: var(--color-secondary) !important;
+}
+
+.contactsSubmitButton:active {
+  box-shadow: 0 1px 2px white;
+}
+
+/* Action Button Focus - used by ChatWithMe, ProfileCard */
+.contactsSubmitButton:focus,
+.contactsSubmitButton:focus-visible {
+  outline: 3px solid var(--color-secondary) !important;
+  outline-offset: 2px !important;
+  box-shadow: 0 0 0 2px white, 0 0 0 5px rgba(124, 77, 255, 0.25) !important;
+  z-index: 1;
 }
 
 .contactsPrimaryButtonSelected {
@@ -74,7 +98,11 @@
   align-self: flex-start;
   padding: 3px;
   font-size: var(--font-size-sm);
-  transition: all var(--animation-duration) ease;
+  position: absolute;
+  width: 30px;
+  height: 20px;
+  top: 0;
+  right: 0;
 }
 
 .contactsCloseButton:hover {
