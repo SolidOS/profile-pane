@@ -14,22 +14,8 @@ async function addContactToAddressBook(
   addressBooksData: AddressBooksData,
   container: HTMLDivElement
 ) {
-  
-  const button = context.dom.getElementById('add-to-contacts-button')
-  button.setAttribute('disabled', '')
-
-  const closeButton = context.dom.createElement('button')
-  closeButton.classList.add('contactsCloseButton')
-  closeButton.innerHTML = 'Close'
-  closeButton.onclick = (event) => {
-    const elementToClose = context.dom.getElementById('contacts-selector-div')
-    elementToClose.remove()
-    
-    button.removeAttribute('disabled')
-  }
 
   const addressBookUriSelectorDiv = createAddressBookUriSelectorDiv(context, contactsModule, contactData, addressBooksData)
-  addressBookUriSelectorDiv.appendChild(closeButton)
   container.appendChild(addressBookUriSelectorDiv)   
 }
 

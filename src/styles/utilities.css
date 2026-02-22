@@ -315,3 +315,16 @@
 .btn-transparent:hover {
   background-color: transparent;
 }
+
+/* input */
+.input {
+  padding: 5px;
+  min-height: var(--min-touch-target);
+  border: 1px solid var(--color-primary);
+  border-radius: var(--border-radius-base);
+  background: white;
+  color: var(--color-primary);
+  font-weight: 600;
+  font-size: var(--font-size-md);
+  cursor: pointer;
+}
