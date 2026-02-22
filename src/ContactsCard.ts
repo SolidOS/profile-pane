@@ -14,6 +14,7 @@ export const createAddressBookUriSelectorDiv = (context: DataBrowserContext,
   addressBookUriSelectorDiv.setAttribute('aria-live', 'polite')
   addressBookUriSelectorDiv.setAttribute('tabindex', '0')
   addressBookUriSelectorDiv.classList.add('contactsAddressBookSelector')
+  addressBookUriSelectorDiv.setAttribute('id', 'contacts-selector-div')
 
   const addressBookDetailsDiv = createAddressBookDetailsDiv(context)
   const addAddressBookDiv = createNewAddressBookDiv(context, contactsModule, contactData)
@@ -83,7 +84,7 @@ export const createAddressBookListDiv = (
   addressBookListDiv.setAttribute('data-testid', 'div')
 
   addressBookListDiv.innerHTML = "Select an address book:"
-    addressBooksData.public.forEach((addressBook, addressBookUri) => {
+  addressBooksData.public.forEach((addressBook, addressBookUri) => {
     addressBookListDiv.appendChild(createAddressBookButton(context, addressBook, addressBookUri, 'public', setButtonOnClickHandler))
   })
 
@@ -109,6 +110,7 @@ const createGroupListDiv = (
   groupListDiv.setAttribute('data-testid', 'div')
   groupListDiv.setAttribute('id', 'group-list')
 
+  groupListDiv.innerHTML = "Select a group (optional):"
   addressBook.groups.map((group) => {
     groupListDiv.appendChild(createGroupButton(context, group))
   })

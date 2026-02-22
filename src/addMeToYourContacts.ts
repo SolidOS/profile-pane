@@ -68,6 +68,7 @@ const createAddMeToYourContactsButton = async (
       needsBorder: true,
     }
   )
+  button.setAttribute('id', 'add-to-contacts-button')
 
   function setButtonHandler(event) {
     event.preventDefault()
@@ -94,6 +95,7 @@ const createAddMeToYourContactsButton = async (
               if (contactExists) {
                 //logged in and friend exists or friend was just added
                 button.innerHTML = contactExistsAlreadyButtonText.toUpperCase()
+                button.onclick = null 
               } else {
                 //logged in and friend does not exist yet
                 button.innerHTML = addMeToYourContactsButtonText.toUpperCase()

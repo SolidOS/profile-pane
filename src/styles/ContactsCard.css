@@ -3,21 +3,20 @@
   border-radius: var(--border-radius);
   box-shadow: var(--box-shadow);
   color: white;
-  padding: var(--spacing-md);
+  padding: 0px var(--spacing-md) 0px 0px;
   justify-content: center;
   align-items: center;
   background-color: var(--color-primary);
-  gap: 10px;
   box-sizing: border-box;
   display: flex;
   flex-direction: row;
+  margin: 0px;
 }
 
 .contactsAddressBookDetails {
   border-radius: var(--border-radius);
   padding: var(--spacing-md);
   justify-content: center;
-  
   gap: 10px;
   box-sizing: border-box;
   display: flex;
@@ -67,4 +66,22 @@
 .contactsSecondaryButtonSelected {
   background-color: var(--color-secondary) !important;
   color: white !important;
+}
+
+.contactsCloseButton {
+  background: white;
+  color: var(--color-primary);
+  align-self: flex-end;
+  padding: 3px;
+  font-size: var(--font-size-sm);
+  transition: all var(--animation-duration) ease;
+}
+
+.contactsCloseButton:hover {
+  background: color-mix(in srgb, var(--color-primary) 90%, black);
+  box-shadow: 0 2px 4px rgba(124, 77, 255, 0.2);
+}
+
+.contactsCloseButton:active {
+  box-shadow: 0 1px 2px rgba(124, 77, 255, 0.2);
 }
