@@ -150,29 +150,7 @@ const createSubmitButton = (
 ): HTMLButtonElement => {
   const setButtonOnClickHandler = async (event) => {
     event.preventDefault()
-    let selectedAddressBookUri = null 
-    let selectedGroupUris = []
 
-    const selectedAddressBookElement = context.dom.querySelectorAll('.selectedAddressBook')
-    const selectedGroupElements = context.dom.querySelectorAll('.selectedGroup')
-  
-    selectedAddressBookElement.forEach((addressBookButton) => {
-      selectedAddressBookUri = addressBookButton.getAttribute('id')
-    })
-
-    selectedGroupElements.forEach((groupButtons) => {
-       selectedGroupUris.push(groupButtons.getAttribute('id'))
-    })
-
-    console.log("address book uris: " + selectedAddressBookUri)
-    console.log("group uris: " + selectedGroupUris)
-    
-    const selectedAddressBookUris = { 
-        addressBookUri: selectedAddressBookUri,
-        groupUris: selectedGroupUris 
-      }
-      const contact = await createContactInAddressBook(contactsModule, contactData, selectedAddressBookUris)
-      console.log("contact: " + contact)
   }
 
   const button = widgets.button(
@@ -220,12 +198,31 @@ const createNewAddressBookForm = (
   contactsModule: ContactsModuleRdfLib,
   contactData: ContactData
 ): HTMLFormElement => {
-  const me = authn.currentUser()
-  const newAddressContainer = me.site().value + '/contacts/'
-  console.log("new address container: " + newAddressContainer)
-  
-
+  const newAddressBookEventListener = (event) => {
+    const me = authn.currentUser()
+    const newAddressContainer = me.site().value + '/contacts/'
+    console.log("new address container: " + newAddressContainer)
+ 
+       // AddressBook creation using solid-data-modules
+    //Public
+    /* const uri = await module.createAddressBook({
+     containerUri: "https://pod.example/alice/",
+     name: "new address book"
+     })
+     */
+    // Private
+    /*
+    const ownerWebId = "http://localhost:3000/alice/profile/card#me"
+await contacts.createAddressBook({
+    containerUri: "http://localhost:3000/alice/public-write/",
+    name: "new address book",
+    ownerWebId
+})
+*/
+  }
+ 
   const newAddressBookForm = context.dom.createElement('form')
+  newAddressBookForm.addEventListener = newAddressBookEventListener;
   newAddressBookForm.innerHTML = 'Create a new address book'
   newAddressBookForm.setAttribute('id', 'new-addressbook-form')
   newAddressBookForm.classList.add('contactsNewAddressForm')
@@ -300,7 +297,45 @@ const createGroupNameForm = (
   contactsModule: ContactsModuleRdfLib,
   contactData: ContactData
 ): HTMLFormElement => {
+  const addContactEventListener = async (event) => {
+    let selectedAddressBookUri = null 
+    let selectedGroupUris = []
+
+    const selectedAddressBookElement = context.dom.querySelectorAll('.selectedAddressBook')
+    selectedAddressBookElement.forEach((addressBookButton) => {
+      selectedAddressBookUri = addressBookButton.getAttribute('id')
+    })
+
+    const selectedGroupElements = context.dom.querySelectorAll('.selectedGroup')
+    selectedGroupElements.forEach((groupButtons) => {
+       selectedGroupUris.push(groupButtons.getAttribute('id'))
+    })
+    
+    const enteredGroupName = context.dom.getElementById('groupNameInput')
+    if (enteredGroupName) {
+      // add group first 
+      try {
+        const newGroupUri = contactsModule.createNewGroup({addressBookUri: selectedAddressBookUri, groupName: enteredGroupName })
+        selectedGroupUris.push(newGroupUri)
+      } catch (error) {
+        throw new Error(error)
+      }
+      
+    }
+    
+    console.log("address book uris: " + selectedAddressBookUri)
+    console.log("group uris: " + selectedGroupUris)
+    
+    const selectedAddressBookUris = { 
+        addressBookUri: selectedAddressBookUri,
+        groupUris: selectedGroupUris 
+      }
+      const contact = await createContactInAddressBook(contactsModule, contactData, selectedAddressBookUris)
+      console.log("contact: " + contact)
+  }
+
   const newGroupForm = context.dom.createElement('form')
+  newGroupForm.addEventListener = addContactEventListener 
   newGroupForm.innerHTML = 'Create a new group (optional)'
   newGroupForm.setAttribute('id', 'new-group-form')
   newGroupForm.classList.add('contactsNewAddressForm')
@@ -352,48 +387,6 @@ const createGroupButton = (
   )
   button.setAttribute('value', group.name)
   button.setAttribute('id', group.uri)
-  button.classList.add('actionButton', 'btn-primary', 'action-button-focus')
-  
-  return button
-}
-
-const createAddNewAddressBookButton = (
-  context: DataBrowserContext
-): HTMLButtonElement => {
-
-  const setButtonOnClickHandler = (event) => {
-    event.preventDefault()
-    // ask user public or private
-    // ask user for the name of addressbook
-    
-    // AddressBook creation using solid-data-modules
-    //Public
-    /* const uri = await module.createAddressBook({
-     containerUri: "https://pod.example/alice/",
-     name: "new address book"
-     })
-     */
-    // Private
-    /*
-    const ownerWebId = "http://localhost:3000/alice/profile/card#me"
-await contacts.createAddressBook({
-    containerUri: "http://localhost:3000/alice/public-write/",
-    name: "new address book",
-    ownerWebId
-})
-    */
-  }
-
-  const button = widgets.button(
-    context.dom,
-    undefined,
-    "AddressBook",
-    setButtonOnClickHandler, //sets an onclick event listener
-    {
-      needsBorder: true,
-    }
-  )
-  button.setAttribute('id', 'new-address-book')
   button.classList.add('actionButton', 'btn-primary', 'action-button-focus')
   
   return button
