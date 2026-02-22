@@ -91,17 +91,15 @@ const createAddMeToYourContactsButton = async (
     const me = authn.currentUser()
   
     if (checkIfAnyUserLoggedIn(me)) {
-      checkIfContactExists(subject, addressBooksData).then((contactExists) => {
-              if (contactExists) {
-                //logged in and friend exists or friend was just added
-                button.innerHTML = contactExistsAlreadyButtonText.toUpperCase()
-                button.onclick = null 
-              } else {
-                //logged in and friend does not exist yet
-                button.innerHTML = addMeToYourContactsButtonText.toUpperCase()
-              }
-            })
-      
+      const contactExists = checkIfContactExists(subject, addressBooksData)
+      if (contactExists) {
+        //logged in and friend exists or friend was just added
+        button.innerHTML = contactExistsAlreadyButtonText.toUpperCase()
+        button.onclick = null 
+      } else {
+        //logged in and friend does not exist yet
+        button.innerHTML = addMeToYourContactsButtonText.toUpperCase()
+      }
     } else {
       //not logged in
       button.innerHTML = logInAddMeToYourContactsButtonText.toUpperCase()
@@ -121,14 +119,12 @@ async function saveNewContact(
 
 // need to find out where the user wants to add the Contact
   if (checkIfAnyUserLoggedIn(me)) {
-    if (!(await checkIfContactExists(subject, addressBooksData))) {
+    if (!(checkIfContactExists(subject, addressBooksData))) {
       //if contact does not exist, we add her/him
       await store.fetcher.load(me)
       try {
         const contactData: ContactData = await getContactData(store, subject)
         await addContactToAddressBook(context, contactsModule, contactData, addressBooksData, buttonContainer)
-        
-        // console.log("contact Data: " + JSON.stringify(contactData))
         
       } catch (error) {
         let errorMessage = error
@@ -146,10 +142,10 @@ function checkIfAnyUserLoggedIn(me: NamedNode): boolean {
   else return false
 }
 
-async function checkIfContactExists(
+function checkIfContactExists(
   subject: NamedNode,
   addressBooksData: AddressBooksData
-): Promise<boolean> {
+): boolean {
  if (addressBooksData.contacts.has(subject.value)) return true
   return false
 }

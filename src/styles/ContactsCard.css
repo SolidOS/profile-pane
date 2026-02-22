@@ -3,7 +3,7 @@
   border-radius: var(--border-radius);
   box-shadow: var(--box-shadow);
   color: white;
-  padding: 0px var(--spacing-md) 0px 0px;
+  padding: var(--spacing-md);
   justify-content: center;
   align-items: center;
   background-color: var(--color-primary);
@@ -79,7 +79,10 @@
 
 .contactsCloseButton:hover {
   background: color-mix(in srgb, var(--color-primary) 90%, black);
-  box-shadow: 0 2px 4px rgba(124, 77, 255, 0.2);
+   border: 1px solid white;
+  border-radius: var(--border-radius-base);
+  color: white;
+  
 }
 
 .contactsCloseButton:active {
