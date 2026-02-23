@@ -298,6 +298,7 @@ const createGroupNameForm = (
   contactData: ContactData
 ): HTMLFormElement => {
   const addContactEventListener = async (event) => {
+    event.preventDefault()
     let selectedAddressBookUri = null 
     let selectedGroupUris = []
 
@@ -311,7 +312,10 @@ const createGroupNameForm = (
        selectedGroupUris.push(groupButtons.getAttribute('id'))
     })
     
-    const enteredGroupName = context.dom.getElementById('groupNameInput')
+    const groupNameField = context.dom.querySelector('#groupNameInput')
+    // @ts-ignore
+    const enteredGroupName = groupNameField.value
+
     if (enteredGroupName) {
       // add group first 
       try {
@@ -323,19 +327,15 @@ const createGroupNameForm = (
       
     }
     
-    console.log("address book uris: " + selectedAddressBookUri)
-    console.log("group uris: " + selectedGroupUris)
-    
     const selectedAddressBookUris = { 
         addressBookUri: selectedAddressBookUri,
         groupUris: selectedGroupUris 
       }
       const contact = await createContactInAddressBook(contactsModule, contactData, selectedAddressBookUris)
-      console.log("contact: " + contact)
   }
 
   const newGroupForm = context.dom.createElement('form')
-  newGroupForm.addEventListener = addContactEventListener 
+  newGroupForm.addEventListener('click', addContactEventListener) 
   newGroupForm.innerHTML = 'Create a new group (optional)'
   newGroupForm.setAttribute('id', 'new-group-form')
   newGroupForm.classList.add('contactsNewAddressForm')
@@ -345,10 +345,10 @@ const createGroupNameForm = (
   groupNameLabel.setAttribute('for', 'groupNameInput')
 
   const groupNameInputBox = context.dom.createElement('input')
-  groupNameInputBox.type = 'text'; 
-  groupNameInputBox.name = 'groupName'; 
-  groupNameInputBox.id = 'groupNameInput'; 
-  groupNameInputBox.placeholder = 'New group name (optional)'; 
+  groupNameInputBox.type = 'text' 
+  groupNameInputBox.name = 'groupName' 
+  groupNameInputBox.id = 'groupNameInput' 
+  groupNameInputBox.placeholder = 'New group name (optional)' 
   groupNameInputBox.classList.add('input', 'contactsGroupInput')
   const submitButton = createSubmitButton(context,contactsModule, contactData)
   
