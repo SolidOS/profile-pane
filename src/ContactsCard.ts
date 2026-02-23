@@ -4,7 +4,7 @@ import { createContactInAddressBook } from "./contactsHelpers"
 import { AddressBookDetails, AddressBooksData, ContactData, GroupData } from "./contactsTypes"
 import ContactsModuleRdfLib from "@solid-data-modules/contacts-rdflib"
 import { authn } from "solid-logic"
-import { mention } from "./buttonsHelper"
+import { complain, mention } from "./buttonsHelper"
 
 export const createAddressBookUriSelectorDiv = (context: DataBrowserContext,
   contactsModule: ContactsModuleRdfLib,
@@ -146,12 +146,11 @@ const createGroupListDiv = (
 
 const createSubmitButton = (
   context: DataBrowserContext,
-  contactsModule: ContactsModuleRdfLib,
-  contactData: ContactData
+  form: HTMLFormElement
 ): HTMLButtonElement => {
   const setButtonOnClickHandler = async (event) => {
     event.preventDefault()
-
+    form.requestSubmit()
   }
 
   const button = widgets.button(
@@ -237,14 +236,18 @@ const createNewAddressBookForm = (
         throw new Error(error)
       }
     } else {
-      mention(event.target, "A address book name is required")
+      // need to change this definitely move it
+      // potentially error message instead
+      complain(event.target, context, "A address book name is required")
     }
   }   
   const newAddressBookForm = context.dom.createElement('form')
-  newAddressBookForm.addEventListener('click', newAddressBookEventListener)
+  newAddressBookForm.method = 'post'
   newAddressBookForm.innerHTML = 'Create a new address book'
   newAddressBookForm.setAttribute('id', 'new-addressbook-form')
   newAddressBookForm.classList.add('contactsNewAddressForm')
+  console.log("address form")
+  console.dir(newAddressBookForm)
   const addressBookNameLabel = context.dom.createElement('label')
   addressBookNameLabel.classList.add('label')
   addressBookNameLabel.setAttribute('for', 'addressBookNameInput')
@@ -298,7 +301,7 @@ const createNewAddressBookForm = (
   groupNameInputBox.id = 'groupNameInput'; 
   groupNameInputBox.placeholder = 'New group name (optional)'; 
   groupNameInputBox.classList.add('input', 'contactsGroupInput')
-  const submitButton = createSubmitButton(context,contactsModule, contactData)
+  const submitButton = createSubmitButton(context, newAddressBookForm)
   
   newAddressBookForm.appendChild(addressBookNameLabel)
   newAddressBookForm.appendChild(addressBookNameInputBox)
@@ -307,6 +310,7 @@ const createNewAddressBookForm = (
   newAddressBookForm.appendChild(groupNameLabel)
   newAddressBookForm.appendChild(groupNameInputBox)
   newAddressBookForm.appendChild(submitButton)
+  newAddressBookForm.addEventListener('submit', newAddressBookEventListener)
     
   return newAddressBookForm
 }
@@ -376,7 +380,7 @@ const createGroupNameForm = (
     }
 
   const newGroupForm = context.dom.createElement('form')
-  newGroupForm.addEventListener('click', addContactEventListener) 
+  newGroupForm.addEventListener('submit', addContactEventListener) 
   newGroupForm.innerHTML = 'Create a new group (optional)'
   newGroupForm.setAttribute('id', 'new-group-form')
   newGroupForm.classList.add('contactsNewAddressForm')
@@ -391,7 +395,7 @@ const createGroupNameForm = (
   groupNameInputBox.id = 'groupNameInput' 
   groupNameInputBox.placeholder = 'New group name (optional)' 
   groupNameInputBox.classList.add('input', 'contactsGroupInput')
-  const submitButton = createSubmitButton(context,contactsModule, contactData)
+  const submitButton = createSubmitButton(context, newGroupForm)
   
   newGroupForm.appendChild(groupNameLabel)
   newGroupForm.appendChild(groupNameInputBox)
