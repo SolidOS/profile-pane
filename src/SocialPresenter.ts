@@ -16,24 +16,34 @@ export interface SocialPresentation {
 }
 
 function expandRdfList(store: LiveStore, node: Node): Node[] {
-  const collectionElements = (node as { termType?: string; elements?: Node[] }).elements
-  if (Array.isArray(collectionElements)) {
-    return collectionElements.flatMap(element => expandRdfList(store, element))
-  }
+  const visited = new Set<string>()
+  function inner(node: Node): Node[] {
+    const termType = (node as any).termType || typeof node
+    const value = (node as any).value || String(node)
+    const key = `${termType}:${value}`
+    if (visited.has(key)) return []
+    visited.add(key)
 
-  const first = store.any(node as NamedNode, ns.rdf('first'))
-  if (!first) return [node]
+    const collectionElements = (node as { termType?: string; elements?: Node[] }).elements
+    if (Array.isArray(collectionElements)) {
+      return collectionElements.flatMap(element => inner(element))
+    }
 
-  const items: Node[] = []
-  let current: Node | null = node
-  while (current) {
-    const value = store.any(current as NamedNode, ns.rdf('first')) as Node | null
-    if (value) items.push(...expandRdfList(store, value))
-    const rest = store.any(current as NamedNode, ns.rdf('rest')) as Node | null
-    if (!rest || (rest.termType === 'NamedNode' && rest.value === ns.rdf('nil').value)) break
-    current = rest
+    const first = store.any(node as NamedNode, ns.rdf('first'))
+    if (!first) return [node]
+
+    const items: Node[] = []
+    let current: Node | null = node
+    while (current) {
+      const value = store.any(current as NamedNode, ns.rdf('first')) as Node | null
+      if (value) items.push(...inner(value))
+      const rest = store.any(current as NamedNode, ns.rdf('rest')) as Node | null
+      if (!rest || (rest.termType === 'NamedNode' && rest.value === ns.rdf('nil').value)) break
+      current = rest
+    }
+    return items
   }
-  return items
+  return inner(node)
 }
 
 export function presentSocial(
@@ -73,12 +83,17 @@ export function presentSocial(
   }
 
   function homepageForAccount (subject):string {
-    const id = store.anyJS(subject, ns.foaf('accountName'), null, subject.doc()) || '' 
+    const acHomepage = store.any(subject, ns.foaf('homepage')) // on the account itself?
+    if (acHomepage) return acHomepage.value
+    const id = store.anyJS(subject, ns.foaf('accountName'), null, subject.doc()) || 'No_account_Name'
     const classes = store.each(subject, ns.rdf('type'))
     for (const k of classes) {
-      const userProfilePrefix: Node | null = store.any(k as any, ns.foaf('userProfilePrefix'))
-      if (userProfilePrefix)  {
-        return userProfilePrefix.value + id.trim() 
+      // Fix: ensure k is a NamedNode for store.any
+      if (k.termType === 'NamedNode') {
+        const userProfilePrefix: Node | null = store.any(k as NamedNode, ns.foaf('userProfilePrefix'))
+        if (userProfilePrefix) {
+          return userProfilePrefix.value + id.trim()
+        }
       }
     }
     return store.anyJS(subject, ns.foaf('homepage'), null, subject.doc()) || ''
@@ -97,11 +112,20 @@ export function presentSocial(
   loadDocument(store, socialMediaForm, socialMediaFormName)
 
   const accountNodes = store.each(subject, ns.foaf('account'))
-  const accountThings = accountNodes.flatMap(node => expandRdfList(store, node))
-  if (!accountThings.length) return { accounts: [] }
-  //console.log('Social: accountThings', accountThings)
-  const accounts: Account[] = accountThings.map(ac => accountAsObject(ac))
-  //console.log('Social: account objects', accounts)
-
+  let accountThings = accountNodes.flatMap(node => expandRdfList(store, node))
+  // Deduplicate by foaf:accountName value
+  const accountNameSet = new Set<string>()
+  const accounts: Account[] = []
+  for (const ac of accountThings) {
+    if (ac.termType === 'NamedNode') {
+      const accountNameNode = store.any(ac as NamedNode, ns.foaf('accountName'))
+      const accountName = accountNameNode ? accountNameNode.value : ''
+      if (!accountNameSet.has(accountName)) {
+        accountNameSet.add(accountName)
+        accounts.push(accountAsObject(ac))
+      }
+    }
+  }
+  if (!accounts.length) return { accounts: [] }
   return { accounts }
 }
