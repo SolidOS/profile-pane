@@ -125,7 +125,7 @@ async function saveNewContact(
       try {
         const contactData: ContactData = await getContactData(store, subject)
         await addContactToAddressBook(context, contactsModule, contactData, addressBooksData, buttonContainer)
-        
+        console.log("contact data: " + JSON.stringify(contactData))
       } catch (error) {
         let errorMessage = error
         if (errorMessage.toString().includes('Unauthenticated'))

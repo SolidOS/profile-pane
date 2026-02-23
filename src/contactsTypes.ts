@@ -19,7 +19,7 @@ export interface AddressBooksData {
 
 export interface ContactData {
     name: string,
-    email: string[],
-    phoneNumber: string[],
+    email?: string,
+    phoneNumber?: string,
     webID: string
 }

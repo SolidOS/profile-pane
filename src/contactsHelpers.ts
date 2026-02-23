@@ -1,6 +1,6 @@
-import { LiveStore, NamedNode, sym } from "rdflib"
+import { LiveStore, NamedNode, sym, st } from "rdflib"
 import { ns, utils } from "solid-ui"
-import ContactsModuleRdfLib from "@solid-data-modules/contacts-rdflib"
+import ContactsModuleRdfLib, { NewContact } from "@solid-data-modules/contacts-rdflib"
 import { DataBrowserContext } from "pane-registry";
 import { createAddressBookUriSelectorDiv } from "./ContactsCard";
 import './styles/ContactsCard.css'
@@ -145,25 +145,57 @@ async function getContactData(
   if (phoneUri) {
     phoneNumber = store.anyValue(sym(phoneUri), ns.vcard('value'), null, subject.doc())
   }
-    return {
-    name,
-    email,
-    phoneNumber,
-    webID: subject.value
+  // const webID = subject.value 
+  const webID = 'testing'
+  return {
+  name,
+  email,
+  phoneNumber,
+  webID 
   }
 }
 
 async function createContactInAddressBook(
+  context: DataBrowserContext,
   contactsModule: ContactsModuleRdfLib,
   contactData: ContactData,
   selectedAddressBookUris: SelectedAddressBookUris
 ): Promise<string>{
+  const newContact: NewContact = {
+      name: contactData.name,
+      email: contactData.email,
+      phoneNumber: contactData.phoneNumber
+  }
   try { 
-    const contact = await contactsModule.createNewContact({addressBookUri: selectedAddressBookUris.addressBookUri, contact: { name: "Sally", email: "testing@gmail.com", phoneNumber: "5555-5555"}, groupUris: selectedAddressBookUris.groupUris}) 
+    const contact = await contactsModule.createNewContact({addressBookUri: selectedAddressBookUris.addressBookUri, contact: newContact, groupUris: selectedAddressBookUris.groupUris}) 
+    await addWebIDToContact(context, contact, contactData.webID)
     return contact
   } catch (error) {
     throw new Error(error)
   }      
+}
+
+async function addWebIDToContact(
+  context: DataBrowserContext,
+  contactUri: string,
+  webID: string
+) {
+  const store = context.session.store
+  const contactNode = new NamedNode(contactUri)
+  const node = store.bnode()
+
+  try {
+
+    await context.session.store.fetcher.load(contactUri)
+
+    const insertions = [st(contactNode, ns.vcard("uri"), node , contactNode.doc()),
+      st(node, ns.rdf('type'), ns.vcard('WebID'), contactNode.doc()),
+      st(node, ns.vcard("value"), sym(webID),contactNode.doc())]
+    await store.updater.update([],insertions)    
+  } catch (error) {
+    throw new Error(error)
+  }
+  
 }
 
 export {

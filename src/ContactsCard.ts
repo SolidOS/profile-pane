@@ -331,7 +331,7 @@ const createGroupNameForm = (
         addressBookUri: selectedAddressBookUri,
         groupUris: selectedGroupUris 
       }
-      const contact = await createContactInAddressBook(contactsModule, contactData, selectedAddressBookUris)
+      const contact = await createContactInAddressBook(context, contactsModule, contactData, selectedAddressBookUris)
   }
 
   const newGroupForm = context.dom.createElement('form')
