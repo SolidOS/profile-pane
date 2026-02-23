@@ -1,0 +1,316 @@
+/* Vertically center autocomplete input in .formFieldValue */
+.profile-form .formFieldValue > div[style*="flex-direction: row"] {
+  align-items: center;
+  display: flex;
+}
+
+.profile-form .formFieldValue input[data-testid="autocomplete-input"] {
+  vertical-align: middle;
+}
+/* Solid-UI form sizing fixes scoped to Edit CV section */
+.profile-form .hoverControl:not(:has(> img:first-child)) {
+  border: 0.1em solid rgb(136, 136, 136) !important;
+}
+
+.profile-form .hoverControl:has(> img:first-child) {
+  background-color: transparent !important;
+  border: none !important;
+  margin: 0 !important;
+  border-radius: 0 !important;
+  padding: 0.7em !important;
+  min-height: var(--min-touch-target);
+  min-width: var(--min-touch-target);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.profile-form .hoverControlHide {
+  width: 1.5em !important;
+  height: 1.5em !important;
+  display: block;
+  margin-top: 0 !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  margin-bottom: 0.3em !important;
+}
+
+.profile-form .hoverControl:has(> img:first-child) > span {
+  display: inline-flex;
+  align-items: center;
+  margin-left: 0.3em;
+}
+
+.profile-form div[style*="padding: 0.5em"]:has(> img) {
+  display: inline-flex;
+  align-items: center;
+}
+
+.profile-form div[style*="padding: 0.5em"]:has(> img) > span {
+  margin-left: 0.3em;
+}
+
+.profile-form .hoverControl:has(> img:first-child):hover {
+  background-color: transparent !important;
+}
+
+.profile-form button:has(> img[src$=".svg"]) {
+  background-color: transparent !important;
+  border: none !important;
+  margin: 0 !important;
+  border-radius: 0 !important;
+}
+
+.profile-form button {
+  min-height: var(--min-touch-target);
+  min-width: var(--min-touch-target);
+}
+
+.profile-form input:not([type="color"]),
+.profile-form textarea,
+.profile-form select {
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box ;
+  font: inherit;
+  color: var(--color-text);
+  background-color: var(--color-card-bg) !important;
+  border: 1px solid var(--color-border-pale);
+}
+
+.profile-form textarea {
+  border-color: var(--color-border-pale) !important;
+}
+
+.profile-form input[type="date"],
+.profile-form input[type="month"],
+.profile-form input[type="week"],
+.profile-form input[type="time"],
+.profile-form input[type="datetime-local"] {
+  min-height: var(--min-touch-target);
+}
+
+.profile-form .hoverControl:has(> img:first-child):focus-visible,
+.profile-form button:focus-visible,
+.profile-form input:not([type="color"]):focus-visible,
+.profile-form textarea:focus-visible,
+.profile-form select:focus-visible {
+  outline: var(--focus-ring-width) solid var(--color-primary) !important;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 1px var(--color-background);
+}
+
+.profile-form input[type="url"] {
+  width: 100%;
+}
+
+.profile-form .formFieldValue {
+  min-width: 0;
+  margin-bottom: var(--spacing-sm);
+}
+
+.profile-form .formFieldValue table {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.profile-form .formFieldValue td {
+  padding: 0 !important;
+  vertical-align: middle;
+}
+
+.profile-form .formFieldValue table[data-testid="autocomplete-table"] {
+  height: 100%;
+}
+
+.profile-form .formFieldValue input:not([type="color"]),
+.profile-form .formFieldValue textarea,
+.profile-form .formFieldValue select {
+  width: 100%;
+  max-width: 100%;
+}
+
+.profile-form select#formSelect {
+  width: 100%;
+  max-width: 97%;
+  box-sizing: border-box;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}
+
+.profile-form .formFieldValue span select {
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}
+
+/* Remove border/padding from the first wrapper div (and its first child wrapper). */
+.profile-form > div:first-of-type,
+.profile-form > div:first-of-type > div:first-of-type {
+  border: none !important;
+  padding: 0 !important;
+}
+
+/* Remove border/padding from the inner div of the first wrapper in the contact section. */
+section[aria-labelledby="edit-profile-contact-heading"] .profile-form > div:first-of-type > div:first-of-type {
+  border: none !important;
+  padding: 0 !important;
+}
+
+/* In contactPane, remove border/padding from all direct child divs. */
+.contactPane > div {
+  border: none !important;
+  padding: 0 !important;
+}
+
+/* Align schema.org, solid terms, FOAF, vCard, and org field labels with their input values. */
+.profile-form :not(.choiceBox):has(> .formFieldName):has(> .formFieldValue) {
+  display: flex;
+  margin-bottom: var(--spacing-sm);
+}
+
+/* for the Resume inside corporation choice */
+/* Add space between classifierBox label and select box */
+.profile-form .choiceBox .classifierBox-label {
+  /* Optional: ensure label doesn't have extra margin */
+  margin-right: 0;
+  padding-left: 0.3em;
+}
+.profile-form .choiceBox .choiceBox-selectBox select {
+  margin-left: 2.1em !important;
+}
+
+/* for the Resume orga details */
+/* Add space between classifierBox label and select box */
+.profile-form .classifierBox .classifierBox-label {
+  /* Match .formFieldName for alignment */
+  margin-right: 0;
+  padding-left: 0.3em;
+  width: 8em;
+  padding: 0.3em;
+  vertical-align: middle;
+}
+.profile-form .classifierBox .classifierBox-selectBox {
+  margin-left: 0 !important;
+}
+
+.profile-form .classifierBox .classifierBox-selectBox select {
+  margin-left: 0 !important;
+}
+
+.profile-form .formFieldValue > span > select {
+  margin-left: 0 !important;
+}
+
+/* for the social media */
+/* Add space between classifierBox label and select box */
+section[data-testid="edit-social-section"] .classifierBox-label {
+  /* Optional: ensure label doesn't have extra margin */
+  margin-right: 0;
+  padding-left: 0.3em;
+}
+section[data-testid="edit-social-section"] .classifierBox-selectBox select {
+  margin-left: 0.7em !important;
+}
+
+.profile-form :not(.choiceBox):has(> .formFieldName):has(> .formFieldValue) > .formFieldValue {
+  margin-bottom: 0;
+}
+
+.profile-form :not(.choiceBox) > .formFieldName:has(a[href*="http://schema.org/"]),
+.profile-form :not(.choiceBox) > .formFieldName:has(a[href*="http://www.w3.org/ns/solid/terms#"]),
+.profile-form :not(.choiceBox) > .formFieldName:has(a[href*="http://xmlns.com/foaf/0.1/"]),
+.profile-form :not(.choiceBox) > .formFieldName:has(a[href*="http://www.w3.org/2006/vcard/ns"]),
+.profile-form :not(.choiceBox) > .formFieldName:has(a[href*="http://www.w3.org/ns/org#"]) {
+  display: inline-flex;
+  align-items: center;
+  vertical-align: middle;
+}
+
+.profile-form :not(.choiceBox) > .formFieldName:has(a[href*="http://schema.org/"]) + .formFieldValue,
+.profile-form :not(.choiceBox) > .formFieldName:has(a[href*="http://www.w3.org/ns/solid/terms#"]) + .formFieldValue,
+.profile-form :not(.choiceBox) > .formFieldName:has(a[href*="http://xmlns.com/foaf/0.1/"]) + .formFieldValue,
+.profile-form :not(.choiceBox) > .formFieldName:has(a[href*="http://www.w3.org/2006/vcard/ns"]) + .formFieldValue,
+.profile-form :not(.choiceBox) > .formFieldName:has(a[href*="http://www.w3.org/ns/org#"]) + .formFieldValue {
+  display: inline-flex;
+  align-items: center;
+  vertical-align: middle;
+  flex: 1;
+  min-width: 0;
+}
+
+.profile-form textarea,
+.profile-form .formFieldValue textarea {
+  appearance: none;
+  -webkit-appearance: none;
+  border: .05em solid #88c !important;
+  border-style: solid !important;
+  border-width: .05em !important;
+  border-color: #88c !important;
+  border-radius: 0.2em !important;
+  width: 100%;
+  box-sizing: border-box;
+  margin-top: var(--spacing-xs);
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}
+
+/* Add horizontal gap between label and textarea for all label+textarea pairs. */
+.profile-form div:has(> a) + div:has(textarea) {
+  margin-left: var(--spacing-sm);
+}
+
+/* Center textarea label vertically in flex rows. */
+.profile-form div[style*="display: flex"][style*="flex-direction: row"]:has(textarea) {
+  align-items: flex-start;
+}
+
+.profile-form div[style*="display: flex"][style*="flex-direction: row"]:has(textarea) > div:has(> a) {
+  padding-left: var(--spacing-xs);
+  padding-top: var(--spacing-sm);
+}
+
+/* Keep autocomplete/table-based fields (e.g. Occupation) aligned to label text baseline. */
+.profile-form :not(.choiceBox):has(> .formFieldValue input[data-testid="autocomplete-input"]) {
+  align-items: flex-start;
+}
+
+.profile-form :not(.choiceBox):has(> .formFieldValue input[data-testid="autocomplete-input"]) > .formFieldName {
+  padding-top: 0.55em !important;
+}
+
+.profile-form .formFieldValue:has(input[data-testid="autocomplete-input"]) {
+  align-self: flex-start;
+}
+
+.profile-form .formFieldValue table[data-testid="autocomplete-table"],
+.profile-form .formFieldValue input[data-testid="autocomplete-input"] {
+  margin: 0 !important;
+}
+
+.profile-form .formFieldValue table[data-testid="autocomplete-table"] {
+  vertical-align: baseline;
+}
+
+.profile-form input:not([type="color"]) {
+  width: 100%;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}
+
+.profile-form input:disabled,
+.profile-form textarea:disabled,
+.profile-form select:disabled,
+.profile-form input[readonly],
+.profile-form textarea[readonly],
+.profile-form input:read-only,
+.profile-form textarea:read-only {
+  background-color: var(--color-background) !important;
+  cursor: not-allowed;
+  opacity: 0.75;
+  border: 0.05em solid white !important;
+}
+
+.webidControl table td div.contactPane.namedPane {
+  border: none !important;
+}

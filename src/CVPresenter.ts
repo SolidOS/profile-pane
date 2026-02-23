@@ -35,7 +35,7 @@ export function skillAsText (store: Store, sk: Node):string {
 
   const manual = store.anyJS(sk as NamedNode, ns.vcard('role'))
   if (manual && manual[0] > '') return manual
-  return '¿¿¿ skill ???'
+  return ''
 }
 
 export function languageAsText (store: Store, lan: Node):string {
@@ -43,7 +43,7 @@ export function languageAsText (store: Store, lan: Node):string {
   const publicId = store.anyJS(lan as NamedNode, ns.solid('publicId'))
   if (publicId)
     return utils.label(publicId, true) // @@ check language and get name in diff language if necessary
-  return '-'                                                  
+  return ''                                                  
 }
 
 export function datesAsText (startDate?:Literal, endDate?:Literal):string {
@@ -136,12 +136,16 @@ export function presentCV(
    })
   }
 
-  const skills = store.each(subject, ns.schema('skills')).map(sk => skillAsText(store, sk))
+  const skills = store
+    .each(subject, ns.schema('skills'))
+    .map((sk) => skillAsText(store, sk))
+    .filter((skill) => skill !== '')
 
-  const languageNodes = store.each(subject, ns.schema('knowsLanguage'))
+ const languageNodes = store.each(subject, ns.schema('knowsLanguage'))
   const languages = languageNodes
     .flatMap(node => expandRdfList(store, node))
     .map(lan => languageAsText(store, lan))
+    .filter((language) => language !== '')
 
   return { rolesByType, skills, languages }
 }
