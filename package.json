@@ -71,7 +71,7 @@
     "babel-loader": "^10.0.0",
     "babel-plugin-inline-import": "^3.0.0",
     "chat-pane": "^3.0.1",
-    "contacts-pane": "3.1.0-newStyle-1d8f97f1",
+    "contacts-pane": "3.1.0-newStyle-5448630d",
     "copy-webpack-plugin": "^13.0.1",
     "css-loader": "^7.1.4",
     "eslint": "^9.39.2",
