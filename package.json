@@ -56,6 +56,9 @@
     "solid-logic": "^4.0.2",
     "solid-ui": "3.0.4-5b6f345"
   },
+  "overrides": {
+    "solid-ui": "$solid-ui"
+  },
   "devDependencies": {
     "@babel/cli": "^7.28.6",
     "@babel/core": "^7.29.0",
