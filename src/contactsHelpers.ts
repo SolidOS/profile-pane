@@ -146,7 +146,7 @@ async function getContactData(
     phoneNumber = store.anyValue(sym(phoneUri), ns.vcard('value'), null, subject.doc())
   }
   // const webID = subject.value 
-  const webID = 'testing'
+  const webID = 'https://testingsolidos.solidcommunity.net/profile/card#me'
   return {
   name,
   email,
@@ -167,6 +167,7 @@ async function createContactInAddressBook(
       phoneNumber: contactData.phoneNumber
   }
   try { 
+    console.log("in create " + JSON.stringify(selectedAddressBookUris))
     const contact = await contactsModule.createNewContact({addressBookUri: selectedAddressBookUris.addressBookUri, contact: newContact, groupUris: selectedAddressBookUris.groupUris}) 
     await addWebIDToContact(context, contact, contactData.webID)
     return contact

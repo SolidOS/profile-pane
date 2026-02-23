@@ -4,6 +4,7 @@ import { createContactInAddressBook } from "./contactsHelpers"
 import { AddressBookDetails, AddressBooksData, ContactData, GroupData } from "./contactsTypes"
 import ContactsModuleRdfLib from "@solid-data-modules/contacts-rdflib"
 import { authn } from "solid-logic"
+import { mention } from "./buttonsHelper"
 
 export const createAddressBookUriSelectorDiv = (context: DataBrowserContext,
   contactsModule: ContactsModuleRdfLib,
@@ -198,31 +199,49 @@ const createNewAddressBookForm = (
   contactsModule: ContactsModuleRdfLib,
   contactData: ContactData
 ): HTMLFormElement => {
-  const newAddressBookEventListener = (event) => {
-    const me = authn.currentUser()
-    const newAddressContainer = me.site().value + '/contacts/'
-    console.log("new address container: " + newAddressContainer)
- 
-       // AddressBook creation using solid-data-modules
-    //Public
-    /* const uri = await module.createAddressBook({
-     containerUri: "https://pod.example/alice/",
-     name: "new address book"
-     })
-     */
-    // Private
-    /*
-    const ownerWebId = "http://localhost:3000/alice/profile/card#me"
-await contacts.createAddressBook({
-    containerUri: "http://localhost:3000/alice/public-write/",
-    name: "new address book",
-    ownerWebId
-})
-*/
-  }
- 
+  const newAddressBookEventListener = async (event) => {
+    event.preventDefault()    
+    let selectedGroupUris = []
+    let enteredAddressBookUri = null 
+
+    const addressNameField = context.dom.querySelector('#addressBookNameInput')
+    console.log("address name field")
+    console.dir(addressNameField)
+    // @ts-ignore
+    const enteredAddressName = addressNameField.value
+    console.log("Entered Name: " + enteredAddressName)
+
+    const selectedresourceTypeRadio = context.dom.querySelector('input[name="address-type"]:checked')
+    // @ts-ignore
+    const resourceType = selectedresourceTypeRadio.value
+    console.log("Resource Type: " + resourceType)
+    
+    const groupNameField = context.dom.querySelector('#groupNameInput')
+    // @ts-ignore
+    const enteredGroupName = groupNameField.value
+
+    if (enteredAddressName) {
+      // add addressbook first 
+      try {
+        enteredAddressBookUri = await handleAddressBookCreation(contactsModule, enteredAddressName,resourceType)
+        if (enteredGroupName) {
+          const newGroupUri = await contactsModule.createNewGroup({addressBookUri: enteredAddressBookUri, groupName: enteredGroupName })
+          selectedGroupUris.push(newGroupUri)
+        }
+        const selectedAddressBookUris = { 
+        addressBookUri: enteredAddressBookUri,
+        groupUris: selectedGroupUris 
+        }
+        const contact = await createContactInAddressBook(context, contactsModule, contactData, selectedAddressBookUris)
+      } catch (error) {
+        throw new Error(error)
+      }
+    } else {
+      mention(event.target, "A address book name is required")
+    }
+  }   
   const newAddressBookForm = context.dom.createElement('form')
-  newAddressBookForm.addEventListener = newAddressBookEventListener;
+  newAddressBookForm.addEventListener('click', newAddressBookEventListener)
   newAddressBookForm.innerHTML = 'Create a new address book'
   newAddressBookForm.setAttribute('id', 'new-addressbook-form')
   newAddressBookForm.classList.add('contactsNewAddressForm')
@@ -292,6 +311,29 @@ await contacts.createAddressBook({
   return newAddressBookForm
 }
 
+async function handleAddressBookCreation(
+  contactsModule: ContactsModuleRdfLib,
+  enteredAddressName: string,
+  resourceType: string
+): Promise<string> {
+  const me = authn.currentUser()
+  const newAddressContainer = me.site().value 
+  let addressBookUri = null
+
+  if (resourceType === 'public') {
+    addressBookUri = await contactsModule.createAddressBook({
+      containerUri: newAddressContainer,
+      name: enteredAddressName
+    })
+  } else {
+      addressBookUri = await contactsModule.createAddressBook({
+        containerUri: newAddressContainer,
+        name: enteredAddressName,
+        ownerWebId: me.uri
+      })
+  }
+  return addressBookUri
+}
 const createGroupNameForm = (
   context: DataBrowserContext,
   contactsModule: ContactsModuleRdfLib,
@@ -319,20 +361,19 @@ const createGroupNameForm = (
     if (enteredGroupName) {
       // add group first 
       try {
-        const newGroupUri = contactsModule.createNewGroup({addressBookUri: selectedAddressBookUri, groupName: enteredGroupName })
+        const newGroupUri = await contactsModule.createNewGroup({addressBookUri: selectedAddressBookUri, groupName: enteredGroupName })
         selectedGroupUris.push(newGroupUri)
       } catch (error) {
         throw new Error(error)
-      }
-      
+      }  
     }
     
     const selectedAddressBookUris = { 
         addressBookUri: selectedAddressBookUri,
         groupUris: selectedGroupUris 
-      }
+    }
       const contact = await createContactInAddressBook(context, contactsModule, contactData, selectedAddressBookUris)
-  }
+    }
 
   const newGroupForm = context.dom.createElement('form')
   newGroupForm.addEventListener('click', addContactEventListener) 
