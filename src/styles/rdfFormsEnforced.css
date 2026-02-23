@@ -1,3 +1,12 @@
+/* Vertically center autocomplete input in .formFieldValue */
+.profile-form .formFieldValue > div[style*="flex-direction: row"] {
+  align-items: center;
+  display: flex;
+}
+
+.profile-form .formFieldValue input[data-testid="autocomplete-input"] {
+  vertical-align: middle;
+}
 /* Solid-UI form sizing fixes scoped to Edit CV section */
 .profile-form .hoverControl:not(:has(> img:first-child)) {
   border: 0.1em solid rgb(136, 136, 136) !important;
@@ -108,6 +117,11 @@
 
 .profile-form .formFieldValue td {
   padding: 0 !important;
+  vertical-align: middle;
+}
+
+.profile-form .formFieldValue table[data-testid="autocomplete-table"] {
+  height: 100%;
 }
 
 .profile-form .formFieldValue input:not([type="color"]),
@@ -152,7 +166,6 @@ section[aria-labelledby="edit-profile-contact-heading"] .profile-form > div:firs
 /* Align schema.org, solid terms, FOAF, vCard, and org field labels with their input values. */
 .profile-form :not(.choiceBox):has(> .formFieldName):has(> .formFieldValue) {
   display: flex;
-  align-items: baseline;
   margin-bottom: var(--spacing-sm);
 }
 
@@ -170,24 +183,23 @@ section[aria-labelledby="edit-profile-contact-heading"] .profile-form > div:firs
 /* for the Resume orga details */
 /* Add space between classifierBox label and select box */
 .profile-form .classifierBox .classifierBox-label {
-  /* Optional: ensure label doesn't have extra margin */
+  /* Match .formFieldName for alignment */
   margin-right: 0;
   padding-left: 0.3em;
+  width: 8em;
+  padding: 0.3em;
+  vertical-align: middle;
 }
 .profile-form .classifierBox .classifierBox-selectBox {
-  margin-left: 4.0em !important;
+  margin-left: 0 !important;
 }
 
-
-/* for the contact pane */
-/* Add space between classifierBox label and select box */
-.profile-form .individualPane .classifierBox-label {
-  /* Optional: ensure label doesn't have extra margin */
-  margin-right: 0;
-  padding-left: 0.3em;
+.profile-form .classifierBox .classifierBox-selectBox select {
+  margin-left: 0 !important;
 }
-.profile-form .individualPane .classifierBox-selectBox select{
-  margin-left: 2.2em !important;
+
+.profile-form .formFieldValue > span > select {
+  margin-left: 0 !important;
 }
 
 /* for the social media */
