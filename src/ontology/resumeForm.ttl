@@ -1,0 +1,371 @@
+@prefix os: <http://www.w3.org/2000/10/swap/os#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>.
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#>.
+@prefix foaf: <http://xmlns.com/foaf/0.1/>.
+@prefix owl: <http://www.w3.org/2002/07/owl#>.
+@prefix solid: <http://www.w3.org/ns/solid/terms#>.
+@prefix ui: <http://www.w3.org/ns/ui#>.
+@prefix schema: <http://schema.org/>.
+@prefix vcard: <http://www.w3.org/2006/vcard/ns#>.
+@prefix org: <http://www.w3.org/ns/org#>.
+@prefix esco: <http://data.europa.eu/esco/model#>.
+@prefix wd: <http://www.wikidata.org/entity/>.
+@prefix wdt: <http://www.wikidata.org/prop/direct/>.
+
+@prefix : <#>.
+
+:this
+    <http://purl.org/dc/elements/1.1/title> "Resume form" ;
+    a ui:Form ;
+    ui:parts (
+      :CVGroup
+      :SkillsHeading :SkillsForm
+      :LanguagesHeading :LanguagesForm
+      ).
+
+# Curriculum Vitae: membership of organizations
+
+:CVGroup a ui:Group; 
+    ui:weight 1; 
+    ui:parts ( 
+        :CVPrompt 
+        :involvementWithOrganizationsForm 
+    ).
+
+:CVPrompt a ui:Comment; ui:contents  "What organizations have you been involved with?" .
+
+:involvementWithOrganizationsForm a ui:Multiple;
+    ui:label "Involvement with organization";
+    ui:property org:member; 
+    ui:reverse true; # link back from role to member
+    ui:ordered false; # Allow user to order CV secions rather than force date order? No.
+    ui:part :RoleMembershipForm.
+
+org:member owl:inverse [ ui:label "Involvement with organization" ]. # timelimited involvement
+
+# This is a big important form for one of a series of roles in the list.
+
+:RoleMembershipForm a ui:Group; 
+    ui:weight 3; 
+    ui:parts ( 
+        :MembershipFormHeading 
+        :roleNameField
+        :escoOccupationField 
+        :orgField 
+        :RoleClassifier 
+        :RoleDatesForm 
+        :RoleDescriptionForm).
+
+:MembershipFormHeading a ui:Heading; 
+    ui:contents "Details of the role"@en, "Détailes de ce rôle"@fr .
+
+:roleNameField a ui:SingleLineTextField; 
+    ui:property vcard:role .
+
+:escoOccupationField a ui:AutocompleteField;
+        ui:label "Occupation";
+        ui:property org:role;
+        ui:dataSource :ESCO_Occupation_DataSource;
+        ui:targetClass schema:Occupation .
+
+    :ESCO_Occupation_DataSource a ui:DataSource;
+        schema:name "ESCO";
+        ui:targetClass schema:Occupation ;
+        schema:logo <https://ec.europa.eu/esco/portal/static_resource2/images/logo/logo_en.gif>;
+        ui:searchByNameURI "https://ec.europa.eu/esco/api/search?language=$(language)&type=occupation&text=$(name)".
+
+:orgField a ui:Choice; 
+    ui:label "Organization"@en, "Organization"@fr;
+    ui:canMintNew true; 
+    ui:use :OrganizationCreationForm ;
+    ui:property org:organization;
+    ui:from vcard:Organization .
+
+vcard:Organization ui:creationForm :OrganizationCreationForm  .
+
+###### eposodes in one's career - Roles
+
+:RoleClassifier a ui:Classifier; 
+    ui:label "What sort of role?"@en;
+    ui:category solid:Role .
+
+:RoleDatesForm a ui:Options; 
+    ui:dependingOn rdf:type; 
+    ui:case
+        [ ui:for solid:PastRole; ui:use :TwoDateForm ],
+        [ ui:for solid:CurrentRole; ui:use :StartDateForm ],
+        [ ui:for solid:FutureRole; ui:use :StartDateForm ].
+
+    :TwoDateForm a ui:Group; 
+        ui:weight 0; 
+        ui:parts ( :StartDateForm :EndDateForm ) .
+    :StartDateForm a ui:DateField; 
+        ui:label "Start"@en,"Début"@fr;
+        ui:property schema:startDate .
+    :EndDateForm a ui:DateField; 
+        ui:label "End"@en,"Fin"@fr;
+        ui:property schema:endDate .
+
+solid:Role a rdfs:Class;
+    owl:disjointUnionOf ( solid:PastRole solid:CurrentRole solid:FutureRole ) ;
+    owl:oneOf ( solid:CurrentRole solid:PastRole solid:FutureRole ). # Future Role too?
+
+solid:PastRole a rdfs:Class; rdfs:label "Former role"@en, "Ancien rôle"@fr, "Vergangene Rolle"@de, "Rol anterior"@es .
+solid:CurrentRole a rdfs:Class; rdfs:label "Current role"@en, "Rôle actuel"@fr, "Momentane Rolle"@de , "Rol actual"@es .
+solid:FutureRole a rdfs:Class; rdfs:label "Future role"@en, "Rôle à venir"@fr, "Zukünftige Rolle"@de, "Rol futuro"@es .
+
+:RoleDescriptionForm a ui:MultiLineTextField; 
+    ui:property schema:description;
+    ui:label "Describe your role" .
+
+###### Organizations
+
+:OrganizationCreationForm a ui:Form; 
+    schema:name "Form for editing an organization using public data" ;
+    ui:parts ( 
+        :OrgClassifier 
+        :OrgSwitch   
+        :OrganizationNameField 
+        :homePageURIField  ) .
+
+:OrgClassifier a ui:Classifier; 
+    ui:label "Type of organization?"@en;
+    ui:category solid:InterestingOrganization .
+
+:OrgSwitch a ui:Options; 
+    ui:dependingOn rdf:type;
+    ui:case
+        [ ui:for schema:Corporation; ui:use :CorporationForm ],
+        [ ui:for schema:GovernmentOrganization; ui:use :GovernmentOrganizationForm ],
+        [ ui:for schema:PerformingGroup; ui:use :PerformingGroupForm ],
+        [ ui:for schema:Project; ui:use :ProjectForm ],
+        [ ui:for schema:NGO; ui:use :NGOForm ],
+        [ ui:for schema:EducationalOrganization; ui:use :EducationalOrganizationForm ],
+        [ ui:for schema:ResearchOrganization; ui:use :ResearchOrganizationForm ],
+        [ ui:for schema:SportsOrganization; ui:use :SportsOrganizationForm ].
+
+:OrganizationNameField
+    a ui:SingleLineTextField ;
+    ui:label "Name";
+    ui:maxLength "200" ;
+    ui:property schema:name .
+
+:homePageURIField a ui:NamedNodeURIField;
+    ui:label "Homepage"@en;
+    ui:property schema:uri .
+
+# Ontology data to drive the :OrgClassifier classifier
+solid:InterestingOrganization owl:disjointUnionOf  (
+    # Airline - a Corporation
+    # Consortium - a Corporation or a NGO
+    schema:Corporation
+    schema:EducationalOrganization
+    schema:ResearchOrganization  # Proposed. https://github.com/schemaorg/schemaorg/issues/2877
+    # FundingScheme - eh?
+    schema:GovernmentOrganization
+    # LibrarySystem
+    # LocalBusiness - Corporation
+    # MedicalOrganization - a Corporation or a NGO
+    schema:NGO
+    # NewsMediaOrganization - a Corporation or a NGO
+    schema:PerformingGroup # a band
+    schema:Project # like Solid
+    schema:SportsOrganization) .
+
+# This until the schema.org ontology adopts it
+schema:ResearchOrganization a rdfs:Class; 
+    rdfs:label "Research Organization"@en, "Organization de Recherche"@fr ,"organización de investigación"@es, 
+    "منظمة البحث"@ar, "अनुसंधान संगठन"@hi, "Forschungsorganisation"@de, "shirika la utafiti"@sw .
+
+#####  Depending on the type of org, chose a different form
+
+#### Corporation
+:CorporationForm a ui:Group; 
+    ui:weight 0; 
+    ui:parts ( 
+        :CorporationPrompt 
+        :CorporationAutocomplete ) .
+
+    :CorporationPrompt a ui:Comment; ui:contents "Corporation details".
+
+    :CorporationAutocomplete a ui:AutocompleteField; 
+        ui:label "Find in wikidata";
+        ui:targetClass  <http://www.wikidata.org/entity/Q6881511>; # Enterprise
+        ui:property solid:publicId; 
+        ui:dataSource :WikidataInstancesByName.
+
+        :WikidataInstancesByName a ui:DataSource ;
+            schema:name "Wikidata instances by name";
+            ui:endpoint "https://query.wikidata.org/sparql" ;
+            ui:searchByNameQuery """SELECT ?subject ?name
+            WHERE {
+                ?klass wdt:P279* $(targetClass) .
+                ?subject wdt:P31 ?klass .
+                ?subject rdfs:label ?name.
+                FILTER regex(?name, "$(name)", "i")
+            } LIMIT $(limit) """ ;
+
+            # Note this form of the query is very experimental
+            ui:searchByName [   ui:construct { ?subject schema:name ?name } ;
+                ui:where { ?klass wdt:P279 ?targetClass .
+                            ?subject wdt:P31 ?klass; rdfs:label ?name .
+                            };
+            ].
+
+#### Gouvernment
+:GovernmentOrganizationForm a ui:Group; 
+    ui:weight 0; 
+    ui:parts ( 
+        :GovernmentOrganizationPrompt 
+        :GovernmentOrganizationAutocomplete ) .
+
+    :GovernmentOrganizationPrompt a ui:Comment; ui:contents "Government organization details".
+
+    :GovernmentOrganizationAutocomplete
+        a ui:AutocompleteField; ui:label "Find in wikidata";
+            ui:targetClass  <http://www.wikidata.org/entity/Q327333>; # GovernmentOrganization
+            ui:property solid:publicId; 
+            ui:dataSource :WikidataInstancesByName.
+
+#### Educational
+:EducationalOrganizationForm a ui:Group; 
+    ui:weight 1; 
+    ui:parts ( 
+        :EducationalOrganizationPrompt 
+        :EducationalOrganizationAutocomplete ) .
+
+    :EducationalOrganizationPrompt a ui:Comment; ui:contents "Educational organization details".
+
+    :EducationalOrganizationAutocomplete
+        a ui:AutocompleteField; ui:label "Find in wikidata";
+                ui:targetClass  <http://www.wikidata.org/entity/Q2385804>; # EducationalOrganization
+                ui:property solid:publicId; ui:dataSource :WikidataInstancesByName.
+
+#### Research Group
+:ResearchOrganizationForm a ui:Group; 
+    ui:weight 0; 
+    ui:parts ( 
+        :ResearchOrganizationPrompt 
+        :ResearchOrganizationAutocomplete ) .
+
+    :ResearchOrganizationPrompt a ui:Comment; ui:contents "Research organizationd details".
+
+    :ResearchOrganizationAutocomplete
+        a ui:AutocompleteField; ui:label "Find in wikidata";
+            ui:targetClass  <http://www.wikidata.org/entity/Q31855>; # research institute
+            ui:property solid:publicId; ui:dataSource :WikidataInstancesByName.
+
+#### NGO
+:NGOForm a ui:Group; ui:weight 0; 
+    ui:parts ( 
+        :NGOPrompt 
+        :NGOAutocomplete ) .
+
+    :NGOPrompt a ui:Comment; ui:contents "NGO details".
+
+    :NGOAutocomplete
+        a ui:AutocompleteField; ui:label "Find in wikidata";
+            ui:targetClass  <http://www.wikidata.org/entity/Q163740>; # Non-profit org
+            ui:property solid:publicId; ui:dataSource :WikidataInstancesByName.
+
+#### Performing group
+:PerformingGroupForm a ui:Group; 
+    ui:weight 0; 
+    ui:parts ( 
+        :PerformingGroupPrompt 
+        :PerformingGroupAutocomplete ) .
+
+    :PerformingGroupPrompt a ui:Comment; ui:contents "Performing group details".
+
+    :PerformingGroupAutocomplete
+        a ui:AutocompleteField; ui:label "Find in wikidata";
+            ui:targetClass  <http://www.wikidata.org/entity/Q32178211>; # Music Org
+            ui:property solid:publicId; ui:dataSource :WikidataInstancesByName.
+
+#### Project
+:ProjectForm a ui:Group; 
+    ui:weight 0; 
+    ui:parts ( 
+        :ProjectPrompt 
+        :ProjectAutocomplete ) . #  :ProjectAutocomplete - no: supress, as not in WD
+
+    :ProjectPrompt a ui:Comment; ui:contents "Project details".
+
+    :ProjectAutocomplete
+        a ui:AutocompleteField; ui:label "Find in wikidata";
+            ui:targetClass  <http://www.wikidata.org/entity/Q170584>; # Project
+            ui:property solid:publicId; ui:dataSource :WikidataInstancesByName.
+
+#### Sports Organization
+:SportsOrganizationForm a ui:Group; 
+    ui:weight 0; 
+    ui:parts ( 
+        :SportsOrganizationPrompt 
+        :SportsOrganizationAutocomplete ) .
+
+:SportsOrganizationPrompt a ui:Comment; ui:contents "Sports organization details".
+
+:SportsOrganizationAutocomplete
+    a ui:AutocompleteField; ui:label "Find in wikidata";
+        ui:targetClass  <http://www.wikidata.org/entity/Q4438121>; # SportsOrganization
+        ui:property solid:publicId; ui:dataSource :WikidataInstancesByName.
+
+#################### Skills
+
+:SkillsHeading a ui:Heading; 
+    ui:contents  "Add your skills" .
+
+:SkillsForm a ui:Multiple;
+    ui:label "Skills";
+    ui:property schema:skills;
+    ui:ordered false; # Allow reader to order skills
+    ui:part :SkillForm.
+
+:SkillForm a ui:Group; ui:weight 1; ui:parts ( :escoSkillField ).
+
+    :escoSkillField a ui:AutocompleteField;
+            ui:label "Find in ESCO";
+            ui:property solid:publicId;
+            ui:dataSource :ESCO_Skill_DataSource;
+            ui:targetClass schema:Skill .
+
+    :ESCO_Skill_DataSource a ui:DataSource;
+        schema:name "ESCO skill";
+        ui:targetClass esco:Skill ;
+        schema:logo <https://ec.europa.eu/esco/portal/static_resource2/images/logo/logo_en.gif>;
+        ui:searchByNameURI "https://ec.europa.eu/esco/api/search?language=$(language)&limit=$(limit)&type=skill&text=$(name)".
+
+#################### Languages
+
+:LanguagesHeading a ui:Heading; ui:contents  "Add your languages" .
+
+:LanguagesForm a ui:Multiple;
+    ui:label "Languages";
+    ui:property schema:knowsLanguage; 
+    ui:ordered true; # Allow user to order languages most important first.
+    ui:part :LanguageForm.
+
+:LanguageForm a ui:Group; ui:weight 1; ui:parts ( :WikidataLanguageField ).
+
+    :WikidataLanguageField a ui:AutocompleteField;
+          ui:label "Language";
+          ui:property solid:publicId; 
+          ui:dataSource :WikidataLanguageDataSource;
+           ui:targetClass schema:Language .
+
+    :WikidataLanguageDataSource
+        schema:name "Find in wikidata";
+        ui:endpoint "https://query.wikidata.org/sparql" ;
+        ui:objectURIBase <https://www.w3.org/ns/iana/language-code/>;
+        # Add this to any literal string returned as ?subject
+        ui:searchByNameQuery """SELECT ?item ?subject ?name
+            WHERE
+            { ?item wdt:P305 ?subject .
+            OPTIONAL {?item rdfs:label ?name}
+            OPTIONAL {?item wdt:P1705 ?name}
+            FILTER regex(?name, "$(name)", "i")
+            FILTER regex(?subject, "^..$", "i")
+            }""" .
+ # Note we restrict code to two-letter codes with the second regex, so as to limit the deluge of languages
+ # Hope there are not any important ones which have three-letter codes.
+ # Omitted: SERVICE wikibase:label { bd:serviceParam wikibase:language "$(languages)". }

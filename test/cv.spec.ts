@@ -126,7 +126,7 @@ pro:card a foaf:PersonalProfileDocument; foaf:maker :me; foaf:primaryTopic :me.
 :me
     a schema:Person, foaf:Person;
     schema:knowsLanguage :b5591_n3-4373, :b5591_n3-4374 ;
-    schema:knowsLanguage ( :id1621182189390 :id1770974719414 ), ( :id1770974719414 );
+    schema:knowsLanguage ( :id1621182189390 :id1770974719414 :id1621182189397), ( :id1770974719414 );
    
     schema:skills :id1622021761923, :id1622021775187, :skill2, :NonExistentSkill;
     vcard:bday "2021-05-14"^^xsd:date;
@@ -174,6 +174,18 @@ describe('profile-pane', () => {
   let element: HTMLElement
 
   describe('curriculum vitae', () => {
+        it('returns the correct number of unique known languages', () => {
+          const { presentCV } = require('../src/CVPresenter')
+          const result = presentCV(subject, store)
+          // You can adjust the expected count if the profile changes
+          expect(result.languages.length).toBe(4)
+          expect(result.languages).toEqual(expect.arrayContaining([
+            expect.stringMatching(/French/i),
+            expect.stringMatching(/germano|german/i),
+            expect.stringMatching(/Spanish/i),
+            expect.stringMatching(/Dutch/i)
+          ]))
+        })
     beforeAll(async () => {
       store.removeDocument(doc)
       parse(exampleProfile, store, doc.uri)
@@ -202,8 +214,10 @@ describe('profile-pane', () => {
     it('renders skill 3 vcard role in CV', () => {
       expect(element).toContainHTML('Sitting')
     })
-    it('renders error flag when missing skill text CV', () => {
-      expect(element).toContainHTML('¿¿¿ Skill ???')
+    // If we have an empty skill node we do not display it at all ANYMORE
+    it('renders three skills in CV', () => {
+      const skills = element.querySelectorAll('.cvSkill')
+      expect(skills.length).toBe(3)
     })
     it('renders languages', () => {
       expect(element).toContainHTML('Fr')

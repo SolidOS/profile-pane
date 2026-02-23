@@ -324,7 +324,7 @@ button:disabled, [role="button"][aria-disabled="true"] {
 /* Common card component - used across all modules */
 .module-card {
   background: var(--color-card-bg);
-  border-radius: var(--border-radius);
+  border-radius: var(--border-radius-full);
   box-shadow: var(--box-shadow);
   padding: var(--spacing-lg);
   margin-bottom: var(--spacing-lg);
