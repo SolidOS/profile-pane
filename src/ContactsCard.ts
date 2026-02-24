@@ -436,3 +436,11 @@ const createGroupButton = (
   
   return button
 }
+
+export function getButtonContainer(
+  context: DataBrowserContext
+): HTMLElement {
+
+  const button = context.dom.getElementById('add-to-contacts-button-container')
+  return button
+}

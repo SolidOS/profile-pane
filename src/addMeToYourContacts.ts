@@ -23,6 +23,7 @@ const addMeToYourContactsDiv = async (
 ): Promise<TemplateResult> => {
   
   buttonContainer = context.dom.createElement('section') as HTMLDivElement
+  buttonContainer.setAttribute('id', 'add-to-contacts-button-container')
   buttonContainer.setAttribute('class', 'buttonSubSection text-truncate text-center section-centered')
   buttonContainer.setAttribute('aria-labelledby', 'add-me-to-your-contacts-button-section')
   buttonContainer.setAttribute('data-testid', 'button')

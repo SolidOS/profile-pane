@@ -161,16 +161,21 @@ async function createContactInAddressBook(
   contactData: ContactData,
   selectedAddressBookUris: SelectedAddressBookUris
 ): Promise<string>{
+  let contactUri = null
   const newContact: NewContact = {
       name: contactData.name,
       email: contactData.email,
       phoneNumber: contactData.phoneNumber
   }
   try { 
-    console.log("in create " + JSON.stringify(selectedAddressBookUris))
-    const contact = await contactsModule.createNewContact({addressBookUri: selectedAddressBookUris.addressBookUri, contact: newContact, groupUris: selectedAddressBookUris.groupUris}) 
-    await addWebIDToContact(context, contact, contactData.webID)
-    return contact
+    const groupUris = (selectedAddressBookUris.groupUris.length  != 0) ? selectedAddressBookUris.groupUris : undefined
+    if (groupUris) {
+      contactUri = await contactsModule.createNewContact({addressBookUri: selectedAddressBookUris.addressBookUri, contact: newContact, groupUris}) 
+    } else {
+      contactUri = await contactsModule.createNewContact({addressBookUri: selectedAddressBookUris.addressBookUri, contact: newContact})   
+    } 
+    await addWebIDToContact(context, groupUris, contactUri, contactData.webID)
+    return contactUri
   } catch (error) {
     throw new Error(error)
   }      
@@ -178,25 +183,37 @@ async function createContactInAddressBook(
 
 async function addWebIDToContact(
   context: DataBrowserContext,
+  groupUris: string[],
   contactUri: string,
   webID: string
 ) {
   const store = context.session.store
   const contactNode = new NamedNode(contactUri)
   const node = store.bnode()
+  const insertions = []
+  let groupUriNode = null
 
   try {
-
     await context.session.store.fetcher.load(contactUri)
 
-    const insertions = [st(contactNode, ns.vcard("uri"), node , contactNode.doc()),
-      st(node, ns.rdf('type'), ns.vcard('WebID'), contactNode.doc()),
-      st(node, ns.vcard("value"), sym(webID),contactNode.doc())]
+    if (groupUris) {
+      groupUris.map(async (groupUri) => {
+        await context.session.store.fetcher.load(groupUri)
+        groupUriNode = new NamedNode(groupUri)
+        insertions.push(st(sym(webID), ns.owl('sameAs'), contactNode, groupUriNode.doc()))
+        // I think this already happens with solid-data-modules
+        // insertions.push(st(groupUriNode, ns.vcard('hasMember'), sym(webID), groupUriNode.doc()))      
+    })
+  }
+    
+    insertions.push(st(contactNode, ns.vcard("uri"), node , contactNode.doc()))
+    insertions.push(st(node, ns.rdf('type'), ns.vcard('WebID'), contactNode.doc()))
+    // @ts-ignore Webid should be a string 
+    insertions.push(st(node, ns.vcard("value"), webID, contactNode.doc()))
     await store.updater.update([],insertions)    
   } catch (error) {
     throw new Error(error)
   }
-  
 }
 
 export {
