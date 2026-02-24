@@ -1,11 +1,10 @@
 import { DataBrowserContext } from "pane-registry"
-import { widgets, ns } from "solid-ui"
+import { widgets } from "solid-ui"
 import { addAddressToPublicTypeIndex, createContactInAddressBook } from "./contactsHelpers"
 import { AddressBookDetails, AddressBooksData, ContactData, GroupData } from "./contactsTypes"
 import ContactsModuleRdfLib from "@solid-data-modules/contacts-rdflib"
 import { authn } from "solid-logic"
-import { complain, mention } from "./buttonsHelper"
-import { NamedNode, sym } from "rdflib"
+import { complain } from "./buttonsHelper"
 
 export const createAddressBookUriSelectorDiv = (context: DataBrowserContext,
   contactsModule: ContactsModuleRdfLib,
