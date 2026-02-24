@@ -216,9 +216,34 @@ async function addWebIDToContact(
   }
 }
 
+async function addAddressToPublicTypeIndex(
+  context: DataBrowserContext,
+  addressBookUri: string
+) {
+  const store = context.session.store
+  const me = authn.currentUser()
+  const uuid = utils.genUuid()
+
+  try {
+    await store.fetcher.load(me)
+    const predicate = ns.solid("publicTypeIndex") as NamedNode
+    const typeIndex = store.any(me, predicate, null, me.doc()) as NamedNode
+    const registrationNode = sym(`${typeIndex.value}#${uuid}`)
+    const insertions = [st(registrationNode, ns.rdf('type'), ns.solid('TypeRegistration'), typeIndex.doc()),
+      st(registrationNode, ns.solid('forClass'), ns.vcard('AddressBook'), typeIndex.doc()),
+      st(registrationNode, ns.solid('instance'), sym(addressBookUri), typeIndex.doc())
+    ]
+    await store.updater.update([],insertions)
+
+  } catch(error) {
+    throw new Error(error)
+  }  
+}
+
 export {
   getAddressBooksData,
   getContactData,
   addContactToAddressBook,
-  createContactInAddressBook
+  createContactInAddressBook,
+  addAddressToPublicTypeIndex
 }

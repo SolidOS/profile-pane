@@ -1,10 +1,11 @@
 import { DataBrowserContext } from "pane-registry"
-import { widgets } from "solid-ui"
-import { createContactInAddressBook } from "./contactsHelpers"
+import { widgets, ns } from "solid-ui"
+import { addAddressToPublicTypeIndex, createContactInAddressBook } from "./contactsHelpers"
 import { AddressBookDetails, AddressBooksData, ContactData, GroupData } from "./contactsTypes"
 import ContactsModuleRdfLib from "@solid-data-modules/contacts-rdflib"
 import { authn } from "solid-logic"
 import { complain, mention } from "./buttonsHelper"
+import { NamedNode, sym } from "rdflib"
 
 export const createAddressBookUriSelectorDiv = (context: DataBrowserContext,
   contactsModule: ContactsModuleRdfLib,
@@ -222,7 +223,7 @@ const createNewAddressBookForm = (
     if (enteredAddressName) {
       // add addressbook first 
       try {
-        enteredAddressBookUri = await handleAddressBookCreation(contactsModule, enteredAddressName,resourceType)
+        enteredAddressBookUri = await handleAddressBookCreation(context, contactsModule, enteredAddressName,resourceType)
         if (enteredGroupName) {
           const newGroupUri = await contactsModule.createNewGroup({addressBookUri: enteredAddressBookUri, groupName: enteredGroupName })
           selectedGroupUris.push(newGroupUri)
@@ -316,6 +317,7 @@ const createNewAddressBookForm = (
 }
 
 async function handleAddressBookCreation(
+  context: DataBrowserContext,
   contactsModule: ContactsModuleRdfLib,
   enteredAddressName: string,
   resourceType: string
@@ -323,18 +325,19 @@ async function handleAddressBookCreation(
   const me = authn.currentUser()
   const newAddressContainer = me.site().value 
   let addressBookUri = null
-
+  
   if (resourceType === 'public') {
     addressBookUri = await contactsModule.createAddressBook({
       containerUri: newAddressContainer,
       name: enteredAddressName
     })
+    await addAddressToPublicTypeIndex(context, addressBookUri)
   } else {
-      addressBookUri = await contactsModule.createAddressBook({
-        containerUri: newAddressContainer,
-        name: enteredAddressName,
-        ownerWebId: me.uri
-      })
+    addressBookUri = await contactsModule.createAddressBook({
+      containerUri: newAddressContainer,
+      name: enteredAddressName,
+      ownerWebId: me.uri
+    })
   }
   return addressBookUri
 }
