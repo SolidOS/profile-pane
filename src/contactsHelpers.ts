@@ -37,7 +37,7 @@ async function getAddressBooks(
 
   const getAddressData = async (addressBookUri) => {
     try {
-      addressBookUri = addressBookUri + '#this'
+      addressBookUri = addressBookUri
       const result = await contactModule.readAddressBook(addressBookUri)
       return result
     } catch (error) {
@@ -62,15 +62,11 @@ async function getAddressBooks(
   }
   
 try {
-  // await context.session.store.fetcher.load(me) - just thought I would try this
-    // Todo later use solid-data-modules to get address books
-    // const addressBookUris = await contactModule.listAddressBooks(me) 
-    // console.log("AddressBooks: " + JSON.stringify(addressBookUris))
-   
-    const addressBookUris = {
-      publicUris:['https://sstratsianis.solidcommunity.net/EFHmoi/index.ttl', 'https://sstratsianis.solidcommunity.net/QKXBP7/index.ttl'],
-      privateUris: ['https://sstratsianis.solidcommunity.net/QKXBP7/index.ttl']
-    } 
+    const me = authn.currentUser()
+    await context.session.store.fetcher.load(me)
+    
+    console.log("Me " + me.value)
+    const addressBookUris = await contactModule.listAddressBooks(me.value) 
       
     const publicAddressBookPromises = await addressBookUris.publicUris.map(getAddressData)
     const publicAddressBooksData = await Promise.all(publicAddressBookPromises)
