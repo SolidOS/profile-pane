@@ -6,14 +6,16 @@
   padding: var(--spacing-md);
   padding-top: 3em;
   justify-content: center;
-  align-items: center;
-  background-color: var(--color-primary);
+  align-items: start;
+  background-color: color-mix(in srgb, var(--color-primary), white 10%);
   box-sizing: border-box;
   display: flex;
   flex-direction: row;
   margin: 0px;
   font-weight: 600;
   position: relative;
+  opacity: 1;
+  transform: scale(1)
 }
 
 .contactsAddressBookDetails {
@@ -31,7 +33,6 @@
   color: white;
   padding: var(--spacing-md);
   justify-content: center;
-  align-items: center;
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
@@ -45,6 +46,7 @@
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
+  justify-content: center;
 }
 
 .contactsGroupList {
@@ -59,14 +61,14 @@
 
 .contactsSubmitButton {
   margin-top: var(--spacing-md);
-  background-color: var(--color-secondary) !important;
+  background-color: #01c9ea !important;
   color: white !important;
 }
 
 .contactsSubmitButton:hover {
   background: color-mix(in srgb, white 90%, black) !important; 
-  box-shadow: 0 2px 4px var(--color-secondary) !important;
-  color: var(--color-secondary) !important;
+  box-shadow: 0 2px 4px #01c9ea !important;
+  color: #01c9ea !important;
 }
 
 .contactsSubmitButton:active {
@@ -95,22 +97,20 @@
 .contactsCloseButton {
   background: white;
   color: var(--color-primary);
-  align-self: flex-start;
   padding: 3px;
   font-size: var(--font-size-sm);
   position: absolute;
-  width: 30px;
-  height: 20px;
+  width: 10px;
+  height: 40px;
   top: 0;
   right: 0;
 }
 
 .contactsCloseButton:hover {
   background: color-mix(in srgb, var(--color-primary) 90%, black);
-   border: 1px solid white;
+  border: 1px solid white;
   border-radius: var(--border-radius-base);
   color: white;
-  
 }
 
 .contactsCloseButton:active {

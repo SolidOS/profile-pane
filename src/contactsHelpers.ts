@@ -65,7 +65,6 @@ try {
     const me = authn.currentUser()
     await context.session.store.fetcher.load(me)
     
-    console.log("Me " + me.value)
     const addressBookUris = await contactModule.listAddressBooks(me.value) 
       
     const publicAddressBookPromises = await addressBookUris.publicUris.map(getAddressData)
@@ -141,6 +140,8 @@ async function getContactData(
   if (phoneUri) {
     phoneNumber = store.anyValue(sym(phoneUri), ns.vcard('value'), null, subject.doc())
   }
+  // Need to fix below right now don't want to add
+  // while testing
   // const webID = subject.value 
   const webID = 'https://testingsolidos.solidcommunity.net/profile/card#me'
   return {

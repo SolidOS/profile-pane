@@ -39,7 +39,7 @@ export const createAddressBookUriSelectorDiv = (context: DataBrowserContext,
 
   addressBookUriSelectorDiv.appendChild(closeButton)
   addressBookUriSelectorDiv.appendChild(addressBookDetailsDiv)
-  addressBookUriSelectorDiv.appendChild(createNewAddressBookForm(context, contactsModule, contactData))
+  addressBookUriSelectorDiv.appendChild(createNewAddressBookForm(context, addressBooksData, contactsModule, contactData))
   
   return addressBookUriSelectorDiv
 }
@@ -84,13 +84,13 @@ export const createAddressBookListDiv = (
       selectedAddressBookButton.classList.remove("selectedButton", "selectedAddressBook");
       const groupForm = context.dom.getElementById('new-group-form')
       if (groupForm) groupForm.remove()
-      addressBookUriSelectorDiv.appendChild(createNewAddressBookForm(context, contactsModule, contactData))
+      addressBookUriSelectorDiv.appendChild(createNewAddressBookForm(context, addressBooksData, contactsModule, contactData))
     } else {
       const addressForm = context.dom.getElementById('new-addressbook-form')
       if (addressForm) addressForm.remove()
       // display group form
       const groupForm = context.dom.getElementById('new-group-form')
-      if (!groupForm) addressBookUriSelectorDiv.appendChild(createGroupNameForm(context, contactsModule, contactData))
+      if (!groupForm) addressBookUriSelectorDiv.appendChild(createGroupNameForm(context, addressBooksData, contactsModule, contactData))
 
       selectedAddressBookButton.classList.add("selectedButton", "selectedAddressBook");
       // selected address book code
@@ -139,9 +139,13 @@ const createGroupListDiv = (
   groupListDiv.setAttribute('id', 'group-list')
 
   groupListDiv.innerHTML = "Select a group (optional)"
-  addressBook.groups.map((group) => {
-    groupListDiv.appendChild(createGroupButton(context, group))
-  })
+  
+  if (addressBook.groups || addressBook.groups.length !== 0) {
+    console.log("made it here")
+    addressBook.groups.map((group) => {
+        groupListDiv.appendChild(createGroupButton(context, group))
+    })
+  }
   return groupListDiv
 }
 
@@ -196,6 +200,7 @@ const createAddressBookButton = (
 
 const createNewAddressBookForm = (
   context: DataBrowserContext,
+  addressBooksData: AddressBooksData,
   contactsModule: ContactsModuleRdfLib,
   contactData: ContactData
 ): HTMLFormElement => {
@@ -205,16 +210,13 @@ const createNewAddressBookForm = (
     let enteredAddressBookUri = null 
 
     const addressNameField = context.dom.querySelector('#addressBookNameInput')
-    console.log("address name field")
-    console.dir(addressNameField)
+
     // @ts-ignore
     const enteredAddressName = addressNameField.value
-    console.log("Entered Name: " + enteredAddressName)
 
     const selectedresourceTypeRadio = context.dom.querySelector('input[name="address-type"]:checked')
     // @ts-ignore
     const resourceType = selectedresourceTypeRadio.value
-    console.log("Resource Type: " + resourceType)
     
     const groupNameField = context.dom.querySelector('#groupNameInput')
     // @ts-ignore
@@ -233,13 +235,15 @@ const createNewAddressBookForm = (
         groupUris: selectedGroupUris 
         }
         const contact = await createContactInAddressBook(context, contactsModule, contactData, selectedAddressBookUris)
+        addressBooksData.contacts.set(contactData.webID, contact)
+        const selectorDiv = context.dom.getElementById('contacts-selector-div')
+        selectorDiv.remove()
+        const buttonContainer = getButtonContainer(context)
+        mention(buttonContainer, contactWasAddedSuccesMessage)      
       } catch (error) {
         throw new Error(error)
       }
-      const selectorDiv = context.dom.getElementById('contacts-selector-div')
-      selectorDiv.remove()
-      const buttonContainer = getButtonContainer(context)
-      mention(buttonContainer, contactWasAddedSuccesMessage)
+  
     } else {
       // need to change this definitely move it
       // potentially error message instead
@@ -347,6 +351,7 @@ async function handleAddressBookCreation(
 }
 const createGroupNameForm = (
   context: DataBrowserContext,
+  addressBooksData: AddressBooksData, 
   contactsModule: ContactsModuleRdfLib,
   contactData: ContactData
 ): HTMLFormElement => {
@@ -385,7 +390,7 @@ const createGroupNameForm = (
     }
     try {
       const contact = await createContactInAddressBook(context, contactsModule, contactData, selectedAddressBookUris)
-    
+      addressBooksData.contacts.set(contactData.webID, contact)
       const selectorDiv = context.dom.getElementById('contacts-selector-div')
       selectorDiv.remove()
       
