@@ -76,8 +76,8 @@ const createAddMeToYourContactsButton = async (
     saveNewContact(subject, context, contactsModule, addressBooksData)
       .then(() => {
         // clearPreviousMessage(buttonContainer)
-        mention(buttonContainer, contactWasAddedSuccesMessage)
-        refreshButton()
+        // mention sucess message was here     
+        // refreshButton() don't think i need to refresh
       })
       .catch((error) => {
         clearPreviousMessage(buttonContainer)
@@ -126,7 +126,7 @@ async function saveNewContact(
       try {
         const contactData: ContactData = await getContactData(store, subject)
         await addContactToAddressBook(context, contactsModule, contactData, addressBooksData, buttonContainer)
-        console.log("contact data: " + JSON.stringify(contactData))
+        // i think i should call refresh here
       } catch (error) {
         let errorMessage = error
         if (errorMessage.toString().includes('Unauthenticated'))

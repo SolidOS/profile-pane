@@ -4,7 +4,8 @@ import { addAddressToPublicTypeIndex, createContactInAddressBook } from "./conta
 import { AddressBookDetails, AddressBooksData, ContactData, GroupData } from "./contactsTypes"
 import ContactsModuleRdfLib from "@solid-data-modules/contacts-rdflib"
 import { authn } from "solid-logic"
-import { complain } from "./buttonsHelper"
+import { complain, mention } from "./buttonsHelper"
+import { contactWasAddedSuccesMessage } from "./texts"
 
 export const createAddressBookUriSelectorDiv = (context: DataBrowserContext,
   contactsModule: ContactsModuleRdfLib,
@@ -235,6 +236,10 @@ const createNewAddressBookForm = (
       } catch (error) {
         throw new Error(error)
       }
+      const selectorDiv = context.dom.getElementById('contacts-selector-div')
+      selectorDiv.remove()
+      const buttonContainer = getButtonContainer(context)
+      mention(buttonContainer, contactWasAddedSuccesMessage)
     } else {
       // need to change this definitely move it
       // potentially error message instead
@@ -378,8 +383,19 @@ const createGroupNameForm = (
         addressBookUri: selectedAddressBookUri,
         groupUris: selectedGroupUris 
     }
+    try {
       const contact = await createContactInAddressBook(context, contactsModule, contactData, selectedAddressBookUris)
+    
+      const selectorDiv = context.dom.getElementById('contacts-selector-div')
+      selectorDiv.remove()
+      
+      const buttonContainer = getButtonContainer(context)
+      mention(buttonContainer, contactWasAddedSuccesMessage)
+    
+    } catch(error) {
+      throw new Error(error)
     }
+  }
 
   const newGroupForm = context.dom.createElement('form')
   newGroupForm.addEventListener('submit', addContactEventListener) 
@@ -441,8 +457,8 @@ const createGroupButton = (
 
 export function getButtonContainer(
   context: DataBrowserContext
-): HTMLElement {
+): HTMLDivElement {
 
-  const button = context.dom.getElementById('add-to-contacts-button-container')
-  return button
+  const buttonContainer = context.dom.getElementById('add-to-contacts-button-container')
+  return buttonContainer as HTMLDivElement
 }
