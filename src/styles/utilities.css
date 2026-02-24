@@ -324,11 +324,22 @@
   border: 1px solid var(--color-primary);
   border-radius: var(--border-radius-base);
   background: white;
-  color: var(--color-primary);
+  color: black;
   font-weight: 600;
   font-size: var(--font-size-sm);
+  transition: var(--color-primary) 0.3s ease;
 }
+.input:focus,
+.input:focus-visible {
+  outline: 1px solid var(--color-primary) !important;
+  outline-offset: 2px !important;
+  box-shadow: 0 0 0 2px var(--color-background), 0 0 0 5px rgba(124, 77, 255, 0.25) !important;
+  z-index: 1;
+}
+
 input[type="radio"] {
   accent-color: var(--color-secondary); /* Change to your desired color */
 }
-
+::placeholder {
+  color: var(--color-primary);
+}

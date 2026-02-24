@@ -69,7 +69,7 @@ export const createAddressBookListDiv = (
     event.preventDefault()
     const selectedAddressBookButton = event.target
     const previouslySelected = selectedAddressBookButton.classList.contains('selectedButton');
-    
+    let addressBook = null
     // remove the previous groups
     const groupDivToRemove = context.dom.getElementById('group-list')
     if (groupDivToRemove) groupDivToRemove.remove()
@@ -95,8 +95,9 @@ export const createAddressBookListDiv = (
       selectedAddressBookButton.classList.add("selectedButton", "selectedAddressBook");
       // selected address book code
       const selectedAddressBookUri = event.target.id
-      const addressBook = addressBooksData.public.get(selectedAddressBookUri) 
-     
+      // can check for the class on private
+      addressBook = addressBooksData.public.get(selectedAddressBookUri) 
+      if (!addressBook) addressBook = addressBooksData.private.get(selectedAddressBookUri) 
       // add groups for addressbook  
       const groupListDiv = createGroupListDiv(context, addressBook)  
       addressBookDetailsDiv.appendChild(groupListDiv)
@@ -139,12 +140,14 @@ const createGroupListDiv = (
   groupListDiv.setAttribute('id', 'group-list')
 
   groupListDiv.innerHTML = "Select a group (optional)"
-  
-  if (addressBook.groups || addressBook.groups.length !== 0) {
-    console.log("made it here")
+  console.log("Contacts cards: ")
+  console.log("Address book: " + JSON.stringify(addressBook))
+  if (addressBook) {
     addressBook.groups.map((group) => {
         groupListDiv.appendChild(createGroupButton(context, group))
     })
+  } else {
+    throw new Error("Your address book wasn't found.")
   }
   return groupListDiv
 }
@@ -239,7 +242,9 @@ const createNewAddressBookForm = (
         const selectorDiv = context.dom.getElementById('contacts-selector-div')
         selectorDiv.remove()
         const buttonContainer = getButtonContainer(context)
-        mention(buttonContainer, contactWasAddedSuccesMessage)      
+        mention(buttonContainer, contactWasAddedSuccesMessage)
+        const button = context.dom.getElementById('add-to-contacts-button')
+        button.removeAttribute('disabled')      
       } catch (error) {
         throw new Error(error)
       }
@@ -255,8 +260,7 @@ const createNewAddressBookForm = (
   newAddressBookForm.innerHTML = 'Create a new address book'
   newAddressBookForm.setAttribute('id', 'new-addressbook-form')
   newAddressBookForm.classList.add('contactsNewAddressForm')
-  console.log("address form")
-  console.dir(newAddressBookForm)
+  
   const addressBookNameLabel = context.dom.createElement('label')
   addressBookNameLabel.classList.add('label')
   addressBookNameLabel.setAttribute('for', 'addressBookNameInput')
@@ -396,7 +400,8 @@ const createGroupNameForm = (
       
       const buttonContainer = getButtonContainer(context)
       mention(buttonContainer, contactWasAddedSuccesMessage)
-    
+      const button = context.dom.getElementById('add-to-contacts-button')
+      button.removeAttribute('disabled')  
     } catch(error) {
       throw new Error(error)
     }

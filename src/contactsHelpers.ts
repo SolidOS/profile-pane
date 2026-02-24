@@ -34,11 +34,13 @@ async function getAddressBooks(
     private: new Map(),
     contacts: new Map()
 }
-
+console.log("addressbook data")
   const getAddressData = async (addressBookUri) => {
     try {
-      addressBookUri = addressBookUri
+      
+      console.log("address book uri: " + addressBookUri)
       const result = await contactModule.readAddressBook(addressBookUri)
+      console.log("address book uri result: " + JSON.stringify(result))
       return result
     } catch (error) {
       throw new Error(error)

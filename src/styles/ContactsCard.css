@@ -8,10 +8,11 @@
   justify-content: center;
   align-items: start;
   background-color: color-mix(in srgb, var(--color-primary), white 10%);
+  background-image: linear-gradient(to bottom right, var(--color-primary), #01c9ea);
   box-sizing: border-box;
   display: flex;
   flex-direction: row;
-  margin: 0px;
+  margin: 4px;
   font-weight: 600;
   position: relative;
   opacity: 1;
