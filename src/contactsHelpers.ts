@@ -5,7 +5,7 @@ import { DataBrowserContext } from "pane-registry";
 import { createAddressBookUriSelectorDiv } from "./ContactsCard";
 import './styles/ContactsCard.css'
 import { authn } from "solid-logic";
-import { AddressBooksData, ContactData, SelectedAddressBookUris } from "./contactsTypes";
+import { AddressBooksData, ContactData, EmailDetails, PhoneDetails, SelectedAddressBookUris } from "./contactsTypes";
 
 async function addContactToAddressBook(
   context: DataBrowserContext,
@@ -33,14 +33,10 @@ async function getAddressBooks(
     public: new Map(),
     private: new Map(),
     contacts: new Map()
-}
-console.log("addressbook data")
+  }
   const getAddressData = async (addressBookUri) => {
     try {
-      
-      console.log("address book uri: " + addressBookUri)
       const result = await contactModule.readAddressBook(addressBookUri)
-      console.log("address book uri result: " + JSON.stringify(result))
       return result
     } catch (error) {
       throw new Error(error)
@@ -129,27 +125,36 @@ async function getContactData(
   store: LiveStore,
   subject: NamedNode
 ): Promise<ContactData> {
+  let emails: EmailDetails[] = []
+  let phoneNumbers: PhoneDetails[] = []
+  let type = null
   let email = null
   let phoneNumber = null
-
-  const name = utils.label(subject)
-  const emailUri = store.anyValue(subject, ns.vcard('hasEmail'), null, subject.doc()) || null
-  const phoneUri = store.anyValue(subject, ns.vcard('hasTelephone'), null, subject.doc()) || null
   
-  if (emailUri) {
-    email = store.anyValue(sym(emailUri), ns.vcard('value'), null, subject.doc())
-  } 
-  if (phoneUri) {
-    phoneNumber = store.anyValue(sym(phoneUri), ns.vcard('value'), null, subject.doc())
-  }
+  const name = utils.label(subject)
+  
+  const emailNodes = store.each(subject, ns.vcard('hasEmail'), null, subject.doc()) || null
+  const phoneNodes = store.each(subject, ns.vcard('hasTelephone'), null, subject.doc()) || null
+  
+  emailNodes.map((node) => {
+    email = store.any(node as NamedNode, ns.vcard('value'), null, subject.doc())
+    type = store.any(node as NamedNode, ns.rdf('type'), null, subject.doc())
+    emails.push({ type, email})
+  })
+  phoneNodes.map((node) => {
+    phoneNumber = store.any(node as NamedNode, ns.vcard('value'), null, subject.doc())
+    type = store.any(node as NamedNode, ns.rdf('type'), null, subject.doc())
+    phoneNumbers.push({type, phoneNumber})  
+  })
+
   // Need to fix below right now don't want to add
   // while testing
   // const webID = subject.value 
   const webID = 'https://testingsolidos.solidcommunity.net/profile/card#me'
   return {
   name,
-  email,
-  phoneNumber,
+  emails,
+  phoneNumbers,
   webID 
   }
 }
@@ -162,10 +167,9 @@ async function createContactInAddressBook(
 ): Promise<string>{
   let contactUri = null
   const newContact: NewContact = {
-      name: contactData.name,
-      email: contactData.email,
-      phoneNumber: contactData.phoneNumber
+      name: contactData.name
   }
+
   try { 
     const groupUris = (selectedAddressBookUris.groupUris.length  != 0) ? selectedAddressBookUris.groupUris : undefined
     if (groupUris) {
@@ -174,10 +178,44 @@ async function createContactInAddressBook(
       contactUri = await contactsModule.createNewContact({addressBookUri: selectedAddressBookUris.addressBookUri, contact: newContact})   
     } 
     await addWebIDToContact(context, groupUris, contactUri, contactData.webID)
+    await addContactDetails(context, contactUri, contactData)
     return contactUri
   } catch (error) {
     throw new Error(error)
   }      
+}
+
+async function addContactDetails(
+  context: DataBrowserContext, 
+  contactUri: string, 
+  contactData: ContactData
+) {
+  const store = context.session.store
+  const contactNode = new NamedNode(contactUri)
+  const node = null
+  // need a number like this #id1771819948686
+  const insertions = []
+  
+  try {
+    await context.session.store.fetcher.load(contactUri)
+    contactData.emails.map((emailInfo) => {
+      // need to create a new node each time
+      insertions.push(st(contactNode, ns.vcard("hasEmail"), node , contactNode.doc()))
+      insertions.push(st(node, ns.rdf('type'), emailInfo.type, contactNode.doc()))
+      insertions.push(st(node, ns.vcard("value"), emailInfo.email, contactNode.doc()))
+    })
+    contactData.phoneNumbers.map((phoneInfo) => {
+      //need to create a new node each time
+      insertions.push(st(contactNode, ns.vcard("hasTelephone"), node , contactNode.doc()))
+      insertions.push(st(node, ns.rdf('type'), phoneInfo.type, contactNode.doc()))
+      insertions.push(st(node, ns.vcard("value"), phoneInfo.phoneNumber, contactNode.doc()))  
+    })
+    
+    await store.updater.update([],insertions)  
+  } catch (error) {
+    throw new Error(error)
+  }
+
 }
 
 async function addWebIDToContact(
@@ -202,8 +240,8 @@ async function addWebIDToContact(
         insertions.push(st(sym(webID), ns.owl('sameAs'), contactNode, groupUriNode.doc()))
         // I think this already happens with solid-data-modules
         // insertions.push(st(groupUriNode, ns.vcard('hasMember'), sym(webID), groupUriNode.doc()))      
-    })
-  }
+      })
+    }
     
     insertions.push(st(contactNode, ns.vcard("uri"), node , contactNode.doc()))
     insertions.push(st(node, ns.rdf('type'), ns.vcard('WebID'), contactNode.doc()))

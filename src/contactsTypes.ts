@@ -1,3 +1,5 @@
+import { NamedNode } from "rdflib/lib/tf-types"
+
 export interface SelectedAddressBookUris {
   addressBookUri: string,
   groupUris: string []
@@ -17,9 +19,18 @@ export interface AddressBooksData {
   contacts: Map<string,string>
 }
 
+export interface EmailDetails {
+  type: NamedNode,
+  email: NamedNode
+}
+
+export interface PhoneDetails {
+  type: NamedNode,
+  phoneNumber: NamedNode
+}
 export interface ContactData {
     name: string,
-    email?: string,
-    phoneNumber?: string,
+    emails?: EmailDetails[],
+    phoneNumbers?: PhoneDetails[],
     webID: string
 }

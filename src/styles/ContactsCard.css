@@ -62,7 +62,7 @@
 
 .contactsSubmitButton {
   margin-top: var(--spacing-md);
-  background-color: #01c9ea !important;
+  background-color: #01c9ea !important; 
   color: white !important;
 }
 
@@ -96,8 +96,10 @@
 }
 
 .contactsCloseButton {
-  background: white;
-  color: var(--color-primary);
+  text-transform: uppercase;
+  background: #01c9ea; 
+  border: 1px solid var(--color-primary);
+  color: white;
   padding: 3px;
   font-size: var(--font-size-sm);
   position: absolute;
@@ -108,14 +110,21 @@
 }
 
 .contactsCloseButton:hover {
-  background: color-mix(in srgb, var(--color-primary) 90%, black);
-  border: 1px solid white;
-  border-radius: var(--border-radius-base);
-  color: white;
+  background: white !important; 
+  box-shadow: 0 2px 4px #01c9ea !important;
+  color: #01c9ea !important;
 }
 
 .contactsCloseButton:active {
-  box-shadow: 0 1px 2px rgba(124, 77, 255, 0.2);
+  box-shadow: 0 1px 2px white;
+}
+
+.contactsCloseButton:focus,
+.contactsCloseButton:focus-visible {
+  outline: 3px solid var(--color-secondary) !important;
+  outline-offset: 2px !important;
+  box-shadow: 0 0 0 2px white, 0 0 0 5px rgba(124, 77, 255, 0.25) !important;
+  z-index: 1;
 }
 
 .contactsNewAddressForm {
