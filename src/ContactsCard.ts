@@ -65,7 +65,7 @@ export const createAddressBookListDiv = (
   const setButtonOnClickHandler =  (event) => {
     event.preventDefault()
     const selectedAddressBookButton = event.target
-    const previouslySelected = selectedAddressBookButton.classList.contains('selectedButton');
+    const previouslySelected = selectedAddressBookButton.classList.contains('contactsSelectedButton');
     const addressBookUriSelectorDialog = context.dom.getElementById('contacts-selector-dialog')
     let addressBook = null
     // remove the previous groups
@@ -75,11 +75,11 @@ export const createAddressBookListDiv = (
     // remove presious address book selection bc you can only have one
     const selectedAddressBookElements = context.dom.querySelectorAll('.selectedAddressBook')
     selectedAddressBookElements.forEach((addressBookButton) => {
-      addressBookButton.classList.remove("selectedButton", "selectedAddressBook")
+      addressBookButton.classList.remove("contactsSelectedButton", "selectedAddressBook")
     })
     
     if (previouslySelected) {
-      selectedAddressBookButton.classList.remove("selectedButton", "selectedAddressBook");
+      selectedAddressBookButton.classList.remove("contactsSelectedButton", "selectedAddressBook");
       const groupForm = context.dom.getElementById('new-group-form')
       if (groupForm) groupForm.remove()
       addressBookUriSelectorDialog.appendChild(createNewAddressBookForm(context, addressBooksData, contactsModule, contactData))
@@ -90,7 +90,7 @@ export const createAddressBookListDiv = (
       const groupForm = context.dom.getElementById('new-group-form')
       if (!groupForm) addressBookUriSelectorDialog.appendChild(createGroupNameForm(context, addressBooksData, contactsModule, contactData))
 
-      selectedAddressBookButton.classList.add("selectedButton", "selectedAddressBook");
+      selectedAddressBookButton.classList.add("contactsSelectedButton", "selectedAddressBook");
       // selected address book code
       const selectedAddressBookUri = event.target.id
       // can check for the class on private
@@ -138,8 +138,6 @@ const createGroupListDiv = (
   groupListDiv.setAttribute('id', 'group-list')
 
   groupListDiv.innerHTML = "Select a group (optional)"
-  console.log("Contacts cards: ")
-  console.log("Address book: " + JSON.stringify(addressBook))
   if (addressBook) {
     addressBook.groups.map((group) => {
         groupListDiv.appendChild(createGroupButton(context, group))
@@ -194,8 +192,8 @@ const createAddressBookButton = (
   )
   button.setAttribute('value', addressBook.name)
   button.setAttribute('id', addressBookUri)
-  button.classList.add('actionButton', 'btn-primary', 'action-button-focus')
-  
+  //button.classList.add('actionButton', 'btn-primary', 'action-button-focus')
+  button.classList.add('contactsButton')
   return button
 }
 
@@ -438,13 +436,13 @@ const createGroupButton = (
     event.preventDefault()
     
     const selectedGroupButton = event.target
-    const previouslySelected = selectedGroupButton.classList.contains('selectedButton');
+    const previouslySelected = selectedGroupButton.classList.contains('contactsSelectedButton');
     
     if (previouslySelected) {
-      selectedGroupButton.classList.remove("selectedButton", "selectedGroup")
+      selectedGroupButton.classList.remove("contactsSelectedButton", "selectedGroup")
     
     } else {
-      selectedGroupButton.classList.add("selectedButton", "selectedGroup");
+      selectedGroupButton.classList.add("contactsSelectedButton", "selectedGroup");
     }
   } 
   const button = widgets.button(
@@ -458,7 +456,8 @@ const createGroupButton = (
   )
   button.setAttribute('value', group.name)
   button.setAttribute('id', group.uri)
-  button.classList.add('actionButton', 'btn-primary', 'action-button-focus')
+  //button.classList.add('actionButton', 'btn-primary', 'action-button-focus')
+  button.classList.add('contactsButton')
   
   return button
 }

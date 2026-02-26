@@ -2,12 +2,11 @@
   width: fit-content;
   border-radius: var(--border-radius-base);
   box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
-  color: white;
+  background: #F0F0F0;
+  color: #909090;
   padding-top: 3em;
   justify-content: center;
   align-items: start;
-  background-color: color-mix(in srgb, var(--color-primary), white 10%);
-  background-image: linear-gradient(to bottom right, var(--color-primary) 60%, #01c9ea);
   box-sizing: border-box;
   display: flex;
   flex-direction: row;
@@ -61,14 +60,14 @@
 
 .contactsSubmitButton {
   margin-top: var(--spacing-md);
-  background-color: #01c9ea !important; 
+  background-color: var(--color-primary) !important; 
+  border-radius: var(--border-radius-base);
   color: white !important;
 }
 
 .contactsSubmitButton:hover {
-  background: color-mix(in srgb, white 90%, black) !important; 
-  box-shadow: 0 2px 4px #01c9ea !important;
-  color: #01c9ea !important;
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
 }
 
 .contactsSubmitButton:active {
@@ -78,27 +77,16 @@
 /* Action Button Focus - used by ChatWithMe, ProfileCard */
 .contactsSubmitButton:focus,
 .contactsSubmitButton:focus-visible {
-  outline: 3px solid var(--color-secondary) !important;
+  outline: 3px solid var(--color-primary) !important;
   outline-offset: 2px !important;
   box-shadow: 0 0 0 2px white, 0 0 0 5px rgba(124, 77, 255, 0.25) !important;
   z-index: 1;
 }
 
-.contactsPrimaryButtonSelected {
-  background-color: var(--color-primary) !important;
-  color: white !important;
-}
-
-.contactsSecondaryButtonSelected {
-  background-color: var(--color-secondary) !important;
-  color: white !important;
-}
-
 .contactsCloseButton {
   text-transform: uppercase;
-  background: #01c9ea; 
-  border: 1px solid var(--color-primary);
-  box-shadow: var(--box-shadow);;
+  background: var(--color-primary); 
+  box-shadow: var(--box-shadow);
   border-radius: var(--border-radius-base);
   color: white;
   padding: 3px;
@@ -112,8 +100,8 @@
 
 .contactsCloseButton:hover {
   background: white !important; 
-  box-shadow: 0 2px 4px #01c9ea !important;
-  color: #01c9ea !important;
+  box-shadow: 0 2px 4px var(--color-primary) !important;
+  color: var(--color-primary) !important;
 }
 
 .contactsCloseButton:active {
@@ -122,7 +110,7 @@
 
 .contactsCloseButton:focus,
 .contactsCloseButton:focus-visible {
-  outline: 3px solid var(--color-secondary) !important;
+  outline: 3px solid var(--color-primary) !important;
   outline-offset: 2px !important;
   box-shadow: 0 0 0 2px white, 0 0 0 5px rgba(124, 77, 255, 0.25) !important;
   z-index: 1;
@@ -139,4 +127,22 @@
   gap: 15px;
   display: flex;
   flex-direction: row;
+}
+
+.contactsButton {
+  color: white  !important;
+  background:  color-mix(in srgb, var(--color-primary), white 30%) !important;
+  border-radius: var(--border-radius-base) !important;
+  box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
+  transition: all 0.3s ease-in-out;
+  
+}
+.contactsButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+} 
+
+.contactsSelectedButton {
+ background: var(--color-primary) !important; 
+ box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px, var(--color-primary) 0px 0px 0px 2px !important;
 }
