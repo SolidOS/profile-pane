@@ -130,9 +130,9 @@ async function getContactData(
   let type = null
   let email = null
   let phoneNumber = null
-  
+
   const name = utils.label(subject)
-  
+
   const emailNodes = store.each(subject, ns.vcard('hasEmail'), null, subject.doc()) || null
   const phoneNodes = store.each(subject, ns.vcard('hasTelephone'), null, subject.doc()) || null
   
@@ -177,8 +177,11 @@ async function createContactInAddressBook(
     } else {
       contactUri = await contactsModule.createNewContact({addressBookUri: selectedAddressBookUris.addressBookUri, contact: newContact})   
     } 
+    await context.session.store.fetcher.load(contactUri)
     await addWebIDToContact(context, groupUris, contactUri, contactData.webID)
-    await addContactDetails(context, contactUri, contactData)
+    if (contactData.emails.length !=0 || contactData.phoneNumbers.length != 0) {
+      await addContactDetails(context, contactUri, contactData)
+    }
     return contactUri
   } catch (error) {
     throw new Error(error)
@@ -192,20 +195,23 @@ async function addContactDetails(
 ) {
   const store = context.session.store
   const contactNode = new NamedNode(contactUri)
-  const node = null
-  // need a number like this #id1771819948686
+  let node = null
+  const max = 9999999999999
+  const min = 1000000000000
+  // need a number like this #id 177 181 994 8686
   const insertions = []
   
   try {
-    await context.session.store.fetcher.load(contactUri)
+    
     contactData.emails.map((emailInfo) => {
-      // need to create a new node each time
+      node = sym(`#id${Math.floor(Math.random() * (max - min + 1) + min)}`)
+      
       insertions.push(st(contactNode, ns.vcard("hasEmail"), node , contactNode.doc()))
       insertions.push(st(node, ns.rdf('type'), emailInfo.type, contactNode.doc()))
       insertions.push(st(node, ns.vcard("value"), emailInfo.email, contactNode.doc()))
     })
     contactData.phoneNumbers.map((phoneInfo) => {
-      //need to create a new node each time
+      node = sym(`#id${Math.floor(Math.random() * (max - min + 1) + min)}`)
       insertions.push(st(contactNode, ns.vcard("hasTelephone"), node , contactNode.doc()))
       insertions.push(st(node, ns.rdf('type'), phoneInfo.type, contactNode.doc()))
       insertions.push(st(node, ns.vcard("value"), phoneInfo.phoneNumber, contactNode.doc()))  
@@ -231,7 +237,6 @@ async function addWebIDToContact(
   let groupUriNode = null
 
   try {
-    await context.session.store.fetcher.load(contactUri)
 
     if (groupUris) {
       groupUris.map(async (groupUri) => {
