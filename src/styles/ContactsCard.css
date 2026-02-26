@@ -61,8 +61,10 @@
 .contactsSubmitButton {
   margin-top: var(--spacing-md);
   background-color: var(--color-primary) !important; 
-  border-radius: var(--border-radius-base);
+  border-radius: var(--border-radius-base) !important;
+  box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
   color: white !important;
+  transition: all 0.3s ease-in-out;
 }
 
 .contactsSubmitButton:hover {
@@ -74,7 +76,6 @@
   box-shadow: 0 1px 2px white;
 }
 
-/* Action Button Focus - used by ChatWithMe, ProfileCard */
 .contactsSubmitButton:focus,
 .contactsSubmitButton:focus-visible {
   outline: 3px solid var(--color-primary) !important;
@@ -96,12 +97,12 @@
   height: 40px;
   top: 0;
   right: 0;
+  transition: all 0.3s ease-in-out;
 }
 
 .contactsCloseButton:hover {
-  background: white !important; 
+  transform: translateY(-5px);
   box-shadow: 0 2px 4px var(--color-primary) !important;
-  color: var(--color-primary) !important;
 }
 
 .contactsCloseButton:active {
