@@ -15,8 +15,9 @@ async function addContactToAddressBook(
   container: HTMLDivElement
 ) {
 
-  const addressBookUriSelectorDiv = createAddressBookUriSelectorDialog(context, contactsModule, contactData, addressBooksData)
-  container.appendChild(addressBookUriSelectorDiv)   
+  const addressBookUriSelectorDialog = createAddressBookUriSelectorDialog(context, contactsModule, contactData, addressBooksData)
+  container.appendChild(addressBookUriSelectorDialog)   
+  addressBookUriSelectorDialog.setAttribute('open', ''); 
 }
 
 async function getAddressBooks(

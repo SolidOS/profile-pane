@@ -12,14 +12,12 @@ export const createAddressBookUriSelectorDialog = (context: DataBrowserContext,
   contactData: ContactData,
   addressBooksData: AddressBooksData
 ): HTMLDialogElement => {
-  const addressBookUriSelectorDiv = context.dom.createElement('dialog')
-  addressBookUriSelectorDiv.setAttribute('role', 'addressBookSelector')
-  addressBookUriSelectorDiv.setAttribute('aria-live', 'polite')
-  addressBookUriSelectorDiv.setAttribute('tabindex', '0')
-  addressBookUriSelectorDiv.classList.add('contactsAddressBookSelector')
-  addressBookUriSelectorDiv.setAttribute('id', 'contacts-selector-dialog')
+  const addressBookUriSelectorDialog = context.dom.createElement('dialog')
+  addressBookUriSelectorDialog.setAttribute('role', 'dialog')
+  addressBookUriSelectorDialog.setAttribute('aria-live', 'polite')
+  addressBookUriSelectorDialog.classList.add('contactsAddressBookSelector')
+  addressBookUriSelectorDialog.setAttribute('id', 'contacts-selector-dialog')
 
-    
   const button = context.dom.getElementById('add-to-contacts-button')
   button.setAttribute('disabled', '')
 
@@ -32,28 +30,28 @@ export const createAddressBookUriSelectorDialog = (context: DataBrowserContext,
     
     button.removeAttribute('disabled')
   }
-  const addressBookDetailsDiv = createAddressBookDetailsDiv(context)
+  const addressBookDetailsSection = createAddressBookDetailsSection(context)
     
-  const addressBookListDiv = createAddressBookListDiv(context, contactsModule, contactData, addressBooksData, addressBookDetailsDiv)
-  addressBookDetailsDiv.appendChild(addressBookListDiv)
+  const addressBookListDiv = createAddressBookListDiv(context, contactsModule, contactData, addressBooksData, addressBookDetailsSection)
+  addressBookDetailsSection.appendChild(addressBookListDiv)
 
-  addressBookUriSelectorDiv.appendChild(closeButton)
-  addressBookUriSelectorDiv.appendChild(addressBookDetailsDiv)
-  addressBookUriSelectorDiv.appendChild(createNewAddressBookForm(context, addressBooksData, contactsModule, contactData))
+  addressBookUriSelectorDialog.appendChild(closeButton)
+  addressBookUriSelectorDialog.appendChild(addressBookDetailsSection)
+  addressBookUriSelectorDialog.appendChild(createNewAddressBookForm(context, addressBooksData, contactsModule, contactData))
   
-  return addressBookUriSelectorDiv
+  return addressBookUriSelectorDialog
 }
 
-export const createAddressBookDetailsDiv = (
+export const createAddressBookDetailsSection = (
   context: DataBrowserContext
-): HTMLDivElement => {
-  const addressBookDetailsDiv = context.dom.createElement('div')
-  addressBookDetailsDiv.setAttribute('role', 'addressBookDetails')
-  addressBookDetailsDiv.setAttribute('aria-live', 'polite')
-  addressBookDetailsDiv.setAttribute('tabindex', '0')
-  addressBookDetailsDiv.classList.add('contactsAddressBookDetails')
+): HTMLElement => {
+  const addressBookDetailsSection = context.dom.createElement('section')
+  addressBookDetailsSection.setAttribute('role', 'addressBookDetails')
+  addressBookDetailsSection.setAttribute('aria-live', 'polite')
+  addressBookDetailsSection.setAttribute('tabindex', '0')
+  addressBookDetailsSection.classList.add('contactsAddressBookDetails')
 
-  return addressBookDetailsDiv
+  return addressBookDetailsSection
 }
 
 export const createAddressBookListDiv = (
@@ -61,7 +59,7 @@ export const createAddressBookListDiv = (
   contactsModule: ContactsModuleRdfLib,
   contactData: ContactData,
   addressBooksData: AddressBooksData,
-  addressBookDetailsDiv: HTMLDivElement
+  addressBookDetailsSection: HTMLElement
 ): HTMLDivElement => {
   
   const setButtonOnClickHandler =  (event) => {
@@ -100,7 +98,7 @@ export const createAddressBookListDiv = (
       if (!addressBook) addressBook = addressBooksData.private.get(selectedAddressBookUri) 
       // add groups for addressbook  
       const groupListDiv = createGroupListDiv(context, addressBook)  
-      addressBookDetailsDiv.appendChild(groupListDiv)
+      addressBookDetailsSection.appendChild(groupListDiv)
     }
   }    
   const addressBookListDiv = context.dom.createElement('div')

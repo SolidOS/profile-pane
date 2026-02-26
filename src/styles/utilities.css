@@ -333,6 +333,7 @@
 .input:focus-visible {
   outline: 1px solid var(--color-primary) !important;
   outline-offset: 2px !important;
+  border-radius: var(--border-radius-base);
   box-shadow: 0 0 0 2px var(--color-background), 0 0 0 5px rgba(124, 77, 255, 0.25) !important;
   z-index: 1;
 }

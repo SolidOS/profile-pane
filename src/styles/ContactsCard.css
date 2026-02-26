@@ -3,7 +3,6 @@
   border-radius: var(--border-radius-base);
   box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
   color: white;
-  padding: var(--spacing-md);
   padding-top: 3em;
   justify-content: center;
   align-items: start;
@@ -12,7 +11,7 @@
   box-sizing: border-box;
   display: flex;
   flex-direction: row;
-  margin: 4px;
+  margin: 1px;
   font-weight: 600;
   position: relative;
   opacity: 1;
