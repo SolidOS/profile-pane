@@ -2,7 +2,7 @@ import { LiveStore, NamedNode, sym, st } from "rdflib"
 import { ns, utils } from "solid-ui"
 import ContactsModuleRdfLib, { NewContact } from "@solid-data-modules/contacts-rdflib"
 import { DataBrowserContext } from "pane-registry";
-import { createAddressBookUriSelectorDiv } from "./ContactsCard";
+import { createAddressBookUriSelectorDialog } from "./ContactsCard";
 import './styles/ContactsCard.css'
 import { authn } from "solid-logic";
 import { AddressBooksData, ContactData, EmailDetails, PhoneDetails, SelectedAddressBookUris } from "./contactsTypes";
@@ -15,7 +15,7 @@ async function addContactToAddressBook(
   container: HTMLDivElement
 ) {
 
-  const addressBookUriSelectorDiv = createAddressBookUriSelectorDiv(context, contactsModule, contactData, addressBooksData)
+  const addressBookUriSelectorDiv = createAddressBookUriSelectorDialog(context, contactsModule, contactData, addressBooksData)
   container.appendChild(addressBookUriSelectorDiv)   
 }
 

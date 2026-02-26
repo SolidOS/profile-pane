@@ -7,17 +7,17 @@ import { authn } from "solid-logic"
 import { complain, mention } from "./buttonsHelper"
 import { contactWasAddedSuccesMessage } from "./texts"
 
-export const createAddressBookUriSelectorDiv = (context: DataBrowserContext,
+export const createAddressBookUriSelectorDialog = (context: DataBrowserContext,
   contactsModule: ContactsModuleRdfLib,
   contactData: ContactData,
   addressBooksData: AddressBooksData
-): HTMLDivElement => {
-  const addressBookUriSelectorDiv = context.dom.createElement('div')
+): HTMLDialogElement => {
+  const addressBookUriSelectorDiv = context.dom.createElement('dialog')
   addressBookUriSelectorDiv.setAttribute('role', 'addressBookSelector')
   addressBookUriSelectorDiv.setAttribute('aria-live', 'polite')
   addressBookUriSelectorDiv.setAttribute('tabindex', '0')
   addressBookUriSelectorDiv.classList.add('contactsAddressBookSelector')
-  addressBookUriSelectorDiv.setAttribute('id', 'contacts-selector-div')
+  addressBookUriSelectorDiv.setAttribute('id', 'contacts-selector-dialog')
 
     
   const button = context.dom.getElementById('add-to-contacts-button')
@@ -27,14 +27,14 @@ export const createAddressBookUriSelectorDiv = (context: DataBrowserContext,
   closeButton.classList.add('contactsCloseButton')
   closeButton.innerHTML = 'Close'
   closeButton.onclick = (event) => {
-    const elementToClose = context.dom.getElementById('contacts-selector-div')
+    const elementToClose = context.dom.getElementById('contacts-selector-dialog')
     elementToClose.remove()
     
     button.removeAttribute('disabled')
   }
   const addressBookDetailsDiv = createAddressBookDetailsDiv(context)
     
-  const addressBookListDiv = createAddressBookListDiv(context, contactsModule, contactData, addressBooksData, addressBookDetailsDiv, addressBookUriSelectorDiv)
+  const addressBookListDiv = createAddressBookListDiv(context, contactsModule, contactData, addressBooksData, addressBookDetailsDiv)
   addressBookDetailsDiv.appendChild(addressBookListDiv)
 
   addressBookUriSelectorDiv.appendChild(closeButton)
@@ -61,14 +61,14 @@ export const createAddressBookListDiv = (
   contactsModule: ContactsModuleRdfLib,
   contactData: ContactData,
   addressBooksData: AddressBooksData,
-  addressBookDetailsDiv: HTMLDivElement,
-  addressBookUriSelectorDiv: HTMLDivElement
+  addressBookDetailsDiv: HTMLDivElement
 ): HTMLDivElement => {
   
   const setButtonOnClickHandler =  (event) => {
     event.preventDefault()
     const selectedAddressBookButton = event.target
     const previouslySelected = selectedAddressBookButton.classList.contains('selectedButton');
+    const addressBookUriSelectorDialog = context.dom.getElementById('contacts-selector-dialog')
     let addressBook = null
     // remove the previous groups
     const groupDivToRemove = context.dom.getElementById('group-list')
@@ -84,13 +84,13 @@ export const createAddressBookListDiv = (
       selectedAddressBookButton.classList.remove("selectedButton", "selectedAddressBook");
       const groupForm = context.dom.getElementById('new-group-form')
       if (groupForm) groupForm.remove()
-      addressBookUriSelectorDiv.appendChild(createNewAddressBookForm(context, addressBooksData, contactsModule, contactData))
+      addressBookUriSelectorDialog.appendChild(createNewAddressBookForm(context, addressBooksData, contactsModule, contactData))
     } else {
       const addressForm = context.dom.getElementById('new-addressbook-form')
       if (addressForm) addressForm.remove()
       // display group form
       const groupForm = context.dom.getElementById('new-group-form')
-      if (!groupForm) addressBookUriSelectorDiv.appendChild(createGroupNameForm(context, addressBooksData, contactsModule, contactData))
+      if (!groupForm) addressBookUriSelectorDialog.appendChild(createGroupNameForm(context, addressBooksData, contactsModule, contactData))
 
       selectedAddressBookButton.classList.add("selectedButton", "selectedAddressBook");
       // selected address book code
@@ -239,8 +239,8 @@ const createNewAddressBookForm = (
         }
         const contact = await createContactInAddressBook(context, contactsModule, contactData, selectedAddressBookUris)
         addressBooksData.contacts.set(contactData.webID, contact)
-        const selectorDiv = context.dom.getElementById('contacts-selector-div')
-        selectorDiv.remove()
+        const selectorDialog = context.dom.getElementById('contacts-selector-dialog')
+        selectorDialog.remove()
         const buttonContainer = getButtonContainer(context)
         mention(buttonContainer, contactWasAddedSuccesMessage)
         const button = context.dom.getElementById('add-to-contacts-button')
@@ -395,8 +395,8 @@ const createGroupNameForm = (
     try {
       const contact = await createContactInAddressBook(context, contactsModule, contactData, selectedAddressBookUris)
       addressBooksData.contacts.set(contactData.webID, contact)
-      const selectorDiv = context.dom.getElementById('contacts-selector-div')
-      selectorDiv.remove()
+      const selectorDialog = context.dom.getElementById('contacts-selector-dialog')
+      selectorDialog.remove()
       
       const buttonContainer = getButtonContainer(context)
       mention(buttonContainer, contactWasAddedSuccesMessage)
