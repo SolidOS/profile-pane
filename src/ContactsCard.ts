@@ -1,16 +1,18 @@
 import { DataBrowserContext } from "pane-registry"
 import { widgets } from "solid-ui"
-import { addAddressToPublicTypeIndex, createContactInAddressBook } from "./contactsHelpers"
+import { addAddressToPublicTypeIndex, createContactInAddressBook, refreshButton } from "./contactsHelpers"
 import { AddressBookDetails, AddressBooksData, ContactData, GroupData } from "./contactsTypes"
 import ContactsModuleRdfLib from "@solid-data-modules/contacts-rdflib"
 import { authn } from "solid-logic"
-import { mention } from "./buttonsHelper"
+import { clearPreviousMessage, mention } from "./buttonsHelper"
 import { addressBookNotExists, contactWasAddedSuccesMessage, errorAddressBookCreation, errorContactCreation, errorGroupCreation, groupIsRequired } from "./texts"
+import { NamedNode } from "rdflib"
 
 export const createAddressBookUriSelectorDialog = (context: DataBrowserContext,
   contactsModule: ContactsModuleRdfLib,
   contactData: ContactData,
-  addressBooksData: AddressBooksData
+  addressBooksData: AddressBooksData,
+  subject: NamedNode
 ): HTMLDialogElement => {
   const addressBookUriSelectorDialog = context.dom.createElement('dialog')
   addressBookUriSelectorDialog.setAttribute('role', 'dialog')
@@ -32,13 +34,13 @@ export const createAddressBookUriSelectorDialog = (context: DataBrowserContext,
   }
   const addressBookDetailsSection = createAddressBookDetailsSection(context)
   const errorDisplaySection = createErrorDisplaySection(context)  
-  const addressBookListDiv = createAddressBookListDiv(context, contactsModule, contactData, addressBooksData, addressBookDetailsSection)
+  const addressBookListDiv = createAddressBookListDiv(context, contactsModule, contactData, addressBooksData, addressBookDetailsSection, subject)
   addressBookDetailsSection.appendChild(addressBookListDiv)
 
   addressBookUriSelectorDialog.appendChild(closeButton)
   addressBookUriSelectorDialog.appendChild(addressBookDetailsSection)
   addressBookUriSelectorDialog.appendChild(errorDisplaySection)
-  addressBookUriSelectorDialog.appendChild(createNewAddressBookForm(context, addressBooksData, contactsModule, contactData))
+  addressBookUriSelectorDialog.appendChild(createNewAddressBookForm(context, addressBooksData, contactsModule, contactData, subject))
  return addressBookUriSelectorDialog
 }
 
@@ -59,7 +61,8 @@ export const createAddressBookListDiv = (
   contactsModule: ContactsModuleRdfLib,
   contactData: ContactData,
   addressBooksData: AddressBooksData,
-  addressBookDetailsSection: HTMLElement
+  addressBookDetailsSection: HTMLElement,
+  subject: NamedNode
 ): HTMLDivElement => {
   
   const setButtonOnClickHandler =  (event) => {
@@ -82,13 +85,13 @@ export const createAddressBookListDiv = (
       selectedAddressBookButton.classList.remove("contactsSelectedButton", "selectedAddressBook");
       const groupForm = context.dom.getElementById('new-group-form')
       if (groupForm) groupForm.remove()
-      addressBookUriSelectorDialog.appendChild(createNewAddressBookForm(context, addressBooksData, contactsModule, contactData))
+      addressBookUriSelectorDialog.appendChild(createNewAddressBookForm(context, addressBooksData, contactsModule, contactData, subject))
     } else {
       const addressForm = context.dom.getElementById('new-addressbook-form')
       if (addressForm) addressForm.remove()
       // display group form
       const groupForm = context.dom.getElementById('new-group-form')
-      if (!groupForm) addressBookUriSelectorDialog.appendChild(createGroupNameForm(context, addressBooksData, contactsModule, contactData))
+      if (!groupForm) addressBookUriSelectorDialog.appendChild(createGroupNameForm(context, addressBooksData, contactsModule, contactData, subject))
 
       selectedAddressBookButton.classList.add("contactsSelectedButton", "selectedAddressBook");
       // selected address book code
@@ -248,7 +251,8 @@ const createNewAddressBookForm = (
   context: DataBrowserContext,
   addressBooksData: AddressBooksData,
   contactsModule: ContactsModuleRdfLib,
-  contactData: ContactData
+  contactData: ContactData,
+  subject: NamedNode
 ): HTMLFormElement => {
   const newAddressBookEventListener = async (event) => {
     event.preventDefault()    
@@ -281,7 +285,7 @@ const createNewAddressBookForm = (
         groupUris: selectedGroupUris 
         }
         const contact = await createContactInAddressBook(context, contactsModule, contactData, selectedAddressBookUris)
-        finalizeContactEntry(context, addressBooksData, contactData.webID, contact)
+        finalizeContactEntry(context, addressBooksData, contactData.webID, contact, subject)
       } catch (error) {
         addErrorToErrorDisplay(context, error)
       }
@@ -396,7 +400,8 @@ const createGroupNameForm = (
   context: DataBrowserContext,
   addressBooksData: AddressBooksData, 
   contactsModule: ContactsModuleRdfLib,
-  contactData: ContactData
+  contactData: ContactData,
+  subject: NamedNode
 ): HTMLFormElement => {
   const inputGroupEventListener = () => {
     checkAndRemoveErrorDisplay(context)
@@ -437,7 +442,7 @@ const createGroupNameForm = (
       }
       try {
         const contact = await createContactInAddressBook(context, contactsModule, contactData, selectedAddressBookUris)
-        finalizeContactEntry(context, addressBooksData, contactData.webID, contact)
+        finalizeContactEntry(context, addressBooksData, contactData.webID, contact, subject)
       } catch(error) {
         addErrorToErrorDisplay(context, `${errorContactCreation}\n${error}`)
       }
@@ -476,7 +481,8 @@ const finalizeContactEntry = (
   context: DataBrowserContext,
   addressBooksData: AddressBooksData,
   webID: string,
-  contact: string
+  contact: string,
+  subject: NamedNode
 ) => {
     addressBooksData.contacts.set(webID, contact)
     const selectorDialog = context.dom.getElementById('contacts-selector-dialog')
@@ -486,6 +492,10 @@ const finalizeContactEntry = (
     mention(buttonContainer, contactWasAddedSuccesMessage)
     const button = context.dom.getElementById('add-to-contacts-button')
     button.removeAttribute('disabled')  
+    setTimeout(() => {
+      clearPreviousMessage(buttonContainer)
+    }, 2000); 
+    refreshButton(context, subject, addressBooksData)  
 }
 
 const createGroupButton = (

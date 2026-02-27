@@ -4,16 +4,16 @@ import { authn } from 'solid-logic'
 import { LiveStore, NamedNode } from 'rdflib'
 import { widgets } from 'solid-ui'
 import {
-  clearPreviousMessage, complain,
-  mention
+  clearPreviousMessage, complain, checkIfAnyUserLoggedIn
 } from './buttonsHelper'
-import { getContactData, getAddressBooksData, addContactToAddressBook } from './contactsHelpers'
+import { getContactData, getAddressBooksData, addContactToAddressBook, checkIfContactExists, refreshButton } from './contactsHelpers'
 import { AddressBooksData, ContactData } from './contactsTypes'
 import {
-  addMeToYourContactsButtonText, contactExistsAlreadyButtonText, contactExistsMessage, contactWasAddedSuccesMessage, logInAddMeToYourContactsButtonText, userNotLoggedInErrorMessage
+  addMeToYourContactsButtonText, contactExistsMessage, logInAddMeToYourContactsButtonText, userNotLoggedInErrorMessage
 } from './texts'
 import './styles/ProfileCard.css'
 import ContactsModuleRdfLib from '@solid-data-modules/contacts-rdflib'
+import { addErrorToErrorDisplay } from './ContactsCard'
 
 let buttonContainer = <HTMLDivElement>document.createElement('section')
 
@@ -56,9 +56,16 @@ const createAddMeToYourContactsButton = async (
   try {
     addressBooksData = await getAddressBooksData(context, contactsModule)
   } catch (error) {
-    throw new Error(error)
+    addErrorToErrorDisplay(context, error)
   }
-
+  function setButtonHandler(event) {
+    event.preventDefault()
+    saveNewContact(subject, context, contactsModule, addressBooksData)
+      .catch((error) => {
+        clearPreviousMessage(buttonContainer)
+        complain(buttonContainer, context, error)
+      })
+  }
   let label = checkIfAnyUserLoggedIn(me) ? addMeToYourContactsButtonText.toUpperCase() : logInAddMeToYourContactsButtonText.toUpperCase()
   const button = widgets.button(
     context.dom,
@@ -70,42 +77,7 @@ const createAddMeToYourContactsButton = async (
     }
   )
   button.setAttribute('id', 'add-to-contacts-button')
-
-  function setButtonHandler(event) {
-    event.preventDefault()
-    saveNewContact(subject, context, contactsModule, addressBooksData)
-      .then(() => {
-        // clearPreviousMessage(buttonContainer)
-        // mention sucess message was here     
-        // refreshButton() don't think i need to refresh
-      })
-      .catch((error) => {
-        clearPreviousMessage(buttonContainer)
-        //else UI.widgets.complain(buttonContainer, message); //displays an error message at the top of the window
-        complain(buttonContainer, context, error)
-      })
-  }
-
-  button.refresh = refreshButton()
-
-  function refreshButton() {
-    const me = authn.currentUser()
-  
-    if (checkIfAnyUserLoggedIn(me)) {
-      const contactExists = checkIfContactExists(subject, addressBooksData)
-      if (contactExists) {
-        //logged in and friend exists or friend was just added
-        button.innerHTML = contactExistsAlreadyButtonText.toUpperCase()
-        button.onclick = null 
-      } else {
-        //logged in and friend does not exist yet
-        button.innerHTML = addMeToYourContactsButtonText.toUpperCase()
-      }
-    } else {
-      //not logged in
-      button.innerHTML = logInAddMeToYourContactsButtonText.toUpperCase()
-    }
-  }
+  //button.refresh = refreshButton(context, subject, addressBooksData)
   return button
 }
 
@@ -125,8 +97,8 @@ async function saveNewContact(
       await store.fetcher.load(me)
       try {
         const contactData: ContactData = await getContactData(store, subject)
-        await addContactToAddressBook(context, contactsModule, contactData, addressBooksData, buttonContainer)
-        // i think i should call refresh here
+        await addContactToAddressBook(context, contactsModule, contactData, addressBooksData, buttonContainer, subject)
+        
       } catch (error) {
         let errorMessage = error
         if (errorMessage.toString().includes('Unauthenticated'))
@@ -137,23 +109,8 @@ async function saveNewContact(
   } else throw new Error(userNotLoggedInErrorMessage)
 }
 
-// move this to a helper file
-function checkIfAnyUserLoggedIn(me: NamedNode): boolean {
-  if (me) return true
-  else return false
-}
-
-function checkIfContactExists(
-  subject: NamedNode,
-  addressBooksData: AddressBooksData
-): boolean {
- if (addressBooksData.contacts.has(subject.value)) return true
-  return false
-}
-
 export {
   addMeToYourContactsDiv,
   createAddMeToYourContactsButton,
-  saveNewContact,
-  checkIfContactExists,
+  saveNewContact
 }

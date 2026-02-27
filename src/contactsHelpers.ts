@@ -6,17 +6,19 @@ import { addErrorToErrorDisplay, createAddressBookUriSelectorDialog } from "./Co
 import './styles/ContactsCard.css'
 import { authn } from "solid-logic";
 import { AddressBooksData, ContactData, EmailDetails, PhoneDetails, SelectedAddressBookUris } from "./contactsTypes";
-import { errorGettingAddressBooks, errorLoadingContact, errorReadingAddressBook } from "./texts";
+import { addMeToYourContactsButtonText, contactExistsAlreadyButtonText, errorGettingAddressBooks, errorLoadingContact, errorReadingAddressBook, logInAddMeToYourContactsButtonText } from "./texts";
+import { checkIfAnyUserLoggedIn } from "./buttonsHelper";
 
 async function addContactToAddressBook(
   context: DataBrowserContext,
   contactsModule: ContactsModuleRdfLib,
   contactData: ContactData,
   addressBooksData: AddressBooksData,
-  container: HTMLDivElement
+  container: HTMLDivElement,
+  subject: NamedNode
 ) {
 
-  const addressBookUriSelectorDialog = createAddressBookUriSelectorDialog(context, contactsModule, contactData, addressBooksData)
+  const addressBookUriSelectorDialog = createAddressBookUriSelectorDialog(context, contactsModule, contactData, addressBooksData, subject)
   container.appendChild(addressBookUriSelectorDialog)   
   addressBookUriSelectorDialog.setAttribute('open', ''); 
 }
@@ -281,10 +283,43 @@ async function addAddressToPublicTypeIndex(
   }  
 }
 
+function refreshButton(
+  context: DataBrowserContext,
+  subject: NamedNode, 
+  addressBooksData: AddressBooksData
+) {
+  const me = authn.currentUser()
+  const button = context.dom.getElementById('add-to-contacts-button')
+  if (checkIfAnyUserLoggedIn(me)) {
+      const contactExists = checkIfContactExists(subject, addressBooksData)
+      if (contactExists) {
+        //logged in and friend exists or friend was just added
+        button.innerHTML = contactExistsAlreadyButtonText.toUpperCase()
+        button.onclick = null 
+      } else {
+        //logged in and friend does not exist yet
+        button.innerHTML = addMeToYourContactsButtonText.toUpperCase()
+      }
+    } else {
+      //not logged in
+      button.innerHTML = logInAddMeToYourContactsButtonText.toUpperCase()
+    }
+  }
+
+function checkIfContactExists(
+  subject: NamedNode,
+  addressBooksData: AddressBooksData
+): boolean {
+ if (addressBooksData.contacts.has(subject.value)) return true
+  return false
+}
+
 export {
   getAddressBooksData,
   getContactData,
   addContactToAddressBook,
   createContactInAddressBook,
-  addAddressToPublicTypeIndex
+  addAddressToPublicTypeIndex,
+  refreshButton,
+  checkIfContactExists
 }
