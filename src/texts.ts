@@ -7,7 +7,9 @@ export const internalErrorMessage = 'An internal error occured!'
 export const friendWasAddedSuccesMessage = 'Friend was added!'
 export const contactWasAddedSuccesMessage = 'Contact was added!'
 export const addressBookNotExists = "Your address book wasn't found."
-
+export const groupIsRequired = "You need to either pick a group or enter one."
+export const errorGroupCreation = "There was an error creating group."
+export const errorContactCreation = "There was an error creating contact."
 //OTHER
 export const friendExistsMessage = 'Friend already exists'
 export const contactExistsMessage = 'Contact already exists'

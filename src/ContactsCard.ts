@@ -5,7 +5,7 @@ import { AddressBookDetails, AddressBooksData, ContactData, GroupData } from "./
 import ContactsModuleRdfLib from "@solid-data-modules/contacts-rdflib"
 import { authn } from "solid-logic"
 import { complain, mention } from "./buttonsHelper"
-import { addressBookNotExists, contactWasAddedSuccesMessage } from "./texts"
+import { addressBookNotExists, contactWasAddedSuccesMessage, errorContactCreation, errorGroupCreation, groupIsRequired } from "./texts"
 
 export const createAddressBookUriSelectorDialog = (context: DataBrowserContext,
   contactsModule: ContactsModuleRdfLib,
@@ -171,6 +171,30 @@ const addErrorToErrorDisplay = (
   errorDisplaySection.innerHTML = message
 }
 
+const checkAndRemoveErrorDisplay = (
+  context: DataBrowserContext
+) => {
+  const errorDisplaySection = context.dom.getElementById('error-display-section')
+  if (errorDisplaySection.classList.contains('contactsShowErrors')) {
+    errorDisplaySection.classList.remove('contactsShowErrors')
+    errorDisplaySection.innerHTML = ''
+  }
+}
+
+const checkAndAddErrorDisplay = (
+  context: DataBrowserContext,
+  message: string
+) => {
+  
+  const selectedGroupElements = context.dom.querySelectorAll('.selectedGroup')
+
+  const groupNameField = context.dom.querySelector('#groupNameInput')
+  // @ts-ignore
+  const enteredGroupName = groupNameField.value
+  if (selectedGroupElements.length === 0 && !enteredGroupName) {
+    addErrorToErrorDisplay(context, message)
+  }
+}
 const createSubmitButton = (
   context: DataBrowserContext,
   form: HTMLFormElement
@@ -331,8 +355,9 @@ const createNewAddressBookForm = (
   groupNameInputBox.type = 'text'; 
   groupNameInputBox.name = 'groupName'; 
   groupNameInputBox.id = 'groupNameInput'; 
-  groupNameInputBox.placeholder = 'New group name (optional)'; 
+  groupNameInputBox.placeholder = 'New group name'; 
   groupNameInputBox.classList.add('input', 'contactsGroupInput')
+  groupNameInputBox.required = true
   const submitButton = createSubmitButton(context, newAddressBookForm)
   
   newAddressBookForm.appendChild(addressBookNameLabel)
@@ -378,6 +403,10 @@ const createGroupNameForm = (
   contactsModule: ContactsModuleRdfLib,
   contactData: ContactData
 ): HTMLFormElement => {
+  const inputGroupEventListener = () => {
+    checkAndRemoveErrorDisplay(context)
+  }
+
   const addContactEventListener = async (event) => {
     event.preventDefault()
     let selectedAddressBookUri = null 
@@ -396,36 +425,32 @@ const createGroupNameForm = (
     const groupNameField = context.dom.querySelector('#groupNameInput')
     // @ts-ignore
     const enteredGroupName = groupNameField.value
-
-    if (enteredGroupName) {
-      // add group first 
-      try {
-        const newGroupUri = await contactsModule.createNewGroup({addressBookUri: selectedAddressBookUri, groupName: enteredGroupName })
-        selectedGroupUris.push(newGroupUri)
-      } catch (error) {
-        throw new Error(error)
-      }  
-    }
+    if (selectedGroupUris.length != 0 || enteredGroupName) {
+      if (enteredGroupName) {
+        // add group first 
+        try {
+          const newGroupUri = await contactsModule.createNewGroup({addressBookUri: selectedAddressBookUri, groupName: enteredGroupName })
+          selectedGroupUris.push(newGroupUri)
+        } catch (error) {
+          addErrorToErrorDisplay(context, errorGroupCreation)
+        }  
+      }
     
-    const selectedAddressBookUris = { 
-        addressBookUri: selectedAddressBookUri,
-        groupUris: selectedGroupUris 
+      const selectedAddressBookUris = { 
+          addressBookUri: selectedAddressBookUri,
+          groupUris: selectedGroupUris 
+      }
+      try {
+        const contact = await createContactInAddressBook(context, contactsModule, contactData, selectedAddressBookUris)
+        finalizeContactEntry(context, addressBooksData, contactData.webID, contact)
+      } catch(error) {
+        addErrorToErrorDisplay(context, errorContactCreation)
+      }
+    } else {
+      addErrorToErrorDisplay(context,groupIsRequired)
     }
-    try {
-      const contact = await createContactInAddressBook(context, contactsModule, contactData, selectedAddressBookUris)
-      addressBooksData.contacts.set(contactData.webID, contact)
-      const selectorDialog = context.dom.getElementById('contacts-selector-dialog')
-      selectorDialog.remove()
-      
-      const buttonContainer = getButtonContainer(context)
-      mention(buttonContainer, contactWasAddedSuccesMessage)
-      const button = context.dom.getElementById('add-to-contacts-button')
-      button.removeAttribute('disabled')  
-    } catch(error) {
-      throw new Error(error)
-    }
-  }
-
+  } 
+  
   const newGroupForm = context.dom.createElement('form')
   newGroupForm.addEventListener('submit', addContactEventListener) 
   newGroupForm.innerHTML = 'Create a new group (optional)'
@@ -435,13 +460,16 @@ const createGroupNameForm = (
   const groupNameLabel = context.dom.createElement('label')
   groupNameLabel.classList.add('label')
   groupNameLabel.setAttribute('for', 'groupNameInput')
-
+  // when something is entered into the input group
+  // field need to remove the error
+  // add an event listener
   const groupNameInputBox = context.dom.createElement('input')
   groupNameInputBox.type = 'text' 
   groupNameInputBox.name = 'groupName' 
   groupNameInputBox.id = 'groupNameInput' 
   groupNameInputBox.placeholder = 'New group name (optional)' 
   groupNameInputBox.classList.add('input', 'contactsGroupInput')
+  groupNameInputBox.addEventListener('click', inputGroupEventListener)
   const submitButton = createSubmitButton(context, newGroupForm)
   
   newGroupForm.appendChild(groupNameLabel)
@@ -449,6 +477,22 @@ const createGroupNameForm = (
   newGroupForm.appendChild(submitButton)
     
   return newGroupForm
+}
+
+const finalizeContactEntry = (
+  context: DataBrowserContext,
+  addressBooksData: AddressBooksData,
+  webID: string,
+  contact: string
+) => {
+    addressBooksData.contacts.set(webID, contact)
+    const selectorDialog = context.dom.getElementById('contacts-selector-dialog')
+    selectorDialog.remove()
+    
+    const buttonContainer = getButtonContainer(context)
+    mention(buttonContainer, contactWasAddedSuccesMessage)
+    const button = context.dom.getElementById('add-to-contacts-button')
+    button.removeAttribute('disabled')  
 }
 
 const createGroupButton = (
@@ -463,9 +507,10 @@ const createGroupButton = (
     
     if (previouslySelected) {
       selectedGroupButton.classList.remove("contactsSelectedButton", "selectedGroup")
-    
+      checkAndAddErrorDisplay(context, groupIsRequired)
     } else {
       selectedGroupButton.classList.add("contactsSelectedButton", "selectedGroup");
+      checkAndRemoveErrorDisplay(context)
     }
   } 
   const button = widgets.button(
@@ -479,7 +524,6 @@ const createGroupButton = (
   )
   button.setAttribute('value', group.name)
   button.setAttribute('id', group.uri)
-  //button.classList.add('actionButton', 'btn-primary', 'action-button-focus')
   button.classList.add('contactsButton')
   
   return button
