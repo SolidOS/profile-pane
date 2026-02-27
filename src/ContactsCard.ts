@@ -502,7 +502,7 @@ const finalizeContactEntry = (
   contact: string,
   subject: NamedNode
 ) => {
-    addressBooksData.contacts.set(webID, contact)
+    addressBooksData.contactWebIDs.set(webID, contact)
     const selectorDialog = context.dom.getElementById('contacts-selector-dialog')
     selectorDialog.remove()
     

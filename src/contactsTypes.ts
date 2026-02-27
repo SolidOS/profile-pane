@@ -16,7 +16,8 @@ export interface AddressBookDetails {
 export interface AddressBooksData {
   public: Map<string, AddressBookDetails>,
   private: Map<string, AddressBookDetails>,
-  contacts: Map<string,string>
+  contactWebIDs: Map<string,string>,
+  contactNames: Map<string, string>
 }
 
 export interface EmailDetails {

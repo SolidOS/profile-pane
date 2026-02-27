@@ -36,7 +36,8 @@ async function getAddressBooks(
   const addressBooksData = { 
     public: new Map(),
     private: new Map(),
-    contacts: new Map()
+    contactWebIDs: new Map(),
+    contactNames: new Map()
   }
   const getAddressData = async (addressBookUri) => {
     try {
@@ -77,6 +78,7 @@ try {
         groups: addressBook.groups
       })
       addressBook.contacts.map((contact) => {
+        addressBooksData.contactNames.set(contact.name, contact.uri)
         allContacts.push(contact)
       })
     })
@@ -88,6 +90,7 @@ try {
         groups: addressBook.groups
       })
       addressBook.contacts.map((contact) => {
+        addressBooksData.contactNames.set(contact.name, contact.uri)
         allContacts.push(contact)
       })
     })
@@ -95,7 +98,7 @@ try {
     const results = await Promise.all(contactPromises)
     
     results.map((contact) => {
-      if (contact) addressBooksData.contacts.set(contact.webID, contact.uri)  
+      if (contact) addressBooksData.contactWebIDs.set(contact.webID, contact.uri)  
     })
     
 
@@ -316,7 +319,7 @@ function checkIfContactExists(
   subject: NamedNode,
   addressBooksData: AddressBooksData
 ): boolean {
- if (addressBooksData.contacts.has(subject.value)) return true
+ if (addressBooksData.contactWebIDs.has(subject.value)) return true
   return false
 }
 
