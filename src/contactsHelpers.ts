@@ -139,6 +139,7 @@ async function getContactData(
 
   const emailNodes = store.each(subject, ns.vcard('hasEmail'), null, subject.doc()) || null
   const phoneNodes = store.each(subject, ns.vcard('hasTelephone'), null, subject.doc()) || null
+ 
   
   emailNodes.map((node) => {
     email = store.any(node as NamedNode, ns.vcard('value'), null, subject.doc())
@@ -183,7 +184,7 @@ async function createContactInAddressBook(
     } 
     await context.session.store.fetcher.load(contactUri)
     await addWebIDToContact(context, groupUris, contactUri, contactData.webID)
-    if (contactData.emails.length !=0 || contactData.phoneNumbers.length != 0) {
+    if (contactData.emails.length != 0 || contactData.phoneNumbers.length != 0) {
       await addContactDetails(context, contactUri, contactData)
     }
     return contactUri
@@ -202,23 +203,28 @@ async function addContactDetails(
   let node = null
   const max = 9999999999999
   const min = 1000000000000
-  const insertions = []
-  
+       //node = sym(`#id${Math.floor(Math.random() * (max - min + 1)) + min}`)
+      console.log("node: " + JSON.stringify(node))
+  let insertions = []
+
+  console.log("emails: " + JSON.stringify(contactData.emails))
+  console.log("phoneNumbers: " + JSON.stringify(contactData.phoneNumbers))
   try {
+ 
     contactData.emails.map((emailInfo) => {
-      node = sym(`#id${Math.floor(Math.random() * (max - min + 1) + min)}`)
-      
+      node = store.bnode()
       insertions.push(st(contactNode, ns.vcard("hasEmail"), node , contactNode.doc()))
       insertions.push(st(node, ns.rdf('type'), emailInfo.type, contactNode.doc()))
       insertions.push(st(node, ns.vcard("value"), emailInfo.email, contactNode.doc()))
-    })
+    }) 
     contactData.phoneNumbers.map((phoneInfo) => {
-      node = sym(`#id${Math.floor(Math.random() * (max - min + 1) + min)}`)
+      node = store.bnode()
       insertions.push(st(contactNode, ns.vcard("hasTelephone"), node , contactNode.doc()))
       insertions.push(st(node, ns.rdf('type'), phoneInfo.type, contactNode.doc()))
       insertions.push(st(node, ns.vcard("value"), phoneInfo.phoneNumber, contactNode.doc()))  
     })
-    
+    console.log("insertions: " + JSON.stringify(insertions))
+    await context.session.store.fetcher.load(contactUri)
     await store.updater.update([],insertions)  
   } catch (error) {
     addErrorToErrorDisplay(context, error)

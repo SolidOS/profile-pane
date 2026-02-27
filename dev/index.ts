@@ -11,7 +11,7 @@ const webId = document.getElementById('webId')
 
 loginBanner.appendChild(UI.login.loginStatusBox(document, null, {}))
 
-const webIdToShow = 'https://testingsolidos.solidcommunity.net/profile/card#me'
+// const webIdToShow = 'https://testingsolidos.solidcommunity.net/profile/card#me'
 
 async function finishLogin() {
   await authSession.handleIncomingRedirect()
@@ -31,6 +31,6 @@ async function finishLogin() {
 finishLogin()
 
 // const webIdToShow = 'https://testingsolidos.solidcommunity.net/profile/card#me'
-// const webIdToShow = 'https://sstratsianis2.solidcommunity.net/profile/card#me'
+const webIdToShow = 'https://sstratsianis2.solidcommunity.net/profile/card#me'
 
 // const webIdToShow = 'https://jeff-zucker.solidcommunity.net/profile/card#me'

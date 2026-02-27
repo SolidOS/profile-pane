@@ -6,7 +6,7 @@ import { widgets } from 'solid-ui'
 import {
   clearPreviousMessage, complain, checkIfAnyUserLoggedIn
 } from './buttonsHelper'
-import { getContactData, getAddressBooksData, addContactToAddressBook, checkIfContactExists, refreshButton } from './contactsHelpers'
+import { getContactData, getAddressBooksData, addContactToAddressBook, checkIfContactExists } from './contactsHelpers'
 import { AddressBooksData, ContactData } from './contactsTypes'
 import {
   addMeToYourContactsButtonText, contactExistsMessage, logInAddMeToYourContactsButtonText, userNotLoggedInErrorMessage
