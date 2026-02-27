@@ -261,6 +261,12 @@ const createNewAddressBookForm = (
 
     const addressNameField = context.dom.querySelector('#addressBookNameInput')
 
+    // will use this later, hoping solid-data-modules will handle it
+    // @ts-ignore
+    const enteredAddressContainer = addressNameField.value
+
+    const addressContainerField = context.dom.querySelector('#addressBookContainerInput')
+
     // @ts-ignore
     const enteredAddressName = addressNameField.value
 
@@ -309,6 +315,18 @@ const createNewAddressBookForm = (
   addressBookNameInputBox.placeholder = 'New address book name' 
   addressBookNameInputBox.classList.add('input', 'contactsAddressBookInput')
   addressBookNameInputBox.required = true
+
+  const addressBookContainerLabel = context.dom.createElement('label')
+  addressBookContainerLabel.classList.add('label')
+  addressBookContainerLabel.setAttribute('for', 'addressBookContainerInput')
+
+  const addressBookContainerInputBox = context.dom.createElement('input')
+  addressBookContainerInputBox.type = 'text'
+  addressBookContainerInputBox.name = 'addressBookContainer'
+  addressBookContainerInputBox.id = 'addressBookContainerInput' 
+  addressBookContainerInputBox.placeholder = 'Address book container' 
+  addressBookContainerInputBox.classList.add('input', 'contactsAddressBookInput')
+  addressBookContainerInputBox.required = true
 
   const addressBookTypeDiv = context.dom.createElement('div')
   addressBookTypeDiv.classList.add('contactsAddressTypeInput')
