@@ -2,10 +2,11 @@ import { LiveStore, NamedNode, sym, st } from "rdflib"
 import { ns, utils } from "solid-ui"
 import ContactsModuleRdfLib, { NewContact } from "@solid-data-modules/contacts-rdflib"
 import { DataBrowserContext } from "pane-registry";
-import { createAddressBookUriSelectorDialog } from "./ContactsCard";
+import { addErrorToErrorDisplay, createAddressBookUriSelectorDialog } from "./ContactsCard";
 import './styles/ContactsCard.css'
 import { authn } from "solid-logic";
 import { AddressBooksData, ContactData, EmailDetails, PhoneDetails, SelectedAddressBookUris } from "./contactsTypes";
+import { errorGettingAddressBooks, errorLoadingContact, errorReadingAddressBook } from "./texts";
 
 async function addContactToAddressBook(
   context: DataBrowserContext,
@@ -40,7 +41,7 @@ async function getAddressBooks(
       const result = await contactModule.readAddressBook(addressBookUri)
       return result
     } catch (error) {
-      throw new Error(error)
+      addErrorToErrorDisplay(context, `${errorReadingAddressBook}\n${error}`)
     }
   }
 
@@ -56,7 +57,7 @@ async function getAddressBooks(
       }
       return null
     } catch (error) {
-      throw new Error(error)
+      addErrorToErrorDisplay(context, `${errorLoadingContact}${contact.uri}\n${error}`)
     }  
   }
   
@@ -97,7 +98,7 @@ try {
     
 
   } catch (error) {
-    throw new Error(error)
+    addErrorToErrorDisplay(context, error)
   }
   return addressBooksData
 }
@@ -116,7 +117,7 @@ async function getAddressBooksData(
     addressBooksData = await getAddressBooks(context, contactModule)
 
   } catch (error) {
-    throw new Error(error)
+    addErrorToErrorDisplay(context, `${errorGettingAddressBooks}\n${error}`)
   }
 
   return addressBooksData
@@ -185,7 +186,7 @@ async function createContactInAddressBook(
     }
     return contactUri
   } catch (error) {
-    throw new Error(error)
+    addErrorToErrorDisplay(context, error)
   }      
 }
 
@@ -199,11 +200,9 @@ async function addContactDetails(
   let node = null
   const max = 9999999999999
   const min = 1000000000000
-  // need a number like this #id 177 181 994 8686
   const insertions = []
   
   try {
-    
     contactData.emails.map((emailInfo) => {
       node = sym(`#id${Math.floor(Math.random() * (max - min + 1) + min)}`)
       
@@ -220,7 +219,7 @@ async function addContactDetails(
     
     await store.updater.update([],insertions)  
   } catch (error) {
-    throw new Error(error)
+    addErrorToErrorDisplay(context, error)
   }
 
 }
@@ -238,7 +237,6 @@ async function addWebIDToContact(
   let groupUriNode = null
 
   try {
-
     if (groupUris) {
       groupUris.map(async (groupUri) => {
         await context.session.store.fetcher.load(groupUri)
@@ -255,7 +253,7 @@ async function addWebIDToContact(
     insertions.push(st(node, ns.vcard("value"), webID, contactNode.doc()))
     await store.updater.update([],insertions)    
   } catch (error) {
-    throw new Error(error)
+    addErrorToErrorDisplay(context, error)
   }
 }
 
@@ -279,7 +277,7 @@ async function addAddressToPublicTypeIndex(
     await store.updater.update([],insertions)
 
   } catch(error) {
-    throw new Error(error)
+    addErrorToErrorDisplay(context, error)
   }  
 }
 

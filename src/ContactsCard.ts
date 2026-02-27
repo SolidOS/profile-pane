@@ -4,8 +4,8 @@ import { addAddressToPublicTypeIndex, createContactInAddressBook } from "./conta
 import { AddressBookDetails, AddressBooksData, ContactData, GroupData } from "./contactsTypes"
 import ContactsModuleRdfLib from "@solid-data-modules/contacts-rdflib"
 import { authn } from "solid-logic"
-import { complain, mention } from "./buttonsHelper"
-import { addressBookNotExists, contactWasAddedSuccesMessage, errorContactCreation, errorGroupCreation, groupIsRequired } from "./texts"
+import { mention } from "./buttonsHelper"
+import { addressBookNotExists, contactWasAddedSuccesMessage, errorAddressBookCreation, errorContactCreation, errorGroupCreation, groupIsRequired } from "./texts"
 
 export const createAddressBookUriSelectorDialog = (context: DataBrowserContext,
   contactsModule: ContactsModuleRdfLib,
@@ -162,7 +162,7 @@ const createErrorDisplaySection = (
   return errorDisplaySection
 }
 
-const addErrorToErrorDisplay = (
+export const addErrorToErrorDisplay = (
   context: DataBrowserContext,
   message: string
 ) => {
@@ -195,6 +195,7 @@ const checkAndAddErrorDisplay = (
     addErrorToErrorDisplay(context, message)
   }
 }
+
 const createSubmitButton = (
   context: DataBrowserContext,
   form: HTMLFormElement
@@ -233,13 +234,12 @@ const createAddressBookButton = (
   const button = widgets.button(
     context.dom,
     undefined,
-    addressBook.name + " (" + index + ")",
+    `${addressBook.name}(${index})`,
     setButtonOnClickHandler, //sets an onclick event listener
     options
   )
   button.setAttribute('value', addressBook.name)
   button.setAttribute('id', addressBookUri)
-  //button.classList.add('actionButton', 'btn-primary', 'action-button-focus')
   button.classList.add('contactsButton')
   return button
 }
@@ -281,22 +281,12 @@ const createNewAddressBookForm = (
         groupUris: selectedGroupUris 
         }
         const contact = await createContactInAddressBook(context, contactsModule, contactData, selectedAddressBookUris)
-        addressBooksData.contacts.set(contactData.webID, contact)
-        const selectorDialog = context.dom.getElementById('contacts-selector-dialog')
-        selectorDialog.remove()
-        const buttonContainer = getButtonContainer(context)
-        mention(buttonContainer, contactWasAddedSuccesMessage)
-        const button = context.dom.getElementById('add-to-contacts-button')
-        button.removeAttribute('disabled')      
+        finalizeContactEntry(context, addressBooksData, contactData.webID, contact)
       } catch (error) {
-        throw new Error(error)
+        addErrorToErrorDisplay(context, error)
       }
   
-    } else {
-      // need to change this definitely move it
-      // potentially error message instead
-      complain(event.target, context, "A address book name is required")
-    }
+    } 
   }   
   const newAddressBookForm = context.dom.createElement('form')
   newAddressBookForm.method = 'post'
@@ -382,21 +372,26 @@ async function handleAddressBookCreation(
   const newAddressContainer = me.site().value 
   let addressBookUri = null
   
-  if (resourceType === 'public') {
-    addressBookUri = await contactsModule.createAddressBook({
-      containerUri: newAddressContainer,
-      name: enteredAddressName
-    })
-    await addAddressToPublicTypeIndex(context, addressBookUri)
-  } else {
-    addressBookUri = await contactsModule.createAddressBook({
-      containerUri: newAddressContainer,
-      name: enteredAddressName,
-      ownerWebId: me.uri
-    })
-  }
+  try {
+    if (resourceType === 'public') {
+      addressBookUri = await contactsModule.createAddressBook({
+        containerUri: newAddressContainer,
+        name: enteredAddressName
+      })
+      await addAddressToPublicTypeIndex(context, addressBookUri)
+    } else {
+      addressBookUri = await contactsModule.createAddressBook({
+        containerUri: newAddressContainer,
+        name: enteredAddressName,
+        ownerWebId: me.uri
+      })
+    }
+} catch (error) {
+  addErrorToErrorDisplay(context, errorAddressBookCreation + "\n" + error)
+}
   return addressBookUri
 }
+
 const createGroupNameForm = (
   context: DataBrowserContext,
   addressBooksData: AddressBooksData, 
@@ -432,7 +427,7 @@ const createGroupNameForm = (
           const newGroupUri = await contactsModule.createNewGroup({addressBookUri: selectedAddressBookUri, groupName: enteredGroupName })
           selectedGroupUris.push(newGroupUri)
         } catch (error) {
-          addErrorToErrorDisplay(context, errorGroupCreation)
+          addErrorToErrorDisplay(context, `${errorGroupCreation}\n${error}`)
         }  
       }
     
@@ -444,10 +439,10 @@ const createGroupNameForm = (
         const contact = await createContactInAddressBook(context, contactsModule, contactData, selectedAddressBookUris)
         finalizeContactEntry(context, addressBooksData, contactData.webID, contact)
       } catch(error) {
-        addErrorToErrorDisplay(context, errorContactCreation)
+        addErrorToErrorDisplay(context, `${errorContactCreation}\n${error}`)
       }
     } else {
-      addErrorToErrorDisplay(context,groupIsRequired)
+      addErrorToErrorDisplay(context, groupIsRequired)
     }
   } 
   
@@ -460,9 +455,7 @@ const createGroupNameForm = (
   const groupNameLabel = context.dom.createElement('label')
   groupNameLabel.classList.add('label')
   groupNameLabel.setAttribute('for', 'groupNameInput')
-  // when something is entered into the input group
-  // field need to remove the error
-  // add an event listener
+
   const groupNameInputBox = context.dom.createElement('input')
   groupNameInputBox.type = 'text' 
   groupNameInputBox.name = 'groupName' 

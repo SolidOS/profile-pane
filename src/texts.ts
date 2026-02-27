@@ -10,6 +10,10 @@ export const addressBookNotExists = "Your address book wasn't found."
 export const groupIsRequired = "You need to either pick a group or enter one."
 export const errorGroupCreation = "There was an error creating group."
 export const errorContactCreation = "There was an error creating contact."
+export const errorAddressBookCreation = "There was an error creating the address book."
+export const errorReadingAddressBook = "There was an error reading your address book."
+export const errorLoadingContact = "There was an error loading the contact: "
+export const errorGettingAddressBooks = "There was an error getting your address books."
 //OTHER
 export const friendExistsMessage = 'Friend already exists'
 export const contactExistsMessage = 'Contact already exists'
