@@ -5,7 +5,7 @@ import { AddressBookDetails, AddressBooksData, ContactData, GroupData } from "./
 import ContactsModuleRdfLib from "@solid-data-modules/contacts-rdflib"
 import { authn } from "solid-logic"
 import { complain, mention } from "./buttonsHelper"
-import { contactWasAddedSuccesMessage } from "./texts"
+import { addressBookNotExists, contactWasAddedSuccesMessage } from "./texts"
 
 export const createAddressBookUriSelectorDialog = (context: DataBrowserContext,
   contactsModule: ContactsModuleRdfLib,
@@ -137,13 +137,13 @@ const createGroupListDiv = (
   groupListDiv.setAttribute('data-testid', 'div')
   groupListDiv.setAttribute('id', 'group-list')
 
-  groupListDiv.innerHTML = "Select a group (optional)"
+  groupListDiv.innerHTML = "Select a group"
   if (addressBook) {
     addressBook.groups.map((group) => {
         groupListDiv.appendChild(createGroupButton(context, group))
     })
   } else {
-    throw new Error("Your address book wasn't found.")
+    addErrorToErrorDisplay(context, addressBookNotExists)
   }
   return groupListDiv
 }
@@ -155,8 +155,20 @@ const createErrorDisplaySection = (
   const errorDisplaySection = context.dom.createElement('section')
   errorDisplaySection.classList.add('contactsErrorDisplay')
   errorDisplaySection.innerHTML = "Errors will go here"
+  errorDisplaySection.setAttribute('id', 'error-display-section')
+  const closeButton = context.dom.createElement('button')
+  closeButton.innerHTML = 'Close'
 
   return errorDisplaySection
+}
+
+const addErrorToErrorDisplay = (
+  context: DataBrowserContext,
+  message: string
+) => {
+  const errorDisplaySection = context.dom.getElementById('error-display-section')
+  errorDisplaySection.classList.add('contactsShowErrors')
+  errorDisplaySection.innerHTML = message
 }
 
 const createSubmitButton = (

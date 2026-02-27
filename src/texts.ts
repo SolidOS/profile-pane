@@ -6,6 +6,7 @@ export const userNotLoggedInErrorMessage = 'Current user not found! Not logged i
 export const internalErrorMessage = 'An internal error occured!'
 export const friendWasAddedSuccesMessage = 'Friend was added!'
 export const contactWasAddedSuccesMessage = 'Contact was added!'
+export const addressBookNotExists = "Your address book wasn't found."
 
 //OTHER
 export const friendExistsMessage = 'Friend already exists'
