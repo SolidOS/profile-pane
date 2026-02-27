@@ -31,15 +31,15 @@ export const createAddressBookUriSelectorDialog = (context: DataBrowserContext,
     button.removeAttribute('disabled')
   }
   const addressBookDetailsSection = createAddressBookDetailsSection(context)
-    
+  const errorDisplaySection = createErrorDisplaySection(context)  
   const addressBookListDiv = createAddressBookListDiv(context, contactsModule, contactData, addressBooksData, addressBookDetailsSection)
   addressBookDetailsSection.appendChild(addressBookListDiv)
 
   addressBookUriSelectorDialog.appendChild(closeButton)
   addressBookUriSelectorDialog.appendChild(addressBookDetailsSection)
+  addressBookUriSelectorDialog.appendChild(errorDisplaySection)
   addressBookUriSelectorDialog.appendChild(createNewAddressBookForm(context, addressBooksData, contactsModule, contactData))
-  
-  return addressBookUriSelectorDialog
+ return addressBookUriSelectorDialog
 }
 
 export const createAddressBookDetailsSection = (
@@ -146,6 +146,17 @@ const createGroupListDiv = (
     throw new Error("Your address book wasn't found.")
   }
   return groupListDiv
+}
+
+const createErrorDisplaySection = (
+  context: DataBrowserContext
+): HTMLElement => {
+
+  const errorDisplaySection = context.dom.createElement('section')
+  errorDisplaySection.classList.add('contactsErrorDisplay')
+  errorDisplaySection.innerHTML = "Errors will go here"
+
+  return errorDisplaySection
 }
 
 const createSubmitButton = (

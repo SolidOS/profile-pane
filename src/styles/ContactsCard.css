@@ -10,7 +10,7 @@
   box-sizing: border-box;
   display: flex;
   flex-direction: row;
-  margin: 1px;
+  margin: 3px;
   font-weight: 600;
   position: relative;
   opacity: 1;
@@ -56,6 +56,14 @@
   box-sizing: border-box;
   display: flex;
   flex-direction: column;
+}
+
+.contactsErrorDisplay {
+  width: 90%;
+  background: pink;
+  align-self: flex-end;
+  padding: 5px;
+  position: absolute;
 }
 
 .contactsSubmitButton {
