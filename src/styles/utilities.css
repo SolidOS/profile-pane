@@ -158,6 +158,11 @@
   outline: none;
 }
 
+.no-focus-ring:focus-visible {
+  outline: none;
+  box-shadow: none;
+}
+
 /* ARIA live regions */
 .live-region {
   position: absolute;
@@ -194,6 +199,17 @@
 .text-contrast-high {
   color: var(--color-text);
   font-weight: 600;
+}
+
+:focus-visible {
+  outline: var(--focus-ring-width) solid var(--color-primary);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 1px var(--color-background);
+}
+
+:focus:not(:focus-visible) {
+  outline: none;
+  box-shadow: none;
 }
 
 /* Better focus for text elements */
@@ -306,6 +322,7 @@
   box-shadow: var(--box-shadow);
   padding: var(--spacing-md);
 }
+
 
 /* Transparent button override (for solid-ui integration) */
 .btn-transparent {

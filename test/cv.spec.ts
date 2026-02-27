@@ -6,7 +6,8 @@ import { context, doc, subject } from './setup'
 
 
 // This was at testingsolidos.solidcommunity.net
-const exampleProfile = `@prefix : <#>.
+const exampleProfile = `
+@prefix : <#>.
 @prefix foaf: <http://xmlns.com/foaf/0.1/>.
 @prefix ldp: <http://www.w3.org/ns/ldp#>.
 @prefix schema: <http://schema.org/>.
@@ -50,6 +51,10 @@ pro:card a foaf:PersonalProfileDocument; foaf:maker :me; foaf:primaryTopic :me.
 :id1621179872094 solid:publicId l:fr.
 
 :id1621182189397 solid:publicId l:de.
+
+:id1621182189390 solid:publicId l:es.
+
+:id1770974719414 solid:publicId l:du.
 
 :id1621184812427
     a solid:FutureRole;
@@ -96,15 +101,11 @@ pro:card a foaf:PersonalProfileDocument; foaf:maker :me; foaf:primaryTopic :me.
     org:organization :id1621183860447;
     org:role occup:807a1ac3-4f56-41f3-a68c-d653d558eb0a.
 
-
-
-
 :id1621183860447
     a schema:GovernmentOrganization;
     schema:name "National Aeronautical and Space Administration";
     schema:uri ww:;
     solid:publicId ent:Q23548.
-
 
 :id1621184844320
     a schema:GovernmentOrganization;
@@ -122,10 +123,11 @@ pro:card a foaf:PersonalProfileDocument; foaf:maker :me; foaf:primaryTopic :me.
 
 :skill2 vcard:role  "sitting and chatting" .
 
-
 :me
     a schema:Person, foaf:Person;
-    schema:knowsLanguage ( :id1621179872094 :id1621182189397 );
+    schema:knowsLanguage :b5591_n3-4373, :b5591_n3-4374 ;
+    schema:knowsLanguage ( :id1621182189390 :id1770974719414 :id1621182189397), ( :id1770974719414 );
+   
     schema:skills :id1622021761923, :id1622021775187, :skill2, :NonExistentSkill;
     vcard:bday "2021-05-14"^^xsd:date;
     vcard:fn "Testing SolidOS Test";
@@ -158,11 +160,32 @@ l:de schema:name "germano"@ia.
 
 l:fr schema:name "French"@en.
 
+l:es schema:name "Spanish"@en.
+
+l:du schema:name "Dutch"@en.
+
+:b5591_n3-4373 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> :id1621179872094;
+    <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> :b5591_n3-4374.
+:b5591_n3-4374 <http://www.w3.org/1999/02/22-rdf-syntax-ns#first> :id1621182189397;
+    <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> :b5591_n3-000.
+
 `
 describe('profile-pane', () => {
   let element: HTMLElement
 
   describe('curriculum vitae', () => {
+        it('returns the correct number of unique known languages', () => {
+          const { presentCV } = require('../src/CVPresenter')
+          const result = presentCV(subject, store)
+          // You can adjust the expected count if the profile changes
+          expect(result.languages.length).toBe(4)
+          expect(result.languages).toEqual(expect.arrayContaining([
+            expect.stringMatching(/French/i),
+            expect.stringMatching(/germano|german/i),
+            expect.stringMatching(/Spanish/i),
+            expect.stringMatching(/Dutch/i)
+          ]))
+        })
     beforeAll(async () => {
       store.removeDocument(doc)
       parse(exampleProfile, store, doc.uri)
@@ -191,8 +214,10 @@ describe('profile-pane', () => {
     it('renders skill 3 vcard role in CV', () => {
       expect(element).toContainHTML('Sitting')
     })
-    it('renders error flag when missing skill text CV', () => {
-      expect(element).toContainHTML('¿¿¿ Skill ???')
+    // If we have an empty skill node we do not display it at all ANYMORE
+    it('renders three skills in CV', () => {
+      const skills = element.querySelectorAll('.cvSkill')
+      expect(skills.length).toBe(3)
     })
     it('renders languages', () => {
       expect(element).toContainHTML('Fr')
@@ -200,6 +225,13 @@ describe('profile-pane', () => {
 
     it('renders languages', () => {
       expect(element).toContainHTML('De')
+    })
+    
+    it('renders languages', () => {
+      expect(element).toContainHTML('Spanish')
+    })
+     it('renders languages', () => {
+      expect(element).toContainHTML('Dutch')
     })
   })
 

@@ -87,8 +87,9 @@ function getColors(subject: NamedNode, store: LiveStore) {
     subject.doc()
   )
   return {
-    backgroundColor: validColorOrDefault(backgroundColor, '#eee'),
-    highlightColor: validColorOrDefault(highlightColor, '#090'),
+    // default colors are coming from the SolidOS theme, so we only want to set them here if they're valid colors
+    backgroundColor: validColorOrDefault(backgroundColor, ''),
+    highlightColor: validColorOrDefault(highlightColor, ''),
   }
 }
 

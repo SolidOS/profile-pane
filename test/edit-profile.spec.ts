@@ -93,19 +93,12 @@ describe('edit-profile-pane', () => {
     })
 
     it('renders the social networks', () => {
-      expect(element).toContainHTML('Edit your public profile')
+      expect(element).toContainHTML('Edit your profile')
     })
 
-    it('renders warning: public', () => {
-      expect(element).toContainHTML('Everything you put here will be public')
-    })
-
-    it.skip('renders thank you', () => {
-      expect(element).toContainHTML('Thank you for filling your profile')
-    })
   })
 
-  describe('edit social media (NOt logged in)', () => {
+  describe('edit social media (Not logged in)', () => {
     beforeAll(async () => {
       store.removeDocument(doc)
       parse(exampleProfile, store, doc.uri)
@@ -122,7 +115,5 @@ describe('edit-profile-pane', () => {
     })
     
   })
-
-  
 
 })

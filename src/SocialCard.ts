@@ -35,7 +35,6 @@ export const SocialCard = (
               target="_blank" 
               rel="noopener noreferrer" 
               aria-label="Visit ${account.name} profile (opens in new tab)"
-              style="display: flex; align-items: center; gap: 0.5em; text-decoration: none;"
             >
               <img 
                 class="socialIcon" 

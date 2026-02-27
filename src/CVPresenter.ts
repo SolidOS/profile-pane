@@ -35,7 +35,7 @@ export function skillAsText (store: Store, sk: Node):string {
 
   const manual = store.anyJS(sk as NamedNode, ns.vcard('role'))
   if (manual && manual[0] > '') return manual
-  return '¿¿¿ skill ???'
+  return ''
 }
 
 export function languageAsText (store: Store, lan: Node):string {
@@ -43,13 +43,34 @@ export function languageAsText (store: Store, lan: Node):string {
   const publicId = store.anyJS(lan as NamedNode, ns.solid('publicId'))
   if (publicId)
     return utils.label(publicId, true) // @@ check language and get name in diff language if necessary
-  return '-'                                                  
+  return ''                                                  
 }
 
 export function datesAsText (startDate?:Literal, endDate?:Literal):string {
   return startDate ? '(' + startDate.value.slice(0,10) + ' to ' +
     ( endDate ? endDate.value.slice(0,10) : '') +')'
     : ''                                
+}
+
+function expandRdfList(store: Store, node: Node): Node[] {
+  const collectionElements = (node as { termType?: string; elements?: Node[] }).elements
+  if (Array.isArray(collectionElements)) {
+    return collectionElements.flatMap(element => expandRdfList(store, element))
+  }
+
+  const first = store.any(node as NamedNode, ns.rdf('first'))
+  if (!first) return [node]
+
+  const items: Node[] = []
+  let current: Node | null = node
+  while (current) {
+    const value = store.any(current as NamedNode, ns.rdf('first')) as Node | null
+    if (value) items.push(...expandRdfList(store, value))
+    const rest = store.any(current as NamedNode, ns.rdf('rest')) as Node | null
+    if (!rest || (rest.termType === 'NamedNode' && rest.value === ns.rdf('nil').value)) break
+    current = rest
+  }
+  return items
 }
 
 function getRolesByType(
@@ -115,11 +136,17 @@ export function presentCV(
    })
   }
 
-  const skills = store.each(subject, ns.schema('skills')).map(sk => skillAsText(store, sk))
+  const skills = store
+    .each(subject, ns.schema('skills'))
+    .map((sk) => skillAsText(store, sk))
+    .filter((skill) => skill !== '')
 
-  const languagesInStore = store.anyJS(subject, ns.schema('knowsLanguage'))
-  let languages = []
-  if (languagesInStore) languages = languagesInStore.map(lan => languageAsText(store, lan))
+ const languageNodes = store.each(subject, ns.schema('knowsLanguage'))
+  const languages = languageNodes
+    .flatMap(node => expandRdfList(store, node))
+    .map(lan => languageAsText(store, lan))
+  // Deduplicate languages
+  const uniqueLanguages = Array.from(new Set(languages))
 
-  return { rolesByType, skills, languages }
+  return { rolesByType, skills, languages: uniqueLanguages }
 }

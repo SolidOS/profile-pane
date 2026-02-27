@@ -1,4 +1,5 @@
 import { sym } from 'rdflib'
+//import { default as pane } from '../src/profileEditor' //uncomment for profile editor
 import { default as pane } from '../src'
 import './dev-global.css' // Import after src to override component styles
 import { context, fetcher } from './context'
@@ -9,6 +10,8 @@ const loginBanner = document.getElementById('loginBanner')
 const webId = document.getElementById('webId')
 
 loginBanner.appendChild(UI.login.loginStatusBox(document, null, {}))
+
+const webIdToShow = 'https://testingsolidos.solidcommunity.net/profile/card#me'
 
 async function finishLogin() {
   await authSession.handleIncomingRedirect()
@@ -30,4 +33,4 @@ finishLogin()
 // const webIdToShow = 'https://testingsolidos.solidcommunity.net/profile/card#me'
 // const webIdToShow = 'https://sstratsianis2.solidcommunity.net/profile/card#me'
 
-const webIdToShow = 'https://jeff-zucker.solidcommunity.net/profile/card#me'
+// const webIdToShow = 'https://jeff-zucker.solidcommunity.net/profile/card#me'
