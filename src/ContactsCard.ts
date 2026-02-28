@@ -290,8 +290,8 @@ const createNewAddressBookForm = (
         addressBookUri: enteredAddressBookUri,
         groupUris: selectedGroupUris 
         }
-        const contact = await createContactInAddressBook(context, contactsModule, contactData, selectedAddressBookUris)
-        finalizeContactEntry(context, addressBooksData, contactData.webID, contact, subject)
+        const contactUri = await createContactInAddressBook(context, contactsModule, contactData, selectedAddressBookUris)
+        finalizeContactEntry(context, addressBooksData, contactData, contactUri)
       } catch (error) {
         addErrorToErrorDisplay(context, error)
       }
@@ -459,8 +459,8 @@ const createGroupNameForm = (
           groupUris: selectedGroupUris 
       }
       try {
-        const contact = await createContactInAddressBook(context, contactsModule, contactData, selectedAddressBookUris)
-        finalizeContactEntry(context, addressBooksData, contactData.webID, contact, subject)
+        const contactUri = await createContactInAddressBook(context, contactsModule, contactData, selectedAddressBookUris)
+        finalizeContactEntry(context, addressBooksData, contactData, contactUri)
       } catch(error) {
         addErrorToErrorDisplay(context, `${errorContactCreation}\n${error}`)
       }
@@ -498,11 +498,10 @@ const createGroupNameForm = (
 const finalizeContactEntry = (
   context: DataBrowserContext,
   addressBooksData: AddressBooksData,
-  webID: string,
-  contact: string,
-  subject: NamedNode
+  contactData: ContactData,
+  contactUri: string,
 ) => {
-    addressBooksData.contactWebIDs.set(webID, contact)
+    addressBooksData.contactWebIDs.set(contactData.webID, contactUri)
     const selectorDialog = context.dom.getElementById('contacts-selector-dialog')
     selectorDialog.remove()
     
@@ -513,7 +512,7 @@ const finalizeContactEntry = (
     setTimeout(() => {
       clearPreviousMessage(buttonContainer)
     }, 2000); 
-    refreshButton(context, subject, addressBooksData)  
+    refreshButton(context, addressBooksData, contactData)  
 }
 
 const createGroupButton = (

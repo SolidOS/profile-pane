@@ -92,7 +92,7 @@ async function saveNewContact(
 
 // need to find out where the user wants to add the Contact
   if (checkIfAnyUserLoggedIn(me)) {
-    if (!(checkIfContactExistsByWebID(subject, addressBooksData))) {
+    if (!(checkIfContactExistsByWebID(subject.value, addressBooksData))) {
       //if contact does not exist, we add her/him
       await store.fetcher.load(me)
       try {

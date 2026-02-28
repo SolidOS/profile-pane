@@ -296,14 +296,14 @@ async function addAddressToPublicTypeIndex(
 
 function refreshButton(
   context: DataBrowserContext,
-  subject: NamedNode, 
-  addressBooksData: AddressBooksData
+  addressBooksData: AddressBooksData,
+  contactData: ContactData
 ) {
   const me = authn.currentUser()
   const button = context.dom.getElementById('add-to-contacts-button')
   if (checkIfAnyUserLoggedIn(me)) {
-      const contactExists = checkIfContactExistsByWebID(subject, addressBooksData)
-      if (contactExists) {
+      const contactExistsByWebID = checkIfContactExistsByWebID(contactData.webID, addressBooksData)
+      if (contactExistsByWebID) {
         //logged in and friend exists or friend was just added
         button.innerHTML = contactExistsAlreadyButtonText.toUpperCase()
         button.onclick = null 
@@ -318,10 +318,10 @@ function refreshButton(
   }
 
 function checkIfContactExistsByWebID(
-  subject: NamedNode,
+  subjectUri: string,
   addressBooksData: AddressBooksData
 ): boolean {
- if (addressBooksData.contactWebIDs.has(subject.value)) return true
+ if (addressBooksData.contactWebIDs.has(subjectUri)) return true
   return false
 }
 
@@ -336,7 +336,7 @@ function checkIfContactExistsByName(
     contactName.replace(/\s/g, '').toLowerCase()
     if (normalizedSubjectName === normalizedContactName) return true
   })
-  
+
   return false 
 }
 
