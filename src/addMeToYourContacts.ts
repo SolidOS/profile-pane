@@ -6,7 +6,7 @@ import { widgets } from 'solid-ui'
 import {
   clearPreviousMessage, complain, checkIfAnyUserLoggedIn
 } from './buttonsHelper'
-import { getContactData, getAddressBooksData, addContactToAddressBook, checkIfContactExistsByWebID } from './contactsHelpers'
+import { getContactData, getAddressBooksData, addContactToAddressBook, checkIfContactExistsByWebID, checkIfContactExistsByName, addWebIDToExistingContact } from './contactsHelpers'
 import { AddressBooksData, ContactData } from './contactsTypes'
 import {
   addMeToYourContactsButtonText, contactExistsMessage, logInAddMeToYourContactsButtonText, userNotLoggedInErrorMessage
@@ -97,15 +97,20 @@ async function saveNewContact(
       await store.fetcher.load(me)
       try {
         const contactData: ContactData = await getContactData(store, subject)
-        await addContactToAddressBook(context, contactsModule, contactData, addressBooksData, buttonContainer, subject)
-        
+        const contactExistsUri = checkIfContactExistsByName(addressBooksData, contactData.name)
+        if (contactExistsUri) {
+          await addWebIDToExistingContact(context, addressBooksData, contactData.webID, contactExistsUri)
+        } else {
+          await addContactToAddressBook(context, contactsModule, contactData, addressBooksData, buttonContainer, subject)
+        }
       } catch (error) {
         let errorMessage = error
         if (errorMessage.toString().includes('Unauthenticated'))
           errorMessage = userNotLoggedInErrorMessage
         throw new Error(errorMessage)
       }
-    } else throw new Error(contactExistsMessage)
+    } 
+      else throw new Error(contactExistsMessage)
   } else throw new Error(userNotLoggedInErrorMessage)
 }
 

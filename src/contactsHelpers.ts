@@ -6,7 +6,7 @@ import { addErrorToErrorDisplay, createAddressBookUriSelectorDialog } from "./Co
 import './styles/ContactsCard.css'
 import { authn } from "solid-logic";
 import { AddressBooksData, ContactData, EmailDetails, PhoneDetails, SelectedAddressBookUris } from "./contactsTypes";
-import { addMeToYourContactsButtonText, contactExistsAlreadyButtonText, errorGettingAddressBooks, errorLoadingContact, errorReadingAddressBook, logInAddMeToYourContactsButtonText } from "./texts";
+import { addMeToYourContactsButtonText, contactExistsAlreadyButtonText, contactExistsAlreadyByNameButtonText, errorGettingAddressBooks, errorLoadingContact, errorReadingAddressBook, logInAddMeToYourContactsButtonText } from "./texts";
 import { checkIfAnyUserLoggedIn } from "./buttonsHelper";
 
 async function addContactToAddressBook(
@@ -303,11 +303,15 @@ function refreshButton(
   const button = context.dom.getElementById('add-to-contacts-button')
   if (checkIfAnyUserLoggedIn(me)) {
       const contactExistsByWebID = checkIfContactExistsByWebID(contactData.webID, addressBooksData)
+      const contactExistsByName = checkIfContactExistsByName(addressBooksData, contactData.name)
       if (contactExistsByWebID) {
         //logged in and friend exists or friend was just added
         button.innerHTML = contactExistsAlreadyButtonText.toUpperCase()
         button.onclick = null 
-      } else {
+      } else if (contactExistsByName) {
+        button.innerHTML = contactExistsAlreadyByNameButtonText.toUpperCase()
+      }
+        else {
         //logged in and friend does not exist yet
         button.innerHTML = addMeToYourContactsButtonText.toUpperCase()
       }
@@ -328,16 +332,41 @@ function checkIfContactExistsByWebID(
 function checkIfContactExistsByName(
   addressBooksData: AddressBooksData,
   name: string
-): boolean {
+): string | null {
   const normalizedSubjectName = name.replace(/\s/g, '').toLowerCase()
   let normalizedContactName = null
 
   addressBooksData.contactNames.forEach((uri, contactName) => {
     contactName.replace(/\s/g, '').toLowerCase()
-    if (normalizedSubjectName === normalizedContactName) return true
+    if (normalizedSubjectName === normalizedContactName) return uri
   })
 
-  return false 
+  return null 
+}
+
+async function addWebIDToExistingContact(
+  context: DataBrowserContext,
+  addressBooksData: AddressBooksData,
+  webID: string,
+  contactUri: string
+) {
+
+  try {
+    const groupUris = await getGroupUrisForContact(contactUri)
+    await addWebIDToContact(context, groupUris, contactUri, webID)
+  } catch (error) {
+    addErrorToErrorDisplay(context, error)
+  }
+}
+
+async function getGroupUrisForContact(
+  contactUri: string
+): Promise<Array<string>> {
+  let groupUris = []
+  // not sure the best way to find this yet
+  // options are potentially looking it up from contact if it exists on the contact
+  // also maybe it's on an address book data that comes back from solid-data-modules
+  return groupUris
 }
 
 export {
@@ -348,5 +377,6 @@ export {
   addAddressToPublicTypeIndex,
   refreshButton,
   checkIfContactExistsByWebID,
-  checkIfContactExistsByName
+  checkIfContactExistsByName,
+  addWebIDToExistingContact
 }
