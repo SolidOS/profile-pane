@@ -6,7 +6,7 @@ import { widgets } from 'solid-ui'
 import {
   clearPreviousMessage, complain, checkIfAnyUserLoggedIn
 } from './buttonsHelper'
-import { getContactData, getAddressBooksData, addContactToAddressBook, checkIfContactExists } from './contactsHelpers'
+import { getContactData, getAddressBooksData, addContactToAddressBook, checkIfContactExistsByWebID } from './contactsHelpers'
 import { AddressBooksData, ContactData } from './contactsTypes'
 import {
   addMeToYourContactsButtonText, contactExistsMessage, logInAddMeToYourContactsButtonText, userNotLoggedInErrorMessage
@@ -92,7 +92,7 @@ async function saveNewContact(
 
 // need to find out where the user wants to add the Contact
   if (checkIfAnyUserLoggedIn(me)) {
-    if (!(checkIfContactExists(subject, addressBooksData))) {
+    if (!(checkIfContactExistsByWebID(subject, addressBooksData))) {
       //if contact does not exist, we add her/him
       await store.fetcher.load(me)
       try {

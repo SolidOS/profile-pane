@@ -204,14 +204,16 @@ async function addContactDetails(
   const store = context.session.store
   const contactNode = new NamedNode(contactUri)
   let node = null
-  const max = 9999999999999
-  const min = 1000000000000
-       //node = sym(`#id${Math.floor(Math.random() * (max - min + 1)) + min}`)
-      console.log("node: " + JSON.stringify(node))
+  // ID isn't working, some reason it hangs and doesn't do anything
+  // else when trying to turn it into a named node
+  // for now using bnode(), but this isn't how the existing data looks in the address book.
+  // in the address book it's a node #id1234567890123.
+  // const max = 9999999999999
+  // const min = 1000000000000
+  //node = sym(`#id${Math.floor(Math.random() * (max - min + 1)) + min}`)
+  //console.log("node: " + JSON.stringify(node))
   let insertions = []
 
-  console.log("emails: " + JSON.stringify(contactData.emails))
-  console.log("phoneNumbers: " + JSON.stringify(contactData.phoneNumbers))
   try {
  
     contactData.emails.map((emailInfo) => {
@@ -226,7 +228,7 @@ async function addContactDetails(
       insertions.push(st(node, ns.rdf('type'), phoneInfo.type, contactNode.doc()))
       insertions.push(st(node, ns.vcard("value"), phoneInfo.phoneNumber, contactNode.doc()))  
     })
-    console.log("insertions: " + JSON.stringify(insertions))
+
     await context.session.store.fetcher.load(contactUri)
     await store.updater.update([],insertions)  
   } catch (error) {
@@ -300,7 +302,7 @@ function refreshButton(
   const me = authn.currentUser()
   const button = context.dom.getElementById('add-to-contacts-button')
   if (checkIfAnyUserLoggedIn(me)) {
-      const contactExists = checkIfContactExists(subject, addressBooksData)
+      const contactExists = checkIfContactExistsByWebID(subject, addressBooksData)
       if (contactExists) {
         //logged in and friend exists or friend was just added
         button.innerHTML = contactExistsAlreadyButtonText.toUpperCase()
@@ -315,12 +317,27 @@ function refreshButton(
     }
   }
 
-function checkIfContactExists(
+function checkIfContactExistsByWebID(
   subject: NamedNode,
   addressBooksData: AddressBooksData
 ): boolean {
  if (addressBooksData.contactWebIDs.has(subject.value)) return true
   return false
+}
+
+function checkIfContactExistsByName(
+  addressBooksData: AddressBooksData,
+  name: string
+): boolean {
+  const normalizedSubjectName = name.replace(/\s/g, '').toLowerCase()
+  let normalizedContactName = null
+
+  addressBooksData.contactNames.forEach((uri, contactName) => {
+    contactName.replace(/\s/g, '').toLowerCase()
+    if (normalizedSubjectName === normalizedContactName) return true
+  })
+  
+  return false 
 }
 
 export {
@@ -330,5 +347,6 @@ export {
   createContactInAddressBook,
   addAddressToPublicTypeIndex,
   refreshButton,
-  checkIfContactExists
+  checkIfContactExistsByWebID,
+  checkIfContactExistsByName
 }
