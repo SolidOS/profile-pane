@@ -342,8 +342,9 @@ function checkIfContactExistsByName(
     normalizedContactName = contactName.replace(/\s/g, '').toLowerCase().trim()
     if (normalizedSubjectName === normalizedContactName) return contactUri = uri
   })
-
-  return contactUri
+  // SAM need to uncomment
+  //return contactUri
+  return null
 }
 
 async function addWebIDToExistingContact(
@@ -371,7 +372,6 @@ async function getGroupUrisForContact(
   let groupUrisForContact = []
   let addressBookForContact = null
   let allGroupUrisForAddressBook = []
-  let group = null
   
   addressBooksData.public.forEach((book, uri) => {
     book.contacts.map((contact) => {
@@ -405,8 +405,6 @@ async function getGroupUrisForContact(
       }
     })
   })
-    
-  
   
   return groupUrisForContact
 }

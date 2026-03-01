@@ -110,7 +110,7 @@ export const createAddressBookListDiv = (
   addressBookListDiv.setAttribute('aria-labelledby', 'address-book-list-div')
   addressBookListDiv.setAttribute('data-testid', 'div')
 
-  addressBookListDiv.innerHTML = "Select an address book"
+  addressBookListDiv.innerHTML = "Address Books"
   addressBooksData.public.forEach((addressBook, addressBookUri) => {
     addressBookListDiv.appendChild(createAddressBookButton(context, addressBook, addressBookUri, 'public', setButtonOnClickHandler))
   })
@@ -137,7 +137,7 @@ const createGroupListDiv = (
   groupListDiv.setAttribute('data-testid', 'div')
   groupListDiv.setAttribute('id', 'group-list')
 
-  groupListDiv.innerHTML = "Select a group"
+  groupListDiv.innerHTML = "Groups"
   if (addressBook) {
     addressBook.groups.map((group) => {
         groupListDiv.appendChild(createGroupButton(context, group))
@@ -224,6 +224,7 @@ const createSubmitButton = (
   button.setAttribute('id', 'add-contact')
   button.classList.add('contactsSubmitButton', 'actionButton', 'btn-primary', 'action-button-focus')
   button.attributeStyleMap.clear()
+  button.innerHTML = 'Add Contact'
   return button
 }
 
@@ -236,17 +237,21 @@ const createAddressBookButton = (
 ): HTMLButtonElement => {
   
   const options = (index === 'private') ? { needsBorder: true, buttonColor: 'Secondary'} : { needsBorder: true }
-  const button = widgets.button(
+  /* const button = widgets.button(
     context.dom,
     undefined,
     `${addressBook.name}(${index})`,
     setButtonOnClickHandler, //sets an onclick event listener
     options
-  )
+  ) */
+  const button = context.dom.createElement('button')
   button.setAttribute('value', addressBook.name)
   button.setAttribute('id', addressBookUri)
   button.classList.add('contactsButton')
-  button.attributeStyleMap.clear()
+  // @ts-ignore
+  button.addEventListener('click', setButtonOnClickHandler)
+  // button.attributeStyleMap.clear()
+  button.innerHTML = `${addressBook.name}<br>(${index})`
   return button
 }
 
@@ -534,6 +539,7 @@ const createGroupButton = (
       checkAndRemoveErrorDisplay(context)
     }
   } 
+  /*
   const button = widgets.button(
     context.dom,
     undefined,
@@ -542,11 +548,14 @@ const createGroupButton = (
     {
       needsBorder: true
     }
-  )
+  ) */
+  const button = context.dom.createElement('button')
   button.setAttribute('value', group.name)
   button.setAttribute('id', group.uri)
   button.classList.add('contactsButton')
+  button.addEventListener('click', setButtonOnClickHandler)
   button.attributeStyleMap.clear()
+  button.innerHTML = group.name
 
   return button
 }

@@ -5,12 +5,11 @@
   background: #F0F0F0;
   color: #909090;
   padding-top: 3em;
-  justify-content: center;
   align-items: start;
   box-sizing: border-box;
+  gap: 5px;
   display: flex;
   flex-direction: row;
-  margin: 3px;
   font-weight: 600;
   position: relative;
   opacity: 1;
@@ -19,10 +18,9 @@
 
 .contactsAddressBookDetails {
   border-radius: var(--border-radius);
-  padding: var(--spacing-md);
   justify-content: center;
-  gap: 10px;
   box-sizing: border-box;
+  gap: 5px;
   display: flex;
   flex-direction: row;
 }
@@ -41,19 +39,18 @@
   width: 100%;
   min-width: 80px;
   max-width: 250px;
-  gap: 5px;
   box-sizing: border-box;
+  gap: 4px;
   display: flex;
   flex-direction: column;
-  justify-content: center;
 }
 
 .contactsGroupList {
   width: 100%;
   min-width: 80px;
   max-width: 250px;
-  gap: 5px;
   box-sizing: border-box;
+  gap: 4px;
   display: flex;
   flex-direction: column;
 }
@@ -144,19 +141,20 @@
 }
 
 .contactsButton {
-  color: white  !important;
-  background:  color-mix(in srgb, var(--color-primary), white 30%) !important;
-  border-radius: var(--border-radius-base) !important;
-  box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
-  transition: all 0.3s ease-in-out;
-  
+  color: #787878;
+  border-radius: 8px;
+  text-align: left;
+  /* transition: all 0.3s ease-in-out; */
+  padding: var(--spacing-md);
 }
+
 .contactsButton:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+  /*transform: translateY(-2px); */
+  color: var(--color-primary);
+  background: color-mix(in srgb, var(--color-primary), white 85%) !important;  
 } 
 
 .contactsSelectedButton {
- background: var(--color-primary) !important; 
- box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px, var(--color-primary) 0px 0px 0px 2px !important;
+ background: color-mix(in srgb, var(--color-primary), white 60%) !important; 
+ color: var(--color-primary);
 }
