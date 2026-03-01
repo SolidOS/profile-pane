@@ -9,7 +9,7 @@ import {
 import { getContactData, getAddressBooksData, addContactToAddressBook, checkIfContactExistsByWebID, checkIfContactExistsByName, addWebIDToExistingContact } from './contactsHelpers'
 import { AddressBooksData, ContactData } from './contactsTypes'
 import {
-  addMeToYourContactsButtonText, contactExistsMessage, logInAddMeToYourContactsButtonText, userNotLoggedInErrorMessage
+  addMeToYourContactsButtonText, contactExistsAlreadyButtonText, contactExistsAlreadyByNameButtonText, contactExistsMessage, logInAddMeToYourContactsButtonText, userNotLoggedInErrorMessage
 } from './texts'
 import './styles/ProfileCard.css'
 import ContactsModuleRdfLib from '@solid-data-modules/contacts-rdflib'
@@ -48,6 +48,7 @@ const createAddMeToYourContactsButton = async (
   const me = authn.currentUser()
   
   let addressBooksData = null
+  let contactData = null
   const store: LiveStore = context.session.store
   const fetcher = store.fetcher
   const updater = store.updater
@@ -55,6 +56,7 @@ const createAddMeToYourContactsButton = async (
 
   try {
     addressBooksData = await getAddressBooksData(context, contactsModule)
+    contactData = await getContactData(store, subject)   
   } catch (error) {
     addErrorToErrorDisplay(context, error)
   }
@@ -78,6 +80,29 @@ const createAddMeToYourContactsButton = async (
   )
   button.setAttribute('id', 'add-to-contacts-button')
   //button.refresh = refreshButton(context, subject, addressBooksData)
+  button.refresh = refreshButton()
+  
+  function refreshButton() {
+    if (checkIfAnyUserLoggedIn(me)) {
+        const contactExistsByWebID = checkIfContactExistsByWebID(subject.value, addressBooksData)
+        const contactExistsByName = checkIfContactExistsByName(addressBooksData, contactData.name)
+        console.log("contact exists by name: " + contactExistsByName)
+        if (contactExistsByWebID) {
+          //logged in and friend exists or friend was just added
+          button.innerHTML = contactExistsAlreadyButtonText.toUpperCase()
+          button.onclick = null 
+        } else if (contactExistsByName) {
+          button.innerHTML = contactExistsAlreadyByNameButtonText.toUpperCase()
+        }
+          else {
+          //logged in and friend does not exist yet
+          button.innerHTML = addMeToYourContactsButtonText.toUpperCase()
+        }
+      } else {
+        //not logged in
+        button.innerHTML = logInAddMeToYourContactsButtonText.toUpperCase()
+      }
+    }
   return button
 }
 
@@ -96,12 +121,13 @@ async function saveNewContact(
       //if contact does not exist, we add her/him
       await store.fetcher.load(me)
       try {
-        const contactData: ContactData = await getContactData(store, subject)
-        const contactExistsUri = checkIfContactExistsByName(addressBooksData, contactData.name)
-        if (contactExistsUri) {
-          await addWebIDToExistingContact(context, addressBooksData, contactData.webID, contactExistsUri)
+        const contactData: ContactData = await getContactData(store, subject) 
+        const contactExistsByNameUri = checkIfContactExistsByName(addressBooksData, contactData.name)
+        console.log("contactExistsByNameUri: " + contactExistsByNameUri)
+        if (contactExistsByNameUri) {
+          await addWebIDToExistingContact(context, contactsModule, addressBooksData, contactData.webID, contactExistsByNameUri)
         } else {
-          await addContactToAddressBook(context, contactsModule, contactData, addressBooksData, buttonContainer, subject)
+          await addContactToAddressBook(context, contactsModule, contactData, addressBooksData, buttonContainer)
         }
       } catch (error) {
         let errorMessage = error

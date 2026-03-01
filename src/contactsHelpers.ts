@@ -14,11 +14,10 @@ async function addContactToAddressBook(
   contactsModule: ContactsModuleRdfLib,
   contactData: ContactData,
   addressBooksData: AddressBooksData,
-  container: HTMLDivElement,
-  subject: NamedNode
+  container: HTMLDivElement
 ) {
 
-  const addressBookUriSelectorDialog = createAddressBookUriSelectorDialog(context, contactsModule, contactData, addressBooksData, subject)
+  const addressBookUriSelectorDialog = createAddressBookUriSelectorDialog(context, contactsModule, contactData, addressBooksData)
   container.appendChild(addressBookUriSelectorDialog)   
   addressBookUriSelectorDialog.setAttribute('open', ''); 
 }
@@ -75,7 +74,8 @@ try {
     publicAddressBooksData.map((addressBook) => {
       addressBooksData.public.set(addressBook.uri, {
         name: addressBook.title,
-        groups: addressBook.groups
+        groups: addressBook.groups,
+        contacts: addressBook.contacts
       })
       addressBook.contacts.map((contact) => {
         addressBooksData.contactNames.set(contact.name, contact.uri)
@@ -87,7 +87,8 @@ try {
     privateAddressBooksData.map((addressBook) => {
       addressBooksData.private.set(addressBook.uri, {
         name: addressBook.title,
-        groups: addressBook.groups
+        groups: addressBook.groups,
+        contacts: addressBook.contacts
       })
       addressBook.contacts.map((contact) => {
         addressBooksData.contactNames.set(contact.name, contact.uri)
@@ -250,7 +251,7 @@ async function addWebIDToContact(
   let groupUriNode = null
 
   try {
-    if (groupUris) {
+    if (groupUris.length) {
       groupUris.map(async (groupUri) => {
         await context.session.store.fetcher.load(groupUri)
         groupUriNode = new NamedNode(groupUri)
@@ -333,26 +334,29 @@ function checkIfContactExistsByName(
   addressBooksData: AddressBooksData,
   name: string
 ): string | null {
-  const normalizedSubjectName = name.replace(/\s/g, '').toLowerCase()
+  let contactUri = null
+  const normalizedSubjectName = name.replace(/\s/g, '').toLowerCase().trim()
+ 
   let normalizedContactName = null
-
   addressBooksData.contactNames.forEach((uri, contactName) => {
-    contactName.replace(/\s/g, '').toLowerCase()
-    if (normalizedSubjectName === normalizedContactName) return uri
+    normalizedContactName = contactName.replace(/\s/g, '').toLowerCase().trim()
+    if (normalizedSubjectName === normalizedContactName) return contactUri = uri
   })
 
-  return null 
+  return contactUri
 }
 
 async function addWebIDToExistingContact(
   context: DataBrowserContext,
+  contactsModule: ContactsModuleRdfLib,
   addressBooksData: AddressBooksData,
   webID: string,
   contactUri: string
 ) {
 
   try {
-    const groupUris = await getGroupUrisForContact(contactUri)
+    const groupUris = await getGroupUrisForContact(contactsModule, addressBooksData, contactUri)
+    console.log("groupUris: " + groupUris)
     await addWebIDToContact(context, groupUris, contactUri, webID)
   } catch (error) {
     addErrorToErrorDisplay(context, error)
@@ -360,13 +364,51 @@ async function addWebIDToExistingContact(
 }
 
 async function getGroupUrisForContact(
+  contactsModule: ContactsModuleRdfLib,
+  addressBooksData: AddressBooksData,
   contactUri: string
 ): Promise<Array<string>> {
-  let groupUris = []
-  // not sure the best way to find this yet
-  // options are potentially looking it up from contact if it exists on the contact
-  // also maybe it's on an address book data that comes back from solid-data-modules
-  return groupUris
+  let groupUrisForContact = []
+  let addressBookForContact = null
+  let allGroupUrisForAddressBook = []
+  let group = null
+  
+  addressBooksData.public.forEach((book, uri) => {
+    book.contacts.map((contact) => {
+      if (contact.uri === contactUri) {
+        addressBookForContact = book
+      }
+    })
+  })
+  addressBooksData.private.forEach((book, uri) => {
+    book.contacts.map((contact) => {
+      if (contact.uri === contactUri) {
+        addressBookForContact = book
+      }
+    })
+  })
+  allGroupUrisForAddressBook = addressBookForContact.groups
+  const groupPromises = allGroupUrisForAddressBook.map(async (group) => {
+    console.log("group uri: " + JSON.stringify(group.uri))
+    group = await contactsModule.readGroup(group.uri)
+    return { groupUri: group.uri, group }
+  })  
+  const groups = await Promise.all(groupPromises)
+  console.log("groups: " + JSON.stringify(groups))
+
+  groups.map((groupInfo) => {
+    groupInfo.group.members.map((contact) => {
+      if (contact.uri === contactUri) {
+        if (!groupUrisForContact.includes(groupInfo.groupUri)) {
+          groupUrisForContact.push(groupInfo.groupUri)
+        }       
+      }
+    })
+  })
+    
+  
+  
+  return groupUrisForContact
 }
 
 export {

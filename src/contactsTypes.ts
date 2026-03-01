@@ -8,16 +8,22 @@ export type GroupData = {
   name: string,
   uri: string
 }
+
+export type ContactDataFromAddressBook = {
+  name: string,
+  uri: string
+}
 export interface AddressBookDetails {
   name: string,
   groups: GroupData[]
+  contacts: ContactDataFromAddressBook[]
 }
 
 export interface AddressBooksData {
   public: Map<string, AddressBookDetails>,
   private: Map<string, AddressBookDetails>,
-  contactWebIDs: Map<string,string>,
-  contactNames: Map<string, string>
+  contactWebIDs: Map<string,string> 
+  contactNames: Map<string,string>
 }
 
 export interface EmailDetails {
