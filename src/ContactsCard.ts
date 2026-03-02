@@ -30,6 +30,7 @@ export const createAddressBookUriSelectorDialog = (context: DataBrowserContext,
     
     button.removeAttribute('disabled')
   }
+
   const addressBookDetailsSection = createAddressBookDetailsSection(context)
   const errorDisplaySection = createErrorDisplaySection(context)  
   const addressBookListDiv = createAddressBookListDiv(context, contactsModule, contactData, addressBooksData, addressBookDetailsSection)
@@ -39,7 +40,8 @@ export const createAddressBookUriSelectorDialog = (context: DataBrowserContext,
   addressBookUriSelectorDialog.appendChild(addressBookDetailsSection)
   addressBookUriSelectorDialog.appendChild(errorDisplaySection)
   addressBookUriSelectorDialog.appendChild(createNewAddressBookForm(context, addressBooksData, contactsModule, contactData))
- return addressBookUriSelectorDialog
+  
+  return addressBookUriSelectorDialog
 }
 
 export const createAddressBookDetailsSection = (
@@ -52,6 +54,15 @@ export const createAddressBookDetailsSection = (
   addressBookDetailsSection.classList.add('contactsAddressBookDetails')
 
   return addressBookDetailsSection
+}
+
+export const createAddressEntryButton = (
+  context: DataBrowserContext
+): HTMLButtonElement => {
+  const entryButton = context.dom.createElement('button')
+  entryButton.setAttribute('id', 'contacts-addressbook-entry-button')
+  entryButton.classList.add('contactsAddressBookEntryButton')
+  return entryButton
 }
 
 export const createAddressBookListDiv = (
@@ -251,7 +262,7 @@ const createAddressBookButton = (
   // @ts-ignore
   button.addEventListener('click', setButtonOnClickHandler)
   // button.attributeStyleMap.clear()
-  button.innerHTML = `${addressBook.name}<br>(${index})`
+  button.innerHTML = `${addressBook.name} (${index})`
   return button
 }
 
@@ -381,6 +392,9 @@ const createNewAddressBookForm = (
   
   newAddressBookForm.appendChild(addressBookNameLabel)
   newAddressBookForm.appendChild(addressBookNameInputBox)
+
+  newAddressBookForm.appendChild(addressBookContainerLabel)
+  newAddressBookForm.appendChild(addressBookContainerInputBox)
 
   newAddressBookForm.appendChild(addressBookTypeDiv)
   newAddressBookForm.appendChild(groupNameLabel)

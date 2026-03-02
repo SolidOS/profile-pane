@@ -1,5 +1,5 @@
 import { LiveStore, NamedNode, sym, st } from "rdflib"
-import { ns, utils } from "solid-ui"
+import { login, ns, utils } from "solid-ui"
 import ContactsModuleRdfLib, { NewContact } from "@solid-data-modules/contacts-rdflib"
 import { DataBrowserContext } from "pane-registry";
 import { addErrorToErrorDisplay, createAddressBookUriSelectorDialog } from "./ContactsCard";
@@ -118,8 +118,21 @@ async function getAddressBooksData(
   if (!me) return null
   let addressBooksData = null
 
-  try {
+
+  let dom = context.dom
+  const div = dom.createElement('div')
+    const context2 = {
+      target: me,
+      me,
+      noun: 'address book',
+      div,
+      dom
+  } // missing: statusRegion
   
+  try {
+    const appInstances = await login.findAppInstances(context2, ns.vcard('AddressBook'))
+    console.log("App instances: " + JSON.stringify(appInstances))
+
     addressBooksData = await getAddressBooks(context, contactModule)
 
   } catch (error) {
