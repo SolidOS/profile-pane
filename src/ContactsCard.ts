@@ -368,6 +368,7 @@ const createNewAddressBookForm = (
 
   const addressBookTypeDiv = context.dom.createElement('div')
   addressBookTypeDiv.classList.add('contactsAddressTypeInput')
+  addressBookTypeDiv.setAttribute('role', 'radiogroup')
 
   const addressBookPublicRadioLabel = context.dom.createElement('label')
   addressBookPublicRadioLabel.classList.add('label')
@@ -397,6 +398,39 @@ const createNewAddressBookForm = (
   addressBookTypeDiv.appendChild(addressBookPrivateRadioLabel)
   addressBookTypeDiv.appendChild(addressBookPrivateRadio)
 
+  const addressBookTypeIndexDiv = context.dom.createElement('div')
+  addressBookTypeIndexDiv.setAttribute('id', 'addressBookTypeIndexDiv')
+  addressBookTypeIndexDiv.setAttribute('role', 'radiogroup')
+  addressBookTypeIndexDiv.classList.add('contactsAddressTypeIndexInput')
+  addressBookTypeIndexDiv.innerHTML = "Add to your type index (optional)"
+
+  const addressBookPublicTypeIndexRadioLabel = context.dom.createElement('label')
+  addressBookPublicTypeIndexRadioLabel.classList.add('label')
+  addressBookPublicTypeIndexRadioLabel.innerHTML = 'PublicTypeIndex'
+  addressBookPublicTypeIndexRadioLabel.setAttribute('for', 'publicTypeIndex')
+
+  const addressBookPublicTypeIndexRadio = context.dom.createElement('input')
+  addressBookPublicTypeIndexRadio.type = 'radio';
+  addressBookPublicTypeIndexRadio.id = 'publicTypeIndex';
+  addressBookPublicTypeIndexRadio.name = 'address-type-index';
+  addressBookPublicTypeIndexRadio.value = 'publicTypeIndex';
+
+  const addressBookPrivateTypeIndexRadioLabel = context.dom.createElement('label')
+  addressBookPrivateTypeIndexRadioLabel.classList.add('label')
+  addressBookPrivateTypeIndexRadioLabel.innerHTML = 'PrivateTypeIndex'
+  addressBookPrivateTypeIndexRadioLabel.setAttribute('for', 'privateTypeIndex')
+
+  const addressBookPrivateTypeIndexRadio = context.dom.createElement('input')
+  addressBookPrivateTypeIndexRadio.type = 'radio';
+  addressBookPrivateTypeIndexRadio.id = 'privateTypeIndex';
+  addressBookPrivateTypeIndexRadio.name = 'address-type-index';
+  addressBookPrivateTypeIndexRadio.value = 'privateTypeIndex';
+
+  addressBookTypeIndexDiv.appendChild(addressBookPublicTypeIndexRadioLabel)
+  addressBookTypeIndexDiv.appendChild(addressBookPublicTypeIndexRadio)
+  addressBookTypeIndexDiv.appendChild(addressBookPrivateTypeIndexRadioLabel)
+  addressBookTypeIndexDiv.appendChild(addressBookPrivateTypeIndexRadio)
+
   const groupNameLabel = context.dom.createElement('label')
   groupNameLabel.classList.add('label')
   groupNameLabel.setAttribute('for', 'groupNameInput')
@@ -417,6 +451,7 @@ const createNewAddressBookForm = (
   newAddressBookForm.appendChild(addressBookContainerInputBox)
 
   newAddressBookForm.appendChild(addressBookTypeDiv)
+  newAddressBookForm.appendChild(addressBookTypeIndexDiv)
   newAddressBookForm.appendChild(groupNameLabel)
   newAddressBookForm.appendChild(groupNameInputBox)
   newAddressBookForm.appendChild(submitButton)

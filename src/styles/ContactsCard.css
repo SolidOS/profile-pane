@@ -116,6 +116,17 @@
   box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
 }
 
+.contactsAddressTypeIndexInput {
+  width: 100%;
+  padding: 5px;
+  gap: 5px;
+  border-radius: var(--border-radius-base);
+  border: 1px solid #ccc;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+}
+
 .contactsAddressBookList {
   width: 100%;
   box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
