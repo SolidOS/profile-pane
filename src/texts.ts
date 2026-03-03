@@ -14,6 +14,9 @@ export const errorAddressBookCreation = 'There was an error creating the address
 export const errorReadingAddressBook = 'There was an error reading your address book.'
 export const errorLoadingContact = 'There was an error loading the contact: '
 export const errorGettingAddressBooks = 'There was an error getting your address books.'
+export const errorNotExistsAddressBookUri = 'Please enter an address book URI.'
+export const errorProcessingUriAddressBook = 'There was an error processing your address book.'
+
 //OTHER
 export const friendExistsMessage = 'Friend already exists'
 export const contactExistsMessage = 'Contact already exists'

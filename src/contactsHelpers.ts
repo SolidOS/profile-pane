@@ -1,12 +1,12 @@
 import { LiveStore, NamedNode, sym, st } from "rdflib"
 import { login, ns, utils } from "solid-ui"
-import ContactsModuleRdfLib, { NewContact } from "@solid-data-modules/contacts-rdflib"
+import ContactsModuleRdfLib, { NewContact, AddressBook } from "@solid-data-modules/contacts-rdflib"
 import { DataBrowserContext } from "pane-registry";
 import { createAddressBookUriSelectorDialog } from "./ContactsCard";
 import './styles/ContactsCard.css'
 import { authn } from "solid-logic";
-import { AddressBooksData, ContactData, EmailDetails, PhoneDetails, SelectedAddressBookUris } from "./contactsTypes";
-import { addMeToYourContactsButtonText, contactExistsAlreadyButtonText, contactExistsAlreadyByNameButtonText, errorGettingAddressBooks, errorLoadingContact, errorReadingAddressBook, logInAddMeToYourContactsButtonText } from "./texts";
+import { AddressBookDetails, AddressBooksData, ContactData, EmailDetails, PhoneDetails, SelectedAddressBookUris } from "./contactsTypes";
+import { addMeToYourContactsButtonText, contactExistsAlreadyButtonText, contactExistsAlreadyByNameButtonText, errorGettingAddressBooks, errorLoadingContact, errorProcessingUriAddressBook, errorReadingAddressBook, logInAddMeToYourContactsButtonText } from "./texts";
 import { checkIfAnyUserLoggedIn } from "./buttonsHelper";
 import { addErrorToErrorDisplay } from "./contactsErrors";
 
@@ -23,54 +23,64 @@ async function addContactToAddressBook(
   addressBookUriSelectorDialog.setAttribute('open', ''); 
 }
 
-async function getAddressBooks(
-  context: DataBrowserContext, 
-  contactModule: ContactsModuleRdfLib
-): Promise<AddressBooksData>  {
+async function getAddressData(
+  context: DataBrowserContext,
+  contactsModule: ContactsModuleRdfLib,
+  addressBookUri: string
+): Promise<AddressBook | null> {
+  let result = null
+  try {
+    result = await contactsModule.readAddressBook(addressBookUri)
+    
+  } catch (error) {
+    addErrorToErrorDisplay(context, `${errorReadingAddressBook}\n${error}`)
+  }
+  return result
+}
 
+async function getWebID(
+  context: DataBrowserContext,  
+  contact
+): Promise<{webID: string, uri: string} | null> {
   let webID = null
   let node = null
   let webIDNode = null
+
+  try {
+    await context.session.store.fetcher.load(contact.uri.substring(0, contact.uri.length - 5))
+    node = new NamedNode(contact.uri)
+    webIDNode = context.session.store.any(node, ns.vcard('url'), undefined, node.doc())
+    if (webIDNode) {
+      webID = context.session.store.anyValue(webIDNode, ns.vcard('value'), undefined, node.doc())
+      return { webID, uri: contact.uri }
+    }
+    return null
+  } catch (error) {
+    addErrorToErrorDisplay(context, `${errorLoadingContact}${contact.uri}\n${error}`)
+  }  
+}
+
+async function getAddressBooks(
+  context: DataBrowserContext, 
+  contactsModule: ContactsModuleRdfLib
+): Promise<AddressBooksData>  {
+
   const allContacts = []
 
-  const addressBooksData = { 
+  let addressBooksData = { 
     public: new Map(),
     private: new Map(),
     contactWebIDs: new Map(),
     contactNames: new Map()
-  }
-  const getAddressData = async (addressBookUri) => {
-    try {
-      const result = await contactModule.readAddressBook(addressBookUri)
-      return result
-    } catch (error) {
-      addErrorToErrorDisplay(context, `${errorReadingAddressBook}\n${error}`)
-    }
-  }
-
-  const getWebID = async (contact) => {
-    
-    try {
-      await context.session.store.fetcher.load(contact.uri.substring(0, contact.uri.length - 5))
-      node = new NamedNode(contact.uri)
-      webIDNode = context.session.store.any(node, ns.vcard('url'), undefined, node.doc())
-      if (webIDNode) {
-        webID = context.session.store.anyValue(webIDNode, ns.vcard('value'), undefined, node.doc())
-        return { webID, uri: contact.uri }
-      }
-      return null
-    } catch (error) {
-      addErrorToErrorDisplay(context, `${errorLoadingContact}${contact.uri}\n${error}`)
-    }  
   }
   
 try {
     const me = authn.currentUser()
     await context.session.store.fetcher.load(me)
     
-    const addressBookUris = await contactModule.listAddressBooks(me.value) 
-      
-    const publicAddressBookPromises = await addressBookUris.publicUris.map(getAddressData)
+    const addressBookUris = await contactsModule.listAddressBooks(me.value) 
+    
+    const publicAddressBookPromises = await addressBookUris.publicUris.map(addressBook => getAddressData(context, contactsModule, addressBook))
     const publicAddressBooksData = await Promise.all(publicAddressBookPromises)
     publicAddressBooksData.map((addressBook) => {
       addressBooksData.public.set(addressBook.uri, {
@@ -83,7 +93,7 @@ try {
         allContacts.push(contact)
       })
     })
-    const privateAddressBookPromises = await addressBookUris.privateUris.map(getAddressData)
+    const privateAddressBookPromises = addressBookUris.privateUris.map(addressBook => getAddressData(context, contactsModule, addressBook))
     const privateAddressBooksData = await Promise.all(privateAddressBookPromises)
     privateAddressBooksData.map((addressBook) => {
       addressBooksData.private.set(addressBook.uri, {
@@ -96,15 +106,9 @@ try {
         allContacts.push(contact)
       })
     })
-    const contactPromises = await allContacts.map(getWebID)
-    const results = await Promise.all(contactPromises)
-    
-    results.map((contact) => {
-      if (contact) addressBooksData.contactWebIDs.set(contact.webID, contact.uri)  
-    })
-    
-
-  } catch (error) {
+  
+    addressBooksData = await processContactWebIDs(context, addressBooksData, allContacts)
+ } catch (error) {
     addErrorToErrorDisplay(context, error)
   }
   return addressBooksData
@@ -124,6 +128,21 @@ async function getAddressBooksData(
   } catch (error) {
     addErrorToErrorDisplay(context, `${errorGettingAddressBooks}\n${error}`)
   }
+  return addressBooksData
+}
+
+async function processContactWebIDs(
+  context: DataBrowserContext,
+  addressBooksData: AddressBooksData,
+  allContacts: Array<{ name: string, uri: string }>
+): Promise<AddressBooksData> {
+
+  const contactPromises = allContacts.map(getWebID.bind(null, context))
+  const results = await Promise.all(contactPromises)
+    
+  results.map((contact) => {
+    if (contact) addressBooksData.contactWebIDs.set(contact.webID, contact.uri)  
+  })
 
   return addressBooksData
 }
@@ -164,6 +183,37 @@ async function getContactData(
   phoneNumbers,
   webID 
   }
+}
+
+async function addANewAddressBookUriToAddressBooks(
+  context:DataBrowserContext, 
+  contactsModule: ContactsModuleRdfLib,
+  addressBooksData: AddressBooksData,
+  enteredAddressBookUri: string
+): Promise<{ addressBooksData: AddressBooksData, addressBook: AddressBookDetails }> {
+  let allContacts = []
+  let contactsAddressBook = null
+
+  try {
+    const addressBook = await getAddressData(context, contactsModule, enteredAddressBookUri)
+    contactsAddressBook = {
+      name: addressBook.title,
+      groups: addressBook.groups,
+      contacts: addressBook.contacts
+    }
+    addressBooksData.private.set(enteredAddressBookUri, contactsAddressBook)
+    
+    addressBook.contacts.map((contact) => {
+      addressBooksData.contactNames.set(contact.name, contact.uri)
+      allContacts.push(contact)
+    })
+    
+    addressBooksData = await processContactWebIDs(context, addressBooksData, allContacts)
+  } catch (error) {
+    addErrorToErrorDisplay(context, errorProcessingUriAddressBook  + '\n' + error)
+  }   
+
+ return { addressBooksData, addressBook: contactsAddressBook }
 }
 
 async function createContactInAddressBook(
@@ -414,5 +464,6 @@ export {
   refreshButton,
   checkIfContactExistsByWebID,
   checkIfContactExistsByName,
-  addWebIDToExistingContact
+  addWebIDToExistingContact,
+  addANewAddressBookUriToAddressBooks
 }
