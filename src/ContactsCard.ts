@@ -100,9 +100,9 @@ const createAddressBookUriEntryForm = (
       addErrorToErrorDisplay(context, errorNotExistsAddressBookUri)
       return
     } else {
-        // check for #this, need to add it if it's not there.
-        
-        const books =  await addANewAddressBookUriToAddressBooks(context, contactsModule, addressBooksData, enteredAddressBookUri)
+        const uriCheck = enteredAddressBookUri.substring(enteredAddressBookUri.length - 5, enteredAddressBookUri.length)
+        const normalizedUri = (uriCheck === '#this') ? enteredAddressBookUri : enteredAddressBookUri + '#this'
+        const books =  await addANewAddressBookUriToAddressBooks(context, contactsModule, addressBooksData, normalizedUri)
         
         const addressBookListDiv = context.dom.querySelector('#addressbook-list')
         if (addressBookListDiv) {
@@ -115,7 +115,7 @@ const createAddressBookUriEntryForm = (
     checkAndRemoveErrorDisplay(context)
   }
   const addressBookUriEntryForm = context.dom.createElement('form')
-  addressBookUriEntryForm.setAttribute('id', 'contacts-address-entry-form')
+  addressBookUriEntryForm.setAttribute('id', 'contacts-address-uri-entry-form')
   addressBookUriEntryForm.classList.add('contactsAddressBookUriEntryForm')
   addressBookUriEntryForm.method = 'post'
   addressBookUriEntryForm.addEventListener('submit', setButtonOnSubmitHandler)
@@ -134,23 +134,26 @@ const createAddressBookUriEntryForm = (
   
   addressBookUriEntryForm.appendChild(addressBookUriEntryLabel)
   addressBookUriEntryForm.appendChild(addressBookNameInputBox)
-  addressBookUriEntryForm.appendChild(createAddressUriEntryButton(context, addressBookUriEntryForm))
+  addressBookUriEntryForm.appendChild(createAddressUriEntryButton(context))
   
   return addressBookUriEntryForm
 }
 
 const createAddressUriEntryButton = (
-  context: DataBrowserContext,
-  addressBookUriEntryForm: HTMLFormElement
+  context: DataBrowserContext
 ): HTMLButtonElement => {
 
   const setButtonOnClickHandler = async (event) => {
     event.preventDefault()
-    addressBookUriEntryForm.requestSubmit()
+    const addressBookUriEntryForm = context.dom.querySelector('#contacts-address-uri-entry-form') 
+    // @ts-ignore
+    if (addressBookUriEntryForm) addressBookUriEntryForm.requestSubmit()
   }
+
   const entryButton = context.dom.createElement('button')
   entryButton.setAttribute('id', 'contacts-addressbook-entry-button')
   entryButton.classList.add('contactsAddressBookUriEntryButton')
+  entryButton.setAttribute('type', 'submit')
   entryButton.addEventListener('click', setButtonOnClickHandler)
   entryButton.innerHTML = 'Add'
   return entryButton
@@ -214,14 +217,19 @@ const createGroupListDiv = (
 const createErrorDisplaySection = (
   context: DataBrowserContext
 ): HTMLElement => {
- // need to implement a on click for close button
+  const setButtonOnClickHandler = (event) => {
+    event.preventDefault()
+    errorDisplaySection.classList.remove('contactsShowErrors')
+  }
+
   const errorDisplaySection = context.dom.createElement('section')
   errorDisplaySection.classList.add('contactsErrorDisplay')
-  errorDisplaySection.innerHTML = "Errors will go here"
   errorDisplaySection.setAttribute('id', 'error-display-section')
   const closeButton = context.dom.createElement('button')
+  closeButton.classList.add('contactsCloseErrorDisplayButton')
   closeButton.textContent = 'x'
-
+  closeButton.addEventListener('click', setButtonOnClickHandler)
+  errorDisplaySection.appendChild(closeButton)
   return errorDisplaySection
 }
 
@@ -282,6 +290,11 @@ const createAddressBookButton = (
     const groupDivToRemove = context.dom.getElementById('group-list')
     if (groupDivToRemove) groupDivToRemove.remove()
     
+    // attach a blank Group Div
+    const groupListDiv = createGroupListDiv(context, null)
+    const addressBookDetailsSection = context.dom.getElementById('addressBookDetailsSection')
+    addressBookDetailsSection.appendChild(groupListDiv)
+    
     // remove presious address book selection bc you can only have one
     const selectedAddressBookElements = context.dom.querySelectorAll('.selectedAddressBook')
     selectedAddressBookElements.forEach((addressBookButton) => {
@@ -291,8 +304,8 @@ const createAddressBookButton = (
     if (previouslySelected) {
       selectedAddressBookButton.classList.remove("contactsSelectedButton", "selectedAddressBook");
       const groupForm = context.dom.getElementById('new-group-form')
-      if (groupForm) groupForm.remove()
-      addressBookUriSelectorDialog.appendChild(createNewAddressBookForm(context, addressBooksData, contactsModule, contactData))
+      if (groupForm) groupForm.remove() 
+      addressBookUriSelectorDialog.appendChild(createNewAddressBookForm(context, addressBooksData, contactsModule, contactData)) 
     } else {
       const addressForm = context.dom.getElementById('new-addressbook-form')
       if (addressForm) addressForm.remove()
@@ -306,7 +319,11 @@ const createAddressBookButton = (
       // can check for the class on private
       addressBook = addressBooksData.public.get(selectedAddressBookUri) 
       if (!addressBook) addressBook = addressBooksData.private.get(selectedAddressBookUri) 
-      // add groups for addressbook  
+      
+      // remove the previous groups
+      const groupDivToRemove = context.dom.getElementById('group-list')
+      if (groupDivToRemove) groupDivToRemove.remove()
+      // add groups for addressbook    
       const groupListDiv = createGroupListDiv(context, addressBook)  
       const addressBookDetailsSection = context.dom.getElementById('addressBookDetailsSection')
       addressBookDetailsSection.appendChild(groupListDiv)
@@ -445,36 +462,52 @@ const createNewAddressBookForm = (
 
   const addressBookTypeIndexDiv = context.dom.createElement('div')
   addressBookTypeIndexDiv.setAttribute('id', 'addressBookTypeIndexDiv')
-  addressBookTypeIndexDiv.setAttribute('role', 'radiogroup')
+  addressBookTypeIndexDiv.setAttribute('role', 'checkboxgroup')
   addressBookTypeIndexDiv.classList.add('contactsAddressTypeIndexInput')
   addressBookTypeIndexDiv.innerHTML = "Add to your type index (optional)"
 
-  const addressBookPublicTypeIndexRadioLabel = context.dom.createElement('label')
-  addressBookPublicTypeIndexRadioLabel.classList.add('label')
-  addressBookPublicTypeIndexRadioLabel.innerHTML = 'Public TypeIndex'
-  addressBookPublicTypeIndexRadioLabel.setAttribute('for', 'publicTypeIndex')
+  const addressBookPublicTypeIndexDiv = context.dom.createElement('div')
+  addressBookPublicTypeIndexDiv.setAttribute('id', 'addressBookPublicTypeIndexDiv')
+  addressBookPublicTypeIndexDiv.setAttribute('role', 'checkboxgroup')
+  addressBookPublicTypeIndexDiv.classList.add('contactsAddressTypeIndexInputGroup')
 
-  const addressBookPublicTypeIndexRadio = context.dom.createElement('input')
-  addressBookPublicTypeIndexRadio.type = 'radio';
-  addressBookPublicTypeIndexRadio.id = 'publicTypeIndex';
-  addressBookPublicTypeIndexRadio.name = 'address-type-index';
-  addressBookPublicTypeIndexRadio.value = 'publicTypeIndex';
+  const addressBookPublicTypeIndexCheckBoxLabel = context.dom.createElement('label')
+  addressBookPublicTypeIndexCheckBoxLabel.classList.add('contactsCheckBoxLabel')
+  addressBookPublicTypeIndexCheckBoxLabel.innerHTML = 'Public Type Index '
+  addressBookPublicTypeIndexCheckBoxLabel.setAttribute('for', 'publicTypeIndex')
 
-  const addressBookPrivateTypeIndexRadioLabel = context.dom.createElement('label')
-  addressBookPrivateTypeIndexRadioLabel.classList.add('label')
-  addressBookPrivateTypeIndexRadioLabel.innerHTML = 'Private TypeIndex'
-  addressBookPrivateTypeIndexRadioLabel.setAttribute('for', 'privateTypeIndex')
+  const addressBookPublicTypeIndexCheckBox = context.dom.createElement('input')
+  addressBookPublicTypeIndexCheckBox.classList.add('contactsCheckBoxInput')
+  addressBookPublicTypeIndexCheckBox.type = 'checkbox';
+  addressBookPublicTypeIndexCheckBox.id = 'publicTypeIndex';
+  addressBookPublicTypeIndexCheckBox.name = 'address-type-index';
+  addressBookPublicTypeIndexCheckBox.value = 'publicTypeIndex';
 
-  const addressBookPrivateTypeIndexRadio = context.dom.createElement('input')
-  addressBookPrivateTypeIndexRadio.type = 'radio';
-  addressBookPrivateTypeIndexRadio.id = 'privateTypeIndex';
-  addressBookPrivateTypeIndexRadio.name = 'address-type-index';
-  addressBookPrivateTypeIndexRadio.value = 'privateTypeIndex';
+  addressBookPublicTypeIndexDiv.appendChild(addressBookPublicTypeIndexCheckBoxLabel)
+  addressBookPublicTypeIndexDiv.appendChild(addressBookPublicTypeIndexCheckBox)
 
-  addressBookTypeIndexDiv.appendChild(addressBookPublicTypeIndexRadioLabel)
-  addressBookTypeIndexDiv.appendChild(addressBookPublicTypeIndexRadio)
-  addressBookTypeIndexDiv.appendChild(addressBookPrivateTypeIndexRadioLabel)
-  addressBookTypeIndexDiv.appendChild(addressBookPrivateTypeIndexRadio)
+  const addressBookPrivateTypeIndexDiv = context.dom.createElement('div')
+  addressBookPrivateTypeIndexDiv.setAttribute('id', 'addressBookPrivateTypeIndexDiv')
+  addressBookPrivateTypeIndexDiv.setAttribute('role', 'checkboxgroup')
+  addressBookPrivateTypeIndexDiv.classList.add('contactsAddressTypeIndexInputGroup')
+
+  const addressBookPrivateTypeIndexCheckBoxLabel = context.dom.createElement('label')
+  addressBookPrivateTypeIndexCheckBoxLabel.classList.add('contactsCheckBoxLabel')
+  addressBookPrivateTypeIndexCheckBoxLabel.innerHTML = 'Private Type Index'
+  addressBookPrivateTypeIndexCheckBoxLabel.setAttribute('for', 'privateTypeIndex')
+
+  const addressBookPrivateTypeIndexCheckBox = context.dom.createElement('input')
+  addressBookPrivateTypeIndexCheckBox.classList.add('contactsCheckBoxInput')
+  addressBookPrivateTypeIndexCheckBox.type = 'checkbox';
+  addressBookPrivateTypeIndexCheckBox.id = 'privateTypeIndex';
+  addressBookPrivateTypeIndexCheckBox.name = 'address-type-index';
+  addressBookPrivateTypeIndexCheckBox.value = 'privateTypeIndex';
+
+  addressBookPrivateTypeIndexDiv.appendChild(addressBookPrivateTypeIndexCheckBoxLabel)
+  addressBookPrivateTypeIndexDiv.appendChild(addressBookPrivateTypeIndexCheckBox)
+
+  addressBookTypeIndexDiv.appendChild(addressBookPublicTypeIndexDiv)
+  addressBookTypeIndexDiv.appendChild(addressBookPrivateTypeIndexDiv)
 
   const groupNameLabel = context.dom.createElement('label')
   groupNameLabel.classList.add('label')
