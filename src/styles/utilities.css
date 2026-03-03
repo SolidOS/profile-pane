@@ -338,10 +338,10 @@
   padding: 5px;
   min-height: var(--min-touch-target);
   height: 35px;
-  box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+  border: none;
   border-radius: var(--border-radius-base);
   background: white;
-  color: black;
   font-weight: 600;
   font-size: var(--font-size-sm);
   transition: #909090 0.3s ease;
@@ -349,10 +349,8 @@
 
 .input:focus,
 .input:focus-visible {
-  outline: 1px solid #909090 !important;
-  outline-offset: 2px !important;
   border-radius: var(--border-radius-base);
-  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px !important;
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px !important;
   z-index: 1;
 }
 
