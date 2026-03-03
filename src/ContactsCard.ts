@@ -4,8 +4,9 @@ import { addAddressToPublicTypeIndex, createContactInAddressBook, refreshButton 
 import { AddressBookDetails, AddressBooksData, ContactData, GroupData } from "./contactsTypes"
 import ContactsModuleRdfLib from "@solid-data-modules/contacts-rdflib"
 import { authn } from "solid-logic"
-import { clearPreviousMessage, complain, mention } from "./buttonsHelper"
-import { addressBookNotExists, contactWasAddedSuccesMessage, errorAddressBookCreation, errorContactCreation, errorGroupCreation, groupIsRequired } from "./texts"
+import { clearPreviousMessage, mention } from "./buttonsHelper"
+import { contactWasAddedSuccesMessage, errorAddressBookCreation, errorContactCreation, errorGroupCreation, groupIsRequired } from "./texts"
+import { addErrorToErrorDisplay, checkAndAddErrorDisplay } from "./contactsErrors"
 
 export const createAddressBookUriSelectorDialog = (context: DataBrowserContext,
   contactsModule: ContactsModuleRdfLib,
@@ -23,21 +24,27 @@ export const createAddressBookUriSelectorDialog = (context: DataBrowserContext,
 
   const closeButton = context.dom.createElement('button')
   closeButton.classList.add('contactsCloseButton')
-  closeButton.innerHTML = 'Close'
+  closeButton.textContent = 'X'
   closeButton.onclick = (event) => {
+    event.preventDefault()
     const elementToClose = context.dom.getElementById('contacts-selector-dialog')
     elementToClose.remove()
     
     button.removeAttribute('disabled')
   }
 
+  const addressBookUriEntryDiv = createAddressBookUriEntryDiv(context)
   const addressBookDetailsSection = createAddressBookDetailsSection(context)
   const errorDisplaySection = createErrorDisplaySection(context)  
   const addressBookListDiv = createAddressBookListDiv(context, contactsModule, contactData, addressBooksData, addressBookDetailsSection)
+  const groupListDiv = createGroupListDiv(context, null)
   addressBookDetailsSection.appendChild(addressBookListDiv)
+  addressBookDetailsSection.appendChild(groupListDiv)
 
+  
   addressBookUriSelectorDialog.appendChild(closeButton)
   addressBookUriSelectorDialog.appendChild(addressBookDetailsSection)
+  addressBookUriSelectorDialog.appendChild(addressBookUriEntryDiv)
   addressBookUriSelectorDialog.appendChild(errorDisplaySection)
   addressBookUriSelectorDialog.appendChild(createNewAddressBookForm(context, addressBooksData, contactsModule, contactData))
   
@@ -56,16 +63,60 @@ export const createAddressBookDetailsSection = (
   return addressBookDetailsSection
 }
 
-export const createAddressEntryButton = (
+const createAddressBookUriEntryDiv = (
+  context: DataBrowserContext
+): HTMLDivElement => {
+  const addressBookUriEntryDiv = context.dom.createElement('div')
+  addressBookUriEntryDiv.setAttribute('role', 'addressBookUriEntry')
+  addressBookUriEntryDiv.setAttribute('aria-live', 'polite')
+  addressBookUriEntryDiv.setAttribute('tabindex', '0')
+  addressBookUriEntryDiv.setAttribute('id', 'contacts-addressbook-uri-entry')
+  addressBookUriEntryDiv.classList.add('contactsAddressBookUriEntry')
+
+  addressBookUriEntryDiv.appendChild(createAddressBookUriEntryForm(context))  
+  return addressBookUriEntryDiv
+}
+
+const createAddressBookUriEntryForm = (
+  context: DataBrowserContext
+): HTMLFormElement => {
+  const addressBookUriEntryForm = context.dom.createElement('form')
+  addressBookUriEntryForm.setAttribute('id', 'contacts-address-entry-form')
+  addressBookUriEntryForm.classList.add('contactsAddressBookUriEntryForm')
+
+  const addressBookUriEntryLabel = context.dom.createElement('label')
+  addressBookUriEntryLabel.classList.add('label')
+  addressBookUriEntryLabel.setAttribute('for', 'addressBookNameInput')
+
+  const addressBookNameInputBox = context.dom.createElement('input')
+  addressBookNameInputBox.type = 'text'
+  addressBookNameInputBox.name = 'addressBookUri'
+  addressBookNameInputBox.id = 'addressBookUriInput' 
+  addressBookNameInputBox.placeholder = 'Enter address book URI to find your address book' 
+  addressBookNameInputBox.classList.add('input', 'contactsAddressBookUriInput')
+  addressBookUriEntryForm.appendChild(addressBookUriEntryLabel)
+  addressBookUriEntryForm.appendChild(addressBookNameInputBox)
+  addressBookUriEntryForm.appendChild(createAddressUriEntryButton(context))
+  
+  return addressBookUriEntryForm
+}
+
+const createAddressUriEntryButton = (
   context: DataBrowserContext
 ): HTMLButtonElement => {
+
+  const setButtonOnClickHandler = (event) => {
+    event.preventDefault()
+  } 
   const entryButton = context.dom.createElement('button')
   entryButton.setAttribute('id', 'contacts-addressbook-entry-button')
-  entryButton.classList.add('contactsAddressBookEntryButton')
+  entryButton.classList.add('contactsAddressBookUriEntryButton')
+  entryButton.addEventListener('click', setButtonOnClickHandler)
+  entryButton.innerHTML = 'Add'
   return entryButton
 }
 
-export const createAddressBookListDiv = (
+const createAddressBookListDiv = (
   context: DataBrowserContext,
   contactsModule: ContactsModuleRdfLib,
   contactData: ContactData,
@@ -121,7 +172,7 @@ export const createAddressBookListDiv = (
   addressBookListDiv.setAttribute('aria-labelledby', 'address-book-list-div')
   addressBookListDiv.setAttribute('data-testid', 'div')
 
-  addressBookListDiv.innerHTML = "Address Books"
+  addressBookListDiv.innerHTML = "ADDRESS BOOKS"
   addressBooksData.public.forEach((addressBook, addressBookUri) => {
     addressBookListDiv.appendChild(createAddressBookButton(context, addressBook, addressBookUri, 'public', setButtonOnClickHandler))
   })
@@ -148,43 +199,27 @@ const createGroupListDiv = (
   groupListDiv.setAttribute('data-testid', 'div')
   groupListDiv.setAttribute('id', 'group-list')
 
-  groupListDiv.innerHTML = "Groups"
+  groupListDiv.innerHTML = "GROUPS"
   if (addressBook) {
     addressBook.groups.map((group) => {
         groupListDiv.appendChild(createGroupButton(context, group))
     })
-  } else {
-    addErrorToErrorDisplay(context, addressBookNotExists)
-  }
+  } 
   return groupListDiv
 }
 
 const createErrorDisplaySection = (
   context: DataBrowserContext
 ): HTMLElement => {
-
+ // need to implement a on click for close button
   const errorDisplaySection = context.dom.createElement('section')
   errorDisplaySection.classList.add('contactsErrorDisplay')
   errorDisplaySection.innerHTML = "Errors will go here"
   errorDisplaySection.setAttribute('id', 'error-display-section')
   const closeButton = context.dom.createElement('button')
-  closeButton.innerHTML = 'Close'
+  closeButton.textContent = 'x'
 
   return errorDisplaySection
-}
-
-export const addErrorToErrorDisplay = (
-  context: DataBrowserContext,
-  message: string
-) => {
-  const errorDisplaySection = context.dom.getElementById('error-display-section')
-  if (errorDisplaySection) {
-    errorDisplaySection.classList.add('contactsShowErrors')
-    errorDisplaySection.innerHTML = message
-  } else {
-    const buttonContainer = context.dom.getElementById('add-to-contacts-button-container')
-    complain(buttonContainer as HTMLDivElement , context, message)
-  }
 }
 
 const checkAndRemoveErrorDisplay = (
@@ -194,21 +229,6 @@ const checkAndRemoveErrorDisplay = (
   if (errorDisplaySection.classList.contains('contactsShowErrors')) {
     errorDisplaySection.classList.remove('contactsShowErrors')
     errorDisplaySection.innerHTML = ''
-  }
-}
-
-const checkAndAddErrorDisplay = (
-  context: DataBrowserContext,
-  message: string
-) => {
-  
-  const selectedGroupElements = context.dom.querySelectorAll('.selectedGroup')
-
-  const groupNameField = context.dom.querySelector('#groupNameInput')
-  // @ts-ignore
-  const enteredGroupName = groupNameField.value
-  if (selectedGroupElements.length === 0 && !enteredGroupName) {
-    addErrorToErrorDisplay(context, message)
   }
 }
 
@@ -262,7 +282,7 @@ const createAddressBookButton = (
   // @ts-ignore
   button.addEventListener('click', setButtonOnClickHandler)
   // button.attributeStyleMap.clear()
-  button.innerHTML = `${addressBook.name} (${index})`
+  button.innerHTML = addressBook.name
   return button
 }
 

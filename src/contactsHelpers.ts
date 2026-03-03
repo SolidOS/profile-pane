@@ -2,12 +2,13 @@ import { LiveStore, NamedNode, sym, st } from "rdflib"
 import { login, ns, utils } from "solid-ui"
 import ContactsModuleRdfLib, { NewContact } from "@solid-data-modules/contacts-rdflib"
 import { DataBrowserContext } from "pane-registry";
-import { addErrorToErrorDisplay, createAddressBookUriSelectorDialog } from "./ContactsCard";
+import { createAddressBookUriSelectorDialog } from "./ContactsCard";
 import './styles/ContactsCard.css'
 import { authn } from "solid-logic";
 import { AddressBooksData, ContactData, EmailDetails, PhoneDetails, SelectedAddressBookUris } from "./contactsTypes";
 import { addMeToYourContactsButtonText, contactExistsAlreadyButtonText, contactExistsAlreadyByNameButtonText, errorGettingAddressBooks, errorLoadingContact, errorReadingAddressBook, logInAddMeToYourContactsButtonText } from "./texts";
 import { checkIfAnyUserLoggedIn } from "./buttonsHelper";
+import { addErrorToErrorDisplay } from "./contactsErrors";
 
 async function addContactToAddressBook(
   context: DataBrowserContext,
@@ -118,23 +119,8 @@ async function getAddressBooksData(
   if (!me) return null
   let addressBooksData = null
 
-
-  let dom = context.dom
-  const div = dom.createElement('div')
-    const context2 = {
-      target: me,
-      me,
-      noun: 'address book',
-      div,
-      dom
-  } // missing: statusRegion
-  
   try {
-    const appInstances = await login.findAppInstances(context2, ns.vcard('AddressBook'))
-    console.log("App instances: " + JSON.stringify(appInstances))
-
     addressBooksData = await getAddressBooks(context, contactModule)
-
   } catch (error) {
     addErrorToErrorDisplay(context, `${errorGettingAddressBooks}\n${error}`)
   }
@@ -157,7 +143,6 @@ async function getContactData(
   const emailNodes = store.each(subject, ns.vcard('hasEmail'), null, subject.doc()) || null
   const phoneNodes = store.each(subject, ns.vcard('hasTelephone'), null, subject.doc()) || null
  
-  
   emailNodes.map((node) => {
     email = store.any(node as NamedNode, ns.vcard('value'), null, subject.doc())
     type = store.any(node as NamedNode, ns.rdf('type'), null, subject.doc())
@@ -197,11 +182,12 @@ async function createContactInAddressBook(
     if (groupUris) {
       contactUri = await contactsModule.createNewContact({addressBookUri: selectedAddressBookUris.addressBookUri, contact: newContact, groupUris}) 
     } else {
+      // TODO: think I should change the code here as we don't allow creation without a group
       contactUri = await contactsModule.createNewContact({addressBookUri: selectedAddressBookUris.addressBookUri, contact: newContact})   
     } 
     await context.session.store.fetcher.load(contactUri)
     await addWebIDToContact(context, groupUris, contactUri, contactData.webID)
-    if (contactData.emails.length != 0 || contactData.phoneNumbers.length != 0) {
+    if (contactData.emails.length || contactData.phoneNumbers.length) {
       await addContactDetails(context, contactUri, contactData)
     }
     return contactUri
@@ -370,7 +356,6 @@ async function addWebIDToExistingContact(
 
   try {
     const groupUris = await getGroupUrisForContact(contactsModule, addressBooksData, contactUri)
-    console.log("groupUris: " + groupUris)
     await addWebIDToContact(context, groupUris, contactUri, webID)
   } catch (error) {
     addErrorToErrorDisplay(context, error)
@@ -402,12 +387,10 @@ async function getGroupUrisForContact(
   })
   allGroupUrisForAddressBook = addressBookForContact.groups
   const groupPromises = allGroupUrisForAddressBook.map(async (group) => {
-    console.log("group uri: " + JSON.stringify(group.uri))
     group = await contactsModule.readGroup(group.uri)
     return { groupUri: group.uri, group }
   })  
   const groups = await Promise.all(groupPromises)
-  console.log("groups: " + JSON.stringify(groups))
 
   groups.map((groupInfo) => {
     groupInfo.group.members.map((contact) => {
