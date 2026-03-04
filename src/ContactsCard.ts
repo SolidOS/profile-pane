@@ -5,7 +5,7 @@ import { AddressBookDetails, AddressBooksData, ContactData, GroupData } from "./
 import ContactsModuleRdfLib from "@solid-data-modules/contacts-rdflib"
 import { authn } from "solid-logic"
 import { clearPreviousMessage, mention } from "./buttonsHelper"
-import { contactExistsMessage, contactWasAddedSuccesMessage, errorAddressBookCreation, errorContactCreation, errorGroupCreation, errorNotExistsAddressBookUri, groupIsRequired } from "./texts"
+import { addressBookFindableMessage, contactExistsMessage, contactWasAddedSuccesMessage, errorAddressBookCreation, errorContactCreation, errorGroupCreation, errorNotExistsAddressBookUri, groupIsRequired } from "./texts"
 import { addErrorToErrorDisplay, checkAndAddErrorDisplay } from "./contactsErrors"
 
 export const createAddressBookUriSelectorDialog = (context: DataBrowserContext,
@@ -370,10 +370,14 @@ const createNewAddressBookForm = (
     // @ts-ignore
     const enteredAddressContainer = addressContainerField.value
 
-    const selectedresourceTypeRadio = context.dom.querySelector('input[name="address-type"]:checked')
+    const selectedResourceTypeRadio = context.dom.querySelector('input[name="address-type"]:checked')
     // @ts-ignore
-    const resourceType = selectedresourceTypeRadio.value
+    const resourceType = selectedResourceTypeRadio.value
     
+    const selectedTypeIndexRadio = context.dom.querySelector('input[name="address-type-index"]:checked')
+    // @ts-ignore
+    const typeIndex = selectedTypeIndexRadio.value
+
     const groupNameField = context.dom.querySelector('#groupNameInput')
     // @ts-ignore
     const enteredGroupName = groupNameField.value
@@ -462,52 +466,38 @@ const createNewAddressBookForm = (
 
   const addressBookTypeIndexDiv = context.dom.createElement('div')
   addressBookTypeIndexDiv.setAttribute('id', 'addressBookTypeIndexDiv')
-  addressBookTypeIndexDiv.setAttribute('role', 'checkboxgroup')
+  addressBookTypeIndexDiv.setAttribute('role', 'radiogroup')
   addressBookTypeIndexDiv.classList.add('contactsAddressTypeIndexInput')
-  addressBookTypeIndexDiv.innerHTML = "Add to your type index (optional)"
+  addressBookTypeIndexDiv.innerHTML = 'Make your address book findable by others'
 
-  const addressBookPublicTypeIndexDiv = context.dom.createElement('div')
-  addressBookPublicTypeIndexDiv.setAttribute('id', 'addressBookPublicTypeIndexDiv')
-  addressBookPublicTypeIndexDiv.setAttribute('role', 'checkboxgroup')
-  addressBookPublicTypeIndexDiv.classList.add('contactsAddressTypeIndexInputGroup')
+  const addressBookTypeIndexRadioLabel = context.dom.createElement('label')
+  addressBookTypeIndexRadioLabel.classList.add('contactsRadioLabel')
+  addressBookTypeIndexRadioLabel.innerHTML = 'Yes'
+  addressBookTypeIndexRadioLabel.setAttribute('for', 'yes')
 
-  const addressBookPublicTypeIndexCheckBoxLabel = context.dom.createElement('label')
-  addressBookPublicTypeIndexCheckBoxLabel.classList.add('contactsCheckBoxLabel')
-  addressBookPublicTypeIndexCheckBoxLabel.innerHTML = 'Public Type Index '
-  addressBookPublicTypeIndexCheckBoxLabel.setAttribute('for', 'publicTypeIndex')
+  const addressBookTypeIndexRadio = context.dom.createElement('input')
+  addressBookTypeIndexRadio.classList.add('contactsRadioInput')
+  addressBookTypeIndexRadio.type = 'radio';
+  addressBookTypeIndexRadio.id = 'yes';
+  addressBookTypeIndexRadio.name = 'address-type-index';
+  addressBookTypeIndexRadio.value = 'yes';
 
-  const addressBookPublicTypeIndexCheckBox = context.dom.createElement('input')
-  addressBookPublicTypeIndexCheckBox.classList.add('contactsCheckBoxInput')
-  addressBookPublicTypeIndexCheckBox.type = 'checkbox';
-  addressBookPublicTypeIndexCheckBox.id = 'publicTypeIndex';
-  addressBookPublicTypeIndexCheckBox.name = 'address-type-index';
-  addressBookPublicTypeIndexCheckBox.value = 'publicTypeIndex';
+  const addressBookNoTypeIndexRadioLabel = context.dom.createElement('label')
+  addressBookNoTypeIndexRadioLabel.classList.add('contactsRadioLabel')
+  addressBookNoTypeIndexRadioLabel.innerHTML = 'No'
+  addressBookNoTypeIndexRadioLabel.setAttribute('for', 'no')
 
-  addressBookPublicTypeIndexDiv.appendChild(addressBookPublicTypeIndexCheckBoxLabel)
-  addressBookPublicTypeIndexDiv.appendChild(addressBookPublicTypeIndexCheckBox)
+  const addressBookNoTypeIndexRadio = context.dom.createElement('input')
+  addressBookNoTypeIndexRadio.classList.add('contactsRadioInput')
+  addressBookNoTypeIndexRadio.type = 'radio';
+  addressBookNoTypeIndexRadio.id = 'no';
+  addressBookNoTypeIndexRadio.name = 'address-type-index';
+  addressBookNoTypeIndexRadio.value = 'no';
 
-  const addressBookPrivateTypeIndexDiv = context.dom.createElement('div')
-  addressBookPrivateTypeIndexDiv.setAttribute('id', 'addressBookPrivateTypeIndexDiv')
-  addressBookPrivateTypeIndexDiv.setAttribute('role', 'checkboxgroup')
-  addressBookPrivateTypeIndexDiv.classList.add('contactsAddressTypeIndexInputGroup')
-
-  const addressBookPrivateTypeIndexCheckBoxLabel = context.dom.createElement('label')
-  addressBookPrivateTypeIndexCheckBoxLabel.classList.add('contactsCheckBoxLabel')
-  addressBookPrivateTypeIndexCheckBoxLabel.innerHTML = 'Private Type Index'
-  addressBookPrivateTypeIndexCheckBoxLabel.setAttribute('for', 'privateTypeIndex')
-
-  const addressBookPrivateTypeIndexCheckBox = context.dom.createElement('input')
-  addressBookPrivateTypeIndexCheckBox.classList.add('contactsCheckBoxInput')
-  addressBookPrivateTypeIndexCheckBox.type = 'checkbox';
-  addressBookPrivateTypeIndexCheckBox.id = 'privateTypeIndex';
-  addressBookPrivateTypeIndexCheckBox.name = 'address-type-index';
-  addressBookPrivateTypeIndexCheckBox.value = 'privateTypeIndex';
-
-  addressBookPrivateTypeIndexDiv.appendChild(addressBookPrivateTypeIndexCheckBoxLabel)
-  addressBookPrivateTypeIndexDiv.appendChild(addressBookPrivateTypeIndexCheckBox)
-
-  addressBookTypeIndexDiv.appendChild(addressBookPublicTypeIndexDiv)
-  addressBookTypeIndexDiv.appendChild(addressBookPrivateTypeIndexDiv)
+  addressBookTypeIndexDiv.appendChild(addressBookTypeIndexRadioLabel)
+  addressBookTypeIndexDiv.appendChild(addressBookTypeIndexRadio)
+  addressBookTypeIndexDiv.appendChild(addressBookNoTypeIndexRadioLabel)
+  addressBookTypeIndexDiv.appendChild(addressBookNoTypeIndexRadio)
 
   const groupNameLabel = context.dom.createElement('label')
   groupNameLabel.classList.add('label')
@@ -672,8 +662,9 @@ const handleContactExists = (
       addErrorToErrorDisplay(context, contactExistsMessage )
       return
     } else if (contactExistsByName) {
+      // need to disable and possibly grey out the dialog
       const selectorDialog = context.dom.getElementById('contacts-selector-dialog')
-
+      
       const contactExistsDiv = context.dom.createElement('div')
       contactExistsDiv.setAttribute('role', 'alert')
       contactExistsDiv.setAttribute('aria-live', 'assertive')
@@ -696,11 +687,12 @@ const handleContactExists = (
       cancelButton.addEventListener('click', (event) => {
         event.preventDefault()
         selectorDialog.remove()
-        mention(getButtonContainer(context), 'Contact was not added')
+        // need to use complain function to display that contact was not added instead of mention
+        mention(getButtonContainer(context), "Contact was not added")
         setTimeout(() => {
           clearPreviousMessage(getButtonContainer(context))
         }, 2000); 
-        refreshButton(context, addressBooksData, contactData)  
+          refreshButton(context, addressBooksData, contactData)  
       })
 
       contactExistsDiv.appendChild(confirmButton)

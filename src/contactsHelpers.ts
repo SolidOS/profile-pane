@@ -80,10 +80,10 @@ try {
     
     let addressBookUris = await contactsModule.listAddressBooks(me.value) 
     // SAM need to add when done testing
-    /*addressBookUris = {
+    addressBookUris = {
       publicUris: [],
       privateUris: [] 
-    } */
+    } 
 
     const publicAddressBookPromises = await addressBookUris.publicUris.map(addressBook => getAddressData(context, contactsModule, addressBook))
     const publicAddressBooksData = await Promise.all(publicAddressBookPromises)
@@ -304,6 +304,7 @@ async function addWebIDToContact(
   const contactNode = new NamedNode(contactUri)
   const node = store.bnode()
   const insertions = []
+  let deletions = []
   let groupUriNode = null
 
   try {
@@ -311,9 +312,10 @@ async function addWebIDToContact(
       groupUris.map(async (groupUri) => {
         await context.session.store.fetcher.load(groupUri)
         groupUriNode = new NamedNode(groupUri)
+        deletions = deletions.concat(context.session.store.statementsMatching(groupUriNode, ns.vcard('hasMember'), contactNode, groupUriNode.doc()))
+    
         insertions.push(st(sym(webID), ns.owl('sameAs'), contactNode, groupUriNode.doc()))
-        // I think this already happens with solid-data-modules
-        // insertions.push(st(groupUriNode, ns.vcard('hasMember'), sym(webID), groupUriNode.doc()))      
+        insertions.push(st(groupUriNode, ns.vcard('hasMember'), sym(webID), groupUriNode.doc()))      
       })
     }
     
@@ -321,7 +323,8 @@ async function addWebIDToContact(
     insertions.push(st(node, ns.rdf('type'), ns.vcard('WebID'), contactNode.doc()))
     // @ts-ignore Webid should be a string 
     insertions.push(st(node, ns.vcard("value"), webID, contactNode.doc()))
-    await store.updater.update([],insertions)    
+    // could use updateMany
+    await store.updater.update(deletions, insertions)    
   } catch (error) {
     addErrorToErrorDisplay(context, error)
   }
@@ -401,8 +404,8 @@ function checkIfContactExistsByName(
     if (normalizedSubjectName === normalizedContactName) return contactUri = uri
   })
   // SAM need to uncomment - more testing
-  // return contactUri
-  return null
+  return contactUri
+  // return null
 }
 
 async function addWebIDToExistingContact(
