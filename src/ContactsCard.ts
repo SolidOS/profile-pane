@@ -1,11 +1,11 @@
 import { DataBrowserContext } from "pane-registry"
 import { widgets } from "solid-ui"
-import { addAddressToPublicTypeIndex, addANewAddressBookUriToAddressBooks, createContactInAddressBook, refreshButton } from "./contactsHelpers"
+import { addAddressToPublicTypeIndex, addANewAddressBookUriToAddressBooks, addWebIDToExistingContact, checkIfContactExistsByName, checkIfContactExistsByWebID, createContactInAddressBook, refreshButton } from "./contactsHelpers"
 import { AddressBookDetails, AddressBooksData, ContactData, GroupData } from "./contactsTypes"
 import ContactsModuleRdfLib from "@solid-data-modules/contacts-rdflib"
 import { authn } from "solid-logic"
 import { clearPreviousMessage, mention } from "./buttonsHelper"
-import { contactWasAddedSuccesMessage, errorAddressBookCreation, errorContactCreation, errorGroupCreation, errorNotExistsAddressBookUri, groupIsRequired } from "./texts"
+import { contactExistsMessage, contactWasAddedSuccesMessage, errorAddressBookCreation, errorContactCreation, errorGroupCreation, errorNotExistsAddressBookUri, groupIsRequired } from "./texts"
 import { addErrorToErrorDisplay, checkAndAddErrorDisplay } from "./contactsErrors"
 
 export const createAddressBookUriSelectorDialog = (context: DataBrowserContext,
@@ -178,7 +178,7 @@ const createAddressBookListDiv = (
   addressBookListDiv.setAttribute('aria-labelledby', 'address-book-list-div')
   addressBookListDiv.setAttribute('data-testid', 'div')
 
-  addressBookListDiv.innerHTML = "ADDRESS BOOKS"
+  addressBookListDiv.innerHTML = "Address Books"
   addressBooksData.public.forEach((addressBook, addressBookUri) => {
     addressBookListDiv.appendChild(createAddressBookButton(context, contactsModule, addressBooksData, addressBook, addressBookUri, contactData, 'public'))
   })
@@ -205,7 +205,7 @@ const createGroupListDiv = (
   groupListDiv.setAttribute('data-testid', 'div')
   groupListDiv.setAttribute('id', 'group-list')
 
-  groupListDiv.innerHTML = "GROUPS"
+  groupListDiv.innerHTML = "Groups"
   if (addressBook) {
     addressBook.groups.map((group) => {
         groupListDiv.appendChild(createGroupButton(context, group))
@@ -390,7 +390,7 @@ const createNewAddressBookForm = (
         addressBookUri: enteredAddressBookUri,
         groupUris: selectedGroupUris 
         }
-        const contactUri = await createContactInAddressBook(context, contactsModule, contactData, selectedAddressBookUris)
+        const contactUri = await createContactInAddressBook(context, contactsModule, addressBooksData, contactData, selectedAddressBookUris)
         finalizeContactEntry(context, addressBooksData, contactData, contactUri)
       } catch (error) {
         addErrorToErrorDisplay(context, error)
@@ -583,6 +583,14 @@ const createGroupNameForm = (
     let selectedAddressBookUri = null 
     let selectedGroupUris = []
 
+    const contactExistsByName = checkIfContactExistsByName(addressBooksData, contactData.name)
+    const contactExistsByWebID = checkIfContactExistsByWebID(addressBooksData, contactData.webID)
+
+    if (contactExistsByName || contactExistsByWebID) {
+      handleContactExists(context, contactsModule, addressBooksData, contactData, contactExistsByWebID, contactExistsByName)
+      return
+    }
+
     const selectedAddressBookElement = context.dom.querySelectorAll('.selectedAddressBook')
     selectedAddressBookElement.forEach((addressBookButton) => {
       selectedAddressBookUri = addressBookButton.getAttribute('id')
@@ -611,8 +619,9 @@ const createGroupNameForm = (
           addressBookUri: selectedAddressBookUri,
           groupUris: selectedGroupUris 
       }
+
       try {
-        const contactUri = await createContactInAddressBook(context, contactsModule, contactData, selectedAddressBookUris)
+        const contactUri = await createContactInAddressBook(context, contactsModule, addressBooksData, contactData, selectedAddressBookUris)
         finalizeContactEntry(context, addressBooksData, contactData, contactUri)
       } catch(error) {
         addErrorToErrorDisplay(context, `${errorContactCreation}\n${error}`)
@@ -648,6 +657,56 @@ const createGroupNameForm = (
   newGroupForm.appendChild(submitButton)
     
   return newGroupForm
+}
+
+const handleContactExists = (
+  context: DataBrowserContext,
+  contactsModule: ContactsModuleRdfLib,
+  addressBooksData: AddressBooksData,
+  contactData: ContactData,
+  contactExistsByWebID: boolean,
+  contactExistsByName: string,
+): boolean => {
+
+  if (contactExistsByWebID) {
+      addErrorToErrorDisplay(context, contactExistsMessage )
+      return
+    } else if (contactExistsByName) {
+      const selectorDialog = context.dom.getElementById('contacts-selector-dialog')
+
+      const contactExistsDiv = context.dom.createElement('div')
+      contactExistsDiv.setAttribute('role', 'alert')
+      contactExistsDiv.setAttribute('aria-live', 'assertive')
+      contactExistsDiv.classList.add('contactsContactExistsAlert')
+      contactExistsDiv.innerHTML = `${contactData.name} already exists. \n Do you want to add their WebID?`
+      
+      const confirmButton = context.dom.createElement('button')
+      confirmButton.classList.add('contactsConfirmButton')
+      confirmButton.innerHTML = 'Yes'
+      confirmButton.addEventListener('click', async (event) => {
+        event.preventDefault()
+        await addWebIDToExistingContact(context, contactsModule, addressBooksData, contactData.webID, contactExistsByName)
+        finalizeContactEntry(context, addressBooksData, contactData, addressBooksData.contactWebIDs.get(contactData.webID))
+        refreshButton(context, addressBooksData, contactData)  
+      })
+
+      const cancelButton = context.dom.createElement('button')
+      cancelButton.classList.add('contactsCancelButton')
+      cancelButton.innerHTML = 'No'
+      cancelButton.addEventListener('click', (event) => {
+        event.preventDefault()
+        selectorDialog.remove()
+        mention(getButtonContainer(context), 'Contact was not added')
+        setTimeout(() => {
+          clearPreviousMessage(getButtonContainer(context))
+        }, 2000); 
+        refreshButton(context, addressBooksData, contactData)  
+      })
+
+      contactExistsDiv.appendChild(confirmButton)
+      contactExistsDiv.appendChild(cancelButton)
+      selectorDialog.appendChild(contactExistsDiv)  
+    }
 }
 
 const finalizeContactEntry = (

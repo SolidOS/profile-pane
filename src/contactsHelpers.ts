@@ -78,8 +78,13 @@ try {
     const me = authn.currentUser()
     await context.session.store.fetcher.load(me)
     
-    const addressBookUris = await contactsModule.listAddressBooks(me.value) 
-    
+    let addressBookUris = await contactsModule.listAddressBooks(me.value) 
+    // SAM need to add when done testing
+    /*addressBookUris = {
+      publicUris: [],
+      privateUris: [] 
+    } */
+
     const publicAddressBookPromises = await addressBookUris.publicUris.map(addressBook => getAddressData(context, contactsModule, addressBook))
     const publicAddressBooksData = await Promise.all(publicAddressBookPromises)
     publicAddressBooksData.map((addressBook) => {
@@ -219,6 +224,7 @@ async function addANewAddressBookUriToAddressBooks(
 async function createContactInAddressBook(
   context: DataBrowserContext,
   contactsModule: ContactsModuleRdfLib,
+  addressBooksData: AddressBooksData,
   contactData: ContactData,
   selectedAddressBookUris: SelectedAddressBookUris
 ): Promise<string>{
@@ -228,7 +234,8 @@ async function createContactInAddressBook(
   }
 
   try { 
-    const groupUris = (selectedAddressBookUris.groupUris.length  != 0) ? selectedAddressBookUris.groupUris : undefined
+   
+    const groupUris = (selectedAddressBookUris.groupUris.length) ? selectedAddressBookUris.groupUris : undefined
     if (groupUris) {
       contactUri = await contactsModule.createNewContact({addressBookUri: selectedAddressBookUris.addressBookUri, contact: newContact, groupUris}) 
     } else {
@@ -352,7 +359,7 @@ function refreshButton(
   const me = authn.currentUser()
   const button = context.dom.getElementById('add-to-contacts-button')
   if (checkIfAnyUserLoggedIn(me)) {
-      const contactExistsByWebID = checkIfContactExistsByWebID(contactData.webID, addressBooksData)
+      const contactExistsByWebID = checkIfContactExistsByWebID(addressBooksData, contactData.webID)
       const contactExistsByName = checkIfContactExistsByName(addressBooksData, contactData.name)
       if (contactExistsByWebID) {
         //logged in and friend exists or friend was just added
@@ -372,9 +379,10 @@ function refreshButton(
   }
 
 function checkIfContactExistsByWebID(
+  addressBooksData: AddressBooksData,
   subjectUri: string,
-  addressBooksData: AddressBooksData
 ): boolean {
+  return false // SAM need to remove when done testing
  if (addressBooksData.contactWebIDs.has(subjectUri)) return true
   return false
 }
@@ -383,16 +391,17 @@ function checkIfContactExistsByName(
   addressBooksData: AddressBooksData,
   name: string
 ): string | null {
+  let normalizedContactName = null
   let contactUri = null
+
   const normalizedSubjectName = name.replace(/\s/g, '').toLowerCase().trim()
  
-  let normalizedContactName = null
   addressBooksData.contactNames.forEach((uri, contactName) => {
     normalizedContactName = contactName.replace(/\s/g, '').toLowerCase().trim()
     if (normalizedSubjectName === normalizedContactName) return contactUri = uri
   })
-  // SAM need to uncomment
-  //return contactUri
+  // SAM need to uncomment - more testing
+  // return contactUri
   return null
 }
 

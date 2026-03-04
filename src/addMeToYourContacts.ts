@@ -13,7 +13,7 @@ import {
 } from './texts'
 import './styles/ProfileCard.css'
 import ContactsModuleRdfLib from '@solid-data-modules/contacts-rdflib'
-import { addErrorToErrorDisplay } from './ContactsCard'
+import { addErrorToErrorDisplay } from './contactsErrors'
 
 let buttonContainer = <HTMLDivElement>document.createElement('section')
 
@@ -84,7 +84,7 @@ const createAddMeToYourContactsButton = async (
   
   function refreshButton() {
     if (checkIfAnyUserLoggedIn(me)) {
-        const contactExistsByWebID = checkIfContactExistsByWebID(subject.value, addressBooksData)
+        const contactExistsByWebID = checkIfContactExistsByWebID(addressBooksData, contactData.webID)
         const contactExistsByName = checkIfContactExistsByName(addressBooksData, contactData.name)
         console.log("contact exists by name: " + contactExistsByName)
         if (contactExistsByWebID) {
@@ -117,7 +117,7 @@ async function saveNewContact(
 
 // need to find out where the user wants to add the Contact
   if (checkIfAnyUserLoggedIn(me)) {
-    if (!(checkIfContactExistsByWebID(subject.value, addressBooksData))) {
+    if (!(checkIfContactExistsByWebID(addressBooksData, subject.value))) {
       //if contact does not exist, we add her/him
       await store.fetcher.load(me)
       try {

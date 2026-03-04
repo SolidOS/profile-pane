@@ -294,3 +294,50 @@
  background: color-mix(in srgb, var(--color-primary), white 60%) !important; 
  color: var(--color-primary);
 }
+
+.contactsContactExistsAlert {
+  background: pink !important;
+  color: #787878;
+  padding: 10px;
+  border-radius: var(--border-radius-base);
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px; 
+  z-index: 10;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 300px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;  
+  text-wrap: pretty;
+}
+
+.contactsConfirmButton {
+  background: var(--color-primary);
+  color: white;
+  border-radius: var(--border-radius-base);
+  padding: var(--spacing-md);
+  transition: all 0.3s ease-in-out;
+  cursor: pointer;
+}
+
+.contactsConfirmButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.contactsCancelButton {
+  background: transparent;
+  color: #787878;
+  border-radius: var(--border-radius-base);
+  padding: var(--spacing-md);
+  border: 1px solid #ccc;
+  transition: all 0.3s ease-in-out;
+  cursor: pointer;
+}
+.contactsCancelButton:hover {
+  background: color-mix(in srgb, var(--color-primary), white 85%) !important;  
+  color: var(--color-primary);
+} 
