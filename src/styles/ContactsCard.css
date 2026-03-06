@@ -1,17 +1,16 @@
 .contactsAddressBookSelector {
   width: auto;
-  min-width: 700px;
   max-width: 90vw;
   border-radius: var(--border-radius-base);
   box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
   background: #F0F0F0;
   color: var(--color-primary);
-  padding-top: 6em;
+  padding-top: 4em;
   align-items: start;
   box-sizing: border-box;
   gap: 7px;
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   font-weight: 600;
   position: absolute;
   top: 70%;
@@ -29,69 +28,141 @@
     top: auto;
     left: auto;
     transform: none;
+  }  
+  /* SAM below isn't working 
+  trying to center the add contact button */
+  .contactsAddressBookCreationDiv .contactsNewContactCreationButton {
+    width: fit-content !important;
+    min-width: 10em;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    align-self: center !important;
+    display: inline-flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    text-align: center;
   }
-    
 }
+
+@media (max-width: 900px) {
+    .contactsAddressBookDetails {
+    flex-direction: column !important; /* Stacks items vertically on small screens */
+    align-items: center; /* Centers items horizontally */
+    gap: 15px !important; /* Adds space between items */
+  }
+}
+
+.contactsAddressBookCreationDiv {
+  width: 100%;
+  border-radius: var(--border-radius-base);
+  background: #F0F0F0;
+  box-sizing: border-box;
+  padding: 5px;
+  gap: 5px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+}
+
+.contactsHelpersButtonDiv {
+  display: flex;
+  flex-direction: row;
+  gap: var(--spacing-md);
+  justify-content: center;
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+  padding: var(--spacing-md);
+  border-radius: var(--border-radius-base);
+}
+
+.contactsAddressBookCreationButton {
+  flex-shrink: 0;
+  background: color-mix(in srgb, var(--color-primary), white 85%) !important;  
+  color: var(--color-primary) !important;
+  border-radius: 8px;
+  text-align: left;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.contactsAddressBookUriEntryButton {
+  flex-shrink: 0;
+  background: color-mix(in srgb, var(--color-primary), white 85%) !important;  
+  color: var(--color-primary) !important;
+  border-radius: 8px;
+  text-align: left;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.contactsActionButton {
+  background: var(--color-primary);
+  color: white;
+  border-radius: var(--border-radius-base);
+  transition: all 0.3s ease-in-out;
+  cursor: pointer;
+}
+
+.contactsActionButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.contactsActionButton:active {
+  box-shadow: 0 1px 2px white;
+}
+
+.contactsActionButton:focus,
+.contactsActionButton:focus-visible {
+  outline: 3px solid var(--color-primary) !important;
+  outline-offset: 2px !important;
+  box-shadow: 0 0 0 2px white, 0 0 0 5px rgba(124, 77, 255, 0.25) !important;
+  z-index: 1;   
+}
+
 .contactsAddressBookDetails {
   width: auto;
   min-width: 0;
-  border-radius: var(--border-radius);
-  justify-content: center;
+  border-radius: var(--border-radius-base);
+  justify-content: flex-start;
   box-sizing: border-box;
   gap: 5px;
   display: flex;
   flex-direction: row;
-  box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+  padding: var(--spacing-md);
 }
 
 .contactsAddressBookUriEntry {
-  width: 85%;
   min-width: 0;
-  border-radius: var(--border-radius-base);
-  align-self: flex-start;
   box-sizing: border-box;
-  padding: 5px;
-  box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
-  position: absolute;
-  top: 0;
-  transform: translate(0.2rem, 0.2rem); /* shift by half a rem */
+  padding-top: 2em;
   gap: 5px;
   display: flex;
   flex-direction: row;
 }
 
 .contactsAddressBookUriEntryForm {
-  width: 100%;
   min-width: 0;
-  border-radius: var(--border-radius-base);
   background: #F0F0F0;
-  color: var(--color-primary);
   box-sizing: border-box;
-  padding: 5px;
+  margin-top: 2.5rem;
   gap: 5px;
   display: flex;
   flex-direction: row;
 }
 
 .contactsAddressBookUriInput {
-  width: 80%;
+  width: 30em;  
   padding: 5px;
   gap: 15px;
   border-radius: var(--border-radius-base);
   border: 1px solid #ccc;
 }
 
-.contactsAddressBookUriEntryButton {
+.contactsAddressBookUriEntryAddButton {
   width: 10%;
   min-width: 0;
   max-width: 4em;
-  background: var(--color-primary);
-  color: white;
   align-self: flex-end !important;
-  box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
-  border-radius: var(--border-radius-base);
-  transition: all 0.3s ease-in-out;
-  cursor: pointer;
   margin-left: auto;
   display: inline-flex;
   justify-content: center;
@@ -99,9 +170,12 @@
   line-height: 1;
 }
 
-.contactsAddressBookUriEntryButton:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+.contactsNewGroupForm {
+  box-sizing: border-box;
+  padding-top: 2.5rem !important;
+  gap: 5px;
+  display: flex;
+  flex-direction: column;
 }
 
 .contactsCreateNewAddressBook {
@@ -127,8 +201,17 @@
   text-wrap: pretty;
 }
 
+.contactsAddressTypeIndexOptions {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+}
+
 .contactsAddressBookList {
   width: 100%;
+  max-width: fit-content !important;
   box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
   min-width: 200px;
   max-width: 300px;
@@ -139,9 +222,10 @@
 }
 
 .contactsGroupList {
-  width: 100%;
+  width: auto;
+  max-width: fit-content !important;
   min-width: 200px;
-  max-width: 300px;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
   box-sizing: border-box;
   gap: 4px;
   display: flex;
@@ -180,33 +264,6 @@
   z-index: 4;
 }
 
-.contactsSubmitButton {
-  margin-top: var(--spacing-md);
-  background-color: var(--color-primary) !important; 
-  border-radius: var(--border-radius-base) !important;
-  box-shadow: rgba(0, 0, 0, 0.15) 1.95px 1.95px 2.6px;
-  color: white !important;
-  transition: all 0.3s ease-in-out;
-  cursor: pointer;
-}
-
-.contactsSubmitButton:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-}
-
-.contactsSubmitButton:active {
-  box-shadow: 0 1px 2px white;
-}
-
-.contactsSubmitButton:focus,
-.contactsSubmitButton:focus-visible {
-  outline: 3px solid var(--color-primary) !important;
-  outline-offset: 2px !important;
-  box-shadow: 0 0 0 2px white, 0 0 0 5px rgba(124, 77, 255, 0.25) !important;
-  z-index: 1;
-}
-
 .contactsCloseButton {
   box-shadow: var(--box-shadow);
   border-radius: var(--border-radius-base);
@@ -237,11 +294,9 @@
 }
 
 .contactsNewAddressForm {
-  padding: 10px;
   gap: 5px;
   display: flex;
   flex-direction: column;
-  box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
 }
 .contactsAddressTypeInput {
   padding: 5px;
@@ -289,18 +344,47 @@
   gap: 15px;  
   text-wrap: pretty;
 }
+
+.contactsContactExistsActions {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  width: auto;
+}
+
+.contactsContactExistsActions .contactsConfirmButton,
+.contactsContactExistsActions .contactsCancelButton {
+  display: inline-flex !important;
+  width: auto !important;
+  min-width: fit-content;
+  flex: 0 0 auto;
+  margin: 0;
+  white-space: nowrap;
+}
+
 [role="alert"] {
   border: none !important; /* Hides the element from all users and AT */
 }
+
+.contactsPopupOverlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.2);
+  z-index: 8;
+}
+
 .contactsPopupMessage {
   background: pink !important;
   color: #787878;
   padding: 10px;
   border-radius: var(--border-radius-base);
   box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
-  z-index: 10;
+  z-index: 50;
   position: absolute;
-  top: -50%;
+  top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
   width: auto;
@@ -333,3 +417,38 @@
   background: color-mix(in srgb, var(--color-primary), white 85%) !important;  
   color: var(--color-primary);
 } 
+
+.contactsNewContactCreationButton {
+  width: 10em !important;
+  align-self: flex-end;
+  line-height: 1;
+}
+
+.contactsCreateGroupCreationButton {
+  flex-shrink: 0;
+  background: color-mix(in srgb, var(--color-primary), white 85%) !important;  
+  color: var(--color-primary) !important;
+  border-radius: 8px;
+  text-align: left;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.contactsCloseButton {
+  position: absolute !important;
+  top: 0 !important;
+  right: 0 !important;
+  left: auto;
+  margin: 0;
+  align-self: auto !important;
+  background: transparent;
+  color: #787878;
+  font-size: var(--font-size-xs);
+  border: none;
+  font-size: var(--font-size-sm);
+  cursor: pointer;
+  z-index: 100 !important;
+  padding: 0.35rem 0.5rem;
+  line-height: 1;
+}
+

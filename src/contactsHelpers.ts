@@ -1,14 +1,15 @@
-import { LiveStore, NamedNode, sym, st } from "rdflib"
+import { LiveStore, NamedNode, sym, st, literal } from "rdflib"
 import { login, ns, utils } from "solid-ui"
 import ContactsModuleRdfLib, { NewContact, AddressBook } from "@solid-data-modules/contacts-rdflib"
 import { DataBrowserContext } from "pane-registry";
 import { createAddressBookUriSelectorDialog } from "./ContactsCard";
 import './styles/ContactsCard.css'
 import { authn } from "solid-logic";
-import { AddressBookDetails, AddressBooksData, ContactData, EmailDetails, PhoneDetails, SelectedAddressBookUris } from "./contactsTypes";
-import { addMeToYourContactsButtonText, contactExistsAlreadyButtonText, contactExistsAlreadyByNameButtonText, errorGettingAddressBooks, errorLoadingContact, errorProcessingUriAddressBook, errorReadingAddressBook, logInAddMeToYourContactsButtonText } from "./texts";
+import { AddressBookDetails, AddressBooksData, ContactData, EmailDetails, GroupData, PhoneDetails, SelectedAddressBookUris } from "./contactsTypes";
+import { addMeToYourContactsButtonText, contactExistsAlreadyButtonText, contactExistsAlreadyByNameButtonText, errorAddressBookCreation, errorGettingAddressBooks, errorLoadingContact, errorProcessingUriAddressBook, errorReadingAddressBook, logInAddMeToYourContactsButtonText } from "./texts";
 import { checkIfAnyUserLoggedIn } from "./buttonsHelper";
 import { addErrorToErrorDisplay } from "./contactsErrors";
+import contacts from 'contacts-pane'
 
 async function addContactToAddressBook(
   context: DataBrowserContext,
@@ -66,6 +67,17 @@ async function getAddressBooks(
 ): Promise<AddressBooksData>  {
 
   const allContacts = []
+  const me = authn.currentUser()
+  const dom = context.dom
+  const div = dom.getElementById('add-to-contacts-button-container') as HTMLDivElement
+
+  const contextForFindAppInstances = {
+        target: me,
+        me,
+        noun: 'address book',
+        div,
+        dom
+  }
 
   let addressBooksData = { 
     public: new Map(),
@@ -75,15 +87,22 @@ async function getAddressBooks(
   }
   
 try {
-    const me = authn.currentUser()
+    
     await context.session.store.fetcher.load(me)
     
-    let addressBookUris = await contactsModule.listAddressBooks(me.value) 
+    const addressBookContext = await login.findAppInstances (contextForFindAppInstances, ns.vcard('AddressBook'))
+    const addressBookNodes = addressBookContext.instances
+    let addressBookUris = {
+      publicUris: (addressBookNodes || []).map((node) => node.value),
+      privateUris: []
+    }
+
+    // let addressBookUris = await contactsModule.listAddressBooks(me.value) 
     // SAM need to add when done testing
-    addressBookUris = {
+    /* addressBookUris = {
       publicUris: [],
       privateUris: [] 
-    } 
+    } */
 
     const publicAddressBookPromises = await addressBookUris.publicUris.map(addressBook => getAddressData(context, contactsModule, addressBook))
     const publicAddressBooksData = await Promise.all(publicAddressBookPromises)
@@ -354,6 +373,37 @@ async function addAddressToPublicTypeIndex(
   }  
 }
 
+async function updateAddressBookName(
+  context: DataBrowserContext,
+  addressBookUri: string,
+  newName: string
+) {
+  const store = context.session.store
+  const addressBookNode = sym(addressBookUri)
+  const addressBookDoc = addressBookNode.doc()
+  const trimmedName = newName?.trim()
+
+  if (!trimmedName) return
+
+  try {
+    await store.fetcher.load(addressBookDoc)
+
+    const deletions = [
+      ...store.statementsMatching(addressBookNode, ns.dc('title'), null, addressBookDoc),
+      ...store.statementsMatching(addressBookNode, ns.vcard('fn'), null, addressBookDoc)
+    ]
+
+    const insertions = [
+      st(addressBookNode, ns.dc('title'), literal(trimmedName), addressBookDoc),
+      st(addressBookNode, ns.vcard('fn'), literal(trimmedName), addressBookDoc)
+    ]
+
+    await store.updater.update(deletions, insertions)
+  } catch (error) {
+    addErrorToErrorDisplay(context, error)
+  }
+}
+
 function refreshButton(
   context: DataBrowserContext,
   addressBooksData: AddressBooksData,
@@ -370,6 +420,7 @@ function refreshButton(
         button.onclick = null 
       } else if (contactExistsByName) {
         button.innerHTML = contactExistsAlreadyByNameButtonText.toUpperCase()
+        button.removeAttribute('disabled') // SAM check if this is working
       }
         else {
         //logged in and friend does not exist yet
@@ -385,8 +436,8 @@ function checkIfContactExistsByWebID(
   addressBooksData: AddressBooksData,
   subjectUri: string,
 ): boolean {
-  return false // SAM need to remove when done testing
- if (addressBooksData.contactWebIDs.has(subjectUri)) return true
+
+ // SAM if (addressBooksData.contactWebIDs.has(subjectUri)) return true
   return false
 }
 
@@ -404,8 +455,8 @@ function checkIfContactExistsByName(
     if (normalizedSubjectName === normalizedContactName) return contactUri = uri
   })
   // SAM need to uncomment - more testing
-  return contactUri
-  // return null
+  // return contactUri
+  return null
 }
 
 async function addWebIDToExistingContact(
@@ -467,6 +518,88 @@ async function getGroupUrisForContact(
   return groupUrisForContact
 }
 
+function addGroupToAddressBookData(
+  addressBooksData: AddressBooksData,
+  addressBookUri: string,
+  group: GroupData
+): boolean {
+  const publicAddressBook = addressBooksData.public.get(addressBookUri)
+  if (publicAddressBook) {
+    const groupExists = publicAddressBook.groups.some((existingGroup) => existingGroup.uri === group.uri)
+    if (!groupExists) {
+      addressBooksData.public.set(addressBookUri, {
+        ...publicAddressBook,
+        groups: [...publicAddressBook.groups, group]
+      })
+    }
+    return true
+  }
+
+  const privateAddressBook = addressBooksData.private.get(addressBookUri)
+  if (privateAddressBook) {
+    const groupExists = privateAddressBook.groups.some((existingGroup) => existingGroup.uri === group.uri)
+    if (!groupExists) {
+      addressBooksData.private.set(addressBookUri, {
+        ...privateAddressBook,
+        groups: [...privateAddressBook.groups, group]
+      })
+    }
+    return true
+  }
+
+  return false
+}
+
+async function handleAddressBookCreation(
+  dataBrowserContext: DataBrowserContext,
+  contactsModule: ContactsModuleRdfLib,
+  containerName: string,
+  enteredAddressName: string,
+  resourceType: string,
+  typeIndex: string
+): Promise<string> {
+  const me = authn.currentUser()
+  const newAddressContainer = me?.site()?.value
+  let addressBookUri = null
+
+  const div = dataBrowserContext.dom.getElementById('new-addressbook-form') as HTMLDivElement
+  try {
+    if (!me || !newAddressContainer) {
+      throw new Error('Unable to determine user workspace for new address book')
+    }
+
+    const normalizedContainer = newAddressContainer.endsWith('/')
+      ? newAddressContainer
+      : `${newAddressContainer}/`
+
+    const addressBookSlug = (containerName || 'address-book')
+      .trim()
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '') || 'address-book'
+
+    const newBase = `${normalizedContainer}${addressBookSlug}/`
+    const mintResult = await contacts.mintNew(dataBrowserContext, {
+      me,
+      dom: dataBrowserContext.dom,
+      div,
+      newBase,
+      instanceClass: ns.vcard('AddressBook'),
+      instanceName: enteredAddressName
+    })
+
+    addressBookUri = mintResult?.newInstance?.uri || `${newBase}index.ttl#this`
+    await updateAddressBookName(dataBrowserContext, addressBookUri, enteredAddressName)
+
+    if (resourceType === 'public' && typeIndex === 'yes') {
+      await addAddressToPublicTypeIndex(dataBrowserContext, addressBookUri)
+    }
+  } catch (error) {
+    addErrorToErrorDisplay(dataBrowserContext, errorAddressBookCreation + "\n" + error)
+  }
+  return addressBookUri
+}
+
 export {
   getAddressBooksData,
   getContactData,
@@ -477,5 +610,8 @@ export {
   checkIfContactExistsByWebID,
   checkIfContactExistsByName,
   addWebIDToExistingContact,
-  addANewAddressBookUriToAddressBooks
+  addANewAddressBookUriToAddressBooks,
+  addGroupToAddressBookData,
+  updateAddressBookName,
+  handleAddressBookCreation
 }
