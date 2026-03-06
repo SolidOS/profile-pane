@@ -6,7 +6,7 @@ import { createAddressBookUriSelectorDialog } from "./ContactsCard";
 import './styles/ContactsCard.css'
 import { authn, solidLogicSingleton } from "solid-logic";
 import { AddressBookDetails, AddressBooksData, ContactData, EmailDetails, GroupData, PhoneDetails, SelectedAddressBookUris } from "./contactsTypes";
-import { addMeToYourContactsButtonText, contactExistsAlreadyButtonText, contactExistsAlreadyByNameButtonText, errorAddressBookCreation, errorGettingAddressBooks, errorLoadingContact, errorProcessingUriAddressBook, errorReadingAddressBook, logInAddMeToYourContactsButtonText } from "./texts";
+import { addMeToYourContactsButtonText, contactExistsAlreadyButtonText, contactExistsAlreadyByNameButtonText, errorAddressBookCreation, errorGettingAddressBooks, errorLoadingContact, errorProcessingUriAddressBook, errorReadingAddressBook, errorUnableToDetermineUserWorkspace, logInAddMeToYourContactsButtonText } from "./texts";
 import { checkIfAnyUserLoggedIn } from "./buttonsHelper";
 import { addErrorToErrorDisplay } from "./contactsErrors";
 import contacts from 'contacts-pane'
@@ -90,7 +90,7 @@ try {
     
     await context.session.store.fetcher.load(me)
     
-    const addressBookContext = await login.findAppInstances (contextForFindAppInstances, ns.vcard('AddressBook'))
+    const addressBookContext = await login.findAppInstances(contextForFindAppInstances, ns.vcard('AddressBook'))
     const addressBookNodes = addressBookContext.instances
     let addressBookUris = {
       publicUris: (addressBookNodes || []).map((node) => node.value),
@@ -98,11 +98,6 @@ try {
     }
 
     // let addressBookUris = await contactsModule.listAddressBooks(me.value) 
-    // SAM need to add when done testing
-    /* addressBookUris = {
-      publicUris: [],
-      privateUris: [] 
-    } */
 
     const publicAddressBookPromises = await addressBookUris.publicUris.map(addressBook => getAddressData(context, contactsModule, addressBook))
     const publicAddressBooksData = await Promise.all(publicAddressBookPromises)
@@ -558,9 +553,7 @@ function addGroupToAddressBookData(
 async function handleAddressBookCreation(
   dataBrowserContext: DataBrowserContext,
   containerName: string,
-  enteredAddressName: string,
-  resourceType: string,
-  needsTypeIndex: string
+  enteredAddressName: string
 ): Promise<string> {
   const me = authn.currentUser()
   const newAddressContainer = me?.site()?.value
@@ -569,7 +562,7 @@ async function handleAddressBookCreation(
   const div = dataBrowserContext.dom.getElementById('new-addressbook-form') as HTMLDivElement
   try {
     if (!me || !newAddressContainer) {
-      throw new Error('Unable to determine user workspace for new address book')
+      throw new Error(errorUnableToDetermineUserWorkspace)
     }
 
     const normalizedContainer = newAddressContainer.endsWith('/')
@@ -595,9 +588,6 @@ async function handleAddressBookCreation(
     addressBookUri = mintResult?.newInstance?.uri || `${newBase}index.ttl#this`
     await updateAddressBookName(dataBrowserContext, addressBookUri, enteredAddressName)
 
-    if (needsTypeIndex === 'yes') {
-      await addAddressToTypeIndex(dataBrowserContext, resourceType, addressBookUri)
-    }
   } catch (error) {
     addErrorToErrorDisplay(dataBrowserContext, errorAddressBookCreation + "\n" + error)
   }

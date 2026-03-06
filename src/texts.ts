@@ -16,6 +16,7 @@ export const errorLoadingContact = 'There was an error loading the contact: '
 export const errorGettingAddressBooks = 'There was an error getting your address books.'
 export const errorNotExistsAddressBookUri = 'Please enter an address book URI.'
 export const errorProcessingUriAddressBook = 'There was an error processing your address book.'
+export const errorUnableToDetermineUserWorkspace = 'Unable to determine user workspace for new address book.'
 
 //OTHER
 export const friendExistsMessage = 'Friend already exists'

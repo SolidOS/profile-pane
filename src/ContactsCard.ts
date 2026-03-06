@@ -167,7 +167,7 @@ const createAddressBookUriEntryForm = (
           addressBookUriEntry.remove()
           removePopupOverlayIfNoPopup(context)
           //SAM remove buttons if we leave them in address list
-          addressBookListDiv.appendChild(createAddressBookButton(context, contactsModule, books.addressBooksData, books.addressBook, enteredAddressBookUri, contactData, 'private'))
+          addressBookListDiv.appendChild(createAddressBookButton(context, contactsModule, books.addressBooksData, books.addressBook, enteredAddressBookUri, contactData))
           // SAM then readd them
         }}
 
@@ -245,11 +245,11 @@ const createAddressBookListDiv = (
 
   addressBookListDiv.innerHTML = "Address Books"
   addressBooksData.public.forEach((addressBook, addressBookUri) => {
-    addressBookListDiv.appendChild(createAddressBookButton(context, contactsModule, addressBooksData, addressBook, addressBookUri, contactData, 'public'))
+    addressBookListDiv.appendChild(createAddressBookButton(context, contactsModule, addressBooksData, addressBook, addressBookUri, contactData))
   })
 
   addressBooksData.private.forEach((addressBook, addressBookUri) => {
-    addressBookListDiv.appendChild(createAddressBookButton(context, contactsModule, addressBooksData, addressBook, addressBookUri, contactData, 'private'))
+    addressBookListDiv.appendChild(createAddressBookButton(context, contactsModule, addressBooksData, addressBook, addressBookUri, contactData))
   })
   const addressBookCreationButton = createAddressBookCreationButton(context, contactsModule, addressBooksData, contactData)
   const addressBookUriEntryButton = createAddressBookUriEntryButton(context, contactsModule, addressBooksData, contactData)
@@ -427,8 +427,7 @@ const createAddressBookButton = (
   addressBooksData: AddressBooksData,
   addressBook: AddressBookDetails,
   addressBookUri: string,
-  contactData: ContactData,
-  index: string,
+  contactData: ContactData
 ): HTMLButtonElement => {
   
   const setButtonOnClickHandler =  (event) => {
@@ -455,10 +454,7 @@ const createAddressBookButton = (
         groupForm.remove()
         removePopupOverlayIfNoPopup(context)
       }
-      // SAM no longer want to pop up the create address book form. only do this when
-    // only do this when they click on create new address book button
-      // addressBookUriSelectorDialog.appendChild(createNewAddressBookForm(context, addressBooksData, contactsModule, contactData)) 
-    } else {
+   } else {
       const addressForm = context.dom.getElementById('new-addressbook-form')
       if (addressForm) {
         addressForm.remove()
@@ -484,7 +480,6 @@ const createAddressBookButton = (
       addressBookDetailsSection.appendChild(groupListDiv)
     }
   }
-  const options = (index === 'private') ? { needsBorder: true, buttonColor: 'Secondary'} : { needsBorder: true }
   /* const button = widgets.button(
     context.dom,
     undefined,
@@ -498,7 +493,6 @@ const createAddressBookButton = (
   button.classList.add('contactsButton')
   // @ts-ignore
   button.addEventListener('click', setButtonOnClickHandler)
-  // button.attributeStyleMap.clear()
   button.innerHTML = addressBook.name
   return button
 }
@@ -521,17 +515,8 @@ const createNewAddressBookForm = (
 
     const addressContainerField = context.dom.querySelector('#addressBookContainerInput')
 
-    // will use this later, hoping solid-data-modules will handle it
     // @ts-ignore
     const enteredAddressContainer = addressContainerField.value
-
-    const selectedResourceTypeRadio = context.dom.querySelector('input[name="address-type"]:checked')
-    // @ts-ignore
-    const resourceType = selectedResourceTypeRadio.value
-    
-    const selectedTypeIndexRadio = context.dom.querySelector('input[name="address-type-index"]:checked')
-    // @ts-ignore
-    const typeIndex = selectedTypeIndexRadio ? selectedTypeIndexRadio.value : null
 
     const groupNameField = context.dom.querySelector('#groupNameInput')
     // @ts-ignore
@@ -540,7 +525,7 @@ const createNewAddressBookForm = (
     if (enteredAddressName) {
       // add addressbook first 
       try {
-        enteredAddressBookUri = await handleAddressBookCreation(context, enteredAddressContainer, enteredAddressName,resourceType, typeIndex)
+        enteredAddressBookUri = await handleAddressBookCreation(context, enteredAddressContainer, enteredAddressName)
         const books =  await addANewAddressBookUriToAddressBooks(context, contactsModule, addressBooksData, enteredAddressBookUri)
         
         if (enteredGroupName) {
@@ -555,14 +540,13 @@ const createNewAddressBookForm = (
         const groupListDiv = context.dom.querySelector('#group-list')
           
         if (addressBookListDiv) {
-          // SAM when I add the screen over the dialog I need to remove it.
           newAddressBookForm.remove()
           removePopupOverlayIfNoPopup(context)
           const addressBookCreationButton = context.dom.getElementById('contacts-create-addressbook-button')
           const addressBookUriEntryButton = context.dom.getElementById('contacts-addressbook-uri-entry-button') 
           addressBookCreationButton.remove()
           addressBookUriEntryButton.remove()
-          addressBookListDiv.appendChild(createAddressBookButton(context, contactsModule, addressBooksData, books.addressBook, enteredAddressBookUri, contactData, resourceType)) 
+          addressBookListDiv.appendChild(createAddressBookButton(context, contactsModule, addressBooksData, books.addressBook, enteredAddressBookUri, contactData)) 
           addressBookListDiv.appendChild(addressBookCreationButton)
           addressBookListDiv.appendChild(addressBookUriEntryButton)
         }
@@ -614,77 +598,6 @@ const createNewAddressBookForm = (
   addressBookContainerInputBox.classList.add('input', 'contactsAddressBookInput')
   addressBookContainerInputBox.required = true
 
-  const addressBookTypeDiv = context.dom.createElement('div')
-  addressBookTypeDiv.classList.add('contactsAddressTypeInput')
-  addressBookTypeDiv.setAttribute('role', 'radiogroup')
-
-  const addressBookPublicRadioLabel = context.dom.createElement('label')
-  addressBookPublicRadioLabel.classList.add('label')
-  addressBookPublicRadioLabel.innerHTML = 'Public'
-  addressBookPublicRadioLabel.setAttribute('for', 'public')
-
-  const addressBookPublicRadio = context.dom.createElement('input')
-  addressBookPublicRadio.type = 'radio';
-  addressBookPublicRadio.id = 'public';
-  addressBookPublicRadio.name = 'address-type';
-  addressBookPublicRadio.value = 'public';
-  addressBookPublicRadio.checked = true
-
-  const addressBookPrivateRadioLabel = context.dom.createElement('label')
-  addressBookPrivateRadioLabel.classList.add('label')
-  addressBookPrivateRadioLabel.innerHTML = 'Private'
-  addressBookPrivateRadioLabel.setAttribute('for', 'private')
-
-  const addressBookPrivateRadio = context.dom.createElement('input')
-  addressBookPrivateRadio.type = 'radio';
-  addressBookPrivateRadio.id = 'private';
-  addressBookPrivateRadio.name = 'address-type';
-  addressBookPrivateRadio.value = 'private';
-
-  addressBookTypeDiv.appendChild(addressBookPublicRadioLabel)
-  addressBookTypeDiv.appendChild(addressBookPublicRadio)
-  addressBookTypeDiv.appendChild(addressBookPrivateRadioLabel)
-  addressBookTypeDiv.appendChild(addressBookPrivateRadio)
-
-  const addressBookTypeIndexDiv = context.dom.createElement('div')
-  addressBookTypeIndexDiv.setAttribute('id', 'addressBookTypeIndexDiv')
-  addressBookTypeIndexDiv.setAttribute('role', 'radiogroup')
-  addressBookTypeIndexDiv.classList.add('contactsAddressTypeIndexInput')
-  addressBookTypeIndexDiv.innerHTML = 'Make your address book findable by others'
-
-  const addressBookTypeIndexOptionsDiv = context.dom.createElement('div')
-  addressBookTypeIndexOptionsDiv.classList.add('contactsAddressTypeIndexOptions')
-
-  const addressBookTypeIndexRadioLabel = context.dom.createElement('label')
-  addressBookTypeIndexRadioLabel.classList.add('contactsRadioLabel')
-  addressBookTypeIndexRadioLabel.innerHTML = 'Yes'
-  addressBookTypeIndexRadioLabel.setAttribute('for', 'yes')
-
-  const addressBookTypeIndexRadio = context.dom.createElement('input')
-  addressBookTypeIndexRadio.classList.add('contactsRadioInput')
-  addressBookTypeIndexRadio.type = 'radio';
-  addressBookTypeIndexRadio.id = 'yes';
-  addressBookTypeIndexRadio.name = 'address-type-index';
-  addressBookTypeIndexRadio.value = 'yes';
-
-  const addressBookNoTypeIndexRadioLabel = context.dom.createElement('label')
-  addressBookNoTypeIndexRadioLabel.classList.add('contactsRadioLabel')
-  addressBookNoTypeIndexRadioLabel.innerHTML = 'No'
-  addressBookNoTypeIndexRadioLabel.setAttribute('for', 'no')
-
-  const addressBookNoTypeIndexRadio = context.dom.createElement('input')
-  addressBookNoTypeIndexRadio.classList.add('contactsRadioInput')
-  addressBookNoTypeIndexRadio.type = 'radio';
-  addressBookNoTypeIndexRadio.id = 'no';
-  addressBookNoTypeIndexRadio.name = 'address-type-index';
-  addressBookNoTypeIndexRadio.value = 'no';
-
-  addressBookTypeIndexOptionsDiv.appendChild(addressBookTypeIndexRadioLabel)
-  addressBookTypeIndexOptionsDiv.appendChild(addressBookTypeIndexRadio)
-  addressBookTypeIndexOptionsDiv.appendChild(addressBookNoTypeIndexRadioLabel)
-  addressBookTypeIndexOptionsDiv.appendChild(addressBookNoTypeIndexRadio)
-  addressBookTypeIndexDiv.appendChild(addressBookTypeIndexOptionsDiv)
-
   const groupNameLabel = context.dom.createElement('label')
   groupNameLabel.classList.add('label')
   groupNameLabel.setAttribute('for', 'groupNameInput')
@@ -718,8 +631,6 @@ const createNewAddressBookForm = (
   newAddressBookForm.appendChild(addressBookContainerLabel)
   newAddressBookForm.appendChild(addressBookContainerInputBox)
 
-  newAddressBookForm.appendChild(addressBookTypeDiv)
-  newAddressBookForm.appendChild(addressBookTypeIndexDiv)
   newAddressBookForm.appendChild(groupNameLabel)
   newAddressBookForm.appendChild(groupNameInputBox)
   newAddressBookForm.appendChild(submitButton)
