@@ -4,7 +4,7 @@ import ContactsModuleRdfLib, { NewContact, AddressBook } from "@solid-data-modul
 import { DataBrowserContext } from "pane-registry";
 import { createAddressBookUriSelectorDialog } from "./ContactsCard";
 import './styles/ContactsCard.css'
-import { authn } from "solid-logic";
+import { authn, solidLogicSingleton } from "solid-logic";
 import { AddressBookDetails, AddressBooksData, ContactData, EmailDetails, GroupData, PhoneDetails, SelectedAddressBookUris } from "./contactsTypes";
 import { addMeToYourContactsButtonText, contactExistsAlreadyButtonText, contactExistsAlreadyByNameButtonText, errorAddressBookCreation, errorGettingAddressBooks, errorLoadingContact, errorProcessingUriAddressBook, errorReadingAddressBook, logInAddMeToYourContactsButtonText } from "./texts";
 import { checkIfAnyUserLoggedIn } from "./buttonsHelper";
@@ -349,28 +349,33 @@ async function addWebIDToContact(
   }
 }
 
-async function addAddressToPublicTypeIndex(
+async function addAddressToTypeIndex(
   context: DataBrowserContext,
+  typeOfIndex: string,
   addressBookUri: string
-) {
+): Promise<boolean> {
   const store = context.session.store
   const me = authn.currentUser()
-  const uuid = utils.genUuid()
-
+  let typeIndexNode = null
+ 
   try {
     await store.fetcher.load(me)
-    const predicate = ns.solid("publicTypeIndex") as NamedNode
-    const typeIndex = store.any(me, predicate, null, me.doc()) as NamedNode
-    const registrationNode = sym(`${typeIndex.value}#${uuid}`)
-    const insertions = [st(registrationNode, ns.rdf('type'), ns.solid('TypeRegistration'), typeIndex.doc()),
-      st(registrationNode, ns.solid('forClass'), ns.vcard('AddressBook'), typeIndex.doc()),
-      st(registrationNode, ns.solid('instance'), sym(addressBookUri), typeIndex.doc())
-    ]
-    await store.updater.update([],insertions)
-
+    const typeIndexes = await solidLogicSingleton.typeIndex.loadTypeIndexesFor(me)
+    if (!typeIndexes.length) {
+      throw new Error('No type index found for the current user')
+      return
+    }
+    typeIndexes.map((typeIndex) => {
+      if (typeIndex.label === typeOfIndex) typeIndexNode = typeIndex.index
+    })
+    if (typeIndexNode) {
+      const registration = await solidLogicSingleton.typeIndex.registerInTypeIndex(sym(addressBookUri), typeIndexNode, ns.vcard('AddressBook'))
+      if (registration) return true
+    }
   } catch(error) {
     addErrorToErrorDisplay(context, error)
   }  
+  return false
 }
 
 async function updateAddressBookName(
@@ -552,11 +557,10 @@ function addGroupToAddressBookData(
 
 async function handleAddressBookCreation(
   dataBrowserContext: DataBrowserContext,
-  contactsModule: ContactsModuleRdfLib,
   containerName: string,
   enteredAddressName: string,
   resourceType: string,
-  typeIndex: string
+  needsTypeIndex: string
 ): Promise<string> {
   const me = authn.currentUser()
   const newAddressContainer = me?.site()?.value
@@ -591,8 +595,8 @@ async function handleAddressBookCreation(
     addressBookUri = mintResult?.newInstance?.uri || `${newBase}index.ttl#this`
     await updateAddressBookName(dataBrowserContext, addressBookUri, enteredAddressName)
 
-    if (resourceType === 'public' && typeIndex === 'yes') {
-      await addAddressToPublicTypeIndex(dataBrowserContext, addressBookUri)
+    if (needsTypeIndex === 'yes') {
+      await addAddressToTypeIndex(dataBrowserContext, resourceType, addressBookUri)
     }
   } catch (error) {
     addErrorToErrorDisplay(dataBrowserContext, errorAddressBookCreation + "\n" + error)
@@ -605,7 +609,7 @@ export {
   getContactData,
   addContactToAddressBook,
   createContactInAddressBook,
-  addAddressToPublicTypeIndex,
+  addAddressToTypeIndex,
   refreshButton,
   checkIfContactExistsByWebID,
   checkIfContactExistsByName,

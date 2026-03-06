@@ -540,7 +540,7 @@ const createNewAddressBookForm = (
     if (enteredAddressName) {
       // add addressbook first 
       try {
-        enteredAddressBookUri = await handleAddressBookCreation(context, contactsModule, enteredAddressContainer, enteredAddressName,resourceType, typeIndex)
+        enteredAddressBookUri = await handleAddressBookCreation(context, enteredAddressContainer, enteredAddressName,resourceType, typeIndex)
         const books =  await addANewAddressBookUriToAddressBooks(context, contactsModule, addressBooksData, enteredAddressBookUri)
         
         if (enteredGroupName) {
