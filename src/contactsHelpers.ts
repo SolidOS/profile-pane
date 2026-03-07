@@ -96,7 +96,7 @@ try {
       publicUris: (addressBookNodes || []).map((node) => node.value),
       privateUris: []
     }
-
+    console.log("address book uris: " + JSON.stringify(addressBookUris))
     // let addressBookUris = await contactsModule.listAddressBooks(me.value) 
 
     const publicAddressBookPromises = await addressBookUris.publicUris.map(addressBook => getAddressData(context, contactsModule, addressBook))
@@ -250,6 +250,7 @@ async function createContactInAddressBook(
   try { 
    
     const groupUris = (selectedAddressBookUris.groupUris.length) ? selectedAddressBookUris.groupUris : undefined
+    console.log("group uris: " + JSON.stringify(groupUris))
     if (groupUris) {
       contactUri = await contactsModule.createNewContact({addressBookUri: selectedAddressBookUris.addressBookUri, contact: newContact, groupUris}) 
     } else {
@@ -316,29 +317,36 @@ async function addWebIDToContact(
 ) {
   const store = context.session.store
   const contactNode = new NamedNode(contactUri)
-  const node = store.bnode()
-  const insertions = []
-  let deletions = []
+  const webIDNode = sym(webID)
+  const vcardURLNode = store.bnode()
   let groupUriNode = null
 
   try {
-    if (groupUris.length) {
-      groupUris.map(async (groupUri) => {
+    if (groupUris?.length) {
+      for (const groupUri of groupUris) {
         await context.session.store.fetcher.load(groupUri)
         groupUriNode = new NamedNode(groupUri)
-        deletions = deletions.concat(context.session.store.statementsMatching(groupUriNode, ns.vcard('hasMember'), contactNode, groupUriNode.doc()))
-    
-        insertions.push(st(sym(webID), ns.owl('sameAs'), contactNode, groupUriNode.doc()))
-        insertions.push(st(groupUriNode, ns.vcard('hasMember'), sym(webID), groupUriNode.doc()))      
-      })
+        const groupDoc = groupUriNode.doc()
+        const deletions = context.session.store.statementsMatching(
+          groupUriNode,
+          ns.vcard('hasMember'),
+          contactNode,
+          groupDoc
+        )
+        const insertions = [
+          st(groupUriNode, ns.vcard('hasMember'), webIDNode, groupDoc),
+          st(webIDNode, ns.owl('sameAs'), contactNode, groupDoc)
+        ]
+        await store.updater.update(deletions, insertions)
+      }
     }
-    
-    insertions.push(st(contactNode, ns.vcard("uri"), node , contactNode.doc()))
-    insertions.push(st(node, ns.rdf('type'), ns.vcard('WebID'), contactNode.doc()))
-    // @ts-ignore Webid should be a string 
-    insertions.push(st(node, ns.vcard("value"), webID, contactNode.doc()))
-    // could use updateMany
-    await store.updater.update(deletions, insertions)    
+
+    const personInsertions = [
+      st(contactNode, ns.vcard('url'), vcardURLNode, contactNode.doc()),
+      st(vcardURLNode, ns.rdf('type'), ns.vcard('WebID'), contactNode.doc()),
+      st(vcardURLNode, ns.vcard('value'), literal(webID), contactNode.doc())
+    ]
+    await store.updater.update([], personInsertions)
   } catch (error) {
     addErrorToErrorDisplay(context, error)
   }
