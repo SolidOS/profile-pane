@@ -286,7 +286,6 @@
   right: 0.2rem;
   background: transparent;
   color: #787878;
-  font-size: var(--font-size-xs);
   border: none;
   font-size: var(--font-size-sm);
   cursor: pointer;
@@ -306,7 +305,6 @@
   width: auto !important;
   height: auto !important;
   cursor: pointer;
-  font-size: var(--font-size-xs);
   line-height: 1;
 }
 
