@@ -344,7 +344,7 @@
   background: white;
   font-weight: 600;
   font-size: var(--font-size-sm);
-  transition: #909090 0.3s ease;
+  transition: box-shadow 0.3s ease;
 }
 
 .input:focus,

@@ -409,7 +409,7 @@ const createNewContactCreationButton = (
   button.setAttribute('type', 'submit')
   button.setAttribute('id', 'add-contact')
   button.setAttribute('role', 'button')
-  button.setAttribute('aria-label', 'Create a new address book')
+  button.setAttribute('aria-label', 'Add contact to selected address book')
   button.setAttribute('tabindex', '0')
   button.classList.add('contactsActionButton', 'contactsNewContactCreationButton')
   button.addEventListener('click', setButtonOnClickHandler)
@@ -650,7 +650,10 @@ const createCloseButton = (
   closeButton.setAttribute('id', 'close-addressbook')
   closeButton.setAttribute('role', 'button')
   closeButton.setAttribute('type', 'button')
-  closeButton.setAttribute('aria-label', 'Cancel the creation of a new address book')
+  const ariaLabel = specialClass === 'contactsCloseButton'
+    ? 'Close contacts dialog'
+    : 'Close dialog'
+  closeButton.setAttribute('aria-label', ariaLabel)
   closeButton.setAttribute('tabindex', '0')
   closeButton.classList.add('contactsCloseButton', specialClass)
   closeButton.addEventListener('click', setButtonOnClickHandler)
