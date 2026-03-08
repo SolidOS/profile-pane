@@ -250,7 +250,6 @@
   max-width: fit-content !important;
   box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
   min-width: 200px;
-  max-width: 300px;
   box-sizing: border-box;
   gap: 4px;
   display: flex;
