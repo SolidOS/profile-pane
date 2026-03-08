@@ -24,11 +24,11 @@ export const ProfileCard = async ({
         ${Line(pronouns, '', 'Pronouns')}
       </section>
       
-      <section class="buttonSection text-center" aria-label="Actions">
+      <section class="buttonSection text-center" aria-label="Friend actions">
         ${addMeToYourFriendsDiv(subject, context)}
       </section>
 
-      <section class="buttonSection text-center" aria-label="Actions">
+      <section class="buttonSection text-center" aria-label="Contact actions">
         ${await addMeToYourContactsDiv(subject, context)}
       </section>
 
