@@ -1,4 +1,4 @@
-import { NamedNode } from "rdflib/lib/tf-types"
+import { NamedNode } from 'rdflib/lib/tf-types'
 
 export interface SelectedAddressBookUris {
   addressBookUri: string,

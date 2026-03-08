@@ -1,14 +1,14 @@
-import { LiveStore, NamedNode, sym, st, literal } from "rdflib"
-import { login, ns, utils } from "solid-ui"
-import ContactsModuleRdfLib, { NewContact, AddressBook } from "@solid-data-modules/contacts-rdflib"
-import { DataBrowserContext } from "pane-registry";
-import { createAddressBookUriSelectorDialog } from "./ContactsCard";
+import { LiveStore, NamedNode, sym, st, literal } from 'rdflib'
+import { login, ns, utils } from 'solid-ui'
+import ContactsModuleRdfLib, { NewContact, AddressBook } from '@solid-data-modules/contacts-rdflib'
+import { DataBrowserContext } from 'pane-registry' 
+import { createAddressBookUriSelectorDialog } from './ContactsCard' 
 import './styles/ContactsCard.css'
-import { authn, solidLogicSingleton } from "solid-logic";
-import { AddressBookDetails, AddressBooksData, ContactData, EmailDetails, GroupData, PhoneDetails, SelectedAddressBookUris } from "./contactsTypes";
-import { addMeToYourContactsButtonText, contactExistsAlreadyButtonText, contactExistsAlreadyByNameButtonText, errorAddressBookCreation, errorGettingAddressBooks, errorLoadingContact, errorProcessingUriAddressBook, errorReadingAddressBook, errorUnableToDetermineUserWorkspace, groupIsRequired, logInAddMeToYourContactsButtonText } from "./texts";
-import { checkIfAnyUserLoggedIn } from "./buttonsHelper";
-import { addErrorToErrorDisplay } from "./contactsErrors";
+import { authn, solidLogicSingleton } from 'solid-logic' 
+import { AddressBookDetails, AddressBooksData, ContactData, EmailDetails, GroupData, PhoneDetails, SelectedAddressBookUris } from './contactsTypes' 
+import { addMeToYourContactsButtonText, contactExistsAlreadyButtonText, contactExistsAlreadyByNameButtonText, errorAddressBookCreation, errorGettingAddressBooks, errorLoadingContact, errorProcessingUriAddressBook, errorReadingAddressBook, errorUnableToDetermineUserWorkspace, groupIsRequired, logInAddMeToYourContactsButtonText } from './texts' 
+import { checkIfAnyUserLoggedIn } from './buttonsHelper' 
+import { addErrorToErrorDisplay } from './contactsErrors' 
 import contacts from 'contacts-pane'
 
 async function addContactToAddressBook(
@@ -21,7 +21,7 @@ async function addContactToAddressBook(
 
   const addressBookUriSelectorDialog = createAddressBookUriSelectorDialog(context, contactsModule, contactData, addressBooksData)
   container.appendChild(addressBookUriSelectorDialog)   
-  addressBookUriSelectorDialog.setAttribute('open', ''); 
+  addressBookUriSelectorDialog.setAttribute('open', '')  
 }
 
 async function getAddressData(
@@ -287,15 +287,15 @@ async function addContactDetails(
  
     contactData.emails.map((emailInfo) => {
       const node = createDetailNode()
-      insertions.push(st(contactNode, ns.vcard("hasEmail"), node , detailDoc))
+      insertions.push(st(contactNode, ns.vcard('hasEmail'), node , detailDoc))
       insertions.push(st(node, ns.rdf('type'), emailInfo.type, detailDoc))
-      insertions.push(st(node, ns.vcard("value"), emailInfo.email, detailDoc))
+      insertions.push(st(node, ns.vcard('value'), emailInfo.email, detailDoc))
     }) 
     contactData.phoneNumbers.map((phoneInfo) => {
       const node = createDetailNode()
-      insertions.push(st(contactNode, ns.vcard("hasTelephone"), node , detailDoc))
+      insertions.push(st(contactNode, ns.vcard('hasTelephone'), node , detailDoc))
       insertions.push(st(node, ns.rdf('type'), phoneInfo.type, detailDoc))
-      insertions.push(st(node, ns.vcard("value"), phoneInfo.phoneNumber, detailDoc))
+      insertions.push(st(node, ns.vcard('value'), phoneInfo.phoneNumber, detailDoc))
     })
 
     await store.updater.update([],insertions)  
@@ -591,7 +591,7 @@ async function handleAddressBookCreation(
     await updateAddressBookName(dataBrowserContext, addressBookUri, enteredAddressName)
 
   } catch (error) {
-    addErrorToErrorDisplay(dataBrowserContext, errorAddressBookCreation + "\n" + error)
+    addErrorToErrorDisplay(dataBrowserContext, errorAddressBookCreation + '\n' + error)
   }
   return addressBookUri
 }

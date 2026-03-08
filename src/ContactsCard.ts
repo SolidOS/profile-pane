@@ -1,10 +1,10 @@
-import { DataBrowserContext } from "pane-registry"
-import { addANewAddressBookUriToAddressBooks, addGroupToAddressBookData, addWebIDToExistingContact, checkIfContactExistsByName, checkIfContactExistsByWebID, createContactInAddressBook, handleAddressBookCreation, refreshButton } from "./contactsHelpers"
-import { AddressBookDetails, AddressBooksData, ContactData, GroupData } from "./contactsTypes"
-import ContactsModuleRdfLib from "@solid-data-modules/contacts-rdflib"
-import { clearPreviousMessage, complain, mention } from "./buttonsHelper"
-import { contactExistsMessage, contactWasAddedSuccesMessage, errorContactCreation, errorGroupCreation, errorNotExistsAddressBookUri, groupIsRequired } from "./texts"
-import { addErrorToErrorDisplay, checkAndAddErrorDisplay } from "./contactsErrors"
+import { DataBrowserContext } from 'pane-registry'
+import { addANewAddressBookUriToAddressBooks, addGroupToAddressBookData, addWebIDToExistingContact, checkIfContactExistsByName, checkIfContactExistsByWebID, createContactInAddressBook, handleAddressBookCreation, refreshButton } from './contactsHelpers'
+import { AddressBookDetails, AddressBooksData, ContactData, GroupData } from './contactsTypes'
+import ContactsModuleRdfLib from '@solid-data-modules/contacts-rdflib'
+import { clearPreviousMessage, complain, mention } from './buttonsHelper'
+import { contactExistsMessage, contactWasAddedSuccesMessage, errorContactCreation, errorGroupCreation, errorNotExistsAddressBookUri, groupIsRequired } from './texts'
+import { addErrorToErrorDisplay, checkAndAddErrorDisplay } from './contactsErrors'
 
 const CONTACTS_POPUP_OVERLAY_ID = 'contacts-popup-overlay'
 const CONTACTS_OVERLAY_ACTIVE_CLASS = 'contactsOverlayActive'
@@ -245,7 +245,7 @@ const createAddressBookListDiv = (
   addressBookListDiv.setAttribute('aria-describedby', 'addressbook-list')
   addressBookListDiv.setAttribute('id', 'addressbook-list')
 
-  addressBookListDiv.innerHTML = "Address Books"
+  addressBookListDiv.innerHTML = 'Address Books'
   addressBooksData.public.forEach((addressBook, addressBookUri) => {
     addressBookListDiv.appendChild(createAddressBookButton(context, contactsModule, addressBooksData, addressBook, addressBookUri, contactData))
   })
@@ -305,7 +305,7 @@ const createGroupListDiv = (
   groupListDiv.setAttribute('aria-describedby', 'group-list')
   groupListDiv.setAttribute('id', 'group-list')
 
-  groupListDiv.innerHTML = "Groups"
+  groupListDiv.innerHTML = 'Groups'
   if (addressBook) {
     addressBook.groups.map((group) => {
         groupListDiv.appendChild(createGroupButton(context, group))
@@ -429,7 +429,7 @@ const createAddressBookButton = (
   const setButtonOnClickHandler =  (event) => {
     event.preventDefault()
     const selectedAddressBookButton = event.target
-    const previouslySelected = selectedAddressBookButton.classList.contains('contactsSelectedButton');
+    const previouslySelected = selectedAddressBookButton.classList.contains('contactsSelectedButton') 
     const addressBookDetailsSection = context.dom.getElementById('addressbook-details-section')
     
     let addressBook = null
@@ -440,11 +440,11 @@ const createAddressBookButton = (
     // remove presious address book selection bc you can only have one
     const selectedAddressBookElements = context.dom.querySelectorAll('.selectedAddressBook')
     selectedAddressBookElements.forEach((addressBookButton) => {
-      addressBookButton.classList.remove("contactsSelectedButton", "selectedAddressBook")
+      addressBookButton.classList.remove('contactsSelectedButton', 'selectedAddressBook')
     })
     
     if (previouslySelected) {
-      selectedAddressBookButton.classList.remove("contactsSelectedButton", "selectedAddressBook");
+      selectedAddressBookButton.classList.remove('contactsSelectedButton', 'selectedAddressBook') 
       const groupForm = context.dom.getElementById('new-group-form')
       if (groupForm) {
         groupForm.remove()
@@ -457,7 +457,7 @@ const createAddressBookButton = (
         removePopupOverlayIfNoPopup(context)
       }
 
-      selectedAddressBookButton.classList.add("contactsSelectedButton", "selectedAddressBook");
+      selectedAddressBookButton.classList.add('contactsSelectedButton', 'selectedAddressBook') 
       // selected address book code
       const selectedAddressBookUri = event.target.id
       // can check for the class on private
@@ -593,10 +593,10 @@ const createNewAddressBookForm = (
   groupNameLabel.setAttribute('for', 'groupNameInput')
 
   const groupNameInputBox = context.dom.createElement('input')
-  groupNameInputBox.type = 'text'; 
-  groupNameInputBox.name = 'groupName'; 
-  groupNameInputBox.id = 'groupNameInput'; 
-  groupNameInputBox.placeholder = 'New group name'; 
+  groupNameInputBox.type = 'text'  
+  groupNameInputBox.name = 'groupName'  
+  groupNameInputBox.id = 'groupNameInput'  
+  groupNameInputBox.placeholder = 'New group name'  
   groupNameInputBox.classList.add('input', 'contactsGroupInput')
   groupNameInputBox.required = true
 
@@ -811,10 +811,10 @@ const handleContactExists = (
         event.preventDefault()
         selectorDialog.remove()
        
-        complain(getButtonContainer(context), context, "Contact was not added")
+        complain(getButtonContainer(context), context, 'Contact was not added')
         setTimeout(() => {
           clearPreviousMessage(getButtonContainer(context))
-        }, 2000); 
+        }, 2000)  
           refreshButton(context, addressBooksData, contactData)  
       })
 
@@ -852,7 +852,7 @@ const finalizeContactEntry = (
     button.removeAttribute('disabled')  
     setTimeout(() => {
       clearPreviousMessage(buttonContainer)
-    }, 2000); 
+    }, 2000)  
     refreshButton(context, addressBooksData, contactData)  
 }
 
@@ -864,13 +864,13 @@ const createGroupButton = (
     event.preventDefault()
     
     const selectedGroupButton = event.target
-    const previouslySelected = selectedGroupButton.classList.contains('contactsSelectedButton');
+    const previouslySelected = selectedGroupButton.classList.contains('contactsSelectedButton') 
     
     if (previouslySelected) {
-      selectedGroupButton.classList.remove("contactsSelectedButton", "selectedGroup")
+      selectedGroupButton.classList.remove('contactsSelectedButton', 'selectedGroup')
       checkAndAddErrorDisplay(context, groupIsRequired)
     } else {
-      selectedGroupButton.classList.add("contactsSelectedButton", "selectedGroup");
+      selectedGroupButton.classList.add('contactsSelectedButton', 'selectedGroup') 
       checkAndRemoveErrorDisplay(context)
     }
   } 

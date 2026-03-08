@@ -86,7 +86,6 @@ const createAddMeToYourContactsButton = async (
     if (checkIfAnyUserLoggedIn(me)) {
         const contactExistsByWebID = checkIfContactExistsByWebID(addressBooksData, contactData.webID)
         const contactExistsByName = checkIfContactExistsByName(addressBooksData, contactData.name)
-        console.log("contact exists by name: " + contactExistsByName)
         if (contactExistsByWebID) {
           //logged in and friend exists or friend was just added
           button.innerHTML = contactExistsAlreadyButtonText.toUpperCase()
@@ -123,7 +122,6 @@ async function saveNewContact(
       try {
         const contactData: ContactData = await getContactData(store, subject) 
         const contactExistsByNameUri = checkIfContactExistsByName(addressBooksData, contactData.name)
-        console.log("contactExistsByNameUri: " + contactExistsByNameUri)
         if (contactExistsByNameUri) {
           await addWebIDToExistingContact(context, contactsModule, addressBooksData, contactData.webID, contactExistsByNameUri)
         } else {

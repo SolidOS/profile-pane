@@ -1,5 +1,5 @@
-import { DataBrowserContext } from "pane-registry"
-import { complain } from "./buttonsHelper"
+import { DataBrowserContext } from  'pane-registry'
+import { complain } from  './buttonsHelper'
 
 export const addErrorToErrorDisplay = (
   context: DataBrowserContext,
