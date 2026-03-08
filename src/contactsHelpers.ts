@@ -253,7 +253,9 @@ async function createContactInAddressBook(
     if (groupUris) {
       contactUri = await contactsModule.createNewContact({addressBookUri: selectedAddressBookUris.addressBookUri, contact: newContact, groupUris}) 
     } else {
-      addErrorToErrorDisplay(context, groupIsRequired)} 
+      addErrorToErrorDisplay(context, groupIsRequired) 
+      return
+    }
     await context.session.store.fetcher.load(contactUri)
     await addWebIDToContact(context, groupUris, contactUri, contactData.webID)
     if (contactData.emails.length || contactData.phoneNumbers.length) {
