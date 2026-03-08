@@ -1,6 +1,7 @@
 import { LiveStore, NamedNode, sym, st, literal } from 'rdflib'
 import { login, ns, utils } from 'solid-ui'
-import ContactsModuleRdfLib, { NewContact, AddressBook } from '@solid-data-modules/contacts-rdflib'
+import ContactsModuleRdfLib from '@solid-data-modules/contacts-rdflib'
+import type { NewContact, AddressBook } from '@solid-data-modules/contacts-rdflib'
 import { DataBrowserContext } from 'pane-registry' 
 import { createAddressBookUriSelectorDialog } from './ContactsCard' 
 import './styles/ContactsCard.css'
