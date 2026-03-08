@@ -160,7 +160,7 @@ async function processContactWebIDs(
   const results = await Promise.all(contactPromises)
     
   results.map((contact) => {
-    if (contact) addressBooksData.contactWebIDs.set(contact.webID, contact.uri)  
+    if (contact?.webID) addressBooksData.contactWebIDs.set(contact.webID.trim(), contact.uri)
   })
 
   return addressBooksData
@@ -192,10 +192,7 @@ async function getContactData(
     phoneNumbers.push({type, phoneNumber})  
   })
 
-  // Need to fix below right now don't want to add
-  // while testing
-  // const webID = subject.value 
-  const webID = 'https://testingsolidos.solidcommunity.net/profile/card#me'
+  const webID = subject.value
   return {
   name,
   emails,
@@ -442,9 +439,8 @@ function checkIfContactExistsByWebID(
   addressBooksData: AddressBooksData,
   subjectUri: string,
 ): boolean {
-
-  if (addressBooksData.contactWebIDs.has(subjectUri)) return true
-  return false
+  if (!subjectUri?.trim()) return false
+  return addressBooksData.contactWebIDs.has(subjectUri.trim())
 }
 
 function checkIfContactExistsByName(

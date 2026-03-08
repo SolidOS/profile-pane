@@ -79,7 +79,6 @@ const createAddMeToYourContactsButton = async (
     }
   )
   button.setAttribute('id', 'add-to-contacts-button')
-  //button.refresh = refreshButton(context, subject, addressBooksData)
   button.refresh = refreshButton()
   
   function refreshButton() {
@@ -90,6 +89,7 @@ const createAddMeToYourContactsButton = async (
           //logged in and friend exists or friend was just added
           button.innerHTML = contactExistsAlreadyButtonText.toUpperCase()
           button.onclick = null 
+          button.setAttribute('disabled', 'true')
         } else if (contactExistsByName) {
           button.innerHTML = contactExistsAlreadyByNameButtonText.toUpperCase()
         }
