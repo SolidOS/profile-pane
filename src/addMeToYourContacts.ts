@@ -83,8 +83,8 @@ const createAddMeToYourContactsButton = async (
   
   function refreshButton() {
     if (checkIfAnyUserLoggedIn(me)) {
-        const contactExistsByWebID = checkIfContactExistsByWebID(addressBooksData, contactData.webID)
-        const contactExistsByName = checkIfContactExistsByName(addressBooksData, contactData.name)
+        const contactExistsByWebID = (contactData) ? checkIfContactExistsByWebID(addressBooksData, contactData.webID) : false
+        const contactExistsByName = (contactData) ? checkIfContactExistsByName(addressBooksData, contactData.name) : false
         if (contactExistsByWebID) {
           //logged in and friend exists or friend was just added
           button.innerHTML = contactExistsAlreadyButtonText.toUpperCase()
