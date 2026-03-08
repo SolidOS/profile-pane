@@ -131,7 +131,7 @@ const createAddressBookUriEntryDiv = (
   addressBookUriEntryDiv.setAttribute('aria-label', 'Address book URI entry div')
   addressBookUriEntryDiv.setAttribute('aria-describedby', 'addressbook-uri-entry-div')
   addressBookUriEntryDiv.setAttribute('id', 'contacts-addressbook-uri-entry')
-  addressBookUriEntryDiv.classList.add('contactsPopupMessage', 'contactsAddressBookUriEntry')
+  addressBookUriEntryDiv.classList.add('contactsPopupDialog', 'contactsAddressBookUriEntry')
 
   const closeButton = createCloseButton(context, addressBookUriEntryDiv, 'contactsAddressBookUriEntryCloseButton')
   addressBookUriEntryDiv.appendChild(closeButton)
@@ -562,7 +562,7 @@ const createNewAddressBookForm = (
   newAddressBookForm.method = 'post'
   newAddressBookForm.innerHTML = 'Create a new address book'
   newAddressBookForm.setAttribute('id', 'new-addressbook-form')
-  newAddressBookForm.classList.add('contactsPopupMessage', 'contactsNewAddressForm')
+  newAddressBookForm.classList.add('contactsPopupDialog', 'contactsNewAddressForm')
   
   const addressBookNameLabel = context.dom.createElement('label')
   addressBookNameLabel.classList.add('label')
@@ -717,7 +717,7 @@ const createGroupNameForm = (
   newGroupForm.addEventListener('submit', addGroupEventListener) 
   newGroupForm.innerHTML = 'Create a new group'
   newGroupForm.setAttribute('id', 'new-group-form')
-  newGroupForm.classList.add('contactsPopupMessage', 'contactsNewGroupForm')
+  newGroupForm.classList.add('contactsPopupDialog', 'contactsNewGroupForm')
   
   const groupNameLabel = context.dom.createElement('label')
   groupNameLabel.classList.add('label')
@@ -926,7 +926,7 @@ const removePopupOverlayIfNoPopup = (
   const selectorDialog = context.dom.getElementById('contacts-selector-dialog')
   if (!selectorDialog) return
 
-  const activePopup = selectorDialog.querySelector('.contactsPopupMessage, .contactsContactExistsAlert')
+  const activePopup = selectorDialog.querySelector('.contactsPopupDialog, .contactsContactExistsAlert')
   if (activePopup) return
 
   const overlay = selectorDialog.querySelector(`#${CONTACTS_POPUP_OVERLAY_ID}`)

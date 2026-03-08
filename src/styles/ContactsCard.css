@@ -405,20 +405,19 @@
   z-index: 8;
 }
 
-.contactsAddressBookSelector.contactsOverlayActive > *:not(.contactsPopupOverlay):not(.contactsPopupMessage):not(.contactsContactExistsAlert) {
+.contactsAddressBookSelector.contactsOverlayActive > *:not(.contactsPopupOverlay):not(.contactsPopupDialog):not(.contactsContactExistsAlert) {
   pointer-events: none;
   user-select: none;
 }
 
-.contactsAddressBookSelector.contactsOverlayActive .contactsPopupMessage,
+.contactsAddressBookSelector.contactsOverlayActive .contactsPopupDialog,
 .contactsAddressBookSelector.contactsOverlayActive .contactsContactExistsAlert,
-.contactsAddressBookSelector.contactsOverlayActive .contactsPopupMessage *,
+.contactsAddressBookSelector.contactsOverlayActive .contactsPopupDialog *,
 .contactsAddressBookSelector.contactsOverlayActive .contactsContactExistsAlert * {
   pointer-events: auto;
 }
 
-/* SAM Look at finding a better name than popupMessage  */
-.contactsPopupMessage {
+.contactsPopupDialog {
   background: #F5F5F5 !important;
   color: var(--color-primary);
   padding: 2em;
@@ -441,7 +440,7 @@
     padding-top: 3rem !important;
   }
 
-  .contactsPopupMessage {
+  .contactsPopupDialog {
     max-width: 92vw;
     max-height: 78vh;
     padding: 1.25rem;
