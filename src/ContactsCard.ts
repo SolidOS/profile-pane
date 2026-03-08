@@ -634,6 +634,7 @@ const createCloseButton = (
   specialClass: string
 ): HTMLButtonElement => {
 
+  const buttonID = `${element.id}-close-button`
   const setButtonOnClickHandler = (event) => {
     event.preventDefault()
     if (element) {
@@ -647,7 +648,7 @@ const createCloseButton = (
   }
 
   const closeButton = context.dom.createElement('button')
-  closeButton.setAttribute('id', 'close-addressbook')
+  closeButton.setAttribute('id', buttonID)
   closeButton.setAttribute('role', 'button')
   closeButton.setAttribute('type', 'button')
   const ariaLabel = specialClass === 'contactsCloseButton'
