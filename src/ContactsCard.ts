@@ -2,11 +2,12 @@ import { DataBrowserContext } from "pane-registry"
 import { addANewAddressBookUriToAddressBooks, addGroupToAddressBookData, addWebIDToExistingContact, checkIfContactExistsByName, checkIfContactExistsByWebID, createContactInAddressBook, handleAddressBookCreation, refreshButton } from "./contactsHelpers"
 import { AddressBookDetails, AddressBooksData, ContactData, GroupData } from "./contactsTypes"
 import ContactsModuleRdfLib from "@solid-data-modules/contacts-rdflib"
-import { clearPreviousMessage, mention } from "./buttonsHelper"
+import { clearPreviousMessage, complain, mention } from "./buttonsHelper"
 import { contactExistsMessage, contactWasAddedSuccesMessage, errorContactCreation, errorGroupCreation, errorNotExistsAddressBookUri, groupIsRequired } from "./texts"
 import { addErrorToErrorDisplay, checkAndAddErrorDisplay } from "./contactsErrors"
 
 const CONTACTS_POPUP_OVERLAY_ID = 'contacts-popup-overlay'
+const CONTACTS_OVERLAY_ACTIVE_CLASS = 'contactsOverlayActive'
 
 export const createAddressBookUriSelectorDialog = (context: DataBrowserContext,
   contactsModule: ContactsModuleRdfLib,
@@ -16,6 +17,8 @@ export const createAddressBookUriSelectorDialog = (context: DataBrowserContext,
   const addressBookUriSelectorDialog = context.dom.createElement('dialog')
   addressBookUriSelectorDialog.setAttribute('role', 'dialog')
   addressBookUriSelectorDialog.setAttribute('aria-live', 'polite')
+  addressBookUriSelectorDialog.setAttribute('aria-label', 'Contact address book selection dialog')
+  addressBookUriSelectorDialog.setAttribute('aria-describedby', 'addressbook-contacts-selection')
   addressBookUriSelectorDialog.classList.add('contactsAddressBookSelector')
   addressBookUriSelectorDialog.setAttribute('id', 'contacts-selector-dialog')
 
@@ -83,7 +86,6 @@ const createAddressBookCreationButton = (
   addressBookCreationButton.setAttribute('id', 'contacts-create-addressbook-button')
   addressBookCreationButton.setAttribute('type', 'button')
   addressBookCreationButton.setAttribute('role', 'button')
-  addressBookCreationButton.setAttribute('data-testid', 'button')
   addressBookCreationButton.setAttribute('aria-label', 'Create a new address book')
   addressBookCreationButton.setAttribute('tabindex', '0')
   addressBookCreationButton.textContent = 'Create Address Book'
@@ -109,7 +111,6 @@ const createAddressBookUriEntryButton = (
   addressBookCreationButton.setAttribute('id', 'contacts-addressbook-uri-entry-button')
   addressBookCreationButton.setAttribute('type', 'button')
   addressBookCreationButton.setAttribute('role', 'button')
-  addressBookCreationButton.setAttribute('data-testid', 'button')
   addressBookCreationButton.setAttribute('aria-label', 'Enter an address book URI to add the contact to a specific address book')
   addressBookCreationButton.setAttribute('tabindex', '0')
   addressBookCreationButton.textContent = 'Enter Address Book URI'
@@ -128,6 +129,8 @@ const createAddressBookUriEntryDiv = (
   addressBookUriEntryDiv.setAttribute('role', 'addressBookUriEntry')
   addressBookUriEntryDiv.setAttribute('aria-live', 'polite')
   addressBookUriEntryDiv.setAttribute('tabindex', '0')
+  addressBookUriEntryDiv.setAttribute('aria-label', 'Address book URI entry div')
+  addressBookUriEntryDiv.setAttribute('aria-describedby', 'addressbook-uri-entry-div')
   addressBookUriEntryDiv.setAttribute('id', 'contacts-addressbook-uri-entry')
   addressBookUriEntryDiv.classList.add('contactsPopupMessage', 'contactsAddressBookUriEntry')
 
@@ -162,15 +165,17 @@ const createAddressBookUriEntryForm = (
         
         const addressBookListDiv = context.dom.querySelector('#addressbook-list')
         if (addressBookListDiv) {
-          // SAM when I add the screen over the dialog I need to remove it.
           const addressBookUriEntry = context.dom.getElementById('contacts-addressbook-uri-entry')
           addressBookUriEntry.remove()
           removePopupOverlayIfNoPopup(context)
-          //SAM remove buttons if we leave them in address list
+          const addressBookCreationButton = context.dom.getElementById('contacts-create-addressbook-button')
+          const addressBookUriEntryButton = context.dom.getElementById('contacts-addressbook-uri-entry-button') 
+          addressBookCreationButton.remove()
+          addressBookUriEntryButton.remove()
           addressBookListDiv.appendChild(createAddressBookButton(context, contactsModule, books.addressBooksData, books.addressBook, enteredAddressBookUri, contactData))
-          // SAM then readd them
+          addressBookListDiv.appendChild(createAddressBookCreationButton(context, contactsModule, books.addressBooksData, contactData))   
+          addressBookListDiv.appendChild(createAddressBookUriEntryButton(context, contactsModule, books.addressBooksData, contactData))
         }}
-
   }
 
   const inputAddressUriEventListener = () => { 
@@ -215,7 +220,6 @@ const createAddressBookUriEntryAddButton = (
   const entryButton = context.dom.createElement('button')
   entryButton.setAttribute('id', 'contacts-addressbook-entry-button')
   entryButton.setAttribute('role', 'button')
-  entryButton.setAttribute('data-testid', 'button')
   entryButton.setAttribute('aria-label', 'Create Address Book from entered URI')
   entryButton.setAttribute('tabindex', '0')
   entryButton.classList.add('contactsActionButton', 'contactsAddressBookUriEntryAddButton')
@@ -238,10 +242,9 @@ const createAddressBookListDiv = (
   addressBookListDiv.setAttribute('role', 'addressBooksList')
   addressBookListDiv.setAttribute('aria-live', 'polite')
   addressBookListDiv.setAttribute('tabindex', '0')
+  addressBookListDiv.setAttribute('aria-label', 'Address book list to select which address book to add the contact to')
+  addressBookListDiv.setAttribute('aria-describedby', 'addressbook-list')
   addressBookListDiv.setAttribute('id', 'addressbook-list')
-  // check if I need below  
-  addressBookListDiv.setAttribute('aria-labelledby', 'address-book-list-div')
-  addressBookListDiv.setAttribute('data-testid', 'div')
 
   addressBookListDiv.innerHTML = "Address Books"
   addressBooksData.public.forEach((addressBook, addressBookUri) => {
@@ -278,7 +281,6 @@ const createAddressBookGroupCreationButton = (
   groupCreationButton.setAttribute('id', 'contacts-create-group-button')
   groupCreationButton.setAttribute('type', 'button')
   groupCreationButton.setAttribute('role', 'button')
-  groupCreationButton.setAttribute('data-testid', 'button')
   groupCreationButton.setAttribute('aria-label', 'Create a new group in the selected address book')
   groupCreationButton.setAttribute('tabindex', '0')
   groupCreationButton.textContent = 'Create Group'
@@ -300,9 +302,8 @@ const createGroupListDiv = (
   groupListDiv.setAttribute('role', 'groupList')
   groupListDiv.setAttribute('aria-live', 'polite')
   groupListDiv.setAttribute('tabindex', '0')
-  // check if I need below
-  groupListDiv.setAttribute('aria-labelledby', 'group-list-div')
-  groupListDiv.setAttribute('data-testid', 'div')
+  groupListDiv.setAttribute('aria-label', 'Group list to select which groups in the address book to add the contact to')
+  groupListDiv.setAttribute('aria-describedby', 'group-list')
   groupListDiv.setAttribute('id', 'group-list')
 
   groupListDiv.innerHTML = "Groups"
@@ -324,9 +325,18 @@ const createErrorDisplaySection = (
   }
 
   const errorDisplaySection = context.dom.createElement('section')
-  errorDisplaySection.classList.add('contactsErrorDisplay')
+  errorDisplaySection.setAttribute('role', 'errorDisplay')
+  errorDisplaySection.setAttribute('aria-live', 'assertive')
+  errorDisplaySection.setAttribute('tabindex', '0')
+  errorDisplaySection.setAttribute('aria-label', 'Section to display error messages related to contact creation')
   errorDisplaySection.setAttribute('id', 'error-display-section')
+  errorDisplaySection.classList.add('contactsErrorDisplay')
+
   const closeButton = context.dom.createElement('button')
+  closeButton.setAttribute('type', 'button')
+  closeButton.setAttribute('aria-label', 'Close error message display')
+  closeButton.setAttribute('tabindex', '0')
+  closeButton.setAttribute('role', 'button')
   closeButton.classList.add('contactsCloseErrorDisplayButton')
   closeButton.textContent = 'x'
   closeButton.addEventListener('click', setButtonOnClickHandler)
@@ -395,28 +405,15 @@ const createNewContactCreationButton = (
       addErrorToErrorDisplay(context, groupIsRequired)
     }
   }
-/*
-  const button = widgets.button(
-    context.dom,
-    undefined,
-    'Add Contact',
-    setButtonOnClickHandler, //sets an onclick event listener
-    {
-      needsBorder: true,
-      buttonColor: 'Secondary'
-    }
-  ) */
+
   const button = context.dom.createElement('button')
   button.setAttribute('type', 'submit')
   button.setAttribute('id', 'add-contact')
   button.setAttribute('role', 'button')
-  button.setAttribute('data-testid', 'button')
   button.setAttribute('aria-label', 'Create a new address book')
   button.setAttribute('tabindex', '0')
   button.classList.add('contactsActionButton', 'contactsNewContactCreationButton')
   button.addEventListener('click', setButtonOnClickHandler)
-  //button.classList.add('contactsSubmitButton', 'actionButton', 'btn-primary', 'action-button-focus')
-  button.attributeStyleMap.clear()
   button.textContent = 'Add Contact'
   return button
 }
@@ -480,18 +477,15 @@ const createAddressBookButton = (
       addressBookDetailsSection.appendChild(groupListDiv)
     }
   }
-  /* const button = widgets.button(
-    context.dom,
-    undefined,
-    `${addressBook.name}(${index})`,
-    setButtonOnClickHandler, //sets an onclick event listener
-    options
-  ) */
+
   const button = context.dom.createElement('button')
   button.setAttribute('value', addressBook.name)
   button.setAttribute('id', addressBookUri)
+  button.setAttribute('role', 'button') 
+  button.setAttribute('type', 'submit')
+  button.setAttribute('aria-label', 'Select address book ' + addressBook.name)
+  button.setAttribute('tabindex', '0')
   button.classList.add('contactsButton')
-  // @ts-ignore
   button.addEventListener('click', setButtonOnClickHandler)
   button.innerHTML = addressBook.name
   return button
@@ -533,6 +527,7 @@ const createNewAddressBookForm = (
           const groupAdded = await addGroupToAddressBookData(addressBooksData, enteredAddressBookUri, { name: enteredGroupName, uri: newGroupUri })
           if (!groupAdded) {
             addErrorToErrorDisplay(context, errorGroupCreation)
+            return
           }
         }
    
@@ -614,7 +609,6 @@ const createNewAddressBookForm = (
   submitButton.setAttribute('id', 'submit-addressbook')
   submitButton.setAttribute('role', 'button') 
   submitButton.setAttribute('type', 'submit')
-  submitButton.setAttribute('data-testid', 'button')
   submitButton.setAttribute('aria-label', 'Create a new address book with the entered name, container, type and group')
   submitButton.setAttribute('tabindex', '0')
   submitButton.classList.add('contactsActionButton', 'contactsAddressBookCreationSubmitButton')
@@ -661,7 +655,6 @@ const createCloseButton = (
   closeButton.setAttribute('id', 'close-addressbook')
   closeButton.setAttribute('role', 'button')
   closeButton.setAttribute('type', 'button')
-  closeButton.setAttribute('data-testid', 'button')
   closeButton.setAttribute('aria-label', 'Cancel the creation of a new address book')
   closeButton.setAttribute('tabindex', '0')
   closeButton.classList.add('contactsCloseButton', specialClass)
@@ -676,11 +669,6 @@ const createGroupNameForm = (
   addressBooksData: AddressBooksData, 
   contactData: ContactData
 ): HTMLFormElement => {
-
-  const submitFormEventListener = (event) => {
-    event.preventDefault()
-    newGroupForm.requestSubmit()
-  }
 
   const addGroupEventListener = async (event) => {
     event.preventDefault()
@@ -744,18 +732,7 @@ const createGroupNameForm = (
   groupNameInputBox.placeholder = 'New group name' 
   groupNameInputBox.classList.add('input', 'contactsGroupInput')
  
-  const submitButton = context.dom.createElement('button')
-  // SAM need to add other attributes potentially move to it's own function.
-  submitButton.setAttribute('id', 'submit-group')
-  submitButton.setAttribute('role', 'button') 
-  submitButton.setAttribute('type', 'submit')
-  submitButton.setAttribute('data-testid', 'button')
-  submitButton.setAttribute('aria-label', 'Create a new group in the selected address book')
-  submitButton.setAttribute('tabindex', '0')
-  submitButton.classList.add('contactsActionButton', 'contactsGroupCreationSubmitButton')
-  submitButton.addEventListener('click', submitFormEventListener)
-  submitButton.innerHTML = 'Add Group' 
-
+  const submitButton = createAddGroupButton(context, newGroupForm)
   const closeButton = createCloseButton(context, newGroupForm, 'contactsGroupCreationCloseButton')
 
   newGroupForm.appendChild(groupNameLabel)
@@ -765,6 +742,27 @@ const createGroupNameForm = (
     
   return newGroupForm
 }
+
+const createAddGroupButton = (
+  context: DataBrowserContext,
+  form: HTMLFormElement
+): HTMLButtonElement => {
+  const setButtonOnClickHandler = async (event) => {
+    event.preventDefault()
+    form.requestSubmit()
+  }
+
+  const button = context.dom.createElement('button')
+  button.setAttribute('id', 'contacts-create-group-button')
+  button.setAttribute('type', 'button')
+  button.setAttribute('role', 'button')
+  button.setAttribute('aria-label', 'Create a new group in the selected address book')
+  button.setAttribute('tabindex', '0')
+  button.textContent = 'Create Group'
+  button.classList.add('contactsActionButton', 'contactsCreateGroupCreationButton')
+  button.addEventListener('click', setButtonOnClickHandler)
+  return button
+}     
 
 const handleContactExists = (
   context: DataBrowserContext,
@@ -785,10 +783,18 @@ const handleContactExists = (
       const contactExistsDiv = context.dom.createElement('div')
       contactExistsDiv.setAttribute('role', 'alert')
       contactExistsDiv.setAttribute('aria-live', 'assertive')
+      contactExistsDiv.setAttribute('tabindex', '0')
+      contactExistsDiv.setAttribute('aria-label', 'Alert message indicating that the contact already exists')
+      contactExistsDiv.setAttribute('id', 'contacts-contact-exists')
       contactExistsDiv.classList.add('contactsContactExistsAlert')
       contactExistsDiv.innerHTML = `${contactData.name} already exists. \n Do you want to add their WebID?`
       
       const confirmButton = context.dom.createElement('button')
+      confirmButton.setAttribute('id', 'contacts-confirm-add-webid-button')
+      confirmButton.setAttribute('role', 'button')
+      confirmButton.setAttribute('type', 'button')
+      confirmButton.setAttribute('aria-label', 'Confirm adding the contact webID to the existing contact')
+      confirmButton.setAttribute('tabindex', '0') 
       confirmButton.classList.add('contactsConfirmButton')
       confirmButton.innerHTML = 'Yes'
       confirmButton.addEventListener('click', async (event) => {
@@ -799,13 +805,18 @@ const handleContactExists = (
       })
 
       const cancelButton = context.dom.createElement('button')
+      cancelButton.setAttribute('id', 'contacts-cancel-add-webid-button')
+      cancelButton.setAttribute('role', 'button')
+      cancelButton.setAttribute('type', 'button')
+      cancelButton.setAttribute('aria-label', 'Cancel adding the contact webID to the existing contact')
+      cancelButton.setAttribute('tabindex', '0')
       cancelButton.classList.add('contactsCancelButton')
       cancelButton.innerHTML = 'No'
       cancelButton.addEventListener('click', (event) => {
         event.preventDefault()
         selectorDialog.remove()
-        // need to use complain function to display that contact was not added instead of mention
-        mention(getButtonContainer(context), "Contact was not added")
+       
+        complain(getButtonContainer(context), context, "Contact was not added")
         setTimeout(() => {
           clearPreviousMessage(getButtonContainer(context))
         }, 2000); 
@@ -813,6 +824,10 @@ const handleContactExists = (
       })
 
       const actionsDiv = context.dom.createElement('div')
+      actionsDiv.setAttribute('id', 'contacts-contact-exists-actions')
+      actionsDiv.setAttribute('role', 'group')
+      actionsDiv.setAttribute('aria-label', 'Actions for existing contact alert') 
+      actionsDiv.setAttribute('tabindex', '0')
       actionsDiv.classList.add('contactsContactExistsActions')
       actionsDiv.appendChild(confirmButton)
       actionsDiv.appendChild(cancelButton)
@@ -864,22 +879,16 @@ const createGroupButton = (
       checkAndRemoveErrorDisplay(context)
     }
   } 
-  /*
-  const button = widgets.button(
-    context.dom,
-    undefined,
-    group.name,
-    setButtonOnClickHandler, //sets an onclick event listener
-    {
-      needsBorder: true
-    }
-  ) */
+
   const button = context.dom.createElement('button')
   button.setAttribute('value', group.name)
   button.setAttribute('id', group.uri)
+  button.setAttribute('type', 'button')
+  button.setAttribute('role', 'button')
+  button.setAttribute('aria-label', 'Select group ' + group.name)
+  button.setAttribute('tabindex', '0')
   button.classList.add('contactsButton')
   button.addEventListener('click', setButtonOnClickHandler)
-  button.attributeStyleMap.clear()
   button.innerHTML = group.name
 
   return button
@@ -899,10 +908,15 @@ const showPopupOverlay = (
   const selectorDialog = context.dom.getElementById('contacts-selector-dialog')
   if (!selectorDialog) return
 
+  selectorDialog.classList.add(CONTACTS_OVERLAY_ACTIVE_CLASS)
+
   const existingOverlay = selectorDialog.querySelector(`#${CONTACTS_POPUP_OVERLAY_ID}`)
   if (existingOverlay) return
 
   const overlay = context.dom.createElement('div')
+  overlay.setAttribute('role', 'popupOverlay')
+  overlay.setAttribute('aria-label', 'Overlay to focus on the active popup message and disable interaction with the rest of the dialog')  
+  overlay.setAttribute('tabindex', '0')
   overlay.setAttribute('id', CONTACTS_POPUP_OVERLAY_ID)
   overlay.classList.add('contactsPopupOverlay')
   selectorDialog.appendChild(overlay)
@@ -919,4 +933,5 @@ const removePopupOverlayIfNoPopup = (
 
   const overlay = selectorDialog.querySelector(`#${CONTACTS_POPUP_OVERLAY_ID}`)
   if (overlay) overlay.remove()
+  selectorDialog.classList.remove(CONTACTS_OVERLAY_ACTIVE_CLASS)
 }

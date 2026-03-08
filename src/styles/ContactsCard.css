@@ -40,17 +40,6 @@
     transform: translate(-50%, -50%);
   }
 
-  .contactsAddressBookUriEntry.contactsPopupMessage {
-    width: calc(100% - 1rem) !important;
-    max-width: calc(100% - 1rem) !important;
-    box-sizing: border-box;
-  }
-
-  .contactsAddressBookUriEntryForm {
-    width: 100%;
-    max-width: 100%;
-  }
-
   .contactsAddressBookDetails {
     flex-direction: column !important; /* Stacks items vertically on small screens */
     align-items: center !important;
@@ -183,15 +172,16 @@
 }
 
 .contactsAddressBookUriEntry {
-  width: 100%;
-  max-width: 100%;
+  width: calc(100% - 1rem) !important;
+  max-width: calc(100% - 1rem) !important;
   min-width: 0;
   box-sizing: border-box;
-  padding-top: 2em;
+  padding-top: 3em !important;
   gap: 5px;
   display: flex;
   align-self: stretch;
   flex-direction: column;
+
 }
 
 .contactsAddressBookUriEntryForm {
@@ -200,7 +190,6 @@
   min-width: 0;
   background: #F0F0F0;
   box-sizing: border-box;
-  margin-top: 2.5rem;
   gap: 5px;
   display: flex;
   flex-wrap: wrap;
@@ -417,6 +406,18 @@
   z-index: 8;
 }
 
+.contactsAddressBookSelector.contactsOverlayActive > *:not(.contactsPopupOverlay):not(.contactsPopupMessage):not(.contactsContactExistsAlert) {
+  pointer-events: none;
+  user-select: none;
+}
+
+.contactsAddressBookSelector.contactsOverlayActive .contactsPopupMessage,
+.contactsAddressBookSelector.contactsOverlayActive .contactsContactExistsAlert,
+.contactsAddressBookSelector.contactsOverlayActive .contactsPopupMessage *,
+.contactsAddressBookSelector.contactsOverlayActive .contactsContactExistsAlert * {
+  pointer-events: auto;
+}
+
 /* SAM Look at finding a better name than popupMessage  */
 .contactsPopupMessage {
   background: #F5F5F5 !important;
@@ -437,6 +438,10 @@
 }
 
 @media (max-width: 600px) {
+  .contactsAddressBookUriEntry {
+    padding-top: 3rem !important;
+  }
+
   .contactsPopupMessage {
     max-width: 92vw;
     max-height: 78vh;

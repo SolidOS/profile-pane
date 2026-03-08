@@ -255,7 +255,7 @@ async function createContactInAddressBook(
       contactUri = await contactsModule.createNewContact({addressBookUri: selectedAddressBookUris.addressBookUri, contact: newContact, groupUris}) 
     } else {
       // TODO: think I should change the code here as we don't allow creation without a group
-      contactUri = await contactsModule.createNewContact({addressBookUri: selectedAddressBookUris.addressBookUri, contact: newContact})   
+      // contactUri = await contactsModule.createNewContact({addressBookUri: selectedAddressBookUris.addressBookUri, contact: newContact})   
     } 
     await context.session.store.fetcher.load(contactUri)
     await addWebIDToContact(context, groupUris, contactUri, contactData.webID)
@@ -275,33 +275,34 @@ async function addContactDetails(
 ) {
   const store = context.session.store
   const contactNode = new NamedNode(contactUri)
-  let node = null
-  // ID isn't working, some reason it hangs and doesn't do anything
-  // else when trying to turn it into a named node
-  // for now using bnode(), but this isn't how the existing data looks in the address book.
-  // in the address book it's a node #id1234567890123.
-  // const max = 9999999999999
-  // const min = 1000000000000
-  //node = sym(`#id${Math.floor(Math.random() * (max - min + 1)) + min}`)
-  //console.log("node: " + JSON.stringify(node))
+  const detailDoc = contactNode.doc()
+  const max = 9999999999999
+  const min = 1000000000000
+
+  const createDetailNode = (): NamedNode => {
+    const randomId = Math.floor(Math.random() * (max - min + 1)) + min
+    return sym(`${detailDoc.uri}#id${randomId}`) as NamedNode
+  }
+
   let insertions = []
 
   try {
  
     contactData.emails.map((emailInfo) => {
-      node = store.bnode()
-      insertions.push(st(contactNode, ns.vcard("hasEmail"), node , contactNode.doc()))
-      insertions.push(st(node, ns.rdf('type'), emailInfo.type, contactNode.doc()))
-      insertions.push(st(node, ns.vcard("value"), emailInfo.email, contactNode.doc()))
+      const node = createDetailNode()
+      insertions.push(st(contactNode, ns.vcard("hasEmail"), node , detailDoc))
+      insertions.push(st(node, ns.rdf('type'), emailInfo.type, detailDoc))
+      insertions.push(st(node, ns.vcard("value"), emailInfo.email, detailDoc))
     }) 
     contactData.phoneNumbers.map((phoneInfo) => {
-      node = store.bnode()
-      insertions.push(st(contactNode, ns.vcard("hasTelephone"), node , contactNode.doc()))
-      insertions.push(st(node, ns.rdf('type'), phoneInfo.type, contactNode.doc()))
-      insertions.push(st(node, ns.vcard("value"), phoneInfo.phoneNumber, contactNode.doc()))  
+      const node = createDetailNode()
+      insertions.push(st(contactNode, ns.vcard("hasTelephone"), node , detailDoc))
+      insertions.push(st(node, ns.rdf('type'), phoneInfo.type, detailDoc))
+      insertions.push(st(node, ns.vcard("value"), phoneInfo.phoneNumber, detailDoc))
     })
 
-    await context.session.store.fetcher.load(contactUri)
+   // SAM don't think i need this bc call it before.
+   // need to test await context.session.store.fetcher.load(contactUri)
     await store.updater.update([],insertions)  
   } catch (error) {
     addErrorToErrorDisplay(context, error)
