@@ -25,7 +25,6 @@ export const createAddressBookUriSelectorDialog = (context: DataBrowserContext,
   const button = context.dom.getElementById('add-to-contacts-button')
   button.setAttribute('disabled', '')
 
-  // SAM there may be a close Icon function in solid-ui I can use instead of creating my own. will check and change this if there is one.
   const closeButton = createCloseButton(context, addressBookUriSelectorDialog, 'contactsCloseButton')
 
   const addressBookCreationDiv = context.dom.createElement('div')
@@ -457,10 +456,6 @@ const createAddressBookButton = (
         addressForm.remove()
         removePopupOverlayIfNoPopup(context)
       }
-      // display group form
-      const groupForm = context.dom.getElementById('new-group-form')
-    
-      if (!groupForm) // SAM addressBookDetailsSection.appendChild(createGroupNameForm(context, addressBooksData, contactsModule, contactData))
 
       selectedAddressBookButton.classList.add("contactsSelectedButton", "selectedAddressBook");
       // selected address book code

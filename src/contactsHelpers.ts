@@ -6,7 +6,7 @@ import { createAddressBookUriSelectorDialog } from "./ContactsCard";
 import './styles/ContactsCard.css'
 import { authn, solidLogicSingleton } from "solid-logic";
 import { AddressBookDetails, AddressBooksData, ContactData, EmailDetails, GroupData, PhoneDetails, SelectedAddressBookUris } from "./contactsTypes";
-import { addMeToYourContactsButtonText, contactExistsAlreadyButtonText, contactExistsAlreadyByNameButtonText, errorAddressBookCreation, errorGettingAddressBooks, errorLoadingContact, errorProcessingUriAddressBook, errorReadingAddressBook, errorUnableToDetermineUserWorkspace, logInAddMeToYourContactsButtonText } from "./texts";
+import { addMeToYourContactsButtonText, contactExistsAlreadyButtonText, contactExistsAlreadyByNameButtonText, errorAddressBookCreation, errorGettingAddressBooks, errorLoadingContact, errorProcessingUriAddressBook, errorReadingAddressBook, errorUnableToDetermineUserWorkspace, groupIsRequired, logInAddMeToYourContactsButtonText } from "./texts";
 import { checkIfAnyUserLoggedIn } from "./buttonsHelper";
 import { addErrorToErrorDisplay } from "./contactsErrors";
 import contacts from 'contacts-pane'
@@ -96,7 +96,6 @@ try {
       publicUris: (addressBookNodes || []).map((node) => node.value),
       privateUris: []
     }
-    console.log("address book uris: " + JSON.stringify(addressBookUris))
     // let addressBookUris = await contactsModule.listAddressBooks(me.value) 
 
     const publicAddressBookPromises = await addressBookUris.publicUris.map(addressBook => getAddressData(context, contactsModule, addressBook))
@@ -250,13 +249,10 @@ async function createContactInAddressBook(
   try { 
    
     const groupUris = (selectedAddressBookUris.groupUris.length) ? selectedAddressBookUris.groupUris : undefined
-    console.log("group uris: " + JSON.stringify(groupUris))
     if (groupUris) {
       contactUri = await contactsModule.createNewContact({addressBookUri: selectedAddressBookUris.addressBookUri, contact: newContact, groupUris}) 
     } else {
-      // TODO: think I should change the code here as we don't allow creation without a group
-      // contactUri = await contactsModule.createNewContact({addressBookUri: selectedAddressBookUris.addressBookUri, contact: newContact})   
-    } 
+      addErrorToErrorDisplay(context, groupIsRequired)} 
     await context.session.store.fetcher.load(contactUri)
     await addWebIDToContact(context, groupUris, contactUri, contactData.webID)
     if (contactData.emails.length || contactData.phoneNumbers.length) {
@@ -276,6 +272,7 @@ async function addContactDetails(
   const store = context.session.store
   const contactNode = new NamedNode(contactUri)
   const detailDoc = contactNode.doc()
+  // needs to be a 13 digit random number.
   const max = 9999999999999
   const min = 1000000000000
 
@@ -301,13 +298,10 @@ async function addContactDetails(
       insertions.push(st(node, ns.vcard("value"), phoneInfo.phoneNumber, detailDoc))
     })
 
-   // SAM don't think i need this bc call it before.
-   // need to test await context.session.store.fetcher.load(contactUri)
     await store.updater.update([],insertions)  
   } catch (error) {
     addErrorToErrorDisplay(context, error)
   }
-
 }
 
 async function addWebIDToContact(
@@ -429,7 +423,7 @@ function refreshButton(
         button.onclick = null 
       } else if (contactExistsByName) {
         button.innerHTML = contactExistsAlreadyByNameButtonText.toUpperCase()
-        button.removeAttribute('disabled') // SAM check if this is working
+        button.removeAttribute('disabled') 
       }
         else {
         //logged in and friend does not exist yet
@@ -446,7 +440,7 @@ function checkIfContactExistsByWebID(
   subjectUri: string,
 ): boolean {
 
- // SAM if (addressBooksData.contactWebIDs.has(subjectUri)) return true
+  if (addressBooksData.contactWebIDs.has(subjectUri)) return true
   return false
 }
 
@@ -463,9 +457,8 @@ function checkIfContactExistsByName(
     normalizedContactName = contactName.replace(/\s/g, '').toLowerCase().trim()
     if (normalizedSubjectName === normalizedContactName) return contactUri = uri
   })
-  // SAM need to uncomment - more testing
-  // return contactUri
-  return null
+  
+  return contactUri
 }
 
 async function addWebIDToExistingContact(
