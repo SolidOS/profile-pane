@@ -99,9 +99,10 @@ try {
     }
     // let addressBookUris = await contactsModule.listAddressBooks(me.value) 
 
-    const publicAddressBookPromises = await addressBookUris.publicUris.map(addressBook => getAddressData(context, contactsModule, addressBook))
+    const publicAddressBookPromises = addressBookUris.publicUris.map(addressBook => getAddressData(context, contactsModule, addressBook))
     const publicAddressBooksData = await Promise.all(publicAddressBookPromises)
     publicAddressBooksData.map((addressBook) => {
+      if (!addressBook) return
       addressBooksData.public.set(addressBook.uri, {
         name: addressBook.title,
         groups: addressBook.groups,
@@ -115,6 +116,7 @@ try {
     const privateAddressBookPromises = addressBookUris.privateUris.map(addressBook => getAddressData(context, contactsModule, addressBook))
     const privateAddressBooksData = await Promise.all(privateAddressBookPromises)
     privateAddressBooksData.map((addressBook) => {
+      if (!addressBook) return
       addressBooksData.private.set(addressBook.uri, {
         name: addressBook.title,
         groups: addressBook.groups,
@@ -212,6 +214,9 @@ async function addANewAddressBookUriToAddressBooks(
 
   try {
     const addressBook = await getAddressData(context, contactsModule, enteredAddressBookUri)
+    if (!addressBook) {
+      return { addressBooksData, addressBook: null }
+    }
     contactsAddressBook = {
       name: addressBook.title,
       groups: addressBook.groups,
