@@ -306,6 +306,13 @@
   height: auto !important;
   cursor: pointer;
   line-height: 1;
+  left: auto;
+  margin: 0;
+  align-self: auto !important;
+  background: transparent;
+  color: #787878;
+  border: none;
+  z-index: 100 !important;
 }
 
 .contactsCloseButton:hover {
