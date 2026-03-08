@@ -650,7 +650,10 @@ const createCloseButton = (
   closeButton.setAttribute('id', 'close-addressbook')
   closeButton.setAttribute('role', 'button')
   closeButton.setAttribute('type', 'button')
-  closeButton.setAttribute('aria-label', 'Cancel the creation of a new address book')
+  const ariaLabel = specialClass === 'contactsCloseButton'
+    ? 'Close contacts dialog'
+    : 'Close dialog'
+  closeButton.setAttribute('aria-label', ariaLabel)
   closeButton.setAttribute('tabindex', '0')
   closeButton.classList.add('contactsCloseButton', specialClass)
   closeButton.addEventListener('click', setButtonOnClickHandler)
