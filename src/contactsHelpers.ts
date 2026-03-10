@@ -1,5 +1,5 @@
 import { LiveStore, NamedNode, sym, st, literal } from 'rdflib'
-import { login, ns, utils } from 'solid-ui'
+import { ns, utils } from 'solid-ui'
 import ContactsModuleRdfLib from '@solid-data-modules/contacts-rdflib'
 import type { NewContact, AddressBook } from '@solid-data-modules/contacts-rdflib'
 import { DataBrowserContext } from 'pane-registry' 
@@ -69,16 +69,6 @@ async function getAddressBooks(
 
   const allContacts = []
   const me = authn.currentUser()
-  const dom = context.dom
-  const div = dom.getElementById('add-to-contacts-button-container') as HTMLDivElement
-
-  const contextForFindAppInstances = {
-        target: me,
-        me,
-        noun: 'address book',
-        div,
-        dom
-  }
 
   let addressBooksData = { 
     public: new Map(),
