@@ -17,6 +17,7 @@ export const errorGettingAddressBooks = 'There was an error getting your address
 export const errorNotExistsAddressBookUri = 'Please enter an address book URI.'
 export const errorProcessingUriAddressBook = 'There was an error processing your address book.'
 export const errorUnableToDetermineUserWorkspace = 'Unable to determine user workspace for new address book.'
+export const errorAddingContactWebIDToAddressBook = 'Contact webID was not saved.'
 
 //OTHER
 export const friendExistsMessage = 'Friend already exists'
