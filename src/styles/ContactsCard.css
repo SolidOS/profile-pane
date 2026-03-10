@@ -398,6 +398,10 @@
   border: none !important; /* Remove borders from alerts within the contacts dialog */
 }
 
+.contactsContactExistsAlert {
+  border: none !important; /* Remove borders from alerts within the contact exists alert */
+}
+
 .contactsPopupOverlay {
   position: absolute;
   inset: 0;

@@ -9,11 +9,13 @@ import {
 import { getContactData, getAddressBooksData, addContactToAddressBook, checkIfContactExistsByWebID, checkIfContactExistsByName, addWebIDToExistingContact } from './contactsHelpers'
 import { AddressBooksData, ContactData } from './contactsTypes'
 import {
-  addMeToYourContactsButtonText, contactExistsAlreadyButtonText, contactExistsAlreadyByNameButtonText, contactExistsMessage, logInAddMeToYourContactsButtonText, userNotLoggedInErrorMessage
+  addMeToYourContactsButtonText, contactExistsAlreadyButtonText, contactExistsAlreadyByNameButtonText, contactExistsMessage, logInAddMeToYourContactsButtonText, userNotLoggedInErrorMessage,
+  errorAddingContactWebIDToAddressBook
 } from './texts'
 import './styles/ProfileCard.css'
 import ContactsModuleRdfLib from '@solid-data-modules/contacts-rdflib'
 import { addErrorToErrorDisplay } from './contactsErrors'
+import { handleContactExistsByName } from './ContactsCard'
 
 let buttonContainer = <HTMLDivElement>document.createElement('section')
 
@@ -123,7 +125,9 @@ async function saveNewContact(
         const contactData: ContactData = await getContactData(store, subject) 
         const contactExistsByNameUri = checkIfContactExistsByName(addressBooksData, contactData.name)
         if (contactExistsByNameUri) {
-          await addWebIDToExistingContact(context, contactData.webID, contactExistsByNameUri)
+          const fromRegisteredAddressBook = true
+          const handled = handleContactExistsByName(context, addressBooksData, contactData, contactExistsByNameUri, fromRegisteredAddressBook)
+            if (!handled) addErrorToErrorDisplay(context, errorAddingContactWebIDToAddressBook)
         } else {
           await addContactToAddressBook(context, contactsModule, contactData, addressBooksData, buttonContainer)
         }

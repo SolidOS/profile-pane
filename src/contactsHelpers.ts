@@ -384,6 +384,7 @@ function refreshButton(
         //logged in and friend exists or friend was just added
         button.innerHTML = contactExistsAlreadyButtonText.toUpperCase()
         button.onclick = null 
+        button.setAttribute('disabled', '') 
       } else if (contactExistsByName) {
         button.innerHTML = contactExistsAlreadyByNameButtonText.toUpperCase()
         button.removeAttribute('disabled') 
@@ -425,15 +426,14 @@ function checkIfContactExistsByName(
 
 async function addWebIDToExistingContact(
   context: DataBrowserContext,
-  webID: string,
+  contactData: ContactData,
   contactUri: string
 ) {
   const store = context.session.store
   try {
     await context.session.store.fetcher.load(contactUri)
     const contactNode = new NamedNode(contactUri)
-    await addWebIDToContacts(contactNode, webID, ns.vcard('WebID'), store)
-   
+    await addWebIDToContacts(contactNode, contactData.webID, ns.vcard('WebID'), store)
   } catch (error) {
     addErrorToErrorDisplay(context, error)
   }
