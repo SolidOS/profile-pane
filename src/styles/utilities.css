@@ -1,5 +1,9 @@
 /* Utility-first CSS classes for layout, spacing, and responsiveness */
 
+:root {
+  --font-size-md: 1em;
+}
+
 .actionButton {
   width: 100%;
   min-width: 180px;

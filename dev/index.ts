@@ -11,8 +11,6 @@ const webId = document.getElementById('webId')
 
 loginBanner.appendChild(UI.login.loginStatusBox(document, null, {}))
 
-// const webIdToShow = 'https://testingsolidos.solidcommunity.net/profile/card#me'
-
 async function finishLogin() {
   await authSession.handleIncomingRedirect()
   const session = authSession
@@ -30,8 +28,5 @@ async function finishLogin() {
 
 finishLogin()
 
-//const webIdToShow = 'https://testingsolidos.solidcommunity.net/profile/card#me'
-const webIdToShow = 'https://bourgeoa.pivot-test.solidproject.org:3000/profile/card#me'
-//const webIdToShow = 'https://sstratsianis2.solidcommunity.net/profile/card#me'
+const webIdToShow = 'https://testingsolidos.solidcommunity.net/profile/card#me'
 
-//const webIdToShow = 'https://jeff-zucker.solidcommunity.net/profile/card#me'
