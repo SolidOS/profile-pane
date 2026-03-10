@@ -892,8 +892,6 @@ const finalizeContactEntry = (
     
     const buttonContainer = getButtonContainer(context)
     mention(buttonContainer, contactWasAddedSuccesMessage)
-    // const button = context.dom.getElementById('add-to-contacts-button')
-    // button.removeAttribute('disabled')  
     setTimeout(() => {
       clearPreviousMessage(buttonContainer)
     }, 2000)  
