@@ -989,11 +989,15 @@ function attachSanitizingValidation(input: HTMLInputElement, feedbackElement: HT
       input.value = sanitizedValue
       input.setAttribute('aria-invalid', 'true')
       feedbackElement.textContent = 'Only letters, numbers, and spaces are allowed.'
+      feedbackElement.classList.add('contactsInputValidationMessage--visible')
+      feedbackElement.setAttribute('aria-hidden', 'false')
       return
     }
 
     input.removeAttribute('aria-invalid')
     feedbackElement.textContent = ''
+    feedbackElement.classList.remove('contactsInputValidationMessage--visible')
+    feedbackElement.setAttribute('aria-hidden', 'true')
   })
 }
 
@@ -1002,5 +1006,6 @@ function createValidationMessage(context: DataBrowserContext): HTMLParagraphElem
   validationMessage.setAttribute('role', 'status')
   validationMessage.setAttribute('aria-live', 'polite')
   validationMessage.classList.add('contactsInputValidationMessage')
+  validationMessage.setAttribute('aria-hidden', 'true')
   return validationMessage
 }

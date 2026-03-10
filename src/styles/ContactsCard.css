@@ -167,7 +167,7 @@
   display: flex;
   flex-direction: row;
   padding: var(--spacing-md);
-  overflow-x: auto;
+  overflow-x: hidden;
   overflow-y: auto;
 }
 
@@ -332,6 +332,9 @@
   gap: 5px;
   display: flex;
   flex-direction: column;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 .contactsButton {
@@ -432,10 +435,11 @@
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: auto;
-  max-width: min(92vw, 34rem);
-  max-height: calc(100vh - 6rem);
+  width: min(24rem, calc(100% - 1rem));
+  max-width: calc(100% - 1rem);
+  max-height: min(calc(100% - 1rem), calc(100vh - 6rem));
   overflow: auto;
+  overflow-x: hidden;
   box-sizing: border-box;
 }
 
@@ -493,6 +497,33 @@
   text-align: left;
   cursor: pointer;
   white-space: nowrap;
+}
+
+.contactsAddressBookCreationSubmitButton {
+  --contacts-form-action-width: 11em;
+  width: var(--contacts-form-action-width);
+  align-self: flex-end;
+}
+
+.contactsInputValidationMessage {
+  display: none;
+  margin: 0 auto;
+  color: #b3261e;
+  font-size: 0.9rem;
+  width: calc(100% - 0.5rem);
+  max-width: calc(100% - 0.5rem);
+  padding-right: 0.25rem;
+  padding-left: 0.25rem;
+  align-self: stretch;
+  box-sizing: border-box;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  text-align: left;
+}
+
+.contactsInputValidationMessage--visible {
+  display: block;
 }
 
 .contactsCloseButton {
