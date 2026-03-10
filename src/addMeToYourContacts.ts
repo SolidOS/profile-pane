@@ -123,7 +123,7 @@ async function saveNewContact(
         const contactData: ContactData = await getContactData(store, subject) 
         const contactExistsByNameUri = checkIfContactExistsByName(addressBooksData, contactData.name)
         if (contactExistsByNameUri) {
-          await addWebIDToExistingContact(context, contactsModule, addressBooksData, contactData.webID, contactExistsByNameUri)
+          await addWebIDToExistingContact(context, contactData.webID, contactExistsByNameUri)
         } else {
           await addContactToAddressBook(context, contactsModule, contactData, addressBooksData, buttonContainer)
         }

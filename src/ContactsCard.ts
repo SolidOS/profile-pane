@@ -502,16 +502,22 @@ const createNewAddressBookForm = (
     const addressNameField = context.dom.querySelector('#addressBookNameInput')
 
     // @ts-ignore
-    const enteredAddressName = addressNameField.value
+    const enteredAddressName = sanitizeInput(addressNameField.value)
+    // @ts-ignore
+    addressNameField.value = enteredAddressName
 
     const addressContainerField = context.dom.querySelector('#addressBookContainerInput')
 
     // @ts-ignore
-    const enteredAddressContainer = addressContainerField.value
+    const enteredAddressContainer = sanitizeInput(addressContainerField.value)
+    // @ts-ignore
+    addressContainerField.value = enteredAddressContainer
 
     const groupNameField = context.dom.querySelector('#groupNameInput')
     // @ts-ignore
-    const enteredGroupName = groupNameField.value
+    const enteredGroupName = sanitizeInput(groupNameField.value)
+    // @ts-ignore
+    groupNameField.value = enteredGroupName
 
     if (enteredAddressName) {
       // add addressbook first 
@@ -603,6 +609,12 @@ const createNewAddressBookForm = (
   groupNameInputBox.classList.add('input', 'contactsGroupInput')
   groupNameInputBox.required = true
 
+  const validationMessage = createValidationMessage(context)
+
+  attachSanitizingValidation(addressBookNameInputBox, validationMessage)
+  attachSanitizingValidation(addressBookContainerInputBox, validationMessage)
+  attachSanitizingValidation(groupNameInputBox, validationMessage)
+
   const submitButton = context.dom.createElement('button')
   submitButton.setAttribute('id', 'submit-addressbook')
   submitButton.setAttribute('role', 'button') 
@@ -625,6 +637,7 @@ const createNewAddressBookForm = (
 
   newAddressBookForm.appendChild(groupNameLabel)
   newAddressBookForm.appendChild(groupNameInputBox)
+  newAddressBookForm.appendChild(validationMessage)
   newAddressBookForm.appendChild(submitButton)
   newAddressBookForm.addEventListener('submit', newAddressBookEventListener)
     
@@ -683,7 +696,9 @@ const createGroupNameForm = (
     
     const groupNameField = context.dom.querySelector('#groupNameInput')
     // @ts-ignore
-    const enteredGroupName = groupNameField.value
+    const enteredGroupName = sanitizeInput(groupNameField.value)
+    // @ts-ignore
+    groupNameField.value = enteredGroupName
 
     if (!selectedAddressBookUri) {
       addErrorToErrorDisplay(context, errorNotExistsAddressBookUri)
@@ -734,12 +749,17 @@ const createGroupNameForm = (
   groupNameInputBox.id = 'groupNameInput' 
   groupNameInputBox.placeholder = 'New group name' 
   groupNameInputBox.classList.add('input', 'contactsGroupInput')
+
+  const validationMessage = createValidationMessage(context)
+
+  attachSanitizingValidation(groupNameInputBox, validationMessage)
  
   const submitButton = createAddGroupButton(context, newGroupForm)
   const closeButton = createCloseButton(context, newGroupForm, 'contactsGroupCreationCloseButton')
 
   newGroupForm.appendChild(groupNameLabel)
   newGroupForm.appendChild(groupNameInputBox)
+  newGroupForm.appendChild(validationMessage)
   newGroupForm.appendChild(submitButton)
   newGroupForm.appendChild(closeButton)
     
@@ -937,4 +957,36 @@ const removePopupOverlayIfNoPopup = (
   const overlay = selectorDialog.querySelector(`#${CONTACTS_POPUP_OVERLAY_ID}`)
   if (overlay) overlay.remove()
   selectorDialog.classList.remove(CONTACTS_OVERLAY_ACTIVE_CLASS)
+}
+/* Sanitization and validation */
+function sanitizeInput(input: string): string {
+  return (input || '')
+    .replace(/[^a-zA-Z0-9 ]+/g, '')
+    .replace(/\s+/g, ' ')
+    .trim()
+}
+
+function attachSanitizingValidation(input: HTMLInputElement, feedbackElement: HTMLElement): void {
+  input.addEventListener('input', () => {
+    const rawValue = input.value
+    const sanitizedValue = sanitizeInput(rawValue)
+
+    if (rawValue !== sanitizedValue) {
+      input.value = sanitizedValue
+      input.setAttribute('aria-invalid', 'true')
+      feedbackElement.textContent = 'Only letters, numbers, and spaces are allowed.'
+      return
+    }
+
+    input.removeAttribute('aria-invalid')
+    feedbackElement.textContent = ''
+  })
+}
+
+function createValidationMessage(context: DataBrowserContext): HTMLParagraphElement {
+  const validationMessage = context.dom.createElement('p')
+  validationMessage.setAttribute('role', 'status')
+  validationMessage.setAttribute('aria-live', 'polite')
+  validationMessage.classList.add('contactsInputValidationMessage')
+  return validationMessage
 }

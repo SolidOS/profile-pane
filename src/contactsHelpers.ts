@@ -471,6 +471,13 @@ function addGroupToAddressBookData(
   return false
 }
 
+function sanitizeAlphaNumericSpaces(input: string): string {
+  return (input || '')
+    .replace(/[^a-zA-Z0-9 ]+/g, '')
+    .replace(/\s+/g, ' ')
+    .trim()
+}
+
 async function handleAddressBookCreation(
   dataBrowserContext: DataBrowserContext,
   containerName: string,
@@ -486,14 +493,22 @@ async function handleAddressBookCreation(
       throw new Error(errorUnableToDetermineUserWorkspace)
     }
 
+    const sanitizedAddressName = sanitizeAlphaNumericSpaces(enteredAddressName)
+    if (!sanitizedAddressName) {
+      throw new Error('Address book name can only contain letters, numbers, and spaces')
+    }
+
+    const sanitizedContainerName = sanitizeAlphaNumericSpaces(containerName)
+
     const normalizedContainer = newAddressContainer.endsWith('/')
       ? newAddressContainer
       : `${newAddressContainer}/`
 
-    const addressBookSlug = (containerName || 'address-book')
+    const addressBookSlug = (sanitizedContainerName || 'address-book')
       .trim()
       .toLowerCase()
-      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/\s+/g, '-')
+      .replace(/[^a-z0-9-]+/g, '-')
       .replace(/^-+|-+$/g, '') || 'address-book'
 
     const newBase = `${normalizedContainer}${addressBookSlug}/`
@@ -503,11 +518,11 @@ async function handleAddressBookCreation(
       div,
       newBase,
       instanceClass: ns.vcard('AddressBook'),
-      instanceName: enteredAddressName
+      instanceName: sanitizedAddressName
     })
 
     addressBookUri = mintResult?.newInstance?.uri || `${newBase}index.ttl#this`
-    await updateAddressBookName(dataBrowserContext, addressBookUri, enteredAddressName)
+    await updateAddressBookName(dataBrowserContext, addressBookUri, sanitizedAddressName)
 
   } catch (error) {
     addErrorToErrorDisplay(dataBrowserContext, errorAddressBookCreation + '\n' + error)
