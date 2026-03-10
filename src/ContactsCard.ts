@@ -836,6 +836,7 @@ export const handleContactExistsByName = (
   confirmButton.addEventListener('click', async (event) => {
     event.preventDefault()
     await addWebIDToExistingContact(context, contactData, contactExistsByNameUri)
+    contactExistsDiv.remove()
     finalizeContactEntry(context, addressBooksData, contactData, addressBooksData.contactWebIDs.get(contactData.webID))
     refreshButton(context, addressBooksData, contactData)  
   })
