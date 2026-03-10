@@ -91,13 +91,7 @@ try {
     
     await context.session.store.fetcher.load(me)
     
-    const addressBookContext = await login.findAppInstances(contextForFindAppInstances, ns.vcard('AddressBook'))
-    const addressBookNodes = addressBookContext.instances
-    let addressBookUris = {
-      publicUris: (addressBookNodes || []).map((node) => node.value),
-      privateUris: []
-    }
-    // let addressBookUris = await contactsModule.listAddressBooks(me.value) 
+    let addressBookUris = await contactsModule.listAddressBooks(me.value) 
 
     const publicAddressBookPromises = addressBookUris.publicUris.map(addressBook => getAddressData(context, contactsModule, addressBook))
     const publicAddressBooksData = await Promise.all(publicAddressBookPromises)
