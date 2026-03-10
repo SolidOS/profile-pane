@@ -2,9 +2,11 @@ import { DataBrowserContext } from 'pane-registry'
 import { addANewAddressBookUriToAddressBooks, addGroupToAddressBookData, addWebIDToExistingContact, checkIfContactExistsByName, checkIfContactExistsByWebID, createContactInAddressBook, handleAddressBookCreation, refreshButton } from './contactsHelpers'
 import { AddressBookDetails, AddressBooksData, ContactData, GroupData } from './contactsTypes'
 import ContactsModuleRdfLib from '@solid-data-modules/contacts-rdflib'
+import { saveNewGroup } from 'contacts-pane'
 import { clearPreviousMessage, complain, mention } from './buttonsHelper'
 import { contactExistsMessage, contactWasAddedSuccesMessage, errorContactCreation, errorGroupCreation, errorNotExistsAddressBookUri, groupIsRequired } from './texts'
 import { addErrorToErrorDisplay, checkAndAddErrorDisplay } from './contactsErrors'
+import { NamedNode } from 'rdflib'
 
 const CONTACTS_POPUP_OVERLAY_ID = 'contacts-popup-overlay'
 const CONTACTS_OVERLAY_ACTIVE_CLASS = 'contactsOverlayActive'
@@ -395,7 +397,7 @@ const createNewContactCreationButton = (
       }
 
       try {
-        const contactUri = await createContactInAddressBook(context, contactsModule, addressBooksData, contactData, selectedAddressBookUris)
+        const contactUri = await createContactInAddressBook(context, contactsModule, contactData, selectedAddressBookUris)
         finalizeContactEntry(context, addressBooksData, contactData, contactUri)
       } catch(error) {
         addErrorToErrorDisplay(context, `${errorContactCreation}\n${error}`)
@@ -495,7 +497,7 @@ const createNewAddressBookForm = (
   const newAddressBookEventListener = async (event) => {
     event.preventDefault()    
     let enteredAddressBookUri = null 
-    let newGroupUri = null
+    let newGroupNode = null
 
     const addressNameField = context.dom.querySelector('#addressBookNameInput')
 
@@ -518,8 +520,9 @@ const createNewAddressBookForm = (
         const books =  await addANewAddressBookUriToAddressBooks(context, contactsModule, addressBooksData, enteredAddressBookUri)
         
         if (enteredGroupName) {
-          newGroupUri = await contactsModule.createNewGroup({addressBookUri: enteredAddressBookUri, groupName: enteredGroupName })
-          const groupAdded = await addGroupToAddressBookData(addressBooksData, enteredAddressBookUri, { name: enteredGroupName, uri: newGroupUri })
+          const selectedAddressBookNode = new NamedNode(enteredAddressBookUri)
+          newGroupNode = await saveNewGroup(selectedAddressBookNode, enteredGroupName)
+          const groupAdded = await addGroupToAddressBookData(addressBooksData, enteredAddressBookUri, { name: enteredGroupName, uri: newGroupNode.value })
           if (!groupAdded) {
             addErrorToErrorDisplay(context, errorGroupCreation)
             return
@@ -543,7 +546,7 @@ const createNewAddressBookForm = (
         if (groupListDiv) {
           const groupCreationButton = context.dom.getElementById('contacts-create-group-button')
           groupCreationButton.remove()
-          groupListDiv.appendChild(createGroupButton(context, {uri: newGroupUri, name: enteredGroupName}))
+          groupListDiv.appendChild(createGroupButton(context, {uri: newGroupNode.value, name: enteredGroupName}))
           groupListDiv.appendChild(groupCreationButton)
         }
       } catch (error) {
@@ -690,8 +693,9 @@ const createGroupNameForm = (
     if (enteredGroupName) {
       // add group first 
       try {
-        const newGroupUri = await contactsModule.createNewGroup({addressBookUri: selectedAddressBookUri, groupName: enteredGroupName })
-        const newGroup = { name: enteredGroupName, uri: newGroupUri }
+        const selectedAddressBookNode = new NamedNode(selectedAddressBookUri)
+        const newGroupNode = await saveNewGroup(selectedAddressBookNode, enteredGroupName)
+        const newGroup = { name: enteredGroupName, uri: newGroupNode.value }
         const wasUpdated = addGroupToAddressBookData(addressBooksData, selectedAddressBookUri, newGroup)
         if (!wasUpdated) {
           addErrorToErrorDisplay(context, errorNotExistsAddressBookUri)
@@ -798,7 +802,7 @@ const handleContactExists = (
       confirmButton.innerHTML = 'Yes'
       confirmButton.addEventListener('click', async (event) => {
         event.preventDefault()
-        await addWebIDToExistingContact(context, contactsModule, addressBooksData, contactData.webID, contactExistsByName)
+        await addWebIDToExistingContact(context, contactData.webID, contactExistsByName)
         finalizeContactEntry(context, addressBooksData, contactData, addressBooksData.contactWebIDs.get(contactData.webID))
         refreshButton(context, addressBooksData, contactData)  
       })

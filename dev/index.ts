@@ -28,5 +28,5 @@ async function finishLogin() {
 
 finishLogin()
 
-const webIdToShow = 'https://testingsolidos.solidcommunity.net/profile/card#me'
-
+// const webIdToShow = 'https://testingsolidos.solidcommunity.net/profile/card#me'
+const webIdToShow = 'https://bourgeoa.pivot-test.solidproject.org:3000/profile/card#me'

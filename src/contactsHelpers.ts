@@ -10,7 +10,7 @@ import { AddressBookDetails, AddressBooksData, ContactData, EmailDetails, GroupD
 import { addMeToYourContactsButtonText, contactExistsAlreadyButtonText, contactExistsAlreadyByNameButtonText, errorAddressBookCreation, errorGettingAddressBooks, errorLoadingContact, errorProcessingUriAddressBook, errorReadingAddressBook, errorUnableToDetermineUserWorkspace, groupIsRequired, logInAddMeToYourContactsButtonText } from './texts' 
 import { checkIfAnyUserLoggedIn } from './buttonsHelper' 
 import { addErrorToErrorDisplay } from './contactsErrors' 
-import contacts from 'contacts-pane'
+import contacts, { addWebIDToContacts } from 'contacts-pane'
 
 async function addContactToAddressBook(
   context: DataBrowserContext,
@@ -196,10 +196,10 @@ async function getContactData(
 
   const webID = subject.value
   return {
-  name,
-  emails,
-  phoneNumbers,
-  webID 
+    name,
+    emails,
+    phoneNumbers,
+    webID 
   }
 }
 
@@ -240,11 +240,11 @@ async function addANewAddressBookUriToAddressBooks(
 async function createContactInAddressBook(
   context: DataBrowserContext,
   contactsModule: ContactsModuleRdfLib,
-  addressBooksData: AddressBooksData,
   contactData: ContactData,
   selectedAddressBookUris: SelectedAddressBookUris
 ): Promise<string>{
   let contactUri = null
+  const store = context.session.store
   const newContact: NewContact = {
       name: contactData.name
   }
@@ -259,7 +259,8 @@ async function createContactInAddressBook(
       return
     }
     await context.session.store.fetcher.load(contactUri)
-    await addWebIDToContact(context, groupUris, contactUri, contactData.webID)
+    const contactNode = new NamedNode(contactUri)
+    await addWebIDToContacts(contactNode, contactData.webID, ns.vcard('WebID'), store)
     if (contactData.emails.length || contactData.phoneNumbers.length) {
       await addContactDetails(context, contactUri, contactData)
     }
@@ -304,49 +305,6 @@ async function addContactDetails(
     })
 
     await store.updater.update([],insertions)  
-  } catch (error) {
-    addErrorToErrorDisplay(context, error)
-  }
-}
-
-async function addWebIDToContact(
-  context: DataBrowserContext,
-  groupUris: string[],
-  contactUri: string,
-  webID: string
-) {
-  const store = context.session.store
-  const contactNode = new NamedNode(contactUri)
-  const webIDNode = sym(webID)
-  const vcardURLNode = store.bnode()
-  let groupUriNode = null
-
-  try {
-    if (groupUris?.length) {
-      for (const groupUri of groupUris) {
-        await context.session.store.fetcher.load(groupUri)
-        groupUriNode = new NamedNode(groupUri)
-        const groupDoc = groupUriNode.doc()
-        const deletions = context.session.store.statementsMatching(
-          groupUriNode,
-          ns.vcard('hasMember'),
-          contactNode,
-          groupDoc
-        )
-        const insertions = [
-          st(groupUriNode, ns.vcard('hasMember'), webIDNode, groupDoc),
-          st(webIDNode, ns.owl('sameAs'), contactNode, groupDoc)
-        ]
-        await store.updater.update(deletions, insertions)
-      }
-    }
-
-    const personInsertions = [
-      st(contactNode, ns.vcard('url'), vcardURLNode, contactNode.doc()),
-      st(vcardURLNode, ns.rdf('type'), ns.vcard('WebID'), contactNode.doc()),
-      st(vcardURLNode, ns.vcard('value'), literal(webID), contactNode.doc())
-    ]
-    await store.updater.update([], personInsertions)
   } catch (error) {
     addErrorToErrorDisplay(context, error)
   }
@@ -467,61 +425,18 @@ function checkIfContactExistsByName(
 
 async function addWebIDToExistingContact(
   context: DataBrowserContext,
-  contactsModule: ContactsModuleRdfLib,
-  addressBooksData: AddressBooksData,
   webID: string,
   contactUri: string
 ) {
-
+  const store = context.session.store
   try {
-    const groupUris = await getGroupUrisForContact(contactsModule, addressBooksData, contactUri)
-    await addWebIDToContact(context, groupUris, contactUri, webID)
+    await context.session.store.fetcher.load(contactUri)
+    const contactNode = new NamedNode(contactUri)
+    await addWebIDToContacts(contactNode, webID, ns.vcard('WebID'), store)
+   
   } catch (error) {
     addErrorToErrorDisplay(context, error)
   }
-}
-
-async function getGroupUrisForContact(
-  contactsModule: ContactsModuleRdfLib,
-  addressBooksData: AddressBooksData,
-  contactUri: string
-): Promise<Array<string>> {
-  let groupUrisForContact = []
-  let addressBookForContact = null
-  let allGroupUrisForAddressBook = []
-  
-  addressBooksData.public.forEach((book, uri) => {
-    book.contacts.map((contact) => {
-      if (contact.uri === contactUri) {
-        addressBookForContact = book
-      }
-    })
-  })
-  addressBooksData.private.forEach((book, uri) => {
-    book.contacts.map((contact) => {
-      if (contact.uri === contactUri) {
-        addressBookForContact = book
-      }
-    })
-  })
-  allGroupUrisForAddressBook = addressBookForContact.groups
-  const groupPromises = allGroupUrisForAddressBook.map(async (group) => {
-    group = await contactsModule.readGroup(group.uri)
-    return { groupUri: group.uri, group }
-  })  
-  const groups = await Promise.all(groupPromises)
-
-  groups.map((groupInfo) => {
-    groupInfo.group.members.map((contact) => {
-      if (contact.uri === contactUri) {
-        if (!groupUrisForContact.includes(groupInfo.groupUri)) {
-          groupUrisForContact.push(groupInfo.groupUri)
-        }       
-      }
-    })
-  })
-  
-  return groupUrisForContact
 }
 
 function addGroupToAddressBookData(
