@@ -807,16 +807,11 @@ export const handleContactExistsByName = (
   contactExistsDialog.setAttribute('role', 'alert')
   contactExistsDialog.setAttribute('aria-live', 'assertive')
   contactExistsDialog.setAttribute('aria-label', 'Alert message indicating that the contact already exists')
-  contactExistsDialog.setAttribute('id', 'contacts-contact-exists')
   contactExistsDialog.classList.add('contactsContactExistsAlert')
   contactExistsDialog.textContent = `${contactData.name} already exists. \n Do you want to add their WebID?`
   
   const confirmButton = context.dom.createElement('button')
-  confirmButton.setAttribute('id', 'contacts-confirm-add-webid-button')
-  confirmButton.setAttribute('role', 'button')
   confirmButton.setAttribute('type', 'button')
-  confirmButton.setAttribute('aria-label', 'Confirm adding the contact webID to the existing contact')
-  confirmButton.setAttribute('tabindex', '0') 
   confirmButton.classList.add('contactsConfirmButton')
   confirmButton.innerHTML = 'Yes'
   confirmButton.addEventListener('click', async (event) => {
@@ -828,7 +823,6 @@ export const handleContactExistsByName = (
   })
 
   const cancelButton = context.dom.createElement('button')
-  cancelButton.setAttribute('id', 'contacts-cancel-add-webid-button')
   cancelButton.setAttribute('type', 'button')
   cancelButton.classList.add('contactsCancelButton')
   cancelButton.innerHTML = 'No'
@@ -902,12 +896,10 @@ const createGroupButton = (
   button.setAttribute('value', group.name)
   button.setAttribute('id', group.uri)
   button.setAttribute('type', 'button')
-  button.setAttribute('role', 'button')
-  button.setAttribute('aria-label', 'Select group ' + group.name)
-  button.setAttribute('tabindex', '0')
+  button.setAttribute('aria-labelledby', group.name)
   button.classList.add('contactsButton')
   button.addEventListener('click', setButtonOnClickHandler)
-  button.innerHTML = group.name
+  button.textContent = group.name
 
   return button
 }
