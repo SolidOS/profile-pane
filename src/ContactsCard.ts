@@ -803,14 +803,13 @@ export const handleContactExistsByName = (
   const selectorDialog = context.dom.getElementById('contacts-addressbook-picker-dialog')
   const buttonContainer = getButtonContainer(context)
   
-  const contactExistsDiv = context.dom.createElement('div')
-  contactExistsDiv.setAttribute('role', 'alert')
-  contactExistsDiv.setAttribute('aria-live', 'assertive')
-  contactExistsDiv.setAttribute('tabindex', '0')
-  contactExistsDiv.setAttribute('aria-label', 'Alert message indicating that the contact already exists')
-  contactExistsDiv.setAttribute('id', 'contacts-contact-exists')
-  contactExistsDiv.classList.add('contactsContactExistsAlert')
-  contactExistsDiv.innerHTML = `${contactData.name} already exists. \n Do you want to add their WebID?`
+  const contactExistsDialog = context.dom.createElement('dialog')
+  contactExistsDialog.setAttribute('role', 'alert')
+  contactExistsDialog.setAttribute('aria-live', 'assertive')
+  contactExistsDialog.setAttribute('aria-label', 'Alert message indicating that the contact already exists')
+  contactExistsDialog.setAttribute('id', 'contacts-contact-exists')
+  contactExistsDialog.classList.add('contactsContactExistsAlert')
+  contactExistsDialog.textContent = `${contactData.name} already exists. \n Do you want to add their WebID?`
   
   const confirmButton = context.dom.createElement('button')
   confirmButton.setAttribute('id', 'contacts-confirm-add-webid-button')
@@ -823,24 +822,21 @@ export const handleContactExistsByName = (
   confirmButton.addEventListener('click', async (event) => {
     event.preventDefault()
     await addWebIDToExistingContact(context, contactData, contactExistsByNameUri)
-    contactExistsDiv.remove()
+    contactExistsDialog.remove()
     finalizeContactEntry(context, addressBooksData, contactData, addressBooksData.contactWebIDs.get(contactData.webID))
     refreshButton(context, addressBooksData, contactData)  
   })
 
   const cancelButton = context.dom.createElement('button')
   cancelButton.setAttribute('id', 'contacts-cancel-add-webid-button')
-  cancelButton.setAttribute('role', 'button')
   cancelButton.setAttribute('type', 'button')
-  cancelButton.setAttribute('aria-label', 'Cancel adding the contact webID to the existing contact')
-  cancelButton.setAttribute('tabindex', '0')
   cancelButton.classList.add('contactsCancelButton')
   cancelButton.innerHTML = 'No'
   cancelButton.addEventListener('click', (event) => {
     event.preventDefault()
     if (!fromRegisteredAddressBook) selectorDialog.remove()
     
-    contactExistsDiv.remove()
+    contactExistsDialog.remove()
     complain(getButtonContainer(context), context, 'Contact was not added')
     setTimeout(() => {
       clearPreviousMessage(getButtonContainer(context))
@@ -849,20 +845,18 @@ export const handleContactExistsByName = (
   })
 
   const actionsDiv = context.dom.createElement('div')
-  actionsDiv.setAttribute('id', 'contacts-contact-exists-actions')
   actionsDiv.setAttribute('role', 'group')
-  actionsDiv.setAttribute('aria-label', 'Actions for existing contact alert') 
-  actionsDiv.setAttribute('tabindex', '0')
+  actionsDiv.setAttribute('aria-label', 'Group of buttons to confirm or cancel adding the contact webID to the existing contact.')
   actionsDiv.classList.add('contactsContactExistsActions')
   actionsDiv.appendChild(confirmButton)
   actionsDiv.appendChild(cancelButton)
 
-  contactExistsDiv.appendChild(actionsDiv)
+  contactExistsDialog.appendChild(actionsDiv)
   showPopupOverlay(context)
   if (fromRegisteredAddressBook) {
-    buttonContainer.appendChild(contactExistsDiv)
+    buttonContainer.appendChild(contactExistsDialog)
   } else {
-    selectorDialog.appendChild(contactExistsDiv)
+    selectorDialog.appendChild(contactExistsDialog)
   }
   return true
 }
