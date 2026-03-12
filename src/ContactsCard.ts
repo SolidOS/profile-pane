@@ -36,6 +36,7 @@ export const createAddressBookContactCreationDialog = (context: DataBrowserConte
 
   const addressBookDetailsSection = createAddressBookDetailsSection(context)
   const errorDisplaySection = createErrorDisplaySection(context)  
+  const statusRegion = createContactsStatusRegion(context)
   const addressBookListDiv = createAddressBookListDiv(context, contactsModule, contactData, addressBooksData, addressBookDetailsSection)
   addressBookDetailsSection.appendChild(addressBookListDiv)
 
@@ -46,6 +47,7 @@ export const createAddressBookContactCreationDialog = (context: DataBrowserConte
   addressBookContactCreationDialog.appendChild(addressBookContactCreationDiv)
 
   addressBookContactCreationDialog.appendChild(errorDisplaySection)
+  addressBookContactCreationDialog.appendChild(statusRegion)
  
   return addressBookContactCreationDialog
 }
@@ -170,6 +172,7 @@ const createAddressBookUriEntryForm = (
           addressBookListDiv.appendChild(createAddressBookButton(context, contactsModule, books.addressBooksData, books.addressBook, enteredAddressBookUri, contactData))
           addressBookListDiv.appendChild(createAddressBookCreationButton(context, contactsModule, books.addressBooksData, contactData))   
           addressBookListDiv.appendChild(createAddressBookUriEntryButton(context, contactsModule, books.addressBooksData, contactData))
+          announceContactsStatus(context, 'Address book added to the list.')
         }}
   }
 
@@ -541,12 +544,14 @@ const createNewAddressBookForm = (
           addressBookListDiv.appendChild(createAddressBookButton(context, contactsModule, addressBooksData, books.addressBook, enteredAddressBookUri, contactData)) 
           addressBookListDiv.appendChild(addressBookCreationButton)
           addressBookListDiv.appendChild(addressBookUriEntryButton)
+          announceContactsStatus(context, 'Address book added to the list.')
         }
         if (groupListDiv) {
           const groupCreationButton = context.dom.getElementById('contacts-create-group-button')
           groupCreationButton.remove()
           groupListDiv.appendChild(createGroupButton(context, {uri: newGroupNode.value, name: enteredGroupName}))
           groupListDiv.appendChild(groupCreationButton)
+          announceContactsStatus(context, 'Group added to the list.')
         }
       } catch (error) {
         addErrorToErrorDisplay(context, error)
@@ -717,6 +722,7 @@ const createGroupNameForm = (
         if (groupListDiv) {
           groupListDiv.appendChild(createGroupButton(context, newGroup))
           groupListDiv.appendChild(createAddressBookGroupCreationButton(context, contactsModule, addressBooksData, contactData))
+          announceContactsStatus(context, 'Group added to the list.')
         } 
         newGroupForm.remove()
         removePopupOverlayIfNoPopup(context)
@@ -1002,4 +1008,23 @@ function createValidationMessage(context: DataBrowserContext): HTMLParagraphElem
   validationMessage.classList.add('contactsInputValidationMessage')
   validationMessage.setAttribute('aria-hidden', 'true')
   return validationMessage
+}
+
+function createContactsStatusRegion(context: DataBrowserContext): HTMLParagraphElement {
+  const statusRegion = context.dom.createElement('p')
+  statusRegion.setAttribute('id', 'contacts-list-status')
+  statusRegion.setAttribute('role', 'status')
+  statusRegion.setAttribute('aria-live', 'polite')
+  statusRegion.classList.add('sr-only')
+  return statusRegion
+}
+
+function announceContactsStatus(context: DataBrowserContext, message: string): void {
+  const statusRegion = context.dom.getElementById('contacts-list-status')
+  if (!statusRegion) return
+
+  statusRegion.textContent = ''
+  setTimeout(() => {
+    statusRegion.textContent = message
+  }, 0)
 }
