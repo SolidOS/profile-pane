@@ -176,7 +176,6 @@ const createAddressBookUriEntryForm = (
     addressBookUriEntryForm.addEventListener('submit', setButtonOnSubmitHandler)
 
     const addressBookUriEntryLabel = context.dom.createElement('label')
-    addressBookUriEntryLabel.classList.add('label') //SAM do i really want this
     addressBookUriEntryLabel.setAttribute('for', 'addressBookUriInput')
     const addressBookUriEntryLabelText = context.dom.createElement('span')
     addressBookUriEntryLabelText.classList.add('sr-only')
@@ -555,7 +554,6 @@ const createNewAddressBookForm = (
   newAddressBookForm.classList.add('contactsPopupDialog', 'contactsNewAddressForm')
   
   const addressBookNameLabel = context.dom.createElement('label')
-  addressBookNameLabel.classList.add('label')
   addressBookNameLabel.setAttribute('for', 'addressBookNameInput')
   const addressBookNameLabelText = context.dom.createElement('span')
   addressBookNameLabelText.classList.add('sr-only')
@@ -571,7 +569,6 @@ const createNewAddressBookForm = (
   addressBookNameInputBox.required = true
 
   const addressBookContainerLabel = context.dom.createElement('label')
-  addressBookContainerLabel.classList.add('label')
   addressBookContainerLabel.setAttribute('for', 'addressBookContainerInput')
   const addressBookContainerLabelText = context.dom.createElement('span')
   addressBookContainerLabelText.classList.add('sr-only')
@@ -587,7 +584,6 @@ const createNewAddressBookForm = (
   addressBookContainerInputBox.required = true
 
   const groupNameLabel = context.dom.createElement('label')
-  groupNameLabel.classList.add('label')
   groupNameLabel.setAttribute('for', 'groupNameInput')
   const groupNameLabelText = context.dom.createElement('span')
   groupNameLabelText.classList.add('sr-only')
@@ -727,7 +723,6 @@ const createGroupNameForm = (
   newGroupForm.classList.add('contactsPopupDialog', 'contactsNewGroupForm')
   
   const groupNameLabel = context.dom.createElement('label')
-  groupNameLabel.classList.add('label')
   groupNameLabel.setAttribute('for', 'groupNameInput')
   const groupNameLabelText = context.dom.createElement('span')
   groupNameLabelText.classList.add('sr-only')
