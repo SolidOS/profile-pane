@@ -443,6 +443,14 @@
   box-sizing: border-box;
 }
 
+.contactsPopupDialog .input {
+  margin-bottom: 0.5rem;
+}
+
+.contactsPopupDialog .contactsActionButton {
+  margin-top: 0.5rem;
+}
+
 @media (max-width: 600px) {
   .contactsAddressBookUriEntry {
     padding-top: 3rem !important;
