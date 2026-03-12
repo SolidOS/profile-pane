@@ -174,7 +174,7 @@ const createAddressBookUriEntryForm = (
     addressBookUriEntryForm.addEventListener('submit', setButtonOnSubmitHandler)
 
     const addressBookUriEntryLabel = context.dom.createElement('label')
-    addressBookUriEntryLabel.classList.add('label')
+    addressBookUriEntryLabel.classList.add('label') //SAM do i really want this
     addressBookUriEntryLabel.setAttribute('for', 'addressBookUriInput')
     const addressBookUriEntryLabelText = context.dom.createElement('span')
     addressBookUriEntryLabelText.classList.add('sr-only')
@@ -544,14 +544,21 @@ const createNewAddressBookForm = (
   }
 
   const newAddressBookForm = context.dom.createElement('form')
+  newAddressBookForm.setAttribute('role', 'dialog')
+  newAddressBookForm.setAttribute('aria-modal', 'true')
+  newAddressBookForm.setAttribute('aria-labelledby', 'Create a new address book')
   newAddressBookForm.method = 'post'
-  newAddressBookForm.innerHTML = 'Create a new address book'
+  newAddressBookForm.textContent = 'Create a new address book'
   newAddressBookForm.setAttribute('id', 'new-addressbook-form')
   newAddressBookForm.classList.add('contactsPopupDialog', 'contactsNewAddressForm')
   
   const addressBookNameLabel = context.dom.createElement('label')
   addressBookNameLabel.classList.add('label')
   addressBookNameLabel.setAttribute('for', 'addressBookNameInput')
+  const addressBookNameLabelText = context.dom.createElement('span')
+  addressBookNameLabelText.classList.add('sr-only')
+  addressBookNameLabelText.textContent = 'Address book name'
+  addressBookNameLabel.appendChild(addressBookNameLabelText)
 
   const addressBookNameInputBox = context.dom.createElement('input')
   addressBookNameInputBox.type = 'text'
@@ -564,6 +571,10 @@ const createNewAddressBookForm = (
   const addressBookContainerLabel = context.dom.createElement('label')
   addressBookContainerLabel.classList.add('label')
   addressBookContainerLabel.setAttribute('for', 'addressBookContainerInput')
+  const addressBookContainerLabelText = context.dom.createElement('span')
+  addressBookContainerLabelText.classList.add('sr-only')
+  addressBookContainerLabelText.textContent = 'Address book container'
+  addressBookContainerLabel.appendChild(addressBookContainerLabelText)
 
   const addressBookContainerInputBox = context.dom.createElement('input')
   addressBookContainerInputBox.type = 'text'
@@ -576,6 +587,10 @@ const createNewAddressBookForm = (
   const groupNameLabel = context.dom.createElement('label')
   groupNameLabel.classList.add('label')
   groupNameLabel.setAttribute('for', 'groupNameInput')
+  const groupNameLabelText = context.dom.createElement('span')
+  groupNameLabelText.classList.add('sr-only')
+  groupNameLabelText.textContent = 'Group name'
+  groupNameLabel.appendChild(groupNameLabelText)
 
   const groupNameInputBox = context.dom.createElement('input')
   groupNameInputBox.type = 'text'  
@@ -592,11 +607,7 @@ const createNewAddressBookForm = (
   attachSanitizingValidation(groupNameInputBox, validationMessage)
 
   const submitButton = context.dom.createElement('button')
-  submitButton.setAttribute('id', 'submit-addressbook')
-  submitButton.setAttribute('role', 'button') 
   submitButton.setAttribute('type', 'submit')
-  submitButton.setAttribute('aria-label', 'Create a new address book with the entered name, container, type and group')
-  submitButton.setAttribute('tabindex', '0')
   submitButton.classList.add('contactsActionButton', 'contactsAddressBookCreationSubmitButton')
   submitButton.addEventListener('click', submitFormEventListener)
   submitButton.innerHTML = 'Create Address Book' 
