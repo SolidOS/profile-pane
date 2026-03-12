@@ -37,7 +37,7 @@ export const createAddressBookContactCreationDialog = (context: DataBrowserConte
   const addressBookDetailsSection = createAddressBookDetailsSection(context)
   const errorDisplaySection = createErrorDisplaySection(context)  
   const statusRegion = createContactsStatusRegion(context)
-  const addressBookListDiv = createAddressBookListDiv(context, contactsModule, contactData, addressBooksData, addressBookDetailsSection)
+  const addressBookListDiv = createAddressBookListSection(context, contactsModule, contactData, addressBooksData, addressBookDetailsSection)
   addressBookDetailsSection.appendChild(addressBookListDiv)
 
   addressBookContactCreationDiv.appendChild(addressBookDetailsSection)
@@ -208,48 +208,42 @@ const createAddressBookUriEntryAddButton = (
   }
 
   const entryButton = context.dom.createElement('button')
+  entryButton.setAttribute('aria-label', 'Submit new address book URI')
   entryButton.setAttribute('id', 'contacts-addressbook-entry-button')
-  entryButton.setAttribute('role', 'button')
-  entryButton.setAttribute('aria-label', 'Create Address Book from entered URI')
-  entryButton.setAttribute('tabindex', '0')
   entryButton.classList.add('contactsActionButton', 'contactsAddressBookUriEntryAddButton')
   entryButton.setAttribute('type', 'submit')
   entryButton.addEventListener('click', setButtonOnClickHandler)
-  entryButton.innerHTML = 'Add'
+  entryButton.textContent = 'Add'
   return entryButton
 }
 
-const createAddressBookListDiv = (
+const createAddressBookListSection = (
   context: DataBrowserContext,
   contactsModule: ContactsModuleRdfLib,
   contactData: ContactData,
-  addressBooksData: AddressBooksData,
-  addressBookDetailsSection: HTMLElement
-): HTMLDivElement => {
+  addressBooksData: AddressBooksData
+): HTMLElement => {
 
-  const addressBookListDiv = context.dom.createElement('div')
-  addressBookListDiv.setAttribute('class', 'contactsAddressBookList')
-  addressBookListDiv.setAttribute('role', 'addressBooksList')
-  addressBookListDiv.setAttribute('aria-live', 'polite')
-  addressBookListDiv.setAttribute('tabindex', '0')
-  addressBookListDiv.setAttribute('aria-label', 'Address book list to select which address book to add the contact to')
-  addressBookListDiv.setAttribute('aria-describedby', 'addressbook-list')
-  addressBookListDiv.setAttribute('id', 'addressbook-list')
+  const addressBookListSection = context.dom.createElement('section')
+  addressBookListSection.setAttribute('class', 'contactsAddressBookList')
+  addressBookListSection.setAttribute('aria-label', 'Select an address book for this contact.')
+  addressBookListSection.setAttribute('aria-describedby', 'addressbook-list')
+  addressBookListSection.setAttribute('id', 'addressbook-list')
 
-  addressBookListDiv.innerHTML = 'Address Books'
+  addressBookListSection.innerHTML = 'Address Books'
   addressBooksData.public.forEach((addressBook, addressBookUri) => {
-    addressBookListDiv.appendChild(createAddressBookButton(context, contactsModule, addressBooksData, addressBook, addressBookUri, contactData))
+    addressBookListSection.appendChild(createAddressBookButton(context, contactsModule, addressBooksData, addressBook, addressBookUri, contactData))
   })
 
   addressBooksData.private.forEach((addressBook, addressBookUri) => {
-    addressBookListDiv.appendChild(createAddressBookButton(context, contactsModule, addressBooksData, addressBook, addressBookUri, contactData))
+    addressBookListSection.appendChild(createAddressBookButton(context, contactsModule, addressBooksData, addressBook, addressBookUri, contactData))
   })
   const addressBookCreationButton = createAddressBookCreationButton(context, contactsModule, addressBooksData, contactData)
   const addressBookUriEntryButton = createAddressBookUriEntryButton(context, contactsModule, addressBooksData, contactData)
 
-  addressBookListDiv.appendChild(addressBookCreationButton)
-  addressBookListDiv.appendChild(addressBookUriEntryButton)
-  return addressBookListDiv
+  addressBookListSection.appendChild(addressBookCreationButton)
+  addressBookListSection.appendChild(addressBookUriEntryButton)
+  return addressBookListSection
 }
 
 const createAddressBookGroupCreationButton = (
@@ -279,31 +273,28 @@ const createAddressBookGroupCreationButton = (
   return groupCreationButton
 }
 
-const createGroupListDiv = (
+const createGroupListSection = (
   context: DataBrowserContext,
   contactsModule: ContactsModuleRdfLib,
   addressBooksData: AddressBooksData,
   addressBook: AddressBookDetails,
   contactData: ContactData
-): HTMLDivElement => {
+): HTMLElement => {
 
-  const groupListDiv = context.dom.createElement('div')
-  groupListDiv.setAttribute('class', 'contactsGroupList')
-  groupListDiv.setAttribute('role', 'groupList')
-  groupListDiv.setAttribute('aria-live', 'polite')
-  groupListDiv.setAttribute('tabindex', '0')
-  groupListDiv.setAttribute('aria-label', 'Group list to select which groups in the address book to add the contact to')
-  groupListDiv.setAttribute('aria-describedby', 'group-list')
-  groupListDiv.setAttribute('id', 'group-list')
+  const groupListSection = context.dom.createElement('section')
+  groupListSection.setAttribute('class', 'contactsGroupList')
+  groupListSection.setAttribute('aria-label', 'Group list to select which groups in the address book to add the contact to')
+  groupListSection.setAttribute('aria-describedby', 'group-list')
+  groupListSection.setAttribute('id', 'group-list')
 
-  groupListDiv.innerHTML = 'Groups'
+  groupListSection.innerHTML = 'Groups'
   if (addressBook) {
     addressBook.groups.map((group) => {
-        groupListDiv.appendChild(createGroupButton(context, group))
+        groupListSection.appendChild(createGroupButton(context, group))
     })
   } 
-  groupListDiv.appendChild(createAddressBookGroupCreationButton(context, contactsModule, addressBooksData, contactData))
-  return groupListDiv
+  groupListSection.appendChild(createAddressBookGroupCreationButton(context, contactsModule, addressBooksData, contactData))
+  return groupListSection as HTMLElement
 }
 
 const createErrorDisplaySection = (
@@ -458,21 +449,19 @@ const createAddressBookButton = (
       const groupDivToRemove = context.dom.getElementById('group-list')
       if (groupDivToRemove) groupDivToRemove.remove()
       // add groups for addressbook    
-      const groupListDiv = createGroupListDiv(context, contactsModule, addressBooksData, addressBook, contactData)  
-      addressBookDetailsSection.appendChild(groupListDiv)
+      const groupListSection = createGroupListSection(context, contactsModule, addressBooksData, addressBook, contactData)  
+      addressBookDetailsSection.appendChild(groupListSection)
     }
   }
 
   const button = context.dom.createElement('button')
   button.setAttribute('value', addressBook.name)
   button.setAttribute('id', addressBookUri)
-  button.setAttribute('role', 'button') 
   button.setAttribute('type', 'submit')
   button.setAttribute('aria-label', 'Select address book ' + addressBook.name)
-  button.setAttribute('tabindex', '0')
   button.classList.add('contactsButton')
   button.addEventListener('click', setButtonOnClickHandler)
-  button.innerHTML = addressBook.name
+  button.textContent = addressBook.name
   return button
 }
 
@@ -523,26 +512,26 @@ const createNewAddressBookForm = (
           }
         }
    
-        const addressBookListDiv = context.dom.querySelector('#addressbook-list')
-        const groupListDiv = context.dom.querySelector('#group-list')
+        const addressBookListSection = context.dom.querySelector('#addressbook-list')
+        const groupListSection = context.dom.querySelector('#group-list')
           
-        if (addressBookListDiv) {
+        if (addressBookListSection) {
           newAddressBookForm.remove()
           removePopupOverlayIfNoPopup(context)
           const addressBookCreationButton = context.dom.getElementById('contacts-create-addressbook-button')
           const addressBookUriEntryButton = context.dom.getElementById('contacts-addressbook-uri-entry-button') 
           addressBookCreationButton.remove()
           addressBookUriEntryButton.remove()
-          addressBookListDiv.appendChild(createAddressBookButton(context, contactsModule, addressBooksData, books.addressBook, enteredAddressBookUri, contactData)) 
-          addressBookListDiv.appendChild(addressBookCreationButton)
-          addressBookListDiv.appendChild(addressBookUriEntryButton)
+          addressBookListSection.appendChild(createAddressBookButton(context, contactsModule, addressBooksData, books.addressBook, enteredAddressBookUri, contactData)) 
+          addressBookListSection.appendChild(addressBookCreationButton)
+          addressBookListSection.appendChild(addressBookUriEntryButton)
           announceContactsStatus(context, 'Address book added to the list.')
         }
-        if (groupListDiv) {
+        if (groupListSection) {
           const groupCreationButton = context.dom.getElementById('contacts-create-group-button')
           groupCreationButton.remove()
-          groupListDiv.appendChild(createGroupButton(context, {uri: newGroupNode.value, name: enteredGroupName}))
-          groupListDiv.appendChild(groupCreationButton)
+          groupListSection.appendChild(createGroupButton(context, {uri: newGroupNode.value, name: enteredGroupName}))
+          groupListSection.appendChild(groupCreationButton)
           announceContactsStatus(context, 'Group added to the list.')
         }
       } catch (error) {
