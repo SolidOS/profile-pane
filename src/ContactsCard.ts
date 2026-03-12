@@ -162,34 +162,38 @@ const createAddressBookUriEntryForm = (
           addressBookListDiv.appendChild(createAddressBookUriEntryButton(context, contactsModule, books.addressBooksData, contactData))
           announceContactsStatus(context, 'Address book added to the list.')
         }}
-  }
+    }
 
-  const inputAddressUriEventListener = () => { 
-    checkAndRemoveErrorDisplay(context)
-  }
-  const addressBookUriEntryForm = context.dom.createElement('form')
-  addressBookUriEntryForm.setAttribute('id', 'contacts-address-uri-entry-form')
-  addressBookUriEntryForm.classList.add('contactsAddressBookUriEntryForm')
-  addressBookUriEntryForm.method = 'post'
-  addressBookUriEntryForm.addEventListener('submit', setButtonOnSubmitHandler)
+    const inputAddressUriEventListener = () => { 
+      checkAndRemoveErrorDisplay(context)
+    }
+    const addressBookUriEntryForm = context.dom.createElement('form')
+    addressBookUriEntryForm.setAttribute('id', 'contacts-address-uri-entry-form')
+    addressBookUriEntryForm.classList.add('contactsAddressBookUriEntryForm')
+    addressBookUriEntryForm.method = 'post'
+    addressBookUriEntryForm.addEventListener('submit', setButtonOnSubmitHandler)
 
-  const addressBookUriEntryLabel = context.dom.createElement('label')
-  addressBookUriEntryLabel.classList.add('label')
-  addressBookUriEntryLabel.setAttribute('for', 'addressBookUriInput')
+    const addressBookUriEntryLabel = context.dom.createElement('label')
+    addressBookUriEntryLabel.classList.add('label')
+    addressBookUriEntryLabel.setAttribute('for', 'addressBookUriInput')
+    const addressBookUriEntryLabelText = context.dom.createElement('span')
+    addressBookUriEntryLabelText.classList.add('sr-only')
+    addressBookUriEntryLabelText.textContent = 'Address book URI'
+    addressBookUriEntryLabel.appendChild(addressBookUriEntryLabelText)
 
-  const addressBookNameInputBox = context.dom.createElement('input')
-  addressBookNameInputBox.type = 'text'
-  addressBookNameInputBox.name = 'addressBookUri'
-  addressBookNameInputBox.id = 'addressBookUriInput' 
-  addressBookNameInputBox.placeholder = 'Enter address book URI to find your address book' 
-  addressBookNameInputBox.classList.add('input', 'contactsAddressBookUriInput')
-  addressBookNameInputBox.addEventListener('click', inputAddressUriEventListener)
-  
-  addressBookUriEntryForm.appendChild(addressBookUriEntryLabel)
-  addressBookUriEntryForm.appendChild(addressBookNameInputBox)
-  addressBookUriEntryForm.appendChild(createAddressBookUriEntryAddButton(context))
-  
-  return addressBookUriEntryForm
+    const addressBookNameInputBox = context.dom.createElement('input')
+    addressBookNameInputBox.type = 'text'
+    addressBookNameInputBox.name = 'addressBookUri'
+    addressBookNameInputBox.id = 'addressBookUriInput' 
+    addressBookNameInputBox.placeholder = 'Enter address book URI to find your address book' 
+    addressBookNameInputBox.classList.add('input', 'contactsAddressBookUriInput')
+    addressBookNameInputBox.addEventListener('click', inputAddressUriEventListener)
+    
+    addressBookUriEntryForm.appendChild(addressBookUriEntryLabel)
+    addressBookUriEntryForm.appendChild(addressBookNameInputBox)
+    addressBookUriEntryForm.appendChild(createAddressBookUriEntryAddButton(context))
+    
+    return addressBookUriEntryForm
 }
 
 const createAddressBookUriEntryAddButton = (
