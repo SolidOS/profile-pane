@@ -7,8 +7,13 @@ export const addErrorToErrorDisplay = (
 ) => {
   const errorDisplaySection = context.dom.getElementById('error-display-section')
   if (errorDisplaySection) {
+    const errorMessage = context.dom.getElementById('error-display-message')
     errorDisplaySection.classList.add('contactsShowErrors')
-    errorDisplaySection.textContent = message
+    if (errorMessage) {
+      errorMessage.textContent = message
+    } else {
+      errorDisplaySection.textContent = message
+    }
   } else {
     const buttonContainer = context.dom.getElementById('add-to-contacts-button-container')
     complain(buttonContainer as HTMLDivElement , context, message)

@@ -37,7 +37,7 @@ export const createAddressBookContactCreationDialog = (context: DataBrowserConte
   const addressBookDetailsSection = createAddressBookDetailsSection(context)
   const errorDisplaySection = createErrorDisplaySection(context)  
   const statusRegion = createContactsStatusRegion(context)
-  const addressBookListDiv = createAddressBookListSection(context, contactsModule, contactData, addressBooksData, addressBookDetailsSection)
+  const addressBookListDiv = createAddressBookListSection(context, contactsModule, contactData, addressBooksData)
   addressBookDetailsSection.appendChild(addressBookListDiv)
 
   addressBookContactCreationDiv.appendChild(addressBookDetailsSection)
@@ -300,6 +300,8 @@ const createErrorDisplaySection = (
   const setButtonOnClickHandler = (event) => {
     event.preventDefault()
     errorDisplaySection.classList.remove('contactsShowErrors')
+    const errorMessage = context.dom.getElementById('error-display-message')
+    if (errorMessage) errorMessage.textContent = ''
   }
 
   const errorDisplaySection = context.dom.createElement('section')
@@ -313,7 +315,13 @@ const createErrorDisplaySection = (
   closeButton.classList.add('contactsCloseErrorDisplayButton')
   closeButton.textContent = 'x'
   closeButton.addEventListener('click', setButtonOnClickHandler)
+
+  const errorMessage = context.dom.createElement('p')
+  errorMessage.setAttribute('id', 'error-display-message')
+  errorMessage.classList.add('contactsErrorMessage')
+
   errorDisplaySection.appendChild(closeButton)
+  errorDisplaySection.appendChild(errorMessage)
   return errorDisplaySection
 }
 
@@ -321,9 +329,10 @@ const checkAndRemoveErrorDisplay = (
   context: DataBrowserContext
 ) => {
   const errorDisplaySection = context.dom.getElementById('error-display-section')
-  if (errorDisplaySection.classList.contains('contactsShowErrors')) {
+  if (errorDisplaySection && errorDisplaySection.classList.contains('contactsShowErrors')) {
     errorDisplaySection.classList.remove('contactsShowErrors')
-    errorDisplaySection.innerHTML = ''
+    const errorMessage = context.dom.getElementById('error-display-message')
+    if (errorMessage) errorMessage.textContent = ''
   }
 }
 
