@@ -101,9 +101,6 @@ const createAddressBookUriEntryButton = (
   const addressBookCreationButton = context.dom.createElement('button')
   addressBookCreationButton.setAttribute('id', 'contacts-addressbook-uri-entry-button')
   addressBookCreationButton.setAttribute('type', 'button')
-  addressBookCreationButton.setAttribute('role', 'button')
-  addressBookCreationButton.setAttribute('aria-label', 'Enter an address book URI to add the contact to a specific address book')
-  addressBookCreationButton.setAttribute('tabindex', '0')
   addressBookCreationButton.textContent = 'Enter Address Book URI'
   addressBookCreationButton.classList.add('contactsActionButton', 'contactsAddressBookUriEntryButton')
   addressBookCreationButton.addEventListener('click', setButtonOnClickHandler)
