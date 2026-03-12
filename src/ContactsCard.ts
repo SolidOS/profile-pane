@@ -57,9 +57,6 @@ const createAddressBookDetailsSection = (
 ): HTMLElement => {
   const addressBookDetailsSection = context.dom.createElement('section')
   addressBookDetailsSection.setAttribute('id', 'addressbook-details-section')
-  addressBookDetailsSection.setAttribute('role', 'addressBookDetails')
-  addressBookDetailsSection.setAttribute('aria-live', 'polite')
-  addressBookDetailsSection.setAttribute('tabindex', '0')
   addressBookDetailsSection.classList.add('contactsAddressBookDetails')
 
   return addressBookDetailsSection
