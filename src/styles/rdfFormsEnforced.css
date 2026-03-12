@@ -1,3 +1,8 @@
+/* this overrides a style coming from contacts-pane*/
+.profile-form .individualPane {
+  box-shadow: none !important;
+}
+
 /* Vertically center autocomplete input in .formFieldValue */
 .profile-form .formFieldValue > div[style*="flex-direction: row"] {
   align-items: center;

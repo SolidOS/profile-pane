@@ -1,10 +1,6 @@
 /* ProfileView.css */
 /* Uses utilities: .section-bg, .text-center */
 
-.profileSection {
-  
-}
-
 /* Horizontal layout for cards */
 .profile-grid .profileSection {
   width: 100%;
@@ -16,7 +12,7 @@
 }
 
 @media (min-width: 900px) {
-  .profileSection {
+  .profile-grid .profileSection {
     margin-bottom: 0;
   }
 }
