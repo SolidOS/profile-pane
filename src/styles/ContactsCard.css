@@ -176,6 +176,7 @@
   max-width: calc(100% - 1rem) !important;
   min-width: 0;
   box-sizing: border-box;
+  border: none;
   padding-top: 3em !important;
   gap: 5px;
   display: flex;

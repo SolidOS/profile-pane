@@ -74,6 +74,7 @@ const createAddressBookCreationButton = (
     const addressBookDialog = context.dom.getElementById('contacts-addressbook-picker-dialog')
     showPopupOverlay(context)
     addressBookDialog.appendChild(newAddressBookForm)
+    focusFirstInputInPopup(newAddressBookForm)
   }
 
   const addressBookCreationButton = context.dom.createElement('button')
@@ -97,6 +98,7 @@ const createAddressBookUriEntryButton = (
     const addressBookUriEntryDialog = createAddressBookUriEntryDialog(context, contactsModule, addressBooksData, contactData)
     showPopupOverlay(context)
     addressBookContactCreationDialog.appendChild(addressBookUriEntryDialog)
+    focusFirstInputInPopup(addressBookUriEntryDialog)
   }
   const addressBookCreationButton = context.dom.createElement('button')
   addressBookCreationButton.setAttribute('id', 'contacts-addressbook-uri-entry-button')
@@ -259,7 +261,9 @@ const createAddressBookGroupCreationButton = (
     const groupNameForm = context.dom.getElementById('new-group-form')
     if (!groupNameForm) {
       showPopupOverlay(context)
-      addressBookDialog.appendChild(createGroupNameForm(context, contactsModule, addressBooksData, contactData))
+      const newGroupForm = createGroupNameForm(context, contactsModule, addressBooksData, contactData)
+      addressBookDialog.appendChild(newGroupForm)
+      focusFirstInputInPopup(newGroupForm)
     }
   }
   const groupCreationButton = context.dom.createElement('button')
@@ -953,5 +957,12 @@ function announceContactsStatus(context: DataBrowserContext, message: string): v
   statusRegion.textContent = ''
   setTimeout(() => {
     statusRegion.textContent = message
+  }, 0)
+}
+
+function focusFirstInputInPopup(container: HTMLElement): void {
+  setTimeout(() => {
+    const firstInput = container.querySelector('input, textarea, select') as HTMLElement | null
+    if (firstInput) firstInput.focus()
   }, 0)
 }
