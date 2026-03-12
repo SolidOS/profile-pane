@@ -79,9 +79,6 @@ const createAddressBookCreationButton = (
   const addressBookCreationButton = context.dom.createElement('button')
   addressBookCreationButton.setAttribute('id', 'contacts-create-addressbook-button')
   addressBookCreationButton.setAttribute('type', 'button')
-  addressBookCreationButton.setAttribute('role', 'button')
-  addressBookCreationButton.setAttribute('aria-label', 'Create a new address book')
-  addressBookCreationButton.setAttribute('tabindex', '0')
   addressBookCreationButton.textContent = 'Create Address Book'
   addressBookCreationButton.classList.add('contactsActionButton', 'contactsAddressBookCreationButton')
   addressBookCreationButton.addEventListener('click', setButtonOnClickHandler)
