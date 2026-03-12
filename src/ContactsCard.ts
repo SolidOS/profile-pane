@@ -94,9 +94,9 @@ const createAddressBookUriEntryButton = (
   const setButtonOnClickHandler = async (event) => { 
     event.preventDefault()
     const addressBookContactCreationDialog = context.dom.getElementById('contacts-addressbook-picker-dialog')
-    const addressBookUriEntryDiv = createAddressBookUriEntryDiv(context, contactsModule, addressBooksData, contactData)
+    const addressBookUriEntryDialog = createAddressBookUriEntryDialog(context, contactsModule, addressBooksData, contactData)
     showPopupOverlay(context)
-    addressBookContactCreationDialog.appendChild(addressBookUriEntryDiv)
+    addressBookContactCreationDialog.appendChild(addressBookUriEntryDialog)
   }
   const addressBookCreationButton = context.dom.createElement('button')
   addressBookCreationButton.setAttribute('id', 'contacts-addressbook-uri-entry-button')
@@ -107,26 +107,23 @@ const createAddressBookUriEntryButton = (
   return addressBookCreationButton
 }
 
-const createAddressBookUriEntryDiv = (
+const createAddressBookUriEntryDialog = (
   context: DataBrowserContext,
   contactsModule: ContactsModuleRdfLib,
   addressBooksData: AddressBooksData,
   contactData: ContactData
-): HTMLDivElement => {
-  const addressBookUriEntryDiv = context.dom.createElement('div')
-  addressBookUriEntryDiv.setAttribute('role', 'addressBookUriEntry')
-  addressBookUriEntryDiv.setAttribute('aria-live', 'polite')
-  addressBookUriEntryDiv.setAttribute('tabindex', '0')
-  addressBookUriEntryDiv.setAttribute('aria-label', 'Address book URI entry div')
-  addressBookUriEntryDiv.setAttribute('aria-describedby', 'addressbook-uri-entry-div')
-  addressBookUriEntryDiv.setAttribute('id', 'contacts-addressbook-uri-entry')
-  addressBookUriEntryDiv.classList.add('contactsPopupDialog', 'contactsAddressBookUriEntry')
+): HTMLDialogElement => {
+  const addressBookUriEntryDialog = context.dom.createElement('dialog')
+  addressBookUriEntryDialog.setAttribute('aria-label', 'Address book URI entry dialog')
+  addressBookUriEntryDialog.setAttribute('aria-describedby', 'addressbook-uri-entry-dialog')
+  addressBookUriEntryDialog.setAttribute('id', 'contacts-addressbook-uri-entry')
+  addressBookUriEntryDialog.classList.add('contactsPopupDialog', 'contactsAddressBookUriEntry')
 
-  const closeButton = createCloseButton(context, addressBookUriEntryDiv, 'contactsAddressBookUriEntryCloseButton')
-  addressBookUriEntryDiv.appendChild(closeButton)
+  const closeButton = createCloseButton(context, addressBookUriEntryDialog, 'contactsAddressBookUriEntryCloseButton')
+  addressBookUriEntryDialog.appendChild(closeButton)
   
-  addressBookUriEntryDiv.appendChild(createAddressBookUriEntryForm(context, contactsModule, addressBooksData, contactData))  
-  return addressBookUriEntryDiv
+  addressBookUriEntryDialog.appendChild(createAddressBookUriEntryForm(context, contactsModule, addressBooksData, contactData))  
+  return addressBookUriEntryDialog
 }
 
 const createAddressBookUriEntryForm = (
