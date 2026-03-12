@@ -135,10 +135,10 @@ const createAddressBookUriEntryForm = (
 
   const setButtonOnSubmitHandler = async (event) => {
     event.preventDefault()
-    const addressBookUriField = context.dom.querySelector('#addressBookUriInput')
+    const addressBookUriField = context.dom.querySelector('#addressBookUriInput') as HTMLInputElement | null
 
-    // @ts-ignore
-    const enteredAddressBookUri = addressBookUriField.value
+    const enteredAddressBookUri = sanitizeInput(addressBookUriField?.value || '')
+    if (addressBookUriField) addressBookUriField.value = enteredAddressBookUri
 
     if (!enteredAddressBookUri) {
       addErrorToErrorDisplay(context, errorNotExistsAddressBookUri)
@@ -164,7 +164,9 @@ const createAddressBookUriEntryForm = (
         }}
     }
 
-    const inputAddressUriEventListener = () => { 
+    const inputAddressUriEventListener = (event) => {
+      const input = event.target as HTMLInputElement
+      input.value = sanitizeInput(input.value)
       checkAndRemoveErrorDisplay(context)
     }
     const addressBookUriEntryForm = context.dom.createElement('form')
@@ -187,7 +189,7 @@ const createAddressBookUriEntryForm = (
     addressBookNameInputBox.id = 'addressBookUriInput' 
     addressBookNameInputBox.placeholder = 'Enter address book URI to find your address book' 
     addressBookNameInputBox.classList.add('input', 'contactsAddressBookUriInput')
-    addressBookNameInputBox.addEventListener('click', inputAddressUriEventListener)
+    addressBookNameInputBox.addEventListener('input', inputAddressUriEventListener)
     
     addressBookUriEntryForm.appendChild(addressBookUriEntryLabel)
     addressBookUriEntryForm.appendChild(addressBookNameInputBox)
@@ -926,7 +928,6 @@ const showPopupOverlay = (
   const overlay = context.dom.createElement('div')
   overlay.setAttribute('role', 'popupOverlay')
   overlay.setAttribute('aria-label', 'Overlay to focus on the active popup message and disable interaction with the rest of the dialog')  
-  overlay.setAttribute('tabindex', '0')
   overlay.setAttribute('id', CONTACTS_POPUP_OVERLAY_ID)
   overlay.classList.add('contactsPopupOverlay')
   selectorDialog.appendChild(overlay)
