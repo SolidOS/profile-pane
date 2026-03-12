@@ -767,9 +767,6 @@ const createAddGroupButton = (
   const button = context.dom.createElement('button')
   button.setAttribute('id', 'contacts-create-group-button')
   button.setAttribute('type', 'button')
-  button.setAttribute('role', 'button')
-  button.setAttribute('aria-label', 'Create a new group in the selected address book')
-  button.setAttribute('tabindex', '0')
   button.textContent = 'Create Group'
   button.classList.add('contactsActionButton', 'contactsCreateGroupCreationButton')
   button.addEventListener('click', setButtonOnClickHandler)
