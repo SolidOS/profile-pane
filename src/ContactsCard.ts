@@ -652,16 +652,10 @@ const createCloseButton = (
 
   const closeButton = context.dom.createElement('button')
   closeButton.setAttribute('id', buttonID)
-  closeButton.setAttribute('role', 'button')
   closeButton.setAttribute('type', 'button')
-  const ariaLabel = specialClass === 'contactsCloseButton'
-    ? 'Close contacts dialog'
-    : 'Close dialog'
-  closeButton.setAttribute('aria-label', ariaLabel)
-  closeButton.setAttribute('tabindex', '0')
   closeButton.classList.add('contactsCloseButton', specialClass)
   closeButton.addEventListener('click', setButtonOnClickHandler)
-  closeButton.innerHTML = 'x' 
+  closeButton.textContent = 'x' 
   return closeButton
 }   
 
@@ -722,14 +716,21 @@ const createGroupNameForm = (
   } 
   
   const newGroupForm = context.dom.createElement('form')
+  newGroupForm.setAttribute('role', 'dialog')
+  newGroupForm.setAttribute('aria-modal', 'true')
+  newGroupForm.setAttribute('aria-labelledby', 'Create a new group')
   newGroupForm.addEventListener('submit', addGroupEventListener) 
-  newGroupForm.innerHTML = 'Create a new group'
+  newGroupForm.textContent = 'Create a new group'
   newGroupForm.setAttribute('id', 'new-group-form')
   newGroupForm.classList.add('contactsPopupDialog', 'contactsNewGroupForm')
   
   const groupNameLabel = context.dom.createElement('label')
   groupNameLabel.classList.add('label')
   groupNameLabel.setAttribute('for', 'groupNameInput')
+  const groupNameLabelText = context.dom.createElement('span')
+  groupNameLabelText.classList.add('sr-only')
+  groupNameLabelText.textContent = 'Group name'
+  groupNameLabel.appendChild(groupNameLabelText)
 
   const groupNameInputBox = context.dom.createElement('input')
   groupNameInputBox.type = 'text' 
