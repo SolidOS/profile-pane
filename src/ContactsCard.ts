@@ -18,7 +18,6 @@ export const createAddressBookContactCreationDialog = (context: DataBrowserConte
 ): HTMLDialogElement => {
   const addressBookContactCreationDialog = context.dom.createElement('dialog')
   addressBookContactCreationDialog.setAttribute('role', 'dialog')
-  addressBookContactCreationDialog.setAttribute('aria-live', 'polite')
   addressBookContactCreationDialog.setAttribute('aria-label', 'Address book picker dialog for contact creation.')
   addressBookContactCreationDialog.setAttribute('aria-describedby', 'addressbook-contacts-picker-dialog')
   addressBookContactCreationDialog.classList.add('contactsAddressBookPickerDialog')
@@ -30,8 +29,6 @@ export const createAddressBookContactCreationDialog = (context: DataBrowserConte
   const closeButton = createCloseButton(context, addressBookContactCreationDialog, 'contactsCloseButton')
 
   const addressBookContactCreationDiv = context.dom.createElement('section')
-  addressBookContactCreationDiv.setAttribute('role', 'addressBookCreation')
-  addressBookContactCreationDiv.setAttribute('aria-live', 'polite')
   addressBookContactCreationDiv.setAttribute('tabindex', '0')
   addressBookContactCreationDiv.setAttribute('aria-label', 'Contact Creation Section')
   addressBookContactCreationDiv.setAttribute('aria-describedby', 'addressbook-contact-creation')
