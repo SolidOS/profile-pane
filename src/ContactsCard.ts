@@ -807,9 +807,9 @@ export const handleContactExistsByName = (
   contactExistsDialog.appendChild(actionsDiv)
   showPopupOverlay(context)
   if (fromRegisteredAddressBook) {
-    buttonContainer.appendChild(contactExistsDialog)
+    if (buttonContainer) buttonContainer.appendChild(contactExistsDialog)
   } else {
-    selectorDialog.appendChild(contactExistsDialog)
+    if (selectorDialog) selectorDialog.appendChild(contactExistsDialog)
   }
   return true
 }
