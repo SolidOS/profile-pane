@@ -280,7 +280,7 @@ const createGroupListSection = (
 
   const groupListSection = context.dom.createElement('section')
   groupListSection.setAttribute('class', 'contactsGroupList')
-  groupListSection.setAttribute('aria-label', 'Group list to select which groups in the address book to add the contact to')
+  groupListSection.setAttribute('aria-label', 'Select a group to add your contact to.')
   groupListSection.setAttribute('aria-describedby', 'group-list')
   groupListSection.setAttribute('id', 'group-list')
 
@@ -303,18 +303,13 @@ const createErrorDisplaySection = (
   }
 
   const errorDisplaySection = context.dom.createElement('section')
-  errorDisplaySection.setAttribute('role', 'errorDisplay')
-  errorDisplaySection.setAttribute('aria-live', 'assertive')
-  errorDisplaySection.setAttribute('tabindex', '0')
+  errorDisplaySection.setAttribute('role', 'alert')
   errorDisplaySection.setAttribute('aria-label', 'Section to display error messages related to contact creation')
   errorDisplaySection.setAttribute('id', 'error-display-section')
   errorDisplaySection.classList.add('contactsErrorDisplay')
 
   const closeButton = context.dom.createElement('button')
   closeButton.setAttribute('type', 'button')
-  closeButton.setAttribute('aria-label', 'Close error message display')
-  closeButton.setAttribute('tabindex', '0')
-  closeButton.setAttribute('role', 'button')
   closeButton.classList.add('contactsCloseErrorDisplayButton')
   closeButton.textContent = 'x'
   closeButton.addEventListener('click', setButtonOnClickHandler)
