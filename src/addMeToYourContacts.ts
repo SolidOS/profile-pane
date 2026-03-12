@@ -89,19 +89,19 @@ const createAddMeToYourContactsButton = async (
         const contactExistsByName = (contactData) ? checkIfContactExistsByName(addressBooksData, contactData.name) : false
         if (contactExistsByWebID) {
           //logged in and friend exists or friend was just added
-          button.innerHTML = contactExistsAlreadyButtonText.toUpperCase()
+          button.textContent = contactExistsAlreadyButtonText.toUpperCase()
           button.onclick = null 
           button.setAttribute('disabled', 'true')
         } else if (contactExistsByName) {
-          button.innerHTML = contactExistsAlreadyByNameButtonText.toUpperCase()
+          button.textContent = contactExistsAlreadyByNameButtonText.toUpperCase()
         }
           else {
           //logged in and friend does not exist yet
-          button.innerHTML = addMeToYourContactsButtonText.toUpperCase()
+          button.textContent = addMeToYourContactsButtonText.toUpperCase()
         }
       } else {
         //not logged in
-        button.innerHTML = logInAddMeToYourContactsButtonText.toUpperCase()
+        button.textContent = logInAddMeToYourContactsButtonText.toUpperCase()
       }
     }
   return button
