@@ -12,6 +12,8 @@ import { checkIfAnyUserLoggedIn } from './buttonsHelper'
 import { addErrorToErrorDisplay } from './contactsErrors' 
 import contacts, { addWebIDToContacts } from 'contacts-pane'
 
+const CONTACTS_MAIN_DIALOG_BACKDROP_ID = 'contacts-main-dialog-backdrop'
+
 async function addContactToAddressBook(
   context: DataBrowserContext,
   contactsModule: ContactsModuleRdfLib,
@@ -21,8 +23,38 @@ async function addContactToAddressBook(
 ) {
 
   const addressBookContactCreationDialog = createAddressBookContactCreationDialog(context, contactsModule, contactData, addressBooksData)
+  showMainDialogBackdrop(context)
   container.appendChild(addressBookContactCreationDialog)   
-  addressBookContactCreationDialog.setAttribute('open', '')  
+  addressBookContactCreationDialog.setAttribute('open', '')
+  trackMainDialogLifecycle(context)
+}
+
+function showMainDialogBackdrop(context: DataBrowserContext): void {
+  const existingBackdrop = context.dom.getElementById(CONTACTS_MAIN_DIALOG_BACKDROP_ID)
+  if (existingBackdrop) return
+
+  const backdrop = context.dom.createElement('div')
+  backdrop.setAttribute('id', CONTACTS_MAIN_DIALOG_BACKDROP_ID)
+  backdrop.setAttribute('aria-hidden', 'true')
+  backdrop.classList.add('contactsMainDialogBackdrop')
+  context.dom.body.appendChild(backdrop)
+}
+
+function removeMainDialogBackdrop(context: DataBrowserContext): void {
+  const backdrop = context.dom.getElementById(CONTACTS_MAIN_DIALOG_BACKDROP_ID)
+  if (backdrop) backdrop.remove()
+}
+
+function trackMainDialogLifecycle(context: DataBrowserContext): void {
+  const observer = new MutationObserver(() => {
+    const mainDialog = context.dom.getElementById('contacts-addressbook-picker-dialog')
+    if (!mainDialog) {
+      removeMainDialogBackdrop(context)
+      observer.disconnect()
+    }
+  })
+
+  observer.observe(context.dom.body, { childList: true, subtree: true })
 }
 
 async function getAddressData(

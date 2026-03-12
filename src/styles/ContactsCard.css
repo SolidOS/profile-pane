@@ -3,6 +3,13 @@
   overflow: visible;
 }
 
+.contactsMainDialogBackdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.35);
+  z-index: 150;
+}
+
 .contactsAddressBookPickerDialog {
   width: fit-content;
   max-width: min(94vw, 48rem);
