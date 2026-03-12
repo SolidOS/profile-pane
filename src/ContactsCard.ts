@@ -11,32 +11,31 @@ import { NamedNode } from 'rdflib'
 const CONTACTS_POPUP_OVERLAY_ID = 'contacts-popup-overlay'
 const CONTACTS_OVERLAY_ACTIVE_CLASS = 'contactsOverlayActive'
 
-export const createAddressBookUriSelectorDialog = (context: DataBrowserContext,
+export const createAddressBookContactCreationDialog = (context: DataBrowserContext,
   contactsModule: ContactsModuleRdfLib,
   contactData: ContactData,
   addressBooksData: AddressBooksData
 ): HTMLDialogElement => {
-  const addressBookUriSelectorDialog = context.dom.createElement('dialog')
-  addressBookUriSelectorDialog.setAttribute('role', 'dialog')
-  addressBookUriSelectorDialog.setAttribute('aria-live', 'polite')
-  addressBookUriSelectorDialog.setAttribute('aria-label', 'Contact address book selection dialog')
-  addressBookUriSelectorDialog.setAttribute('aria-describedby', 'addressbook-contacts-selection')
-  addressBookUriSelectorDialog.classList.add('contactsAddressBookSelector')
-  addressBookUriSelectorDialog.setAttribute('id', 'contacts-selector-dialog')
+  const addressBookContactCreationDialog = context.dom.createElement('dialog')
+  addressBookContactCreationDialog.setAttribute('role', 'dialog')
+  addressBookContactCreationDialog.setAttribute('aria-live', 'polite')
+  addressBookContactCreationDialog.setAttribute('aria-label', 'Address book picker dialog for contact creation.')
+  addressBookContactCreationDialog.setAttribute('aria-describedby', 'addressbook-contacts-picker-dialog')
+  addressBookContactCreationDialog.classList.add('contactsAddressBookPickerDialog')
+  addressBookContactCreationDialog.setAttribute('id', 'contacts-addressbook-picker-dialog')
 
   const button = context.dom.getElementById('add-to-contacts-button')
   button.setAttribute('disabled', '')
 
-  const closeButton = createCloseButton(context, addressBookUriSelectorDialog, 'contactsCloseButton')
+  const closeButton = createCloseButton(context, addressBookContactCreationDialog, 'contactsCloseButton')
 
-  const addressBookCreationDiv = context.dom.createElement('div')
-  addressBookCreationDiv.setAttribute('id', 'addressbook-creation-div')
-  addressBookCreationDiv.setAttribute('role', 'addressBookCreation')
-  addressBookCreationDiv.setAttribute('aria-live', 'polite')
-  addressBookCreationDiv.setAttribute('tabindex', '0')
-  addressBookCreationDiv.setAttribute('aria-label', 'Address book creation section')
-  addressBookCreationDiv.setAttribute('aria-describedby', 'addressbook-details-section')
-  addressBookCreationDiv.classList.add('contactsAddressBookCreationDiv')
+  const addressBookContactCreationDiv = context.dom.createElement('section')
+  addressBookContactCreationDiv.setAttribute('role', 'addressBookCreation')
+  addressBookContactCreationDiv.setAttribute('aria-live', 'polite')
+  addressBookContactCreationDiv.setAttribute('tabindex', '0')
+  addressBookContactCreationDiv.setAttribute('aria-label', 'Contact Creation Section')
+  addressBookContactCreationDiv.setAttribute('aria-describedby', 'addressbook-contact-creation')
+  addressBookContactCreationDiv.classList.add('contactsAddressBookContactCreationSection')
 
   const addressBookContactSubmitButton = createNewContactCreationButton(context, contactsModule, addressBooksData, contactData)
 
@@ -45,15 +44,15 @@ export const createAddressBookUriSelectorDialog = (context: DataBrowserContext,
   const addressBookListDiv = createAddressBookListDiv(context, contactsModule, contactData, addressBooksData, addressBookDetailsSection)
   addressBookDetailsSection.appendChild(addressBookListDiv)
 
-  addressBookCreationDiv.appendChild(addressBookDetailsSection)
-  addressBookCreationDiv.appendChild(addressBookContactSubmitButton)
+  addressBookContactCreationDiv.appendChild(addressBookDetailsSection)
+  addressBookContactCreationDiv.appendChild(addressBookContactSubmitButton)
   
-  addressBookUriSelectorDialog.appendChild(closeButton)
-  addressBookUriSelectorDialog.appendChild(addressBookCreationDiv)
+  addressBookContactCreationDialog.appendChild(closeButton)
+  addressBookContactCreationDialog.appendChild(addressBookContactCreationDiv)
 
-  addressBookUriSelectorDialog.appendChild(errorDisplaySection)
+  addressBookContactCreationDialog.appendChild(errorDisplaySection)
  
-  return addressBookUriSelectorDialog
+  return addressBookContactCreationDialog
 }
 
 const createAddressBookDetailsSection = (
@@ -78,7 +77,7 @@ const createAddressBookCreationButton = (
   const setButtonOnClickHandler = async (event) => { 
     event.preventDefault()
     const newAddressBookForm = createNewAddressBookForm(context, addressBooksData, contactsModule, contactData)
-    const addressBookDialog = context.dom.getElementById('contacts-selector-dialog')
+    const addressBookDialog = context.dom.getElementById('contacts-addressbook-picker-dialog')
     showPopupOverlay(context)
     addressBookDialog.appendChild(newAddressBookForm)
   }
@@ -103,10 +102,10 @@ const createAddressBookUriEntryButton = (
 ): HTMLButtonElement => {
   const setButtonOnClickHandler = async (event) => { 
     event.preventDefault()
-    const addressBookUriSelectorDialog = context.dom.getElementById('contacts-selector-dialog')
+    const addressBookContactCreationDialog = context.dom.getElementById('contacts-addressbook-picker-dialog')
     const addressBookUriEntryDiv = createAddressBookUriEntryDiv(context, contactsModule, addressBooksData, contactData)
     showPopupOverlay(context)
-    addressBookUriSelectorDialog.appendChild(addressBookUriEntryDiv)
+    addressBookContactCreationDialog.appendChild(addressBookUriEntryDiv)
   }
   const addressBookCreationButton = context.dom.createElement('button')
   addressBookCreationButton.setAttribute('id', 'contacts-addressbook-uri-entry-button')
@@ -271,7 +270,7 @@ const createAddressBookGroupCreationButton = (
 ): HTMLButtonElement => {
   const setButtonOnClickHandler = async (event) => { 
     event.preventDefault()
-    const addressBookDialog = context.dom.getElementById('contacts-selector-dialog')
+    const addressBookDialog = context.dom.getElementById('contacts-addressbook-picker-dialog')
     const groupNameForm = context.dom.getElementById('new-group-form')
     if (!groupNameForm) {
       showPopupOverlay(context)
@@ -813,7 +812,7 @@ export const handleContactExistsByName = (
   contactExistsByNameUri: string,
   fromRegisteredAddressBook: boolean
 ): Boolean => {
-  const selectorDialog = context.dom.getElementById('contacts-selector-dialog')
+  const selectorDialog = context.dom.getElementById('contacts-addressbook-picker-dialog')
   const buttonContainer = getButtonContainer(context)
   
   const contactExistsDiv = context.dom.createElement('div')
@@ -887,7 +886,7 @@ const finalizeContactEntry = (
   contactUri: string,
 ) => {
     addressBooksData.contactWebIDs.set(contactData.webID, contactUri)
-    const selectorDialog = context.dom.getElementById('contacts-selector-dialog')
+    const selectorDialog = context.dom.getElementById('contacts-addressbook-picker-dialog')
     if (selectorDialog) selectorDialog.remove()
     
     const buttonContainer = getButtonContainer(context)
@@ -942,7 +941,7 @@ export function getButtonContainer(
 const showPopupOverlay = (
   context: DataBrowserContext
 ): void => {
-  const selectorDialog = context.dom.getElementById('contacts-selector-dialog')
+  const selectorDialog = context.dom.getElementById('contacts-addressbook-picker-dialog')
   if (!selectorDialog) return
 
   selectorDialog.classList.add(CONTACTS_OVERLAY_ACTIVE_CLASS)
@@ -962,7 +961,7 @@ const showPopupOverlay = (
 const removePopupOverlayIfNoPopup = (
   context: DataBrowserContext
 ): void => {
-  const selectorDialog = context.dom.getElementById('contacts-selector-dialog')
+  const selectorDialog = context.dom.getElementById('contacts-addressbook-picker-dialog')
   if (!selectorDialog) return
 
   const activePopup = selectorDialog.querySelector('.contactsPopupDialog, .contactsContactExistsAlert')
