@@ -389,10 +389,6 @@ const createNewContactCreationButton = (
 
   const button = context.dom.createElement('button')
   button.setAttribute('type', 'submit')
-  button.setAttribute('id', 'add-contact')
-  button.setAttribute('role', 'button')
-  button.setAttribute('aria-label', 'Add contact to selected address book')
-  button.setAttribute('tabindex', '0')
   button.classList.add('contactsActionButton', 'contactsNewContactCreationButton')
   button.addEventListener('click', setButtonOnClickHandler)
   button.textContent = 'Add Contact'
