@@ -1,0 +1,562 @@
+#add-to-contacts-button-container {
+  position: relative;
+  overflow: visible;
+}
+
+.contactsMainDialogBackdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.35);
+  z-index: 150;
+}
+
+.contactsAddressBookPickerDialog {
+  width: fit-content;
+  max-width: min(94vw, 48rem);
+  min-width: 0;
+  max-height: 80vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+  border-radius: var(--border-radius-base);
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+  background: #F0F0F0;
+  color: var(--color-primary);
+  padding-top: 4em;
+  align-items: stretch;
+  box-sizing: border-box;
+  gap: 7px;
+  display: flex;
+  flex-direction: column;
+  font-weight: 600;
+  position: absolute;
+  top: 54%;
+  bottom: auto;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  margin-top: 0;
+  margin: 0;
+  z-index: 200;
+  opacity: 1;
+}
+
+@media (max-width: 900px) {
+  .contactsAddressBookPickerDialog {
+    top: 54%;
+    bottom: auto;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  .contactsAddressBookDetails {
+    flex-direction: column !important; /* Stacks items vertically on small screens */
+    align-items: center !important;
+    width: 100% !important;
+    max-height: 60vh;
+    overflow-y: auto;
+    overflow-x: hidden; 
+  }
+
+  .contactsAddressBookContactCreationSection .contactsNewContactCreationButton {
+    width: fit-content !important;
+    min-width: 10em;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    align-self: center !important;
+    display: inline-flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    text-align: center;
+  }
+}
+
+@media (max-width: 333px) {
+  .contactsAddressBookPickerDialog {
+    width: 96vw;
+    max-width: 96vw;
+    min-width: 0;
+    top: 50%;
+    bottom: auto;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding-top: 3rem;
+    position: fixed;
+    overflow-x: hidden;
+  }
+
+  .contactsAddressBookDetails {
+    width: 100% !important;
+    min-width: 0;
+    padding: 0.5rem;
+  }
+  .contactsAddressBookList,
+  .contactsGroupList {
+    min-width: 0;
+    max-width: 100% !important;
+    width: 100%;
+  }
+}
+
+.contactsAddressBookContactCreationSection {
+  width: 100%;
+  border-radius: var(--border-radius-base);
+  background: #F0F0F0;
+  box-sizing: border-box;
+  padding: 5px;
+  gap: 5px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+}
+
+.contactsHelpersButtonDiv {
+  display: flex;
+  flex-direction: row;
+  gap: var(--spacing-md);
+  justify-content: center;
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+  padding: var(--spacing-md);
+  border-radius: var(--border-radius-base);
+}
+
+.contactsAddressBookCreationButton {
+  flex-shrink: 0;
+  background: color-mix(in srgb, var(--color-primary), white 85%) !important;  
+  color: var(--color-primary) !important;
+  border-radius: 8px;
+  text-align: left;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.contactsAddressBookUriEntryButton {
+  flex-shrink: 0;
+  background: color-mix(in srgb, var(--color-primary), white 85%) !important;  
+  color: var(--color-primary) !important;
+  border-radius: 8px;
+  text-align: left;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.contactsActionButton {
+  background: var(--color-primary);
+  color: white;
+  border-radius: var(--border-radius-base);
+  transition: all 0.3s ease-in-out;
+  cursor: pointer;
+}
+
+.contactsActionButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.contactsActionButton:active {
+  box-shadow: 0 1px 2px white;
+}
+
+.contactsActionButton:focus,
+.contactsActionButton:focus-visible {
+  outline: 3px solid var(--color-primary) !important;
+  outline-offset: 2px !important;
+  box-shadow: 0 0 0 2px white, 0 0 0 5px rgba(124, 77, 255, 0.25) !important;
+  z-index: 1;   
+}
+
+.contactsAddressBookDetails {
+  width: 100%;
+  min-width: 0;
+  min-height: 0;
+  border-radius: var(--border-radius-base);
+  justify-content: flex-start;
+  box-sizing: border-box;
+  gap: 15px;
+  display: flex;
+  flex-direction: row;
+  padding: var(--spacing-md);
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+.contactsAddressBookUriEntry {
+  width: calc(100% - 1rem) !important;
+  max-width: calc(100% - 1rem) !important;
+  min-width: 0;
+  box-sizing: border-box;
+  border: none;
+  padding-top: 3em !important;
+  gap: 5px;
+  display: flex;
+  align-self: stretch;
+  flex-direction: column;
+
+}
+
+.contactsAddressBookUriEntryForm {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  background: #F0F0F0;
+  box-sizing: border-box;
+  gap: 5px;
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.contactsAddressBookUriInput {
+  width: clamp(14rem, 60vw, 22rem);
+  max-width: 100%;
+  min-width: 0;
+  flex: 0 0 auto;
+  align-self: flex-start;
+  padding: 5px;
+  gap: 15px;
+  border-radius: var(--border-radius-base);
+  border: 1px solid #ccc;
+}
+
+.contactsAddressBookUriEntryAddButton {
+  width: 10%;
+  min-width: 0;
+  max-width: 4em;
+  align-self: flex-end !important;
+  margin-left: auto;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  line-height: 1;
+}
+
+.contactsNewGroupForm {
+  box-sizing: border-box;
+  padding-top: 2.5rem !important;
+  gap: 5px;
+  display: flex;
+  flex-direction: column;
+}
+
+.contactsCreateNewAddressBook {
+  border-radius: var(--border-radius);
+  color: white;
+  padding: var(--spacing-md);
+  justify-content: center;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+}
+
+.contactsAddressBookList {
+  width: 100%;
+  max-width: fit-content !important;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+  min-width: 200px;
+  box-sizing: border-box;
+  gap: 4px;
+  display: flex;
+  flex-direction: column;
+}
+
+.contactsGroupList {
+  width: auto;
+  max-width: fit-content !important;
+  min-width: 200px;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+  box-sizing: border-box;
+  gap: 4px;
+  display: flex;
+  flex-direction: column;
+}
+
+.contactsErrorDisplay {
+  width: 90%;
+  align-self: flex-end;
+  padding: 5px;
+  position: absolute;
+  background: pink;
+  display: none;
+  color: #787878;
+  border-radius: var(--border-radius-base);
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px; 
+  z-index: 3;
+}
+
+.contactsShowErrors {
+  display: flex !important;
+  flex-direction: row;
+  justify-content: center;
+}
+.contactsCloseErrorDisplayButton {
+  position: absolute;
+  top: 0.2rem;
+  right: 0.2rem;
+  background: transparent;
+  color: #787878;
+  border: none;
+  font-size: var(--font-size-sm);
+  cursor: pointer;
+  z-index: 4;
+}
+
+.contactsCloseButton {
+  box-shadow: var(--box-shadow);
+  border-radius: var(--border-radius-base);
+  color: #787878 !important;
+  padding: 1em;
+  font-size: var(--font-size-sm);
+  position: absolute;
+  top: 0;          
+  right: 0;
+  display: inline-block;
+  width: auto !important;
+  height: auto !important;
+  cursor: pointer;
+  line-height: 1;
+  left: auto;
+  margin: 0;
+  align-self: auto !important;
+  background: transparent;
+  color: #787878;
+  border: none;
+  z-index: 100 !important;
+}
+
+.contactsCloseButton:hover {
+  box-shadow: 0 2px 4px var(--color-primary) !important;
+}
+
+.contactsCloseButton:focus,
+.contactsCloseButton:focus-visible {
+  outline: 3px solid var(--color-primary) !important;
+  outline-offset: 2px !important;
+  box-shadow: 0 0 0 2px white, 0 0 0 5px rgba(124, 77, 255, 0.25) !important;
+  z-index: 1;
+}
+
+.contactsNewAddressForm {
+  padding-top: 3em !important;
+  gap: 5px;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.contactsButton {
+  flex-shrink: 0;
+  background: #F0F0F0;
+  color: #787878;
+  border-radius: 8px;
+  text-align: left;
+  padding: var(--spacing-md);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.contactsButton:hover {
+  color: var(--color-primary);
+  background: color-mix(in srgb, var(--color-primary), white 85%) !important;  
+} 
+
+.contactsSelectedButton {
+ background: color-mix(in srgb, var(--color-primary), white 60%) !important; 
+ color: var(--color-primary);
+}
+
+.contactsContactExistsAlert {
+  background: #F0F0F0 !important;
+  color: #787878;
+  padding: 10px;
+  border-radius: var(--border-radius-base);
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+  z-index: 10;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 300px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;  
+  text-wrap: pretty;
+}
+
+.contactsContactExistsActions {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  width: auto;
+}
+
+.contactsContactExistsActions .contactsConfirmButton,
+.contactsContactExistsActions .contactsCancelButton {
+  display: inline-flex !important;
+  width: auto !important;
+  min-width: fit-content;
+  flex: 0 0 auto;
+  margin: 0;
+  white-space: nowrap;
+}
+
+.contactsAddressBookPickerDialog [role="alert"] {
+  border: none !important; /* Remove borders from alerts within the contacts dialog */
+}
+
+.contactsContactExistsAlert {
+  border: none !important; /* Remove borders from alerts within the contact exists alert */
+}
+
+.contactsPopupOverlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.2);
+  z-index: 8;
+}
+
+.contactsAddressBookPickerDialog.contactsOverlayActive > *:not(.contactsPopupOverlay):not(.contactsPopupDialog):not(.contactsContactExistsAlert) {
+  pointer-events: none;
+  user-select: none;
+}
+
+.contactsAddressBookPickerDialog.contactsOverlayActive .contactsPopupDialog,
+.contactsAddressBookPickerDialog.contactsOverlayActive .contactsContactExistsAlert,
+.contactsAddressBookPickerDialog.contactsOverlayActive .contactsPopupDialog *,
+.contactsAddressBookPickerDialog.contactsOverlayActive .contactsContactExistsAlert * {
+  pointer-events: auto;
+}
+
+.contactsPopupDialog {
+  background: #F5F5F5 !important;
+  color: var(--color-primary);
+  padding: 2em;
+  border-radius: var(--border-radius-base);
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+  z-index: 50;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: min(24rem, calc(100% - 1rem));
+  max-width: calc(100% - 1rem);
+  max-height: min(calc(100% - 1rem), calc(100vh - 6rem));
+  overflow: auto;
+  overflow-x: hidden;
+  box-sizing: border-box;
+}
+
+.contactsPopupDialog .input {
+  margin-bottom: 0.5rem;
+}
+
+.contactsPopupDialog .contactsActionButton {
+  margin-top: 0.5rem;
+}
+
+@media (max-width: 600px) {
+  .contactsAddressBookUriEntry {
+    padding-top: 3rem !important;
+  }
+
+  .contactsPopupDialog {
+    max-width: 92vw;
+    max-height: 78vh;
+    padding: 1.25rem;
+  }
+}
+
+.contactsConfirmButton {
+  background: var(--color-primary);
+  color: white;
+  border-radius: var(--border-radius-base);
+  padding: var(--spacing-md);
+  transition: all 0.3s ease-in-out;
+  cursor: pointer;
+}
+
+.contactsConfirmButton:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.contactsCancelButton {
+  background: transparent;
+  color: #787878;
+  border-radius: var(--border-radius-base);
+  padding: var(--spacing-md);
+  border: 1px solid #ccc;
+  transition: all 0.3s ease-in-out;
+  cursor: pointer;
+}
+.contactsCancelButton:hover {
+  background: color-mix(in srgb, var(--color-primary), white 85%) !important;  
+  color: var(--color-primary);
+} 
+
+.contactsNewContactCreationButton {
+  width: 10em !important;
+  align-self: flex-end;
+  line-height: 1;
+}
+
+.contactsCreateGroupCreationButton {
+  flex-shrink: 0;
+  background: color-mix(in srgb, var(--color-primary), white 85%) !important;  
+  color: var(--color-primary) !important;
+  border-radius: 8px;
+  text-align: left;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.contactsAddressBookCreationSubmitButton {
+  --contacts-form-action-width: 11em;
+  width: var(--contacts-form-action-width);
+  align-self: flex-end;
+}
+
+.contactsInputValidationMessage {
+  display: none;
+  margin: 0 auto;
+  color: #b3261e;
+  font-size: 0.9rem;
+  width: calc(100% - 0.5rem);
+  max-width: calc(100% - 0.5rem);
+  padding-right: 0.25rem;
+  padding-left: 0.25rem;
+  align-self: stretch;
+  box-sizing: border-box;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  text-align: left;
+}
+
+.contactsInputValidationMessage--visible {
+  display: block;
+}
+
+.contactsCloseButton {
+  position: absolute !important;
+  top: 0 !important;
+  right: 0 !important;
+  left: auto;
+  margin: 0;
+  align-self: auto !important;
+  background: transparent;
+  color: #787878;
+  font-size: var(--font-size-xs);
+  border: none;
+  font-size: var(--font-size-sm);
+  cursor: pointer;
+  z-index: 100 !important;
+  padding: 0.35rem 0.5rem;
+  line-height: 1;
+}
+

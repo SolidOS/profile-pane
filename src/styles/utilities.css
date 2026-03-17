@@ -1,5 +1,9 @@
 /* Utility-first CSS classes for layout, spacing, and responsiveness */
 
+:root {
+  --font-size-md: 1em;
+}
+
 .actionButton {
   width: 100%;
   min-width: 180px;
@@ -8,6 +12,11 @@
   display: inline-block;
 }
 
+.selectedButton {
+  background-color: var(--color-primary) !important;
+  color: white !important;
+  border: 1px solid white !important;
+}
 /* ===========================================
    PROFILE GRID LAYOUT
    =========================================== */
@@ -326,4 +335,29 @@
 
 .btn-transparent:hover {
   background-color: transparent;
+}
+
+/* input */
+.input {
+  padding: 5px;
+  min-height: var(--min-touch-target);
+  height: 35px;
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+  border: none;
+  border-radius: var(--border-radius-base);
+  background: white;
+  font-weight: 600;
+  font-size: var(--font-size-sm);
+  transition: box-shadow 0.3s ease;
+}
+
+.input:focus,
+.input:focus-visible {
+  border-radius: var(--border-radius-base);
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px !important;
+  z-index: 1;
+}
+
+input[type="radio"] {
+  accent-color: var(--color-secondary); /* Change to your desired color */
 }
