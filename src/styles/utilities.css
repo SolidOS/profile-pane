@@ -207,6 +207,13 @@
   box-shadow: none;
 }
 
+/* Prevent labels from appearing focusable to keyboard users. */
+label:focus,
+label:focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
 /* Better focus for text elements */
 .focusable-text:focus {
   background-color: rgba(124, 77, 255, 0.1);

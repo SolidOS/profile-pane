@@ -24,7 +24,7 @@
 :styleGroup a ui:Group; ui:weight 0; 
     ui:parts ( :styleHeading :backgroundColor :highlightColor ).
 
-:styleHeading a ui:Heading; ui:contents "The style of your public profile.".
+:styleHeading a ui:Heading; ui:contents "The style of your public profile".
 
 :backgroundColor a ui:ColorField; ui:property solid:profileBackgroundColor;
     ui:label "Background color"; ui:default "#ffffff".

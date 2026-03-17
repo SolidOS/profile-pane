@@ -1,6 +1,47 @@
 /* this overrides a style coming from contacts-pane*/
+
+/* Delete pop up*/
+/* Make the Solid-UI delete confirmation popup appear near the last click position.
+   Keep the built-in Solid-UI styling (orange border, white background) so it looks like the original.
+*/
+.profile-form div[style*="position: relative"] > div[style*="display: grid"] {
+/* only override positioning; keep styling (border/background/etc) from solid-ui */
+  position: fixed !important;
+  z-index: 9999 !important;
+  display: grid !important;
+  pointer-events: auto !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  padding: 0.7em !important;
+  background: var(--color-background) !important;
+  border: 0.1em solid var(--color-primary) !important;
+  border-radius: var(--border-radius-base) !important;
+  box-shadow: 0 0.5em 0.9em rgba(0, 0, 0, 0.2) !important;
+  grid-template-columns: auto auto !important;
+  gap: 0.3em !important;
+}
+
 .profile-form .individualPane {
   box-shadow: none !important;
+}
+
+.profile-form p {
+  padding: 0 !important;
+}
+
+.profile-form .mb-md {
+  margin-bottom: 0 !important;
+}
+
+.profile-form h2 {
+  margin-bottom: 1em !important;
+}
+
+.profile-form h3 {
+  color: var(--color-primary) !important;
+  padding: 0 !important;
+  font-size: 1em !important;
+  font-weight: 600 !important;
 }
 
 /* Vertically center autocomplete input in .formFieldValue */
@@ -15,6 +56,7 @@
 /* Solid-UI form sizing fixes scoped to Edit CV section */
 .profile-form .hoverControl:not(:has(> img:first-child)) {
   border: 0.1em solid rgb(136, 136, 136) !important;
+  flex-direction: column !important;
 }
 
 .profile-form .hoverControl:has(> img:first-child) {
@@ -31,14 +73,43 @@
   justify-content: center;
 }
 
-.profile-form .hoverControlHide {
+/* Make sure the delete icon floats in the top-right corner of the full hoverControl wrapper */
+.profile-form .hoverControl {
+  position: relative !important;
+}
+
+.profile-form .hoverControl > img.hoverControlHide,
+.profile-form .hoverControl > [data-testid="deleteButtonWithCheck"] {
+  position: absolute !important;
+  top: 0.2em !important;
+  right: 0.2em !important;
   width: 1.5em !important;
   height: 1.5em !important;
-  display: block;
-  margin-top: 0 !important;
-  margin-left: 0 !important;
-  margin-right: 0 !important;
-  margin-bottom: 0.3em !important;
+  display: none !important;
+  align-items: center;
+  justify-content: center;
+  margin: 0 !important;
+  float: none !important;
+}
+
+/* Show the delete icon only when the container is hovered */
+.profile-form .hoverControl:hover > img.hoverControlHide,
+.profile-form .hoverControl:hover > [data-testid="deleteButtonWithCheck"] {
+  display: inline-flex !important;
+}
+
+/* If the hoverControl has exactly one div + the delete icon, keep the icon vertically centered but right-aligned */
+.profile-form .hoverControl:has(> div:nth-child(1):nth-last-child(2)):hover > img.hoverControlHide,
+.profile-form .hoverControl:has(> div:nth-child(1):nth-last-child(2)):hover > [data-testid="deleteButtonWithCheck"] {
+  top: 50% !important;
+  right: 0.2em !important;
+  left: auto !important;
+  transform: translateY(-50%) !important;
+}
+
+/* Hide delete icon only in autocomplete fields */
+.profile-form .formFieldValue:has(input[data-testid="autocomplete-input"]) [data-testid="delete-button"] {
+  display: none !important;
 }
 
 .profile-form .hoverControl:has(> img:first-child) > span {
@@ -47,13 +118,9 @@
   margin-left: 0.3em;
 }
 
-.profile-form div[style*="padding: 0.5em"]:has(> img) {
-  display: inline-flex;
-  align-items: center;
-}
-
 .profile-form div[style*="padding: 0.5em"]:has(> img) > span {
   margin-left: 0.3em;
+  vertical-align: super !important;
 }
 
 .profile-form .hoverControl:has(> img:first-child):hover {
@@ -171,7 +238,6 @@ section[aria-labelledby="edit-profile-contact-heading"] .profile-form > div:firs
 /* Align schema.org, solid terms, FOAF, vCard, and org field labels with their input values. */
 .profile-form :not(.choiceBox):has(> .formFieldName):has(> .formFieldValue) {
   display: flex;
-  margin-bottom: var(--spacing-sm);
 }
 
 /* for the Resume inside corporation choice */
@@ -277,7 +343,7 @@ section[data-testid="edit-social-section"] .classifierBox-selectBox select {
 
 /* Keep autocomplete/table-based fields (e.g. Occupation) aligned to label text baseline. */
 .profile-form :not(.choiceBox):has(> .formFieldValue input[data-testid="autocomplete-input"]) {
-  align-items: flex-start;
+
 }
 
 .profile-form :not(.choiceBox):has(> .formFieldValue input[data-testid="autocomplete-input"]) > .formFieldName {
@@ -318,4 +384,23 @@ section[data-testid="edit-social-section"] .classifierBox-selectBox select {
 
 .webidControl table td div.contactPane.namedPane {
   border: none !important;
+}
+
+/* Hide the edit icon used by solid-ui (noun_253504.svg and noun_1180158.svg) when it appears as an <img> */
+img[src="https://solidos.github.io/solid-ui/src/icons/noun_253504.svg"],
+img[src="https://solidos.github.io/solid-ui/src/icons/noun_1180158.svg"] {
+  display: none !important;
+}
+
+/* Ensure the parent button for that icon doesn't add padding/margin or affect layout */
+button:has(> img[src="https://solidos.github.io/solid-ui/src/icons/noun_253504.svg"]),
+button:has(> img[src="https://solidos.github.io/solid-ui/src/icons/noun_1180158.svg"]) {
+  display: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  border: none !important;
+  background: none !important;
+  width: 0 !important;
+  height: 0 !important;
+  overflow: hidden !important;
 }

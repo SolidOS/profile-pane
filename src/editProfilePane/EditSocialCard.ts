@@ -23,12 +23,7 @@ export function EditSocialSection(context: DataBrowserContext, me: NamedNode, ed
   header.appendChild(heading)
   section.appendChild(header)
 
-  if (editableProfile) {
-    const comment2 = context.dom.createElement('p')
-    comment2.classList.add('p-md')
-    comment2.textContent = 'Add links to your social media accounts here. These will be publicly visible on your profile.'
-    section.appendChild(comment2)
-  } else {
+  if (!editableProfile) {
     const comment1 = context.dom.createElement('p')
     comment1.classList.add('p-md')
     comment1.textContent = 'Login to add social media accounts to your profile.'

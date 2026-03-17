@@ -19,6 +19,7 @@ import '../styles/utilities.css'
 import '../styles/rdfFormsEnforced.css'
 import { EditCVSection } from './EditCVCard'
 import { EditOtherPreferencesSection } from './EditOtherPreferences'
+import { skipLabelsFromTabbing } from '../rdfFormsHelper'
 
 const editProfileView: PaneDefinition = {
   global: true,
@@ -109,6 +110,9 @@ const editProfileView: PaneDefinition = {
         
         // Communities you participate in Section
         main.appendChild(EditProfileCommunitiesSection(context, me, editableProfile, profile))
+
+        // Ensure keyboard navigation skips labels (including those rendered as links).
+        skipLabelsFromTabbing(main)
 
         main.setAttribute('aria-busy', 'false')
         main.focus()

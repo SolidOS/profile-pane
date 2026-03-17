@@ -28,20 +28,21 @@
 :CVGroup a ui:Group; 
     ui:weight 1; 
     ui:parts ( 
-        :CVPrompt 
+        :ResumeHeading 
         :involvementWithOrganizationsForm 
     ).
 
-:CVPrompt a ui:Comment; ui:contents  "What organizations have you been involved with?" .
+:ResumeHeading a ui:Heading; 
+    ui:contents  "Add your work experience" .
 
 :involvementWithOrganizationsForm a ui:Multiple;
-    ui:label "Involvement with organization";
+    ui:label "work experience";
     ui:property org:member; 
     ui:reverse true; # link back from role to member
     ui:ordered false; # Allow user to order CV secions rather than force date order? No.
     ui:part :RoleMembershipForm.
 
-org:member owl:inverse [ ui:label "Involvement with organization" ]. # timelimited involvement
+org:member owl:inverse [ ui:label "Work experience" ]. # timelimited involvement
 
 # This is a big important form for one of a series of roles in the list.
 
@@ -64,7 +65,7 @@ org:member owl:inverse [ ui:label "Involvement with organization" ]. # timelimit
     ui:property vcard:role .
 
 :escoOccupationField a ui:AutocompleteField;
-    ui:label "Occupation in ESCO";
+    ui:label "Find in occupation catalog";
     ui:property org:role;
     ui:dataSource :ESCO_Occupation_DataSource;
     ui:targetClass schema:Occupation .
@@ -292,7 +293,7 @@ schema:ResearchOrganization a rdfs:Class;
     ui:contents  "Add your skills" .
 
 :SkillsForm a ui:Multiple;
-    ui:label "Skills";
+    ui:label "skill";
     ui:property schema:skills;
     ui:ordered false; # Allow reader to order skills
     ui:part :SkillForm.
@@ -300,7 +301,7 @@ schema:ResearchOrganization a rdfs:Class;
 :SkillForm a ui:Group; ui:weight 1; ui:parts ( :escoSkillField ).
 
     :escoSkillField a ui:AutocompleteField;
-            ui:label "Find in ESCO";
+            ui:label "Find in skills catalog";
             ui:property solid:publicId;
             ui:dataSource :ESCO_Skill_DataSource;
             ui:targetClass schema:Skill .
@@ -316,7 +317,7 @@ schema:ResearchOrganization a rdfs:Class;
 :LanguagesHeading a ui:Heading; ui:contents  "Add your languages" .
 
 :LanguagesForm a ui:Multiple;
-    ui:label "Languages";
+    ui:label "language";
     ui:property schema:knowsLanguage; 
     ui:ordered true; # Allow user to order languages most important first.
     ui:part :LanguageForm.

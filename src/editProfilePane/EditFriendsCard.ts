@@ -19,12 +19,6 @@ export function EditFriendsSection(context: DataBrowserContext, me: NamedNode, e
   header.appendChild(heading)
   section.appendChild(header)
 
-  const comment1 = context.dom.createElement('p')
-  comment1.id = 'edit-profile-friends-description'
-  comment1.classList.add('p-md')
-  comment1.textContent = 'This is your public social network. Only put people here to whom you are happy to be publicly connected. (You can always keep private track of friends and family in your contacts.)'
-  section.appendChild(comment1)
-
   let comment2: HTMLParagraphElement | null = null
   if (editableProfile) {
     comment2 = context.dom.createElement('p')
@@ -41,7 +35,7 @@ export function EditFriendsSection(context: DataBrowserContext, me: NamedNode, e
     noun: 'friend'
   })
 
-  const descriptions = [comment1.id]
+  const descriptions = []
   if (comment2?.id) {
     descriptions.push(comment2.id)
   }
