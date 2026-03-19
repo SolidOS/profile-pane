@@ -1,6 +1,6 @@
-import { NamedNode, sym } from "rdflib"
-import { store } from "solid-logic"
-import { ns, utils, widgets } from "solid-ui"
+import { NamedNode, sym } from 'rdflib'
+import { store } from 'solid-logic'
+import { ns, utils, widgets } from 'solid-ui'
 
 export function refresh(dom: Document, attachmentTable: HTMLTableElement, me: NamedNode, editableProfile: NamedNode | null, predicate: NamedNode) {
     // Keep the RDF terms so downstream Solid-UI helpers (e.g. findImage) can call term.sameTerm().

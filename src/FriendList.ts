@@ -15,10 +15,9 @@ export const FriendList = (
   return html`
     <section
       class="friendListSection"
-      role="region"
-      aria-labelledby="friends-section-title"
       data-testid="friend-list"
     >
+      <h2 id="friends-section-title" class="sr-only">Friends</h2>
       <nav aria-label="Friend profiles">
         <ul class="list-reset zebra-stripe" role="list">
           ${friends}

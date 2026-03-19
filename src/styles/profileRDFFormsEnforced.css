@@ -1,5 +1,3 @@
-/* this overrides a style coming from contacts-pane*/
-
 /* Delete pop up*/
 /* Make the Solid-UI delete confirmation popup appear near the last click position.
    Keep the built-in Solid-UI styling (orange border, white background) so it looks like the original.
@@ -55,15 +53,7 @@
   font-weight: 600 !important;
 }
 
-/* Vertically center autocomplete input in .formFieldValue */
-.profile-form .formFieldValue > div[style*="flex-direction: row"] {
-  align-items: center;
-  display: flex;
-}
-
-.profile-form .formFieldValue input[data-testid="autocomplete-input"] {
-  vertical-align: middle;
-}
+/* Shared form layout rules are imported from rdfFormsCommon.css */
 /* Solid-UI form sizing fixes scoped to Edit CV section */
 .profile-form .hoverControl:not(:has(> img:first-child)) {
   border: 0.1em solid rgb(136, 136, 136) !important;
@@ -133,8 +123,25 @@
   min-height: 2.5em !important;
 }
 
+/* When the hoverControl only contains the hidden delete icon, keep it out of layout so it doesn't create empty space */
+.profile-form .formFieldValue .hoverControl:has(> img.hoverControlHide) {
+  min-width: 0 !important;
+  min-height: 0 !important;
+  width: 0 !important;
+  height: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  overflow: visible !important;
+}
+
 /* Hide delete icon only in autocomplete fields */
 .profile-grid .formFieldValue:has(input[data-testid="autocomplete-input"]) [data-testid="delete-button"] {
+  display: none !important;
+}
+
+/* Keep autocomplete cancel button hidden when the user is not interacting.
+   This avoids the cancel button remaining visible when focus moves away. */
+.profile-grid .formFieldValue:not(:focus-within) [data-testid="cancel-button"] {
   display: none !important;
 }
 
@@ -160,7 +167,14 @@
   margin: 0 !important;
   border-radius: 0 !important;
   box-shadow: none !important;
+  padding: 0.5em !important;
   transition: background-color 0.2s ease, box-shadow 0.2s ease;
+  padding: 0 !important;
+}
+
+/* Specific icon button should have no extra padding */
+.profile-grid button:has(> img[src="https://solidos.github.io/solid-ui/src/icons/noun_1369241.svg"]) {
+  padding: 0 !important;
 }
 
 .profile-form button {
@@ -168,10 +182,16 @@
   min-width: var(--min-touch-target);
 }
 
+.profile-form input:not([type="color"]) {
+  width: 99%;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}
+
 .profile-form input:not([type="color"]),
 .profile-form textarea,
 .profile-form select {
-  max-width: 100%;
+  max-width: 96%;
   min-width: 0;
   box-sizing: border-box ;
   font: inherit;
@@ -206,41 +226,10 @@
   width: 100%;
 }
 
-.profile-form .formFieldValue {
-  min-width: 0;
-  margin-bottom: var(--spacing-sm);
-}
-
-.profile-form .formFieldValue table {
-  margin: 0 !important;
-  padding: 0 !important;
-}
-
-.profile-form .formFieldValue td {
-  padding: 0 !important;
-  vertical-align: middle;
-}
-
-.profile-form .formFieldValue table[data-testid="autocomplete-table"] {
-  height: 100%;
-}
-
-.profile-form .formFieldValue input:not([type="color"]),
-.profile-form .formFieldValue textarea,
-.profile-form .formFieldValue select {
-  width: 100%;
-  max-width: 100%;
-}
-
 .profile-form select#formSelect {
   width: 100%;
   max-width: 97%;
   box-sizing: border-box;
-  margin-left: 0 !important;
-  margin-right: 0 !important;
-}
-
-.profile-form .formFieldValue span select {
   margin-left: 0 !important;
   margin-right: 0 !important;
 }
@@ -295,10 +284,6 @@ section[aria-labelledby="edit-profile-contact-heading"] .profile-form > div:firs
 }
 
 .profile-form .classifierBox .classifierBox-selectBox select {
-  margin-left: 0 !important;
-}
-
-.profile-form .formFieldValue > span > select {
   margin-left: 0 !important;
 }
 
@@ -370,33 +355,11 @@ section[data-testid="edit-social-section"] .classifierBox-selectBox select {
   padding-top: var(--spacing-sm);
 }
 
-/* Keep autocomplete/table-based fields (e.g. Occupation) aligned to label text baseline. */
-.profile-form :not(.choiceBox):has(> .formFieldValue input[data-testid="autocomplete-input"]) {
-
-}
 
 .profile-form :not(.choiceBox):has(> .formFieldValue input[data-testid="autocomplete-input"]) > .formFieldName {
   padding-top: 0.55em !important;
 }
 
-.profile-form .formFieldValue:has(input[data-testid="autocomplete-input"]) {
-  align-self: flex-start;
-}
-
-.profile-form .formFieldValue table[data-testid="autocomplete-table"],
-.profile-form .formFieldValue input[data-testid="autocomplete-input"] {
-  margin: 0 !important;
-}
-
-.profile-form .formFieldValue table[data-testid="autocomplete-table"] {
-  vertical-align: baseline;
-}
-
-.profile-form input:not([type="color"]) {
-  width: 100%;
-  margin-left: 0 !important;
-  margin-right: 0 !important;
-}
 
 .profile-form input:disabled,
 .profile-form textarea:disabled,
@@ -416,14 +379,18 @@ section[data-testid="edit-social-section"] .classifierBox-selectBox select {
 }
 
 /* Hide the edit icon used by solid-ui (noun_253504.svg and noun_1180158.svg) when it appears as an <img> */
-img[src="https://solidos.github.io/solid-ui/src/icons/noun_253504.svg"],
-img[src="https://solidos.github.io/solid-ui/src/icons/noun_1180158.svg"] {
+img[src*="noun_253504.svg"],
+img[src*="noun_1180158.svg"] {
   display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
 }
 
 /* Ensure the parent button for that icon doesn't add padding/margin or affect layout */
-button:has(> img[src="https://solidos.github.io/solid-ui/src/icons/noun_253504.svg"]),
-button:has(> img[src="https://solidos.github.io/solid-ui/src/icons/noun_1180158.svg"]) {
+button:has(> img[src*="noun_253504.svg"]),
+button:has(> img[src*="noun_1180158.svg"]) {
   display: none !important;
   padding: 0 !important;
   margin: 0 !important;
@@ -440,6 +407,8 @@ button:has(> img[src="https://solidos.github.io/solid-ui/src/icons/noun_1180158.
 .profile-grid .profileSection .add-community-button-container img[src="https://solidos.github.io/solid-ui/src/icons/noun_253504.svg"],
 .profile-grid .profileSection .add-community-button-container img[src="https://solidos.github.io/solid-ui/src/icons/noun_1180158.svg"] {
   display: inline !important;
+  width: auto !important;
+  height: auto !important;
 }
 
 .profile-grid .profileSection .add-friend-button-container button:has(> img[src="https://solidos.github.io/solid-ui/src/icons/noun_253504.svg"]),
@@ -447,6 +416,9 @@ button:has(> img[src="https://solidos.github.io/solid-ui/src/icons/noun_1180158.
 .profile-grid .profileSection .add-community-button-container button:has(> img[src="https://solidos.github.io/solid-ui/src/icons/noun_253504.svg"]),
 .profile-grid .profileSection .add-community-button-container button:has(> img[src="https://solidos.github.io/solid-ui/src/icons/noun_1180158.svg"]) {
   display: inline-flex !important;
+  width: auto !important;
+  height: auto !important;
+  overflow: visible !important;
 }
 
 

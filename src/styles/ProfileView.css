@@ -5,10 +5,12 @@
 .profile-grid .profileSection {
   width: 100%;
   max-width: 100%;
+  min-width: 0;
   box-sizing: border-box;
   margin-bottom: var(--spacing-md);
   box-sizing: border-box;
   margin-bottom: var(--spacing-md);
+  overflow-wrap: anywhere;
 }
 
 @media (min-width: 900px) {

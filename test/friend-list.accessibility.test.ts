@@ -7,9 +7,14 @@ describe('FriendList accessibility', () => {
   it('has no accessibility violations', async () => {
     // Mock extractFriends to return a static friend list
     jest.spyOn(AddMeToYourFriendsModule, 'extractFriends').mockImplementation(() => {
-      const div = document.createElement('div')
-      div.innerHTML = '<li><a href="https://friend.example">Alice</a></li>'
-      return div
+      const fragment = document.createDocumentFragment()
+      const li = document.createElement('li')
+      const a = document.createElement('a')
+      a.href = 'https://friend.example'
+      a.textContent = 'Alice'
+      li.appendChild(a)
+      fragment.appendChild(li)
+      return fragment as unknown as HTMLDivElement
     })
 
     const { sym } = require('rdflib')
