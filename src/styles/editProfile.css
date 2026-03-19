@@ -2,7 +2,7 @@
 .profile-grid .add-community-button-container {
   display: inline-flex;
   align-items: center;
-  gap: 0.4em;
+  gap: var(--spacing-xxs);
   flex-wrap: wrap;
   justify-content: flex-start;
 }
@@ -28,8 +28,8 @@
 }
 
 .profile-grid .profile-image {
-  width: 3em;
-  height: 3em;
-  margin: 0.1em;
-  border-radius: 1.5em;
+  width: var(--profile-image-size-profilePane);
+  height: var(--profile-image-size-profilePane);
+  margin: var(--spacing-xxxs-profilePane);
+  border-radius: var(--spacing-lg);
 }

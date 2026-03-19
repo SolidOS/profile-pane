@@ -4,7 +4,7 @@ import { ns, widgets, icons } from 'solid-ui'
 import { communitiesHeadingText } from '../texts'
 import { store } from 'solid-logic'
 import '../styles/editProfile.css'
-import '../styles/rdfFormsEnforced.css'
+import '../styles/profileRDFFormsEnforced.css'
 import {
   clearPreviousMessage, complain
 } from '../buttonsHelper'

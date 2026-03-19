@@ -1,5 +1,12 @@
 /* Utility-first CSS classes for layout, spacing, and responsiveness */
 
+:root {
+  /* Added for profile-pane (editProfile) layout sizing */
+  --spacing-xxs: 0.4em;
+  --spacing-xxxs: 0.1em;
+  --profile-image-size: 3em;
+}
+
 .actionButton {
   width: 100%;
   min-width: 180px;
