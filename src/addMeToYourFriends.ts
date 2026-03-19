@@ -155,5 +155,6 @@ export {
   addMeToYourFriendsDiv,
   createAddMeToYourFriendsButton,
   saveNewThing,
-  extractFriends
+  extractFriends,
+  checkIfThingExists
 }
