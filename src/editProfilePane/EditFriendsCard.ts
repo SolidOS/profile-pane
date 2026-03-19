@@ -1,9 +1,19 @@
 import { DataBrowserContext } from 'pane-registry'
 import { NamedNode } from 'rdflib'
-import { ns, widgets } from 'solid-ui'
+import { ns, widgets, icons } from 'solid-ui'
 import { friendsHeadingText } from '../texts'
+import { saveNewThing } from '../addMeToYourFriends'
+import '../styles/rdfFormsEnforced.css'
+import '../styles/editProfile.css'
+import { store } from 'solid-logic'
+import {
+  clearPreviousMessage, complain
+} from '../buttonsHelper'
+import { isAWebID, refresh } from './editProfilePresenter'
 
-export function EditFriendsSection(context: DataBrowserContext, me: NamedNode, editableProfile: NamedNode | null, profile: NamedNode) {
+const GREEN_PLUS = icons.iconBase + 'noun_34653_green.svg'
+
+export function EditFriendsSection(context: DataBrowserContext, me: NamedNode, editableProfile: NamedNode | null) {
   const section = context.dom.createElement('section')
   section.setAttribute('aria-labelledby', 'edit-profile-friends-heading')
   section.classList.add('profileSection', 'section-bg')
@@ -19,28 +29,74 @@ export function EditFriendsSection(context: DataBrowserContext, me: NamedNode, e
   header.appendChild(heading)
   section.appendChild(header)
 
-  let comment2: HTMLParagraphElement | null = null
   if (editableProfile) {
-    comment2 = context.dom.createElement('p')
-    comment2.id = 'edit-profile-friends-help'
-    comment2.classList.add('p-md')
-    comment2.textContent = 'Drag people onto the target below to add people.'
-    section.appendChild(comment2)
+    let plusButtonDiv = context.dom.createElement('div')
+    plusButtonDiv.classList.add('add-friend-button-container')
+
+    createAddButton(plusButtonDiv, context)
+    section.appendChild(plusButtonDiv)
   }
 
-  const attachmentList = widgets.attachmentList(context.dom, me, section, {
-    doc: profile,
-    modify: !!editableProfile,
-    predicate: ns.foaf('knows'),
-    noun: 'friend'
-  })
+  const attachmentOuter = section.appendChild(context.dom.createElement('table'))
+  attachmentOuter.classList.add('edit-friends-attachment-outer')
+  const attachmentOne = attachmentOuter.appendChild(context.dom.createElement('tr'))
+  const attachmentRight = attachmentOne.appendChild(context.dom.createElement('td'))
+  const attachmentTable = attachmentRight.appendChild(context.dom.createElement('table'))
+  attachmentTable.classList.add('attachmentTable', 'table', 'table-striped', 'table-hover')
 
-  const descriptions = []
-  if (comment2?.id) {
-    descriptions.push(comment2.id)
+  ;(attachmentOuter as any).refresh = refresh(context.dom, attachmentTable, me, editableProfile, ns.foaf('knows')) // Participate in downstream changes
+
+  refresh(context.dom, attachmentTable, me, editableProfile, ns.foaf('knows'))
+
+  function createAddButton(buttonContainer: HTMLDivElement, context: DataBrowserContext) {
+
+    const plus = buttonContainer.appendChild(widgets.button(context.dom, GREEN_PLUS, 'Add a friend', greenButtonHandler))
+    const predicate = ns.foaf('knows')
+
+    plus.setAttribute('class', 'add-button')
+    plus.setAttribute('aria-label', 'Add a friend')
+    const span = context.dom.createElement('span')
+    span.textContent = 'Add a friend' // for screen readers
+    span.setAttribute('class','span')
+    buttonContainer.appendChild(span)
+
+    async function greenButtonHandler (_event) {
+      const webid = await widgets.askName(context.dom, store, buttonContainer, predicate, undefined, 'WebID of the friend you')
+
+      if (!webid) {
+        return
+      }
+
+      try {
+        new URL(webid)
+      } catch {
+        complain(buttonContainer, context, 'Not a URL')
+        return
+      }
+
+      try {
+        await store.fetcher.load(store.sym(webid))
+      } catch {
+        complain(buttonContainer, context, 'Not a valid WebID')
+        return
+      }
+
+      if (!isAWebID(store.sym(webid))) {
+        complain(buttonContainer, context, 'WebID does not seem to exist')
+        return
+      }
+
+      return saveNewThing(webid, context, predicate)
+        .then(() => {
+          refresh(context.dom, attachmentTable, me, editableProfile, predicate) // Update the button state after adding a friend
+        })
+        .catch((error) => {
+          clearPreviousMessage(buttonContainer)
+          complain(buttonContainer, context, error)
+        })
+    }
   }
-  attachmentList.setAttribute('aria-describedby', descriptions.join(' '))
-  section.appendChild(attachmentList)
 
   return section
 }
+

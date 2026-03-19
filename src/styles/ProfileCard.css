@@ -69,6 +69,12 @@
   min-width: 0;
 }
 
+/* Ensure prompt inputs stretch to fit their container */
+.add-friend-button-container input[type="text"] {
+  width: 100%;
+  box-sizing: border-box;
+}
+
 .qrCodeSection {
   color: var(--color-text-secondary);
   font-size: 1em;

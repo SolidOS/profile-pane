@@ -110,21 +110,6 @@ function enableFocusOnAdd(root: HTMLElement) {
     )
   }
 
-  const getFocusable = (container: HTMLElement) =>
-    Array.from(
-      container.querySelectorAll<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>(
-        'input:not([type=hidden]):not([disabled]), textarea:not([disabled]), select:not([disabled])'
-      )
-    )
-
-  const focusNewOrLastInput = (container: HTMLElement, previous: Set<Element>) => {
-    const focusable = getFocusable(container)
-    // Prefer the first newly added input, otherwise fall back to last input
-    const newInput = focusable.find((el) => !previous.has(el))
-    const target = newInput ?? focusable[focusable.length - 1]
-    if (target) target.focus()
-  }
-
   const buttons = Array.from(root.querySelectorAll<HTMLElement>('div')).filter(isAddButton)
   buttons.forEach((btn) => {
     btn.addEventListener('click', () => {
@@ -194,10 +179,17 @@ export function skipLabelsFromTabbing(root: HTMLElement): void {
     '.classifierBox-label a',
     '.choiceBox-label a',
     '.label a',
+    // Skip focusable label-like links created by Solid-UI forms, including the vcard note link
+    'a[href="http://www.w3.org/2006/vcard/ns#note"]',
+    'a[href$="#note"]',
   ].join(', ')
 
-  root.querySelectorAll<HTMLElement>(selectors).forEach(el => {
-    if (el.tabIndex !== -1) {
+  // querySelectorAll<HTMLElement> ensures the elements are typed correctly so we can access tabIndex.
+  const nodes = root?.querySelectorAll<HTMLElement>(selectors)
+  if (!nodes) return
+
+  Array.from(nodes).forEach(el => {
+    if (typeof el.tabIndex === 'number' && el.tabIndex !== -1) {
       el.tabIndex = -1
     }
     // Ensure those label links are not announced as focusable elements

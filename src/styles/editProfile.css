@@ -1,0 +1,35 @@
+.profile-grid .add-friend-button-container,
+.profile-grid .add-community-button-container {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4em;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+}
+
+.profile-grid table {
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+}
+
+.profile-grid td {
+  padding: 0;
+}
+
+.profile-grid .add-friend-button-container .span,
+.profile-grid .add-community-button-container .span {
+  display: inline-flex;
+  align-items: center;
+}
+
+.profile-grid .add-friend-button-container > div,
+.profile-grid .add-community-button-container > div {
+  flex-basis: 100%;
+}
+
+.profile-grid .profile-image {
+  width: 3em;
+  height: 3em;
+  margin: 0.1em;
+  border-radius: 1.5em;
+}

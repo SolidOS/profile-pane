@@ -106,10 +106,10 @@ const editProfileView: PaneDefinition = {
         main.appendChild(EditOtherPreferencesSection(context, me, editableProfile, store))
       
         // People you know Section
-        main.appendChild(EditFriendsSection(context, me, editableProfile, profile))
+        main.appendChild(EditFriendsSection(context, me, editableProfile))
         
         // Communities you participate in Section
-        main.appendChild(EditProfileCommunitiesSection(context, me, editableProfile, profile))
+        main.appendChild(EditProfileCommunitiesSection(context, me, editableProfile))
 
         // Ensure keyboard navigation skips labels (including those rendered as links).
         skipLabelsFromTabbing(main)
