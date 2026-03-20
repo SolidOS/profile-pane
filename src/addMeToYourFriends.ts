@@ -55,7 +55,7 @@ const createAddMeToYourFriendsButton = (
 
   function setButtonHandler(event) {
     event.preventDefault()
-    saveNewFriend(subject, context)
+    saveNewThing(subject, context, ns.foaf('knows'))
       .then(() => {
         clearPreviousMessage(buttonContainer)
         mention(buttonContainer, friendWasAddedSuccesMessage)
@@ -75,7 +75,7 @@ const createAddMeToYourFriendsButton = (
     const store: LiveStore = context.session.store
 
     if (checkIfAnyUserLoggedIn(me)) {
-      checkIfFriendExists(store, me, subject).then((friendExists) => {
+      checkIfThingExists(store, me, subject, ns.foaf('knows')).then((friendExists) => {
         if (friendExists) {
           //logged in and friend exists or friend was just added
           button.innerHTML = friendExistsAlreadyButtonText.toUpperCase()
@@ -93,19 +93,20 @@ const createAddMeToYourFriendsButton = (
   return button
 }
 
-async function saveNewFriend(
+async function saveNewThing(
   subject: NamedNode,
-  context: DataBrowserContext
+  context: DataBrowserContext,
+  predicate: NamedNode
 ): Promise<void> {
   const me = authn.currentUser()
   const store: LiveStore = context.session.store
 
   if (checkIfAnyUserLoggedIn(me)) {
-    if (!(await checkIfFriendExists(store , me, subject))) {
+    if (!(await checkIfThingExists(store , me, subject, predicate))) {
       //if friend does not exist, we add her/him
       await store.fetcher.load(me)
       const updater = store.updater
-      const toBeInserted = [st(me, ns.foaf('knows'), subject, me.doc())]
+      const toBeInserted = [st(me, predicate, subject, me.doc())]
       try {
         await updater.update([], toBeInserted)
       } catch (error) {
@@ -123,20 +124,37 @@ function checkIfAnyUserLoggedIn(me: NamedNode): boolean {
   else return false
 }
 
-async function checkIfFriendExists(
+async function checkIfThingExists(
   store: LiveStore,
   me: NamedNode,
-  subject: NamedNode
+  subject: NamedNode,
+  predicate: NamedNode
 ): Promise<boolean> {
   await store.fetcher.load(me)
-  if (store.whether(me, ns.foaf('knows'), subject, me.doc()) === 0)
+  if (store.whether(me, predicate, subject, me.doc()) === 0)
     return false
   else return true
+}
+
+function extractFriends(editable: boolean, subject: NamedNode, { dom }: DataBrowserContext): HTMLDivElement | null {
+  const target = dom.createElement('div')
+  console.log('Extracting friends for subject:', subject.doc()) // Debug log to check the subject
+  widgets.attachmentList(dom, subject, target, {
+    doc: subject.doc(),
+    modify: editable,
+    predicate: ns.foaf('knows'),
+    noun: 'friend',
+  })
+  if (target.textContent === '')
+    return null
+  console.log('Extracted friends:', target.innerHTML) // Debug log to check the generated HTML
+  return target
 }
 
 export {
   addMeToYourFriendsDiv,
   createAddMeToYourFriendsButton,
-  saveNewFriend,
-  checkIfFriendExists,
+  saveNewThing,
+  extractFriends,
+  checkIfThingExists
 }
