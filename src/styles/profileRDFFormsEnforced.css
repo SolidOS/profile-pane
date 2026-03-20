@@ -403,18 +403,9 @@ button:has(> img[src*="noun_1180158.svg"]) {
 
 /* Exceptions: allow these icons (and their buttons) when they're part of the add-friend or add-community flows. */
 .profile-grid .profileSection .add-friend-button-container img[src="https://solidos.github.io/solid-ui/src/icons/noun_253504.svg"],
-.profile-grid .profileSection .add-friend-button-container img[src="https://solidos.github.io/solid-ui/src/icons/noun_1180158.svg"],
 .profile-grid .profileSection .add-community-button-container img[src="https://solidos.github.io/solid-ui/src/icons/noun_253504.svg"],
-.profile-grid .profileSection .add-community-button-container img[src="https://solidos.github.io/solid-ui/src/icons/noun_1180158.svg"] {
-  display: inline !important;
-  width: auto !important;
-  height: auto !important;
-}
-
 .profile-grid .profileSection .add-friend-button-container button:has(> img[src="https://solidos.github.io/solid-ui/src/icons/noun_253504.svg"]),
-.profile-grid .profileSection .add-friend-button-container button:has(> img[src="https://solidos.github.io/solid-ui/src/icons/noun_1180158.svg"]),
-.profile-grid .profileSection .add-community-button-container button:has(> img[src="https://solidos.github.io/solid-ui/src/icons/noun_253504.svg"]),
-.profile-grid .profileSection .add-community-button-container button:has(> img[src="https://solidos.github.io/solid-ui/src/icons/noun_1180158.svg"]) {
+.profile-grid .profileSection .add-community-button-container button:has(> img[src="https://solidos.github.io/solid-ui/src/icons/noun_253504.svg"]) {
   display: inline-flex !important;
   width: auto !important;
   height: auto !important;
@@ -424,6 +415,13 @@ button:has(> img[src*="noun_1180158.svg"]) {
 
 /* Exception: allow “Continue” buttons inside add-friend and add-community button containers. */
 .profile-grid .profileSection .add-friend-button-container button:has(> img[title="Continue"]),
-.profile-grid .profileSection .add-community-button-container button:has(> img[title="Continue"]) {
+.profile-grid .profileSection .add-community-button-container button:has(> img[title="Continue"]),
+.profile-grid .profileSection .add-friend-button-container button:has(> img[src="https://solidos.github.io/solid-ui/src/icons/noun_1180158.svg"]),
+.profile-grid .profileSection .add-community-button-container button:has(> img[src="https://solidos.github.io/solid-ui/src/icons/noun_1180158.svg"]),
+.profile-grid .profileSection .add-friend-button-container img[src="https://solidos.github.io/solid-ui/src/icons/noun_1180158.svg"],
+.profile-grid .profileSection .add-community-button-container img[src="https://solidos.github.io/solid-ui/src/icons/noun_1180158.svg"] {
   display: inline-flex !important;
+  width: 2em !important;
+  height: 2em !important;
+  overflow: visible !important;
 }
