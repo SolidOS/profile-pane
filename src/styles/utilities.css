@@ -7,6 +7,23 @@
   --profile-image-size: 3em;
 }
 
+@media (max-width: 1000px) {
+  .profile-grid,
+  .profile-grid * {
+    font-size: 2rem !important;
+  }
+
+  .profile-grid .actionButton,
+  .profile-grid .searchInput,
+  .profile-grid .flatButton,
+  .profile-grid .buttonSection button,
+  .profile-grid .groupButtonsList button {
+    min-height: calc(var(--min-touch-target) + 0.5em) !important;
+    font-size: 2rem !important;
+    padding: 1em 1em !important;
+  }
+}
+
 .actionButton {
   width: 100%;
   min-width: 180px;
