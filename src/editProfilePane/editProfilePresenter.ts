@@ -1,6 +1,8 @@
 import { NamedNode, sym } from 'rdflib'
 import { store } from 'solid-logic'
-import { ns, utils, widgets } from 'solid-ui'
+import { ns, utils, widgets, icons } from 'solid-ui'
+
+const DEFAULT_ICON_URI = icons.iconBase + 'noun_10636_grey.svg' // grey disc
 
 export function refresh(dom: Document, attachmentTable: HTMLTableElement, me: NamedNode, editableProfile: NamedNode | null, predicate: NamedNode) {
     // Keep the RDF terms so downstream Solid-UI helpers (e.g. findImage) can call term.sameTerm().
@@ -26,8 +28,8 @@ export function refresh(dom: Document, attachmentTable: HTMLTableElement, me: Na
 function createNewRow (dom: Document, attachmentTable: HTMLTableElement, target: any, me: NamedNode, editableProfile: NamedNode | null, predicate: NamedNode): HTMLTableRowElement {
     const theTarget = target
     const profileImg = dom.createElement('img')
-    profileImg.classList.add('profile-image')
-    profileImg.src = widgets.findImage(sym(target))
+    
+    profileImg.src = getProfileImg(sym(target), profileImg)
     profileImg.alt = `Image of ${utils.label(sym(target))}`
 
     const opt: any = { 
@@ -41,6 +43,16 @@ function createNewRow (dom: Document, attachmentTable: HTMLTableElement, target:
         }
     }
     return widgets.renderAsRow(dom, predicate, target, opt)
+}
+
+function getProfileImg(subject: NamedNode, profileImg: HTMLImageElement): string {
+    const img = widgets.findImage(subject)
+    if (img) {
+        profileImg.classList.add('profile-image')
+        return img
+    }
+    profileImg.classList.add('default-profile-image')
+    return DEFAULT_ICON_URI
 }
 
 async function deleteAttachment(dom: Document, attachmentTable: HTMLTableElement, me: NamedNode, editableProfile: NamedNode | null, target: NamedNode, predicate: NamedNode) {
@@ -92,7 +104,7 @@ async function deleteAttachment(dom: Document, attachmentTable: HTMLTableElement
     }
 }
 
-export function isAWebID(subject) {
+export function isAWebID(subject: NamedNode): boolean {
     if (subject && subject.doc) {
         const t = store.findTypeURIs(subject.doc())
         return !!t[ns.foaf('PersonalProfileDocument').uri]

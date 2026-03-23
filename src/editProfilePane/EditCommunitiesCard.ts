@@ -61,9 +61,29 @@ if (editableProfile) {
 
     async function greenButtonHandler (_event) {
       const webid = await widgets.askName(context.dom, store, buttonContainer, predicate, undefined, 'WebID of')
-      if (!webid || !isAWebID(webid)) {
-        return // cancelled by user
+      if (!webid) {
+        return
       }
+
+      try {
+        new URL(webid)
+      } catch {
+        complain(buttonContainer, context, 'Not a URL')
+        return
+      }
+
+      try {
+        await store.fetcher.load(store.sym(webid))
+      } catch {
+        complain(buttonContainer, context, 'Not a valid WebID')
+        return
+      }
+
+      if (!isAWebID(store.sym(webid))) {
+        complain(buttonContainer, context, 'WebID does not seem to exist')
+        return
+      }
+      
       return saveNewThing(webid, context, predicate)
         .then(() => {
           refresh(context.dom, attachmentTable, me, editableProfile, predicate) // Update the button state after adding a community
