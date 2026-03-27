@@ -87,7 +87,6 @@
   right: 0.2em !important;
   width: 1.5em !important;
   height: 1.5em !important;
-  display: none !important;
   align-items: center;
   justify-content: center;
   margin: 0 !important;
@@ -102,6 +101,7 @@
 .hoverControl > [data-testid="deleteButtonWithCheck"]:nth-child(2) {
   top: 50% !important;
   transform: translateY(-50%) !important;
+  display: inline-flex !important;
 }
 
 /* Show the delete icon only when the container is hovered */
