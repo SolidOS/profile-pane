@@ -1,6 +1,6 @@
 {
   "name": "profile-pane",
-  "version": "3.1.2",
+  "version": "3.1.3",
   "description": "A SolidOS compatible pane to display a personal profile page",
   "sideEffects": [
     "*.css"
@@ -47,14 +47,14 @@
   "license": "MIT",
   "dependencies": {
     "lit-html": "^3.3.2",
-    "pane-registry": "^3.0.1",
+    "pane-registry": "^3.0.2",
     "qrcode": "^1.5.4",
     "validate-color": "^2.2.4"
   },
   "peerDependencies": {
-    "rdflib": "^2.3.5",
-    "solid-logic": "^4.0.2",
-    "solid-ui": "3.0.4-5b6f345"
+    "rdflib": "^2.3.6",
+    "solid-logic": "^4.0.6",
+    "solid-ui": "^3.0.5"
   },
   "overrides": {
     "solid-ui": "$solid-ui"
@@ -73,8 +73,8 @@
     "babel-jest": "^30.2.0",
     "babel-loader": "^10.0.0",
     "babel-plugin-inline-import": "^3.0.0",
-    "chat-pane": "^3.0.1",
-    "contacts-pane": "3.1.0-newStyle-60af913f",
+    "chat-pane": "^3.0.3",
+    "contacts-pane": "file:../contacts-pane",
     "copy-webpack-plugin": "^14.0.0",
     "css-loader": "^7.1.4",
     "eslint": "^9.39.2",
@@ -84,9 +84,9 @@
     "jest-fetch-mock": "^3.0.3",
     "jsdom": "^29.0.0",
     "node-polyfill-webpack-plugin": "^4.1.0",
-    "rdflib": "^2.3.5",
-    "solid-logic": "^4.0.3",
-    "solid-ui": "3.0.4-5b6f345",
+    "rdflib": "^2.3.6",
+    "solid-logic": "^4.0.6",
+    "solid-ui": "^3.0.5",
     "style-loader": "^4.0.0",
     "terser-webpack-plugin": "^5.3.16",
     "ts-loader": "^9.5.4",
