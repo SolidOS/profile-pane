@@ -1,5 +1,5 @@
 import { context, subject } from './setup'
-import { addMeToYourFriendsDiv, checkIfFriendExists, createAddMeToYourFriendsButton, saveNewFriend } from '../src/addMeToYourFriends'
+import { addMeToYourFriendsDiv, checkIfThingExists, createAddMeToYourFriendsButton, saveNewThing } from '../src/addMeToYourFriends'
 
 describe('add-me-to-your-friends functions', () => {
     describe('addMeToYourFriendsDiv', () => {
@@ -22,21 +22,21 @@ describe('add-me-to-your-friends functions', () => {
       })
     })
   
-    describe('saveNewFriend', () => {
+    describe('saveNewThing', () => {
       it('exists', () => {
-        expect(saveNewFriend).toBeInstanceOf(Function)
+        expect(saveNewThing).toBeInstanceOf(Function)
       })
   
     })
   
-    describe('checkIfFriendExists', () => {
+    describe('checkIfThingExists', () => {
       it('exists', () => {
-        expect(checkIfFriendExists).toBeInstanceOf(Function)
+        expect(checkIfThingExists).toBeInstanceOf(Function)
       })
   
       it('runs', () => {
-        expect(checkIfFriendExists(context.session.store, subject, subject)).toBeTruthy()
-        expect(checkIfFriendExists(context.session.store, subject, subject)).toBeInstanceOf(Promise)
+        expect(checkIfThingExists(context.session.store, subject, subject, subject)).toBeTruthy()
+        expect(checkIfThingExists(context.session.store, subject, subject, subject)).toBeInstanceOf(Promise)
       })
     })
   

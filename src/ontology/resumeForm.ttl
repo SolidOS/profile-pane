@@ -28,45 +28,47 @@
 :CVGroup a ui:Group; 
     ui:weight 1; 
     ui:parts ( 
-        :CVPrompt 
+        :ResumeHeading 
         :involvementWithOrganizationsForm 
     ).
 
-:CVPrompt a ui:Comment; ui:contents  "What organizations have you been involved with?" .
+:ResumeHeading a ui:Heading; 
+    ui:contents  "Add your work experience" .
 
 :involvementWithOrganizationsForm a ui:Multiple;
-    ui:label "Involvement with organization";
+    ui:label "work experience";
     ui:property org:member; 
     ui:reverse true; # link back from role to member
     ui:ordered false; # Allow user to order CV secions rather than force date order? No.
     ui:part :RoleMembershipForm.
 
-org:member owl:inverse [ ui:label "Involvement with organization" ]. # timelimited involvement
+org:member owl:inverse [ ui:label "Work experience" ]. # timelimited involvement
 
 # This is a big important form for one of a series of roles in the list.
 
 :RoleMembershipForm a ui:Group; 
     ui:weight 3; 
     ui:parts ( 
-        :MembershipFormHeading 
+        :MembershipFormHeading
+        :RoleClassifier  
         :roleNameField
         :escoOccupationField 
         :orgField 
-        :RoleClassifier 
         :RoleDatesForm 
         :RoleDescriptionForm).
 
 :MembershipFormHeading a ui:Heading; 
     ui:contents "Details of the role"@en, "Détailes de ce rôle"@fr .
 
-:roleNameField a ui:SingleLineTextField; 
+:roleNameField a ui:SingleLineTextField;
+    ui:label "Job title";
     ui:property vcard:role .
 
 :escoOccupationField a ui:AutocompleteField;
-        ui:label "Occupation";
-        ui:property org:role;
-        ui:dataSource :ESCO_Occupation_DataSource;
-        ui:targetClass schema:Occupation .
+    ui:label "Find in occupation catalog";
+    ui:property org:role;
+    ui:dataSource :ESCO_Occupation_DataSource;
+    ui:targetClass schema:Occupation .
 
     :ESCO_Occupation_DataSource a ui:DataSource;
         schema:name "ESCO";
@@ -75,7 +77,7 @@ org:member owl:inverse [ ui:label "Involvement with organization" ]. # timelimit
         ui:searchByNameURI "https://ec.europa.eu/esco/api/search?language=$(language)&type=occupation&text=$(name)".
 
 :orgField a ui:Choice; 
-    ui:label "Organization"@en, "Organization"@fr;
+    ui:label "For organization"@en, "Pour l'organisation"@fr;
     ui:canMintNew true; 
     ui:use :OrganizationCreationForm ;
     ui:property org:organization;
@@ -86,7 +88,7 @@ vcard:Organization ui:creationForm :OrganizationCreationForm  .
 ###### eposodes in one's career - Roles
 
 :RoleClassifier a ui:Classifier; 
-    ui:label "What sort of role?"@en;
+    ui:label "Job type"@en;
     ui:category solid:Role .
 
 :RoleDatesForm a ui:Options; 
@@ -124,12 +126,12 @@ solid:FutureRole a rdfs:Class; rdfs:label "Future role"@en, "Rôle à venir"@fr,
     schema:name "Form for editing an organization using public data" ;
     ui:parts ( 
         :OrgClassifier 
-        :OrgSwitch   
-        :OrganizationNameField 
+        :OrganizationNameField
+        :OrgSwitch
         :homePageURIField  ) .
 
 :OrgClassifier a ui:Classifier; 
-    ui:label "Type of organization?"@en;
+    ui:label "Type"@en;
     ui:category solid:InterestingOrganization .
 
 :OrgSwitch a ui:Options; 
@@ -144,8 +146,7 @@ solid:FutureRole a rdfs:Class; rdfs:label "Future role"@en, "Rôle à venir"@fr,
         [ ui:for schema:ResearchOrganization; ui:use :ResearchOrganizationForm ],
         [ ui:for schema:SportsOrganization; ui:use :SportsOrganizationForm ].
 
-:OrganizationNameField
-    a ui:SingleLineTextField ;
+:OrganizationNameField a ui:SingleLineTextField ;
     ui:label "Name";
     ui:maxLength "200" ;
     ui:property schema:name .
@@ -183,10 +184,7 @@ schema:ResearchOrganization a rdfs:Class;
 :CorporationForm a ui:Group; 
     ui:weight 0; 
     ui:parts ( 
-        :CorporationPrompt 
         :CorporationAutocomplete ) .
-
-    :CorporationPrompt a ui:Comment; ui:contents "Corporation details".
 
     :CorporationAutocomplete a ui:AutocompleteField; 
         ui:label "Find in wikidata";
@@ -216,10 +214,7 @@ schema:ResearchOrganization a rdfs:Class;
 :GovernmentOrganizationForm a ui:Group; 
     ui:weight 0; 
     ui:parts ( 
-        :GovernmentOrganizationPrompt 
         :GovernmentOrganizationAutocomplete ) .
-
-    :GovernmentOrganizationPrompt a ui:Comment; ui:contents "Government organization details".
 
     :GovernmentOrganizationAutocomplete
         a ui:AutocompleteField; ui:label "Find in wikidata";
@@ -231,10 +226,7 @@ schema:ResearchOrganization a rdfs:Class;
 :EducationalOrganizationForm a ui:Group; 
     ui:weight 1; 
     ui:parts ( 
-        :EducationalOrganizationPrompt 
         :EducationalOrganizationAutocomplete ) .
-
-    :EducationalOrganizationPrompt a ui:Comment; ui:contents "Educational organization details".
 
     :EducationalOrganizationAutocomplete
         a ui:AutocompleteField; ui:label "Find in wikidata";
@@ -245,10 +237,7 @@ schema:ResearchOrganization a rdfs:Class;
 :ResearchOrganizationForm a ui:Group; 
     ui:weight 0; 
     ui:parts ( 
-        :ResearchOrganizationPrompt 
         :ResearchOrganizationAutocomplete ) .
-
-    :ResearchOrganizationPrompt a ui:Comment; ui:contents "Research organizationd details".
 
     :ResearchOrganizationAutocomplete
         a ui:AutocompleteField; ui:label "Find in wikidata";
@@ -258,10 +247,7 @@ schema:ResearchOrganization a rdfs:Class;
 #### NGO
 :NGOForm a ui:Group; ui:weight 0; 
     ui:parts ( 
-        :NGOPrompt 
         :NGOAutocomplete ) .
-
-    :NGOPrompt a ui:Comment; ui:contents "NGO details".
 
     :NGOAutocomplete
         a ui:AutocompleteField; ui:label "Find in wikidata";
@@ -272,10 +258,7 @@ schema:ResearchOrganization a rdfs:Class;
 :PerformingGroupForm a ui:Group; 
     ui:weight 0; 
     ui:parts ( 
-        :PerformingGroupPrompt 
         :PerformingGroupAutocomplete ) .
-
-    :PerformingGroupPrompt a ui:Comment; ui:contents "Performing group details".
 
     :PerformingGroupAutocomplete
         a ui:AutocompleteField; ui:label "Find in wikidata";
@@ -286,10 +269,7 @@ schema:ResearchOrganization a rdfs:Class;
 :ProjectForm a ui:Group; 
     ui:weight 0; 
     ui:parts ( 
-        :ProjectPrompt 
         :ProjectAutocomplete ) . #  :ProjectAutocomplete - no: supress, as not in WD
-
-    :ProjectPrompt a ui:Comment; ui:contents "Project details".
 
     :ProjectAutocomplete
         a ui:AutocompleteField; ui:label "Find in wikidata";
@@ -297,18 +277,15 @@ schema:ResearchOrganization a rdfs:Class;
             ui:property solid:publicId; ui:dataSource :WikidataInstancesByName.
 
 #### Sports Organization
-:SportsOrganizationForm a ui:Group; 
-    ui:weight 0; 
-    ui:parts ( 
-        :SportsOrganizationPrompt 
-        :SportsOrganizationAutocomplete ) .
+    :SportsOrganizationForm a ui:Group; 
+        ui:weight 0; 
+        ui:parts ( 
+            :SportsOrganizationAutocomplete ) .
 
-:SportsOrganizationPrompt a ui:Comment; ui:contents "Sports organization details".
-
-:SportsOrganizationAutocomplete
-    a ui:AutocompleteField; ui:label "Find in wikidata";
-        ui:targetClass  <http://www.wikidata.org/entity/Q4438121>; # SportsOrganization
-        ui:property solid:publicId; ui:dataSource :WikidataInstancesByName.
+    :SportsOrganizationAutocomplete
+        a ui:AutocompleteField; ui:label "Find in wikidata";
+            ui:targetClass  <http://www.wikidata.org/entity/Q4438121>; # SportsOrganization
+            ui:property solid:publicId; ui:dataSource :WikidataInstancesByName.
 
 #################### Skills
 
@@ -316,7 +293,7 @@ schema:ResearchOrganization a rdfs:Class;
     ui:contents  "Add your skills" .
 
 :SkillsForm a ui:Multiple;
-    ui:label "Skills";
+    ui:label "skill";
     ui:property schema:skills;
     ui:ordered false; # Allow reader to order skills
     ui:part :SkillForm.
@@ -324,7 +301,7 @@ schema:ResearchOrganization a rdfs:Class;
 :SkillForm a ui:Group; ui:weight 1; ui:parts ( :escoSkillField ).
 
     :escoSkillField a ui:AutocompleteField;
-            ui:label "Find in ESCO";
+            ui:label "Find in skills catalog";
             ui:property solid:publicId;
             ui:dataSource :ESCO_Skill_DataSource;
             ui:targetClass schema:Skill .
@@ -340,7 +317,7 @@ schema:ResearchOrganization a rdfs:Class;
 :LanguagesHeading a ui:Heading; ui:contents  "Add your languages" .
 
 :LanguagesForm a ui:Multiple;
-    ui:label "Languages";
+    ui:label "language";
     ui:property schema:knowsLanguage; 
     ui:ordered true; # Allow user to order languages most important first.
     ui:part :LanguageForm.

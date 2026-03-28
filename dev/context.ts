@@ -1,5 +1,5 @@
 import { longChatPane } from 'chat-pane'
-//import { contact } from 'contact-pane' //uncomment for profileEditor
+//import * as contact from 'contacts-pane' //uncomment for profileEditor
 import { DataBrowserContext, PaneRegistry } from 'pane-registry'
 import { solidLogicSingleton, store } from 'solid-logic'
 import { LiveStore } from 'rdflib'
