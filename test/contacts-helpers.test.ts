@@ -11,16 +11,128 @@ jest.mock('../src/contactsErrors', () => ({
 }))
 
 import {
+  createContactInAddressBook,
+  getContactData,
 	addWebIDToExistingContact,
 	addGroupToAddressBookData,
 	checkIfContactExistsByName,
 	checkIfContactExistsByWebID,
 	updateAddressBookName
 } from '../src/contactsHelpers'
+import { sym } from 'rdflib'
 import { addWebIDToContacts } from 'contacts-pane'
 import { addErrorToErrorDisplay } from '../src/contactsErrors'
 
 describe('contactsHelpers', () => {
+	beforeEach(() => {
+		jest.clearAllMocks()
+	})
+
+	describe('getContactData', () => {
+		it('exists', () => {
+			expect(getContactData).toBeInstanceOf(Function)
+		})
+
+		it('reads nickname and preferred pronouns from the profile subject', async () => {
+			const subject = sym('https://alice.example/profile/card#me')
+			const store = {
+				anyValue: jest.fn((node, predicate) => {
+					if (predicate.value.endsWith('foaf/0.1/nick')) return 'Ali'
+					if (predicate.value.endsWith('preferredSubjectPronoun')) return 'they'
+					if (predicate.value.endsWith('preferredObjectPronoun')) return 'them'
+					if (predicate.value.endsWith('preferredRelativePronoun')) return 'theirs'
+					return null
+				}),
+				each: jest.fn().mockReturnValue([]),
+				any: jest.fn()
+			} as any
+
+			const contactData = await getContactData(store, subject)
+
+			expect(contactData.nickname).toBe('Ali')
+			expect(contactData.preferredSubjectPronoun).toBe('they')
+			expect(contactData.preferredObjectPronoun).toBe('them')
+			expect(contactData.preferredRelativePronoun).toBe('theirs')
+		})
+	})
+
+	describe('createContactInAddressBook', () => {
+		it('exists', () => {
+			expect(createContactInAddressBook).toBeInstanceOf(Function)
+		})
+
+		it('persists nickname and preferred pronouns when present', async () => {
+			const createdContactUri = 'https://pod.example/address-book/index.ttl#new-contact'
+			const fetcherLoad = jest.fn().mockResolvedValue(undefined)
+			const updaterUpdate = jest.fn().mockResolvedValue(undefined)
+			const context = {
+				session: {
+					store: {
+						fetcher: { load: fetcherLoad },
+						updater: { update: updaterUpdate }
+					}
+				}
+			} as any
+
+			const contactsModule = {
+				createNewContact: jest.fn().mockResolvedValue(createdContactUri)
+			} as any
+
+			const contactData = {
+				name: 'Alice',
+				webID: 'https://alice.example/profile#me',
+				emails: [],
+				phoneNumbers: [],
+				nickname: 'Ali',
+				preferredSubjectPronoun: 'they',
+				preferredObjectPronoun: 'them',
+				preferredRelativePronoun: 'theirs'
+			} as any
+
+			await createContactInAddressBook(context, contactsModule, contactData, {
+				addressBookUri: 'https://pod.example/address-book/index.ttl#this',
+				groupUris: ['https://pod.example/address-book/index.ttl#friends']
+			})
+
+			expect(addWebIDToContacts).toHaveBeenCalledTimes(1)
+			expect(updaterUpdate).toHaveBeenCalledTimes(1)
+
+			const [, insertions] = updaterUpdate.mock.calls[0]
+			const predicates = insertions.map((statement) => statement.predicate.value)
+			expect(predicates).toContain('http://xmlns.com/foaf/0.1/nick')
+			expect(predicates).toContain('http://www.w3.org/ns/solid/terms#preferredSubjectPronoun')
+			expect(predicates).toContain('http://www.w3.org/ns/solid/terms#preferredObjectPronoun')
+			expect(predicates).toContain('http://www.w3.org/ns/solid/terms#preferredRelativePronoun')
+		})
+
+		it('skips detail writes when there are no detail fields', async () => {
+			const context = {
+				session: {
+					store: {
+						fetcher: { load: jest.fn().mockResolvedValue(undefined) },
+						updater: { update: jest.fn().mockResolvedValue(undefined) }
+					}
+				}
+			} as any
+
+			const contactsModule = {
+				createNewContact: jest.fn().mockResolvedValue('https://pod.example/address-book/index.ttl#new-contact')
+			} as any
+
+			await createContactInAddressBook(context, contactsModule, {
+				name: 'Alice',
+				webID: 'https://alice.example/profile#me',
+				emails: [],
+				phoneNumbers: []
+			} as any, {
+				addressBookUri: 'https://pod.example/address-book/index.ttl#this',
+				groupUris: ['https://pod.example/address-book/index.ttl#friends']
+			})
+
+			expect(context.session.store.updater.update).not.toHaveBeenCalled()
+		})
+	})
+
 	describe('checkIfContactExistsByWebID', () => {
 		it('exists', () => {
 			expect(checkIfContactExistsByWebID).toBeInstanceOf(Function)
