@@ -37,6 +37,10 @@ export interface PhoneDetails {
 }
 export interface ContactData {
     name: string,
+  nickname?: string,
+  preferredSubjectPronoun?: string,
+  preferredObjectPronoun?: string,
+  preferredRelativePronoun?: string,
     emails?: EmailDetails[],
     phoneNumbers?: PhoneDetails[],
     webID: string

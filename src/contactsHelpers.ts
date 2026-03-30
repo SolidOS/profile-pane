@@ -195,6 +195,10 @@ async function getContactData(
   let phoneNumber = null
 
   const name = utils.label(subject)
+  const nickname = store.anyValue(subject, ns.foaf('nick'), null, subject.doc()) || undefined
+  const preferredSubjectPronoun = store.anyValue(subject, ns.solid('preferredSubjectPronoun'), null, subject.doc()) || undefined
+  const preferredObjectPronoun = store.anyValue(subject, ns.solid('preferredObjectPronoun'), null, subject.doc()) || undefined
+  const preferredRelativePronoun = store.anyValue(subject, ns.solid('preferredRelativePronoun'), null, subject.doc()) || undefined
 
   const emailNodes = store.each(subject, ns.vcard('hasEmail'), null, subject.doc()) || null
   const phoneNodes = store.each(subject, ns.vcard('hasTelephone'), null, subject.doc()) || null
@@ -213,6 +217,10 @@ async function getContactData(
   const webID = subject.value
   return {
     name,
+    nickname,
+    preferredSubjectPronoun,
+    preferredObjectPronoun,
+    preferredRelativePronoun,
     emails,
     phoneNumbers,
     webID 
@@ -277,7 +285,14 @@ async function createContactInAddressBook(
     await context.session.store.fetcher.load(contactUri)
     const contactNode = new NamedNode(contactUri)
     await addWebIDToContacts(contactNode, contactData.webID, ns.vcard('WebID'), store)
-    if (contactData.emails.length || contactData.phoneNumbers.length) {
+    if (
+      contactData.emails.length ||
+      contactData.phoneNumbers.length ||
+      contactData.nickname ||
+      contactData.preferredSubjectPronoun ||
+      contactData.preferredObjectPronoun ||
+      contactData.preferredRelativePronoun
+    ) {
       await addContactDetails(context, contactUri, contactData)
     }
     return contactUri
@@ -306,6 +321,19 @@ async function addContactDetails(
   let insertions = []
 
   try {
+
+    if (contactData.nickname) {
+      insertions.push(st(contactNode, ns.foaf('nick'), literal(contactData.nickname), detailDoc))
+    }
+    if (contactData.preferredSubjectPronoun) {
+      insertions.push(st(contactNode, ns.solid('preferredSubjectPronoun'), literal(contactData.preferredSubjectPronoun), detailDoc))
+    }
+    if (contactData.preferredObjectPronoun) {
+      insertions.push(st(contactNode, ns.solid('preferredObjectPronoun'), literal(contactData.preferredObjectPronoun), detailDoc))
+    }
+    if (contactData.preferredRelativePronoun) {
+      insertions.push(st(contactNode, ns.solid('preferredRelativePronoun'), literal(contactData.preferredRelativePronoun), detailDoc))
+    }
  
     contactData.emails.map((emailInfo) => {
       const node = createDetailNode()
