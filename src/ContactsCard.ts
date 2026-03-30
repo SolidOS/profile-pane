@@ -52,6 +52,9 @@ export const createAddressBookContactCreationDialog = (context: DataBrowserConte
   return addressBookContactCreationDialog
 }
 
+  // Backward-compatible export name used by consumers and tests.
+  export const createAddressBookUriSelectorDialog = createAddressBookContactCreationDialog
+
 const createAddressBookDetailsSection = (
   context: DataBrowserContext
 ): HTMLElement => {

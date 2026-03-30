@@ -21,10 +21,15 @@ jest.mock('../src/buttonsHelper', () => ({
   mention: jest.fn()
 }))
 
-jest.mock('../src/contactsErrors', () => ({
-  addErrorToErrorDisplay: jest.fn(),
-  checkAndAddErrorDisplay: jest.fn()
-}))
+jest.mock('../src/contactsErrors', () => {
+  const actual = jest.requireActual('../src/contactsErrors')
+  return {
+    ...actual,
+    addErrorToErrorDisplay: jest.fn(),
+    checkAndAddErrorToDisplay: jest.fn(),
+    checkAndRemoveErrorDisplay: jest.fn()
+  }
+})
 
 import { createAddressBookUriSelectorDialog } from '../src/ContactsCard'
 
