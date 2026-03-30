@@ -1,9 +1,7 @@
 /* Utility-first CSS classes for layout, spacing, and responsiveness */
 
 :root {
-<<<<<<< HEAD
   --font-size-md: 1em;
-=======
   --profile-image-size: 3em;
 }
 
@@ -22,7 +20,6 @@
     font-size: 2rem !important;
     padding: 1em 1em !important;
   }
->>>>>>> main
 }
 
 .actionButton {
