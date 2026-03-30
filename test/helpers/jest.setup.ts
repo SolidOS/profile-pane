@@ -9,6 +9,29 @@ global.TextDecoder = TextDecoder as any
 
 fetchMock.enableMocks()
 
+// Workaround for axe-core calling canvas.getContext in jsdom
+// (jsdom does not implement canvas without installing the canvas package)
+if (typeof HTMLCanvasElement !== 'undefined' && !HTMLCanvasElement.prototype.getContext) {
+  HTMLCanvasElement.prototype.getContext = function () {
+    return {
+      canvas: this,
+      getImageData: () => ({ data: new Uint8ClampedArray() }),
+      putImageData: () => {},
+      createImageData: () => [],
+      measureText: () => ({ width: 0 }),
+      fillText: () => {},
+      strokeText: () => {},
+      beginPath: () => {},
+      closePath: () => {},
+      moveTo: () => {},
+      lineTo: () => {},
+      rect: () => {},
+      fill: () => {},
+      stroke: () => {},
+    } as any
+  }
+}
+
 // Added 2024-09
 global.Buffer = Buffer
 

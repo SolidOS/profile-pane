@@ -1,7 +1,28 @@
 /* Utility-first CSS classes for layout, spacing, and responsiveness */
 
 :root {
+<<<<<<< HEAD
   --font-size-md: 1em;
+=======
+  --profile-image-size: 3em;
+}
+
+@media (max-width: 1000px) {
+  .profile-grid,
+  .profile-grid * {
+    font-size: 2rem !important;
+  }
+
+  .profile-grid .actionButton,
+  .profile-grid .searchInput,
+  .profile-grid .flatButton,
+  .profile-grid .buttonSection button,
+  .profile-grid .groupButtonsList button {
+    min-height: calc(var(--min-touch-target) + 0.5em) !important;
+    font-size: 2rem !important;
+    padding: 1em 1em !important;
+  }
+>>>>>>> main
 }
 
 .actionButton {
@@ -23,7 +44,8 @@
 
 .profile-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(30em, 1fr));
+  /* Allow the grid to shrink below 30em on small viewports to avoid overflow */
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 30em), 1fr));
   gap: var(--spacing-lg);
   background: var(--color-background);
 }
@@ -214,6 +236,13 @@
 :focus:not(:focus-visible) {
   outline: none;
   box-shadow: none;
+}
+
+/* Prevent labels from appearing focusable to keyboard users. */
+label:focus,
+label:focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
 }
 
 /* Better focus for text elements */
