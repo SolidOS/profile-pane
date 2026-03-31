@@ -1,3 +1,4 @@
+/** Project-local: currently unused component. Keep temporarily; do not add new usage. */
 import { DataBrowserContext } from 'pane-registry'
 import { NamedNode } from 'rdflib'
 import { ns, widgets, icons } from 'solid-ui'

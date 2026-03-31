@@ -1,3 +1,4 @@
+/** Project-local: currently unused component. Keep temporarily; do not add new usage. */
 /**
  * Profile Editing App Pane
  *

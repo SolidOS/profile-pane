@@ -1,3 +1,4 @@
+/** Project-local: currently unused component. Keep temporarily; do not add new usage. */
 import { DataBrowserContext } from 'pane-registry'
 import { NamedNode, Store} from 'rdflib'
 import socialMediaForm from '../ontology/socialMedia.ttl'

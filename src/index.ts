@@ -11,7 +11,6 @@ import './styles/utilities.css'
 import { NamedNode, LiveStore } from 'rdflib'
 import { render } from 'lit-html'
 import { ProfileView } from './ProfileView'
-import editProfileView from './editProfilePane/EditProfileView'
 import { icons, ns } from 'solid-ui'
 import * as qrcode from 'qrcode'
 
@@ -45,8 +44,7 @@ const Pane = {
       return 'Profile'
     }
     return null
-  },
-  editor: editProfileView,                                            
+  },                                         
   render: (subject: NamedNode, context: DataBrowserContext): HTMLElement => {
     const target = context.dom.createElement('div')
     const store = context.session.store
