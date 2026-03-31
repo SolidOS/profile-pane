@@ -6,11 +6,14 @@ import { authn } from 'solid-logic'
 import { asyncReplace } from 'lit-html/directives/async-replace.js'
 import { chatWithMeButtonText, logInToChatWithMeButtonText, loadingMessage } from './texts'
 import { checkIfAnyUserLoggedIn, complain } from './buttonsHelper'
+import { ViewerMode } from './types'
 import './styles/ChatWithMe.css'
+
 
 export const ChatWithMe = (
   subject: NamedNode,
-  context: DataBrowserContext
+  context: DataBrowserContext,
+  viewerMode: ViewerMode
 ): TemplateResult => {
   const logic = context.session.logic
   const longChatPane = context.session.paneRegistry.byName('long chat')

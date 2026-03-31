@@ -1,9 +1,12 @@
 import { html } from 'lit-html'
 import { CVPresentation } from './CVPresenter'
+import { ViewerMode } from './types'
 import './styles/CVCard.css'
 
+
 export const CVCard = (
-  cvData: CVPresentation
+  cvData: CVPresentation,
+  viewerMode: ViewerMode
 ) => {
   const { rolesByType, skills, languages } = cvData
 

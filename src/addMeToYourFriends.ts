@@ -10,13 +10,15 @@ import {
 import {
   addMeToYourFriendsButtonText, friendExistsAlreadyButtonText, friendExistsMessage, friendWasAddedSuccesMessage, logInAddMeToYourFriendsButtonText, userNotLoggedInErrorMessage
 } from './texts'
+import { ViewerMode } from './types'
 import './styles/ProfileCard.css'
 
 let buttonContainer = <HTMLDivElement>document.createElement('section')
 
 const addMeToYourFriendsDiv = (
   subject: NamedNode,
-  context: DataBrowserContext
+  context: DataBrowserContext,
+  viewerMode: ViewerMode
 ): TemplateResult => {
 
   buttonContainer = context.dom.createElement('section') as HTMLDivElement

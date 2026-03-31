@@ -2,13 +2,16 @@ import { html, TemplateResult } from 'lit-html'
 import { NamedNode } from 'rdflib'
 import { DataBrowserContext } from 'pane-registry'
 import { widgets } from 'solid-ui'
-import './styles/StuffCard.css'
 import { ProfilePresentation } from './presenter'
+import { ViewerMode } from './types'
+import './styles/StuffCard.css'
 
 
 export const StuffCard = (profileBasics: ProfilePresentation,
   context: DataBrowserContext,
-  subject: NamedNode, stuffData): TemplateResult => {
+  subject: NamedNode, stuffData,
+  viewerMode: ViewerMode
+): TemplateResult => {
   const { stuff }  = stuffData
   const dom = context.dom || document
   return html`

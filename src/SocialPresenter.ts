@@ -2,6 +2,7 @@ import { LiveStore, NamedNode, Node } from 'rdflib'
 import { ns, utils, icons } from 'solid-ui'
 import socialMediaForm from './ontology/socialMedia.ttl'
 import { loadDocument } from './rdfFormsHelper'
+import { ViewerMode } from './types'
 
 const socialMediaFormName = 'socialMedia.ttl' // The name of the file to upload
 
@@ -48,7 +49,8 @@ function expandRdfList(store: LiveStore, node: Node): Node[] {
 
 export function presentSocial(
   subject: NamedNode,
-  store: LiveStore
+  store: LiveStore,
+  viewerMode: ViewerMode
 ): SocialPresentation {
   
   function nameForAccount (subject):string {

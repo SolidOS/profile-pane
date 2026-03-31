@@ -5,11 +5,12 @@ import { addMeToYourFriendsDiv } from './addMeToYourFriends'
 import { DataBrowserContext } from 'pane-registry'
 import { NamedNode } from 'rdflib'
 import { QRCodeCard } from './QRCodeCard'
+import { ViewerMode } from './types'
 
 
 export const ProfileCard = ({
   name, imageSrc, introduction, location, pronouns, highlightColor, backgroundColor
-}: ProfilePresentation, context: DataBrowserContext, subject: NamedNode) => {
+}: ProfilePresentation, context: DataBrowserContext, subject: NamedNode, viewerMode: ViewerMode) => {
 
   return html`
     <article class="profileCard" aria-labelledby="profile-name">
@@ -25,7 +26,7 @@ export const ProfileCard = ({
       </section>
       
       <section class="buttonSection text-center" aria-label="Actions">
-        ${addMeToYourFriendsDiv(subject, context)}
+        ${addMeToYourFriendsDiv(subject, context, viewerMode)}
       </section>
       
       <div class="qrCodeSection section-centered">

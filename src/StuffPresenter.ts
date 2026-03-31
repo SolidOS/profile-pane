@@ -1,6 +1,7 @@
 import { NamedNode, uri } from 'rdflib'
 import { ns, utils, widgets, icons } from 'solid-ui'
 import { solidLogicSingleton } from 'solid-logic'
+import { ViewerMode } from './types'
 
 const { iconForClass } = widgets
 const { typeIndex } = solidLogicSingleton
@@ -32,7 +33,8 @@ export function getIconForClass (klass:NamedNode) {
 }
 
 export async function presentStuff(
-  subject: NamedNode
+  subject: NamedNode,
+  viewerMode: ViewerMode
 ): Promise<StuffPresentation> {
 
  const scopedItems = await getScopedAppInstances(null, subject)

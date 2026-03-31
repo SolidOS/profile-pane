@@ -1,5 +1,6 @@
 import { LiveStore, NamedNode, Literal, Namespace, Node, Store } from 'rdflib'
 import { ns, utils } from 'solid-ui'
+import { ViewerMode } from './types';
 
 export interface Role {
   startDate?: Literal,
@@ -122,7 +123,8 @@ function getRolesByType(
 
 export function presentCV(
   subject: NamedNode,
-  store: LiveStore
+  store: LiveStore,
+  viewerMode: ViewerMode
 ): CVPresentation {
   
  const rolesByType = getRolesByType(store, subject)

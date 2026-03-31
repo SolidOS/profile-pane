@@ -1,13 +1,15 @@
 import { DataBrowserContext } from 'pane-registry'
 import { NamedNode } from 'rdflib'
 import { html, TemplateResult } from 'lit-html'
-import './styles/FriendList.css'
 import { extractFriends } from './addMeToYourFriends'
+import { ViewerMode } from './types'
+import './styles/FriendList.css'
 
 
 export const FriendList = (
   subject: NamedNode,
-  context: DataBrowserContext
+  context: DataBrowserContext,
+  viewerMode: ViewerMode
 ): TemplateResult | null => {
   const friends = extractFriends(false, subject, context)
   if (!friends || !friends.textContent?.trim()) return null

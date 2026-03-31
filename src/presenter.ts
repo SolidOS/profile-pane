@@ -2,6 +2,7 @@ import { NamedNode, LiveStore } from 'rdflib'
 import { ns, utils, widgets } from 'solid-ui'
 import { store } from 'solid-logic'
 import { Node } from 'rdflib'
+import { ViewerMode } from './types'
 import { validateHTMLColorHex } from 'validate-color'
 
 export interface ProfilePresentation {
@@ -33,7 +34,8 @@ export function pronounsAsText (subject:NamedNode): string {
 
 export const presentProfile = (
   subject: NamedNode,
-  store: LiveStore
+  store: LiveStore,
+  viewerMode: ViewerMode
 ): ProfilePresentation => {
   const name = utils.label(subject)
   const imageSrc = widgets.findImage(subject)

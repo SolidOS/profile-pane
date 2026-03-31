@@ -1,10 +1,11 @@
 import { html, TemplateResult } from 'lit-html'
 import { SocialPresentation } from './SocialPresenter'
+import { ViewerMode } from './types'
 import './styles/SocialCard.css'
 
-
 export const SocialCard = (
-  SocialData: SocialPresentation
+  SocialData: SocialPresentation,
+  viewerMode: ViewerMode
 ): TemplateResult => {
  
   const { accounts } = SocialData
