@@ -72,11 +72,16 @@ const Pane = {
           if (error) {
             console.error('QRcode error!', error)
           } else {
-            // console.log('QRcode success.', svg);
-            QRCodeElement.innerHTML = svg
-            QRCodeElement.style.width = '80%'
-            QRCodeElement.style.height = '80%'
-            QRCodeElement.style.margin = '10%'
+            // Inject SVG only into the image container so caption/description remain in the figure.
+            const imageContainer = QRCodeElement.querySelector('div[role="img"]') as HTMLElement | null
+            if (!imageContainer) {
+              console.error('QRCode image container missing')
+              return
+            }
+            imageContainer.innerHTML = svg
+            imageContainer.style.width = '80%'
+            imageContainer.style.height = '80%'
+            imageContainer.style.margin = '10%'
           }
         })
 

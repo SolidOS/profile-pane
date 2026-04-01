@@ -97,7 +97,7 @@ function renderSidebar(
 function renderQRCode(profileBasics: ProfileBasics, subject: NamedNode) {
   return html`
       <div class="qrCodeSection section-centered">
-        ${QRCodeCard(profileBasics.highlightColor, profileBasics.backgroundColor, subject)}
+        ${QRCodeCard(subject)}
       </div>
   `
 }
