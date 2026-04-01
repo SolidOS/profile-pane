@@ -34,8 +34,7 @@ export function pronounsAsText (subject:NamedNode): string {
 
 export const presentProfile = (
   subject: NamedNode,
-  store: LiveStore,
-  viewerMode: ViewerMode
+  store: LiveStore
 ): ProfilePresentation => {
   const name = utils.label(subject)
   const imageSrc = widgets.findImage(subject)

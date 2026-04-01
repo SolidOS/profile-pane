@@ -3,9 +3,7 @@ import { DataBrowserContext } from 'pane-registry'
 import { NamedNode, LiveStore } from 'rdflib'
 import { authn } from 'solid-logic'
 import './styles/ProfileView.css'
-import { presentProfile } from './presenter'
-import { presentCV } from './CVPresenter' // 20210527
-import { presentSocial } from './SocialPresenter' // 20210527
+import { presentCV } from './CVPresenter' // 20210527// 20210527
 import { ProfileCard } from './ProfileCard'
 import { CVCard } from './CVCard'
 import { SocialCard } from './SocialCard'
@@ -16,11 +14,12 @@ import {
 } from './texts'
 import { ViewerMode } from './types'
 import { strToUpperCase } from './textUtils'
-import { selectProfileDetails } from './ProfileDetailsSelector'
+import { selectProfileViewModel } from './ProfileViewModelSelector'
 
-type ProfileBasics = ReturnType<typeof presentProfile>
-type SocialAccounts = ReturnType<typeof presentSocial>
-type ProfileDetails = ReturnType<typeof selectProfileDetails>
+type ProfileViewModelData = ReturnType<typeof selectProfileViewModel>
+type ProfileBasics = ProfileViewModelData['basics']
+type SocialAccounts = ProfileViewModelData['social']
+type ProfileDetails = Pick<ProfileViewModelData, 'skills' | 'languages'>
 
 
 function getViewerMode(subject: NamedNode): ViewerMode {
@@ -69,7 +68,8 @@ function renderCVSection(rolesByType, viewerMode: ViewerMode) {
 
 function renderSidebar(
   accounts: SocialAccounts,
-  profileDetails: ProfileDetails,
+  skills: string[],
+  languages: string[],
   profileBasics: ProfileBasics,
   subject: NamedNode,
   viewerMode: ViewerMode
@@ -86,8 +86,8 @@ function renderSidebar(
       </header>
       <div aria-label="Sidebar Content">
         ${renderSocialAccounts(accounts, viewerMode)}
-        ${renderSkillsSection(profileDetails)}
-        ${renderLanguageSection(profileDetails)}
+        ${renderSkillsSection(skills)}
+        ${renderLanguageSection(languages)}
         ${renderQRCode(profileBasics, subject)}
       </div>
     </aside>
@@ -114,8 +114,7 @@ function renderSkills(skills, asList = false) {
   return html`${renderSkill(skills[0], asList)}${skills.length > 1 ? renderSkills(skills.slice(1), asList) : html``}`
 }
 
-function renderSkillsSection(profileDetails: ProfileDetails) {
-  const { skills } = profileDetails
+function renderSkillsSection(skills: string[]) {
   const skillsArr = skills || []
   const hasSkills = Array.isArray(skillsArr) && skillsArr.length > 0
 
@@ -142,8 +141,7 @@ function renderLanguages(languages, asList = false) {
   return html`${renderLan(languages[0], asList)}${languages.length > 1 ? renderLanguages(languages.slice(1), asList) : html``}`
 }
 
-function renderLanguageSection(profileDetails: ProfileDetails) {
-  const { languages } = profileDetails
+function renderLanguageSection(languages: string[]) {
   const languagesArr = languages || []
   const hasLanguages = Array.isArray(languagesArr) && languagesArr.length > 0
 
@@ -166,10 +164,12 @@ export async function ProfileView (
   const store = context.session.store as LiveStore
   const viewerMode = getViewerMode(subject)
 
-  const profileBasics = presentProfile(subject, store, viewerMode)
-  const rolesByType = presentCV(subject, store)
-  const profileDetails = selectProfileDetails(subject, store)
-  const accounts = presentSocial(subject, store, viewerMode) 
+  const viewModel = selectProfileViewModel(subject, store)
+  const profileBasics = viewModel.basics
+  const rolesByType = viewModel.cvDetails
+  const skills = viewModel.skills
+  const languages = viewModel.languages
+  const accounts = viewModel.social
   
   return html` 
     <main
@@ -200,7 +200,7 @@ export async function ProfileView (
 
         ${renderCVSection(rolesByType, viewerMode)}
       </section>
-      ${renderSidebar(accounts, profileDetails, profileBasics, subject, viewerMode)}
+      ${renderSidebar(accounts, skills, languages, profileBasics, subject, viewerMode)}
     </main>
   `
 }

@@ -1,12 +1,7 @@
-import { LiveStore, NamedNode, Node, Store } from 'rdflib'
-import { ns, utils } from 'solid-ui'
+import { NamedNode, Store, Node, LiveStore } from "rdflib";
+import { ns, utils } from "solid-ui";
 
-type ProfileDetails = {
-  skills: string[],
-  languages: string[]
-}
-
-function expandRdfList(store: Store, node: Node): Node[] {
+export function expandRdfList(store: Store, node: Node): Node[] {
   const collectionElements = (node as { termType?: string; elements?: Node[] }).elements
   if (Array.isArray(collectionElements)) {
     return collectionElements.flatMap(element => expandRdfList(store, element))
@@ -27,19 +22,6 @@ function expandRdfList(store: Store, node: Node): Node[] {
   return items
 }
 
-export function skillAsText (store: Store, sk: Node):string {
-  if (sk.termType === 'Literal') return sk.value // Not normal but allow this
-  const publicId =  store.anyJS(sk as NamedNode, ns.solid('publicId'))
-  if (publicId) {
-    const name = store.anyJS(publicId, ns.schema('name'))
-    if (name) return name // @@ check language and get name in diff language if necessary
-  }
-
-  const manual = store.anyJS(sk as NamedNode, ns.vcard('role'))
-  if (manual && manual[0] > '') return manual
-  return ''
-}
-
 export function languageAsText (store: Store, lan: Node):string {
   if (lan.termType === 'Literal') return lan.value // Not normal but allow this
   const publicId = store.anyJS(lan as NamedNode, ns.solid('publicId'))
@@ -48,31 +30,11 @@ export function languageAsText (store: Store, lan: Node):string {
   return ''                                                  
 }
 
-function getSkills(subject: NamedNode, store: LiveStore): string[] {
-  return store
-    .each(subject, ns.schema('skills'))
-    .map((sk) => skillAsText(store, sk))
-    .filter((skill) => skill !== '')
-}
-
-function getLanguages(subject: NamedNode, store: LiveStore): string[] {
+export function selectLanguages(subject: NamedNode, store: LiveStore): string[] {
   const languageNodes = store.each(subject, ns.schema('knowsLanguage'))
   const languages = languageNodes
     .flatMap(node => expandRdfList(store, node))
     .map(lan => languageAsText(store, lan))
   // Deduplicate languages
   return Array.from(new Set(languages))
-}
-
-export function selectProfileDetails(
-  subject: NamedNode,
-  store: LiveStore
-): ProfileDetails {
-  
-  const skills = getSkills(subject, store)
-
-  const languages = getLanguages(subject, store)
-
-  return { skills, languages }
-
 }

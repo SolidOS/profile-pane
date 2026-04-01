@@ -49,8 +49,7 @@ function expandRdfList(store: LiveStore, node: Node): Node[] {
 
 export function presentSocial(
   subject: NamedNode,
-  store: LiveStore,
-  viewerMode: ViewerMode
+  store: LiveStore
 ): SocialPresentation {
   
   function nameForAccount (subject):string {
