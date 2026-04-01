@@ -8,7 +8,11 @@ import { contactHeadingText, friendsHeadingText, sharedItemsHeadingText } from "
 import { ChatWithMe } from "./ChatWithMe"
 import { FriendList } from "./FriendList"
 import { StuffCard } from "./StuffCard"
+import { ViewerMode } from "./types"
+import { DataBrowserContext } from "pane-registry"
+import { presentProfile } from "./presenter"
 
+type ProfileBasics = ReturnType<typeof presentProfile>
 type StuffData = Awaited<ReturnType<typeof presentStuff>>
 
 export function renderChatWithMeSection(subject: NamedNode, context: DataBrowserContext, viewerMode: ViewerMode) {
@@ -48,7 +52,11 @@ export function renderFriendsSection(subject: NamedNode, context: DataBrowserCon
   ` : ''
 }
 
-export function renderStuffSection(stuffData: StuffData, profileBasics: ProfileBasics, context: DataBrowserContext, subject: NamedNode, viewerMode: ViewerMode) {
+export async function renderStuffSection(profileBasics: ProfileBasics, context: DataBrowserContext, subject: NamedNode, viewerMode: ViewerMode) {
+  // stuff data was done somewhere else moving it 
+  // here for now so it doesn't get lost.
+  const stuffData: StuffData = await presentStuff(subject, viewerMode)
+
   return stuffData.stuff && stuffData.stuff.length > 0 ? html`
     <section 
       aria-labelledby="stuff-heading" 

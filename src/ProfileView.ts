@@ -6,7 +6,6 @@ import './styles/ProfileView.css'
 import { presentProfile } from './presenter'
 import { presentCV } from './CVPresenter' // 20210527
 import { presentSocial } from './SocialPresenter' // 20210527
-import { presentStuff } from './StuffPresenter' // 20210527
 import { ProfileCard } from './ProfileCard'
 import { CVCard } from './CVCard'
 import { SocialCard } from './SocialCard'
@@ -168,8 +167,7 @@ export async function ProfileView (
   const rolesByType = presentCV(subject, store)
   const profileDetails = selectProfileDetails(subject, store)
   const accounts = presentSocial(subject, store, viewerMode) 
-  const stuffData = await presentStuff(subject, viewerMode)
-
+  
   return html` 
     <main
       id="main-content"

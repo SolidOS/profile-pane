@@ -4,7 +4,6 @@ import { ProfilePresentation } from './presenter'
 import { addMeToYourFriendsDiv } from './addMeToYourFriends'
 import { DataBrowserContext } from 'pane-registry'
 import { NamedNode } from 'rdflib'
-import { QRCodeCard } from './QRCodeCard'
 import { ViewerMode } from './types'
 
 

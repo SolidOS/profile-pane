@@ -1,7 +1,14 @@
 /* ProfileView.css */
 /* Uses utilities: .section-bg, .text-center */
 
-/* Horizontal layout for cards */
+
+.profile-grid {
+  display: flex;
+  grid-template-columns: 1fr;
+  gap: var(--spacing-lg);
+  flex-direction: column;
+}
+
 .profile-grid .profileSection {
   width: 100%;
   max-width: 100%;
