@@ -22,12 +22,134 @@ import {
 } from './texts'
 import { ViewerMode } from './types'
 
+type ProfileBasics = ReturnType<typeof presentProfile>
+type SocialAccounts = ReturnType<typeof presentSocial>
+type StuffData = Awaited<ReturnType<typeof presentStuff>>
+
 
 function getViewerMode(subject: NamedNode): ViewerMode {
   let mode: ViewerMode = 'anonymous'
   if (authn.currentUser() && authn.currentUser().sameTerm(subject)) mode = 'owner'
   if (authn.currentUser() && !authn.currentUser().sameTerm(subject)) mode = 'authenticated'
   return mode
+}
+
+function renderSocialAccounts(accounts: SocialAccounts, viewerMode: ViewerMode) {
+   return accounts.accounts && accounts.accounts.length > 0 ? html`
+        <aside 
+          aria-labelledby="social-heading" 
+          class="profileSection section-bg" 
+          role="complementary"
+          tabindex="-1"
+        >
+          <header class="text-center mb-md">
+            <h2 id="social-heading" tabindex="-1">${socialAccountsHeadingText}</h2>
+          </header>
+          <nav aria-label="Social media links">
+            ${SocialCard(accounts, viewerMode)}
+          </nav>
+        </aside>
+      ` : ''
+}
+
+function renderFriends(subject, context, viewerMode: ViewerMode) {
+  const friends = FriendList(subject, context, viewerMode)
+  return friends ? html`
+    <aside 
+      aria-labelledby="friends-heading" 
+      class="profileSection section-bg" 
+      role="complementary"
+      tabindex="-1"
+    >
+      <header class="text-center mb-md">
+        <h2 id="friends-heading" tabindex="-1">${friendsHeadingText}</h2>
+      </header>
+      <div role="list" aria-label="Friend connections">
+        ${friends}
+      </div>
+    </aside>
+  ` : ''
+}
+
+function renderStuff(stuffData: StuffData, profileBasics: ProfileBasics, context: DataBrowserContext, subject: NamedNode, viewerMode: ViewerMode) {
+  return stuffData.stuff && stuffData.stuff.length > 0 ? html`
+    <section 
+      aria-labelledby="stuff-heading" 
+      class="profileSection section-bg" 
+      role="region"
+      tabindex="-1"
+    >
+      <header class="text-center mb-md">
+        <h2 id="stuff-heading" tabindex="-1">${sharedItemsHeadingText}</h2>
+      </header>
+      <div>
+        ${StuffCard(profileBasics, context, subject, stuffData, viewerMode)}
+      </div>
+    </section>
+  ` : ''
+}
+
+function renderCV(rolesByType, viewerMode: ViewerMode) {
+  const cv = CVCard(rolesByType, viewerMode)
+  return cv && cv.strings && cv.strings.join('').trim() !== '' ? html`
+    <section 
+      aria-labelledby="cv-heading" 
+      class="profileSection section-bg" 
+      role="region"
+      tabindex="-1"
+    >
+      <header class="text-center mb-md">
+        <h2 id="cv-heading" tabindex="-1">${resumeHeadingText}</h2>
+      </header>
+      <div>
+        ${cv}
+      </div>
+    </section>
+  ` : ''
+}
+
+function renderSidebar(
+  accounts: SocialAccounts,
+  stuffData: StuffData,
+  profileBasics: ProfileBasics,
+  context: DataBrowserContext,
+  subject: NamedNode,
+  viewerMode: ViewerMode
+) {
+  return html`
+    <aside 
+      aria-labelledby="sidebar-heading" 
+      class="profileSection profileSidebar section-bg" 
+      role="complementary"
+      tabindex="-1"
+    >
+      <header class="text-center mb-md">
+        <h2 id="sidebar-heading" tabindex="-1">Sidebar</h2>
+      </header>
+      <nav aria-label="Sidebar navigation">
+        ${renderSocialAccounts(accounts, viewerMode)}
+        ${renderStuff(stuffData, profileBasics, context, subject, viewerMode)}
+      </nav>
+    </aside>
+  `
+}
+
+function renderChatWithMe(subject, context, viewerMode: ViewerMode) {
+  return html`
+    <section 
+      aria-labelledby="chat-heading" 
+      class="profileSection section-bg" 
+      role="region"
+      tabindex="-1"
+    >
+        <header class="text-center mb-md">
+          <h2 id="chat-heading" tabindex="-1">${contactHeadingText}</h2>
+        </header>
+        <div>
+          ${ChatWithMe(subject, context, viewerMode)}
+        </div>
+      </section>
+  ` 
 }
 
 export async function ProfileView (
@@ -64,89 +186,11 @@ export async function ProfileView (
         ${ProfileCard(profileBasics, context, subject, viewerMode)}
       </article>
 
-      ${(() => {
-        const cv = CVCard(rolesByType, viewerMode)
-        return cv && cv.strings && cv.strings.join('').trim() !== '' ? html`
-          <section 
-            aria-labelledby="cv-heading" 
-            class="profileSection section-bg" 
-            role="region"
-            tabindex="-1"
-          >
-            <header class="text-center mb-md">
-              <h2 id="cv-heading" tabindex="-1">${resumeHeadingText}</h2>
-            </header>
-            <div>
-              ${cv}
-            </div>
-          </section>
-        ` : ''
-      })()}
+      ${renderCV(rolesByType, viewerMode)}
 
-      ${accounts.accounts && accounts.accounts.length > 0 ? html`
-        <aside 
-          aria-labelledby="social-heading" 
-          class="profileSection section-bg" 
-          role="complementary"
-          tabindex="-1"
-        >
-          <header class="text-center mb-md">
-            <h2 id="social-heading" tabindex="-1">${socialAccountsHeadingText}</h2>
-          </header>
-          <nav aria-label="Social media links">
-            ${SocialCard(accounts, viewerMode)}
-          </nav>
-        </aside>
-      ` : ''}
+      ${renderSidebar(accounts, stuffData, profileBasics, context, subject, viewerMode)}
 
-      ${stuffData.stuff && stuffData.stuff.length > 0 ? html`
-        <section 
-          aria-labelledby="stuff-heading" 
-          class="profileSection section-bg" 
-          role="region"
-          tabindex="-1"
-        >
-          <header class="text-center mb-md">
-            <h2 id="stuff-heading" tabindex="-1">${sharedItemsHeadingText}</h2>
-          </header>
-          <div>
-            ${StuffCard(profileBasics, context, subject, stuffData, viewerMode)}
-          </div>
-        </section>
-      ` : ''}
 
-      ${(() => {
-        const friends = FriendList(subject, context, viewerMode)
-        return friends ? html`
-          <aside 
-            aria-labelledby="friends-heading" 
-            class="profileSection section-bg" 
-            role="complementary"
-            tabindex="-1"
-          >
-            <header class="text-center mb-md">
-              <h2 id="friends-heading" tabindex="-1">${friendsHeadingText}</h2>
-            </header>
-            <div role="list" aria-label="Friend connections">
-              ${friends}
-            </div>
-          </aside>
-        ` : ''
-      })()}
-
-      <section 
-        aria-labelledby="chat-heading" 
-        class="profileSection section-bg" 
-        role="region"
-        tabindex="-1"
-      >
-        <header class="text-center mb-md">
-          <h2 id="chat-heading" tabindex="-1">${contactHeadingText}</h2>
-        </header>
-        <div>
-          ${ChatWithMe(subject, context, viewerMode)}
-        </div>
-      </section>
     </main>
   `
 }

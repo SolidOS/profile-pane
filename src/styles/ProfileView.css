@@ -17,4 +17,9 @@
   .profile-grid .profileSection {
     margin-bottom: 0;
   }
+
+  .profile-grid .profileSidebar {
+    grid-column: 2;
+    align-self: start;
+  }
 }
