@@ -13,6 +13,7 @@ import { ProfileCard } from './ProfileCard'
 import { CVCard } from './CVCard'
 import { SocialCard } from './SocialCard'
 import { StuffCard } from './StuffCard'
+import { QRCodeCard } from './QRCodeCard'
 import {
   resumeHeadingText,
   socialAccountsHeadingText,
@@ -21,6 +22,7 @@ import {
   contactHeadingText
 } from './texts'
 import { ViewerMode } from './types'
+
 
 type ProfileBasics = ReturnType<typeof presentProfile>
 type SocialAccounts = ReturnType<typeof presentSocial>
@@ -129,6 +131,7 @@ function renderSidebar(
       <nav aria-label="Sidebar navigation">
         ${renderSocialAccounts(accounts, viewerMode)}
         ${renderStuff(stuffData, profileBasics, context, subject, viewerMode)}
+        ${renderQRCode(profileBasics, subject)}
       </nav>
     </aside>
   `
@@ -150,6 +153,14 @@ function renderChatWithMe(subject, context, viewerMode: ViewerMode) {
         </div>
       </section>
   ` 
+}
+
+function renderQRCode(profileBasics: ProfileBasics, subject: NamedNode) {
+  return html`
+      <div class="qrCodeSection section-centered">
+        ${QRCodeCard(profileBasics.highlightColor, profileBasics.backgroundColor, subject)}
+      </div>
+  `
 }
 
 export async function ProfileView (

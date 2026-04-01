@@ -29,9 +29,6 @@ export const ProfileCard = ({
         ${addMeToYourFriendsDiv(subject, context, viewerMode)}
       </section>
       
-      <div class="qrCodeSection section-centered">
-        ${QRCodeCard(highlightColor, backgroundColor, subject)}
-      </div>
     </article>
   `
 }
