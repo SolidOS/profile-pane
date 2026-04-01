@@ -13,6 +13,16 @@
   overflow-wrap: anywhere;
 }
 
+.profile-grid .profileSidebar {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  text-align: left;
+  padding: var(--spacing-lg);
+  border-radius: var(--border-radius-base);
+  background: var(--color-card-bg);
+}
+
 @media (min-width: 900px) {
   .profile-grid .profileSection {
     margin-bottom: 0;

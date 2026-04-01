@@ -57,7 +57,7 @@ function renderCVSection(rolesByType, viewerMode: ViewerMode) {
       role="region"
       tabindex="-1"
     >
-      <header class="text-center mb-md">
+      <header class="mb-md">
         <h2 id="cv-heading" tabindex="-1">${resumeHeadingText}</h2>
       </header>
       <div>
@@ -77,11 +77,11 @@ function renderSidebar(
   return html`
     <aside 
       aria-labelledby="sidebar-heading" 
-      class="profileSection profileSidebar section-bg" 
+      class="profileSidebar section-bg" 
       role="complementary"
       tabindex="-1"
     >
-      <header class="text-center mb-md">
+      <header class="sr-only">
         <h2 id="sidebar-heading" tabindex="-1">Sidebar</h2>
       </header>
       <div aria-label="Sidebar Content">

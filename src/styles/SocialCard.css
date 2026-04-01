@@ -12,12 +12,6 @@
 .socialItem {
   display: flex;
   align-items: center;
-  font-size: 1.1em;
-}
-
-.socialItem span {
-  min-width: 0;
-  display: block;
 }
 
 .socialItem a {
