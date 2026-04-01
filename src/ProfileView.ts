@@ -135,7 +135,6 @@ function renderSidebar(
         ${renderSocialAccounts(accounts, viewerMode)}
         ${renderSkillsSection(profileDetails)}
         ${renderLanguageSection(profileDetails)}
-        ${renderStuffSection(stuffData, profileBasics, context, subject, viewerMode)}
         ${renderQRCode(profileBasics, subject)}
       </nav>
     </aside>
