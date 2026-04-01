@@ -2,13 +2,6 @@
 /* Uses utilities: .section-bg, .text-center */
 
 
-.profile-grid {
-  display: flex;
-  grid-template-columns: 1fr;
-  gap: var(--spacing-lg);
-  flex-direction: column;
-}
-
 .profile-grid .profileSection {
   width: 100%;
   max-width: 100%;
@@ -25,8 +18,5 @@
     margin-bottom: 0;
   }
 
-  .profile-grid .profileSidebar {
-    grid-column: 2;
-    align-self: start;
-  }
 }
+

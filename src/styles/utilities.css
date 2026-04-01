@@ -35,10 +35,15 @@
 
 .profile-grid {
   display: grid;
-  /* Allow the grid to shrink below 30em on small viewports to avoid overflow */
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 30em), 1fr));
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
   gap: var(--spacing-lg);
   background: var(--color-background);
+}
+
+@media (max-width: 900px) {
+  .profile-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 .profile-header,

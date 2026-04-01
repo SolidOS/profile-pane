@@ -84,12 +84,12 @@ function renderSidebar(
       <header class="text-center mb-md">
         <h2 id="sidebar-heading" tabindex="-1">Sidebar</h2>
       </header>
-      <nav aria-label="Sidebar navigation">
+      <div aria-label="Sidebar Content">
         ${renderSocialAccounts(accounts, viewerMode)}
         ${renderSkillsSection(profileDetails)}
         ${renderLanguageSection(profileDetails)}
         ${renderQRCode(profileBasics, subject)}
-      </nav>
+      </div>
     </aside>
   `
 }
@@ -177,21 +177,26 @@ export async function ProfileView (
       aria-label="Profile for ${profileBasics.name}"
       tabindex="-1"
     > 
-
-      <article 
-        aria-labelledby="profile-card-heading" 
-        class="profileSection section-bg" 
+      <section
+        class="profileSection section-bg"
         role="region"
-        tabindex="-1"
-      >
-        <header class="text-center mb-md">
-          <h2 id="profile-card-heading" tabindex="-1">${profileBasics.name}</h2>
-        </header>
-        ${ProfileCard(profileBasics, context, subject, viewerMode)}
-      </article>
+        aria-labelledby="profile-content-heading"
+        >
+        <h2 id="profile-content-heading" class="sr-only">Profile content</h2>
+        <article 
+          aria-labelledby="profile-card-heading" 
+          class="section-bg" 
+          role="region"
+          tabindex="-1"
+        >
+          <header class="text-center mb-md">
+            <h2 id="profile-card-heading" tabindex="-1">${profileBasics.name}</h2>
+          </header>
+          ${ProfileCard(profileBasics, context, subject, viewerMode)}
+        </article>
 
-      ${renderCVSection(rolesByType, viewerMode)}
-
+        ${renderCVSection(rolesByType, viewerMode)}
+      </section>
       ${renderSidebar(accounts, profileDetails, profileBasics, subject, viewerMode)}
     </main>
   `
