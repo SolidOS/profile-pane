@@ -22,11 +22,13 @@ import {
   contactHeadingText
 } from './texts'
 import { ViewerMode } from './types'
-
+import { strToUpperCase } from './textUtils'
+import { selectProfileDetails } from './ProfileDetailsSelector'
 
 type ProfileBasics = ReturnType<typeof presentProfile>
 type SocialAccounts = ReturnType<typeof presentSocial>
 type StuffData = Awaited<ReturnType<typeof presentStuff>>
+type ProfileDetails = ReturnType<typeof selectProfileDetails>
 
 
 function getViewerMode(subject: NamedNode): ViewerMode {
@@ -54,26 +56,7 @@ function renderSocialAccounts(accounts: SocialAccounts, viewerMode: ViewerMode) 
       ` : ''
 }
 
-function renderFriends(subject, context, viewerMode: ViewerMode) {
-  const friends = FriendList(subject, context, viewerMode)
-  return friends ? html`
-    <aside 
-      aria-labelledby="friends-heading" 
-      class="profileSection section-bg" 
-      role="complementary"
-      tabindex="-1"
-    >
-      <header class="text-center mb-md">
-        <h2 id="friends-heading" tabindex="-1">${friendsHeadingText}</h2>
-      </header>
-      <div role="list" aria-label="Friend connections">
-        ${friends}
-      </div>
-    </aside>
-  ` : ''
-}
-
-function renderStuff(stuffData: StuffData, profileBasics: ProfileBasics, context: DataBrowserContext, subject: NamedNode, viewerMode: ViewerMode) {
+function renderStuffSection(stuffData: StuffData, profileBasics: ProfileBasics, context: DataBrowserContext, subject: NamedNode, viewerMode: ViewerMode) {
   return stuffData.stuff && stuffData.stuff.length > 0 ? html`
     <section 
       aria-labelledby="stuff-heading" 
@@ -91,7 +74,7 @@ function renderStuff(stuffData: StuffData, profileBasics: ProfileBasics, context
   ` : ''
 }
 
-function renderCV(rolesByType, viewerMode: ViewerMode) {
+function renderCVSection(rolesByType, viewerMode: ViewerMode) {
   const cv = CVCard(rolesByType, viewerMode)
   return cv && cv.strings && cv.strings.join('').trim() !== '' ? html`
     <section 
@@ -110,8 +93,28 @@ function renderCV(rolesByType, viewerMode: ViewerMode) {
   ` : ''
 }
 
+function renderFriendsSection(subject: NamedNode, context: DataBrowserContext, viewerMode: ViewerMode) {
+  const friends = FriendList(subject, context, viewerMode)
+  return friends ? html`
+    <aside
+      aria-labelledby="friends-heading"
+      class="profileSection section-bg"
+      role="complementary"
+      tabindex="-1"
+    >
+      <header class="text-center mb-md">
+        <h2 id="friends-heading" tabindex="-1">${friendsHeadingText}</h2>
+      </header>
+      <div role="list" aria-label="Friend connections">
+        ${friends}
+      </div>
+    </aside>
+  ` : ''
+}
+
 function renderSidebar(
   accounts: SocialAccounts,
+  profileDetails: ProfileDetails,
   stuffData: StuffData,
   profileBasics: ProfileBasics,
   context: DataBrowserContext,
@@ -130,29 +133,31 @@ function renderSidebar(
       </header>
       <nav aria-label="Sidebar navigation">
         ${renderSocialAccounts(accounts, viewerMode)}
-        ${renderStuff(stuffData, profileBasics, context, subject, viewerMode)}
+        ${renderSkillsSection(profileDetails)}
+        ${renderLanguageSection(profileDetails)}
+        ${renderStuffSection(stuffData, profileBasics, context, subject, viewerMode)}
         ${renderQRCode(profileBasics, subject)}
       </nav>
     </aside>
   `
 }
 
-function renderChatWithMe(subject, context, viewerMode: ViewerMode) {
+function renderChatWithMeSection(subject: NamedNode, context: DataBrowserContext, viewerMode: ViewerMode) {
   return html`
-    <section 
-      aria-labelledby="chat-heading" 
-      class="profileSection section-bg" 
+    <section
+      aria-labelledby="chat-heading"
+      class="profileSection section-bg"
       role="region"
       tabindex="-1"
     >
-        <header class="text-center mb-md">
-          <h2 id="chat-heading" tabindex="-1">${contactHeadingText}</h2>
-        </header>
-        <div>
-          ${ChatWithMe(subject, context, viewerMode)}
-        </div>
-      </section>
-  ` 
+      <header class="text-center mb-md">
+        <h2 id="chat-heading" tabindex="-1">${contactHeadingText}</h2>
+      </header>
+      <div>
+        ${ChatWithMe(subject, context, viewerMode)}
+      </div>
+    </section>
+  `
 }
 
 function renderQRCode(profileBasics: ProfileBasics, subject: NamedNode) {
@@ -163,6 +168,60 @@ function renderQRCode(profileBasics: ProfileBasics, subject: NamedNode) {
   `
 }
 
+function renderSkill(skill, asList = false) {
+  if (!skill) return html``
+  return asList
+    ? html`<li class="cvSkill">${strToUpperCase(skill)}</li>`
+    : html``
+}
+
+function renderSkills(skills, asList = false) {
+  if (!skills || !skills.length || !skills[0]) return html``
+  return html`${renderSkill(skills[0], asList)}${skills.length > 1 ? renderSkills(skills.slice(1), asList) : html``}`
+}
+
+function renderSkillsSection(profileDetails: ProfileDetails) {
+  const { skills } = profileDetails
+  const skillsArr = skills || []
+  const hasSkills = Array.isArray(skillsArr) && skillsArr.length > 0
+
+  return hasSkills ? html`
+    <section class="cvSection" aria-labelledby="cv-skills-heading">
+      <h3 id="cv-skills-heading">Skills</h3>
+      <ul role="list" aria-label="Professional skills and competencies">
+        ${renderSkills(skillsArr, true)}
+      </ul>
+    </section>
+  ` : ''
+}
+
+function renderLan(language, asList = false) {
+  if (!language) return html``
+  return asList
+    ? html`<li class="cvLanguage">${language}</li>`
+    : html``
+}
+
+function renderLanguages(languages, asList = false) {
+  if (!languages || !languages.length || !languages[0]) return html``
+  return html`${renderLan(languages[0], asList)}${languages.length > 1 ? renderLanguages(languages.slice(1), asList) : html``}`
+}
+
+function renderLanguageSection(profileDetails: ProfileDetails) {
+  const { languages } = profileDetails
+  const languagesArr = languages || []
+  const hasLanguages = Array.isArray(languagesArr) && languagesArr.length > 0
+
+  return hasLanguages ? html`
+    <section class="cvSection" aria-labelledby="cv-languages-heading">
+      <h3 id="cv-languages-heading">Languages</h3>
+      <ul role="list" aria-label="Known languages">
+        ${renderLanguages(languagesArr, true)}
+      </ul>
+    </section>
+  ` : ''
+}
+
 export async function ProfileView (
   subject: NamedNode,
   context: DataBrowserContext
@@ -171,7 +230,8 @@ export async function ProfileView (
   const viewerMode = getViewerMode(subject)
 
   const profileBasics = presentProfile(subject, store, viewerMode)
-  const rolesByType = presentCV(subject, store, viewerMode) 
+  const rolesByType = presentCV(subject, store)
+  const profileDetails = selectProfileDetails(subject, store)
   const accounts = presentSocial(subject, store, viewerMode) 
   const stuffData = await presentStuff(subject, viewerMode)
 
@@ -197,11 +257,9 @@ export async function ProfileView (
         ${ProfileCard(profileBasics, context, subject, viewerMode)}
       </article>
 
-      ${renderCV(rolesByType, viewerMode)}
+      ${renderCVSection(rolesByType, viewerMode)}
 
-      ${renderSidebar(accounts, stuffData, profileBasics, context, subject, viewerMode)}
-
-
+      ${renderSidebar(accounts, profileDetails, stuffData, profileBasics, context, subject, viewerMode)}
     </main>
   `
 }
