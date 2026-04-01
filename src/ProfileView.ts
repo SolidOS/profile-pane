@@ -32,7 +32,7 @@ function getViewerMode(subject: NamedNode): ViewerMode {
 
 function renderSocialAccounts(accounts: SocialAccounts, viewerMode: ViewerMode) {
    return accounts.accounts && accounts.accounts.length > 0 ? html`
-        <aside 
+        <section 
           aria-labelledby="social-heading" 
           class="profileSection section-bg" 
           role="complementary"
@@ -44,7 +44,7 @@ function renderSocialAccounts(accounts: SocialAccounts, viewerMode: ViewerMode) 
           <nav aria-label="Social media links">
             ${SocialCard(accounts, viewerMode)}
           </nav>
-        </aside>
+        </section>
       ` : ''
 }
 
