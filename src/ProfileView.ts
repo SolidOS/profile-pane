@@ -3,8 +3,6 @@ import { DataBrowserContext } from 'pane-registry'
 import { NamedNode, LiveStore } from 'rdflib'
 import { authn } from 'solid-logic'
 import './styles/ProfileView.css'
-import { ChatWithMe } from './ChatWithMe'
-import { FriendList } from './FriendList'
 import { presentProfile } from './presenter'
 import { presentCV } from './CVPresenter' // 20210527
 import { presentSocial } from './SocialPresenter' // 20210527
@@ -12,14 +10,10 @@ import { presentStuff } from './StuffPresenter' // 20210527
 import { ProfileCard } from './ProfileCard'
 import { CVCard } from './CVCard'
 import { SocialCard } from './SocialCard'
-import { StuffCard } from './StuffCard'
 import { QRCodeCard } from './QRCodeCard'
 import {
   resumeHeadingText,
   socialAccountsHeadingText,
-  sharedItemsHeadingText,
-  friendsHeadingText,
-  contactHeadingText
 } from './texts'
 import { ViewerMode } from './types'
 import { strToUpperCase } from './textUtils'
@@ -27,7 +21,6 @@ import { selectProfileDetails } from './ProfileDetailsSelector'
 
 type ProfileBasics = ReturnType<typeof presentProfile>
 type SocialAccounts = ReturnType<typeof presentSocial>
-type StuffData = Awaited<ReturnType<typeof presentStuff>>
 type ProfileDetails = ReturnType<typeof selectProfileDetails>
 
 
@@ -56,24 +49,6 @@ function renderSocialAccounts(accounts: SocialAccounts, viewerMode: ViewerMode) 
       ` : ''
 }
 
-function renderStuffSection(stuffData: StuffData, profileBasics: ProfileBasics, context: DataBrowserContext, subject: NamedNode, viewerMode: ViewerMode) {
-  return stuffData.stuff && stuffData.stuff.length > 0 ? html`
-    <section 
-      aria-labelledby="stuff-heading" 
-      class="profileSection section-bg" 
-      role="region"
-      tabindex="-1"
-    >
-      <header class="text-center mb-md">
-        <h2 id="stuff-heading" tabindex="-1">${sharedItemsHeadingText}</h2>
-      </header>
-      <div>
-        ${StuffCard(profileBasics, context, subject, stuffData, viewerMode)}
-      </div>
-    </section>
-  ` : ''
-}
-
 function renderCVSection(rolesByType, viewerMode: ViewerMode) {
   const cv = CVCard(rolesByType, viewerMode)
   return cv && cv.strings && cv.strings.join('').trim() !== '' ? html`
@@ -93,31 +68,10 @@ function renderCVSection(rolesByType, viewerMode: ViewerMode) {
   ` : ''
 }
 
-function renderFriendsSection(subject: NamedNode, context: DataBrowserContext, viewerMode: ViewerMode) {
-  const friends = FriendList(subject, context, viewerMode)
-  return friends ? html`
-    <aside
-      aria-labelledby="friends-heading"
-      class="profileSection section-bg"
-      role="complementary"
-      tabindex="-1"
-    >
-      <header class="text-center mb-md">
-        <h2 id="friends-heading" tabindex="-1">${friendsHeadingText}</h2>
-      </header>
-      <div role="list" aria-label="Friend connections">
-        ${friends}
-      </div>
-    </aside>
-  ` : ''
-}
-
 function renderSidebar(
   accounts: SocialAccounts,
   profileDetails: ProfileDetails,
-  stuffData: StuffData,
   profileBasics: ProfileBasics,
-  context: DataBrowserContext,
   subject: NamedNode,
   viewerMode: ViewerMode
 ) {
@@ -138,24 +92,6 @@ function renderSidebar(
         ${renderQRCode(profileBasics, subject)}
       </nav>
     </aside>
-  `
-}
-
-function renderChatWithMeSection(subject: NamedNode, context: DataBrowserContext, viewerMode: ViewerMode) {
-  return html`
-    <section
-      aria-labelledby="chat-heading"
-      class="profileSection section-bg"
-      role="region"
-      tabindex="-1"
-    >
-      <header class="text-center mb-md">
-        <h2 id="chat-heading" tabindex="-1">${contactHeadingText}</h2>
-      </header>
-      <div>
-        ${ChatWithMe(subject, context, viewerMode)}
-      </div>
-    </section>
   `
 }
 
@@ -258,7 +194,7 @@ export async function ProfileView (
 
       ${renderCVSection(rolesByType, viewerMode)}
 
-      ${renderSidebar(accounts, profileDetails, stuffData, profileBasics, context, subject, viewerMode)}
+      ${renderSidebar(accounts, profileDetails, profileBasics, subject, viewerMode)}
     </main>
   `
 }
