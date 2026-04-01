@@ -8,7 +8,7 @@ import { CVPresentation, presentCV } from './CVPresenter';
 
 export type ProfileViewModel = {
   basics: ProfilePresentation,
-  contact: ContactDetails,
+  contactDetails: ContactDetails,
   skills: string[],
   languages: string[], 
   social: SocialPresentation,
@@ -17,7 +17,7 @@ export type ProfileViewModel = {
 
 export function selectProfileViewModel(subject: NamedNode, store: LiveStore): ProfileViewModel {
   const basics = presentProfile(subject, store)
-  const contact = selectContactDetails(subject, store)
+  const contactDetails = selectContactDetails(subject, store)
   const skills = selectSkills(subject, store)
   const languages = selectLanguages(subject, store)
   const social = presentSocial(subject, store)
@@ -26,7 +26,7 @@ export function selectProfileViewModel(subject: NamedNode, store: LiveStore): Pr
   return { 
     basics,
     social,
-    contact,
+    contactDetails,
     skills, 
     languages,
     cvDetails

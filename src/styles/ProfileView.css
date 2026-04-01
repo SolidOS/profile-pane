@@ -23,6 +23,12 @@
   background: var(--color-card-bg);
 }
 
+.profile-grid .phone-type {
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-base);
+  color: var(--color-text-secondary);
+}
+
 @media (min-width: 900px) {
   .profile-grid .profileSection {
     margin-bottom: 0;

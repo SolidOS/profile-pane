@@ -26,16 +26,26 @@ export interface ContactDetails {
   phones: PhoneDetails[],
   addresses: AddressDetails[]
 }
+
+function termValue(term: any): string {
+  if (!term) return ''
+  if (typeof term === 'string') return term
+  return term.value || ''
+}
+
 function selectEmails(subject: NamedNode, store: LiveStore): EmailDetails[] {
   let emails: EmailDetails[] = []
   let type = null
   let email = null
   
   const emailNodes = store.each(subject, ns.vcard('hasEmail'), null, subject.doc()) || null
-    emailNodes.map((node) => {
-    email = store.any(node as NamedNode, ns.vcard('value'), null, subject.doc())
+  emailNodes.map((node) => {
+    email = store.any(node as NamedNode, ns.vcard('value'), null, subject.doc()) || node
     type = store.any(node as NamedNode, ns.rdf('type'), null, subject.doc())
-    emails.push({ type, email})
+    const emailValue = termValue(email)
+    if (emailValue) {
+      emails.push({ type, email })
+    }
   })
   return emails
 }
@@ -47,9 +57,12 @@ function selectPhones(subject: NamedNode, store: LiveStore): PhoneDetails[] {
 
   const phoneNodes = store.each(subject, ns.vcard('hasTelephone'), null, subject.doc()) || null
   phoneNodes.map((node) => {
-    phoneNumber = store.any(node as NamedNode, ns.vcard('value'), null, subject.doc())
+    phoneNumber = store.any(node as NamedNode, ns.vcard('value'), null, subject.doc()) || node
     type = store.any(node as NamedNode, ns.rdf('type'), null, subject.doc())
-    phoneNumbers.push({type, phoneNumber})  
+    const phoneValue = termValue(phoneNumber)
+    if (phoneValue) {
+      phoneNumbers.push({type, phoneNumber})
+    }
   })
   return phoneNumbers
 }
