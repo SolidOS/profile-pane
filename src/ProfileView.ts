@@ -34,12 +34,12 @@ function renderSocialAccounts(accounts: SocialAccounts, viewerMode: ViewerMode) 
    return accounts.accounts && accounts.accounts.length > 0 ? html`
         <section 
           aria-labelledby="social-heading" 
-          class="profileSection section-bg" 
+          class="section-bg" 
           role="complementary"
           tabindex="-1"
         >
           <header class="mb-md">
-            <h2 id="social-heading" tabindex="-1">${socialAccountsHeadingText}</h2>
+            <h3 id="social-heading" tabindex="-1">${socialAccountsHeadingText}</h3>
           </header>
           <nav aria-label="Social media links">
             ${SocialCard(accounts, viewerMode)}
@@ -53,12 +53,12 @@ function renderCVSection(rolesByType, viewerMode: ViewerMode) {
   return cv && cv.strings && cv.strings.join('').trim() !== '' ? html`
     <section 
       aria-labelledby="cv-heading" 
-      class="profileSection section-bg" 
+      class="section-bg" 
       role="region"
       tabindex="-1"
     >
       <header class="mb-md">
-        <h2 id="cv-heading" tabindex="-1">${resumeHeadingText}</h2>
+        <h3 id="cv-heading" tabindex="-1">${resumeHeadingText}</h3>
       </header>
       <div>
         ${cv}
@@ -120,8 +120,9 @@ function renderSkillsSection(profileDetails: ProfileDetails) {
   const hasSkills = Array.isArray(skillsArr) && skillsArr.length > 0
 
   return hasSkills ? html`
-    <section class="cvSection" aria-labelledby="cv-skills-heading">
-      <h3 id="cv-skills-heading">Skills</h3>
+    <section class="section-bg" aria-labelledby="skills-heading">
+    <header class="mb-md">
+      <h3 id="skills-heading">Skills</h3>
       <ul role="list" aria-label="Professional skills and competencies">
         ${renderSkills(skillsArr, true)}
       </ul>
@@ -147,8 +148,10 @@ function renderLanguageSection(profileDetails: ProfileDetails) {
   const hasLanguages = Array.isArray(languagesArr) && languagesArr.length > 0
 
   return hasLanguages ? html`
-    <section class="cvSection" aria-labelledby="cv-languages-heading">
-      <h3 id="cv-languages-heading">Languages</h3>
+    <section class="section-bg" aria-labelledby="languages-heading">
+      <header class="mb-md">
+        <h3 id="languages-heading">Languages</h3>
+      </header>
       <ul role="list" aria-label="Known languages">
         ${renderLanguages(languagesArr, true)}
       </ul>
