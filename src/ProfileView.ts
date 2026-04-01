@@ -16,6 +16,7 @@ import { ViewerMode } from './types'
 import { strToUpperCase } from './textUtils'
 import { selectProfileViewModel } from './ProfileViewModelSelector'
 import { ContactDetails } from './ContactDetailsPresenter'
+import { renderContactInfoSection } from './sections/contactInfo/ContactInfoSection'
 
 type ProfileViewModelData = ReturnType<typeof selectProfileViewModel>
 type ProfileBasics = ProfileViewModelData['basics']
@@ -90,7 +91,7 @@ function renderSidebar(
         ${renderSocialAccounts(accounts, viewerMode)}
         ${renderSkillsSection(skills)}
         ${renderLanguageSection(languages)}
-        ${renderContactDetailsSection(contactDetails, viewerMode)}
+        ${renderContactInfoSection(contactDetails, viewerMode)}
         ${renderQRCode(profileBasics, subject)}
       </div>
     </aside>

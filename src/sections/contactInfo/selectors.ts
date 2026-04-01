@@ -68,7 +68,7 @@ function selectAddresses(subject: NamedNode, store: LiveStore): AddressDetails[]
   return addresses
 }
 
-export function selectContactDetails(subject: NamedNode, store: LiveStore): ContactDetails {
+export function selectContactInfo(subject: NamedNode, store: LiveStore): ContactDetails {
   const emails = selectEmails(subject, store)
   const phones = selectPhones(subject, store)
   const addresses = selectAddresses(subject, store)

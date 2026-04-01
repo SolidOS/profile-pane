@@ -1,4 +1,5 @@
 import { html } from "lit-html"
+import { ViewerMode } from "../../types"
 
 function renderPhone(phone, asList = false) {
   if (!phone) return html``
@@ -41,7 +42,7 @@ function renderAddresses(addresses, asList = false) {
   return html`${renderAddress(addresses[0], asList)}${addresses.length > 1 ? renderAddresses(addresses.slice(1), asList) : html``}`
 }
 
-export function renderContactDetailsSection(contactDetails, viewerMode: ViewerMode) {
+export function renderContactInfoSection(contactDetails, viewerMode: ViewerMode) {
   return contactDetails && (contactDetails.emails.length > 0 || contactDetails.phones.length > 0 || contactDetails.addresses.length > 0) ? html`
     <section
       aria-labelledby="contact-details-heading"
