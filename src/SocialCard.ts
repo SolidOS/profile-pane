@@ -45,7 +45,6 @@ export const SocialCard = (
                 height="40"
                 loading="lazy"
               />
-              <span class="text-wrap-anywhere">${account.name}</span>
             </a>
           </li>
         `

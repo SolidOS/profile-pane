@@ -61,6 +61,12 @@
   --line-height-loose: 1.6;
   --letter-spacing-wide: 0.025em;
 
+   /* icons */
+  --icon-xxs: 1em;
+  --icon-xs: 1.5em;
+  --icon-sm: 1.8em;
+  --icon-base: 2em;
+  --icon-xl: 3.1em;
   /* Minimum font sizes for accessibility */
   --min-font-size: 14px;
   --min-line-height: 1.4;
@@ -99,7 +105,7 @@ html, body {
 
 /* Improved heading hierarchy */
 h1, h2, h3, h4, h5, h6 {
-  color: var(--color-primary);
+  /* color: var(--color-primary); maybe this is changing for all */
   font-weight: 600;
   line-height: var(--line-height-tight);
   margin-top: 0;

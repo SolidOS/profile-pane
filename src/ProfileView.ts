@@ -38,7 +38,7 @@ function renderSocialAccounts(accounts: SocialAccounts, viewerMode: ViewerMode) 
           role="complementary"
           tabindex="-1"
         >
-          <header class="text-center mb-md">
+          <header class="mb-md">
             <h2 id="social-heading" tabindex="-1">${socialAccountsHeadingText}</h2>
           </header>
           <nav aria-label="Social media links">

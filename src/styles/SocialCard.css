@@ -5,14 +5,13 @@
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
-  gap: var(--spacing-lg);
-  justify-content: center;
+  gap: var(--spacing-xxs);
+  justify-content: flex-start;
 }
 
 .socialItem {
   display: flex;
   align-items: center;
-  gap: var(--spacing-sm);
   font-size: 1.1em;
 }
 
@@ -26,9 +25,8 @@
   text-decoration: none;
   display: flex;
   align-items: center;
-  gap: var(--spacing-sm);
   min-height: var(--min-touch-target);
-  padding: var(--spacing-xs);
+  padding: var(--spacing-xxs); 
   border-radius: var(--border-radius-base);
   transition: background-color var(--animation-duration) ease;
   position: relative;
@@ -53,8 +51,8 @@
 }
 
 .socialIcon {
-  width: 2.5em;
-  height: 2.5em;
+  width: var(--icon-base);
+  height: var(--icon-base);
   border-radius: var(--border-radius-base);
   background: var(--color-card-bg);
   flex-shrink: 0;
