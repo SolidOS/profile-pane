@@ -1,6 +1,9 @@
 import HtmlWebpackPlugin from "html-webpack-plugin";
 import NodePolyfillPlugin from "node-polyfill-webpack-plugin";
 import webpack from "webpack";
+import { createRequire } from 'module'
+
+const require = createRequire(import.meta.url)
 
 export default [
   {
@@ -59,6 +62,9 @@ export default [
     },
     resolve: {
       extensions: [".js", ".ts"],
+      fallback: {
+        path: require.resolve('path-browserify')
+      },
       alias: {
         $rdf: 'rdflib',
         rdflib: 'rdflib',
