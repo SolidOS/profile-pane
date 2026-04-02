@@ -379,8 +379,10 @@ section[data-testid="edit-social-section"] .classifierBox-selectBox select {
 }
 
 /* Hide the edit icon used by solid-ui (noun_253504.svg and noun_1180158.svg) when it appears as an <img> */
-img[src*="noun_253504.svg"],
-img[src*="noun_1180158.svg"] {
+.profile-form img[src*="noun_253504.svg"],
+.profile-form img[src*="noun_1180158.svg"],
+.webidControl img[src*="noun_253504.svg"],
+.webidControl img[src*="noun_1180158.svg"] {
   display: none !important;
   width: 0 !important;
   height: 0 !important;
@@ -389,8 +391,10 @@ img[src*="noun_1180158.svg"] {
 }
 
 /* Ensure the parent button for that icon doesn't add padding/margin or affect layout */
-button:has(> img[src*="noun_253504.svg"]),
-button:has(> img[src*="noun_1180158.svg"]) {
+.profile-form button:has(> img[src*="noun_253504.svg"]),
+.profile-form button:has(> img[src*="noun_1180158.svg"]),
+.webidControl button:has(> img[src*="noun_253504.svg"]),
+.webidControl button:has(> img[src*="noun_1180158.svg"]) {
   display: none !important;
   padding: 0 !important;
   margin: 0 !important;
