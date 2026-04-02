@@ -1,4 +1,4 @@
-import { NamedNode } from 'rdflib/lib/tf-types'
+import { NamedNode } from 'rdflib'
 
 export interface SelectedAddressBookUris {
   addressBookUri: string,
@@ -36,12 +36,12 @@ export interface PhoneDetails {
   phoneNumber: NamedNode
 }
 export interface ContactData {
-    name: string,
+  name: string,
   nickname?: string,
   preferredSubjectPronoun?: string,
   preferredObjectPronoun?: string,
   preferredRelativePronoun?: string,
-    emails?: EmailDetails[],
-    phoneNumbers?: PhoneDetails[],
-    webID: string
+  emails?: EmailDetails[],
+  phoneNumbers?: PhoneDetails[],
+  webID: string
 }

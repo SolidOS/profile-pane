@@ -1,20 +1,11 @@
 import path from 'path'
-import { createRequire } from 'module'
 import TerserPlugin from 'terser-webpack-plugin'
 import CopyPlugin from 'copy-webpack-plugin'
 
-const require = createRequire(import.meta.url)
-
 const common = {
   entry: './src/index.ts',
-  performance: {
-    hints: false
-  },
   resolve: {
-    extensions: ['.ts', '.js', '.json'],
-    fallback: {
-      path: require.resolve('path-browserify')
-    }
+    extensions: ['.ts', '.js', '.json']
   },
   module: {
     rules: [
