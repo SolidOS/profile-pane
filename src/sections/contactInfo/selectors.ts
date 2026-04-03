@@ -1,7 +1,6 @@
 import { LiveStore, NamedNode } from "rdflib"
 import { ns } from "solid-ui"
-import { AddressDetails, ContactDetails, EmailDetails, PhoneDetails } from "./types"
-
+import { AddressDetails, ContactInfo, EmailDetails, PhoneDetails } from "./types"
 
 
 function termValue(term: any): string {
@@ -10,35 +9,52 @@ function termValue(term: any): string {
   return term.value || ''
 }
 
+function isEmailValue(value: string): boolean {
+  const normalized = (value || '').trim()
+  if (!normalized) return false
+  if (/^mailto:/i.test(normalized)) return true
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalized)
+}
+
+function isPhoneValue(value: string): boolean {
+  const normalized = (value || '').trim()
+  if (!normalized) return false
+  if (/^tel:/i.test(normalized)) return true
+  return /^[+()\-\s\d]{5,}$/.test(normalized)
+}
+
 function selectEmails(subject: NamedNode, store: LiveStore): EmailDetails[] {
   let emails: EmailDetails[] = []
   let type = null
-  let email = null
+  let valueNode = null
   
   const emailNodes = store.each(subject, ns.vcard('hasEmail'), null, subject.doc()) || null
   emailNodes.map((node) => {
-    email = store.any(node as NamedNode, ns.vcard('value'), null, subject.doc()) || node
+    const explicitValue = store.any(node as NamedNode, ns.vcard('value'), null, subject.doc())
+    valueNode = explicitValue || node
     type = store.any(node as NamedNode, ns.rdf('type'), null, subject.doc())
-    const emailValue = termValue(email)
-    if (emailValue) {
-      emails.push({ type, email })
+    const emailValue = termValue(valueNode)
+    if (isEmailValue(emailValue)) {
+      emails.push({ entryNode: node, type, valueNode })
     }
   })
   return emails
 }
-
+/* SAM need to look at this doesn't seem to be working 
+although it was working in add-to-contacts button */
 function selectPhones(subject: NamedNode, store: LiveStore): PhoneDetails[] {
   let phoneNumbers: PhoneDetails[] = []
   let type = null
-  let phoneNumber = null
+  let valueNode = null
 
   const phoneNodes = store.each(subject, ns.vcard('hasTelephone'), null, subject.doc()) || null
   phoneNodes.map((node) => {
-    phoneNumber = store.any(node as NamedNode, ns.vcard('value'), null, subject.doc()) || node
+    const explicitValue = store.any(node as NamedNode, ns.vcard('value'), null, subject.doc())
+    valueNode = explicitValue || node
     type = store.any(node as NamedNode, ns.rdf('type'), null, subject.doc())
-    const phoneValue = termValue(phoneNumber)
-    if (phoneValue) {
-      phoneNumbers.push({type, phoneNumber})
+    const phoneValue = termValue(valueNode)
+    if (isPhoneValue(phoneValue)) {
+      phoneNumbers.push({ entryNode: node, type, valueNode })
     }
   })
   return phoneNumbers
@@ -47,7 +63,6 @@ function selectPhones(subject: NamedNode, store: LiveStore): PhoneDetails[] {
 function selectAddresses(subject: NamedNode, store: LiveStore): AddressDetails[] {
   let addresses: AddressDetails[] = []
   let type = null
-  let fullAddress = null
   let streetAddress = null
   let locality = null
   let region = null
@@ -56,19 +71,18 @@ function selectAddresses(subject: NamedNode, store: LiveStore): AddressDetails[]
 
   const addressNodes = store.each(subject, ns.vcard('hasAddress'), null, subject.doc()) || null
   addressNodes.map((node) => {
-    fullAddress = store.any(node as NamedNode, ns.vcard('value'), null, subject.doc())
     streetAddress = store.any(node as NamedNode, ns.vcard('street-address'), null, subject.doc())
     locality = store.any(node as NamedNode, ns.vcard('locality'), null, subject.doc())
     region = store.any(node as NamedNode, ns.vcard('region'), null, subject.doc())
     postalCode = store.any(node as NamedNode, ns.vcard('postal-code'), null, subject.doc())
     countryName = store.any(node as NamedNode, ns.vcard('country-name'), null, subject.doc())
     type = store.any(node as NamedNode, ns.rdf('type'), null, subject.doc())
-    addresses.push({type, fullAddress, streetAddress, locality, region, postalCode, countryName})  
+    addresses.push({entryNode: node, type, streetAddress, locality, region, postalCode, countryName})  
   })
   return addresses
 }
 
-export function selectContactInfo(subject: NamedNode, store: LiveStore): ContactDetails {
+export function selectContactInfo(subject: NamedNode, store: LiveStore): ContactInfo {
   const emails = selectEmails(subject, store)
   const phones = selectPhones(subject, store)
   const addresses = selectAddresses(subject, store)

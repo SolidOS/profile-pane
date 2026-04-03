@@ -3,7 +3,6 @@ import { DataBrowserContext } from 'pane-registry'
 import { NamedNode, LiveStore } from 'rdflib'
 import { authn } from 'solid-logic'
 import './styles/ProfileView.css'
-import { presentCV } from './CVPresenter' // 20210527// 20210527
 import { ProfileCard } from './ProfileCard'
 import { CVCard } from './CVCard'
 import { SocialCard } from './SocialCard'
@@ -15,14 +14,12 @@ import {
 import { ViewerMode } from './types'
 import { strToUpperCase } from './textUtils'
 import { selectProfileViewModel } from './ProfileViewModelSelector'
-import { ContactDetails } from './ContactDetailsPresenter'
 import { renderContactInfoSection } from './sections/contactInfo/ContactInfoSection'
+import { ContactInfo } from './sections/contactInfo/types'
 
 type ProfileViewModelData = ReturnType<typeof selectProfileViewModel>
 type ProfileBasics = ProfileViewModelData['basics']
 type SocialAccounts = ProfileViewModelData['social']
-type ProfileDetails = Pick<ProfileViewModelData, 'skills' | 'languages'>
-
 
 function getViewerMode(subject: NamedNode): ViewerMode {
   let mode: ViewerMode = 'anonymous'
@@ -69,12 +66,13 @@ function renderCVSection(rolesByType, viewerMode: ViewerMode) {
 }
 
 function renderSidebar(
+  store: LiveStore,
+  subject: NamedNode,
   accounts: SocialAccounts,
   skills: string[],
   languages: string[],
-  contactDetails: ContactDetails,
+  contactInfo: ContactInfo,
   profileBasics: ProfileBasics,
-  subject: NamedNode,
   viewerMode: ViewerMode
 ) {
   return html`
@@ -91,7 +89,7 @@ function renderSidebar(
         ${renderSocialAccounts(accounts, viewerMode)}
         ${renderSkillsSection(skills)}
         ${renderLanguageSection(languages)}
-        ${renderContactInfoSection(contactDetails, viewerMode)}
+        ${renderContactInfoSection(store, subject, contactInfo, viewerMode)}
         ${renderQRCode(profileBasics, subject)}
       </div>
     </aside>
@@ -175,8 +173,8 @@ export async function ProfileView (
   const skills = viewModel.skills
   const languages = viewModel.languages
   const accounts = viewModel.social
-  const contactDetails = viewModel.contactDetails
-  console.log('Contact Details', JSON.stringify(contactDetails))
+  const contactInfo = viewModel.contactInfo
+  console.log('Contact Info', JSON.stringify(contactInfo))
   
   return html` 
     <main
@@ -207,7 +205,7 @@ export async function ProfileView (
 
         ${renderCVSection(rolesByType, viewerMode)}
       </section>
-      ${renderSidebar(accounts, skills, languages, contactDetails, profileBasics, subject, viewerMode)}
+      ${renderSidebar(store, subject, accounts, skills, languages, contactInfo, profileBasics, viewerMode)}
     </main>
   `
 }

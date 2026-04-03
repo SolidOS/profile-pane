@@ -1,4 +1,4 @@
-import './styles/dialog.css'
+import '../styles/dialog.css'
 
 /* Copied from issue-pane, minor typescript adjustments */
 let modalOverlay: HTMLDivElement | null = null
@@ -140,17 +140,9 @@ export function openInputDialog (options: OpenInputDialogCustom): Promise<InputD
   const submitLabel = options.submitLabel || 'Save Changes'
   const cancelLabel = options.cancelLabel || 'Cancel'
 
-  let messageNode: Node
-  let form: HTMLFormElement | null = null
-
-  if ('content' in options) {
-    messageNode = options.content
-    form = options.form || (options.content instanceof HTMLFormElement ? options.content : null)
-  } 
-
   return openModal({
     title: options.title,
-    message: messageNode,
+    message: options.form,
     buttons: [
       { label: cancelLabel, value: null, cancel: true },
       { label: submitLabel, value: 'save', primary: true }
@@ -158,9 +150,9 @@ export function openInputDialog (options: OpenInputDialogCustom): Promise<InputD
     dom: options.dom
   }).then((result) => {
     if (result !== 'save') return null
-    if (!form) return {}
+    if (!options.form) return {}
 
-    const data = new FormData(form)
+    const data = new FormData(options.form)
     const values: InputDialogValues = {}
     data.forEach((value, key) => {
       values[key] = String(value)

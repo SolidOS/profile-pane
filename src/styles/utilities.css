@@ -360,3 +360,26 @@ label:focus-visible {
 .btn-transparent:hover {
   background-color: transparent;
 }
+.sectionHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-sm);
+  width: 100%;
+}
+.sectionHeader .actionButton {
+  width: auto;
+  min-width: 0;
+  max-width: none;
+  padding: var(--spacing-xxs);
+  border: none;
+  background: none;
+  color: var(--color-primary);
+  cursor: pointer;
+  font-size: var(--font-size-sm);
+  display: flex;
+  align-items: center;
+}
+.sectionHeader .actionButton:hover {
+  text-decoration: underline;
+}

@@ -90,3 +90,17 @@
   cursor: not-allowed;
   transform: none;
 }
+
+/* Keep text-style actions in section headers while preserving footer button styling. */
+#profile-modal .modal .sectionHeader .actionButton {
+  min-height: auto;
+  padding: var(--spacing-xxs);
+  border: none;
+  background: none;
+  color: var(--color-primary);
+  font-weight: 500;
+}
+
+#profile-modal .modal .sectionHeader .actionButton:hover {
+  text-decoration: underline;
+}

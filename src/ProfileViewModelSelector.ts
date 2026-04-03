@@ -1,6 +1,6 @@
 import { NamedNode, LiveStore } from 'rdflib'
 import { presentProfile, ProfilePresentation } from './presenter';
-import { ContactDetails } from './ContactDetailsPresenter';
+import { ContactInfo  } from './sections/contactInfo/types';
 import { presentSocial, SocialPresentation } from './SocialPresenter';
 import { selectSkills } from './SkillsPresenter';
 import { selectLanguages } from './LanguagePresenter';
@@ -9,7 +9,7 @@ import { selectContactInfo } from './sections/contactInfo/selectors';
 
 export type ProfileViewModel = {
   basics: ProfilePresentation,
-  contactDetails: ContactDetails,
+  contactInfo: ContactInfo,
   skills: string[],
   languages: string[], 
   social: SocialPresentation,
@@ -18,7 +18,7 @@ export type ProfileViewModel = {
 
 export function selectProfileViewModel(subject: NamedNode, store: LiveStore): ProfileViewModel {
   const basics = presentProfile(subject, store)
-  const contactDetails = selectContactInfo(subject, store)
+  const contactInfo = selectContactInfo(subject, store)
   const skills = selectSkills(subject, store)
   const languages = selectLanguages(subject, store)
   const social = presentSocial(subject, store)
@@ -27,7 +27,7 @@ export function selectProfileViewModel(subject: NamedNode, store: LiveStore): Pr
   return { 
     basics,
     social,
-    contactDetails,
+    contactInfo,
     skills, 
     languages,
     cvDetails
