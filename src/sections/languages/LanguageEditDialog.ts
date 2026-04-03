@@ -5,7 +5,7 @@ import "../../styles/ContactInfoEditDialog.css"
 import { LiveStore, NamedNode } from "rdflib"
 import { ViewerMode } from "../../types"
 import { applyRowFieldChange, applyRowSelectChange, deleteRow, summarizeRowOps } from "../shared/rowState"
-import { hasNonEmptyText, sanitizeTextValue, toText } from "../shared/textUtils"
+import { hasNonEmptyText, sanitizeTextValue, toText } from "../../textUtils"
 import { MutationOps } from "../contactInfo/types"
 import { processLanguageMutations } from "./mutations"
 
