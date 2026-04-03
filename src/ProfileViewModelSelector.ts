@@ -2,7 +2,7 @@ import { NamedNode, LiveStore } from 'rdflib'
 import { presentProfile, ProfilePresentation } from './presenter';
 import { ContactInfo  } from './sections/contactInfo/types';
 import { presentSocial, SocialPresentation } from './SocialPresenter';
-import { selectSkills } from './SkillsPresenter';
+import { selectSkills } from './sections/skills/selectors';
 import { selectLanguages } from './sections/languages/selectors';
 import { LanguageDetails } from './sections/languages/types';
 import { CVPresentation, presentCV } from './CVPresenter';

@@ -12,10 +12,10 @@ import {
   socialAccountsHeadingText,
 } from './texts'
 import { ViewerMode } from './types'
-import { strToUpperCase } from './textUtils'
 import { selectProfileViewModel } from './ProfileViewModelSelector'
 import { renderContactInfoSection } from './sections/contactInfo/ContactInfoSection'
 import { renderLanguageSection } from './sections/languages/LanguageSection'
+import { renderSkillsSection } from './sections/skills/SkillsSection'
 import { ContactInfo } from './sections/contactInfo/types'
 import { LanguageDetails } from './sections/languages/types'
 
@@ -89,7 +89,7 @@ function renderSidebar(
       </header>
       <div aria-label="Sidebar Content">
         ${renderSocialAccounts(accounts, viewerMode)}
-        ${renderSkillsSection(skills)}
+        ${renderSkillsSection(store, subject, skills, viewerMode)}
         ${renderLanguageSection(store, subject, languages, viewerMode)}
         ${renderContactInfoSection(store, subject, contactInfo, viewerMode)}
         ${renderQRCode(profileBasics, subject)}
@@ -104,33 +104,6 @@ function renderQRCode(profileBasics: ProfileBasics, subject: NamedNode) {
         ${QRCodeCard(subject)}
       </div>
   `
-}
-
-function renderSkill(skill, asList = false) {
-  if (!skill) return html``
-  return asList
-    ? html`<li class="skill">${strToUpperCase(skill)}</li>`
-    : html``
-}
-
-function renderSkills(skills, asList = false) {
-  if (!skills || !skills.length || !skills[0]) return html``
-  return html`${renderSkill(skills[0], asList)}${skills.length > 1 ? renderSkills(skills.slice(1), asList) : html``}`
-}
-
-function renderSkillsSection(skills: string[]) {
-  const skillsArr = skills || []
-  const hasSkills = Array.isArray(skillsArr) && skillsArr.length > 0
-
-  return hasSkills ? html`
-    <section class="section-bg" aria-labelledby="skills-heading">
-    <header class="mb-md">
-      <h3 id="skills-heading">Skills</h3>
-      <ul role="list" aria-label="Professional skills and competencies">
-        ${renderSkills(skillsArr, true)}
-      </ul>
-    </section>
-  ` : ''
 }
 
 export async function ProfileView (
