@@ -1,5 +1,6 @@
 import { NamedNode, Store, Node, LiveStore } from "rdflib";
 import { ns, utils } from "solid-ui";
+import { LanguageDetails } from "./types"
 
 export function expandRdfList(store: Store, node: Node): Node[] {
   const collectionElements = (node as { termType?: string; elements?: Node[] }).elements
@@ -30,11 +31,22 @@ export function languageAsText (store: Store, lan: Node):string {
   return ''                                                  
 }
 
-export function selectLanguages(subject: NamedNode, store: LiveStore): string[] {
+export function selectLanguages(subject: NamedNode, store: LiveStore): LanguageDetails[] {
   const languageNodes = store.each(subject, ns.schema('knowsLanguage'))
-  const languages = languageNodes
+  const details: LanguageDetails[] = languageNodes
     .flatMap(node => expandRdfList(store, node))
-    .map(lan => languageAsText(store, lan))
-  // Deduplicate languages
-  return Array.from(new Set(languages))
+    .map((lan) => ({
+      name: languageAsText(store, lan),
+      entryNode: lan
+    }))
+    .filter((item) => Boolean(item.name))
+
+  const dedupedByLanguage = new Map<string, LanguageDetails>()
+  details.forEach((item) => {
+    if (!dedupedByLanguage.has(item.name)) {
+      dedupedByLanguage.set(item.name, item)
+    }
+  })
+
+  return Array.from(dedupedByLanguage.values())
 }
