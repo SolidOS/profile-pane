@@ -1,3 +1,8 @@
+/*
+  DEPRECATED: This stylesheet is no longer imported by active source files.
+  It is retained temporarily for reference only and can be removed after cleanup validation.
+*/
+
 /* Delete pop up*/
 /* Make the Solid-UI delete confirmation popup appear near the last click position.
    Keep the built-in Solid-UI styling (orange border, white background) so it looks like the original.

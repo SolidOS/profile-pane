@@ -4,7 +4,6 @@ import { NamedNode } from 'rdflib'
 import { ns, widgets, icons } from 'solid-ui'
 import { friendsHeadingText } from '../texts'
 import { saveNewThing } from '../addMeToYourFriends'
-import '../styles/profileRDFFormsEnforced.css'
 import '../styles/editProfile.css'
 import { store } from 'solid-logic'
 import {
