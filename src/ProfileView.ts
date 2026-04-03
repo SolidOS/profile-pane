@@ -15,7 +15,9 @@ import { ViewerMode } from './types'
 import { strToUpperCase } from './textUtils'
 import { selectProfileViewModel } from './ProfileViewModelSelector'
 import { renderContactInfoSection } from './sections/contactInfo/ContactInfoSection'
+import { renderLanguageSection } from './sections/languages/LanguageSection'
 import { ContactInfo } from './sections/contactInfo/types'
+import { LanguageDetails } from './sections/languages/types'
 
 type ProfileViewModelData = ReturnType<typeof selectProfileViewModel>
 type ProfileBasics = ProfileViewModelData['basics']
@@ -70,7 +72,7 @@ function renderSidebar(
   subject: NamedNode,
   accounts: SocialAccounts,
   skills: string[],
-  languages: string[],
+  languages: LanguageDetails[],
   contactInfo: ContactInfo,
   profileBasics: ProfileBasics,
   viewerMode: ViewerMode
@@ -88,7 +90,7 @@ function renderSidebar(
       <div aria-label="Sidebar Content">
         ${renderSocialAccounts(accounts, viewerMode)}
         ${renderSkillsSection(skills)}
-        ${renderLanguageSection(languages)}
+        ${renderLanguageSection(store, subject, languages, viewerMode)}
         ${renderContactInfoSection(store, subject, contactInfo, viewerMode)}
         ${renderQRCode(profileBasics, subject)}
       </div>
@@ -130,35 +132,6 @@ function renderSkillsSection(skills: string[]) {
     </section>
   ` : ''
 }
-
-function renderLan(language, asList = false) {
-  if (!language) return html``
-  return asList
-    ? html`<li class="language">${language}</li>`
-    : html``
-}
-
-function renderLanguages(languages, asList = false) {
-  if (!languages || !languages.length || !languages[0]) return html``
-  return html`${renderLan(languages[0], asList)}${languages.length > 1 ? renderLanguages(languages.slice(1), asList) : html``}`
-}
-
-function renderLanguageSection(languages: string[]) {
-  const languagesArr = languages || []
-  const hasLanguages = Array.isArray(languagesArr) && languagesArr.length > 0
-
-  return hasLanguages ? html`
-    <section class="section-bg" aria-labelledby="languages-heading">
-      <header class="mb-md">
-        <h3 id="languages-heading">Languages</h3>
-      </header>
-      <ul role="list" aria-label="Known languages">
-        ${renderLanguages(languagesArr, true)}
-      </ul>
-    </section>
-  ` : ''
-}
-
 
 export async function ProfileView (
   subject: NamedNode,

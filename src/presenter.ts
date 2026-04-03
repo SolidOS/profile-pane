@@ -2,7 +2,6 @@ import { NamedNode, LiveStore } from 'rdflib'
 import { ns, utils, widgets } from 'solid-ui'
 import { store } from 'solid-logic'
 import { Node } from 'rdflib'
-import { ViewerMode } from './types'
 import { validateHTMLColorHex } from 'validate-color'
 
 export interface ProfilePresentation {

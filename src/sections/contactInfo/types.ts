@@ -1,18 +1,11 @@
 import { Node } from "rdflib"
 /* using Node instead of NamedNode because the data could
 also be a blank node because it's coming from user-edited profile data */
-export interface EmailDetails {
+export interface PointDetails {
   entryNode: Node,
   type: Node,
   valueNode: Node
 }
-
-export interface PhoneDetails {
-  entryNode: Node,
-  type: Node,
-  valueNode: Node
-}
-
 export interface AddressDetails {
   entryNode: Node,
   type?: Node,
@@ -24,8 +17,8 @@ export interface AddressDetails {
 }
 
 export interface ContactInfo {
-  emails: EmailDetails[],
-  phones: PhoneDetails[],
+  emails: PointDetails[],
+  phones: PointDetails[],
   addresses: AddressDetails[]
 }
 

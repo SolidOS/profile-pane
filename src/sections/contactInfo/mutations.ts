@@ -1,26 +1,8 @@
 import { LiveStore, NamedNode, Node, st } from "rdflib"
 import { ns } from "solid-ui"
-import { ContactAddressRow, ContactMutationPlan, ContactPointRow, MutationOps } from "./types"
-
-function applyUpdaterPatch(store: LiveStore, deletions: any[], insertions: any[]) {
-  if (store.updater) {
-    return store.updater.update(deletions as any, insertions as any)
-  } else {
-    throw new Error("Store does not support updates")
-  }
-}
-
-function collectNodeStatements(store: LiveStore, node: Node, doc: NamedNode) {
-  return store.statementsMatching(node as any, null, null, doc as any)
-}
-
-function collectLinkStatements(store: LiveStore, subject: NamedNode, predicate: NamedNode, node: Node, doc: NamedNode) {
-  return store.statementsMatching(subject, predicate, node as any, doc)
-}
-
-function findExistingNode(nodes: Node[], entryNode: string) {
-  return nodes.find((node) => node.value === entryNode)
-}
+import { ContactAddressRow, ContactMutationPlan, ContactPointRow } from "./types"
+import { MutationOps } from "../shared/types"
+import { applyUpdaterPatch, collectLinkStatements, collectNodeStatements, findExistingNode } from "../shared/rdfMutationHelpers"
 
 function buildPhoneStatements(subject: NamedNode, doc: NamedNode, node: Node, phone: ContactPointRow) {
   const normalizedValue = phone.value.startsWith('tel:') ? phone.value : `tel:${phone.value}`

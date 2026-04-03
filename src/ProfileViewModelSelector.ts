@@ -3,7 +3,8 @@ import { presentProfile, ProfilePresentation } from './presenter';
 import { ContactInfo  } from './sections/contactInfo/types';
 import { presentSocial, SocialPresentation } from './SocialPresenter';
 import { selectSkills } from './SkillsPresenter';
-import { selectLanguages } from './LanguagePresenter';
+import { selectLanguages } from './sections/languages/selectors';
+import { LanguageDetails } from './sections/languages/types';
 import { CVPresentation, presentCV } from './CVPresenter';
 import { selectContactInfo } from './sections/contactInfo/selectors';
 
@@ -11,7 +12,7 @@ export type ProfileViewModel = {
   basics: ProfilePresentation,
   contactInfo: ContactInfo,
   skills: string[],
-  languages: string[], 
+  languages: LanguageDetails[], 
   social: SocialPresentation,
   cvDetails: CVPresentation
 }

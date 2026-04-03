@@ -1,6 +1,6 @@
 import { LiveStore, NamedNode } from "rdflib"
 import { ns } from "solid-ui"
-import { AddressDetails, ContactInfo, EmailDetails, PhoneDetails } from "./types"
+import { AddressDetails, ContactInfo, PointDetails } from "./types"
 
 
 function termValue(term: any): string {
@@ -23,8 +23,8 @@ function isPhoneValue(value: string): boolean {
   return /^[+()\-\s\d]{5,}$/.test(normalized)
 }
 
-function selectEmails(subject: NamedNode, store: LiveStore): EmailDetails[] {
-  let emails: EmailDetails[] = []
+function selectEmails(subject: NamedNode, store: LiveStore): PointDetails[] {
+  let emails: PointDetails[] = []
   let type = null
   let valueNode = null
   
@@ -42,8 +42,8 @@ function selectEmails(subject: NamedNode, store: LiveStore): EmailDetails[] {
 }
 /* SAM need to look at this doesn't seem to be working 
 although it was working in add-to-contacts button */
-function selectPhones(subject: NamedNode, store: LiveStore): PhoneDetails[] {
-  let phoneNumbers: PhoneDetails[] = []
+function selectPhones(subject: NamedNode, store: LiveStore): PointDetails[] {
+  let phoneNumbers: PointDetails[] = []
   let type = null
   let valueNode = null
 
