@@ -61,6 +61,10 @@
   margin-top: var(--spacing-sm);
 }
 
+#profile-modal .dialogErrorSection[hidden] {
+  display: none !important;
+}
+
 #profile-modal input,
 #profile-modal select,
 #profile-modal textarea {

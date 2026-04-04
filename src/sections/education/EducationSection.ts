@@ -6,11 +6,25 @@ import { educationHeadingText } from '../../texts'
 import { LiveStore, NamedNode } from 'rdflib'
 import { createEducationEditDialog } from './EducationEditDialog'
 import {
-  formatMonthYear,
   scheduleDescriptionOverflowCheck,
   toMonthDateTime,
   toggleDescription,
 } from '../shared/sectionCardHelpers'
+
+function formatEducationMonthYearFull(date?: string): string {
+  if (!date) return ''
+  const value = date
+  const year = value.slice(0, 4)
+  const month = value.slice(5, 7)
+  const monthNames = [
+    'January', 'February', 'March', 'April', 'May', 'June',
+    'July', 'August', 'September', 'October', 'November', 'December'
+  ]
+  const monthIndex = Number(month) - 1
+
+  if (!year || monthIndex < 0 || monthIndex > 11) return value
+  return `${monthNames[monthIndex]} ${year}`
+}
 
 function renderEducationEntry(educationEntry: EducationDetails, index: number) {
   if (!educationEntry) return html``
@@ -28,13 +42,9 @@ function renderEducationEntry(educationEntry: EducationDetails, index: number) {
       <div class="educationHeader">
         <h4 id=${schoolId}>${educationEntry.school}</h4>
         <p id=${educationPeriodId} class="educationPeriod">
-          ${educationEntry.startDate
-            ? html`<time datetime=${toMonthDateTime(educationEntry.startDate)}>${formatMonthYear(educationEntry.startDate)}</time>`
-            : html`<span>Start date unknown</span>`}
-          <span aria-hidden="true"> to </span>
           ${educationEntry.endDate
-            ? html`<time datetime=${toMonthDateTime(educationEntry.endDate)}>${formatMonthYear(educationEntry.endDate)}</time>`
-            : html`<span>Present</span>`}
+            ? html`<time datetime=${toMonthDateTime(educationEntry.endDate)}>${formatEducationMonthYearFull(educationEntry.endDate)}</time>`
+            : html`<span>End date unknown</span>`}
         </p>
       </div>
       <p class="educationOrg" id=${educationOrgId}>

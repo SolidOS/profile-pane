@@ -14,7 +14,7 @@ import {
   dialogSubmitLabelText,
   editLanguagesDialogTitleText,
   ownerLoginRequiredDialogMessageText,
-  saveContactUpdatesFailedPrefixText,
+  saveLanguageUpdatesFailedPrefixText,
 } from "../../texts"
 
 type LanguageFormState = {
@@ -244,7 +244,7 @@ export async function createLanguageEditDialog(
     },
     formatSaveError: (error: unknown) => {
       const message = error instanceof Error ? error.message : String(error)
-      return `${saveContactUpdatesFailedPrefixText} ${message}`
+      return `${saveLanguageUpdatesFailedPrefixText} ${message}`
     }
   })
 
