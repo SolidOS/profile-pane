@@ -1,4 +1,5 @@
 import { Node } from "rdflib"
+import { MutationOps } from "../shared/types"
 /* using Node instead of NamedNode because the data could
 also be a blank node because it's coming from user-edited profile data */
 export interface PointDetails {
@@ -40,12 +41,6 @@ export type ContactAddressRow = {
   type: string
   entryNode: string
   status: ContactRowStatus
-}
-
-export type MutationOps<T> = {
-  create: T[]
-  update: T[]
-  remove: T[]
 }
 
 export type ContactMutationPlan = {

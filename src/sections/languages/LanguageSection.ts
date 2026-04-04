@@ -3,11 +3,12 @@ import { LiveStore, NamedNode } from "rdflib"
 import { ViewerMode } from "../../types"
 import { createLanguageEditDialog } from "./LanguageEditDialog"
 import { LanguageDetails } from "./types"
+import { languagesHeadingText } from "../../texts"
 
 function renderLan(language: LanguageDetails, asList = false) {
   if (!language) return html``
   return asList
-    ? html`<li class="language">${language.name}</li>`
+    ? html`<li class="language" role="listitem">${language.name}</li>`
     : html``
 }
 
@@ -28,7 +29,7 @@ export function renderLanguageSection(
   return html`
     <section class="section-bg" aria-labelledby="languages-heading">
       <header class="sectionHeader mb-md">
-        <h3 id="languages-heading">Languages</h3>
+        <h3 id="languages-heading">${languagesHeadingText}</h3>
         ${viewerMode === 'owner'
           ? html`
               <button

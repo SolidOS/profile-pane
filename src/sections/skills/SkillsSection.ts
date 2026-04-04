@@ -4,11 +4,12 @@ import { literal, LiveStore, NamedNode } from "rdflib"
 import { ViewerMode } from "../../types"
 import { createSkillsEditDialog } from "./SkillsEditDialog"
 import { SkillDetails } from "./types"
+import { skillsHeadingText } from "../../texts"
 
 function renderSkill(skill, asList = false) {
   if (!skill) return html``
   return asList
-    ? html`<li class="skill">${strToUpperCase(skill)}</li>`
+    ? html`<li class="skill" role="listitem">${strToUpperCase(skill)}</li>`
     : html``
 }
 
@@ -37,7 +38,7 @@ export function renderSkillsSection(
   return html`
     <section class="section-bg" aria-labelledby="skills-heading">
       <header class="sectionHeader mb-md">
-        <h3 id="skills-heading">Skills</h3>
+        <h3 id="skills-heading">${skillsHeadingText}</h3>
         ${viewerMode === 'owner'
           ? html`
               <button

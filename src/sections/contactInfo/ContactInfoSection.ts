@@ -2,6 +2,7 @@ import { html } from "lit-html"
 import { ViewerMode } from "../../types"
 import { createContactInfoEditDialog } from "./ContactInfoEditDialog"
 import { LiveStore, NamedNode } from "rdflib"
+import { contactInfoHeadingText } from "../../texts"
 
 function toText(value: unknown): string {
   if (!value) return ''
@@ -33,7 +34,7 @@ function renderPhone(phone) {
   const phoneValue = toText(phone.valueNode || phone.phoneNumber).replace(/^tel:/i, '')
   const phoneType = formatTypeLabel(phone.type)
 
-  return html`<li class="phone">
+  return html`<li class="phone" role="listitem">
         ${phoneValue}
         ${phoneType ? html`<span class="phone-type"> (${phoneType})</span>` : html``}
       </li>`
@@ -50,7 +51,7 @@ function renderEmail(email) {
   const emailValue = toText(email.valueNode || email.emailAddress).replace(/^mailto:/i, '')
   const emailType = formatTypeLabel(email.type)
 
-  return html`<li class="email">
+  return html`<li class="email" role="listitem">
         ${emailValue}
         ${emailType ? html`<span class="email-type"> (${emailType})</span>` : html``}
       </li>`
@@ -72,7 +73,7 @@ function renderAddress(address) {
     address.countryName?.value || address.countryName,
   ].filter(Boolean)
   const formattedAddress = pieces.join(', ')
-  return html`<li class="address">${formattedAddress}</li>`
+  return html`<li class="address" role="listitem">${formattedAddress}</li>`
 }
 
 function renderAddresses(addresses) {
@@ -89,7 +90,7 @@ export function renderContactInfoSection(store: LiveStore, subject: NamedNode, c
       tabindex="-1"
     >
       <header class="sectionHeader mb-md">
-        <h3 id="contact-details-heading" tabindex="-1">More Contacts</h3>
+        <h3 id="contact-details-heading" tabindex="-1">${contactInfoHeadingText}</h3>
         <button 
           type="button" 
           class="actionButton" 

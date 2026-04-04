@@ -3,6 +3,7 @@ import { ns } from "solid-ui"
 import { LanguageRow } from "./types"
 import { MutationOps } from "../shared/types"
 import { applyUpdaterPatch, collectLinkStatements, collectNodeStatements, findExistingNode } from "../shared/rdfMutationHelpers"
+import { mutationSaveLanguagesFailedPrefixText } from "../../texts"
 
 export type LanguageMutationPlan = MutationOps<LanguageRow>
 /* SAM need to look at the new field proficiency and see how we will handle that */
@@ -56,6 +57,6 @@ export async function processLanguageMutations(store: LiveStore, subject: NamedN
 
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error)
-    throw new Error(`Failed to save languages: ${message}`)
+    throw new Error(`${mutationSaveLanguagesFailedPrefixText} ${message}`)
   }
 } 

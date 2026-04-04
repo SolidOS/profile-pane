@@ -1,4 +1,4 @@
-import { alertDialog, openInputDialog } from "../../ui/dialog"
+import { openInputDialog } from "../../ui/dialog"
 import { html, render } from "lit-html"
 import { SkillDetails, SkillRow } from "./types"
 import "../../styles/ContactInfoEditDialog.css"
@@ -8,6 +8,14 @@ import { applyRowFieldChange, deleteRow, summarizeRowOps } from "../shared/rowSt
 import { hasNonEmptyText, sanitizeTextValue, toText } from "../../textUtils"
 import { MutationOps } from "../shared/types"
 import { processSkillsMutations } from "./mutations"
+import {
+  deleteEntryButtonTitleText,
+  dialogCancelLabelText,
+  dialogSubmitLabelText,
+  editSkillsDialogTitleText,
+  ownerLoginRequiredDialogMessageText,
+  saveContactUpdatesFailedPrefixText,
+} from "../../texts"
 
 type SkillFormState = {
   skills: SkillRow[]
@@ -38,6 +46,13 @@ function toFormState(details: SkillDetails[]): SkillFormState {
   return {
     skills: rows.length ? rows : [{ name: '', entryNode: '', status: 'new' }],
   }
+}
+
+function validateSkillsBeforeSave(rows: SkillRow[]): string | null {
+  const ops = summarizeRowOps(rows, rowHasContent)
+  const hasChanges = ops.create.length > 0 || ops.update.length > 0 || ops.remove.length > 0
+  if (!hasChanges) return 'No skill changes detected.'
+  return null
 }
 
 type SkillsInputRowProps = {
@@ -92,7 +107,7 @@ function renderSkillInputRow({
           type="button"
           class="deleteEntryButton"
           aria-label=${`Delete skill ${displayIndex + 1}`}
-          title="Delete entry"
+          title=${deleteEntryButtonTitleText}
           @click=${handleDelete}
         >
           <svg class="deleteEntryIcon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
@@ -185,40 +200,36 @@ export async function createSkillsEditDialog(
   const { form, formState } = createSkillsEditForm(skills)
 
   const result = await openInputDialog({
-    title: 'Edit Skills',
+    title: editSkillsDialogTitleText,
     dom,
     form,
-    submitLabel: 'Save Changes',
-    cancelLabel: 'Cancel'
+    submitLabel: dialogSubmitLabelText,
+    cancelLabel: dialogCancelLabelText,
+    validate: () => {
+      if (viewerMode !== 'owner') {
+        return ownerLoginRequiredDialogMessageText
+      }
+      return validateSkillsBeforeSave(formState.skills)
+    },
+    onSave: async () => {
+      const skillOps = summarizeRowOps(formState.skills, rowHasContent)
+      const plan: MutationOps<SkillRow> = {
+        create: skillOps.create,
+        update: skillOps.update,
+        remove: skillOps.remove
+      }
+      await processSkillsMutations(store, subject, plan)
+    },
+    formatSaveError: (error: unknown) => {
+      const message = error instanceof Error ? error.message : String(error)
+      return `${saveContactUpdatesFailedPrefixText} ${message}`
+    }
   })
 
   if (!result) return
 
-  if (viewerMode !== 'owner') {
-    await alertDialog('You need to log in as the profile owner to save contact updates.', 'Login Required', dom)
-    return
-  }
-
- const skillOps = summarizeRowOps(formState.skills, rowHasContent)
- const plan: MutationOps<SkillRow> = {
-  create: skillOps.create,
-  update: skillOps.update,
-  remove: skillOps.remove
-}
-
-  // Save wiring is section-specific and can be added when mutation logic is ready.
-  console.log('Skill edit values', result)
-  console.log('Pending skill operations', skillOps)
-
-  try {
-    await processSkillsMutations(store, subject, plan)
-
-    const view = dom.defaultView
-    if (view) {
-      view.location.reload()
-    }
-  } catch (error) {
-    const message = error instanceof Error ? error.message : String(error)
-    await alertDialog(`Could not save contact updates. ${message}`, 'Save Failed', dom)
+  const view = dom.defaultView
+  if (view) {
+    view.location.reload()
   }
 }

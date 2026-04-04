@@ -1,4 +1,4 @@
-import { alertDialog, openInputDialog } from "../../ui/dialog"
+import { openInputDialog } from "../../ui/dialog"
 import { html, render } from "lit-html"
 import { LanguageDetails, LanguageRow } from "./types"
 import "../../styles/ContactInfoEditDialog.css"
@@ -6,8 +6,16 @@ import { LiveStore, NamedNode } from "rdflib"
 import { ViewerMode } from "../../types"
 import { applyRowFieldChange, applyRowSelectChange, deleteRow, summarizeRowOps } from "../shared/rowState"
 import { hasNonEmptyText, sanitizeTextValue, toText } from "../../textUtils"
-import { MutationOps } from "../contactInfo/types"
+import { MutationOps } from "../shared/types"
 import { processLanguageMutations } from "./mutations"
+import {
+  deleteEntryButtonTitleText,
+  dialogCancelLabelText,
+  dialogSubmitLabelText,
+  editLanguagesDialogTitleText,
+  ownerLoginRequiredDialogMessageText,
+  saveContactUpdatesFailedPrefixText,
+} from "../../texts"
 
 type LanguageFormState = {
   languages: LanguageRow[]
@@ -40,6 +48,13 @@ function toFormState(details: LanguageDetails[]): LanguageFormState {
   return {
     languages: rows.length ? rows : [{ name: '', proficiency: '', entryNode: '', status: 'new' }],
   }
+}
+
+function validateLanguagesBeforeSave(rows: LanguageRow[]): string | null {
+  const ops = summarizeRowOps(rows, rowHasContent)
+  const hasChanges = ops.create.length > 0 || ops.update.length > 0 || ops.remove.length > 0
+  if (!hasChanges) return 'No language changes detected.'
+  return null
 }
 
 type ContactLanguageInputRowProps = {
@@ -113,7 +128,7 @@ function renderLanguageInputRow({
           type="button"
           class="deleteEntryButton"
           aria-label=${`Delete language ${displayIndex + 1}`}
-          title="Delete entry"
+          title=${deleteEntryButtonTitleText}
           @click=${handleDelete}
         >
           <svg class="deleteEntryIcon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
@@ -207,40 +222,36 @@ export async function createLanguageEditDialog(
   const { form, formState } = createLanguageEditForm(languages)
 
   const result = await openInputDialog({
-    title: 'Edit Languages',
+    title: editLanguagesDialogTitleText,
     dom,
     form,
-    submitLabel: 'Save Changes',
-    cancelLabel: 'Cancel'
+    submitLabel: dialogSubmitLabelText,
+    cancelLabel: dialogCancelLabelText,
+    validate: () => {
+      if (viewerMode !== 'owner') {
+        return ownerLoginRequiredDialogMessageText
+      }
+      return validateLanguagesBeforeSave(formState.languages)
+    },
+    onSave: async () => {
+      const languageOps = summarizeRowOps(formState.languages, rowHasContent)
+      const plan: MutationOps<LanguageRow> = {
+        create: languageOps.create,
+        update: languageOps.update,
+        remove: languageOps.remove
+      }
+      await processLanguageMutations(store, subject, plan)
+    },
+    formatSaveError: (error: unknown) => {
+      const message = error instanceof Error ? error.message : String(error)
+      return `${saveContactUpdatesFailedPrefixText} ${message}`
+    }
   })
 
   if (!result) return
 
-  if (viewerMode !== 'owner') {
-    await alertDialog('You need to log in as the profile owner to save contact updates.', 'Login Required', dom)
-    return
-  }
-
- const languageOps = summarizeRowOps(formState.languages, rowHasContent)
- const plan: MutationOps<LanguageRow> = {
-  create: languageOps.create,
-  update: languageOps.update,
-  remove: languageOps.remove
-}
-
-  // Save wiring is section-specific and can be added when mutation logic is ready.
-  console.log('Language edit values', result)
-  console.log('Pending language operations', languageOps)
-
-  try {
-    await processLanguageMutations(store, subject, plan)
-
-    const view = dom.defaultView
-    if (view) {
-      view.location.reload()
-    }
-  } catch (error) {
-    const message = error instanceof Error ? error.message : String(error)
-    await alertDialog(`Could not save contact updates. ${message}`, 'Save Failed', dom)
+  const view = dom.defaultView
+  if (view) {
+    view.location.reload()
   }
 }
