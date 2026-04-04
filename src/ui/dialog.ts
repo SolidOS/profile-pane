@@ -30,7 +30,7 @@ function ensureModalOverlay (dom: Document): HTMLDivElement {
     <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title" aria-describedby="modal-desc">
       <h2 id="modal-title"></h2>
       <div id="modal-desc"></div>
-      <section id="modal-error" class="dialogErrorSection" aria-live="assertive" role="alert"></section>
+      <section id="modal-error" class="dialogErrorSection" aria-live="assertive" role="alert" hidden></section>
       <div id="modal-buttons"></div>
     </div>
   `
@@ -81,6 +81,7 @@ function clearModalError(overlay: HTMLDivElement) {
   const errorEl = overlay.querySelector('#modal-error') as HTMLElement | null
   if (errorEl) {
     errorEl.textContent = ''
+    errorEl.hidden = true
   }
 }
 
@@ -88,6 +89,7 @@ function setModalError(overlay: HTMLDivElement, message: string) {
   const errorEl = overlay.querySelector('#modal-error') as HTMLElement | null
   if (!errorEl) return
   errorEl.textContent = message
+  errorEl.hidden = false
 }
 
 function openModal ({ title, message, buttons, dom }: { title?: string, message?: string | Node, buttons: DialogButton[], dom: Document }) {

@@ -10,15 +10,16 @@ import {
   socialAccountsHeadingText,
 } from './texts'
 import { ViewerMode } from './types'
-import { selectProfileViewModel } from './ProfileViewModelSelector'
+import { presentProfileViewModel } from './ProfileViewModelPresenter'
 import { renderContactInfoSection } from './sections/contactInfo/ContactInfoSection'
 import { renderLanguageSection } from './sections/languages/LanguageSection'
 import { renderSkillsSection } from './sections/skills/SkillsSection'
 import { ContactInfo } from './sections/contactInfo/types'
 import { LanguageDetails } from './sections/languages/types'
 import { renderCVSection } from './sections/resume/ResumeSection'
+import { renderEducationSection } from './sections/education/EducationSection'
 
-type ProfileViewModelData = ReturnType<typeof selectProfileViewModel>
+type ProfileViewModelData = ReturnType<typeof presentProfileViewModel>
 type ProfileBasics = ProfileViewModelData['basics']
 type SocialAccounts = ProfileViewModelData['social']
 
@@ -93,11 +94,12 @@ export async function ProfileView (
   const store = context.session.store as LiveStore
   const viewerMode = getViewerMode(subject)
 
-  const viewModel = selectProfileViewModel(subject, store)
+  const viewModel = presentProfileViewModel(subject, store)
   const profileBasics = viewModel.basics
   const rolesByType = viewModel.cvDetails
   const skills = viewModel.skills
   const languages = viewModel.languages
+  const education = viewModel.education
   const accounts = viewModel.social
   const contactInfo = viewModel.contactInfo
   console.log('Contact Info', JSON.stringify(contactInfo))
@@ -130,6 +132,7 @@ export async function ProfileView (
         </article>
 
         ${renderCVSection(store, subject, rolesByType, viewerMode)}
+        ${renderEducationSection(store, subject, education, viewerMode)}
       </section>
       ${renderSidebar(store, subject, accounts, skills, languages, contactInfo, profileBasics, viewerMode)}
     </main>
