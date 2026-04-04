@@ -33,6 +33,16 @@
   min-width: 0;
 }
 
+.inputValueRow--stack {
+  display: grid;
+  gap: var(--spacing-xxs);
+}
+
+.inputValueRow--full {
+  max-width: 100% !important;
+  width: 100%;
+}
+
 .inputTypeRow {
   flex: 0 0 10rem;
 }
@@ -40,6 +50,25 @@
 .inputRow--addressHeader {
   max-width: 34rem;
   align-items: flex-end;
+}
+
+.inputRow--inlineEnd {
+  justify-content: flex-end;
+  max-width: 100%;
+}
+
+.inputCheckboxLabel {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  margin-left: auto;
+}
+
+.inputCheckboxLabel input[type="checkbox"] {
+  min-height: auto;
+  height: auto;
+  width: auto;
+  margin: 0;
 }
 
 /* The street-address row is a standalone label, so cap its width like the flex rows. */
@@ -112,6 +141,25 @@
   height: var(--min-touch-target, 44px);
 }
 
+.inputValueRow textarea,
+.inputTypeRow textarea {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  min-height: var(--min-touch-target, 44px);
+}
+
+.inputTextarea--multiline {
+  min-height: calc(4 * 1.4em + var(--spacing-sm));
+  height: auto;
+  resize: vertical;
+}
+
+.inputValueRow--stack small {
+  justify-self: end;
+  text-align: right;
+}
+
 @media (max-width: 640px) {
   .inputRow {
     max-width: 100%;
@@ -126,6 +174,10 @@
   .inputRow--addressHeader {
     flex-direction: row;
     align-items: flex-end;
+  }
+
+  .inputRow--inlineEnd {
+    justify-content: flex-start;
   }
 
   .inputActions {

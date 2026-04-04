@@ -1,10 +1,32 @@
 import { LiveStore, NamedNode, Node } from "rdflib"
+import { fallbackSaveUpdatesErrorMessageText, updaterUnsupportedStoreErrorMessageText } from "../../texts"
+
+function normalizeNodeId(value: string): string {
+  return value.startsWith("_:") ? value.slice(2) : value
+}
 
 export function applyUpdaterPatch(store: LiveStore, deletions: any[], insertions: any[]) {
-  if (store.updater) {
-    return store.updater.update(deletions as any, insertions as any)
+  if (!store.updater) {
+    throw new Error(updaterUnsupportedStoreErrorMessageText)
   }
-  throw new Error("Store does not support updates")
+
+  return new Promise<void>((resolve, reject) => {
+    try {
+      ;(store.updater as any).update(
+        deletions as any,
+        insertions as any,
+        (_uri: string, ok: boolean, message?: string) => {
+          if (ok === true) {
+            resolve()
+            return
+          }
+          reject(new Error(message || fallbackSaveUpdatesErrorMessageText))
+        }
+      )
+    } catch (error) {
+      reject(error instanceof Error ? error : new Error(String(error)))
+    }
+  })
 }
 
 export function collectNodeStatements(store: LiveStore, node: Node, doc: NamedNode) {
@@ -22,5 +44,10 @@ export function collectLinkStatements(
 }
 
 export function findExistingNode(nodes: Node[], entryNode: string) {
-  return nodes.find((node) => node.value === entryNode)
+  const normalizedEntryNode = normalizeNodeId(entryNode)
+  return nodes.find((node) => {
+    const nodeValue = normalizeNodeId(node.value)
+    if (nodeValue === normalizedEntryNode) return true
+    return node.value === entryNode
+  })
 }

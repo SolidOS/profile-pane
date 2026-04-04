@@ -48,6 +48,19 @@
   gap: var(--spacing-xxs);
 }
 
+#profile-modal .dialogInlineError {
+  margin: 0 0 var(--spacing-sm) 0;
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border: 1px solid var(--color-border-pale);
+  border-radius: var(--border-radius-base);
+  background: color-mix(in srgb, var(--color-warning) 12%, var(--color-background));
+  color: var(--color-text);
+}
+
+#profile-modal .dialogErrorSection {
+  margin-top: var(--spacing-sm);
+}
+
 #profile-modal input,
 #profile-modal select,
 #profile-modal textarea {

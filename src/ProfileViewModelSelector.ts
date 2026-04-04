@@ -5,7 +5,8 @@ import { presentSocial, SocialPresentation } from './SocialPresenter';
 import { selectSkills } from './sections/skills/selectors';
 import { selectLanguages } from './sections/languages/selectors';
 import { LanguageDetails } from './sections/languages/types';
-import { CVPresentation, presentCV } from './CVPresenter';
+import { presentCV } from './sections/resume/selectors';
+import { RoleDetails } from './sections/resume/types';
 import { selectContactInfo } from './sections/contactInfo/selectors';
 
 export type ProfileViewModel = {
@@ -14,7 +15,7 @@ export type ProfileViewModel = {
   skills: string[],
   languages: LanguageDetails[], 
   social: SocialPresentation,
-  cvDetails: CVPresentation
+  cvDetails: RoleDetails[]
 }
 
 export function selectProfileViewModel(subject: NamedNode, store: LiveStore): ProfileViewModel {

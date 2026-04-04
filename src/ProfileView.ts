@@ -4,11 +4,9 @@ import { NamedNode, LiveStore } from 'rdflib'
 import { authn } from 'solid-logic'
 import './styles/ProfileView.css'
 import { ProfileCard } from './ProfileCard'
-import { CVCard } from './CVCard'
 import { SocialCard } from './SocialCard'
 import { QRCodeCard } from './QRCodeCard'
 import {
-  resumeHeadingText,
   socialAccountsHeadingText,
 } from './texts'
 import { ViewerMode } from './types'
@@ -18,6 +16,7 @@ import { renderLanguageSection } from './sections/languages/LanguageSection'
 import { renderSkillsSection } from './sections/skills/SkillsSection'
 import { ContactInfo } from './sections/contactInfo/types'
 import { LanguageDetails } from './sections/languages/types'
+import { renderCVSection } from './sections/resume/ResumeSection'
 
 type ProfileViewModelData = ReturnType<typeof selectProfileViewModel>
 type ProfileBasics = ProfileViewModelData['basics']
@@ -46,25 +45,6 @@ function renderSocialAccounts(accounts: SocialAccounts, viewerMode: ViewerMode) 
           </nav>
         </section>
       ` : ''
-}
-
-function renderCVSection(rolesByType, viewerMode: ViewerMode) {
-  const cv = CVCard(rolesByType, viewerMode)
-  return cv && cv.strings && cv.strings.join('').trim() !== '' ? html`
-    <section 
-      aria-labelledby="cv-heading" 
-      class="section-bg" 
-      role="region"
-      tabindex="-1"
-    >
-      <header class="mb-md">
-        <h3 id="cv-heading" tabindex="-1">${resumeHeadingText}</h3>
-      </header>
-      <div>
-        ${cv}
-      </div>
-    </section>
-  ` : ''
 }
 
 function renderSidebar(
@@ -149,7 +129,7 @@ export async function ProfileView (
           ${ProfileCard(profileBasics, context, subject, viewerMode)}
         </article>
 
-        ${renderCVSection(rolesByType, viewerMode)}
+        ${renderCVSection(store, subject, rolesByType, viewerMode)}
       </section>
       ${renderSidebar(store, subject, accounts, skills, languages, contactInfo, profileBasics, viewerMode)}
     </main>
