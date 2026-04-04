@@ -12,6 +12,10 @@
         if (typeof $rdf !== 'undefined') window.$rdf = $rdf;
         if (typeof SolidLogic !== 'undefined') window.SolidLogic = SolidLogic;
         if (typeof UI !== 'undefined') window.UI = UI;
+
+        // Shared OpenGraph key used by the Projects dialog URL preview fetch.
+        // Set this once for the site/environment; users won't need to enter a key.
+        window.__PROFILE_PANE_OPENGRAPH_APP_ID = 'f38abbeb-63a7-477a-88b6-9e51282049b0';
     </script>
     <style>
         body {
