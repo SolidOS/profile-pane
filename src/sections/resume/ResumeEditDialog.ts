@@ -132,13 +132,15 @@ type ResumeRowProps = {
   index: number
   displayIndex: number
   onDelete: () => void
+  onChange: () => void
 }
 
 function renderResumeInputRow({
   resumeData,
   index,
   displayIndex,
-  onDelete
+  onDelete,
+  onChange
 }: ResumeRowProps) {
   const resumeRow = resumeData[index]
   const label = `Experience ${displayIndex + 1}`
@@ -236,6 +238,7 @@ function renderResumeInputRow({
     const nextValue = sanitizeResumeFieldValue(target.value)
     if (resumeData[index]) {
       applyRowFieldChange(resumeData[index], field, nextValue, rowHasContent)
+      onChange()
     }
   }
 
@@ -258,6 +261,7 @@ function renderResumeInputRow({
     const nextStartDate = buildDateLiteral(month, year)
     if (resumeData[index]) {
       applyRowFieldChange(resumeData[index], 'startDate', nextStartDate, rowHasContent)
+      onChange()
     }
   }
 
@@ -268,6 +272,7 @@ function renderResumeInputRow({
     const nextStartDate = buildDateLiteral(month, year)
     if (resumeData[index]) {
       applyRowFieldChange(resumeData[index], 'startDate', nextStartDate, rowHasContent)
+      onChange()
     }
   }
 
@@ -278,6 +283,7 @@ function renderResumeInputRow({
     const nextEndDate = buildDateLiteral(month, year)
     if (resumeData[index]) {
       applyRowFieldChange(resumeData[index], 'endDate', nextEndDate, rowHasContent)
+      onChange()
     }
   }
 
@@ -288,6 +294,7 @@ function renderResumeInputRow({
     const nextEndDate = buildDateLiteral(month, year)
     if (resumeData[index]) {
       applyRowFieldChange(resumeData[index], 'endDate', nextEndDate, rowHasContent)
+      onChange()
     }
   }
 
@@ -296,6 +303,7 @@ function renderResumeInputRow({
     const nextValue = sanitizeResumeFieldValue(target.value.slice(0, descriptionMaxLength))
     if (resumeData[index]) {
       applyRowFieldChange(resumeData[index], 'description', nextValue, rowHasContent)
+      onChange()
     }
   }
 
@@ -303,6 +311,7 @@ function renderResumeInputRow({
     const target = event.target as HTMLInputElement
     if (resumeData[index]) {
       applyRowFieldChange(resumeData[index], 'isCurrentRole', target.checked, rowHasContent)
+      onChange()
     }
   }
 
@@ -514,7 +523,8 @@ function renderResumeSection(resumeData: ResumeRow[], onAddRow: () => void) {
           onDelete: () => {
             deleteRow(resumeData, index)
             onAddRow()
-          }
+          },
+          onChange: onAddRow
         }))}
       </fieldset>
     </section>
@@ -547,7 +557,7 @@ export async function createResumeEditDialog(
   viewerMode: ViewerMode
 ) {
   const dom = (event.currentTarget as HTMLElement | null)?.ownerDocument || document
-  const { form, formState } = createResumeEditForm(resumeData)
+  const { form, formState, rerender } = createResumeEditForm(resumeData)
 
   const result = await openInputDialog({
     title: editResumeDialogTitleText,
@@ -576,6 +586,7 @@ export async function createResumeEditDialog(
     onSave: async () => {
       const plan: MutationOps<ResumeRow> = summarizeRowOps(formState.resumeData, rowHasContent)
       await processResumeMutations(store, subject, plan)
+      rerender()
     },
     formatSaveError: (error: unknown) => {
       const message = error instanceof Error ? error.message : String(error)

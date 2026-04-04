@@ -1,6 +1,12 @@
 import { LiveStore, NamedNode, Literal, Node } from 'rdflib'
 import { ns } from 'solid-ui'
 import { RoleDetails } from './types'
+
+const educationMembershipType = ns.schema('EducationalOccupationalCredential')
+
+function isEducationMembership(store: LiveStore, membership: Node, doc: NamedNode): boolean {
+  return store.holds(membership as any, ns.rdf('type'), educationMembershipType, doc as any)
+}
 // Copied from CVPresenter and modified for new functionallity. 
 /* Restructure for new design - notes */
 /* The design displays in reverse chronological order: removed rolesByType and 
@@ -26,7 +32,9 @@ function getRoles(
   const roles: RoleDetails[] = []
   const deduped = new Map<string, RoleDetails>()
   const doc = subject.doc()
-  const memberships = store.each(null, ns.org('member'), subject, doc)
+  const memberships = store
+    .each(null, ns.org('member'), subject, doc)
+    .filter((membership) => !isEducationMembership(store, membership as Node, doc))
 
   for (const membership of memberships) {
     let orgHomePage, orgNameGiven, publicIdName, roleName, publicId, orgType, orgLocation

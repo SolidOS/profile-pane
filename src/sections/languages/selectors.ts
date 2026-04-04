@@ -31,7 +31,7 @@ export function languageAsText (store: Store, lan: Node):string {
   return ''                                                  
 }
 
-export function selectLanguages(subject: NamedNode, store: LiveStore): LanguageDetails[] {
+export function presentLanguages(subject: NamedNode, store: LiveStore): LanguageDetails[] {
   const languageNodes = store.each(subject, ns.schema('knowsLanguage'))
   const details: LanguageDetails[] = languageNodes
     .flatMap(node => expandRdfList(store, node))
