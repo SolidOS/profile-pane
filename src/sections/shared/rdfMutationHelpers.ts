@@ -10,11 +10,25 @@ export function applyUpdaterPatch(store: LiveStore, deletions: any[], insertions
     throw new Error(updaterUnsupportedStoreErrorMessageText)
   }
 
+  const safeDeletions = (deletions || []).filter((statement: any) => {
+    if (!statement || !statement.subject || !statement.predicate || !statement.object) return false
+    const graph = statement.why
+    return store.holds(statement.subject, statement.predicate, statement.object, graph)
+  })
+
+  const safeInsertions = (insertions || []).filter((statement: any) => {
+    return Boolean(statement && statement.subject && statement.predicate && statement.object)
+  })
+
+  if (safeDeletions.length === 0 && safeInsertions.length === 0) {
+    return Promise.resolve()
+  }
+
   return new Promise<void>((resolve, reject) => {
     try {
       ;(store.updater as any).update(
-        deletions as any,
-        insertions as any,
+        safeDeletions as any,
+        safeInsertions as any,
         (_uri: string, ok: boolean, message?: string) => {
           if (ok === true) {
             resolve()
