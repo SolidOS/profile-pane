@@ -2,7 +2,7 @@ import { NamedNode, uri } from 'rdflib'
 import { ns, utils, widgets, icons } from 'solid-ui'
 import { solidLogicSingleton } from 'solid-logic'
 import { ViewerMode } from './types'
-
+// Deprecated: unused after page redesign (April 2026); kept temporarily for reference.
 const { iconForClass } = widgets
 const { typeIndex } = solidLogicSingleton
 const { getScopedAppInstances } = typeIndex
