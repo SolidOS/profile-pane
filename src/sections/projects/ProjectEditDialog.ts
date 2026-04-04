@@ -8,7 +8,7 @@ import { applyRowFieldChange, deleteRow, summarizeRowOps } from "../shared/rowSt
 import { hasNonEmptyText, sanitizeTextValue, toText } from "../../textUtils"
 import { MutationOps } from "../shared/types"
 import { processProjectsMutations } from "./mutations"
-import { fetchLinkPreview, LinkCategory } from "../shared/linkPreview"
+import { fetchLinkPreview, LinkCategory } from "./linkPreview"
 import {
   deleteEntryButtonTitleText,
   dialogCancelLabelText,
