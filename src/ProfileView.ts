@@ -18,6 +18,7 @@ import { ContactInfo } from './sections/contactInfo/types'
 import { LanguageDetails } from './sections/languages/types'
 import { renderCVSection } from './sections/resume/ResumeSection'
 import { renderEducationSection } from './sections/education/EducationSection'
+import { renderProjectSection } from './sections/projects/ProjectSection'
 
 type ProfileViewModelData = ReturnType<typeof presentProfileViewModel>
 type ProfileBasics = ProfileViewModelData['basics']
@@ -100,9 +101,9 @@ export async function ProfileView (
   const skills = viewModel.skills
   const languages = viewModel.languages
   const education = viewModel.education
+  const projects = viewModel.projects
   const accounts = viewModel.social
   const contactInfo = viewModel.contactInfo
-  console.log('Contact Info', JSON.stringify(contactInfo))
   
   return html` 
     <main
@@ -132,6 +133,7 @@ export async function ProfileView (
         </article>
 
         ${renderCVSection(store, subject, rolesByType, viewerMode)}
+        ${renderProjectSection(store, subject, projects, viewerMode)}
         ${renderEducationSection(store, subject, education, viewerMode)}
       </section>
       ${renderSidebar(store, subject, accounts, skills, languages, contactInfo, profileBasics, viewerMode)}
