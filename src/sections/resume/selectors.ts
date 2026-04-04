@@ -1,7 +1,7 @@
 import { LiveStore, NamedNode, Literal, Node } from 'rdflib'
 import { ns } from 'solid-ui'
 import { RoleDetails } from './types'
-
+// Copied from CVPresenter and modified for new functionallity. 
 /* Restructure for new design - notes */
 /* The design displays in reverse chronological order: removed rolesByType and 
    just sort the Roles */

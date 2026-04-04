@@ -2,12 +2,12 @@ import { NamedNode, LiveStore } from 'rdflib'
 import { presentProfile, ProfilePresentation } from './presenter';
 import { ContactInfo  } from './sections/contactInfo/types';
 import { presentSocial, SocialPresentation } from './SocialPresenter';
-import { selectSkills } from './sections/skills/selectors';
-import { selectLanguages } from './sections/languages/selectors';
+import { presentSkills } from './sections/skills/selectors';
+import { presentLanguages } from './sections/languages/selectors';
 import { LanguageDetails } from './sections/languages/types';
 import { presentCV } from './sections/resume/selectors';
 import { RoleDetails } from './sections/resume/types';
-import { selectContactInfo } from './sections/contactInfo/selectors';
+import { presentContactInfo } from './sections/contactInfo/selectors';
 
 export type ProfileViewModel = {
   basics: ProfilePresentation,
@@ -18,11 +18,11 @@ export type ProfileViewModel = {
   cvDetails: RoleDetails[]
 }
 
-export function selectProfileViewModel(subject: NamedNode, store: LiveStore): ProfileViewModel {
+export function presentProfileViewModel(subject: NamedNode, store: LiveStore): ProfileViewModel {
   const basics = presentProfile(subject, store)
-  const contactInfo = selectContactInfo(subject, store)
-  const skills = selectSkills(subject, store)
-  const languages = selectLanguages(subject, store)
+  const contactInfo = presentContactInfo(subject, store)
+  const skills = presentSkills(subject, store)
+  const languages = presentLanguages(subject, store)
   const social = presentSocial(subject, store)
   const cvDetails = presentCV(subject, store)
 

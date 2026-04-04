@@ -15,7 +15,7 @@ export function skillAsText (store: Store, sk: Node):string {
   return ''
 }
 
-export function selectSkills(subject: NamedNode, store: LiveStore): string[] {
+export function presentSkills(subject: NamedNode, store: LiveStore): string[] {
   return store
     .each(subject, ns.schema('skills'))
     .map((sk) => skillAsText(store, sk))
