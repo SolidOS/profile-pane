@@ -1,5 +1,5 @@
 import { presentSocial } from '../src/SocialPresenter'
-import { presentCV} from '../src/CVPresenter'
+import { presentCV } from '../src/sections/resume/selectors'
 import { blankNode, sym, parse } from 'rdflib'
 import { ns } from 'solid-ui'
 import { store } from 'solid-logic'
