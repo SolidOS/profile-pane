@@ -20,6 +20,14 @@ To run all tests:
 npm test
 ```
 
+Focused accessibility check:
+```shell script
+npm test -- test/profile-view.accessibility.test.ts
+```
+
+Accessibility markup baseline checklist:
+[docs/accessibility-baseline-checklist.md](docs/accessibility-baseline-checklist.md)
+
 If you are a first time developer/user on Windows 10, the repository may give package issues regarding webpack or jest.
 If this is the case, simply run "npm audit fix" and upgrade the repository. It should work fine.
 

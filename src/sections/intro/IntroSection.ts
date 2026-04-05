@@ -1,4 +1,4 @@
-import { html, nothing, render } from 'lit-html'
+import { html, nothing } from 'lit-html'
 import '../../styles/ProfileCard.css'
 import { ProfileDetails } from './types'
 import { addMeToYourFriendsDiv } from '../../addMeToYourFriends'
@@ -7,26 +7,13 @@ import { NamedNode } from 'rdflib'
 import { ViewerMode } from '../../types'
 import { createIntroEditDialog } from './IntroEditDialog'
 import { toText } from '../../textUtils'
-import { presentProfile } from './selectors'
 
 
 export const renderIntroSection = (context: DataBrowserContext, subject: NamedNode, profileData: ProfileDetails, viewerMode: ViewerMode) => {
 
-  const refreshIntroSection = async (hostSection: HTMLElement | null) => {
-    if (!hostSection) return
-
-    try {
-      await context.session.store.fetcher.load(subject.doc(), { force: true } as any)
-    } catch {
-      // Best-effort refresh; render from current store if fetch reload fails.
-    }
-
-    const nextProfile = presentProfile(subject, context.session.store)
-    render(renderIntroSection(context, subject, nextProfile, viewerMode), hostSection)
-  }
-
-  const phoneValue = toText(profileData.primaryPhone.valueNode).replace(/^tel:/i, '')
-  const emailValue = toText(profileData.primaryEmail.valueNode).replace(/^mailto:/i, '')
+  const phoneValue = toText(profileData.primaryPhone?.valueNode || profileData.primaryPhone?.entryNode).replace(/^tel:/i, '')
+  const emailValue = toText(profileData.primaryEmail?.valueNode || profileData.primaryEmail?.entryNode).replace(/^mailto:/i, '')
+  const roleAndOrg = [profileData.jobTitle, profileData.orgName].filter(Boolean).join(' at ')
   return html`
       <section class="introSection section-bg" aria-labelledby="intro-heading">
         <header class="introSectionHeader mb-md">
@@ -37,12 +24,12 @@ export const renderIntroSection = (context: DataBrowserContext, subject: NamedNo
             <h2 id="profile-name">${profileData.name}</h2>
             <p>${profileData.pronouns ? `(${profileData.pronouns})` : ''}</p>
           </div>
-          <h4>${profileData.jobTitle}</h4>
+          ${roleAndOrg ? html`<p>${roleAndOrg}</p>` : nothing}
           <div class="introDetailsRow">
             ${Line(profileData.dateOfBirth, '', 'Date of Birth')}
             ${Line(profileData.location, '🌐', 'Location')}
           </div>
-          <div class="introDetailsRow" aria-label="Contact information">
+          <div class="introDetailsRow" role="group" aria-label="Contact information">
             ${Line(phoneValue, '', 'Phone')}
             ${Line(emailValue, '', 'Email')}
           </div>
@@ -54,14 +41,12 @@ export const renderIntroSection = (context: DataBrowserContext, subject: NamedNo
               class="actionButton"
               aria-label="Add or edit intro information"
               @click=${(event: Event) => {
-                const hostSection = (event.currentTarget as HTMLElement | null)?.closest('section') as HTMLElement | null
                 return createIntroEditDialog(
                   event,
                   context.session.store,
                   subject,
                   profileData,
-                  viewerMode,
-                  async () => refreshIntroSection(hostSection)
+                  viewerMode
                 )
               }}
             >
@@ -78,7 +63,7 @@ export const renderIntroSection = (context: DataBrowserContext, subject: NamedNo
 
 const Line = (value, prefix: symbol | string = nothing, label: string = '') =>
   value ? html`
-    <div class="details" role="text" ${label ? `aria-label="${label}: ${value}"` : ''}>
+    <div class="details" role="text" aria-label=${label ? `${label}: ${value}` : nothing}>
       ${prefix} ${value}
     </div>
   ` : nothing
