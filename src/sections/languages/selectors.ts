@@ -1,27 +1,7 @@
 import { NamedNode, Store, Node, LiveStore } from "rdflib";
 import { ns, utils } from "solid-ui";
 import { LanguageDetails } from "./types"
-
-export function expandRdfList(store: Store, node: Node): Node[] {
-  const collectionElements = (node as { termType?: string; elements?: Node[] }).elements
-  if (Array.isArray(collectionElements)) {
-    return collectionElements.flatMap(element => expandRdfList(store, element))
-  }
-
-  const first = store.any(node as NamedNode, ns.rdf('first'))
-  if (!first) return [node]
-
-  const items: Node[] = []
-  let current: Node | null = node
-  while (current) {
-    const value = store.any(current as NamedNode, ns.rdf('first')) as Node | null
-    if (value) items.push(...expandRdfList(store, value))
-    const rest = store.any(current as NamedNode, ns.rdf('rest')) as Node | null
-    if (!rest || (rest.termType === 'NamedNode' && rest.value === ns.rdf('nil').value)) break
-    current = rest
-  }
-  return items
-}
+import { expandRdfList } from "../shared/rdfList"
 
 export function languageAsText (store: Store, lan: Node):string {
   if (lan.termType === 'Literal') return lan.value // Not normal but allow this

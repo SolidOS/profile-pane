@@ -1,4 +1,4 @@
-import { html, render } from "lit-html"
+import { html } from "lit-html"
 import { LiveStore, NamedNode } from "rdflib"
 import { ViewerMode } from "../../types"
 import { ProjectDetails, ProjectRow } from "./types"
@@ -6,7 +6,6 @@ import { projectsHeadingText } from "../../texts"
 import { createProjectsEditDialog } from "./ProjectEditDialog"
 import { processProjectsMutations } from "./mutations"
 import { MutationOps } from "../shared/types"
-import { presentProjects } from "./selectors"
 import "../../styles/ProjectsCard.css"
 
 function toProjectRow(project: ProjectDetails, status: 'existing' | 'deleted'): ProjectRow {
@@ -26,8 +25,7 @@ function renderProject(
   project: ProjectDetails,
   store: LiveStore,
   subject: NamedNode,
-  viewerMode: ViewerMode,
-  refreshProjectsSection: (hostSection: HTMLElement | null) => Promise<void>
+  viewerMode: ViewerMode
 ) {
   if (!project) return html``
 
@@ -42,8 +40,6 @@ function renderProject(
     }
 
     await processProjectsMutations(store, subject, removePlan)
-    const hostSection = (event.currentTarget as HTMLElement | null)?.closest('section') as HTMLElement | null
-    await refreshProjectsSection(hostSection)
   }
 
   return html`
@@ -89,11 +85,10 @@ function renderProjects(
   projects: ProjectDetails[],
   store: LiveStore,
   subject: NamedNode,
-  viewerMode: ViewerMode,
-  refreshProjectsSection: (hostSection: HTMLElement | null) => Promise<void>
+  viewerMode: ViewerMode
 ) {
   if (!projects || !projects.length || !projects[0]) return html``
-  return html`${renderProject(projects[0], store, subject, viewerMode, refreshProjectsSection)}${projects.length > 1 ? renderProjects(projects.slice(1), store, subject, viewerMode, refreshProjectsSection) : html``}`
+  return html`${renderProject(projects[0], store, subject, viewerMode)}${projects.length > 1 ? renderProjects(projects.slice(1), store, subject, viewerMode) : html``}`
 }
 
 export function renderProjectSection(
@@ -102,18 +97,6 @@ export function renderProjectSection(
   projects: ProjectDetails[],
   viewerMode: ViewerMode
 ) {
-  const refreshProjectsSection = async (hostSection: HTMLElement | null) => {
-    if (!hostSection) return
-    try {
-      await store.fetcher.load(subject.doc(), { force: true } as any)
-    } catch {
-      // Best-effort refresh; render from current store if fetch reload fails.
-    }
-
-    const nextProjects = presentProjects(subject, store)
-    render(renderProjectSection(store, subject, nextProjects, viewerMode), hostSection)
-  }
-
   const hasProjects = Array.isArray(projects) && projects.length > 0
 
   return html`
@@ -127,8 +110,7 @@ export function renderProjectSection(
                 class="actionButton"
                 aria-label="Add or edit projects"
                 @click=${(event: Event) => {
-                  const hostSection = (event.currentTarget as HTMLElement | null)?.closest('section') as HTMLElement | null
-                  return createProjectsEditDialog(event, store, subject, projects, viewerMode, async () => refreshProjectsSection(hostSection))
+                  return createProjectsEditDialog(event, store, subject, projects, viewerMode)
                 }}
               >
                 + Add More
@@ -143,8 +125,7 @@ export function renderProjectSection(
                 projects,
                 store,
                 subject,
-                viewerMode,
-                refreshProjectsSection
+                viewerMode
               )}
             </ul>
           `
