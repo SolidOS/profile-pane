@@ -176,7 +176,7 @@ describe.skip('profile-pane', () => {
 
   describe('curriculum vitae', () => {
         it('returns the correct number of unique known languages', () => {
-          const { presentCV } = require('../src/CVPresenter')
+          const { presentCV } = require('../src/legacy/CVPresenter')
           const result = presentCV(subject, store)
           // You can adjust the expected count if the profile changes
           expect(result.languages.length).toBe(4)
