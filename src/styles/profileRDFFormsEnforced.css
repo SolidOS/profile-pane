@@ -74,46 +74,30 @@
   justify-content: center;
 }
 
-/* Make sure the delete icon floats in the top-right corner of the full hoverControl wrapper */
-.profile-form .hoverControl,
-.profile-grid .hoverControl {
-  position: relative !important;
-}
-
 .profile-grid .hoverControl > img.hoverControlHide,
 .profile-grid .hoverControl > [data-testid="deleteButtonWithCheck"] {
-  position: absolute !important;
-  top: 0.2em !important;
-  right: 0.2em !important;
-  width: 1.5em !important;
-  height: 1.5em !important;
-  align-items: center;
-  justify-content: center;
+  position: static !important;
+  top: auto !important;
+  right: auto !important;
+  width: 1.2em !important;
+  height: 1.2em !important;
+  display: block !important;
   margin: 0 !important;
-  float: none !important;
+  margin-left: 0.4em !important;
+  float: right !important;
   transform: none !important;
-}
-
-/* When icon is 2nd or 3rd child (i.e. sibling elements exist), align it vertically to the previous item */
-.profile-grid .hoverControl > img.hoverControlHide:nth-child(1),
-.profile-grid .hoverControl > img.hoverControlHide:nth-child(2),
-.profile-grid .hoverControl > [data-testid="deleteButtonWithCheck"]:nth-child(1),
-.profile-grid .hoverControl > [data-testid="deleteButtonWithCheck"]:nth-child(2) {
-  top: 50% !important;
-  transform: translateY(-50%) !important;
-  display: inline-flex !important;
 }
 
 /* Show the delete icon only when the container is hovered */
 .profile-grid .hoverControl:hover > img.hoverControlHide,
 .profile-grid .hoverControl:hover > [data-testid="deleteButtonWithCheck"] {
-  display: inline-flex !important;
+  display: block !important;
 }
 
 /* Also show the delete icon when the entire row is hovered */
 .profile-grid .attachmentTable tr:hover .hoverControl > img.hoverControlHide,
 .profile-grid .attachmentTable tr:hover .hoverControl > [data-testid="deleteButtonWithCheck"] {
-  display: inline-flex !important;
+  display: block !important;
 }
 
 /* Make the hover-control cell easier to hit */
@@ -125,10 +109,11 @@
 
 /* When the hoverControl only contains the hidden delete icon, keep it out of layout so it doesn't create empty space */
 .profile-form .formFieldValue .hoverControl:has(> img.hoverControlHide) {
-  min-width: 0 !important;
-  min-height: 0 !important;
-  width: 0 !important;
-  height: 0 !important;
+  display: inline-block !important;
+  min-width: 1.2em !important;
+  min-height: 1.2em !important;
+  width: auto !important;
+  height: auto !important;
   padding: 0 !important;
   margin: 0 !important;
   overflow: visible !important;
