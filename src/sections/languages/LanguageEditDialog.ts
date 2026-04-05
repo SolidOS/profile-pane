@@ -216,7 +216,8 @@ export async function createLanguageEditDialog(
   store: LiveStore,
   subject: NamedNode,
   languages: LanguageDetails[],
-  viewerMode: ViewerMode
+  viewerMode: ViewerMode,
+  onSaved?: () => Promise<void> | void
 ) {
   const dom = (event.currentTarget as HTMLElement | null)?.ownerDocument || document
   const { form, formState } = createLanguageEditForm(languages)
@@ -250,8 +251,7 @@ export async function createLanguageEditDialog(
 
   if (!result) return
 
-  const view = dom.defaultView
-  if (view) {
-    view.location.reload()
+  if (onSaved) {
+    await onSaved()
   }
 }

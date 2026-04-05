@@ -1,9 +1,10 @@
-import { html } from "lit-html"
+import { html, render } from "lit-html"
 import { LiveStore, NamedNode } from "rdflib"
 import { ViewerMode } from "../../types"
 import { createLanguageEditDialog } from "./LanguageEditDialog"
 import { LanguageDetails } from "./types"
 import { languagesHeadingText } from "../../texts"
+import { presentLanguages } from "./selectors"
 
 function renderLan(language: LanguageDetails, asList = false) {
   if (!language) return html``
@@ -23,6 +24,19 @@ export function renderLanguageSection(
   languages: LanguageDetails[],
   viewerMode: ViewerMode
 ) {
+  const refreshLanguageSection = async (hostSection: HTMLElement | null) => {
+    if (!hostSection) return
+
+    try {
+      await store.fetcher.load(subject.doc(), { force: true } as any)
+    } catch {
+      // Best-effort refresh; render from current store if fetch reload fails.
+    }
+
+    const nextLanguages = presentLanguages(subject, store)
+    render(renderLanguageSection(store, subject, nextLanguages, viewerMode), hostSection)
+  }
+
   const languagesArr = languages || []
   const hasLanguages = Array.isArray(languagesArr) && languagesArr.length > 0
 
@@ -36,7 +50,17 @@ export function renderLanguageSection(
                 type="button"
                 class="actionButton"
                 aria-label="Add or edit languages"
-                @click=${(event: Event) => createLanguageEditDialog(event, store, subject, languagesArr, viewerMode)}
+                @click=${(event: Event) => {
+                  const hostSection = (event.currentTarget as HTMLElement | null)?.closest('section') as HTMLElement | null
+                  return createLanguageEditDialog(
+                    event,
+                    store,
+                    subject,
+                    languagesArr,
+                    viewerMode,
+                    async () => refreshLanguageSection(hostSection)
+                  )
+                }}
               >
                 + Add More
               </button>
