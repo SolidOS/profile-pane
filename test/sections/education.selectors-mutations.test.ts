@@ -1,3 +1,4 @@
+import { describe, expect, it } from "@jest/globals"
 import { graph, sym } from 'rdflib'
 import { presentEducation } from '../../src/sections/education/selectors'
 import { processEducationMutations } from '../../src/sections/education/mutations'

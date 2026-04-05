@@ -1,3 +1,4 @@
+import { describe, expect, it } from "@jest/globals"
 import { render } from 'lit-html'
 import { literal, sym } from 'rdflib'
 import { renderCVSection } from '../../src/sections/resume/ResumeSection'

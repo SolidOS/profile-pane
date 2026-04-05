@@ -1,3 +1,4 @@
+import { describe, expect, it } from "@jest/globals"
 import { render } from 'lit-html'
 import { sym } from 'rdflib'
 import { renderBioSection } from '../../src/sections/bio/BioSection'

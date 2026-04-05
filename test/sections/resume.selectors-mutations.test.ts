@@ -1,3 +1,4 @@
+import { describe, expect, it } from "@jest/globals"
 import { graph, sym } from 'rdflib'
 import { presentCV } from '../../src/sections/resume/selectors'
 import { processResumeMutations } from '../../src/sections/resume/mutations'

@@ -1,3 +1,4 @@
+import { describe, expect, it } from "@jest/globals"
 import { render } from 'lit-html'
 import { sym } from 'rdflib'
 import { renderSocialAccounts } from '../../src/sections/social/SocialSection'

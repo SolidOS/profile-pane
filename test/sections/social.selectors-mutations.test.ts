@@ -1,3 +1,4 @@
+import { describe, expect, it, jest } from "@jest/globals"
 import { graph, sym } from 'rdflib'
 import { presentSocial } from '../../src/sections/social/selectors'
 import { processSocialMutations } from '../../src/sections/social/mutations'

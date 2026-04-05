@@ -1,3 +1,4 @@
+import { describe, expect, it } from "@jest/globals"
 import { graph, sym } from 'rdflib'
 import { presentProjects } from '../../src/sections/projects/selectors'
 import { processProjectsMutations } from '../../src/sections/projects/mutations'

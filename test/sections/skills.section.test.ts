@@ -1,3 +1,4 @@
+import { describe, expect, it } from "@jest/globals"
 import { render } from 'lit-html'
 import { renderSkillsSection } from '../../src/sections/skills/SkillsSection'
 import { context, subject } from '../setup'
