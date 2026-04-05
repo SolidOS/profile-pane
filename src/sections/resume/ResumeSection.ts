@@ -89,10 +89,10 @@ export function renderCVSection(
 ) {
   scheduleDescriptionOverflowCheck()
 
-  const cv = CVCard(roles, viewerMode)
   const resumeDetails: RoleDetails[] = roles || []
-  const hasResume = cv && cv.strings && cv.strings.join('').trim() !== ''
+  const hasResume = resumeDetails.length > 0
   const showSection = hasResume || viewerMode === 'owner'
+  const cv = hasResume ? CVCard(resumeDetails, viewerMode) : html``
 
   return showSection ? html`
     <section 
