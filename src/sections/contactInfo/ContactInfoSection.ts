@@ -1,8 +1,9 @@
-import { html } from "lit-html"
+import { html, render } from "lit-html"
 import { ViewerMode } from "../../types"
 import { createContactInfoEditDialog } from "./ContactInfoEditDialog"
 import { LiveStore, NamedNode } from "rdflib"
 import { contactInfoHeadingText } from "../../texts"
+import { presentContactInfo } from "./selectors"
 
 function toText(value: unknown): string {
   if (!value) return ''
@@ -30,8 +31,7 @@ function formatTypeLabel(value: unknown): string {
 
 function renderPhone(phone) {
   if (!phone) return html``
-  console.log('rendering phone', JSON.stringify(phone))
-  const phoneValue = toText(phone.valueNode || phone.phoneNumber).replace(/^tel:/i, '')
+  const phoneValue = toText(phone.valueNode).replace(/^tel:/i, '')
   const phoneType = formatTypeLabel(phone.type)
 
   return html`<li class="phone" role="listitem">
@@ -48,7 +48,7 @@ function renderPhones(phones) {
 function renderEmail(email) {
   if (!email) return html``
   console.log('rendering email', JSON.stringify(email))
-  const emailValue = toText(email.valueNode || email.emailAddress).replace(/^mailto:/i, '')
+  const emailValue = toText(email.valueNode).replace(/^mailto:/i, '')
   const emailType = formatTypeLabel(email.type)
 
   return html`<li class="email" role="listitem">
@@ -82,6 +82,19 @@ function renderAddresses(addresses) {
 }
 
 export function renderContactInfoSection(store: LiveStore, subject: NamedNode, contactInfo, viewerMode: ViewerMode) {
+  const refreshContactInfoSection = async (hostSection: HTMLElement | null) => {
+    if (!hostSection) return
+
+    try {
+      await store.fetcher.load(subject.doc(), { force: true } as any)
+    } catch {
+      // Best-effort refresh; render from current store if fetch reload fails.
+    }
+
+    const nextContactInfo = presentContactInfo(subject, store)
+    render(renderContactInfoSection(store, subject, nextContactInfo, viewerMode), hostSection)
+  }
+
   return contactInfo && (contactInfo.emails.length > 0 || contactInfo.phones.length > 0 || contactInfo.addresses.length > 0) ? html`
     <section
       aria-labelledby="contact-details-heading"
@@ -95,7 +108,17 @@ export function renderContactInfoSection(store: LiveStore, subject: NamedNode, c
           type="button" 
           class="actionButton" 
           aria-label="Edit contact information"
-          @click=${(event: Event) => createContactInfoEditDialog(event, store, subject, contactInfo, viewerMode)}>
+          @click=${(event: Event) => {
+            const hostSection = (event.currentTarget as HTMLElement | null)?.closest('section') as HTMLElement | null
+            return createContactInfoEditDialog(
+              event,
+              store,
+              subject,
+              contactInfo,
+              viewerMode,
+              async () => refreshContactInfoSection(hostSection)
+            )
+          }}>
           <span class="actionIcon" aria-hidden="true">✎ Edit</span>
         </button>
       </header>
