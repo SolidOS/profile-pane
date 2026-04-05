@@ -1,5 +1,4 @@
 import { NamedNode, LiveStore } from 'rdflib'
-import { presentProfile, ProfilePresentation } from './presenter';
 import { ContactInfo  } from './sections/contactInfo/types';
 import { presentSocial, SocialPresentation } from './SocialPresenter';
 import { presentSkills } from './sections/skills/selectors';
@@ -12,9 +11,11 @@ import { EducationDetails } from './sections/education/types';
 import { presentEducation } from './sections/education/selectors';
 import { ProjectDetails } from './sections/projects/types';
 import { presentProjects } from './sections/projects/selectors';
+import { presentProfile } from './sections/intro/selectors';
+import { ProfileDetails } from './sections/intro/types'
 
 export type ProfileViewModel = {
-  basics: ProfilePresentation,
+  profileDetails: ProfileDetails,
   contactInfo: ContactInfo,
   skills: string[],
   languages: LanguageDetails[], 
@@ -25,7 +26,7 @@ export type ProfileViewModel = {
 }
 
 export function presentProfileViewModel(subject: NamedNode, store: LiveStore): ProfileViewModel {
-  const basics = presentProfile(subject, store)
+  const profileDetails = presentProfile(subject, store)
   const contactInfo = presentContactInfo(subject, store)
   const skills = presentSkills(subject, store)
   const languages = presentLanguages(subject, store)
@@ -35,7 +36,7 @@ export function presentProfileViewModel(subject: NamedNode, store: LiveStore): P
   const cvDetails = presentCV(subject, store)
 
   return { 
-    basics,
+    profileDetails,
     social,
     contactInfo,
     skills, 

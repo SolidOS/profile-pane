@@ -1,6 +1,38 @@
 /* ProfileCard.css */
 /* Uses utilities: .action-button-focus, .btn-primary, .flex-column-center, .text-truncate, .text-center, .text-wrap-anywhere, .section-centered, .btn-transparent */
 
+
+.introSection {
+  display: flex;
+  gap: 1.5rem;
+  padding: 1.5rem;
+}
+
+.introSectionHeader {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.introDetailsRow {
+  display: flex;
+  flex-direction: row;
+  gap: 1.5rem;
+}
+
+.introDetails {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.introDetailsHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+
 .profileCard {
   /* Component container */
 }
@@ -8,7 +40,7 @@
 .image {
   width: 160px;
   height: 160px;
-  border-radius: 50%;
+  border-radius: 14px;
   object-fit: cover;
   margin-bottom: var(--spacing-sm);
   box-shadow: var(--box-shadow-sm);
@@ -23,7 +55,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 50%;
+  border-radius: 14px;
   margin-bottom: var(--spacing-sm);
   box-shadow: var(--box-shadow-sm);
   border: 3px solid var(--color-primary);

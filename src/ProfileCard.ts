@@ -6,7 +6,8 @@ import { DataBrowserContext } from 'pane-registry'
 import { NamedNode } from 'rdflib'
 import { ViewerMode } from './types'
 
-
+/* moved from sections/profileOverview to src/ProfileCard.ts to be used in multiple sections; 
+renamed from ProfileOverviewCard to ProfileCard; updated to match new presenter output and design */
 export const ProfileCard = ({
   name, imageSrc, introduction, location, pronouns, highlightColor, backgroundColor
 }: ProfilePresentation, context: DataBrowserContext, subject: NamedNode, viewerMode: ViewerMode) => {

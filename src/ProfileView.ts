@@ -3,7 +3,6 @@ import { DataBrowserContext } from 'pane-registry'
 import { NamedNode, LiveStore } from 'rdflib'
 import { authn } from 'solid-logic'
 import './styles/ProfileView.css'
-import { ProfileCard } from './ProfileCard'
 import { SocialCard } from './SocialCard'
 import { QRCodeCard } from './QRCodeCard'
 import {
@@ -19,9 +18,10 @@ import { LanguageDetails } from './sections/languages/types'
 import { renderCVSection } from './sections/resume/ResumeSection'
 import { renderEducationSection } from './sections/education/EducationSection'
 import { renderProjectSection } from './sections/projects/ProjectSection'
+import { renderIntroSection } from './sections/intro/IntroSection'
 
 type ProfileViewModelData = ReturnType<typeof presentProfileViewModel>
-type ProfileBasics = ProfileViewModelData['basics']
+type ProfileDetails = ProfileViewModelData['profileDetails']
 type SocialAccounts = ProfileViewModelData['social']
 
 function getViewerMode(subject: NamedNode): ViewerMode {
@@ -56,7 +56,7 @@ function renderSidebar(
   skills: string[],
   languages: LanguageDetails[],
   contactInfo: ContactInfo,
-  profileBasics: ProfileBasics,
+  profileDetails: ProfileDetails,
   viewerMode: ViewerMode
 ) {
   return html`
@@ -74,13 +74,13 @@ function renderSidebar(
         ${renderSkillsSection(store, subject, skills, viewerMode)}
         ${renderLanguageSection(store, subject, languages, viewerMode)}
         ${renderContactInfoSection(store, subject, contactInfo, viewerMode)}
-        ${renderQRCode(profileBasics, subject)}
+        ${renderQRCode(subject)}
       </div>
     </aside>
   `
 }
 
-function renderQRCode(profileBasics: ProfileBasics, subject: NamedNode) {
+function renderQRCode(subject: NamedNode) {
   return html`
       <div class="qrCodeSection section-centered">
         ${QRCodeCard(subject)}
@@ -96,7 +96,7 @@ export async function ProfileView (
   const viewerMode = getViewerMode(subject)
 
   const viewModel = presentProfileViewModel(subject, store)
-  const profileBasics = viewModel.basics
+  const profileDetails = viewModel.profileDetails
   const rolesByType = viewModel.cvDetails
   const skills = viewModel.skills
   const languages = viewModel.languages
@@ -109,9 +109,8 @@ export async function ProfileView (
     <main
       id="main-content"
       class="profile-grid"
-      style="--profile-grid-bg: radial-gradient(circle, ${profileBasics.backgroundColor} 80%, ${profileBasics.highlightColor} 100%)"
       role="main"
-      aria-label="Profile for ${profileBasics.name}"
+      aria-label="Profile for ${profileDetails.name}"
       tabindex="-1"
     > 
       <section
@@ -126,17 +125,14 @@ export async function ProfileView (
           role="region"
           tabindex="-1"
         >
-          <header class="text-center mb-md">
-            <h2 id="profile-card-heading" tabindex="-1">${profileBasics.name}</h2>
-          </header>
-          ${ProfileCard(profileBasics, context, subject, viewerMode)}
+          ${renderIntroSection(context, subject, profileDetails, viewerMode)}
         </article>
 
         ${renderCVSection(store, subject, rolesByType, viewerMode)}
         ${renderProjectSection(store, subject, projects, viewerMode)}
         ${renderEducationSection(store, subject, education, viewerMode)}
       </section>
-      ${renderSidebar(store, subject, accounts, skills, languages, contactInfo, profileBasics, viewerMode)}
+      ${renderSidebar(store, subject, accounts, skills, languages, contactInfo, profileDetails, viewerMode)}
     </main>
   `
 }
