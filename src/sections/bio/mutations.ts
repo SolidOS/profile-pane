@@ -4,7 +4,7 @@ import { BioMutationPlan, BioRow } from "./types"
 import { MutationOps } from "../shared/types"
 import { applyUpdaterPatch} from "../shared/rdfMutationHelpers"
 import { saveBioUpdatesFailedPrefixText} from "../../texts"
-
+// Need to find out if this is really how we should store the data
 async function mutateBioEntry(store: LiveStore, subject: NamedNode, bioOps: MutationOps<BioRow>) {
   const doc = subject.doc()
   const deletions: any[] = []
