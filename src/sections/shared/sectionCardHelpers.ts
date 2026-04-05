@@ -12,24 +12,39 @@ function toDateValue(date?: DateLike): string {
 /* Prompt: the description needs to only show 2 lines and then more button
    please generate code for this. */
 export function updateDescriptionOverflow(root: ParentNode = document) {
-  const wraps = root.querySelectorAll('.cvDescriptionWrap')
-  wraps.forEach((wrap) => {
-    const textEl = wrap.querySelector('.cvDescriptionText') as HTMLElement | null
-    const button = wrap.querySelector('.cvDescriptionToggle') as HTMLButtonElement | null
-    if (!textEl || !button) return
-
-    const isExpanded = textEl.classList.contains('isExpanded')
-    if (isExpanded) {
-      button.hidden = false
-      return
+  const selectorGroups = [
+    {
+      wrap: '.cvDescriptionWrap',
+      text: '.cvDescriptionText',
+      toggle: '.cvDescriptionToggle'
+    },
+    {
+      wrap: '.bioDescriptionWrap',
+      text: '.bioDescriptionText',
+      toggle: '.bioDescriptionToggle'
     }
+  ]
 
-    const isOverflowing = textEl.scrollHeight > textEl.clientHeight + 1
-    button.hidden = !isOverflowing
-    if (!isOverflowing) {
-      button.setAttribute('aria-expanded', 'false')
-      button.textContent = '...more'
-    }
+  selectorGroups.forEach(({ wrap, text, toggle }) => {
+    const wraps = root.querySelectorAll(wrap)
+    wraps.forEach((container) => {
+      const textEl = container.querySelector(text) as HTMLElement | null
+      const button = container.querySelector(toggle) as HTMLButtonElement | null
+      if (!textEl || !button) return
+
+      const isExpanded = textEl.classList.contains('isExpanded')
+      if (isExpanded) {
+        button.hidden = false
+        return
+      }
+
+      const isOverflowing = textEl.scrollHeight > textEl.clientHeight + 1
+      button.hidden = !isOverflowing
+      if (!isOverflowing) {
+        button.setAttribute('aria-expanded', 'false')
+        button.textContent = '...more'
+      }
+    })
   })
 }
 
