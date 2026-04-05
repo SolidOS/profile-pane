@@ -194,7 +194,8 @@ export async function createSkillsEditDialog(
   store: LiveStore,
   subject: NamedNode,
   skills: SkillDetails[],
-  viewerMode: ViewerMode
+  viewerMode: ViewerMode,
+  onSaved?: () => Promise<void> | void
 ) {
   const dom = (event.currentTarget as HTMLElement | null)?.ownerDocument || document
   const { form, formState } = createSkillsEditForm(skills)
@@ -228,8 +229,7 @@ export async function createSkillsEditDialog(
 
   if (!result) return
 
-  const view = dom.defaultView
-  if (view) {
-    view.location.reload()
+  if (onSaved) {
+    await onSaved()
   }
 }

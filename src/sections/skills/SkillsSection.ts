@@ -1,10 +1,11 @@
-import { html } from "lit-html"
+import { html, render } from "lit-html"
 import { strToUpperCase } from '../../textUtils'
 import { literal, LiveStore, NamedNode } from "rdflib"
 import { ViewerMode } from "../../types"
 import { createSkillsEditDialog } from "./SkillsEditDialog"
 import { SkillDetails } from "./types"
 import { skillsHeadingText } from "../../texts"
+import { presentSkills } from "./selectors"
 
 function renderSkill(skill, asList = false) {
   if (!skill) return html``
@@ -31,6 +32,19 @@ export function renderSkillsSection(
   skills: string[],
   viewerMode: ViewerMode
 ) {
+  const refreshSkillsSection = async (hostSection: HTMLElement | null) => {
+    if (!hostSection) return
+
+    try {
+      await store.fetcher.load(subject.doc(), { force: true } as any)
+    } catch {
+      // Best-effort refresh; render from current store if fetch reload fails.
+    }
+
+    const nextSkills = presentSkills(subject, store)
+    render(renderSkillsSection(store, subject, nextSkills, viewerMode), hostSection)
+  }
+
   const skillsArr = skills || []
   const hasSkills = Array.isArray(skillsArr) && skillsArr.length > 0
   const skillDetails = toSkillDetails(skillsArr)
@@ -45,7 +59,17 @@ export function renderSkillsSection(
                 type="button"
                 class="actionButton"
                 aria-label="Add or edit skills"
-                @click=${(event: Event) => createSkillsEditDialog(event, store, subject, skillDetails, viewerMode)}
+                @click=${(event: Event) => {
+                  const hostSection = (event.currentTarget as HTMLElement | null)?.closest('section') as HTMLElement | null
+                  return createSkillsEditDialog(
+                    event,
+                    store,
+                    subject,
+                    skillDetails,
+                    viewerMode,
+                    async () => refreshSkillsSection(hostSection)
+                  )
+                }}
               >
                 + Add More
               </button>
