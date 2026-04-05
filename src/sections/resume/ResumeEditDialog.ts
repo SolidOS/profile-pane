@@ -501,7 +501,7 @@ function renderResumeSection(resumeData: ResumeRow[], onAddRow: () => void) {
       aria-labelledby="resume-heading" 
       class="resumeEditSection section-bg">
       <header class="sectionHeader">
-        <h4 id="resume-heading" tabindex="-1">
+        <h4 id="resume-heading">
           <span class="sectionTitleIcon" aria-hidden="true">&#9993;</span>
           Resume
         </h4>

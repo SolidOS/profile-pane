@@ -27,7 +27,7 @@ export function renderLanguageSection(
   const hasLanguages = Array.isArray(languagesArr) && languagesArr.length > 0
 
   return html`
-    <section class="section-bg" aria-labelledby="languages-heading">
+    <section class="section-bg" aria-labelledby="languages-heading" role="region">
       <header class="sectionHeader mb-md">
         <h3 id="languages-heading">${languagesHeadingText}</h3>
         ${viewerMode === 'owner'

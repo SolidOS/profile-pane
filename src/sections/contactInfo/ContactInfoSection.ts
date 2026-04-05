@@ -106,9 +106,27 @@ export function renderContactInfoSection(store: LiveStore, subject: NamedNode, c
         </button>
       </header>
       <div>
-        ${renderPhones(contactInfo.phones)}
-        ${renderEmails(contactInfo.emails)}
-        ${renderAddresses(contactInfo.addresses)}
+        ${contactInfo.phones.length > 0
+          ? html`
+              <ul role="list" aria-label="Phone numbers">
+                ${renderPhones(contactInfo.phones)}
+              </ul>
+            `
+          : html``}
+        ${contactInfo.emails.length > 0
+          ? html`
+              <ul role="list" aria-label="Email addresses">
+                ${renderEmails(contactInfo.emails)}
+              </ul>
+            `
+          : html``}
+        ${contactInfo.addresses.length > 0
+          ? html`
+              <ul role="list" aria-label="Postal addresses">
+                ${renderAddresses(contactInfo.addresses)}
+              </ul>
+            `
+          : html``}
       </div>
     </section>
   ` : ''

@@ -238,7 +238,7 @@ function renderSocialSection(rows: SocialRow[], options: SocialAccountOption[], 
   return html`
     <section aria-labelledby="social-heading" class="contactsEditSection section-bg">
       <header class="sectionHeader">
-        <h4 id="social-heading" tabindex="-1">Social Accounts</h4>
+        <h4 id="social-heading">Social Accounts</h4>
         <button
           type="button"
           class="actionButton"

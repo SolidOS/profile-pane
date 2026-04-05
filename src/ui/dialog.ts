@@ -113,6 +113,20 @@ function openModal ({ title, message, buttons, dom }: { title?: string, message?
   btnContainer.innerHTML = ''
   clearModalError(overlay)
 
+  function findInitialContentFocusTarget(container: ParentNode): HTMLElement | null {
+    const focusable = Array.from(
+      container.querySelectorAll('input, select, textarea, [contenteditable="true"], [tabindex]:not([tabindex="-1"])')
+    ) as HTMLElement[]
+
+    for (const el of focusable) {
+      const isDisabled = el.hasAttribute('disabled') || el.getAttribute('aria-disabled') === 'true'
+      const hiddenByAttr = el.hasAttribute('hidden') || el.getAttribute('aria-hidden') === 'true'
+      if (!isDisabled && !hiddenByAttr) return el
+    }
+
+    return null
+  }
+
   return new Promise<DialogButtonValue>((resolve) => {
     buttons.forEach((btn) => {
       const b = dom.createElement('button')
@@ -130,9 +144,20 @@ function openModal ({ title, message, buttons, dom }: { title?: string, message?
       })
       btnContainer.appendChild(b)
     })
-    // focus first button
-    const first = btnContainer.querySelector('button') as HTMLButtonElement | null
-    if (first) first.focus()
+
+    // Prefer first input-like control in dialog content for data-entry dialogs,
+    // then fall back to the first action button.
+    const initialInput = findInitialContentFocusTarget(descEl)
+    if (initialInput) {
+      initialInput.focus()
+      if (initialInput instanceof HTMLInputElement || initialInput instanceof HTMLTextAreaElement) {
+        initialInput.select()
+      }
+      return
+    }
+
+    const firstButton = btnContainer.querySelector('button') as HTMLButtonElement | null
+    if (firstButton) firstButton.focus()
   })
 }
 

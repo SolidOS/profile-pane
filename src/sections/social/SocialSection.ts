@@ -18,7 +18,7 @@ export const SocialCard = (
     return html`
       <section
         class="socialCard"
-        aria-labelledby="social-card-title"
+        aria-label="Social media"
         data-testid="social-media"
       >
         <nav aria-label="Social media profiles">
@@ -81,9 +81,7 @@ function renderSocialSectionContent(
           `
         : html``}
     </header>
-    <nav aria-label="Social media links">
-      ${hasAccounts ? SocialCard(accounts, viewerMode) : html`<p>No social accounts added yet.</p>`}
-    </nav>
+    ${hasAccounts ? SocialCard(accounts, viewerMode) : html`<p>No social accounts added yet.</p>`}
   `
 }
 
@@ -110,7 +108,7 @@ export function renderSocialAccounts(
         <section 
           aria-labelledby="social-heading" 
           class="section-bg" 
-          role="complementary"
+          role="region"
           tabindex="-1"
         >
           ${renderSocialSectionContent(accounts, viewerMode, handleEdit)}

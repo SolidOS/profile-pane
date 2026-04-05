@@ -162,7 +162,7 @@ function renderLanguageSection(rows: LanguageRow[], onAddRow: () => void) {
       aria-labelledby="language-heading" 
       class="contactsEditSection section-bg">
       <header class="sectionHeader">
-        <h4 id="language-heading" tabindex="-1">
+        <h4 id="language-heading">
           <span class="sectionTitleIcon" aria-hidden="true">&#9993;</span>
           Languages
         </h4>

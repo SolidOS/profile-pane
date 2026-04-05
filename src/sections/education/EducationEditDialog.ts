@@ -388,7 +388,7 @@ function renderEducationSection(educationData: EducationRow[], onAddRow: () => v
       aria-labelledby="education-heading" 
       class="educationEditSection section-bg">
       <header class="sectionHeader">
-        <h4 id="education-heading" tabindex="-1">
+        <h4 id="education-heading">
           <span class="sectionTitleIcon" aria-hidden="true">&#9993;</span>
           Education
         </h4>

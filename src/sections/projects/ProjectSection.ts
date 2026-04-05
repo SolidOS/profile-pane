@@ -100,7 +100,7 @@ export function renderProjectSection(
   const hasProjects = Array.isArray(projects) && projects.length > 0
 
   return html`
-    <section class="section-bg" aria-labelledby="projects-heading">
+    <section class="section-bg" aria-labelledby="projects-heading" role="region">
       <header class="sectionHeader mb-md">
         <h3 id="projects-heading">${projectsHeadingText}</h3>
         ${viewerMode === 'owner'

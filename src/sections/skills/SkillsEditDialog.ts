@@ -140,7 +140,7 @@ function renderSkillsSection(rows: SkillRow[], onAddRow: () => void) {
       aria-labelledby="skills-heading" 
       class="contactsEditSection section-bg">
       <header class="sectionHeader">
-        <h4 id="skills-heading" tabindex="-1">
+        <h4 id="skills-heading">
           <span class="sectionTitleIcon" aria-hidden="true">&#9993;</span>
           Skills
         </h4>

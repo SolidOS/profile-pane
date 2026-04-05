@@ -36,7 +36,7 @@ export function renderSkillsSection(
   const skillDetails = toSkillDetails(skillsArr)
 
   return html`
-    <section class="section-bg" aria-labelledby="skills-heading">
+    <section class="section-bg" aria-labelledby="skills-heading" role="region">
       <header class="sectionHeader mb-md">
         <h3 id="skills-heading">${skillsHeadingText}</h3>
         ${viewerMode === 'owner'

@@ -241,7 +241,7 @@ function renderProjectSection(rows: ProjectRow[], onAddRow: () => void) {
       aria-labelledby="project-heading" 
       class="editSection section-bg">
       <header class="sectionHeader">
-        <h4 id="project-heading" tabindex="-1">
+        <h4 id="project-heading">
           <span class="sectionTitleIcon" aria-hidden="true">&#9993;</span>
           Projects & Communities
         </h4>
