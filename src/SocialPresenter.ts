@@ -2,8 +2,9 @@ import { LiveStore, NamedNode, Node } from 'rdflib'
 import { ns, utils, icons } from 'solid-ui'
 import socialMediaForm from './ontology/socialMedia.ttl'
 import { loadDocument } from './rdfFormsHelper'
-import { ViewerMode } from './types'
+import { expandRdfList } from './sections/shared/rdfList'
 
+// Note: This file was copied to src/sections/social/selectors.ts and edited there. Edits here will not be reflected in the app. Please make any necessary edits in the selectors file.
 const socialMediaFormName = 'socialMedia.ttl' // The name of the file to upload
 
 const DEFAULT_ICON_URI = icons.iconBase + 'noun_10636_grey.svg' // grey disc
@@ -14,37 +15,6 @@ export interface Account {
 }
 export interface SocialPresentation { 
   accounts: Account[];
-}
-
-function expandRdfList(store: LiveStore, node: Node): Node[] {
-  const visited = new Set<string>()
-  function inner(node: Node): Node[] {
-    const termType = (node as any).termType || typeof node
-    const value = (node as any).value || String(node)
-    const key = `${termType}:${value}`
-    if (visited.has(key)) return []
-    visited.add(key)
-
-    const collectionElements = (node as { termType?: string; elements?: Node[] }).elements
-    if (Array.isArray(collectionElements)) {
-      return collectionElements.flatMap(element => inner(element))
-    }
-
-    const first = store.any(node as NamedNode, ns.rdf('first'))
-    if (!first) return [node]
-
-    const items: Node[] = []
-    let current: Node | null = node
-    while (current) {
-      const value = store.any(current as NamedNode, ns.rdf('first')) as Node | null
-      if (value) items.push(...inner(value))
-      const rest = store.any(current as NamedNode, ns.rdf('rest')) as Node | null
-      if (!rest || (rest.termType === 'NamedNode' && rest.value === ns.rdf('nil').value)) break
-      current = rest
-    }
-    return items
-  }
-  return inner(node)
 }
 
 export function presentSocial(

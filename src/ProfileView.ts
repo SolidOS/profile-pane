@@ -3,11 +3,7 @@ import { DataBrowserContext } from 'pane-registry'
 import { NamedNode, LiveStore } from 'rdflib'
 import { authn } from 'solid-logic'
 import './styles/ProfileView.css'
-import { SocialCard } from './SocialCard'
 import { QRCodeCard } from './QRCodeCard'
-import {
-  socialAccountsHeadingText,
-} from './texts'
 import { ViewerMode } from './types'
 import { presentProfileViewModel } from './ProfileViewModelPresenter'
 import { renderContactInfoSection } from './sections/contactInfo/ContactInfoSection'
@@ -19,6 +15,8 @@ import { renderCVSection } from './sections/resume/ResumeSection'
 import { renderEducationSection } from './sections/education/EducationSection'
 import { renderProjectSection } from './sections/projects/ProjectSection'
 import { renderIntroSection } from './sections/intro/IntroSection'
+import { renderBioSection } from './sections/bio/BioSection'
+import { renderSocialAccounts } from './sections/social/SocialSection'
 
 type ProfileViewModelData = ReturnType<typeof presentProfileViewModel>
 type ProfileDetails = ProfileViewModelData['profileDetails']
@@ -29,24 +27,6 @@ function getViewerMode(subject: NamedNode): ViewerMode {
   if (authn.currentUser() && authn.currentUser().sameTerm(subject)) mode = 'owner'
   if (authn.currentUser() && !authn.currentUser().sameTerm(subject)) mode = 'authenticated'
   return mode
-}
-
-function renderSocialAccounts(accounts: SocialAccounts, viewerMode: ViewerMode) {
-   return accounts.accounts && accounts.accounts.length > 0 ? html`
-        <section 
-          aria-labelledby="social-heading" 
-          class="section-bg" 
-          role="complementary"
-          tabindex="-1"
-        >
-          <header class="mb-md">
-            <h3 id="social-heading" tabindex="-1">${socialAccountsHeadingText}</h3>
-          </header>
-          <nav aria-label="Social media links">
-            ${SocialCard(accounts, viewerMode)}
-          </nav>
-        </section>
-      ` : ''
 }
 
 function renderSidebar(
@@ -70,7 +50,7 @@ function renderSidebar(
         <h2 id="sidebar-heading" tabindex="-1">Sidebar</h2>
       </header>
       <div aria-label="Sidebar Content">
-        ${renderSocialAccounts(accounts, viewerMode)}
+        ${renderSocialAccounts(store, subject, accounts, viewerMode)}
         ${renderSkillsSection(store, subject, skills, viewerMode)}
         ${renderLanguageSection(store, subject, languages, viewerMode)}
         ${renderContactInfoSection(store, subject, contactInfo, viewerMode)}
@@ -102,6 +82,7 @@ export async function ProfileView (
   const languages = viewModel.languages
   const education = viewModel.education
   const projects = viewModel.projects
+  const bioDetails = viewModel.bioDetails
   const accounts = viewModel.social
   const contactInfo = viewModel.contactInfo
   
@@ -128,6 +109,7 @@ export async function ProfileView (
           ${renderIntroSection(context, subject, profileDetails, viewerMode)}
         </article>
 
+        ${renderBioSection(store, subject, bioDetails, viewerMode)}
         ${renderCVSection(store, subject, rolesByType, viewerMode)}
         ${renderProjectSection(store, subject, projects, viewerMode)}
         ${renderEducationSection(store, subject, education, viewerMode)}

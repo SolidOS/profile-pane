@@ -1,6 +1,7 @@
 import { NamedNode, LiveStore } from 'rdflib'
 import { ContactInfo  } from './sections/contactInfo/types';
-import { presentSocial, SocialPresentation } from './SocialPresenter';
+import { presentSocial } from './sections/social/selectors';
+import { SocialPresentation } from './sections/social/types';
 import { presentSkills } from './sections/skills/selectors';
 import { presentLanguages } from './sections/languages/selectors';
 import { LanguageDetails } from './sections/languages/types';
@@ -13,6 +14,8 @@ import { ProjectDetails } from './sections/projects/types';
 import { presentProjects } from './sections/projects/selectors';
 import { presentProfile } from './sections/intro/selectors';
 import { ProfileDetails } from './sections/intro/types'
+import { BioDetails } from './sections/bio/types'
+import { presentBio } from './sections/bio/selectors'
 
 export type ProfileViewModel = {
   profileDetails: ProfileDetails,
@@ -21,6 +24,7 @@ export type ProfileViewModel = {
   languages: LanguageDetails[], 
   education: EducationDetails[],
   projects: ProjectDetails[],
+  bioDetails: BioDetails,
   social: SocialPresentation,
   cvDetails: RoleDetails[]
 }
@@ -32,6 +36,7 @@ export function presentProfileViewModel(subject: NamedNode, store: LiveStore): P
   const languages = presentLanguages(subject, store)
   const education = presentEducation(subject, store)
   const projects = presentProjects(subject, store)
+  const bioDetails = presentBio(subject, store)
   const social = presentSocial(subject, store)
   const cvDetails = presentCV(subject, store)
 
@@ -43,6 +48,7 @@ export function presentProfileViewModel(subject: NamedNode, store: LiveStore): P
     languages,
     education,
     projects,
+    bioDetails,
     cvDetails
   }
 }

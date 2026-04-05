@@ -2,7 +2,7 @@ import { html, TemplateResult } from 'lit-html'
 import { SocialPresentation } from './SocialPresenter'
 import { ViewerMode } from './types'
 import './styles/SocialCard.css'
-
+// Note: This file was copied to src/sections/social/SocialSection.ts 
 export const SocialCard = (
   SocialData: SocialPresentation,
   viewerMode: ViewerMode
