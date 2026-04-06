@@ -9,23 +9,32 @@ import * as UI from 'solid-ui'
 const loginBanner = document.getElementById('loginBanner')
 const webId = document.getElementById('webId')
 
-loginBanner.appendChild(UI.login.loginStatusBox(document, null, {}))
+if (loginBanner) {
+  loginBanner.appendChild(UI.login.loginStatusBox(document, null, {}))
+}
 
-const webIdToShow = 'https://testingsolidos.solidcommunity.net/profile/card#me'
+// const webIdToShow = 'https://testingsolidos.solidcommunity.net/profile/card#me'
+const webIdToShow = 'https://sstratsianis.solidcommunity.net/profile/card#me'
 
 async function finishLogin() {
   await authSession.handleIncomingRedirect()
   const session = authSession
-  if (session.info.isLoggedIn) {
-    // Update the page with the status.
-    webId.innerHTML = 'Logged in as: ' + authn.currentUser().uri
-  } else {
-    webId.innerHTML = ''
+  if (webId) {
+    if (session.info.isLoggedIn) {
+      const currentUser = authn.currentUser()
+      webId.textContent = currentUser ? `Logged in as: ${currentUser.uri}` : ''
+    } else {
+      webId.textContent = ''
+    }
   }
+
   fetcher.load(webIdToShow).then(() => {
-  const app = pane.render(sym(webIdToShow), context)
-  document.getElementById('app').replaceWith(app)
-})
+    const app = pane.render(sym(webIdToShow), context)
+    const appRoot = document.getElementById('app')
+    if (appRoot) {
+      appRoot.replaceWith(app)
+    }
+  })
 }
 
 finishLogin()
