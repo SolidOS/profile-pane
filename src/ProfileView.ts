@@ -14,12 +14,11 @@ import { LanguageDetails } from './sections/languages/types'
 import { renderCVSection } from './sections/resume/ResumeSection'
 import { renderEducationSection } from './sections/education/EducationSection'
 import { renderProjectSection } from './sections/projects/ProjectSection'
-import { renderIntroSection } from './sections/heading/HeadingSection'
+import { renderHeadingSection } from './sections/heading/HeadingSection'
 import { renderBioSection } from './sections/bio/BioSection'
 import { renderSocialAccounts } from './sections/social/SocialSection'
 
 type ProfileViewModelData = ReturnType<typeof presentProfileViewModel>
-type ProfileDetails = ProfileViewModelData['profileDetails']
 type SocialAccounts = ProfileViewModelData['social']
 
 function getViewerMode(subject: NamedNode): ViewerMode {
@@ -95,7 +94,7 @@ export async function ProfileView (
         >
         <h2 id="profile-main-heading" class="sr-only">Main Profile Content</h2>
 
-        ${renderIntroSection(context, subject, profileDetails, viewerMode)}
+        ${renderHeadingSection(context, subject, profileDetails, viewerMode)}
         ${renderBioSection(store, subject, bioDetails, viewerMode)}
         ${renderCVSection(store, subject, rolesByType, viewerMode)}
         ${renderProjectSection(store, subject, projects, viewerMode)}
