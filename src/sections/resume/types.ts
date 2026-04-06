@@ -1,5 +1,5 @@
-import { Literal, Node } from "rdflib"
-import { RowStatus } from "../shared/types"
+import { Literal, Node } from 'rdflib'
+import { RowStatus } from '../shared/types'
 
 export interface ResumeDetails extends RoleDetails {}
 

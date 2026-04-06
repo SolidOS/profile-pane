@@ -1,18 +1,18 @@
-import { openInputDialog } from "../../ui/dialog"
-import { html, render, TemplateResult } from "lit-html"
-import type { BioDetails, BioRow } from "./types"
-import "../../styles/SectionInputRows.css"
-import { LiveStore, NamedNode } from "rdflib"
-import { processBioMutations } from "./mutations"
-import { ViewerMode } from "../../types"
-import { applyRowFieldChange, summarizeRowOps } from "../shared/rowState"
-import { hasNonEmptyText, sanitizeTextValue, toText } from "../../textUtils"
+import { openInputDialog } from '../../ui/dialog'
+import { html, render, TemplateResult } from 'lit-html'
+import type { BioDetails, BioRow } from './types'
+import '../../styles/SectionInputRows.css'
+import { LiveStore, NamedNode } from 'rdflib'
+import { processBioMutations } from './mutations'
+import { ViewerMode } from '../../types'
+import { applyRowFieldChange, summarizeRowOps } from '../shared/rowState'
+import { hasNonEmptyText, sanitizeTextValue, toText } from '../../textUtils'
 import {
   dialogCancelLabelText,
   dialogSubmitLabelText,
   ownerLoginRequiredDialogMessageText,
   saveBioUpdatesFailedPrefixText
-} from "../../texts"
+} from '../../texts'
 
 type BioFormState = {
   bio: BioRow
@@ -35,15 +35,15 @@ function toFormState(bioData: BioDetails): BioFormState {
 }
 
 function renderBioSection(bioRow: BioRow, onChange: () => void): TemplateResult {
-  const descriptionName = "bio-description"
-  const descriptionCounterId = "bio-description-counter"
+  const descriptionName = 'bio-description'
+  const descriptionCounterId = 'bio-description-counter'
   const descriptionMaxLength = 2600
-  const descriptionCount = (bioRow?.description || "").length
+  const descriptionCount = (bioRow?.description || '').length
 
   const handleDescriptionInput = (event: Event) => {
     const target = event.target as HTMLTextAreaElement
     const nextValue = sanitizeTextValue(target.value.slice(0, descriptionMaxLength))
-    applyRowFieldChange(bioRow, "description", nextValue, rowHasContent)
+    applyRowFieldChange(bioRow, 'description', nextValue, rowHasContent)
     onChange()
   }
 
@@ -56,12 +56,12 @@ function renderBioSection(bioRow: BioRow, onChange: () => void): TemplateResult 
           class="inputTextarea inputTextarea--multiline"
           name=${descriptionName}
           rows="5"
-          .value=${bioRow?.description || ""}
+          .value=${bioRow?.description || ''}
           maxlength=${descriptionMaxLength}
           aria-describedby=${descriptionCounterId}
           data-contact-field="description"
-          data-entry-node=${bioRow?.entryNode || ""}
-          data-row-status=${bioRow?.status || "n/a"}
+          data-entry-node=${bioRow?.entryNode || ''}
+          data-row-status=${bioRow?.status || 'n/a'}
           placeholder="Write a short bio"
           autocomplete="off"
           @input=${handleDescriptionInput}
@@ -78,8 +78,8 @@ function renderBioEditTemplate(form: HTMLFormElement, formState: BioFormState) {
 }
 
 function createBioEditForm(bioData: BioDetails) {
-  const form = document.createElement("form")
-  form.classList.add("section-edit-form")
+  const form = document.createElement('form')
+  form.classList.add('section-edit-form')
 
   const formState = toFormState(bioData)
   renderBioEditTemplate(form, formState)
@@ -99,19 +99,19 @@ export async function createBioEditDialog(
   const { form, formState } = createBioEditForm(bioData)
 
   const result = await openInputDialog({
-    title: "Edit Bio",
+    title: 'Edit Bio',
     dom,
     form,
     submitLabel: dialogSubmitLabelText,
     cancelLabel: dialogCancelLabelText,
     validate: () => {
-      if (viewerMode !== "owner") {
+      if (viewerMode !== 'owner') {
         return ownerLoginRequiredDialogMessageText
       }
 
       const bioOps = summarizeRowOps([formState.bio], rowHasContent)
       const hasChanges = bioOps.create.length > 0 || bioOps.update.length > 0 || bioOps.remove.length > 0
-      if (!hasChanges) return "No bio changes detected."
+      if (!hasChanges) return 'No bio changes detected.'
       return null
     },
     onSave: async () => {

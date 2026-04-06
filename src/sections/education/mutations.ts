@@ -1,9 +1,9 @@
-import { LiveStore, NamedNode, Node, st, literal } from "rdflib"
-import { ns } from "solid-ui"
-import { EducationMutationPlan, EducationRow } from "./types"
-import { MutationOps } from "../shared/types"
-import { applyUpdaterPatch, collectNodeStatements, findExistingNode } from "../shared/rdfMutationHelpers"
-import { mutationEducationFailedPrefixText } from "../../texts"
+import { LiveStore, NamedNode, Node, st, literal } from 'rdflib'
+import { ns } from 'solid-ui'
+import { EducationMutationPlan, EducationRow } from './types'
+import { MutationOps } from '../shared/types'
+import { applyUpdaterPatch, collectNodeStatements, findExistingNode } from '../shared/rdfMutationHelpers'
+import { mutationEducationFailedPrefixText } from '../../texts'
 
 const educationMembershipType = ns.schema('EducationalOccupationalCredential')
 

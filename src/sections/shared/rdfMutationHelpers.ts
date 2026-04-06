@@ -1,8 +1,8 @@
-import { LiveStore, NamedNode, Node } from "rdflib"
-import { fallbackSaveUpdatesErrorMessageText, updaterUnsupportedStoreErrorMessageText } from "../../texts"
+import { LiveStore, NamedNode, Node } from 'rdflib'
+import { fallbackSaveUpdatesErrorMessageText, updaterUnsupportedStoreErrorMessageText } from '../../texts'
 
 function normalizeNodeId(value: string): string {
-  return value.startsWith("_:") ? value.slice(2) : value
+  return value.startsWith('_:') ? value.slice(2) : value
 }
 
 export function applyUpdaterPatch(store: LiveStore, deletions: any[], insertions: any[]) {

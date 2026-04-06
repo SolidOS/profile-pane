@@ -1,9 +1,9 @@
-import { LiveStore, NamedNode, st, literal } from "rdflib"
-import { ns } from "solid-ui"
-import { LanguageRow } from "./types"
-import { MutationOps } from "../shared/types"
-import { applyUpdaterPatch, collectLinkStatements, collectNodeStatements, findExistingNode } from "../shared/rdfMutationHelpers"
-import { mutationSaveLanguagesFailedPrefixText } from "../../texts"
+import { LiveStore, NamedNode, st, literal } from 'rdflib'
+import { ns } from 'solid-ui'
+import { LanguageRow } from './types'
+import { MutationOps } from '../shared/types'
+import { applyUpdaterPatch, collectLinkStatements, collectNodeStatements, findExistingNode } from '../shared/rdfMutationHelpers'
+import { mutationSaveLanguagesFailedPrefixText } from '../../texts'
 
 export type LanguageMutationPlan = MutationOps<LanguageRow>
 /* SAM need to look at the new field proficiency and see how we will handle that */

@@ -29,7 +29,7 @@ export const presentProfile = (
 ): ProfileDetails => {
   const name = utils.label(subject)
   // on contact-pane form it is foaf, but maybe another app saves with vcard.
-  const nickname = store.anyValue(subject, ns.vcard("nickname")) || store.anyValue(subject, ns.foaf("nick")) || undefined
+  const nickname = store.anyValue(subject, ns.vcard('nickname')) || store.anyValue(subject, ns.foaf('nick')) || undefined
   const dateOfBirth = store.anyValue(subject, ns.vcard('bday')) || undefined
   const imageSrc = widgets.findImage(subject)
   const jobTitle = store.anyValue(subject, ns.vcard('role')) || undefined

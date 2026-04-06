@@ -1,29 +1,29 @@
-import { openInputDialog } from "../../ui/dialog"
-import { html, render, TemplateResult } from "lit-html"
-import { ProfileDetails, IntroMutationPlan, ProfileBasicRow } from "./types"
-import { Image } from "./IntroSection"
-import "../../styles/SectionInputRows.css"
-import "../../styles/IntroEditDialog.css"
-import { LiveStore, NamedNode } from "rdflib"
-import { processIntroMutations } from "./mutations"
-import { ViewerMode } from "../../types"
+import { openInputDialog } from '../../ui/dialog'
+import { html, render, TemplateResult } from 'lit-html'
+import { ProfileDetails, IntroMutationPlan, ProfileBasicRow } from './types'
+import { Image } from './IntroSection'
+import '../../styles/SectionInputRows.css'
+import '../../styles/IntroEditDialog.css'
+import { LiveStore, NamedNode } from 'rdflib'
+import { processIntroMutations } from './mutations'
+import { ViewerMode } from '../../types'
 import {
   combinePhoneValue,
   COUNTRY_PREFIX_OPTIONS,
   countryCodeToFlag,
   splitPhoneValue
-} from "../shared/phoneCountries"
-import { applyRowFieldChange, applyRowSelectChange, summarizeRowOps } from "../shared/rowState"
-import { hasNonEmptyText, sanitizeTextValue, toText, toTypeLabel } from "../../textUtils"
+} from '../shared/phoneCountries'
+import { applyRowFieldChange, applyRowSelectChange, summarizeRowOps } from '../shared/rowState'
+import { hasNonEmptyText, sanitizeTextValue, toText, toTypeLabel } from '../../textUtils'
 import {
   dialogCancelLabelText,
   dialogSubmitLabelText,
   editIntroDialogTitleText,
   ownerLoginRequiredDialogMessageText,
   saveIntroUpdatesFailedPrefixText
-} from "../../texts"
-import { ContactAddressRow, ContactPointRow } from "../contactInfo/types"
-import { sanitizeAddressFieldValue, sanitizeBasicInputFieldValue, sanitizeEmailValue, sanitizePhoneLocalValue } from "../shared/sanitizeUtils"
+} from '../../texts'
+import { ContactAddressRow, ContactPointRow } from '../contactInfo/types'
+import { sanitizeAddressFieldValue, sanitizeBasicInputFieldValue, sanitizeEmailValue, sanitizePhoneLocalValue } from '../shared/sanitizeUtils'
 
 // Notes: In the design there is no type on address, but phone and email have a type.
 // guess it depends on where we are storing this data whether we should add type or not
@@ -204,12 +204,12 @@ function renderCountryPrefixSelect(
 function renderContactPhoneInput({
   phone
 }: ContactPhoneInputRowProps) {
-  const label = `Phone Number`
-  const countryCodeLabel = `Country Calling Code`
-  const typeLabel = `Phone Type`
-  const prefixInputName = `phone-prefix`
-  const inputName = `phone-value`
-  const typeInputName = `phone-type`
+  const label = 'Phone Number'
+  const countryCodeLabel = 'Country Calling Code'
+  const typeLabel = 'Phone Type'
+  const prefixInputName = 'phone-prefix'
+  const inputName = 'phone-value'
+  const typeInputName = 'phone-type'
   const splitValue = splitPhoneValue(phone?.value || '')
   let selectedDialCode = splitValue.dialCode
 
@@ -276,10 +276,10 @@ function renderContactPhoneInput({
 function renderContactEmailInputRow({
   email
 }: ContactEmailInputRowProps) {
-  const label = `Email Address`
-  const typeLabel = `Email Type`
-  const inputName = `email-value`
-  const typeInputName = `email-type`
+  const label = 'Email Address'
+  const typeLabel = 'Email Type'
+  const inputName = 'email-value'
+  const typeInputName = 'email-type'
 
   const handleValueInput = (e: Event) => {
     const target = e.target as HTMLInputElement
@@ -328,15 +328,15 @@ function renderContactEmailInputRow({
 function renderContactAddressInput({
   address
 }: ContactAddressInputRowProps) {
-  const label = `Address`
-  const typeLabel = `Address Type`
-  const streetAddressName = `address-street`
-  const localityName = `address-locality`
-  const regionName = `address-region`
-  const postalCodeName = `address-postal`
-  const countryName = `address-country`
-  const typeInputName = `address-type`
-  const addressTypeSelectId = `address-type-select`
+  const label = 'Address'
+  const typeLabel = 'Address Type'
+  const streetAddressName = 'address-street'
+  const localityName = 'address-locality'
+  const regionName = 'address-region'
+  const postalCodeName = 'address-postal'
+  const countryName = 'address-country'
+  const typeInputName = 'address-type'
+  const addressTypeSelectId = 'address-type-select'
 
   const handleAddressInput = (field: ContactAddressEditableField) => (e: Event) => {
     const target = e.target as HTMLInputElement

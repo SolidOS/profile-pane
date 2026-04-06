@@ -1,4 +1,4 @@
-import { sanitizeTextValue } from "../../textUtils"
+import { sanitizeTextValue } from '../../textUtils'
 
 export function sanitizeEmailValue(value: string): string {
   return sanitizeTextValue(value).replace(/\s+/g, '').toLowerCase()

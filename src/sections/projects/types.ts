@@ -1,7 +1,7 @@
-import { Node } from "rdflib"
-import { MutationOps } from "../shared/types"
-import { RowStatus } from "../shared/types"
-import { ns } from "solid-ui"
+import { Node } from 'rdflib'
+import { MutationOps } from '../shared/types'
+import { RowStatus } from '../shared/types'
+import { ns } from 'solid-ui'
 
 export const projectType = ns.schema('Project')
 

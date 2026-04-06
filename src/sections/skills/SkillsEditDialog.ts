@@ -1,13 +1,13 @@
-import { openInputDialog } from "../../ui/dialog"
-import { html, render } from "lit-html"
-import { SkillDetails, SkillRow } from "./types"
-import "../../styles/ContactInfoEditDialog.css"
-import { LiveStore, NamedNode } from "rdflib"
-import { ViewerMode } from "../../types"
-import { applyRowFieldChange, deleteRow, summarizeRowOps } from "../shared/rowState"
-import { hasNonEmptyText, sanitizeTextValue, toText } from "../../textUtils"
-import { MutationOps } from "../shared/types"
-import { processSkillsMutations } from "./mutations"
+import { openInputDialog } from '../../ui/dialog'
+import { html, render } from 'lit-html'
+import { SkillDetails, SkillRow } from './types'
+import '../../styles/ContactInfoEditDialog.css'
+import { LiveStore, NamedNode } from 'rdflib'
+import { ViewerMode } from '../../types'
+import { applyRowFieldChange, deleteRow, summarizeRowOps } from '../shared/rowState'
+import { hasNonEmptyText, sanitizeTextValue, toText } from '../../textUtils'
+import { MutationOps } from '../shared/types'
+import { processSkillsMutations } from './mutations'
 import {
   deleteEntryButtonTitleText,
   dialogCancelLabelText,
@@ -15,7 +15,7 @@ import {
   editSkillsDialogTitleText,
   ownerLoginRequiredDialogMessageText,
   saveContactUpdatesFailedPrefixText,
-} from "../../texts"
+} from '../../texts'
 
 type SkillFormState = {
   skills: SkillRow[]

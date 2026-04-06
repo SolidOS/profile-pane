@@ -1,6 +1,6 @@
-import { LiveStore, NamedNode, Node } from "rdflib"
-import { ns } from "solid-ui"
-import { projectType, ProjectDetails } from "./types"
+import { LiveStore, NamedNode, Node } from 'rdflib'
+import { ns } from 'solid-ui'
+import { projectType, ProjectDetails } from './types'
 
 
 /* This code is AI generated from Model: GPT-5.3-Codex */

@@ -1,14 +1,14 @@
-import { openInputDialog } from "../../ui/dialog"
-import { html, render } from "lit-html"
-import type { Account, SocialRow } from "./types"
-import "../../styles/ContactInfoEditDialog.css"
-import "../../styles/SectionInputRows.css"
-import { LiveStore, NamedNode } from "rdflib"
-import { ViewerMode } from "../../types"
-import { applyRowFieldChange, deleteRow, summarizeRowOps } from "../shared/rowState"
-import { hasNonEmptyText, sanitizeTextValue, toText } from "../../textUtils"
-import { MutationOps } from "../shared/types"
-import { processSocialMutations } from "./mutations"
+import { openInputDialog } from '../../ui/dialog'
+import { html, render } from 'lit-html'
+import type { Account, SocialRow } from './types'
+import '../../styles/ContactInfoEditDialog.css'
+import '../../styles/SectionInputRows.css'
+import { LiveStore, NamedNode } from 'rdflib'
+import { ViewerMode } from '../../types'
+import { applyRowFieldChange, deleteRow, summarizeRowOps } from '../shared/rowState'
+import { hasNonEmptyText, sanitizeTextValue, toText } from '../../textUtils'
+import { MutationOps } from '../shared/types'
+import { processSocialMutations } from './mutations'
 import {
   deleteEntryButtonTitleText,
   dialogCancelLabelText,
@@ -16,15 +16,15 @@ import {
   editSocialDialogTitleText,
   ownerLoginRequiredDialogMessageText,
   saveSocialUpdatesFailedPrefixText
-} from "../../texts"
-import { DEFAULT_ICON_URI } from "./constants"
-import { getSocialAccountOptions, type SocialAccountOption } from "./helpers"
+} from '../../texts'
+import { DEFAULT_ICON_URI } from './constants'
+import { getSocialAccountOptions, type SocialAccountOption } from './helpers'
 
 type SocialFormState = {
   socialAccounts: SocialRow[]
 }
 
-type SocialEditableField = "name" | "icon" | "homepage"
+type SocialEditableField = 'name' | 'icon' | 'homepage'
 
 type SocialRowInputProps = {
   rows: SocialRow[]
@@ -40,15 +40,15 @@ function sanitizeSocialFieldValue(value: string): string {
 }
 
 function sanitizeUrlFieldValue(value: string): string {
-  return sanitizeTextValue(value).replace(/\s+/g, "")
+  return sanitizeTextValue(value).replace(/\s+/g, '')
 }
 
 function isValidProfileUrl(value: string): boolean {
-  const normalized = (value || "").trim()
+  const normalized = (value || '').trim()
   if (!normalized) return false
   try {
     const parsed = new URL(normalized)
-    return parsed.protocol === "http:" || parsed.protocol === "https:"
+    return parsed.protocol === 'http:' || parsed.protocol === 'https:'
   } catch {
     return false
   }
@@ -66,25 +66,25 @@ function toFormState(socialAccounts: Account[]): SocialFormState {
       icon: sanitizeSocialFieldValue(toText(account.icon)),
       homepage: sanitizeSocialFieldValue(toText(account.homepage)),
       entryNode: toText(account.entryNode),
-      status: toText(account.entryNode) ? "existing" as const : "new" as const
+      status: toText(account.entryNode) ? 'existing' as const : 'new' as const
     }))
     .filter((row) => Boolean(row.name || row.icon || row.homepage || row.entryNode))
 
   return {
     socialAccounts: rows.length
       ? rows
-      : [{ name: "", icon: "", homepage: "", entryNode: "", status: "new" }]
+      : [{ name: '', icon: '', homepage: '', entryNode: '', status: 'new' }]
   }
 }
 
 function validateSocialBeforeSave(rows: SocialRow[]): string | null {
   const ops = summarizeRowOps(rows, rowHasContent)
   const hasChanges = ops.create.length > 0 || ops.update.length > 0 || ops.remove.length > 0
-  if (!hasChanges) return "No social changes detected."
+  if (!hasChanges) return 'No social changes detected.'
 
   for (let i = 0; i < rows.length; i++) {
     const row = rows[i]
-    if (!row || row.status === "deleted") continue
+    if (!row || row.status === 'deleted') continue
 
     const hasAnyValue = [row.name, row.icon, row.homepage].some(hasNonEmptyText)
     if (!hasAnyValue) continue
@@ -97,7 +97,7 @@ function validateSocialBeforeSave(rows: SocialRow[]): string | null {
       return `Social account ${i + 1}: please enter your personal profile link.`
     }
 
-    if (!isValidProfileUrl(row.homepage || "")) {
+    if (!isValidProfileUrl(row.homepage || '')) {
       return `Social account ${i + 1}: profile link must be a valid http(s) URL.`
     }
   }
@@ -106,7 +106,7 @@ function validateSocialBeforeSave(rows: SocialRow[]): string | null {
 }
 
 function findOptionByName(options: SocialAccountOption[], name: string): SocialAccountOption | undefined {
-  const key = (name || "").trim().toLowerCase()
+  const key = (name || '').trim().toLowerCase()
   return options.find((option) => option.label.toLowerCase() === key)
 }
 
@@ -115,8 +115,8 @@ function renderSocialAccountInputSelect(
   options: SocialAccountOption[],
   onChange: (event: Event) => void
 ) {
-  const selected = findOptionByName(options, row?.name || "")
-  const selectedValue = selected?.label || ""
+  const selected = findOptionByName(options, row?.name || '')
+  const selectedValue = selected?.label || ''
 
   return html`
     <select class="inputSelect" name="social-account-type" .value=${selectedValue} @change=${onChange}>
@@ -140,7 +140,7 @@ function renderSocialInputRow({
 
   const handleTextInput = (field: SocialEditableField) => (event: Event) => {
     const target = event.target as HTMLInputElement
-    const nextValue = field === "homepage"
+    const nextValue = field === 'homepage'
       ? sanitizeUrlFieldValue(target.value)
       : sanitizeSocialFieldValue(target.value)
     if (rows[index]) {
@@ -155,14 +155,14 @@ function renderSocialInputRow({
     if (!rows[index]) return
 
     if (!selected) {
-      applyRowFieldChange(rows[index], "name", "", rowHasContent)
-      applyRowFieldChange(rows[index], "icon", "", rowHasContent)
+      applyRowFieldChange(rows[index], 'name', '', rowHasContent)
+      applyRowFieldChange(rows[index], 'icon', '', rowHasContent)
       onChange()
       return
     }
 
-    applyRowFieldChange(rows[index], "name", selected.label, rowHasContent)
-    applyRowFieldChange(rows[index], "icon", selected.icon || DEFAULT_ICON_URI, rowHasContent)
+    applyRowFieldChange(rows[index], 'name', selected.label, rowHasContent)
+    applyRowFieldChange(rows[index], 'icon', selected.icon || DEFAULT_ICON_URI, rowHasContent)
 
     onChange()
   }
@@ -189,15 +189,15 @@ function renderSocialInputRow({
         <input
           type="url"
           name=${`social-homepage-${index}`}
-          .value=${row?.homepage || ""}
+          .value=${row?.homepage || ''}
           data-contact-field="homepage"
-          data-entry-node=${row?.entryNode || ""}
-          data-row-status=${row?.status || "n/a"}
+          data-entry-node=${row?.entryNode || ''}
+          data-row-status=${row?.status || 'n/a'}
           placeholder="Profile URL"
           autocomplete="url"
           inputmode="url"
           required
-          @input=${handleTextInput("homepage")}
+          @input=${handleTextInput('homepage')}
         />
         <small class="inputHelpText">Paste your full profile URL (for example: https://example.com/username)</small>
       </label>
@@ -222,18 +222,18 @@ function renderSocialSection(rows: SocialRow[], options: SocialAccountOption[], 
   const createNewRow = (event: Event) => {
     event.preventDefault()
     rows.push({
-      name: "",
-      icon: "",
-      homepage: "",
-      entryNode: "",
-      status: "new"
+      name: '',
+      icon: '',
+      homepage: '',
+      entryNode: '',
+      status: 'new'
     })
     onRerender()
   }
 
   const visibleRows = rows
     .map((row, index) => ({ row, index }))
-    .filter(({ row }) => row.status !== "deleted")
+    .filter(({ row }) => row.status !== 'deleted')
 
   return html`
     <section aria-labelledby="social-heading" class="contactsEditSection section-bg">
@@ -275,8 +275,8 @@ function renderSocialEditTemplate(form: HTMLFormElement, formState: SocialFormSt
 }
 
 function createSocialEditForm(details: Account[], store: LiveStore) {
-  const form = document.createElement("form")
-  form.classList.add("section-edit-form")
+  const form = document.createElement('form')
+  form.classList.add('section-edit-form')
 
   const formState = toFormState(details)
   renderSocialEditTemplate(form, formState, store)
@@ -302,7 +302,7 @@ export async function createSocialEditDialog(
     submitLabel: dialogSubmitLabelText,
     cancelLabel: dialogCancelLabelText,
     validate: () => {
-      if (viewerMode !== "owner") {
+      if (viewerMode !== 'owner') {
         return ownerLoginRequiredDialogMessageText
       }
       return validateSocialBeforeSave(formState.socialAccounts)

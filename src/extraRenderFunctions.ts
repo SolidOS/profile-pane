@@ -1,16 +1,16 @@
 /* These functions may be needed later I don't want to remove them
 when we are done with the refactor we can see if they can be removed.
 or rename the file as needed. */
-import { NamedNode } from "rdflib"
-import { presentStuff } from "./StuffPresenter"
-import { html } from "lit-html"
-import { contactHeadingText, friendsHeadingText, sharedItemsHeadingText } from "./texts"
-import { ChatWithMe } from "./ChatWithMe"
-import { FriendList } from "./FriendList"
-import { StuffCard } from "./StuffCard"
-import { ViewerMode } from "./types"
-import { DataBrowserContext } from "pane-registry"
-import { presentProfile } from "./presenter"
+import { NamedNode } from 'rdflib'
+import { presentStuff } from './StuffPresenter'
+import { html } from 'lit-html'
+import { contactHeadingText, friendsHeadingText, sharedItemsHeadingText } from './texts'
+import { ChatWithMe } from './ChatWithMe'
+import { FriendList } from './FriendList'
+import { StuffCard } from './StuffCard'
+import { ViewerMode } from './types'
+import { DataBrowserContext } from 'pane-registry'
+import { presentProfile } from './presenter'
 
 type ProfileBasics = ReturnType<typeof presentProfile>
 type StuffData = Awaited<ReturnType<typeof presentStuff>>

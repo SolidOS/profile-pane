@@ -1,13 +1,13 @@
-import { openInputDialog } from "../../ui/dialog"
-import { html, render } from "lit-html"
-import { LanguageDetails, LanguageRow } from "./types"
-import "../../styles/ContactInfoEditDialog.css"
-import { LiveStore, NamedNode } from "rdflib"
-import { ViewerMode } from "../../types"
-import { applyRowFieldChange, applyRowSelectChange, deleteRow, summarizeRowOps } from "../shared/rowState"
-import { hasNonEmptyText, sanitizeTextValue, toText } from "../../textUtils"
-import { MutationOps } from "../shared/types"
-import { processLanguageMutations } from "./mutations"
+import { openInputDialog } from '../../ui/dialog'
+import { html, render } from 'lit-html'
+import { LanguageDetails, LanguageRow } from './types'
+import '../../styles/ContactInfoEditDialog.css'
+import { LiveStore, NamedNode } from 'rdflib'
+import { ViewerMode } from '../../types'
+import { applyRowFieldChange, applyRowSelectChange, deleteRow, summarizeRowOps } from '../shared/rowState'
+import { hasNonEmptyText, sanitizeTextValue, toText } from '../../textUtils'
+import { MutationOps } from '../shared/types'
+import { processLanguageMutations } from './mutations'
 import {
   deleteEntryButtonTitleText,
   dialogCancelLabelText,
@@ -15,7 +15,7 @@ import {
   editLanguagesDialogTitleText,
   ownerLoginRequiredDialogMessageText,
   saveLanguageUpdatesFailedPrefixText,
-} from "../../texts"
+} from '../../texts'
 
 type LanguageFormState = {
   languages: LanguageRow[]

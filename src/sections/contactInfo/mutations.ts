@@ -1,9 +1,9 @@
-import { LiveStore, NamedNode, Node, st } from "rdflib"
-import { ns } from "solid-ui"
-import { ContactAddressRow, ContactMutationPlan, ContactPointRow } from "./types"
-import { MutationOps } from "../shared/types"
-import { applyUpdaterPatch, collectLinkStatements, collectNodeStatements, findExistingNode } from "../shared/rdfMutationHelpers"
-import { mutationSaveContactInfoFailedPrefixText } from "../../texts"
+import { LiveStore, NamedNode, Node, st } from 'rdflib'
+import { ns } from 'solid-ui'
+import { ContactAddressRow, ContactMutationPlan, ContactPointRow } from './types'
+import { MutationOps } from '../shared/types'
+import { applyUpdaterPatch, collectLinkStatements, collectNodeStatements, findExistingNode } from '../shared/rdfMutationHelpers'
+import { mutationSaveContactInfoFailedPrefixText } from '../../texts'
 
 function buildPhoneStatements(subject: NamedNode, doc: NamedNode, node: Node, phone: ContactPointRow) {
   const normalizedValue = phone.value.startsWith('tel:') ? phone.value : `tel:${phone.value}`

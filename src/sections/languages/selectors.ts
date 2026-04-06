@@ -1,7 +1,7 @@
-import { NamedNode, Store, Node, LiveStore } from "rdflib";
-import { ns, utils } from "solid-ui";
-import { LanguageDetails } from "./types"
-import { expandRdfList } from "../shared/rdfList"
+import { NamedNode, Store, Node, LiveStore } from 'rdflib'
+import { ns, utils } from 'solid-ui'
+import { LanguageDetails } from './types'
+import { expandRdfList } from '../shared/rdfList'
 
 export function languageAsText (store: Store, lan: Node):string {
   if (lan.termType === 'Literal') return lan.value // Not normal but allow this

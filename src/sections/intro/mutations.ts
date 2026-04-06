@@ -1,10 +1,10 @@
-import { LiveStore, NamedNode, Node, st, literal, sym } from "rdflib"
-import { ns } from "solid-ui"
-import { ProfileBasicRow, IntroMutationPlan } from "./types"
-import { MutationOps } from "../shared/types"
-import { applyUpdaterPatch, collectLinkStatements, collectNodeStatements, findExistingNode } from "../shared/rdfMutationHelpers"
-import { saveIntroUpdatesFailedPrefixText } from "../../texts"
-import { ContactAddressRow, ContactPointRow } from "../contactInfo/types"
+import { LiveStore, NamedNode, Node, st, literal, sym } from 'rdflib'
+import { ns } from 'solid-ui'
+import { ProfileBasicRow, IntroMutationPlan } from './types'
+import { MutationOps } from '../shared/types'
+import { applyUpdaterPatch, collectLinkStatements, collectNodeStatements, findExistingNode } from '../shared/rdfMutationHelpers'
+import { saveIntroUpdatesFailedPrefixText } from '../../texts'
+import { ContactAddressRow, ContactPointRow } from '../contactInfo/types'
 
 function buildPhoneStatements(subject: NamedNode, doc: NamedNode, node: Node, phone: ContactPointRow) {
   const normalizedValue = phone.value.startsWith('tel:') ? phone.value : `tel:${phone.value}`

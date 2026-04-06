@@ -1,9 +1,9 @@
-import { LiveStore, NamedNode, Node, st, literal, sym } from "rdflib"
-import { ns } from "solid-ui"
-import { ResumeRow } from "./types"
-import { MutationOps } from "../shared/types"
-import { applyUpdaterPatch, collectNodeStatements, findExistingNode } from "../shared/rdfMutationHelpers"
-import { mutationSaveResumeFailedPrefixText, resumeUpdateEntryNotFoundErrorMessageText } from "../../texts"
+import { LiveStore, NamedNode, Node, st, literal, sym } from 'rdflib'
+import { ns } from 'solid-ui'
+import { ResumeRow } from './types'
+import { MutationOps } from '../shared/types'
+import { applyUpdaterPatch, collectNodeStatements, findExistingNode } from '../shared/rdfMutationHelpers'
+import { mutationSaveResumeFailedPrefixText, resumeUpdateEntryNotFoundErrorMessageText } from '../../texts'
 
 
 function buildResumeStatements(

@@ -1,5 +1,5 @@
-import { NamedNode, Node, Store } from "rdflib"
-import { ns } from "solid-ui"
+import { NamedNode, Node, Store } from 'rdflib'
+import { ns } from 'solid-ui'
 
 export function expandRdfList(store: Store, node: Node): Node[] {
   const visited = new Set<string>()
@@ -16,16 +16,16 @@ export function expandRdfList(store: Store, node: Node): Node[] {
       return collectionElements.flatMap((element) => inner(element))
     }
 
-    const first = store.any(currentNode as NamedNode, ns.rdf("first"))
+    const first = store.any(currentNode as NamedNode, ns.rdf('first'))
     if (!first) return [currentNode]
 
     const items: Node[] = []
     let listNode: Node | null = currentNode
     while (listNode) {
-      const listValue = store.any(listNode as NamedNode, ns.rdf("first")) as Node | null
+      const listValue = store.any(listNode as NamedNode, ns.rdf('first')) as Node | null
       if (listValue) items.push(...inner(listValue))
-      const rest = store.any(listNode as NamedNode, ns.rdf("rest")) as Node | null
-      if (!rest || (rest.termType === "NamedNode" && rest.value === ns.rdf("nil").value)) break
+      const rest = store.any(listNode as NamedNode, ns.rdf('rest')) as Node | null
+      if (!rest || (rest.termType === 'NamedNode' && rest.value === ns.rdf('nil').value)) break
       listNode = rest
     }
 

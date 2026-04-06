@@ -1,14 +1,14 @@
-import { alertDialog, openInputDialog } from "../../ui/dialog"
-import { html, render } from "lit-html"
-import { RoleDetails, ResumeRow } from "./types"
-import "../../styles/SectionInputRows.css"
-import "../../styles/ContactInfoEditDialog.css"
-import { LiveStore, NamedNode, literal } from "rdflib"
-import { processResumeMutations } from "./mutations"
-import { ViewerMode } from "../../types"
-import { applyRowFieldChange, deleteRow, summarizeRowOps } from "../shared/rowState"
-import { hasNonEmptyText, sanitizeTextValue, toText } from "../../textUtils"
-import { MutationOps } from "../shared/types"
+import { alertDialog, openInputDialog } from '../../ui/dialog'
+import { html, render } from 'lit-html'
+import { RoleDetails, ResumeRow } from './types'
+import '../../styles/SectionInputRows.css'
+import '../../styles/ContactInfoEditDialog.css'
+import { LiveStore, NamedNode, literal } from 'rdflib'
+import { processResumeMutations } from './mutations'
+import { ViewerMode } from '../../types'
+import { applyRowFieldChange, deleteRow, summarizeRowOps } from '../shared/rowState'
+import { hasNonEmptyText, sanitizeTextValue, toText } from '../../textUtils'
+import { MutationOps } from '../shared/types'
 import {
   deleteEntryButtonTitleText,
   dialogCancelLabelText,
@@ -16,7 +16,7 @@ import {
   editResumeDialogTitleText,
   ownerLoginRequiredDialogMessageText,
   saveResumeUpdatesFailedPrefixText
-} from "../../texts"
+} from '../../texts'
 
 type ResumeFormState = {
   resumeData: ResumeRow[]

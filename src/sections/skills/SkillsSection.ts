@@ -1,10 +1,10 @@
-import { html } from "lit-html"
+import { html } from 'lit-html'
 import { strToUpperCase } from '../../textUtils'
-import { literal, LiveStore, NamedNode } from "rdflib"
-import { ViewerMode } from "../../types"
-import { createSkillsEditDialog } from "./SkillsEditDialog"
-import { SkillDetails } from "./types"
-import { skillsHeadingText } from "../../texts"
+import { literal, LiveStore, NamedNode } from 'rdflib'
+import { ViewerMode } from '../../types'
+import { createSkillsEditDialog } from './SkillsEditDialog'
+import { SkillDetails } from './types'
+import { skillsHeadingText } from '../../texts'
 
 function renderSkill(skill, asList = false) {
   if (!skill) return html``

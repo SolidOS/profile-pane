@@ -1,12 +1,12 @@
-import { html } from "lit-html"
-import { LiveStore, NamedNode } from "rdflib"
-import { ViewerMode } from "../../types"
-import { ProjectDetails, ProjectRow } from "./types"
-import { projectsHeadingText } from "../../texts"
-import { createProjectsEditDialog } from "./ProjectEditDialog"
-import { processProjectsMutations } from "./mutations"
-import { MutationOps } from "../shared/types"
-import "../../styles/ProjectsCard.css"
+import { html } from 'lit-html'
+import { LiveStore, NamedNode } from 'rdflib'
+import { ViewerMode } from '../../types'
+import { ProjectDetails, ProjectRow } from './types'
+import { projectsHeadingText } from '../../texts'
+import { createProjectsEditDialog } from './ProjectEditDialog'
+import { processProjectsMutations } from './mutations'
+import { MutationOps } from '../shared/types'
+import '../../styles/ProjectsCard.css'
 
 function toProjectRow(project: ProjectDetails, status: 'existing' | 'deleted'): ProjectRow {
   return {

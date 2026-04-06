@@ -1,8 +1,8 @@
-import { html } from "lit-html"
-import { ViewerMode } from "../../types"
-import { createContactInfoEditDialog } from "./ContactInfoEditDialog"
-import { LiveStore, NamedNode } from "rdflib"
-import { contactInfoHeadingText } from "../../texts"
+import { html } from 'lit-html'
+import { ViewerMode } from '../../types'
+import { createContactInfoEditDialog } from './ContactInfoEditDialog'
+import { LiveStore, NamedNode } from 'rdflib'
+import { contactInfoHeadingText } from '../../texts'
 
 function toText(value: unknown): string {
   if (!value) return ''

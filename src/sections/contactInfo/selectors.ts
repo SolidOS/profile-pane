@@ -1,6 +1,6 @@
-import { LiveStore, NamedNode } from "rdflib"
-import { ns } from "solid-ui"
-import { AddressDetails, ContactInfo, PointDetails } from "./types"
+import { LiveStore, NamedNode } from 'rdflib'
+import { ns } from 'solid-ui'
+import { AddressDetails, ContactInfo, PointDetails } from './types'
 
 
 function termValue(term: any): string {

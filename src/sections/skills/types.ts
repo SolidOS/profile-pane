@@ -1,5 +1,5 @@
-import { Node } from "rdflib"
-import { RowStatus } from "../shared/types"
+import { Node } from 'rdflib'
+import { RowStatus } from '../shared/types'
 
 export interface SkillFields {
   name: string

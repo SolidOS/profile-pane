@@ -1,5 +1,5 @@
-import { Node } from "rdflib"
-import { MutationOps, RowStatus } from "../shared/types"
+import { Node } from 'rdflib'
+import { MutationOps, RowStatus } from '../shared/types'
 
 export interface SocialFields {
   name?: string

@@ -1,8 +1,8 @@
-import { LiveStore, NamedNode, Node, st, sym, literal } from "rdflib"
-import { ns } from "solid-ui"
-import { ProjectMutationPlan, ProjectRow, projectType } from "./types"
-import { MutationOps } from "../shared/types"
-import { applyUpdaterPatch, collectLinkStatements, collectNodeStatements, findExistingNode } from "../shared/rdfMutationHelpers"
+import { LiveStore, NamedNode, Node, st, sym, literal } from 'rdflib'
+import { ns } from 'solid-ui'
+import { ProjectMutationPlan, ProjectRow, projectType } from './types'
+import { MutationOps } from '../shared/types'
+import { applyUpdaterPatch, collectLinkStatements, collectNodeStatements, findExistingNode } from '../shared/rdfMutationHelpers'
 
 /* This code is AI generated from Model: GPT-5.3-Codex */
 /* Prompt: I need to store Project data only the url of the project how

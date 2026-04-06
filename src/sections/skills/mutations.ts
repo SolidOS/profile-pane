@@ -1,9 +1,9 @@
-import { LiveStore, NamedNode, st, literal } from "rdflib"
-import { ns } from "solid-ui"
-import { SkillRow } from "./types"
-import { MutationOps } from "../shared/types"
-import { applyUpdaterPatch, collectLinkStatements, collectNodeStatements, findExistingNode } from "../shared/rdfMutationHelpers"
-import { mutationSaveSkillsFailedPrefixText } from "../../texts"
+import { LiveStore, NamedNode, st, literal } from 'rdflib'
+import { ns } from 'solid-ui'
+import { SkillRow } from './types'
+import { MutationOps } from '../shared/types'
+import { applyUpdaterPatch, collectLinkStatements, collectNodeStatements, findExistingNode } from '../shared/rdfMutationHelpers'
+import { mutationSaveSkillsFailedPrefixText } from '../../texts'
 
 export type SkillMutationPlan = MutationOps<SkillRow>
 

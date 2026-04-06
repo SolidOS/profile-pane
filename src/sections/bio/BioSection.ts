@@ -13,7 +13,7 @@ import { createBioEditDialog } from './BioEditDialog'
 function renderBio(bioData: BioDetails) {
   if (!bioData) return html``
 
-  const bioDescriptionId = "bio-description"
+  const bioDescriptionId = 'bio-description'
 
   return html`
       ${bioData.description ? html`

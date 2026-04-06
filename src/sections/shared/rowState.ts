@@ -1,4 +1,4 @@
-import { RowStatus } from "./types"
+import { RowStatus } from './types'
 
 export type EditableRow = {
   entryNode: string

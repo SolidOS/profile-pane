@@ -1,9 +1,9 @@
-import { html } from "lit-html"
-import { LiveStore, NamedNode } from "rdflib"
-import { ViewerMode } from "../../types"
-import { createLanguageEditDialog } from "./LanguageEditDialog"
-import { LanguageDetails } from "./types"
-import { languagesHeadingText } from "../../texts"
+import { html } from 'lit-html'
+import { LiveStore, NamedNode } from 'rdflib'
+import { ViewerMode } from '../../types'
+import { createLanguageEditDialog } from './LanguageEditDialog'
+import { LanguageDetails } from './types'
+import { languagesHeadingText } from '../../texts'
 
 function renderLan(language: LanguageDetails, asList = false) {
   if (!language) return html``

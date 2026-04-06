@@ -1,14 +1,14 @@
-import { openInputDialog } from "../../ui/dialog"
-import { html, render } from "lit-html"
-import { ProjectDetails, ProjectRow } from "./types"
-import "../../styles/ContactInfoEditDialog.css"
-import { LiveStore, NamedNode } from "rdflib"
-import { ViewerMode } from "../../types"
-import { applyRowFieldChange, deleteRow, summarizeRowOps } from "../shared/rowState"
-import { hasNonEmptyText, sanitizeTextValue, toText } from "../../textUtils"
-import { MutationOps } from "../shared/types"
-import { processProjectsMutations } from "./mutations"
-import { fetchLinkPreview, LinkCategory } from "./linkPreview"
+import { openInputDialog } from '../../ui/dialog'
+import { html, render } from 'lit-html'
+import { ProjectDetails, ProjectRow } from './types'
+import '../../styles/ContactInfoEditDialog.css'
+import { LiveStore, NamedNode } from 'rdflib'
+import { ViewerMode } from '../../types'
+import { applyRowFieldChange, deleteRow, summarizeRowOps } from '../shared/rowState'
+import { hasNonEmptyText, sanitizeTextValue, toText } from '../../textUtils'
+import { MutationOps } from '../shared/types'
+import { processProjectsMutations } from './mutations'
+import { fetchLinkPreview, LinkCategory } from './linkPreview'
 import {
   deleteEntryButtonTitleText,
   dialogCancelLabelText,
@@ -16,7 +16,7 @@ import {
   editProjectsDialogTitleText,
   ownerLoginRequiredDialogMessageText,
   saveProjectsUpdatesFailedPrefixText,
-} from "../../texts"
+} from '../../texts'
 
 type ProjectFormState = {
   projects: ProjectRow[]

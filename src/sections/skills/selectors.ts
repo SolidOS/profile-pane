@@ -1,5 +1,5 @@
-import { LiveStore, NamedNode, Node, Store } from "rdflib"
-import { ns } from "solid-ui"
+import { LiveStore, NamedNode, Node, Store } from 'rdflib'
+import { ns } from 'solid-ui'
 
 
 export function skillAsText (store: Store, sk: Node):string {

@@ -1,6 +1,6 @@
-import { Node } from "rdflib"
-import { MutationOps } from "../shared/types"
-import { RowStatus } from "../shared/types"
+import { Node } from 'rdflib'
+import { MutationOps } from '../shared/types'
+import { RowStatus } from '../shared/types'
 
 export interface BioFields {
   description?: string
