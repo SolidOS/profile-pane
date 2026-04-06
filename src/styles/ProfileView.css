@@ -2,7 +2,7 @@
 /* Uses utilities: .section-bg, .text-center */
 
 
-.profile-grid .profileSection {
+.profile-grid .profile__main {
   width: 100%;
   max-width: 100%;
   min-width: 0;
@@ -13,16 +13,17 @@
   overflow-wrap: anywhere;
 }
 
-.profile-grid .profileSidebar {
+.profile-grid .profile__sidebar {
   display: flex;
   flex-direction: column;
   align-items: stretch;
   text-align: left;
   padding: var(--spacing-lg);
   border-radius: var(--border-radius-base);
-  background: var(--color-card-bg);
+  background: var(--color-section-bg);
 }
 
+/* SAM Not sure this is needed, and potentially should be moved somewhere else */
 .profile-grid .phone-type {
   font-size: var(--font-size-sm);
   line-height: var(--line-height-base);
@@ -30,7 +31,7 @@
 }
 
 @media (min-width: 900px) {
-  .profile-grid .profileSection {
+  .profile-grid .profile__main {
     margin-bottom: 0;
   }
 
