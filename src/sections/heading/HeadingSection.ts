@@ -1,21 +1,21 @@
 import { html, nothing } from 'lit-html'
-import '../../styles/ProfileCard.css'
+import '../../styles/HeadingSection.css'
 import { ProfileDetails } from './types'
 import { addMeToYourFriendsDiv } from '../../addMeToYourFriends'
 import { DataBrowserContext } from 'pane-registry'
 import { NamedNode } from 'rdflib'
 import { ViewerMode } from '../../types'
-import { createIntroEditDialog } from './IntroEditDialog'
+import { createHeadingEditDialog } from './HeadingEditDialog'
 import { toText } from '../../textUtils'
 
 
-export const renderIntroSection = (context: DataBrowserContext, subject: NamedNode, profileData: ProfileDetails, viewerMode: ViewerMode) => {
+export const renderHeadingSection = (context: DataBrowserContext, subject: NamedNode, profileData: ProfileDetails, viewerMode: ViewerMode) => {
 
   const phoneValue = toText(profileData.primaryPhone?.valueNode || profileData.primaryPhone?.entryNode).replace(/^tel:/i, '')
   const emailValue = toText(profileData.primaryEmail?.valueNode || profileData.primaryEmail?.entryNode).replace(/^mailto:/i, '')
   const roleAndOrg = [profileData.jobTitle, profileData.orgName].filter(Boolean).join(' at ')
   return html`
-      <section class="introSection section-bg" aria-labelledby="intro-heading">
+      <section class="introSection section-bg border-slate" aria-labelledby="intro-heading">
         <header class="introSectionHeader mb-md">
           ${Image(profileData.imageSrc, profileData.name)}
         </header>
@@ -41,7 +41,7 @@ export const renderIntroSection = (context: DataBrowserContext, subject: NamedNo
               class="actionButton"
               aria-label="Add or edit intro information"
               @click=${(event: Event) => {
-                return createIntroEditDialog(
+                return createHeadingEditDialog(
                   event,
                   context.session.store,
                   subject,
@@ -72,16 +72,16 @@ export const Image = (src, alt) =>
   src
     ? html`
         <img
-          class="image"
+          class="profile__hero"
           src=${src}
-          alt="Profile photo of ${alt}"
-          width="160"
-          height="160"
+          alt="${alt}"
+          width="140"
+          height="140"
           loading="eager"
         />
       `
     : html`
-        <div class="image-alt" role="img" aria-label="${alt}" tabindex="0">
+        <div class="profile__hero-alt" role="img" aria-label="${alt}" tabindex="0">
           ${alt}
         </div>
       `

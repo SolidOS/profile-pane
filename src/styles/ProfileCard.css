@@ -37,10 +37,10 @@
   /* Component container */
 }
 
-.image {
+.profile__image {
   width: 160px;
   height: 160px;
-  border-radius: 14px;
+  border-radius: var(--border-radius-full);
   object-fit: cover;
   margin-bottom: var(--spacing-sm);
   box-shadow: var(--box-shadow-sm);
@@ -49,13 +49,13 @@
   box-sizing: border-box;
 }
 
-.image-alt {
+.profile__image-alt {
   width: 160px;
   height: 160px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 14px;
+  border-radius: var(--border-radius-full);
   margin-bottom: var(--spacing-sm);
   box-shadow: var(--box-shadow-sm);
   border: 3px solid var(--color-primary);
@@ -107,10 +107,15 @@
   box-sizing: border-box;
 }
 
-.qrCodeSection {
-  color: var(--color-text-secondary);
+.profile__qr-code {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  align-self: stretch;
+  /* OLD color: var(--color-text-secondary);
   font-size: 1em;
-  margin-bottom: var(--spacing-xs);
+  margin-bottom: var(--spacing-xs); */
 }
 
 .details {

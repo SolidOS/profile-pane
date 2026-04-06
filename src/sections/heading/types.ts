@@ -36,7 +36,7 @@ export type ProfileBasicRow = ProfileBasicFields & {
   status: RowStatus
 }
 
-export type IntroMutationPlan = {
+export type HeadingMutationPlan = {
   basicOps: MutationOps<ProfileBasicRow>
   phoneOps: MutationOps<ContactPointRow>
   emailOps: MutationOps<ContactPointRow>

@@ -1,11 +1,11 @@
 import { openInputDialog } from '../../ui/dialog'
 import { html, render, TemplateResult } from 'lit-html'
-import { ProfileDetails, IntroMutationPlan, ProfileBasicRow } from './types'
-import { Image } from './IntroSection'
+import { ProfileDetails, HeadingMutationPlan, ProfileBasicRow } from './types'
+import { Image } from './HeadingSection'
 import '../../styles/SectionInputRows.css'
-import '../../styles/IntroEditDialog.css'
+import '../../styles/HeadingEditDialog.css'
 import { LiveStore, NamedNode } from 'rdflib'
-import { processIntroMutations } from './mutations'
+import { processHeadingMutations } from './mutations'
 import { ViewerMode } from '../../types'
 import {
   combinePhoneValue,
@@ -18,9 +18,9 @@ import { hasNonEmptyText, sanitizeTextValue, toText, toTypeLabel } from '../../t
 import {
   dialogCancelLabelText,
   dialogSubmitLabelText,
-  editIntroDialogTitleText,
+  editHeadingDialogTitleText,
   ownerLoginRequiredDialogMessageText,
-  saveIntroUpdatesFailedPrefixText
+  saveHeadingUpdatesFailedPrefixText
 } from '../../texts'
 import { ContactAddressRow, ContactPointRow } from '../contactInfo/types'
 import { sanitizeAddressFieldValue, sanitizeBasicInputFieldValue, sanitizeEmailValue, sanitizePhoneLocalValue } from '../shared/sanitizeUtils'
@@ -28,7 +28,7 @@ import { sanitizeAddressFieldValue, sanitizeBasicInputFieldValue, sanitizeEmailV
 // Notes: In the design there is no type on address, but phone and email have a type.
 // guess it depends on where we are storing this data whether we should add type or not
 // for now I've left type but can remove.
-type IntroFormState = {
+type HeadingFormState = {
   basicInfo: ProfileBasicRow
   email: ContactPointRow
   phone: ContactPointRow
@@ -108,7 +108,7 @@ function normalizePronounsValue(value: string | undefined): string {
   return value || ''
 }
 
-function toFormState(profileData: ProfileDetails): IntroFormState {
+function toFormState(profileData: ProfileDetails): HeadingFormState {
   const basicInfo: ProfileBasicRow = {
     name: sanitizeTextValue(toText(profileData.name)),
     nickname: sanitizeTextValue(toText(profileData.nickname || '')),
@@ -450,7 +450,7 @@ function renderContactAddressInput({
   `
 }
 
-function renderIntroBasicInfoInput(
+function renderHeadingBasicInfoInput(
   basicInfo: ProfileBasicRow
 ): TemplateResult {
   const imageSrcLabel = 'Profile Photo'
@@ -646,16 +646,16 @@ function renderContactPointInput(
     `
 }
 
-function renderIntroEditTemplate(form: HTMLFormElement, formState: IntroFormState) {
+function renderHeadingEditTemplate(form: HTMLFormElement, formState: HeadingFormState) {
  
   render(html`
-    ${renderIntroBasicInfoInput(formState.basicInfo)}
+    ${renderHeadingBasicInfoInput(formState.basicInfo)}
     ${renderContactPointInput(formState.phone, formState.email)}
     ${renderContactAddressInput({ address: formState.address })}
   `, form)
 }
 
-function createIntroEditForm(profileData: ProfileDetails) {
+function createHeadingEditForm(profileData: ProfileDetails) {
   const form = document.createElement('form')
   form.classList.add('section-edit-form')
   form.autocomplete = 'off'
@@ -664,12 +664,12 @@ function createIntroEditForm(profileData: ProfileDetails) {
   form.setAttribute('data-bwignore', 'true')
 
   const formState = toFormState(profileData)
-  renderIntroEditTemplate(form, formState)
+  renderHeadingEditTemplate(form, formState)
 
   return { form, formState }
 }
 
-function validateIntroDataBeforeSave(formState: IntroFormState): string | null {
+function validateHeadingDataBeforeSave(formState: HeadingFormState): string | null {
   const basicInfoOps = summarizeRowOps([formState.basicInfo], rowHasContent)
   const phoneOps = summarizeRowOps([formState.phone], rowHasContent)
   const emailOps = summarizeRowOps([formState.email], rowHasContent)
@@ -685,7 +685,7 @@ function validateIntroDataBeforeSave(formState: IntroFormState): string | null {
 }
 
 
-export async function createIntroEditDialog(
+export async function createHeadingEditDialog(
   event: Event,
   store: LiveStore,
   subject: NamedNode,
@@ -694,10 +694,10 @@ export async function createIntroEditDialog(
   onSaved?: () => Promise<void> | void
 ) {
   const dom = (event.currentTarget as HTMLElement | null)?.ownerDocument || document
-  const { form, formState } = createIntroEditForm(profileData)
+  const { form, formState } = createHeadingEditForm(profileData)
 
   const result = await openInputDialog({
-    title: editIntroDialogTitleText,
+    title: editHeadingDialogTitleText,
     dom,
     form,
     submitLabel: dialogSubmitLabelText,
@@ -706,20 +706,20 @@ export async function createIntroEditDialog(
       if (viewerMode !== 'owner') {
         return ownerLoginRequiredDialogMessageText
       }
-      return validateIntroDataBeforeSave(formState)
+      return validateHeadingDataBeforeSave(formState)
     },
     onSave: async () => {
-      const plan: IntroMutationPlan = {
+      const plan: HeadingMutationPlan = {
         basicOps: summarizeRowOps([formState.basicInfo], rowHasContent),
         phoneOps: summarizeRowOps([formState.phone], rowHasContent),
         emailOps: summarizeRowOps([formState.email], rowHasContent),
         addressOps: summarizeRowOps([formState.address], rowHasContent)
       }
-      await processIntroMutations(store, subject, plan)
+      await processHeadingMutations(store, subject, plan)
     },
     formatSaveError: (error: unknown) => {
       const message = error instanceof Error ? error.message : String(error)
-      return `${saveIntroUpdatesFailedPrefixText} ${message}`
+      return `${saveHeadingUpdatesFailedPrefixText} ${message}`
     }
   })
 

@@ -1,9 +1,9 @@
 import { LiveStore, NamedNode, Node, st, literal, sym } from 'rdflib'
 import { ns } from 'solid-ui'
-import { ProfileBasicRow, IntroMutationPlan } from './types'
+import { ProfileBasicRow, HeadingMutationPlan } from './types'
 import { MutationOps } from '../shared/types'
 import { applyUpdaterPatch, collectLinkStatements, collectNodeStatements, findExistingNode } from '../shared/rdfMutationHelpers'
-import { saveIntroUpdatesFailedPrefixText } from '../../texts'
+import { saveHeadingUpdatesFailedPrefixText } from '../../texts'
 import { ContactAddressRow, ContactPointRow } from '../contactInfo/types'
 
 function buildPhoneStatements(subject: NamedNode, doc: NamedNode, node: Node, phone: ContactPointRow) {
@@ -213,7 +213,7 @@ async function mutateBasicProfileEntry(store: LiveStore, subject: NamedNode, bas
   await applyUpdaterPatch(store, deletions, insertions)
 }
 
-export async function processIntroMutations(store: LiveStore, subject: NamedNode, mutationPlan: IntroMutationPlan) {
+export async function processHeadingMutations(store: LiveStore, subject: NamedNode, mutationPlan: HeadingMutationPlan) {
   try {
     await mutateBasicProfileEntry(store, subject, mutationPlan.basicOps)
     await mutatePhoneEntry(store, subject, mutationPlan.phoneOps)
@@ -221,6 +221,6 @@ export async function processIntroMutations(store: LiveStore, subject: NamedNode
     await mutateAddressEntry(store, subject, mutationPlan.addressOps)
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error)
-    throw new Error(`${saveIntroUpdatesFailedPrefixText} ${message}`)
+    throw new Error(`${saveHeadingUpdatesFailedPrefixText} ${message}`)
   }
 } 
