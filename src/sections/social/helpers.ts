@@ -88,7 +88,7 @@ export function homepageForAccount(store: LiveStore, accountNode: any): string {
   const accountHomepage = store.any(accountNode, ns.foaf('homepage'))
   if (accountHomepage) return accountHomepage.value
 
-  const id = store.anyJS(accountNode as any, ns.foaf('accountName')) || ''
+  const id = store.anyJS(accountNode as any, ns.foaf('accountName'), null, accountNode.doc()) || 'No_account_Name'
   const classes = store.each(accountNode as any, ns.rdf('type'))
 
   for (const classNode of classes) {
@@ -100,5 +100,5 @@ export function homepageForAccount(store: LiveStore, accountNode: any): string {
     }
   }
 
-  return store.anyJS(accountNode as any, ns.foaf('homepage')) || ''
+  return store.anyJS(accountNode as any, ns.foaf('homepage'), null, accountNode.doc()) || ''
 }

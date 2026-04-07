@@ -4,6 +4,7 @@ import { ns } from 'solid-ui'
 import { presentSocial } from '../../src/sections/social/selectors'
 import { processSocialMutations } from '../../src/sections/social/mutations'
 import { saveSocialUpdatesFailedPrefixText } from '../../src/texts'
+import { expandRdfList } from '../../src/sections/shared/rdfList'
 
 jest.mock('../../src/sections/social/helpers', () => {
   const actual = jest.requireActual('../../src/sections/social/helpers')
@@ -54,7 +55,12 @@ describe('Social selectors and mutations', () => {
 
     const accountLinks = store.statementsMatching(subject, ns.foaf('account'), null, doc)
     expect(accountLinks).toHaveLength(1)
-    const entryNode = accountLinks[0].object
+
+    const expandedAccounts = accountLinks
+      .flatMap((statement: any) => expandRdfList(store, statement.object))
+      .filter((node: any) => node.termType === 'NamedNode')
+    expect(expandedAccounts).toHaveLength(1)
+    const entryNode = expandedAccounts[0]
     expect(entryNode.termType).toBe('NamedNode')
     expect(entryNode.value).toMatch(/^https:\/\/example\.com\/profile\/card#id\d{13}$/)
 
