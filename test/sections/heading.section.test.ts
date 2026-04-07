@@ -1,7 +1,7 @@
 import { describe, expect, it } from "@jest/globals"
 import { render } from 'lit-html'
 import { sym } from 'rdflib'
-import { renderIntroSection } from '../../src/sections/intro/IntroSection'
+import { renderHeadingSection } from '../../src/sections/heading/HeadingSection'
 import { context, subject } from '../setup'
 
 describe('Intro section', () => {
@@ -33,11 +33,11 @@ describe('Intro section', () => {
       }
     }
 
-    render(renderIntroSection(context, subject, profile as any, 'owner'), container)
+    render(renderHeadingSection(context, subject, profile as any, 'owner'), container)
 
-    expect(container.querySelector('.introSection')).toBeTruthy()
+    expect(container.querySelector('.profile__section')).toBeTruthy()
     expect(container.textContent).toContain('Jane Doe')
-    expect(container.querySelector('button[aria-label="Add or edit intro information"]')).toBeTruthy()
+    expect(container.querySelector('button[aria-label="Add or edit heading information"]')).toBeTruthy()
 
     container.remove()
   })
