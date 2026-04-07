@@ -43,22 +43,57 @@ type OpenGraphApiResponse = {
   }
 }
 
-function inferCategory(typeHint?: string, title?: string, description?: string): LinkCategory {
-  const typeText = (typeHint || '').toLowerCase()
-  const titleText = (title || '').toLowerCase()
-  const descriptionText = (description || '').toLowerCase()
-  const fullText = `${typeText} ${titleText} ${descriptionText}`
+type CategoryHints = {
+  url?: string
+  typeHint?: string
+  title?: string
+  description?: string
+  businessType?: string
+}
 
-  if (fullText.includes('community') || fullText.includes('forum') || fullText.includes('group')) {
+function tokenizeForCategory(value: string): string[] {
+  return (value || '')
+    .toLowerCase()
+    .split(/[^a-z0-9]+/)
+    .filter(Boolean)
+}
+
+function buildCategoryText(hints: CategoryHints) {
+  const raw = [
+    hints.typeHint || '',
+    hints.title || '',
+    hints.description || '',
+    hints.businessType || '',
+    hints.url || ''
+  ].join(' ')
+
+  return {
+    fullText: raw.toLowerCase(),
+    tokens: new Set(tokenizeForCategory(raw))
+  }
+}
+
+export function classifyLinkCategory(hints: CategoryHints): LinkCategory {
+  const { fullText, tokens } = buildCategoryText(hints)
+
+  const hasCommunityToken = [
+    'community', 'forum', 'group', 'club', 'team', 'association', 'society',
+    'supporter', 'supporters', 'fan', 'fans', 'fandom', 'federation',
+    'football', 'soccer', 'rugby', 'cricket', 'hockey', 'basketball',
+    'baseball', 'volleyball', 'athletics', 'esports', 'ultras', 'fc', 'afc', 'cf', 'sc'
+  ].some((token) => tokens.has(token))
+
+  if (hasCommunityToken || fullText.includes('supporters club') || fullText.includes('football club') || fullText.includes('soccer club')) {
     return 'community'
   }
 
-  if (fullText.includes('project') || fullText.includes('repo') || fullText.includes('product')) {
+  const hasProjectToken = [
+    'project', 'repo', 'repository', 'product', 'platform', 'app', 'application',
+    'tool', 'library', 'framework', 'sdk', 'plugin', 'extension', 'api', 'service', 'startup'
+  ].some((token) => tokens.has(token))
+
+  if (hasProjectToken || fullText.includes('open source')) {
     return 'project'
-  }
-
-  if (fullText.includes('club') || fullText.includes('team') || fullText.includes('association') || fullText.includes('society')) {
-    return 'community'
   }
 
   return 'unknown'
@@ -130,6 +165,12 @@ export async function fetchLinkPreview(url: string, apiKey: string): Promise<Lin
     imageUrl,
     siteName,
     businessType: inferBusinessType(typeHint, title, description),
-    category: inferCategory(typeHint, title, description)
+    category: classifyLinkCategory({
+      url: canonicalUrl,
+      typeHint,
+      title,
+      description,
+      businessType: inferBusinessType(typeHint, title, description)
+    })
   }
 }

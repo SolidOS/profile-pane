@@ -1,14 +1,6 @@
 import { LiveStore, NamedNode, Node } from 'rdflib'
 import { ns } from 'solid-ui'
-import { projectType, ProjectDetails } from './types'
-
-
-/* This code is AI generated from Model: GPT-5.3-Codex */
-/* Prompt: I need to store Project data only the url of the project how
-   should I store it please generate the code. Follow other sections */
-function isProjectEntry(store: LiveStore, node: Node, doc: NamedNode): boolean {
-  return store.holds(node as any, ns.rdf('type'), projectType, doc as any)
-}
+import { ProjectDetails } from './types'
 
 function projectNodeToUrl(node: Node): string {
   if (!node) return ''
@@ -17,39 +9,35 @@ function projectNodeToUrl(node: Node): string {
   return ''
 }
 
-function normalizeCategory(value?: string): 'project' | 'community' | 'unknown' {
-  const text = (value || '').trim().toLowerCase()
-  if (text === 'project') return 'project'
-  if (text === 'community') return 'community'
-  return 'unknown'
+function normalizeUrlKey(value: string): string {
+  const text = (value || '').trim()
+  if (!text) return ''
+  try {
+    const parsed = new URL(text)
+    parsed.hash = ''
+    return parsed.href
+  } catch {
+    return text
+  }
 }
 
 export function presentProjects(subject: NamedNode, store: LiveStore): ProjectDetails[] {
   const doc = subject.doc()
+  const seen = new Set<string>()
 
   return store
-    .each(subject, ns.schema('memberOf'), null, doc)
-    .filter((membershipNode) => isProjectEntry(store, membershipNode as Node, doc))
-    .map((membershipNode) => {
-      const entryNode = membershipNode as unknown as Node
-      const urlNode = store.any(membershipNode as NamedNode, ns.schema('url'), null, doc) as Node | null
-      const imageNode = store.any(membershipNode as NamedNode, ns.schema('image'), null, doc) as Node | null
-      const url = urlNode ? projectNodeToUrl(urlNode) : ''
-      const title = (store.anyJS(membershipNode as NamedNode, ns.schema('name'), null, doc) as string | null) || undefined
-      const businessType = (store.anyJS(membershipNode as NamedNode, ns.schema('industry'), null, doc) as string | null) || undefined
-      const description = (store.anyJS(membershipNode as NamedNode, ns.schema('description'), null, doc) as string | null) || undefined
-      const categoryRaw = (store.anyJS(membershipNode as NamedNode, ns.schema('additionalType'), null, doc) as string | null) || undefined
-      const imageUrl = imageNode ? projectNodeToUrl(imageNode) : undefined
+    .each(subject, ns.solid('community'), null, doc)
+    .map((communityNode) => {
+      const url = projectNodeToUrl(communityNode as Node)
+      const key = normalizeUrlKey(url)
+      if (!url || !key || seen.has(key)) return null
+      seen.add(key)
 
       return {
         url,
-        title,
-        businessType,
-        description,
-        imageUrl,
-        category: normalizeCategory(categoryRaw),
-        entryNode
+        category: 'unknown',
+        entryNode: communityNode as Node
       } as ProjectDetails
     })
-    .filter((project) => project.url !== '')
+    .filter((project): project is ProjectDetails => Boolean(project))
 }
