@@ -1,4 +1,4 @@
-import { LiveStore, NamedNode } from 'rdflib'
+import { LiveStore, NamedNode, Node } from 'rdflib'
 import { ns } from 'solid-ui'
 import { AddressDetails, ContactInfo, PointDetails } from './types'
 
@@ -23,40 +23,58 @@ function isPhoneValue(value: string): boolean {
   return /^[+()\-\s\d]{5,}$/.test(normalized)
 }
 
+function resolvePointValueNode(
+  store: LiveStore,
+  entryNode: NamedNode,
+  doc: NamedNode,
+  kind: 'email' | 'phone'
+): Node | null {
+  const expected = kind === 'email' ? isEmailValue : isPhoneValue
+
+  const entryValue = termValue(entryNode)
+  if (expected(entryValue)) return entryNode
+
+  const inDocStatements = store.statementsMatching(entryNode, ns.vcard('value'), null, doc)
+  const anyGraphStatements = store.statementsMatching(entryNode, ns.vcard('value'))
+
+  for (const statement of [...inDocStatements, ...anyGraphStatements]) {
+    const objectNode = statement.object as Node
+    if (expected(termValue(objectNode))) {
+      return objectNode
+    }
+  }
+
+  return null
+}
+
 function selectEmails(subject: NamedNode, store: LiveStore): PointDetails[] {
-  let emails: PointDetails[] = []
-  let type = null
-  let valueNode = null
+  const emails: PointDetails[] = []
   
   const emailNodes = store.each(subject, ns.vcard('hasEmail'), null, subject.doc()) || null
-  emailNodes.map((node) => {
-    const explicitValue = store.any(node as NamedNode, ns.vcard('value'), null, subject.doc())
-    valueNode = explicitValue || node
-    type = store.any(node as NamedNode, ns.rdf('type'), null, subject.doc())
-    const emailValue = termValue(valueNode)
-    if (isEmailValue(emailValue)) {
-      emails.push({ entryNode: node, type, valueNode })
-    }
+  emailNodes.forEach((node) => {
+    const valueNode = resolvePointValueNode(store, node as NamedNode, subject.doc(), 'email')
+    if (!valueNode) return
+
+    const type = store.any(node as NamedNode, ns.rdf('type'), null, subject.doc())
+    emails.push({ entryNode: node, type, valueNode })
   })
+
   return emails
 }
 /* SAM need to look at this doesn't seem to be working 
 although it was working in add-to-contacts button */
 function selectPhones(subject: NamedNode, store: LiveStore): PointDetails[] {
-  let phoneNumbers: PointDetails[] = []
-  let type = null
-  let valueNode = null
+  const phoneNumbers: PointDetails[] = []
 
   const phoneNodes = store.each(subject, ns.vcard('hasTelephone'), null, subject.doc()) || null
-  phoneNodes.map((node) => {
-    const explicitValue = store.any(node as NamedNode, ns.vcard('value'), null, subject.doc())
-    valueNode = explicitValue || node
-    type = store.any(node as NamedNode, ns.rdf('type'), null, subject.doc())
-    const phoneValue = termValue(valueNode)
-    if (isPhoneValue(phoneValue)) {
-      phoneNumbers.push({ entryNode: node, type, valueNode })
-    }
+  phoneNodes.forEach((node) => {
+    const valueNode = resolvePointValueNode(store, node as NamedNode, subject.doc(), 'phone')
+    if (!valueNode) return
+
+    const type = store.any(node as NamedNode, ns.rdf('type'), null, subject.doc())
+    phoneNumbers.push({ entryNode: node, type, valueNode })
   })
+
   return phoneNumbers
 }
 

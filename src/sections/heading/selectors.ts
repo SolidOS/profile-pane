@@ -5,6 +5,95 @@ import { utils, ns, widgets } from 'solid-ui'
 import type { AddressDetails, PointDetails } from '../contactInfo/types'
 import type { ProfileDetails } from './types'
 
+function termValue(term: unknown): string {
+  if (!term) return ''
+  if (typeof term === 'string') return term
+  if (typeof term === 'object' && 'value' in (term as Record<string, unknown>)) {
+    const value = (term as { value?: unknown }).value
+    return typeof value === 'string' ? value : ''
+  }
+  return ''
+}
+
+function isEmailValue(value: string): boolean {
+  const normalized = (value || '').trim()
+  if (!normalized) return false
+  if (/^mailto:/i.test(normalized)) return true
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalized)
+}
+
+function isPhoneValue(value: string): boolean {
+  const normalized = (value || '').trim()
+  if (!normalized) return false
+  if (/^tel:/i.test(normalized)) return true
+  return /^[+()\-\s\d]{5,}$/.test(normalized)
+}
+
+function resolvePointValueNode(
+  store: LiveStore,
+  entryNode: Node | undefined,
+  doc: NamedNode,
+  kind: 'email' | 'phone'
+): Node | undefined {
+  if (!entryNode) return undefined
+
+  const expected = kind === 'email' ? isEmailValue : isPhoneValue
+
+  const entryValue = termValue(entryNode)
+  if (expected(entryValue)) return entryNode
+
+  if ((entryNode as { termType?: string }).termType !== 'NamedNode') return undefined
+  const inDocStatements = store.statementsMatching(entryNode as NamedNode, ns.vcard('value'), null, doc)
+  const anyGraphStatements = store.statementsMatching(entryNode as NamedNode, ns.vcard('value'))
+
+  for (const statement of [...inDocStatements, ...anyGraphStatements]) {
+    if (expected(termValue(statement.object))) {
+      return statement.object as Node
+    }
+  }
+
+  return undefined
+}
+
+function resolvePointType(store: LiveStore, entryNode: Node, doc: NamedNode): Node | undefined {
+  if ((entryNode as { termType?: string }).termType !== 'NamedNode') return undefined
+  const inDocStatements = store.statementsMatching(entryNode as NamedNode, ns.rdf('type'), null, doc)
+  if (inDocStatements.length > 0) return inDocStatements[0].object as Node
+
+  const anyGraphStatements = store.statementsMatching(entryNode as NamedNode, ns.rdf('type'))
+  if (anyGraphStatements.length > 0) return anyGraphStatements[0].object as Node
+
+  return undefined
+}
+
+function selectPrimaryPoint(
+  store: LiveStore,
+  subject: NamedNode,
+  predicate: NamedNode,
+  doc: NamedNode,
+  kind: 'email' | 'phone',
+  fallbackType: Node
+): PointDetails | undefined {
+  const inDocStatements = store.statementsMatching(subject, predicate, null, doc)
+  const anyGraphStatements = store.statementsMatching(subject, predicate)
+  const nodes = [...inDocStatements, ...anyGraphStatements].map((statement) => statement.object as Node)
+
+  const seen = new Set<string>()
+  for (const entryNode of nodes) {
+    const key = termValue(entryNode)
+    if (key && seen.has(key)) continue
+    if (key) seen.add(key)
+
+    const valueNode = resolvePointValueNode(store, entryNode, doc, kind)
+    if (!valueNode) continue
+
+    const type = resolvePointType(store, entryNode, doc) || fallbackType
+    return { entryNode, type, valueNode }
+  }
+
+  return undefined
+}
+
 
 export function pronounsAsText (store: LiveStore, subject:NamedNode): string {
   let pronouns = store.anyJS(subject, ns.solid('preferredSubjectPronoun')) || ''
@@ -34,39 +123,14 @@ export const presentProfile = (
   const imageSrc = widgets.findImage(subject)
   const jobTitle = store.anyValue(subject, ns.vcard('role')) || undefined
   const orgName = store.anyValue(subject, ns.vcard('organization-name')) || undefined // @@ Search whole store
+  const doc = subject.doc()
 
   // Contact info - we will only show one of each type here
   // Just doing for now, but we should change to either store a primary
   // indicator or store it a bit differently in the store.
-  const primaryPhoneEntryNode = store.any(subject, ns.vcard('hasTelephone')) as Node || undefined
-  const primaryPhoneValueNode = primaryPhoneEntryNode
-    ? (store.any(primaryPhoneEntryNode as NamedNode, ns.vcard('value')) as Node || primaryPhoneEntryNode)
-    : undefined
-  const primaryPhoneType = primaryPhoneEntryNode
-    ? (store.any(primaryPhoneEntryNode as NamedNode, ns.rdf('type')) as Node || undefined)
-    : undefined
-  const primaryPhone: PointDetails | undefined = (primaryPhoneEntryNode && primaryPhoneValueNode)
-    ? {
-      entryNode: primaryPhoneEntryNode,
-      type: primaryPhoneType || ns.vcard('Voice'),
-      valueNode: primaryPhoneValueNode
-    }
-    : undefined
+  const primaryPhone = selectPrimaryPoint(store, subject, ns.vcard('hasTelephone'), doc, 'phone', ns.vcard('Voice'))
 
-  const primaryEmailEntryNode = store.any(subject, ns.vcard('hasEmail')) as Node || undefined
-  const primaryEmailValueNode = primaryEmailEntryNode
-    ? (store.any(primaryEmailEntryNode as NamedNode, ns.vcard('value')) as Node || primaryEmailEntryNode)
-    : undefined
-  const primaryEmailType = primaryEmailEntryNode
-    ? (store.any(primaryEmailEntryNode as NamedNode, ns.rdf('type')) as Node || undefined)
-    : undefined
-  const primaryEmail: PointDetails | undefined = (primaryEmailEntryNode && primaryEmailValueNode)
-    ? {
-      entryNode: primaryEmailEntryNode,
-      type: primaryEmailType || ns.vcard('Internet'),
-      valueNode: primaryEmailValueNode
-    }
-    : undefined
+  const primaryEmail = selectPrimaryPoint(store, subject, ns.vcard('hasEmail'), doc, 'email', ns.vcard('Internet'))
 
   const primaryAddressEntryNode = store.any(subject, ns.vcard('hasAddress')) as Node || undefined
   const primaryAddressType = primaryAddressEntryNode
