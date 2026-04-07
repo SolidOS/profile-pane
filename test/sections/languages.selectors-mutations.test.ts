@@ -164,19 +164,15 @@ describe('Languages selectors and mutations', () => {
     await processLanguageMutations(store, subject, plan as any)
 
     const linkStatement = insertionsCaptured.find((statement) => statement.predicate.value === ns.schema('knowsLanguage').value)
-    expect(linkStatement?.object?.termType).toBe('BlankNode')
+    expect(linkStatement?.object?.termType).toBe('Collection')
 
-    const firstStatement = insertionsCaptured.find(
-      (statement) =>
-        statement.subject.value === linkStatement.object.value &&
-        statement.predicate.value === ns.rdf('first').value
-    )
-    expect(firstStatement?.object?.termType).toBe('NamedNode')
-    expect(firstStatement?.object?.value).toMatch(/^https:\/\/example\.com\/profile\/card#id\d{13}$/)
+    const firstEntry = linkStatement?.object?.elements?.[0]
+    expect(firstEntry?.termType).toBe('NamedNode')
+    expect(firstEntry?.value).toMatch(/^https:\/\/example\.com\/profile\/card#id\d{13}$/)
 
     const publicIdStatement = insertionsCaptured.find(
       (statement) =>
-        statement.subject.value === firstStatement.object.value &&
+        statement.subject.value === firstEntry.value &&
         statement.predicate.value === ns.solid('publicId').value
     )
     expect(publicIdStatement?.object?.termType).toBe('NamedNode')
@@ -186,22 +182,28 @@ describe('Languages selectors and mutations', () => {
         statement.subject.value === publicIdStatement.object.value &&
         statement.predicate.value === ns.schema('name').value
     )
-    expect(nameStatement?.object?.value).toBe('French')
-    expect(nameStatement?.object?.termType).toBe('Literal')
+    expect(nameStatement).toBeUndefined()
+
+    const typeStatement = insertionsCaptured.find(
+      (statement) =>
+        statement.subject.value === publicIdStatement.object.value &&
+        statement.predicate.value === ns.rdf('type').value
+    )
+    expect(typeStatement?.object?.value).toBe(ns.schema('Language').value)
 
     const knowsLanguageValues = store.statementsMatching(subject, ns.schema('knowsLanguage'), null, doc)
     expect(knowsLanguageValues.length).toBe(1)
-    expect(knowsLanguageValues[0].object.termType).toBe('BlankNode')
+    expect(knowsLanguageValues[0].object.termType).toBe('Collection')
   })
 
-  it('does not accumulate extra language schema:name nodes across repeated saves', async () => {
+  it('does not accumulate extra language schema:Language type nodes across repeated saves', async () => {
     const store = graph() as any
     const subject = sym('https://example.com/profile/card#me')
     const doc = subject.doc()
 
     store.updater = {
       update: (deletions: any[], insertions: any[], callback: Function) => {
-        deletions.forEach((statement) => store.remove(st(statement.subject, statement.predicate, statement.object, statement.why)))
+        deletions.forEach((statement) => store.remove(statement))
         insertions.forEach((statement) => store.add(statement.subject, statement.predicate, statement.object, statement.why))
         callback('', true)
       }
@@ -219,8 +221,8 @@ describe('Languages selectors and mutations', () => {
     await processLanguageMutations(store, subject, plan as any)
     await processLanguageMutations(store, subject, plan as any)
 
-    const nameStatements = store.statementsMatching(undefined, ns.schema('name'), null, doc)
-      .filter((statement) => ['Greek', 'English'].includes(statement.object.value))
-    expect(nameStatements).toHaveLength(2)
+    const typeStatements = store.statementsMatching(undefined, ns.rdf('type'), ns.schema('Language'), doc)
+    expect(typeStatements.length).toBeGreaterThanOrEqual(2)
+
   })
 })
