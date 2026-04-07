@@ -5,9 +5,13 @@ import { expandRdfList } from '../shared/rdfList'
 
 export function languageAsText (store: Store, lan: Node):string {
   if (lan.termType === 'Literal') return lan.value // Not normal but allow this
+
   const publicId = store.anyJS(lan as NamedNode, ns.solid('publicId'))
   if (publicId)
     return utils.label(publicId, true) // @@ check language and get name in diff language if necessary
+
+  const directName = store.anyJS(lan as NamedNode, ns.schema('name'))
+  if (directName) return directName
   return ''                                                  
 }
 

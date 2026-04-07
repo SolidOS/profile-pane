@@ -21,7 +21,8 @@ export function renderLanguageSection(
   store: LiveStore,
   subject: NamedNode,
   languages: LanguageDetails[],
-  viewerMode: ViewerMode
+  viewerMode: ViewerMode,
+  onSaved?: () => Promise<void> | void
 ) {
   const languagesArr = languages || []
   const hasLanguages = Array.isArray(languagesArr) && languagesArr.length > 0
@@ -36,7 +37,7 @@ export function renderLanguageSection(
                 type="button"
                 class="actionButton"
                 aria-label="Add or edit languages"
-                @click=${(event: Event) => createLanguageEditDialog(event, store, subject, languagesArr, viewerMode)}
+                @click=${(event: Event) => createLanguageEditDialog(event, store, subject, languagesArr, viewerMode, onSaved)}
               >
                 + Add More
               </button>
