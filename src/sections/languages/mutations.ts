@@ -1,4 +1,4 @@
-import { LiveStore, NamedNode, st, literal } from 'rdflib'
+import { LiveStore, NamedNode, st, Collection } from 'rdflib'
 import { ns } from 'solid-ui'
 import { LanguageRow } from './types'
 import { MutationOps } from '../shared/types'
@@ -22,30 +22,44 @@ function buildLanguageStatements(store: LiveStore, subject: NamedNode, doc: Name
 
   const entryNodes = languageNames.map(() => createIdNode(doc))
   const publicIdNodes = languageNames.map(() => createIdNode(doc))
-  const head = store.bnode()
-  const statements = [st(subject, ns.schema('knowsLanguage'), head, doc)]
+  const statements: any[] = []
 
-  let current = head
-  entryNodes.forEach((node, index) => {
-    statements.push(st(current, ns.rdf('first'), node, doc))
-    if (index === entryNodes.length - 1) {
-      statements.push(st(current, ns.rdf('rest'), ns.rdf('nil'), doc))
-      return
-    }
-
-    const next = store.bnode()
-    statements.push(st(current, ns.rdf('rest'), next, doc))
-    current = next
-  })
+  // Keep ui:ordered semantics by writing cumulative ordered list variants:
+  // (a b c), (a b), (a)
+  for (let size = entryNodes.length; size >= 1; size -= 1) {
+    const orderedSlice = entryNodes.slice(0, size)
+    const listObject = new Collection(orderedSlice as any)
+    statements.push(st(subject, ns.schema('knowsLanguage'), listObject as any, doc))
+  }
 
   entryNodes.forEach((node, index) => {
     const publicIdNode = publicIdNodes[index]
     statements.push(st(node, ns.solid('publicId'), publicIdNode, doc))
-    statements.push(st(publicIdNode, ns.schema('name'), literal(languageNames[index]), doc))
     statements.push(st(publicIdNode, ns.rdf('type'), ns.schema('Language'), doc))
   })
 
   return statements
+}
+
+function collectListChainNodes(store: LiveStore, listHead: any, doc: NamedNode): any[] {
+  const visited = new Set<string>()
+  const nodes: any[] = []
+  let current = listHead
+
+  while (current) {
+    const key = `${current.termType}:${current.value}`
+    if (visited.has(key)) break
+    visited.add(key)
+    nodes.push(current)
+
+    const rest = store.any(current as NamedNode, ns.rdf('rest'), null, doc) as any
+    if (!rest || (rest.termType === 'NamedNode' && rest.value === ns.rdf('nil').value)) {
+      break
+    }
+    current = rest
+  }
+
+  return nodes
 }
 
 function isPatchFailure(message: string): boolean {
@@ -67,7 +81,8 @@ function sanitizePatchStatements(store: LiveStore, deletions: any[], insertions:
     (deletions || [])
       .filter((statement) => {
         if (!statement || !statement.subject || !statement.predicate || !statement.object) return false
-        return store.holds(statement.subject, statement.predicate, statement.object, statement.why)
+        if (store.holds(statement.subject, statement.predicate, statement.object, statement.why)) return true
+        return store.statementsMatching(statement.subject, statement.predicate, statement.object, statement.why).length > 0
       })
       .map((statement) => [statementKey(statement), statement])
   ).values())
@@ -217,6 +232,14 @@ async function mutateLanguageEntries(store: LiveStore, subject: NamedNode, langu
   const nextNames = mergeLanguageOps(existingRows, languageOps)
 
   const listObjects = store.each(subject, ns.schema('knowsLanguage'), null, doc)
+  const existingListHeads = listObjects.filter((node) => node.termType === 'BlankNode' || node.termType === 'NamedNode')
+
+  const existingListNodes = Array.from(new Map(
+    existingListHeads
+      .flatMap((node) => collectListChainNodes(store, node, doc))
+      .map((node) => [`${node.termType}:${node.value}`, node])
+  ).values())
+
   const existingLanguageNodes = Array.from(new Set(
     listObjects
       .flatMap((node) => expandRdfList(store, node))
@@ -232,6 +255,9 @@ async function mutateLanguageEntries(store: LiveStore, subject: NamedNode, langu
   )).map((value) => store.sym(value))
 
   const deletions = store.statementsMatching(subject, ns.schema('knowsLanguage'), null, doc)
+  existingListNodes.forEach((node) => {
+    deletions.push(...store.statementsMatching(node as any, null, null, doc))
+  })
   existingLanguageNodes.forEach((node) => {
     deletions.push(...store.statementsMatching(node as NamedNode, null, null, doc))
   })
