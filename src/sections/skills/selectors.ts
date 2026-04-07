@@ -3,15 +3,12 @@ import { ns } from 'solid-ui'
 
 
 export function skillAsText (store: Store, sk: Node):string {
-  if (sk.termType === 'Literal') return sk.value // Not normal but allow this
+  if (sk.termType === 'Literal') return ''
   const publicId =  store.anyJS(sk as NamedNode, ns.solid('publicId'))
   if (publicId) {
     const name = store.anyJS(publicId, ns.schema('name'))
     if (name) return name // @@ check language and get name in diff language if necessary
   }
-
-  const manual = store.anyJS(sk as NamedNode, ns.vcard('role'))
-  if (manual && manual[0] > '') return manual
   return ''
 }
 

@@ -10,9 +10,11 @@ export type SkillMutationPlan = MutationOps<SkillRow>
 
 function buildSkillsStatements(subject: NamedNode, doc: NamedNode, node: NamedNode, skill: SkillRow) {
   if (!skill.name) return []
+  const publicIdNode = createIdNode(doc)
   return [
     st(subject, ns.schema('skills'), node, doc),
-    st(node, ns.vcard('role'), literal(skill.name), doc)
+    st(node, ns.solid('publicId'), publicIdNode, doc),
+    st(publicIdNode, ns.schema('name'), literal(skill.name), doc)
   ]
 }
 
@@ -23,6 +25,13 @@ async function mutateSkillsEntries(store: LiveStore, subject: NamedNode, skillOp
   const deletions: any[] = []
   const insertions: any[] = []
 
+  const collectLinkedPublicIdStatements = (skillNode: NamedNode) => {
+    const publicIdNode = store.any(skillNode, ns.solid('publicId'), null, doc)
+    if (publicIdNode && publicIdNode.termType === 'NamedNode') {
+      deletions.push(...collectNodeStatements(store, publicIdNode as NamedNode, doc))
+    }
+  }
+
   skillOps.remove.forEach((skill) => {
     if (!skill.entryNode) return
     const existingNode = findExistingNode(existingSkillNodes, skill.entryNode)
@@ -30,6 +39,9 @@ async function mutateSkillsEntries(store: LiveStore, subject: NamedNode, skillOp
       deletions.push(...collectLinkStatements(store, subject, ns.schema('skills'), existingNode, doc))
       if (existingNode.termType !== 'Literal') {
         deletions.push(...collectNodeStatements(store, existingNode, doc))
+        if (existingNode.termType === 'NamedNode') {
+          collectLinkedPublicIdStatements(existingNode as NamedNode)
+        }
       }
     }
   })
@@ -44,6 +56,9 @@ async function mutateSkillsEntries(store: LiveStore, subject: NamedNode, skillOp
     deletions.push(...collectLinkStatements(store, subject, ns.schema('skills'), existingNode, doc))
     if (existingNode.termType !== 'Literal') {
       deletions.push(...collectNodeStatements(store, existingNode, doc))
+      if (existingNode.termType === 'NamedNode') {
+        collectLinkedPublicIdStatements(existingNode as NamedNode)
+      }
     }
     if (existingNode.termType === 'NamedNode') {
       insertions.push(...buildSkillsStatements(subject, doc, existingNode as NamedNode, skill))
