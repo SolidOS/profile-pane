@@ -1,13 +1,14 @@
 import { LiveStore, NamedNode, Node, Store } from 'rdflib'
-import { ns } from 'solid-ui'
+import { ns, utils } from 'solid-ui'
 
 
 export function skillAsText (store: Store, sk: Node):string {
   if (sk.termType === 'Literal') return ''
-  const publicId =  store.anyJS(sk as NamedNode, ns.solid('publicId'))
-  if (publicId) {
-    const name = store.anyJS(publicId, ns.schema('name'))
-    if (name) return name // @@ check language and get name in diff language if necessary
+  const publicId = store.any(sk as NamedNode, ns.solid('publicId')) as Node | null
+  if (publicId && publicId.termType === 'NamedNode') {
+    const name = store.anyJS(publicId as NamedNode, ns.schema('name'))
+    if (name) return name
+    return utils.label(publicId, true)
   }
   return ''
 }

@@ -14,7 +14,8 @@ function buildSkillsStatements(subject: NamedNode, doc: NamedNode, node: NamedNo
   return [
     st(subject, ns.schema('skills'), node, doc),
     st(node, ns.solid('publicId'), publicIdNode, doc),
-    st(publicIdNode, ns.schema('name'), literal(skill.name), doc)
+    st(publicIdNode, ns.schema('name'), literal(skill.name), doc),
+    st(publicIdNode, ns.rdf('type'), ns.schema('Skill'), doc)
   ]
 }
 
