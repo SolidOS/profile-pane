@@ -7,6 +7,252 @@ import { createIdNode } from '../shared/idNodeFactory'
 import { saveHeadingUpdatesFailedPrefixText } from '../../texts'
 import { ContactAddressRow, ContactPointRow } from '../contactInfo/types'
 
+type CleanupSummary = {
+  deletedStatements: number
+  removedOrphanNodes: number
+  removedKnowsLanguageLinks: number
+}
+
+function statementKey(statement: any): string {
+  return `${statement.subject?.toNT?.() || statement.subject?.value} ${statement.predicate?.toNT?.() || statement.predicate?.value} ${statement.object?.toNT?.() || statement.object?.value} ${statement.why?.toNT?.() || statement.why?.value}`
+}
+
+function dedupeStatements(statements: any[]): any[] {
+  return Array.from(new Map((statements || []).map((statement) => [statementKey(statement), statement])).values())
+}
+
+function isPatchFailure(message: string): boolean {
+  const text = (message || '').toLowerCase()
+  return (
+    text.includes(' on patch ') ||
+    text.includes('web error: 500') ||
+    text.includes('web error: 501') ||
+    text.includes('web error: 405') ||
+    text.includes('web error: 400')
+  )
+}
+
+function isMissingGetRecordError(message: string): boolean {
+  return (message || '').toLowerCase().includes('no record of our http get request for document')
+}
+
+function sanitizePatchStatements(store: LiveStore, deletions: any[], insertions: any[]) {
+  const safeDeletions = Array.from(new Map(
+    (deletions || [])
+      .filter((statement) => {
+        if (!statement || !statement.subject || !statement.predicate || !statement.object) return false
+        return store.holds(statement.subject, statement.predicate, statement.object, statement.why)
+      })
+      .map((statement) => [statementKey(statement), statement])
+  ).values())
+
+  const safeInsertions = Array.from(new Map(
+    (insertions || [])
+      .filter((statement) => Boolean(statement && statement.subject && statement.predicate && statement.object))
+      .map((statement) => [statementKey(statement), statement])
+  ).values())
+
+  return { safeDeletions, safeInsertions }
+}
+
+async function runPutFallback(store: LiveStore, doc: NamedNode, deletions: any[], insertions: any[]) {
+  const updater = store.updater as any
+  const fetcher = (store as any).fetcher
+
+  if (!updater || typeof updater.serialize !== 'function' || !fetcher || typeof fetcher.webOperation !== 'function') {
+    throw new Error('Cleanup updates are not supported by this store updater.')
+  }
+
+  const currentStatements = store.statementsMatching(undefined, undefined, undefined, doc).slice()
+  const deletionKeys = new Set((deletions || []).map((statement) => statementKey(statement)))
+  const nextStatements = currentStatements.filter((statement) => !deletionKeys.has(statementKey(statement))).concat(insertions || [])
+
+  const contentType = 'text/turtle'
+  const body = updater.serialize(doc.value, nextStatements, contentType)
+  const response = await fetcher.webOperation('PUT', doc.uri, {
+    noMeta: true,
+    contentType,
+    body
+  })
+
+  if (!response || response.ok !== true) {
+    const status = response?.status || 'unknown'
+    throw new Error(`Web error: ${status} on PUT of <${doc.uri}>`)
+  }
+
+  store.remove(deletions)
+  insertions.forEach((statement) => {
+    store.add(statement.subject, statement.predicate, statement.object, statement.why)
+  })
+}
+
+async function runUpdateWithDavFallback(store: LiveStore, doc: NamedNode, deletions: any[], insertions: any[]) {
+  const updater = store.updater as any
+  if (!updater || typeof updater.update !== 'function') {
+    throw new Error('Cleanup updates are not supported by this store updater.')
+  }
+
+  const { safeDeletions, safeInsertions } = sanitizePatchStatements(store, deletions, insertions)
+  if (safeDeletions.length === 0 && safeInsertions.length === 0) {
+    return
+  }
+
+  const tryUpdate = () => new Promise<void>((resolve, reject) => {
+    updater.update(safeDeletions, safeInsertions, (_uri: string, ok: boolean, message?: string) => {
+      if (ok === true) {
+        resolve()
+        return
+      }
+      reject(new Error(message || 'Failed to clean profile graph'))
+    })
+  })
+
+  try {
+    await tryUpdate()
+    return
+  } catch (error) {
+    const message = error instanceof Error ? error.message : String(error)
+    if (!isPatchFailure(message) || typeof updater.updateDav !== 'function') {
+      throw error
+    }
+
+    if (store.fetcher && typeof (store.fetcher as any).load === 'function') {
+      try {
+        await (store.fetcher as any).load(doc)
+      } catch {
+        // Continue to fallback.
+      }
+    }
+
+    try {
+      await new Promise<void>((resolve, reject) => {
+        updater.updateDav(doc, safeDeletions, safeInsertions, (_uri: string, ok: boolean, body?: string) => {
+          if (ok === true) {
+            resolve()
+            return
+          }
+          reject(new Error(body || message || 'Failed to clean profile graph'))
+        })
+      })
+    } catch (davError) {
+      const davMessage = davError instanceof Error ? davError.message : String(davError)
+      if (!isMissingGetRecordError(davMessage)) {
+        throw davError
+      }
+      await runPutFallback(store, doc, safeDeletions, safeInsertions)
+    }
+  }
+}
+
+function isLocalProfileNode(node: Node | null | undefined, doc: NamedNode): node is Node {
+  if (!node) return false
+  if (node.termType === 'BlankNode') return true
+  if (node.termType !== 'NamedNode') return false
+  return node.value === doc.value || node.value.startsWith(`${doc.value}#`)
+}
+
+function collectKnowsLanguageCascadeDeletions(store: LiveStore, subject: NamedNode, doc: NamedNode): any[] {
+  const deletions: any[] = []
+  const visited = new Set<string>()
+  const queue: Node[] = []
+  const knowsLanguageStatements = store.statementsMatching(subject, ns.schema('knowsLanguage'), null, doc)
+
+  deletions.push(...knowsLanguageStatements)
+  knowsLanguageStatements.forEach((statement) => {
+    queue.push(statement.object as Node)
+  })
+
+  while (queue.length > 0) {
+    const current = queue.shift() as Node
+    const currentKey = current.termType === 'BlankNode' ? `_:${current.value}` : current.value
+    if (visited.has(currentKey)) continue
+    visited.add(currentKey)
+
+    const nodeStatements = store.statementsMatching(current as any, null, null, doc)
+    deletions.push(...nodeStatements)
+
+    nodeStatements.forEach((statement) => {
+      const next = statement.object as Node
+      if (isLocalProfileNode(next, doc)) {
+        queue.push(next)
+      }
+    })
+  }
+
+  return dedupeStatements(deletions)
+}
+
+function collectReachableLocalNodeKeys(store: LiveStore, doc: NamedNode, roots: Node[]): Set<string> {
+  const reachable = new Set<string>()
+  const queue = roots.filter((root) => isLocalProfileNode(root, doc))
+
+  while (queue.length > 0) {
+    const current = queue.shift() as Node
+    const currentKey = current.termType === 'BlankNode' ? `_:${current.value}` : current.value
+    if (reachable.has(currentKey)) continue
+    reachable.add(currentKey)
+
+    const nextStatements = store.statementsMatching(current as any, null, null, doc)
+    nextStatements.forEach((statement) => {
+      const next = statement.object as Node
+      if (!isLocalProfileNode(next, doc)) return
+      const nextKey = next.termType === 'BlankNode' ? `_:${next.value}` : next.value
+      if (!reachable.has(nextKey)) {
+        queue.push(next)
+      }
+    })
+  }
+
+  return reachable
+}
+
+function collectOrphanNodeDeletions(store: LiveStore, subject: NamedNode, doc: NamedNode, baseDeletions: any[]): { orphanNodes: Node[]; deletions: any[] } {
+  const baseDeletionKeys = new Set(baseDeletions.map((statement) => statementKey(statement)))
+  const docStatements = store
+    .statementsMatching(undefined, undefined, undefined, doc)
+    .filter((statement) => !baseDeletionKeys.has(statementKey(statement)))
+
+  const localNodeByKey = new Map<string, Node>()
+  docStatements.forEach((statement) => {
+    if (isLocalProfileNode(statement.subject as Node, doc)) {
+      const subjectNode = statement.subject as Node
+      const subjectKey = subjectNode.termType === 'BlankNode' ? `_:${subjectNode.value}` : subjectNode.value
+      localNodeByKey.set(subjectKey, subjectNode)
+    }
+    if (isLocalProfileNode(statement.object as Node, doc)) {
+      const objectNode = statement.object as Node
+      const objectKey = objectNode.termType === 'BlankNode' ? `_:${objectNode.value}` : objectNode.value
+      localNodeByKey.set(objectKey, objectNode)
+    }
+  })
+
+  const reachable = collectReachableLocalNodeKeys(store, doc, [subject])
+  const subjectKey = subject.value
+
+  const orphanNodes = Array.from(localNodeByKey.entries())
+    .filter(([key]) => key !== subjectKey && !reachable.has(key))
+    .map(([, node]) => node)
+
+  const orphanDeletions = dedupeStatements(orphanNodes.flatMap((node) => store.statementsMatching(node as any, null, null, doc)))
+  return { orphanNodes, deletions: orphanDeletions }
+}
+
+export async function cleanupHeadingLanguagesAndOrphans(store: LiveStore, subject: NamedNode): Promise<CleanupSummary> {
+  const doc = subject.doc()
+  const knowsLanguageStatements = store.statementsMatching(subject, ns.schema('knowsLanguage'), null, doc)
+  const knowsLanguageDeletions = collectKnowsLanguageCascadeDeletions(store, subject, doc)
+  const orphanResult = collectOrphanNodeDeletions(store, subject, doc, knowsLanguageDeletions)
+  const deletions = dedupeStatements([...knowsLanguageDeletions, ...orphanResult.deletions])
+
+  await runUpdateWithDavFallback(store, doc, deletions, [])
+
+  return {
+    deletedStatements: deletions.length,
+    removedOrphanNodes: orphanResult.orphanNodes.length,
+    removedKnowsLanguageLinks: knowsLanguageStatements.length
+  }
+}
+
 function buildPhoneStatements(subject: NamedNode, doc: NamedNode, node: Node, phone: ContactPointRow) {
   const normalizedValue = phone.value.startsWith('tel:') ? phone.value : `tel:${phone.value}`
   const valueNode = sym(normalizedValue)

@@ -58,14 +58,16 @@
   --box-shadow-modal: 0 2px 10px rgba(0, 0, 0, 0.3);
   --box-shadow-popup: 0 0.5em 0.9em rgba(0, 0, 0, 0.2);
 
-  --spacing-xs: 0.5em;
-  --spacing-sm: 0.75em;
-  --spacing-md: 1em;
-  --spacing-lg: 1.5em;
-  --spacing-xl: 2em;
-  --spacing-xxs: 0.3em;
-  --spacing-xxxs: 0.2em;
-  --spacing-btn: 0.7em;
+  /* New Design: Spacing scale with root instead of parent for consistency across page. */
+  /* Noted: changed em to rem */
+  --spacing-xs: 0.5rem;
+  --spacing-sm: 0.75rem;
+  --spacing-md: 1.2rem; /* New design uses 1.2 changed from 1rem */
+  --spacing-lg: 1.5rem;
+  --spacing-xl: 2rem;
+  --spacing-xxs: 0.3rem;
+  --spacing-xxxs: 0.2rem;
+  --spacing-btn: 0.7rem;
 
   --font-family-base: "Neue Einstellung", sans-serif;
   /* OLD --font-family-base: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif; */

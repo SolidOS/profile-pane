@@ -37,32 +37,6 @@
   /* Component container */
 }
 
-.profile__image {
-  width: 160px;
-  height: 160px;
-  border-radius: var(--border-radius-full);
-  object-fit: cover;
-  margin-bottom: var(--spacing-sm);
-  box-shadow: var(--box-shadow-sm);
-  border: 3px solid var(--color-primary);
-  background: var(--color-card-bg);
-  box-sizing: border-box;
-}
-
-.profile__image-alt {
-  width: 160px;
-  height: 160px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: var(--border-radius-full);
-  margin-bottom: var(--spacing-sm);
-  box-shadow: var(--box-shadow-sm);
-  border: 3px solid var(--color-primary);
-  background: var(--color-card-bg);
-  box-sizing: border-box;
-  color: var(--color-text-secondary);
-}
 
 .name {
   font-size: var(--font-size-xl);

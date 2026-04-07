@@ -56,14 +56,12 @@ const Pane = {
       for (const QRCodeElement of QRCodeEles as HTMLElement[]) {
         const value = QRCodeElement.getAttribute('data-value')
         if (!value) return console.error('QRCode data-value missing')
-        const highlightColor = QRCodeElement.getAttribute('highlightColor') || '#000000'
-        const backgroundColor = QRCodeElement.getAttribute('backgroundColor') || '#ffffff'
 
         const options = {
           type: 'svg',
           color: {
-            dark: highlightColor,
-            light: backgroundColor
+            dark: '#000000',
+            light: '#ffffff'
           }
         }
 

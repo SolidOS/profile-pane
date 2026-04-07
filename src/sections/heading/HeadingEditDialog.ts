@@ -3,7 +3,6 @@ import { html, render, TemplateResult } from 'lit-html'
 import { ProfileDetails, HeadingMutationPlan, ProfileBasicRow } from './types'
 import { Image } from './HeadingSection'
 import '../../styles/SectionInputRows.css'
-import '../../styles/HeadingEditDialog.css'
 import { LiveStore, NamedNode } from 'rdflib'
 import { processHeadingMutations } from './mutations'
 import { ViewerMode } from '../../types'
@@ -24,6 +23,7 @@ import {
 } from '../../texts'
 import { ContactAddressRow, ContactPointRow } from '../contactInfo/types'
 import { sanitizeAddressFieldValue, sanitizeBasicInputFieldValue, sanitizeEmailValue, sanitizePhoneLocalValue } from '../shared/sanitizeUtils'
+import { toEditableDateDMY, toStorageDateISO } from './dateHelpers'
 
 // Notes: In the design there is no type on address, but phone and email have a type.
 // guess it depends on where we are storing this data whether we should add type or not
@@ -75,28 +75,6 @@ function rowHasContent(row: Row): boolean {
     ].some(hasNonEmptyText)
   }
   return false
-}
-
-function toDateInputValue(value: string | undefined): string {
-  if (!value) return ''
-  const trimmed = value.trim()
-  // Native date inputs expect yyyy-mm-dd.
-  if (/^\d{4}-\d{2}-\d{2}$/.test(trimmed)) return trimmed
-  return ''
-}
-
-function openNativeDatePicker(event: Event): void {
-  const target = event.currentTarget as HTMLInputElement | null
-  if (!target) return
-
-  // Prefer the built-in browser picker so users don't rely on extension UI icons.
-  if (typeof target.showPicker === 'function') {
-    try {
-      target.showPicker()
-    } catch {
-      // Ignore unsupported/blocked showPicker calls.
-    }
-  }
 }
 
 function normalizePronounsValue(value: string | undefined): string {
@@ -469,6 +447,14 @@ function renderHeadingBasicInfoInput(
       applyRowFieldChange(basicInfo, field, nextValue, rowHasContent)
     }
   }
+
+  const handleDateOfBirthInput = (e: Event) => {
+    const target = e.target as HTMLInputElement
+    const nextValue = sanitizeBasicInputFieldValue(target.value)
+    if (basicInfo) {
+      applyRowFieldChange(basicInfo, 'dateOfBirth', toStorageDateISO(nextValue), rowHasContent)
+    }
+  }
    const handlePronounsInput = (e: Event) => {
     const target = e.target as HTMLSelectElement
     const nextType = target.value
@@ -580,19 +566,20 @@ function renderHeadingBasicInfoInput(
       <label aria-label=${dateOfBirthLabel} class="inputValueRow">
         ${dateOfBirthLabel}
         <input
-          type="date"
+          type="text"
           name="profile-date-of-birth"
-          .value=${toDateInputValue(basicInfo?.dateOfBirth)}
+          .value=${toEditableDateDMY(basicInfo?.dateOfBirth)}
           data-contact-field="dateOfBirth"
           data-entry-node=${basicInfo?.entryNode || ''}
           data-row-status=${basicInfo?.status || 'n/a'}
+          placeholder="DD-MM-YYYY"
           autocomplete="off"
+          inputmode="numeric"
+          pattern="\d{2}-\d{2}-\d{4}"
           data-lpignore="true"
           data-1p-ignore="true"
           data-bwignore="true"
-          @focus=${openNativeDatePicker}
-          @click=${openNativeDatePicker}
-          @change=${handleBasicInfoInput('dateOfBirth')}
+          @change=${handleDateOfBirthInput}
         />
       </label>
     </div>

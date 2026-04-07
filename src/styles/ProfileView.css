@@ -23,6 +23,13 @@
   background: var(--color-section-bg);
 }
 
+.profile-grid .profile__section {
+  padding: var(--spacing-lg);
+  border-radius: var(--border-radius-base);
+  background: var(--color-section-bg);
+}
+
+
 /* SAM Not sure this is needed, and potentially should be moved somewhere else */
 .profile-grid .phone-type {
   font-size: var(--font-size-sm);

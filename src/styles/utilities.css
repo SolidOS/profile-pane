@@ -365,6 +365,11 @@ label:focus-visible {
 .border-slate {
   border: 1px solid var(--slate-200);
 }
+.flex-row {
+  display: flex;
+  flex-direction: row;
+  gap: var(--spacing-md);
+}
 
 /* Below are things I've added need to change */
 .sectionHeader {
