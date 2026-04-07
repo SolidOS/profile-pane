@@ -28,7 +28,10 @@ function ensureModalOverlay (dom: Document): HTMLDivElement {
 
   modalOverlay.innerHTML = `
     <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title" aria-describedby="modal-desc">
-      <h2 id="modal-title"></h2>
+      <header class="modal-header">
+        <h2 id="modal-title"></h2>
+        <button type="button" id="modal-close" class="dialogCloseButton" aria-label="Close dialog" data-cancel="true">&times;</button>
+      </header>
       <div id="modal-desc"></div>
       <section id="modal-error" class="dialogErrorSection" aria-live="assertive" role="alert" hidden></section>
       <div id="modal-buttons"></div>
@@ -128,6 +131,14 @@ function openModal ({ title, message, buttons, dom }: { title?: string, message?
   }
 
   return new Promise<DialogButtonValue>((resolve) => {
+    const closeButton = overlay.querySelector('#modal-close') as HTMLButtonElement | null
+    if (closeButton) {
+      closeButton.onclick = () => {
+        closeModal(null)
+        resolve(null)
+      }
+    }
+
     buttons.forEach((btn) => {
       const b = dom.createElement('button')
       b.setAttribute('type', 'button')
