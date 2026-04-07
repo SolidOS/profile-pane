@@ -3,13 +3,17 @@ import { ns } from 'solid-ui'
 import { SkillRow } from './types'
 import { MutationOps } from '../shared/types'
 import { applyUpdaterPatch, collectLinkStatements, collectNodeStatements, findExistingNode } from '../shared/rdfMutationHelpers'
+import { createIdNode } from '../shared/idNodeFactory'
 import { mutationSaveSkillsFailedPrefixText } from '../../texts'
 
 export type SkillMutationPlan = MutationOps<SkillRow>
 
-function buildSkillsStatements(subject: NamedNode, doc: NamedNode, skill: SkillRow) {
+function buildSkillsStatements(subject: NamedNode, doc: NamedNode, node: NamedNode, skill: SkillRow) {
   if (!skill.name) return []
-  return [st(subject, ns.schema('skills'), literal(skill.name), doc)]
+  return [
+    st(subject, ns.schema('skills'), node, doc),
+    st(node, ns.vcard('role'), literal(skill.name), doc)
+  ]
 }
 
 async function mutateSkillsEntries(store: LiveStore, subject: NamedNode, skillOps: MutationOps<SkillRow>) {
@@ -34,18 +38,22 @@ async function mutateSkillsEntries(store: LiveStore, subject: NamedNode, skillOp
     if (!skill.entryNode) return
     const existingNode = findExistingNode(existingSkillNodes, skill.entryNode)
     if (!existingNode) {
-      insertions.push(...buildSkillsStatements(subject, doc, skill))
+      insertions.push(...buildSkillsStatements(subject, doc, createIdNode(doc), skill))
       return
     }
     deletions.push(...collectLinkStatements(store, subject, ns.schema('skills'), existingNode, doc))
     if (existingNode.termType !== 'Literal') {
       deletions.push(...collectNodeStatements(store, existingNode, doc))
     }
-    insertions.push(...buildSkillsStatements(subject, doc, skill))
+    if (existingNode.termType === 'NamedNode') {
+      insertions.push(...buildSkillsStatements(subject, doc, existingNode as NamedNode, skill))
+      return
+    }
+    insertions.push(...buildSkillsStatements(subject, doc, createIdNode(doc), skill))
   })
 
   skillOps.create.forEach((skill) => {
-    insertions.push(...buildSkillsStatements(subject, doc, skill))
+    insertions.push(...buildSkillsStatements(subject, doc, createIdNode(doc), skill))
   })
 
   await applyUpdaterPatch(store, deletions, insertions)

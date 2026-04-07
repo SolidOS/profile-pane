@@ -1,15 +1,17 @@
-import { LiveStore, NamedNode, Node, st } from 'rdflib'
+import { LiveStore, NamedNode, Node, st, sym } from 'rdflib'
 import { ns } from 'solid-ui'
 import { ContactAddressRow, ContactMutationPlan, ContactPointRow } from './types'
 import { MutationOps } from '../shared/types'
 import { applyUpdaterPatch, collectLinkStatements, collectNodeStatements, findExistingNode } from '../shared/rdfMutationHelpers'
+import { createIdNode } from '../shared/idNodeFactory'
 import { mutationSaveContactInfoFailedPrefixText } from '../../texts'
 
 function buildPhoneStatements(subject: NamedNode, doc: NamedNode, node: Node, phone: ContactPointRow) {
   const normalizedValue = phone.value.startsWith('tel:') ? phone.value : `tel:${phone.value}`
+  const valueNode = sym(normalizedValue)
   const inserts = [
     st(subject, ns.vcard('hasTelephone'), node as any, doc),
-    st(node as any, ns.vcard('value'), normalizedValue as any, doc)
+    st(node as any, ns.vcard('value'), valueNode as any, doc)
   ]
 
   if (phone.type) {
@@ -21,9 +23,10 @@ function buildPhoneStatements(subject: NamedNode, doc: NamedNode, node: Node, ph
 
 function buildEmailStatements(subject: NamedNode, doc: NamedNode, node: Node, email: ContactPointRow) {
   const normalizedValue = email.value.startsWith('mailto:') ? email.value : `mailto:${email.value}`
+  const valueNode = sym(normalizedValue)
   const inserts = [
     st(subject, ns.vcard('hasEmail'), node as any, doc),
-    st(node as any, ns.vcard('value'), normalizedValue as any, doc)
+    st(node as any, ns.vcard('value'), valueNode as any, doc)
   ]
 
   if (email.type) {
@@ -65,7 +68,7 @@ async function mutatePhoneEntries(store: LiveStore, subject: NamedNode, phoneOps
     if (!phone.entryNode) return
     const existingNode = findExistingNode(existingPhoneNodes, phone.entryNode)
     if (!existingNode) {
-      insertions.push(...buildPhoneStatements(subject, doc, store.bnode(), phone))
+      insertions.push(...buildPhoneStatements(subject, doc, createIdNode(doc), phone))
       return
     }
     deletions.push(...collectNodeStatements(store, existingNode, doc))
@@ -73,7 +76,7 @@ async function mutatePhoneEntries(store: LiveStore, subject: NamedNode, phoneOps
   })
 
   phoneOps.create.forEach((phone) => {
-    insertions.push(...buildPhoneStatements(subject, doc, store.bnode(), phone))
+    insertions.push(...buildPhoneStatements(subject, doc, createIdNode(doc), phone))
   })
 
   await applyUpdaterPatch(store, deletions, insertions)
@@ -98,7 +101,7 @@ async function mutateEmailEntries(store: LiveStore, subject: NamedNode, emailOps
     if (!email.entryNode) return
     const existingNode = findExistingNode(existingEmailNodes, email.entryNode)
     if (!existingNode) {
-      insertions.push(...buildEmailStatements(subject, doc, store.bnode(), email))
+      insertions.push(...buildEmailStatements(subject, doc, createIdNode(doc), email))
       return
     }
     deletions.push(...collectNodeStatements(store, existingNode, doc))
@@ -106,7 +109,7 @@ async function mutateEmailEntries(store: LiveStore, subject: NamedNode, emailOps
   })
 
   emailOps.create.forEach((email) => {
-    insertions.push(...buildEmailStatements(subject, doc, store.bnode(), email))
+    insertions.push(...buildEmailStatements(subject, doc, createIdNode(doc), email))
   })
 
   await applyUpdaterPatch(store, deletions, insertions)
@@ -131,7 +134,7 @@ async function mutateAddressEntries(store: LiveStore, subject: NamedNode, addres
     if (!address.entryNode) return
     const existingNode = findExistingNode(existingAddressNodes, address.entryNode)
     if (!existingNode) {
-      insertions.push(...buildAddressStatements(subject, doc, store.bnode(), address))
+      insertions.push(...buildAddressStatements(subject, doc, createIdNode(doc), address))
       return
     }
     deletions.push(...collectNodeStatements(store, existingNode, doc))
@@ -139,7 +142,7 @@ async function mutateAddressEntries(store: LiveStore, subject: NamedNode, addres
   })
 
   addressOps.create.forEach((address) => {
-    insertions.push(...buildAddressStatements(subject, doc, store.bnode(), address))
+    insertions.push(...buildAddressStatements(subject, doc, createIdNode(doc), address))
   })
 
   await applyUpdaterPatch(store, deletions, insertions)
