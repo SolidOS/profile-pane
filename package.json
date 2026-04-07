@@ -1,6 +1,6 @@
 {
   "name": "profile-pane",
-  "version": "3.1.4",
+  "version": "3.1.5",
   "description": "A SolidOS compatible pane to display a personal profile page",
   "sideEffects": [
     "*.css"
@@ -47,7 +47,7 @@
   "license": "MIT",
   "dependencies": {
     "lit-html": "^3.3.2",
-    "pane-registry": "^3.0.2",
+    "pane-registry": "^3.1.0",
     "qrcode": "^1.5.4",
     "validate-color": "^2.2.4"
   },
@@ -74,7 +74,7 @@
     "babel-loader": "^10.0.0",
     "babel-plugin-inline-import": "^3.0.0",
     "chat-pane": "^3.0.3",
-    "contacts-pane": "^3.0.3",
+    "contacts-pane": "^3.1.0",
     "copy-webpack-plugin": "^14.0.0",
     "css-loader": "^7.1.4",
     "eslint": "^9.39.2",
