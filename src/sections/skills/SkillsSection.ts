@@ -29,7 +29,8 @@ export function renderSkillsSection(
   store: LiveStore,
   subject: NamedNode,
   skills: string[],
-  viewerMode: ViewerMode
+  viewerMode: ViewerMode,
+  onSaved?: () => Promise<void> | void
 ) {
   const skillsArr = skills || []
   const hasSkills = Array.isArray(skillsArr) && skillsArr.length > 0
@@ -45,7 +46,7 @@ export function renderSkillsSection(
                 type="button"
                 class="actionButton"
                 aria-label="Add or edit skills"
-                @click=${(event: Event) => createSkillsEditDialog(event, store, subject, skillDetails, viewerMode)}
+                @click=${(event: Event) => createSkillsEditDialog(event, store, subject, skillDetails, viewerMode, onSaved)}
               >
                 + Add More
               </button>

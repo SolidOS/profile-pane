@@ -97,7 +97,8 @@ export function renderEducationSection(
   store: LiveStore,
   subject: NamedNode,
   educationData: EducationDetails[],
-  viewerMode: ViewerMode
+  viewerMode: ViewerMode,
+  onSaved?: () => Promise<void> | void
 ) {
   scheduleDescriptionOverflowCheck()
 
@@ -121,7 +122,7 @@ export function renderEducationSection(
                 type="button"
                 class="actionButton"
                 aria-label="Edit education details"
-                @click=${(event: Event) => createEducationEditDialog(event, store, subject, educationDetails, viewerMode)}
+                @click=${(event: Event) => createEducationEditDialog(event, store, subject, educationDetails, viewerMode, onSaved)}
               >
                 <span class="actionIcon" aria-hidden="true">✎ Edit</span>
               </button>

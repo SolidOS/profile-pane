@@ -554,7 +554,8 @@ export async function createResumeEditDialog(
   store: LiveStore,
   subject: NamedNode,
   resumeData: RoleDetails[],
-  viewerMode: ViewerMode
+  viewerMode: ViewerMode,
+  onSaved?: () => Promise<void> | void
 ) {
   const dom = (event.currentTarget as HTMLElement | null)?.ownerDocument || document
   const { form, formState, rerender } = createResumeEditForm(resumeData)
@@ -595,5 +596,9 @@ export async function createResumeEditDialog(
   })
 
   if (!result) return
+  if (onSaved) {
+    await onSaved()
+    return
+  }
   await alertDialog('Resume updates saved. Refresh to see latest values.', 'Saved', dom)
 }

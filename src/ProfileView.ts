@@ -17,6 +17,7 @@ import { renderProjectSection } from './sections/projects/ProjectSection'
 import { renderHeadingSection } from './sections/heading/HeadingSection'
 import { renderBioSection } from './sections/bio/BioSection'
 import { renderSocialAccounts } from './sections/social/SocialSection'
+import { classifyLinkCategory, fetchLinkPreview } from './sections/projects/linkPreview'
 
 type ProfileViewModelData = ReturnType<typeof presentProfileViewModel>
 type SocialAccounts = ProfileViewModelData['social']
@@ -35,7 +36,8 @@ function renderSidebar(
   skills: string[],
   languages: LanguageDetails[],
   contactInfo: ContactInfo,
-  viewerMode: ViewerMode
+  viewerMode: ViewerMode,
+  onSaved?: () => Promise<void> | void
 ) {
   return html`
     <aside 
@@ -44,10 +46,10 @@ function renderSidebar(
     >
       <h2 id="sidebar-heading" class="sr-only">Sidebar</h2>
       <div aria-label="Sidebar Content">
-        ${renderSocialAccounts(store, subject, accounts, viewerMode)}
-        ${renderSkillsSection(store, subject, skills, viewerMode)}
-        ${renderLanguageSection(store, subject, languages, viewerMode)}
-        ${renderContactInfoSection(store, subject, contactInfo, viewerMode)}
+        ${renderSocialAccounts(store, subject, accounts, viewerMode, onSaved)}
+        ${renderSkillsSection(store, subject, skills, viewerMode, onSaved)}
+        ${renderLanguageSection(store, subject, languages, viewerMode, onSaved)}
+        ${renderContactInfoSection(store, subject, contactInfo, viewerMode, onSaved)}
         ${renderQRCode(subject)}
       </div>
     </aside>
@@ -63,9 +65,83 @@ function renderQRCode(subject: NamedNode) {
   `
 }
 
+function getOpenGraphAppId(): string {
+  const globalSiteKey = (globalThis as any).__PROFILE_PANE_OPENGRAPH_APP_ID
+  if (typeof globalSiteKey === 'string' && globalSiteKey.trim()) return globalSiteKey.trim()
+
+  const legacyGlobalKey = (globalThis as any).__OPENGRAPH_APP_ID
+  if (typeof legacyGlobalKey === 'string' && legacyGlobalKey.trim()) return legacyGlobalKey.trim()
+
+  const meta = typeof document !== 'undefined'
+    ? document.querySelector('meta[name="profile-pane-opengraph-app-id"]') as HTMLMetaElement | null
+    : null
+  const metaKey = meta?.content?.trim() || ''
+  if (metaKey) return metaKey
+
+  return ''
+}
+
+async function enrichProjectsForDisplay(projects: ProfileViewModelData['projects']) {
+  const apiKey = getOpenGraphAppId()
+  if (!apiKey) {
+    return projects.map((project) => ({
+      ...project,
+      category: project.category && project.category !== 'unknown'
+        ? project.category
+        : classifyLinkCategory({
+            url: project.url,
+            title: project.title,
+            description: project.description,
+            businessType: project.businessType
+          })
+    }))
+  }
+
+  const enriched = await Promise.all(projects.map(async (project) => {
+    const url = (project.url || '').trim()
+    if (!url) return project
+
+    try {
+      const preview = await fetchLinkPreview(url, apiKey)
+      const category = preview.category && preview.category !== 'unknown'
+        ? preview.category
+        : classifyLinkCategory({
+            url: preview.url || project.url,
+            title: preview.title || project.title,
+            description: preview.description || project.description,
+            businessType: preview.businessType || project.businessType
+          })
+
+      return {
+        ...project,
+        title: preview.title || project.title,
+        description: preview.description || project.description,
+        imageUrl: preview.imageUrl || project.imageUrl,
+        businessType: preview.businessType || project.businessType,
+        category,
+      }
+    } catch {
+      return {
+        ...project,
+        category: project.category && project.category !== 'unknown'
+          ? project.category
+          : classifyLinkCategory({
+              url: project.url,
+              title: project.title,
+              description: project.description,
+              businessType: project.businessType
+            })
+      }
+    }
+  }))
+
+  return enriched
+}
+
 export async function ProfileView (
   subject: NamedNode,
-  context: DataBrowserContext
+  context: DataBrowserContext,
+  onSaved?: () => Promise<void> | void
 ): Promise <TemplateResult> {
   const store = context.session.store as LiveStore
   const viewerMode = getViewerMode(subject)
@@ -76,7 +152,7 @@ export async function ProfileView (
   const skills = viewModel.skills
   const languages = viewModel.languages
   const education = viewModel.education
-  const projects = viewModel.projects
+  const projects = await enrichProjectsForDisplay(viewModel.projects)
   const bioDetails = viewModel.bioDetails
   const accounts = viewModel.social
   const contactInfo = viewModel.contactInfo
@@ -94,13 +170,13 @@ export async function ProfileView (
         >
         <h2 id="profile-main-heading" class="sr-only">Main Profile Content</h2>
 
-        ${renderHeadingSection(context, subject, profileDetails, viewerMode)}
-        ${renderBioSection(store, subject, bioDetails, viewerMode)}
-        ${renderCVSection(store, subject, rolesByType, viewerMode)}
-        ${renderProjectSection(store, subject, projects, viewerMode)}
-        ${renderEducationSection(store, subject, education, viewerMode)}
+        ${renderHeadingSection(context, subject, profileDetails, viewerMode, onSaved)}
+        ${renderBioSection(store, subject, bioDetails, viewerMode, onSaved)}
+        ${renderCVSection(store, subject, rolesByType, viewerMode, onSaved)}
+        ${renderProjectSection(store, subject, projects, viewerMode, onSaved)}
+        ${renderEducationSection(store, subject, education, viewerMode, onSaved)}
       </section>
-      ${renderSidebar(store, subject, accounts, skills, languages, contactInfo, viewerMode)}
+      ${renderSidebar(store, subject, accounts, skills, languages, contactInfo, viewerMode, onSaved)}
     </main>
   `
 }

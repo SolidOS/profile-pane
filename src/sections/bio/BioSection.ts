@@ -58,7 +58,8 @@ function renderBioSectionContent(
   store: LiveStore,
   subject: NamedNode,
   bioData: BioDetails,
-  viewerMode: ViewerMode
+  viewerMode: ViewerMode,
+  onSaved?: () => Promise<void> | void
 ) {
   const bio = BioCard(bioData, viewerMode)
   const bioDetails: BioDetails = bioData
@@ -79,7 +80,8 @@ function renderBioSectionContent(
                   store,
                   subject,
                   bioDetails,
-                  viewerMode
+                  viewerMode,
+                  onSaved
                 )
               }}
             >
@@ -98,7 +100,8 @@ export function renderBioSection(
   store: LiveStore,
   subject: NamedNode,
   bioData: BioDetails,
-  viewerMode: ViewerMode
+  viewerMode: ViewerMode,
+  onSaved?: () => Promise<void> | void
 ) {
   scheduleDescriptionOverflowCheck()
 
@@ -113,7 +116,7 @@ export function renderBioSection(
       role="region"
       tabindex="-1"
     >
-      ${renderBioSectionContent(store, subject, bioData, viewerMode)}
+      ${renderBioSectionContent(store, subject, bioData, viewerMode, onSaved)}
     </section>
   ` : ''
 }

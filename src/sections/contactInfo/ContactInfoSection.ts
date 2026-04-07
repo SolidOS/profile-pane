@@ -2,6 +2,7 @@ import { html } from 'lit-html'
 import { ViewerMode } from '../../types'
 import { createContactInfoEditDialog } from './ContactInfoEditDialog'
 import { LiveStore, NamedNode } from 'rdflib'
+import { ns } from 'solid-ui'
 import { contactInfoHeadingText } from '../../texts'
 
 function toText(value: unknown): string {
@@ -27,10 +28,39 @@ function formatTypeLabel(value: unknown): string {
   return slashParts[slashParts.length - 1]
 }
 
+function normalizeContactValue(rawValue: string, kind: 'email' | 'phone'): string {
+  if (!rawValue) return ''
+  return kind === 'email'
+    ? rawValue.replace(/^mailto:/i, '')
+    : rawValue.replace(/^tel:/i, '')
+}
 
-function renderPhone(phone) {
+function resolveContactValue(store: LiveStore, point: any, kind: 'email' | 'phone'): string {
+  if (!point) return ''
+
+  const directValue = toText(point.valueNode || point.entryNode).trim()
+  const looksLikeExpectedValue = kind === 'email'
+    ? /^mailto:/i.test(directValue) || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(directValue)
+    : /^tel:/i.test(directValue) || /^[+()\-\s\d]{5,}$/.test(directValue)
+
+  if (looksLikeExpectedValue) {
+    return normalizeContactValue(directValue, kind)
+  }
+
+  const entryNode = point.entryNode || point.valueNode
+  if (entryNode) {
+    const storedValueNode = store.any(entryNode as NamedNode, ns.vcard('value'))
+    const storedValue = toText(storedValueNode).trim()
+    if (storedValue) return normalizeContactValue(storedValue, kind)
+  }
+
+  return normalizeContactValue(directValue, kind)
+}
+
+
+function renderPhone(phone, store: LiveStore) {
   if (!phone) return html``
-  const phoneValue = toText(phone.valueNode).replace(/^tel:/i, '')
+  const phoneValue = resolveContactValue(store, phone, 'phone')
   const phoneType = formatTypeLabel(phone.type)
 
   return html`<li class="phone" role="listitem">
@@ -39,14 +69,14 @@ function renderPhone(phone) {
       </li>`
 }
 
-function renderPhones(phones) {
+function renderPhones(phones, store: LiveStore) {
   if (!phones || !phones.length || !phones[0]) return html``
-  return html`${renderPhone(phones[0])}${phones.length > 1 ? renderPhones(phones.slice(1)) : html``}`
+  return html`${renderPhone(phones[0], store)}${phones.length > 1 ? renderPhones(phones.slice(1), store) : html``}`
 }
 
-function renderEmail(email) {
+function renderEmail(email, store: LiveStore) {
   if (!email) return html``
-  const emailValue = toText(email.valueNode).replace(/^mailto:/i, '')
+  const emailValue = resolveContactValue(store, email, 'email')
   const emailType = formatTypeLabel(email.type)
 
   return html`<li class="email" role="listitem">
@@ -55,9 +85,9 @@ function renderEmail(email) {
       </li>`
 }
 
-function renderEmails(emails) {
+function renderEmails(emails, store: LiveStore) {
   if (!emails || !emails.length || !emails[0]) return html``
-  return html`${renderEmail(emails[0])}${emails.length > 1 ? renderEmails(emails.slice(1)) : html``}`
+  return html`${renderEmail(emails[0], store)}${emails.length > 1 ? renderEmails(emails.slice(1), store) : html``}`
 }
 
 function renderAddress(address) {
@@ -79,7 +109,13 @@ function renderAddresses(addresses) {
   return html`${renderAddress(addresses[0])}${addresses.length > 1 ? renderAddresses(addresses.slice(1)) : html``}`
 }
 
-export function renderContactInfoSection(store: LiveStore, subject: NamedNode, contactInfo, viewerMode: ViewerMode) {
+export function renderContactInfoSection(
+  store: LiveStore,
+  subject: NamedNode,
+  contactInfo,
+  viewerMode: ViewerMode,
+  onSaved?: () => Promise<void> | void
+) {
   return contactInfo && (contactInfo.emails.length > 0 || contactInfo.phones.length > 0 || contactInfo.addresses.length > 0) ? html`
     <section
       aria-labelledby="contact-details-heading"
@@ -99,7 +135,8 @@ export function renderContactInfoSection(store: LiveStore, subject: NamedNode, c
               store,
               subject,
               contactInfo,
-              viewerMode
+              viewerMode,
+              onSaved
             )
           }}>
           <span class="actionIcon" aria-hidden="true">✎ Edit</span>
@@ -109,14 +146,14 @@ export function renderContactInfoSection(store: LiveStore, subject: NamedNode, c
         ${contactInfo.phones.length > 0
           ? html`
               <ul role="list" aria-label="Phone numbers">
-                ${renderPhones(contactInfo.phones)}
+                ${renderPhones(contactInfo.phones, store)}
               </ul>
             `
           : html``}
         ${contactInfo.emails.length > 0
           ? html`
               <ul role="list" aria-label="Email addresses">
-                ${renderEmails(contactInfo.emails)}
+                ${renderEmails(contactInfo.emails, store)}
               </ul>
             `
           : html``}
