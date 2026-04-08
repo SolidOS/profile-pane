@@ -2,7 +2,7 @@ import { LiveStore, NamedNode, st, literal } from 'rdflib'
 import { ns } from 'solid-ui'
 import { BioMutationPlan, BioRow } from './types'
 import { MutationOps } from '../shared/types'
-import { applyUpdaterPatch} from '../shared/rdfMutationHelpers'
+import { applyUpdaterPatch, replacePredicateStatements } from '../shared/rdfMutationHelpers'
 import { saveBioUpdatesFailedPrefixText} from '../../texts'
 // Need to find out if this is really how we should store the data
 async function mutateBioEntry(store: LiveStore, subject: NamedNode, bioOps: MutationOps<BioRow>) {
@@ -11,11 +11,9 @@ async function mutateBioEntry(store: LiveStore, subject: NamedNode, bioOps: Muta
   const insertions: any[] = []
 
   const replaceLiteralField = (predicate: NamedNode, value?: string) => {
-    deletions.push(...store.statementsMatching(subject, predicate, null, doc))
     const normalized = (value || '').trim()
-    if (normalized) {
-      insertions.push(st(subject, predicate, literal(normalized), doc))
-    }
+    const nextObject = normalized ? literal(normalized) : null
+    replacePredicateStatements(store, subject, predicate, doc, deletions, insertions, nextObject)
   }
 
   const applyBasics = (bio: BioRow, clearAll = false) => {

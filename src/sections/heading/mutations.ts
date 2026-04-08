@@ -2,7 +2,7 @@ import { LiveStore, NamedNode, Node, st, literal, sym } from 'rdflib'
 import { ns } from 'solid-ui'
 import { ProfileBasicRow, HeadingMutationPlan } from './types'
 import { MutationOps } from '../shared/types'
-import { applyUpdaterPatch, collectLinkedNodeStatements, collectNodeStatements, findExistingNode } from '../shared/rdfMutationHelpers'
+import { applyUpdaterPatch, collectLinkedNodeStatements, collectNodeStatements, findExistingNode, replacePredicateStatements } from '../shared/rdfMutationHelpers'
 import { createIdNode } from '../shared/idNodeFactory'
 import { saveHeadingUpdatesFailedPrefixText } from '../../texts'
 import { ContactAddressRow, ContactPointRow } from '../contactInfo/types'
@@ -175,23 +175,19 @@ async function mutateBasicProfileEntry(store: LiveStore, subject: NamedNode, bas
   const insertions: any[] = []
 
   const replaceLiteralField = (predicate: NamedNode, value?: string) => {
-    deletions.push(...store.statementsMatching(subject, predicate, null, doc))
     const normalized = (value || '').trim()
-    if (normalized) {
-      insertions.push(st(subject, predicate, literal(normalized), doc))
-    }
+    const nextObject = normalized ? literal(normalized) : null
+    replacePredicateStatements(store, subject, predicate, doc, deletions, insertions, nextObject)
   }
 
   const replacePhotoField = (value?: string) => {
-    deletions.push(...store.statementsMatching(subject, ns.vcard('hasPhoto'), null, doc))
     const normalized = (value || '').trim()
-    if (!normalized) return
-
-    if (normalized.startsWith('http://') || normalized.startsWith('https://')) {
-      insertions.push(st(subject, ns.vcard('hasPhoto'), sym(normalized), doc))
-    } else {
-      insertions.push(st(subject, ns.vcard('hasPhoto'), literal(normalized), doc))
-    }
+    const nextObject = !normalized
+      ? null
+      : (normalized.startsWith('http://') || normalized.startsWith('https://'))
+        ? sym(normalized)
+        : literal(normalized)
+    replacePredicateStatements(store, subject, ns.vcard('hasPhoto'), doc, deletions, insertions, nextObject)
   }
 
   const applyBasics = (basic: ProfileBasicRow, clearAll = false) => {
