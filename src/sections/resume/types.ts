@@ -14,6 +14,7 @@ export interface ResumeRow extends Role {
 
 export interface Role {
   title: string,
+  roleType?: string,
   startDate?: Literal,
   endDate?: Literal,
   isCurrentRole?: boolean,

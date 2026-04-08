@@ -99,29 +99,33 @@ function toFormState(profileData: ProfileDetails): HeadingFormState {
     entryNode: toText(profileData.entryNode),
     status: toText(profileData.entryNode) ? 'existing' as const : 'new' as const
   }
+  const primaryEmail = profileData.primaryEmail
+  const primaryPhone = profileData.primaryPhone
+  const primaryAddress = profileData.primaryAddress
+
   const email: ContactPointRow = {
-    value: sanitizeEmailValue(toText(profileData.primaryEmail.valueNode).replace(/^mailto:/i, '')),
-    type: toTypeLabel(profileData.primaryEmail.type),
-    entryNode: toText(profileData.primaryEmail.entryNode),
-    status: toText(profileData.primaryEmail.entryNode) ? 'existing' as const : 'new' as const
+    value: sanitizeEmailValue(toText(primaryEmail?.valueNode).replace(/^mailto:/i, '')),
+    type: toTypeLabel(primaryEmail?.type),
+    entryNode: toText(primaryEmail?.entryNode),
+    status: toText(primaryEmail?.entryNode) ? 'existing' as const : 'new' as const
   }
   const phone: ContactPointRow = {
       value: sanitizeTextValue(
-        toText(profileData.primaryPhone?.valueNode || profileData.primaryPhone?.entryNode || '').replace(/^tel:/i, '')
+        toText(primaryPhone?.valueNode || primaryPhone?.entryNode || '').replace(/^tel:/i, '')
       ),
-      type: toTypeLabel(profileData.primaryPhone?.type),
-      entryNode: toText(profileData.primaryPhone?.entryNode || ''),
-      status: toText(profileData.primaryPhone?.entryNode || '') ? 'existing' as const : 'new' as const
+      type: toTypeLabel(primaryPhone?.type),
+      entryNode: toText(primaryPhone?.entryNode || ''),
+      status: toText(primaryPhone?.entryNode || '') ? 'existing' as const : 'new' as const
   }
   const address: ContactAddressRow = {
-      streetAddress: sanitizeAddressFieldValue(toText(profileData.primaryAddress.streetAddress)),
-      locality: sanitizeAddressFieldValue(toText(profileData.primaryAddress.locality)),
-      region: sanitizeAddressFieldValue(toText(profileData.primaryAddress.region)),
-      postalCode: sanitizeAddressFieldValue(toText(profileData.primaryAddress.postalCode)),
-      countryName: sanitizeAddressFieldValue(toText(profileData.primaryAddress.countryName)),
-      type: toTypeLabel(profileData.primaryAddress.type),
-      entryNode: toText(profileData.primaryAddress.entryNode),
-      status: toText(profileData.primaryAddress.entryNode) ? 'existing' as const : 'new' as const
+      streetAddress: sanitizeAddressFieldValue(toText(primaryAddress?.streetAddress)),
+      locality: sanitizeAddressFieldValue(toText(primaryAddress?.locality)),
+      region: sanitizeAddressFieldValue(toText(primaryAddress?.region)),
+      postalCode: sanitizeAddressFieldValue(toText(primaryAddress?.postalCode)),
+      countryName: sanitizeAddressFieldValue(toText(primaryAddress?.countryName)),
+      type: toTypeLabel(primaryAddress?.type),
+      entryNode: toText(primaryAddress?.entryNode),
+      status: toText(primaryAddress?.entryNode) ? 'existing' as const : 'new' as const
   }
 
   return {
