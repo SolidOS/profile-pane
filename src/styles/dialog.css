@@ -1,25 +1,25 @@
-/* CSS for the accessible modal dialogs created by localUtils.js */
-/* originally copied from issue-pane and adapted for profile editing */
-/* backdrop / focus trap container */
-.focus-trap {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+/* CSS for the accessible modal dialogs created by dialog.ts */
+/* dialog host */
+#profile-modal {
+  padding: 0;
+  border: none;
+  background: transparent;
+  max-width: none;
+  max-height: none;
+  width: auto;
+  overflow: visible;
   z-index: 9999;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
 }
 
-.focus-trap.hidden {
+#profile-modal:not([open]) {
   display: none;
 }
 
-/* inner dialog box */
-.focus-trap .modal {
+#profile-modal::backdrop {
+  background: rgba(0, 0, 0, 0.5);
+}
+
+#profile-modal .modal {
   background: var(--color-background);
   padding: var(--spacing-lg);
   border-radius: var(--border-radius-base);
