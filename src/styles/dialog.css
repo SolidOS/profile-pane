@@ -1,6 +1,7 @@
 /* CSS for the accessible modal dialogs created by dialog.ts */
 /* dialog host */
 #profile-modal {
+  margin: 0;
   padding: 0;
   border: none;
   background: transparent;
@@ -20,6 +21,8 @@
 }
 
 #profile-modal .modal {
+  box-sizing: border-box;
+  margin: auto;
   background: var(--color-background);
   padding: var(--spacing-lg);
   border-radius: var(--border-radius-base);
@@ -147,4 +150,39 @@
 
 #profile-modal .modal .sectionHeader .actionButton:hover {
   text-decoration: underline;
+}
+
+@media (max-width: 640px) {
+  #profile-modal {
+    padding:
+      max(var(--spacing-sm), env(safe-area-inset-top))
+      max(var(--spacing-sm), env(safe-area-inset-right))
+      max(var(--spacing-sm), env(safe-area-inset-bottom))
+      max(var(--spacing-sm), env(safe-area-inset-left));
+  }
+
+  #profile-modal .modal {
+    width: 100%;
+    max-width: none;
+    max-height: calc(100dvh - 2 * var(--spacing-sm));
+    padding: var(--spacing-md);
+    border-radius: calc(var(--border-radius-base) * 0.75);
+    overscroll-behavior: contain;
+  }
+
+  #profile-modal #modal-buttons {
+    flex-direction: column-reverse;
+    align-items: stretch;
+  }
+
+  #profile-modal #modal-buttons button {
+    width: 100%;
+  }
+
+  #profile-modal input,
+  #profile-modal select,
+  #profile-modal textarea {
+    width: 100%;
+    box-sizing: border-box;
+  }
 }

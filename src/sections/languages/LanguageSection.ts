@@ -5,6 +5,7 @@ import { ViewerMode } from '../../types'
 import { createLanguageEditDialog } from './LanguageEditDialog'
 import { LanguageDetails } from './types'
 import { languagesHeadingText } from '../../texts'
+import { toggleCollapsibleSection } from '../shared/collapsibleSection'
 
 function renderLan(language: LanguageDetails, asList = false) {
   if (!language) return html``
@@ -30,31 +31,51 @@ export function renderLanguageSection(
   const hasLanguageLinks = store.each(subject, ns.schema('knowsLanguage')).length > 0
 
   return html`
-    <section class="section-bg" aria-labelledby="languages-heading" role="region">
-      <header class="sectionHeader mb-md">
+    <section
+      class="profileSectionCollapsible section-bg"
+      aria-labelledby="languages-heading"
+      role="region"
+      data-expanded="false"
+    >
+      <header class="sectionHeader profileSectionCollapsible__header">
         <h3 id="languages-heading">${languagesHeadingText}</h3>
-        ${viewerMode === 'owner'
-          ? html`
-              <button
-                type="button"
-                class="actionButton"
-                aria-label="Add or edit languages"
-                @click=${(event: Event) => createLanguageEditDialog(event, store, subject, languagesArr, viewerMode, onSaved)}
-              >
-                + Add More
-              </button>
-            `
-          : html``}
+        <div class="profileSectionCollapsible__actions">
+          ${viewerMode === 'owner'
+            ? html`
+                <button
+                  type="button"
+                  class="actionButton profileSectionCollapsible__editButton"
+                  aria-label="Add or edit languages"
+                  @click=${(event: Event) => createLanguageEditDialog(event, store, subject, languagesArr, viewerMode, onSaved)}
+                >
+                  <span class="profileSectionCollapsible__editLabel">+ Add More</span>
+                  <span class="profileSectionCollapsible__editIcon" aria-hidden="true">✎</span>
+                </button>
+              `
+            : html``}
+          <button
+            type="button"
+            class="profileSectionCollapsible__toggle"
+            aria-label="Toggle languages section"
+            aria-controls="languages-panel"
+            aria-expanded="false"
+            @click=${toggleCollapsibleSection}
+          >
+            <span class="profileSectionCollapsible__chevron" aria-hidden="true">⌄</span>
+          </button>
+        </div>
       </header>
-      ${hasLanguages
-        ? html`
-            <ul role="list" aria-label="Known languages">
-              ${renderLanguages(languagesArr, true)}
-            </ul>
-          `
-        : hasLanguageLinks
-          ? html`<p>Language details are missing for one or more entries.</p>`
-          : html`<p>No languages added yet.</p>`}
+      <div id="languages-panel" class="profileSectionCollapsible__content" aria-hidden="true">
+        ${hasLanguages
+          ? html`
+              <ul role="list" aria-label="Known languages">
+                ${renderLanguages(languagesArr, true)}
+              </ul>
+            `
+          : hasLanguageLinks
+            ? html`<p>Language details are missing for one or more entries.</p>`
+            : html`<p>No languages added yet.</p>`}
+      </div>
     </section>
   `
 }
