@@ -6,7 +6,7 @@ import '../../styles/ContactInfoEditDialog.css'
 import { LiveStore, NamedNode, literal } from 'rdflib'
 import { processResumeMutations } from './mutations'
 import { ViewerMode } from '../../types'
-import { applyRowFieldChange, deleteRow, summarizeRowOps } from '../shared/rowState'
+import { applyRowFieldChange, applyRowSelectChange, deleteRow, summarizeRowOps } from '../shared/rowState'
 import { hasNonEmptyText, sanitizeTextValue, toText } from '../../textUtils'
 import { MutationOps } from '../shared/types'
 import {
@@ -51,6 +51,7 @@ function rowHasContent(row: ResumeRow): boolean {
 
   return Boolean(row.isCurrentRole) || [
     row.title,
+    row.roleType,
     toText(row.startDate),
     toText(row.endDate),
     row.orgName,
@@ -66,6 +67,7 @@ function toFormState(resumeData: RoleDetails[]): ResumeFormState {
   const roles = (resumeData || [])
     .map((role) => ({
       title: sanitizeResumeFieldValue(toText(role.title)),
+      roleType: sanitizeResumeFieldValue(toText(role.roleType)),
       startDate: role.startDate,
       endDate: role.endDate,
       isCurrentRole: role.isCurrentRole ?? !role.endDate,
@@ -84,6 +86,7 @@ function toFormState(resumeData: RoleDetails[]): ResumeFormState {
       ? roles
       : [{
         title: '',
+        roleType: '',
         startDate: undefined,
         endDate: undefined,
         isCurrentRole: false,
@@ -149,6 +152,7 @@ function renderResumeInputRow({
   const titleName = `resume-title-${index}`
   const organizationName = `resume-organization-${index}`
   const organizationTypeName = `resume-organization-type-${index}`
+  const organizationTypeSelectId = `resume-organization-type-select-${index}`
   const companyUrlName = `resume-company-url-${index}`
   const orgLocationName = `resume-org-location-${index}`
   const descriptionName = `resume-description-${index}`
@@ -236,8 +240,8 @@ function renderResumeInputRow({
   const handleResumeInput = (field: ResumeEditableField) => (e: Event) => {
     const target = e.target as HTMLInputElement
     const nextValue = sanitizeResumeFieldValue(target.value)
-    if (resumeData[index]) {
-      applyRowFieldChange(resumeData[index], field, nextValue, rowHasContent)
+    if (resumeRow) {
+      applyRowFieldChange(resumeRow, field, nextValue, rowHasContent)
       onChange()
     }
   }
@@ -315,6 +319,15 @@ function renderResumeInputRow({
     }
   }
 
+  const handleOrganizationTypeInput = (e: Event) => {
+    const target = e.target as HTMLSelectElement
+    const nextType = target.value
+    if (resumeRow) {
+      applyRowSelectChange(resumeRow, 'orgType', nextType)
+      onChange()
+    }
+  }
+
   return html`
     <div class="inputRow" role="group" aria-labelledby=${experienceHeadingId}>
       <h5 id=${experienceHeadingId}>${label}</h5>
@@ -365,20 +378,17 @@ function renderResumeInputRow({
         />
       </label>
       <label aria-label=${`${label} Organization Type`} class="inputValueRow">
-        Company Type
-        <input
-          type="text"
-          name=${organizationTypeName}
-          .value=${resumeRow?.orgType || ''}
-          required
-          data-contact-field="orgType"
-          data-entry-node=${resumeRow?.entryNode || ''}
-          data-row-status=${resumeRow?.status || 'n/a'}
-          placeholder="Company Type"
-          autocomplete="organization"
-          inputmode="text"
-          @change=${handleResumeInput('orgType')}
-        />
+        <select name=${organizationTypeName} id=${organizationTypeSelectId} @change=${handleOrganizationTypeInput} .value=${resumeRow?.orgType || ''}>
+          <option value="Corporation">Corporation</option>
+          <option value="EducationalOrganization">Educational Organization</option>
+          <option value="ResearchOrganization">Research Organization</option>
+          <option value="GovernmentOrganization">Government Organization</option>
+          <option value="NGO">NGO</option>
+          <option value="PerformingGroup">Performing Group</option>
+          <option value="Project">Project</option>
+          <option value="SportsOrganization">Sports Organization</option>
+          <option value="Other">Other</option>
+        </select>
       </label>
     </div>  
     <div class="inputRow">
@@ -478,6 +488,7 @@ function renderResumeSection(resumeData: ResumeRow[], onAddRow: () => void) {
     event.preventDefault()
     resumeData.push({
       title: '',
+      roleType: '',
       startDate: undefined,
       endDate: undefined,
       isCurrentRole: false,

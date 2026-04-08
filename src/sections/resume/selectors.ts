@@ -90,7 +90,6 @@ function getRoles(
     const endDate = store.any(membership as NamedNode, ns.schema('endDate'), null, doc) as Literal | null
     const roleDescription = store.anyJS(membership as NamedNode, ns.schema('description'), null, doc) as string | null
     const isCurrentRole = !endDate
-
     const roleType = roleTypeFromMembership(store, membership as NamedNode, doc)
 
     const organization = store.any(membership as NamedNode, ns.org('organization'), null, doc)
@@ -100,9 +99,6 @@ function getRoles(
       orgType = organizationTypeFromNode(store, organization as NamedNode, doc)
       orgLocation = store.any(organization as NamedNode, ns.org('location'), null, doc)
       publicId = store.any(organization as NamedNode, ns.solid('publicId'), null, doc)
-    }
-    if (roleType) {
-      orgType = roleType
     }
     if (publicId) {
       publicIdName = store.anyJS(publicId as NamedNode, ns.schema('name'), null, doc)
@@ -119,6 +115,7 @@ function getRoles(
 
     const item: RoleDetails = {
       title,
+      roleType,
       entryNode: membership as Node,
       startDate: startDate as Literal,
       endDate,
