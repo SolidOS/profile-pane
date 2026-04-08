@@ -8,7 +8,6 @@ import { ViewerMode } from '../../types'
 import { createHeadingEditDialog } from './HeadingEditDialog'
 import { toText } from '../../textUtils'
 import { toDisplayDateDMY } from './dateHelpers'
-import { cleanupHeadingLanguagesAndOrphans } from './mutations'
 
 export const renderHeadingSection = (
   context: DataBrowserContext,
@@ -23,35 +22,6 @@ export const renderHeadingSection = (
   const emailValue = toText(primaryEmail?.valueNode).replace(/^mailto:/i, '')
   const dateOfBirthDisplay = toDisplayDateDMY(toText(dateOfBirth), 'DD-MM-YYYY')
   const roleAndOrg = [jobTitle, orgName].filter(Boolean).join(' at ')
-  let cleanupInProgress = false
-
-  const runCleanup = async () => {
-    if (cleanupInProgress) return
-
-    const confirmText = 'Delete all knowsLanguage data and remove orphaned nodes from this profile?'
-    if (typeof window !== 'undefined' && typeof window.confirm === 'function' && !window.confirm(confirmText)) {
-      return
-    }
-
-    cleanupInProgress = true
-    try {
-      const summary = await cleanupHeadingLanguagesAndOrphans(context.session.store as any, subject)
-      if (onSaved) {
-        await onSaved()
-      }
-
-      if (typeof window !== 'undefined' && typeof window.alert === 'function') {
-        window.alert(`Cleanup complete. Deleted ${summary.deletedStatements} statements, removed ${summary.removedKnowsLanguageLinks} knowsLanguage links, and removed ${summary.removedOrphanNodes} orphan nodes.`)
-      }
-    } catch (error) {
-      const message = error instanceof Error ? error.message : String(error)
-      if (typeof window !== 'undefined' && typeof window.alert === 'function') {
-        window.alert(`Cleanup failed: ${message}`)
-      }
-    } finally {
-      cleanupInProgress = false
-    }
-  }
 
   return html`
       <section class="profile__section flex-row section-bg border-slate" aria-labelledby="profile-name">
@@ -94,14 +64,6 @@ export const renderHeadingSection = (
               }}
             >
               <span class="actionIcon" aria-hidden="true">✎ Edit</span>
-            </button>
-            <button
-              type="button"
-              class="actionButton"
-              aria-label="Clean profile languages and orphaned nodes"
-              @click=${runCleanup}
-            >
-              <span class="actionIcon" aria-hidden="true">Clean profile graph</span>
             </button>
           </section>
         `
