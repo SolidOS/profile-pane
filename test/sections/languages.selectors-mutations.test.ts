@@ -21,7 +21,7 @@ describe('Languages selectors and mutations', () => {
     }
 
     const plan = {
-      create: [{ name: 'French', proficiency: '', entryNode: '', status: 'new' }],
+      create: [{ name: 'French', publicId: 'https://www.w3.org/ns/iana/language-code/fr', proficiency: '', entryNode: '', status: 'new' }],
       update: [],
       remove: []
     }
@@ -46,7 +46,7 @@ describe('Languages selectors and mutations', () => {
     const plan = {
       create: [],
       update: [],
-      remove: [{ name: 'French', proficiency: '', entryNode: 'French', status: 'deleted' }]
+      remove: [{ name: 'French', publicId: '', proficiency: '', entryNode: 'French', status: 'deleted' }]
     }
 
     let deletionsCount = 0
@@ -93,7 +93,7 @@ describe('Languages selectors and mutations', () => {
     const plan = {
       create: [],
       update: [],
-      remove: [{ name: 'French', proficiency: '', entryNode: 'French', status: 'deleted' }]
+      remove: [{ name: 'French', publicId: '', proficiency: '', entryNode: 'French', status: 'deleted' }]
     }
 
     await processLanguageMutations(store, subject, plan as any)
@@ -131,7 +131,7 @@ describe('Languages selectors and mutations', () => {
     const plan = {
       create: [],
       update: [],
-      remove: [{ name: 'French', proficiency: '', entryNode: 'French', status: 'deleted' }]
+      remove: [{ name: 'French', publicId: '', proficiency: '', entryNode: 'French', status: 'deleted' }]
     }
 
     await processLanguageMutations(store, subject, plan as any)
@@ -156,7 +156,7 @@ describe('Languages selectors and mutations', () => {
     }
 
     const plan = {
-      create: [{ name: 'French', proficiency: '', entryNode: '', status: 'new' }],
+      create: [{ name: 'French', publicId: 'https://www.w3.org/ns/iana/language-code/fr', proficiency: '', entryNode: '', status: 'new' }],
       update: [],
       remove: []
     }
@@ -176,6 +176,14 @@ describe('Languages selectors and mutations', () => {
         statement.predicate.value === ns.solid('publicId').value
     )
     expect(publicIdStatement?.object?.termType).toBe('NamedNode')
+    expect(publicIdStatement?.object?.value).toBe('https://www.w3.org/ns/iana/language-code/fr')
+
+    const publicIdNameStatement = insertionsCaptured.find(
+      (statement) =>
+        statement.subject.value === 'https://www.w3.org/ns/iana/language-code/fr' &&
+        statement.predicate.value === ns.schema('name').value
+    )
+    expect(publicIdNameStatement?.object?.value).toBe('French')
 
     const proficiencyStatement = insertionsCaptured.find(
       (statement) =>
@@ -184,16 +192,9 @@ describe('Languages selectors and mutations', () => {
     )
     expect(proficiencyStatement).toBeUndefined()
 
-    const nameStatement = insertionsCaptured.find(
-      (statement) =>
-        statement.subject.value === publicIdStatement.object.value &&
-        statement.predicate.value === ns.schema('name').value
-    )
-    expect(nameStatement).toBeUndefined()
-
     const typeStatement = insertionsCaptured.find(
       (statement) =>
-        statement.subject.value === publicIdStatement.object.value &&
+        statement.subject.value === firstEntry.value &&
         statement.predicate.value === ns.rdf('type').value
     )
     expect(typeStatement?.object?.value).toBe(ns.schema('Language').value)
@@ -218,8 +219,8 @@ describe('Languages selectors and mutations', () => {
 
     const plan = {
       create: [
-        { name: 'Greek', proficiency: '', entryNode: '', status: 'new' },
-        { name: 'English', proficiency: '', entryNode: '', status: 'new' }
+        { name: 'Greek', publicId: 'https://www.w3.org/ns/iana/language-code/el', proficiency: '', entryNode: '', status: 'new' },
+        { name: 'English', publicId: 'https://www.w3.org/ns/iana/language-code/en', proficiency: '', entryNode: '', status: 'new' }
       ],
       update: [],
       remove: []
@@ -231,5 +232,39 @@ describe('Languages selectors and mutations', () => {
     const typeStatements = store.statementsMatching(undefined, ns.rdf('type'), ns.schema('Language'), doc)
     expect(typeStatements.length).toBeGreaterThanOrEqual(2)
 
+  })
+
+  it('keeps selected language display name even when publicId is unchanged', async () => {
+    const store = graph() as any
+    const subject = sym('https://example.com/profile/card#me')
+
+    store.updater = {
+      update: (deletions: any[], insertions: any[], callback: Function) => {
+        deletions.forEach((statement) => store.remove(statement))
+        insertions.forEach((statement) => store.add(statement.subject, statement.predicate, statement.object, statement.why))
+        callback('', true)
+      }
+    }
+
+    await processLanguageMutations(store, subject, {
+      create: [{ name: 'Greek', publicId: 'https://www.w3.org/ns/iana/language-code/el', proficiency: '', entryNode: '', status: 'new' }],
+      update: [],
+      remove: []
+    } as any)
+
+    const firstPass = presentLanguages(subject, store)
+    const existingEntry = firstPass[0]?.entryNode?.value
+    expect(existingEntry).toBeTruthy()
+
+    await processLanguageMutations(store, subject, {
+      create: [],
+      update: [{ name: 'Modern Greek', publicId: 'https://www.w3.org/ns/iana/language-code/el', proficiency: '', entryNode: existingEntry, status: 'modified' }],
+      remove: []
+    } as any)
+
+    const secondPass = presentLanguages(subject, store)
+    expect(secondPass).toHaveLength(1)
+    expect(secondPass[0].publicId).toBe('https://www.w3.org/ns/iana/language-code/el')
+    expect(secondPass[0].name).toBe('Modern Greek')
   })
 })
