@@ -1,4 +1,4 @@
-import { LiveStore, NamedNode, Node, st, literal } from 'rdflib'
+import { LiveStore, NamedNode, Node, st, literal, sym } from 'rdflib'
 import { ns } from 'solid-ui'
 import { ResumeRow } from './types'
 import { MutationOps } from '../shared/types'
@@ -16,6 +16,30 @@ function membershipTypeForRole(resumeData: ResumeRow): NamedNode {
   if (startIso && startIso > todayIso) return ns.solid('FutureRole')
   if (endIso && endIso < todayIso) return ns.solid('PastRole')
   return ns.solid('FutureRole')
+}
+
+function organizationTypeNode(orgType: string): NamedNode | null {
+  const text = (orgType || '').trim()
+  if (!text) return null
+
+  if (text.startsWith('http://') || text.startsWith('https://')) {
+    return sym(text)
+  }
+
+  const prefixed = text.match(/^([a-zA-Z][\w-]*):(.*)$/)
+  if (prefixed) {
+    const prefix = prefixed[1].toLowerCase()
+    const local = prefixed[2].trim()
+    if (!local) return null
+    if (prefix === 'schema') return ns.schema(local)
+    if (prefix === 'vcard') return ns.vcard(local)
+    if (prefix === 'solid') return ns.solid(local)
+    if (prefix === 'org') return ns.org(local)
+    return null
+  }
+
+  // For plain values like "Corporation", map to schema:Corporation.
+  return ns.schema(text)
 }
 
 
@@ -51,12 +75,15 @@ function buildResumeStatements(
   if (resumeData.orgName || resumeData.orgType || resumeData.orgLocation || resumeData.orgHomePage) {
     const organizationNode = createIdNode(doc)
     inserts.push(st(node as any, ns.org('organization'), organizationNode, doc))
+    inserts.push(st(organizationNode, ns.rdf('type'), ns.vcard('Organization'), doc))
+
+    const organizationClassNode = organizationTypeNode(resumeData.orgType || '')
+    if (organizationClassNode) {
+      inserts.push(st(organizationNode, ns.rdf('type'), organizationClassNode, doc))
+    }
 
     if (resumeData.orgName) {
       inserts.push(st(organizationNode, ns.schema('name'), literal(resumeData.orgName), doc))
-    }
-    if (resumeData.orgType) {
-      inserts.push(st(organizationNode, ns.org('classification'), literal(resumeData.orgType), doc))
     }
     if (resumeData.orgLocation) {
       inserts.push(st(organizationNode, ns.org('location'), literal(resumeData.orgLocation), doc))

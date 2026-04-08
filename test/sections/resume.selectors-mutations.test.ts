@@ -65,6 +65,20 @@ describe('Resume selectors and mutations', () => {
     )?.object
 
     expect(organizationNode?.value).toMatch(idPattern)
+
+    const organizationTypeValues = insertionsCaptured
+      .filter((statement) =>
+        statement.subject.value === organizationNode.value &&
+        statement.predicate.value === ns.rdf('type').value
+      )
+      .map((statement) => statement.object.value)
+
+    expect(organizationTypeValues).toContain(ns.vcard('Organization').value)
+    expect(organizationTypeValues).toContain(ns.schema('Corporation').value)
+    expect(insertionsCaptured.some((statement) =>
+      statement.subject.value === organizationNode.value &&
+      statement.predicate.value === ns.org('classification').value
+    )).toBe(false)
   })
 
   it('writes solid role class type consistent with role timing', async () => {
@@ -123,5 +137,27 @@ describe('Resume selectors and mutations', () => {
     expect(typeValues).toContain(ns.solid('CurrentRole').value)
     expect(typeValues).toContain(ns.solid('PastRole').value)
     expect(typeValues).toContain(ns.solid('FutureRole').value)
+  })
+
+  it('selector derives orgType from membership role type when classification is missing', () => {
+    const store = graph() as any
+    const subject = sym('https://example.com/profile/card#me')
+    const doc = subject.doc()
+
+    const membership = sym('https://example.com/profile/card#id123')
+    const organization = sym('https://example.com/profile/card#id456')
+
+    store.add(membership, ns.org('member'), subject, doc)
+    store.add(membership, ns.rdf('type'), ns.solid('PastRole'), doc)
+    store.add(membership, ns.vcard('role'), literal('Software Engineer'), doc)
+    store.add(membership, ns.org('organization'), organization, doc)
+    store.add(membership, ns.schema('startDate'), literal('2000-03-12'), doc)
+    store.add(membership, ns.schema('endDate'), literal('2004-04-12'), doc)
+    store.add(organization, ns.rdf('type'), ns.schema('Corporation'), doc)
+    store.add(organization, ns.schema('name'), literal('Inrupt'), doc)
+
+    const roles = presentCV(subject, store)
+    expect(roles).toHaveLength(1)
+    expect(roles[0].orgType).toBe('PastRole')
   })
 })
