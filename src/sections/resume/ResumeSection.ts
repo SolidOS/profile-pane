@@ -11,6 +11,7 @@ import {
   toMonthDateTime,
   toggleDescription
 } from '../shared/sectionCardHelpers'
+import { toggleCollapsibleSection } from '../shared/collapsibleSection'
 
 function renderRole(role: RoleDetails, index: number) {
   if (!role) return html``
@@ -98,26 +99,40 @@ export function renderCVSection(
   return showSection ? html`
     <section 
       aria-labelledby="cv-heading" 
-      class="section-bg" 
+      class="profileSectionCollapsible section-bg" 
       role="region"
       tabindex="-1"
+      data-expanded="false"
     >
-      <header class="sectionHeader mb-md">
+      <header class="sectionHeader profileSectionCollapsible__header">
         <h3 id="cv-heading" tabindex="-1">${resumeHeadingText}</h3>
-        ${viewerMode === 'owner'
-          ? html`
-              <button
-                type="button"
-                class="actionButton"
-                aria-label="Edit resume details"
-                @click=${(event: Event) => createResumeEditDialog(event, store, subject, resumeDetails, viewerMode, onSaved)}
-              >
-                <span class="actionIcon" aria-hidden="true">✎ Edit</span>
-              </button>
-            `
-          : html``}
+        <div class="profileSectionCollapsible__actions">
+          ${viewerMode === 'owner'
+            ? html`
+                <button
+                  type="button"
+                  class="actionButton profileSectionCollapsible__editButton"
+                  aria-label="Edit resume details"
+                  @click=${(event: Event) => createResumeEditDialog(event, store, subject, resumeDetails, viewerMode, onSaved)}
+                >
+                  <span class="profileSectionCollapsible__editLabel">✎ Edit</span>
+                  <span class="profileSectionCollapsible__editIcon" aria-hidden="true">✎</span>
+                </button>
+              `
+            : html``}
+          <button
+            type="button"
+            class="profileSectionCollapsible__toggle"
+            aria-label="Toggle resume section"
+            aria-controls="cv-panel"
+            aria-expanded="false"
+            @click=${toggleCollapsibleSection}
+          >
+            <span class="profileSectionCollapsible__chevron" aria-hidden="true">⌄</span>
+          </button>
+        </div>
       </header>
-      <div>
+      <div id="cv-panel" class="profileSectionCollapsible__content" aria-hidden="true">
         ${hasResume ? cv : html`<p>No resume details added yet.</p>`}
       </div>
     </section>

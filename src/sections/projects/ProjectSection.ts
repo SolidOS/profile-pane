@@ -7,6 +7,7 @@ import { createProjectsEditDialog } from './ProjectEditDialog'
 import { processProjectsMutations } from './mutations'
 import { MutationOps } from '../shared/types'
 import '../../styles/ProjectsCard.css'
+import { toggleCollapsibleSection } from '../shared/collapsibleSection'
 
 function toProjectRow(project: ProjectDetails, status: 'existing' | 'deleted'): ProjectRow {
   return {
@@ -106,37 +107,57 @@ export function renderProjectSection(
   const hasProjects = Array.isArray(projects) && projects.length > 0
 
   return html`
-    <section class="section-bg" aria-labelledby="projects-heading" role="region">
-      <header class="sectionHeader mb-md">
+    <section
+      class="profileSectionCollapsible section-bg"
+      aria-labelledby="projects-heading"
+      role="region"
+      data-expanded="false"
+    >
+      <header class="sectionHeader profileSectionCollapsible__header">
         <h3 id="projects-heading">${projectsHeadingText}</h3>
-        ${viewerMode === 'owner'
-          ? html`
-              <button
-                type="button"
-                class="actionButton"
-                aria-label="Add or edit projects"
-                @click=${(event: Event) => {
-                  return createProjectsEditDialog(event, store, subject, projects, viewerMode, onSaved)
-                }}
-              >
-                + Add More
-              </button>
-            `
-          : html``}
+        <div class="profileSectionCollapsible__actions">
+          ${viewerMode === 'owner'
+            ? html`
+                <button
+                  type="button"
+                  class="actionButton profileSectionCollapsible__editButton"
+                  aria-label="Add or edit projects"
+                  @click=${(event: Event) => {
+                    return createProjectsEditDialog(event, store, subject, projects, viewerMode, onSaved)
+                  }}
+                >
+                  <span class="profileSectionCollapsible__editLabel">+ Add More</span>
+                  <span class="profileSectionCollapsible__editIcon" aria-hidden="true">✎</span>
+                </button>
+              `
+            : html``}
+          <button
+            type="button"
+            class="profileSectionCollapsible__toggle"
+            aria-label="Toggle projects section"
+            aria-controls="projects-panel"
+            aria-expanded="false"
+            @click=${toggleCollapsibleSection}
+          >
+            <span class="profileSectionCollapsible__chevron" aria-hidden="true">⌄</span>
+          </button>
+        </div>
       </header>
-      ${hasProjects
-        ? html`
-            <ul class="projectRail" role="list" aria-label="Known projects">
-              ${renderProjects(
-                projects,
-                store,
-                subject,
-                viewerMode,
-                onSaved
-              )}
-            </ul>
-          `
-        : html`<p>No projects added yet.</p>`}
+      <div id="projects-panel" class="profileSectionCollapsible__content" aria-hidden="true">
+        ${hasProjects
+          ? html`
+              <ul class="projectRail" role="list" aria-label="Known projects">
+                ${renderProjects(
+                  projects,
+                  store,
+                  subject,
+                  viewerMode,
+                  onSaved
+                )}
+              </ul>
+            `
+          : html`<p>No projects added yet.</p>`}
+      </div>
     </section>
   `
 }

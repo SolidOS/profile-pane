@@ -5,6 +5,7 @@ import { ViewerMode } from '../../types'
 import { createSkillsEditDialog } from './SkillsEditDialog'
 import { SkillDetails } from './types'
 import { skillsHeadingText } from '../../texts'
+import { toggleCollapsibleSection } from '../shared/collapsibleSection'
 
 function renderSkill(skill, asList = false) {
   if (!skill) return html``
@@ -37,29 +38,53 @@ export function renderSkillsSection(
   const skillDetails = toSkillDetails(skillsArr)
 
   return html`
-    <section class="section-bg" aria-labelledby="skills-heading" role="region">
-      <header class="sectionHeader mb-md">
+    <section
+      class="profileSectionCollapsible section-bg"
+      aria-labelledby="skills-heading"
+      role="region"
+      data-expanded="false"
+    >
+      <header class="sectionHeader profileSectionCollapsible__header">
         <h3 id="skills-heading">${skillsHeadingText}</h3>
-        ${viewerMode === 'owner'
-          ? html`
-              <button
-                type="button"
-                class="actionButton"
-                aria-label="Add or edit skills"
-                @click=${(event: Event) => createSkillsEditDialog(event, store, subject, skillDetails, viewerMode, onSaved)}
-              >
-                + Add More
-              </button>
-            `
-          : html``}
+        <div class="profileSectionCollapsible__actions">
+          ${viewerMode === 'owner'
+            ? html`
+                <button
+                  type="button"
+                  class="actionButton profileSectionCollapsible__editButton"
+                  aria-label="Add or edit skills"
+                  @click=${(event: Event) => createSkillsEditDialog(event, store, subject, skillDetails, viewerMode, onSaved)}
+                >
+                  <span class="profileSectionCollapsible__editLabel">+ Add More</span>
+                  <span class="profileSectionCollapsible__editIcon" aria-hidden="true">✎</span>
+                </button>
+              `
+            : html``}
+          <button
+            type="button"
+            class="profileSectionCollapsible__toggle"
+            aria-label="Toggle skills section"
+            aria-controls="skills-panel"
+            aria-expanded="false"
+            @click=${toggleCollapsibleSection}
+          >
+            <span class="profileSectionCollapsible__chevron" aria-hidden="true">⌄</span>
+          </button>
+        </div>
       </header>
-      ${hasSkills
-        ? html`
-            <ul role="list" aria-label="Professional skills and competencies">
-              ${renderSkills(skillsArr, true)}
-            </ul>
-          `
-        : html`<p>No skills added yet.</p>`}
+      <div
+        id="skills-panel"
+        class="profileSectionCollapsible__content"
+        aria-hidden="true"
+      >
+        ${hasSkills
+          ? html`
+              <ul role="list" aria-label="Professional skills and competencies">
+                ${renderSkills(skillsArr, true)}
+              </ul>
+            `
+          : html`<p>No skills added yet.</p>`}
+      </div>
     </section>
   `
 }

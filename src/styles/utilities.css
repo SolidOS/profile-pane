@@ -379,6 +379,11 @@ label:focus-visible {
   gap: var(--spacing-sm);
   width: 100%;
 }
+
+.sectionHeader--actionsOnly {
+  justify-content: flex-end;
+}
+
 .sectionHeader .actionButton {
   width: auto;
   min-width: 0;
@@ -394,4 +399,89 @@ label:focus-visible {
 }
 .sectionHeader .actionButton:hover {
   text-decoration: underline;
+}
+
+.profileSectionCollapsible {
+  display: block;
+}
+
+.profileSectionCollapsible__header {
+  margin-bottom: 0;
+}
+
+.profileSectionCollapsible__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+}
+
+.profileSectionCollapsible__editButton {
+  min-width: 0;
+}
+
+.profileSectionCollapsible__editIcon {
+  display: none;
+}
+
+.profileSectionCollapsible__toggle {
+  display: none;
+  min-height: auto;
+  min-width: auto;
+  padding: var(--spacing-xxs);
+  border: none;
+  background: none;
+  color: var(--color-text);
+  cursor: pointer;
+}
+
+.profileSectionCollapsible__chevron {
+  display: inline-block;
+  flex: 0 0 auto;
+  transition: transform var(--animation-duration) ease;
+}
+
+.profileSectionCollapsible__content {
+  margin-top: var(--spacing-md);
+}
+
+@media (min-width: 1001px) {
+  .profileSectionCollapsible > .profileSectionCollapsible__content {
+    display: block;
+  }
+
+  .profileSectionCollapsible__toggle {
+    display: none;
+  }
+
+  .profileSectionCollapsible__editLabel {
+    display: inline;
+  }
+
+  .profileSectionCollapsible__editIcon {
+    display: none;
+  }
+}
+
+@media (max-width: 1000px) {
+  .profileSectionCollapsible[data-expanded="false"] .profileSectionCollapsible__content {
+    display: none;
+  }
+
+  .profileSectionCollapsible__toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .profileSectionCollapsible[data-expanded="true"] .profileSectionCollapsible__chevron {
+    transform: rotate(180deg);
+  }
+
+  .profileSectionCollapsible__editLabel {
+    display: none;
+  }
+
+  .profileSectionCollapsible__editIcon {
+    display: inline;
+  }
 }

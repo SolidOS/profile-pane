@@ -4,6 +4,7 @@ import { createContactInfoEditDialog } from './ContactInfoEditDialog'
 import { LiveStore, NamedNode } from 'rdflib'
 import { ns } from 'solid-ui'
 import { contactInfoHeadingText } from '../../texts'
+import { toggleCollapsibleSection } from '../shared/collapsibleSection'
 
 function toText(value: unknown): string {
   if (!value) return ''
@@ -119,30 +120,44 @@ export function renderContactInfoSection(
   return contactInfo && (contactInfo.emails.length > 0 || contactInfo.phones.length > 0 || contactInfo.addresses.length > 0) ? html`
     <section
       aria-labelledby="contact-details-heading"
-      class="section-bg"
+      class="profileSectionCollapsible section-bg"
       role="region"
       tabindex="-1"
+      data-expanded="false"
     >
-      <header class="sectionHeader mb-md">
+      <header class="sectionHeader profileSectionCollapsible__header">
         <h3 id="contact-details-heading" tabindex="-1">${contactInfoHeadingText}</h3>
-        <button 
-          type="button" 
-          class="actionButton" 
-          aria-label="Edit contact information"
-          @click=${(event: Event) => {
-            return createContactInfoEditDialog(
-              event,
-              store,
-              subject,
-              contactInfo,
-              viewerMode,
-              onSaved
-            )
-          }}>
-          <span class="actionIcon" aria-hidden="true">✎ Edit</span>
-        </button>
+        <div class="profileSectionCollapsible__actions">
+          <button 
+            type="button" 
+            class="actionButton profileSectionCollapsible__editButton" 
+            aria-label="Edit contact information"
+            @click=${(event: Event) => {
+              return createContactInfoEditDialog(
+                event,
+                store,
+                subject,
+                contactInfo,
+                viewerMode,
+                onSaved
+              )
+            }}>
+            <span class="profileSectionCollapsible__editLabel">✎ Edit</span>
+            <span class="profileSectionCollapsible__editIcon" aria-hidden="true">✎</span>
+          </button>
+          <button
+            type="button"
+            class="profileSectionCollapsible__toggle"
+            aria-label="Toggle contact information section"
+            aria-controls="contact-details-panel"
+            aria-expanded="false"
+            @click=${toggleCollapsibleSection}
+          >
+            <span class="profileSectionCollapsible__chevron" aria-hidden="true">⌄</span>
+          </button>
+        </div>
       </header>
-      <div>
+      <div id="contact-details-panel" class="profileSectionCollapsible__content" aria-hidden="true">
         ${contactInfo.phones.length > 0
           ? html`
               <ul role="list" aria-label="Phone numbers">

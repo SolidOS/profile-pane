@@ -1,7 +1,7 @@
 import '../styles/dialog.css'
 
 /* Copied from issue-pane, minor typescript adjustments */
-let modalOverlay: HTMLDivElement | null = null
+let modalDialog: HTMLDialogElement | null = null
 let previousFocus: Element | null = null
 
 type DialogButtonValue = boolean | 'save' | null
@@ -13,130 +13,153 @@ type DialogButton = {
   beforeClose?: () => Promise<boolean> | boolean
 }
 
-function ensureModalOverlay (dom: Document): HTMLDivElement {
-  // if we previously created an overlay but it was removed from the document
-  // (tests clear body), rebuild it.  Checking presence ensures our reference
-  // doesn't point at a detached element.
-  if (modalOverlay && dom.body.contains(modalOverlay)) return modalOverlay
-  // otherwise drop stale reference and create a new element
-  modalOverlay = null
-  // overlay container
-  modalOverlay = dom.createElement('div')
-  modalOverlay.id = 'profile-modal'
-  modalOverlay.className = 'focus-trap hidden'
-  modalOverlay.setAttribute('role', 'presentation')
+type DialogElements = {
+  dialog: HTMLDialogElement,
+  title: HTMLHeadingElement,
+  description: HTMLDivElement,
+  error: HTMLElement,
+  buttons: HTMLDivElement
+}
 
-  modalOverlay.innerHTML = `
-    <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title" aria-describedby="modal-desc">
-      <header class="modal-header">
-        <h2 id="modal-title"></h2>
-        <button type="button" id="modal-close" class="dialogCloseButton" aria-label="Close dialog" data-cancel="true">&times;</button>
-      </header>
+function ensureModalDialog (dom: Document): HTMLDialogElement {
+  // if we previously created a dialog but it was removed from the document
+  // (tests clear body), rebuild it. Checking presence ensures our reference
+  // doesn't point at a detached element.
+  if (modalDialog && dom.body.contains(modalDialog)) return modalDialog
+
+  modalDialog = null
+  modalDialog = dom.createElement('dialog')
+  modalDialog.id = 'profile-modal'
+  modalDialog.setAttribute('role', 'dialog')
+  modalDialog.setAttribute('aria-modal', 'true')
+  modalDialog.setAttribute('aria-labelledby', 'modal-title')
+  modalDialog.setAttribute('aria-describedby', 'modal-desc')
+
+  modalDialog.innerHTML = `
+    <div class="modal">
+      <h2 id="modal-title"></h2>
       <div id="modal-desc"></div>
       <section id="modal-error" class="dialogErrorSection" aria-live="assertive" role="alert" hidden></section>
       <div id="modal-buttons"></div>
     </div>
   `
 
-  dom.body.appendChild(modalOverlay)
-
-  // keyboard handling (esc/tab)
-  modalOverlay.addEventListener('keydown', (e: KeyboardEvent) => {
-    if (e.key === 'Escape') {
-      e.stopPropagation()
-      // simulate cancel if available
-      const cancelBtn = modalOverlay.querySelector('button[data-cancel]') as HTMLButtonElement | null
-      if (cancelBtn) cancelBtn.click()
-      else closeModal(false)
-    } else if (e.key === 'Tab') {
-      // simple focus trap: cycle through focusable elements inside overlay
-      const focusable = Array.from(
-        modalOverlay.querySelectorAll('button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])')
-      ).filter((el) => !el.hasAttribute('disabled')) as HTMLElement[]
-      if (focusable.length === 0) return
-      const idx = focusable.indexOf(dom.activeElement as HTMLElement)
-      if (e.shiftKey) {
-        if (idx === 0) {
-          focusable[focusable.length - 1].focus()
-          e.preventDefault()
-        }
-      } else {
-        if (idx === focusable.length - 1) {
-          focusable[0].focus()
-          e.preventDefault()
-        }
-      }
-    }
-  })
-
-  return modalOverlay
+  dom.body.appendChild(modalDialog)
+  return modalDialog
 }
 
-function hideSiblings (hide: boolean, dom: Document): void {
-  const siblings = Array.from(dom.body.children).filter((c) => c !== modalOverlay) as HTMLElement[]
-  siblings.forEach((el) => {
-    if (hide) el.setAttribute('aria-hidden', 'true')
-    else el.removeAttribute('aria-hidden')
-  })
-}
-
-function clearModalError(overlay: HTMLDivElement) {
-  const errorEl = overlay.querySelector('#modal-error') as HTMLElement | null
-  if (errorEl) {
-    errorEl.textContent = ''
-    errorEl.hidden = true
+function getDialogElements (dialog: HTMLDialogElement): DialogElements {
+  return {
+    dialog,
+    title: dialog.querySelector('#modal-title') as HTMLHeadingElement,
+    description: dialog.querySelector('#modal-desc') as HTMLDivElement,
+    error: dialog.querySelector('#modal-error') as HTMLElement,
+    buttons: dialog.querySelector('#modal-buttons') as HTMLDivElement
   }
 }
 
-function setModalError(overlay: HTMLDivElement, message: string) {
-  const errorEl = overlay.querySelector('#modal-error') as HTMLElement | null
-  if (!errorEl) return
-  errorEl.textContent = message
-  errorEl.hidden = false
+function clearModalError(elements: DialogElements): void {
+  elements.error.textContent = ''
+  elements.error.hidden = true
+}
+
+function setModalError(elements: DialogElements, message: string): void {
+  elements.error.textContent = message
+  elements.error.hidden = false
+}
+
+function openDialogElement (dialog: HTMLDialogElement): void {
+  if (typeof dialog.showModal === 'function') {
+    try {
+      if (!dialog.open) dialog.showModal()
+      return
+    } catch {
+      // Fall back for jsdom or partial dialog implementations.
+    }
+  }
+
+  dialog.setAttribute('open', '')
+}
+
+function closeDialogElement (dialog: HTMLDialogElement): void {
+  if (typeof dialog.close === 'function' && dialog.open) {
+    dialog.close()
+    return
+  }
+
+  dialog.removeAttribute('open')
+}
+
+function findInitialContentFocusTarget(container: ParentNode): HTMLElement | null {
+  const focusable = Array.from(
+    container.querySelectorAll('input, select, textarea, [contenteditable="true"], [tabindex]:not([tabindex="-1"])')
+  ) as HTMLElement[]
+
+  for (const el of focusable) {
+    const isDisabled = el.hasAttribute('disabled') || el.getAttribute('aria-disabled') === 'true'
+    const hiddenByAttr = el.hasAttribute('hidden') || el.getAttribute('aria-hidden') === 'true'
+    if (!isDisabled && !hiddenByAttr) return el
+  }
+
+  return null
+}
+
+function focusInitialDialogTarget (description: HTMLDivElement, buttons: HTMLDivElement): void {
+  const initialInput = findInitialContentFocusTarget(description)
+  if (initialInput) {
+    initialInput.focus()
+    if (initialInput instanceof HTMLInputElement || initialInput instanceof HTMLTextAreaElement) {
+      initialInput.select()
+    }
+    return
+  }
+
+  const firstButton = buttons.querySelector('button') as HTMLButtonElement | null
+  if (firstButton) firstButton.focus()
+}
+
+function collectFormValues (form: HTMLFormElement): InputDialogValues {
+  const data = new FormData(form)
+  const values: InputDialogValues = {}
+  data.forEach((value, key) => {
+    values[key] = String(value)
+  })
+  return values
 }
 
 function openModal ({ title, message, buttons, dom }: { title?: string, message?: string | Node, buttons: DialogButton[], dom: Document }) {
-  const overlay = ensureModalOverlay(dom)
+  const dialog = ensureModalDialog(dom)
+  const elements = getDialogElements(dialog)
 
   previousFocus = dom.activeElement
-  hideSiblings(true, dom)
-  overlay.classList.remove('hidden')
+  openDialogElement(dialog)
 
-  overlay.querySelector('#modal-title').textContent = title || ''
-  const descEl = overlay.querySelector('#modal-desc') as HTMLDivElement
+  elements.title.textContent = title || ''
+  elements.description.innerHTML = ''
   if (typeof message === 'string') {
-    descEl.textContent = message
+    elements.description.textContent = message
   } else {
-    // allow passing nodes
-    descEl.innerHTML = ''
-    descEl.appendChild(message)
+    elements.description.appendChild(message)
   }
 
-  const btnContainer = overlay.querySelector('#modal-buttons') as HTMLDivElement
-  btnContainer.innerHTML = ''
-  clearModalError(overlay)
-
-  function findInitialContentFocusTarget(container: ParentNode): HTMLElement | null {
-    const focusable = Array.from(
-      container.querySelectorAll('input, select, textarea, [contenteditable="true"], [tabindex]:not([tabindex="-1"])')
-    ) as HTMLElement[]
-
-    for (const el of focusable) {
-      const isDisabled = el.hasAttribute('disabled') || el.getAttribute('aria-disabled') === 'true'
-      const hiddenByAttr = el.hasAttribute('hidden') || el.getAttribute('aria-hidden') === 'true'
-      if (!isDisabled && !hiddenByAttr) return el
-    }
-
-    return null
-  }
+  elements.buttons.innerHTML = ''
+  clearModalError(elements)
 
   return new Promise<DialogButtonValue>((resolve) => {
-    const closeButton = overlay.querySelector('#modal-close') as HTMLButtonElement | null
-    if (closeButton) {
-      closeButton.onclick = () => {
-        closeModal(null)
-        resolve(null)
+    const finish = (value: DialogButtonValue) => {
+      closeModal(value)
+      resolve(value)
+    }
+
+    dialog.oncancel = (event: Event) => {
+      event.preventDefault()
+      const cancelBtn = dialog.querySelector('button[data-cancel]') as HTMLButtonElement | null
+      if (cancelBtn) {
+        cancelBtn.click()
+        return
       }
+
+      finish(false)
     }
 
     buttons.forEach((btn) => {
@@ -150,33 +173,19 @@ function openModal ({ title, message, buttons, dom }: { title?: string, message?
           const shouldClose = await btn.beforeClose()
           if (!shouldClose) return
         }
-        closeModal(btn.value)
-        resolve(btn.value)
+        finish(btn.value)
       })
-      btnContainer.appendChild(b)
+      elements.buttons.appendChild(b)
     })
 
-    // Prefer first input-like control in dialog content for data-entry dialogs,
-    // then fall back to the first action button.
-    const initialInput = findInitialContentFocusTarget(descEl)
-    if (initialInput) {
-      initialInput.focus()
-      if (initialInput instanceof HTMLInputElement || initialInput instanceof HTMLTextAreaElement) {
-        initialInput.select()
-      }
-      return
-    }
-
-    const firstButton = btnContainer.querySelector('button') as HTMLButtonElement | null
-    if (firstButton) firstButton.focus()
+    focusInitialDialogTarget(elements.description, elements.buttons)
   })
 }
 
 function closeModal (_result: DialogButtonValue): void {
-  if (modalOverlay) {
-    const modalDom = modalOverlay.ownerDocument
-    modalOverlay.classList.add('hidden')
-    hideSiblings(false, modalDom)
+  if (modalDialog) {
+    closeDialogElement(modalDialog)
+    modalDialog.oncancel = null
     if (previousFocus && 'focus' in previousFocus) (previousFocus as HTMLElement).focus()
   }
 }
@@ -209,7 +218,8 @@ It should reuse the OpenModal function for consistency. Done in 2 passes */
 export function openInputDialog (options: OpenInputDialogCustom): Promise<InputDialogValues | null> {
   const submitLabel = options.submitLabel || 'Save Changes'
   const cancelLabel = options.cancelLabel || 'Cancel'
-  const overlay = ensureModalOverlay(options.dom)
+  const dialog = ensureModalDialog(options.dom)
+  const elements = getDialogElements(dialog)
 
   return openModal({
     title: options.title,
@@ -221,12 +231,12 @@ export function openInputDialog (options: OpenInputDialogCustom): Promise<InputD
         value: 'save',
         primary: true,
         beforeClose: async () => {
-          clearModalError(overlay)
+          clearModalError(elements)
 
           if (options.validate) {
             const validationMessage = await options.validate()
             if (validationMessage) {
-              setModalError(overlay, validationMessage)
+              setModalError(elements, validationMessage)
               return false
             }
           }
@@ -239,7 +249,7 @@ export function openInputDialog (options: OpenInputDialogCustom): Promise<InputD
           } catch (error) {
             const fallback = error instanceof Error ? error.message : String(error)
             const message = options.formatSaveError ? options.formatSaveError(error) : fallback
-            setModalError(overlay, message)
+            setModalError(elements, message)
             return false
           }
         }
@@ -248,13 +258,6 @@ export function openInputDialog (options: OpenInputDialogCustom): Promise<InputD
     dom: options.dom
   }).then((result) => {
     if (result !== 'save') return null
-    if (!options.form) return {}
-
-    const data = new FormData(options.form)
-    const values: InputDialogValues = {}
-    data.forEach((value, key) => {
-      values[key] = String(value)
-    })
-    return values
+    return collectFormValues(options.form)
   })
 }

@@ -5,6 +5,7 @@ import '../../styles/SocialCard.css'
 import { socialAccountsHeadingText } from '../../texts'
 import { createSocialEditDialog } from './SocialEditDialog'
 import { LiveStore, NamedNode } from 'rdflib'
+import { toggleCollapsibleSection } from '../shared/collapsibleSection'
 
 export const SocialCard = (
   SocialData: SocialPresentation,
@@ -60,27 +61,11 @@ export const SocialCard = (
 
 function renderSocialSectionContent(
   accounts: SocialPresentation,
-  viewerMode: ViewerMode,
-  onEdit?: (event: Event) => void
+  viewerMode: ViewerMode
 ) {
   const hasAccounts = accounts.accounts && accounts.accounts.length > 0
 
   return html`
-    <header class="mb-md">
-      <h3 id="social-heading" tabindex="-1">${socialAccountsHeadingText}</h3>
-      ${viewerMode === 'owner' && onEdit
-        ? html`
-            <button
-              type="button"
-              class="actionButton"
-              aria-label="Edit social accounts"
-              @click=${onEdit}
-            >
-              <span class="actionIcon" aria-hidden="true">✎ Edit</span>
-            </button>
-          `
-        : html``}
-    </header>
     ${hasAccounts ? SocialCard(accounts, viewerMode) : html`<p>No social accounts added yet.</p>`}
   `
 }
@@ -109,11 +94,42 @@ export function renderSocialAccounts(
   return showSection ? html`
         <section 
           aria-labelledby="social-heading" 
-          class="section-bg" 
+          class="profileSectionCollapsible section-bg" 
           role="region"
           tabindex="-1"
+          data-expanded="false"
         >
-          ${renderSocialSectionContent(accounts, viewerMode, handleEdit)}
+          <header class="sectionHeader profileSectionCollapsible__header">
+            <h3 id="social-heading" tabindex="-1">${socialAccountsHeadingText}</h3>
+            <div class="profileSectionCollapsible__actions">
+              ${viewerMode === 'owner'
+                ? html`
+                    <button
+                      type="button"
+                      class="actionButton profileSectionCollapsible__editButton"
+                      aria-label="Edit social accounts"
+                      @click=${handleEdit}
+                    >
+                      <span class="profileSectionCollapsible__editLabel">✎ Edit</span>
+                      <span class="profileSectionCollapsible__editIcon" aria-hidden="true">✎</span>
+                    </button>
+                  `
+                : html``}
+              <button
+                type="button"
+                class="profileSectionCollapsible__toggle"
+                aria-label="Toggle social accounts section"
+                aria-controls="social-panel"
+                aria-expanded="false"
+                @click=${toggleCollapsibleSection}
+              >
+                <span class="profileSectionCollapsible__chevron" aria-hidden="true">⌄</span>
+              </button>
+            </div>
+          </header>
+          <div id="social-panel" class="profileSectionCollapsible__content" aria-hidden="true">
+            ${renderSocialSectionContent(accounts, viewerMode)}
+          </div>
         </section>
       ` : html``
 }

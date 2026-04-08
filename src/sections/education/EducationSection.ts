@@ -10,6 +10,7 @@ import {
   toMonthDateTime,
   toggleDescription,
 } from '../shared/sectionCardHelpers'
+import { toggleCollapsibleSection } from '../shared/collapsibleSection'
 
 function formatEducationMonthYearFull(date?: string): string {
   if (!date) return ''
@@ -110,26 +111,40 @@ export function renderEducationSection(
   return showSection ? html`
     <section 
       aria-labelledby="education-heading" 
-      class="section-bg" 
+      class="profileSectionCollapsible section-bg" 
       role="region"
       tabindex="-1"
+      data-expanded="false"
     >
-      <header class="sectionHeader mb-md">
+      <header class="sectionHeader profileSectionCollapsible__header">
         <h3 id="education-heading" tabindex="-1">${educationHeadingText}</h3>
-        ${viewerMode === 'owner'
-          ? html`
-              <button
-                type="button"
-                class="actionButton"
-                aria-label="Edit education details"
-                @click=${(event: Event) => createEducationEditDialog(event, store, subject, educationDetails, viewerMode, onSaved)}
-              >
-                <span class="actionIcon" aria-hidden="true">✎ Edit</span>
-              </button>
-            `
-          : html``}
+        <div class="profileSectionCollapsible__actions">
+          ${viewerMode === 'owner'
+            ? html`
+                <button
+                  type="button"
+                  class="actionButton profileSectionCollapsible__editButton"
+                  aria-label="Edit education details"
+                  @click=${(event: Event) => createEducationEditDialog(event, store, subject, educationDetails, viewerMode, onSaved)}
+                >
+                  <span class="profileSectionCollapsible__editLabel">✎ Edit</span>
+                  <span class="profileSectionCollapsible__editIcon" aria-hidden="true">✎</span>
+                </button>
+              `
+            : html``}
+          <button
+            type="button"
+            class="profileSectionCollapsible__toggle"
+            aria-label="Toggle education section"
+            aria-controls="education-panel"
+            aria-expanded="false"
+            @click=${toggleCollapsibleSection}
+          >
+            <span class="profileSectionCollapsible__chevron" aria-hidden="true">⌄</span>
+          </button>
+        </div>
       </header>
-      <div>
+      <div id="education-panel" class="profileSectionCollapsible__content" aria-hidden="true">
         ${hasEducation ? educationCard : html`<p>No education details added yet.</p>`}
       </div>
     </section>
