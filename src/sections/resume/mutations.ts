@@ -2,7 +2,7 @@ import { LiveStore, NamedNode, Node, st, literal, sym } from 'rdflib'
 import { ns } from 'solid-ui'
 import { ResumeRow } from './types'
 import { MutationOps } from '../shared/types'
-import { applyUpdaterPatch, collectLinkedNodeStatements, collectNodeStatements, findExistingNode } from '../shared/rdfMutationHelpers'
+import { applyUpdaterPatch, collectLinkedNodeStatements, collectNodeStatements, findExistingNode, replacePredicateStatements } from '../shared/rdfMutationHelpers'
 import { createIdNode } from '../shared/idNodeFactory'
 import { mutationSaveResumeFailedPrefixText, resumeUpdateEntryNotFoundErrorMessageText } from '../../texts'
 
@@ -175,11 +175,10 @@ async function mutateResumeEntries(store: LiveStore, subject: NamedNode, resumeO
     }
 
     // For updates on existing named memberships, keep the membership link and replace only mutable fields.
-    deletions.push(...store.statementsMatching(existingNode as any, ns.rdf('type'), null, doc as any))
-    deletions.push(...store.statementsMatching(existingNode as any, ns.vcard('role'), null, doc as any))
-    deletions.push(...store.statementsMatching(existingNode as any, ns.schema('startDate'), null, doc as any))
-    deletions.push(...store.statementsMatching(existingNode as any, ns.schema('endDate'), null, doc as any))
-    deletions.push(...store.statementsMatching(existingNode as any, ns.schema('description'), null, doc as any))
+    ;[ns.rdf('type'), ns.vcard('role'), ns.schema('startDate'), ns.schema('endDate'), ns.schema('description')]
+      .forEach((predicate) => {
+        replacePredicateStatements(store, existingNode as NamedNode, predicate, doc, deletions, insertions, null)
+      })
 
     const linkedOrganizations = collectLinkedNodeStatements(store, existingNode, ns.org('organization'), doc)
     deletions.push(...linkedOrganizations.linkedStatements)
