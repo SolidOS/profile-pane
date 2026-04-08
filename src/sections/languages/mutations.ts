@@ -1,4 +1,4 @@
-import { LiveStore, NamedNode, st, Collection, literal } from 'rdflib'
+import { LiveStore, NamedNode, st, Collection, literal, sym } from 'rdflib'
 import { ns } from 'solid-ui'
 import { LanguageRow } from './types'
 import { MutationOps } from '../shared/types'
@@ -8,27 +8,39 @@ import { createIdNode } from '../shared/idNodeFactory'
 import { mutationSaveLanguagesFailedPrefixText } from '../../texts'
 
 export type LanguageMutationPlan = MutationOps<LanguageRow>
-/* SAM need to look at the new field proficiency and see how we will handle that */
-function normalizedLanguageName(value: string | undefined): string {
-  return (value || '').trim()
+// NOTE (new design): Language entries keep a display name for UI, but persisted
+// identity must come from the datasource URI written to solid:publicId (for
+// example l:fr when serialized with the l prefix).
+const LANGUAGE_IANA_NS = 'https://www.w3.org/ns/iana/language-code/'
+
+function ensureLanguagePrefix(store: LiveStore) {
+  const anyStore = store as any
+  if (typeof anyStore.setPrefixForURI === 'function') {
+    anyStore.setPrefixForURI('l', LANGUAGE_IANA_NS)
+    return
+  }
+  if (!anyStore.namespaces) {
+    anyStore.namespaces = {}
+  }
+  anyStore.namespaces.l = LANGUAGE_IANA_NS
 }
 
-function normalizedProficiency(value: string | undefined): string {
+function normalizeText(value: string | undefined): string {
   return (value || '').trim()
 }
 
 function buildLanguageStatements(store: LiveStore, subject: NamedNode, doc: NamedNode, rows: LanguageRow[]) {
   const languageRows = rows
     .map((row) => ({
-      name: normalizedLanguageName(row.name),
-      proficiency: normalizedProficiency(row.proficiency)
+      name: normalizeText(row.name),
+      publicId: normalizeText(row.publicId),
+      proficiency: normalizeText(row.proficiency)
     }))
-    .filter((row) => Boolean(row.name))
+    .filter((row) => Boolean(row.publicId))
 
   if (languageRows.length === 0) return []
 
   const entryNodes = languageRows.map(() => createIdNode(doc))
-  const publicIdNodes = languageRows.map(() => createIdNode(doc))
   const statements: any[] = []
 
   // Keep ui:ordered semantics by writing cumulative ordered list variants:
@@ -40,12 +52,17 @@ function buildLanguageStatements(store: LiveStore, subject: NamedNode, doc: Name
   }
 
   entryNodes.forEach((node, index) => {
-    const publicIdNode = publicIdNodes[index]
-    statements.push(st(node, ns.solid('publicId'), publicIdNode, doc))
+    const publicIdNode = sym(languageRows[index].publicId)
+    // NOTE (new design): Write publicId directly as the selected IANA URI node.
+    statements.push(st(node, ns.solid('publicId'), publicIdNode as any, doc))
+    if (languageRows[index].name) {
+      // Solid-UI autocomplete expects the label on the selected object itself.
+      statements.push(st(publicIdNode as any, ns.schema('name'), literal(languageRows[index].name), doc))
+    }
     if (languageRows[index].proficiency) {
       statements.push(st(node, ns.schema('proficiencyLevel'), literal(languageRows[index].proficiency), doc))
     }
-    statements.push(st(publicIdNode, ns.rdf('type'), ns.schema('Language'), doc))
+    statements.push(st(node, ns.rdf('type'), ns.schema('Language'), doc))
   })
 
   return statements
@@ -121,7 +138,7 @@ async function runPutFallback(store: LiveStore, doc: NamedNode, deletions: any[]
 
   const contentType = 'text/turtle'
   const body = updater.serialize(doc.value, nextStatements, contentType)
-  const response = await fetcher.webOperation('PUT', doc.uri, {
+  const response = await fetcher.webOperation('PUT', doc.value, {
     noMeta: true,
     contentType,
     body
@@ -129,7 +146,7 @@ async function runPutFallback(store: LiveStore, doc: NamedNode, deletions: any[]
 
   if (!response || response.ok !== true) {
     const status = response?.status || 'unknown'
-    throw new Error(`Web error: ${status} on PUT of <${doc.uri}>`)
+    throw new Error(`Web error: ${status} on PUT of <${doc.value}>`)
   }
 
   // PUT bypasses UpdateManager's local-store patching, so apply the same changes locally.
@@ -218,22 +235,23 @@ function mergeLanguageOps(existingRows: LanguageRow[], languageOps: MutationOps<
   })
 
   languageOps.create.forEach((row) => {
-    if (!normalizedLanguageName(row.name)) return
+    if (!normalizeText(row.publicId)) return
     byEntryNode.set(`new:${row.name}:${Math.random()}`, {
       ...row,
-      proficiency: normalizedProficiency(row.proficiency)
+      publicId: normalizeText(row.publicId),
+      proficiency: normalizeText(row.proficiency)
     })
   })
 
   const dedupedByLanguage = new Map<string, LanguageRow>()
   Array.from(byEntryNode.values()).forEach((row) => {
-    const normalized = normalizedLanguageName(row.name)
-    if (!normalized) return
-    if (!dedupedByLanguage.has(normalized)) {
-      dedupedByLanguage.set(normalized, {
+    const publicId = normalizeText(row.publicId)
+    if (!publicId) return
+    if (!dedupedByLanguage.has(publicId)) {
+      dedupedByLanguage.set(publicId, {
         ...row,
-        name: normalized,
-        proficiency: normalizedProficiency(row.proficiency)
+        publicId,
+        proficiency: normalizeText(row.proficiency)
       })
     }
   })
@@ -242,10 +260,12 @@ function mergeLanguageOps(existingRows: LanguageRow[], languageOps: MutationOps<
 }
 
 async function mutateLanguageEntries(store: LiveStore, subject: NamedNode, languageOps: MutationOps<LanguageRow>) {
+  ensureLanguagePrefix(store)
   const doc = subject.doc()
   const existingRows = presentLanguages(subject, store).map((detail) => ({
-    name: normalizedLanguageName(detail.name),
-    proficiency: normalizedProficiency(detail.proficiency),
+    name: normalizeText(detail.name),
+    publicId: normalizeText(detail.publicId),
+    proficiency: normalizeText(detail.proficiency),
     entryNode: detail.entryNode.value,
     status: 'existing' as const
   }))

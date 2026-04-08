@@ -3,6 +3,7 @@ import { RowStatus } from '../shared/types'
 
 export interface LanguageFields {
   name: string
+  publicId?: string
   proficiency?: string
 }
 

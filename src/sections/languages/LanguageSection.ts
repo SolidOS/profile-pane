@@ -1,5 +1,6 @@
 import { html } from 'lit-html'
 import { LiveStore, NamedNode } from 'rdflib'
+import { ns } from 'solid-ui'
 import { ViewerMode } from '../../types'
 import { createLanguageEditDialog } from './LanguageEditDialog'
 import { LanguageDetails } from './types'
@@ -26,6 +27,7 @@ export function renderLanguageSection(
 ) {
   const languagesArr = languages || []
   const hasLanguages = Array.isArray(languagesArr) && languagesArr.length > 0
+  const hasLanguageLinks = store.each(subject, ns.schema('knowsLanguage')).length > 0
 
   return html`
     <section class="section-bg" aria-labelledby="languages-heading" role="region">
@@ -50,7 +52,9 @@ export function renderLanguageSection(
               ${renderLanguages(languagesArr, true)}
             </ul>
           `
-        : html`<p>No languages added yet.</p>`}
+        : hasLanguageLinks
+          ? html`<p>Language details are missing for one or more entries.</p>`
+          : html`<p>No languages added yet.</p>`}
     </section>
   `
 }
