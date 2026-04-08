@@ -19,6 +19,7 @@ export function presentLanguages(subject: NamedNode, store: LiveStore): Language
     .flatMap(node => expandRdfList(store, node))
     .map((lan) => ({
       name: languageAsText(store, lan),
+      proficiency: store.anyValue(lan as NamedNode, ns.schema('proficiencyLevel')) || undefined,
       entryNode: lan
     }))
     .filter((item) => Boolean(item.name))

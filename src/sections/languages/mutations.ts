@@ -1,4 +1,4 @@
-import { LiveStore, NamedNode, st, Collection } from 'rdflib'
+import { LiveStore, NamedNode, st, Collection, literal } from 'rdflib'
 import { ns } from 'solid-ui'
 import { LanguageRow } from './types'
 import { MutationOps } from '../shared/types'
@@ -13,15 +13,22 @@ function normalizedLanguageName(value: string | undefined): string {
   return (value || '').trim()
 }
 
-function buildLanguageStatements(store: LiveStore, subject: NamedNode, doc: NamedNode, names: string[]) {
-  const languageNames = names
-    .map((name) => normalizedLanguageName(name))
-    .filter(Boolean)
+function normalizedProficiency(value: string | undefined): string {
+  return (value || '').trim()
+}
 
-  if (languageNames.length === 0) return []
+function buildLanguageStatements(store: LiveStore, subject: NamedNode, doc: NamedNode, rows: LanguageRow[]) {
+  const languageRows = rows
+    .map((row) => ({
+      name: normalizedLanguageName(row.name),
+      proficiency: normalizedProficiency(row.proficiency)
+    }))
+    .filter((row) => Boolean(row.name))
 
-  const entryNodes = languageNames.map(() => createIdNode(doc))
-  const publicIdNodes = languageNames.map(() => createIdNode(doc))
+  if (languageRows.length === 0) return []
+
+  const entryNodes = languageRows.map(() => createIdNode(doc))
+  const publicIdNodes = languageRows.map(() => createIdNode(doc))
   const statements: any[] = []
 
   // Keep ui:ordered semantics by writing cumulative ordered list variants:
@@ -35,6 +42,9 @@ function buildLanguageStatements(store: LiveStore, subject: NamedNode, doc: Name
   entryNodes.forEach((node, index) => {
     const publicIdNode = publicIdNodes[index]
     statements.push(st(node, ns.solid('publicId'), publicIdNode, doc))
+    if (languageRows[index].proficiency) {
+      statements.push(st(node, ns.schema('proficiencyLevel'), literal(languageRows[index].proficiency), doc))
+    }
     statements.push(st(publicIdNode, ns.rdf('type'), ns.schema('Language'), doc))
   })
 
@@ -190,7 +200,7 @@ async function runUpdateWithDavFallback(store: LiveStore, doc: NamedNode, deleti
   }
 }
 
-function mergeLanguageOps(existingRows: LanguageRow[], languageOps: MutationOps<LanguageRow>): string[] {
+function mergeLanguageOps(existingRows: LanguageRow[], languageOps: MutationOps<LanguageRow>): LanguageRow[] {
   const byEntryNode = new Map<string, LanguageRow>()
   existingRows.forEach((row) => {
     byEntryNode.set(row.entryNode, row)
@@ -209,27 +219,37 @@ function mergeLanguageOps(existingRows: LanguageRow[], languageOps: MutationOps<
 
   languageOps.create.forEach((row) => {
     if (!normalizedLanguageName(row.name)) return
-    byEntryNode.set(`new:${row.name}:${Math.random()}`, row)
+    byEntryNode.set(`new:${row.name}:${Math.random()}`, {
+      ...row,
+      proficiency: normalizedProficiency(row.proficiency)
+    })
   })
 
-  const dedupedNames = new Set<string>()
+  const dedupedByLanguage = new Map<string, LanguageRow>()
   Array.from(byEntryNode.values()).forEach((row) => {
     const normalized = normalizedLanguageName(row.name)
-    if (normalized) dedupedNames.add(normalized)
+    if (!normalized) return
+    if (!dedupedByLanguage.has(normalized)) {
+      dedupedByLanguage.set(normalized, {
+        ...row,
+        name: normalized,
+        proficiency: normalizedProficiency(row.proficiency)
+      })
+    }
   })
 
-  return Array.from(dedupedNames)
+  return Array.from(dedupedByLanguage.values())
 }
 
 async function mutateLanguageEntries(store: LiveStore, subject: NamedNode, languageOps: MutationOps<LanguageRow>) {
   const doc = subject.doc()
   const existingRows = presentLanguages(subject, store).map((detail) => ({
     name: normalizedLanguageName(detail.name),
-    proficiency: '',
+    proficiency: normalizedProficiency(detail.proficiency),
     entryNode: detail.entryNode.value,
     status: 'existing' as const
   }))
-  const nextNames = mergeLanguageOps(existingRows, languageOps)
+  const nextRows = mergeLanguageOps(existingRows, languageOps)
 
   const listObjects = store.each(subject, ns.schema('knowsLanguage'), null, doc)
   const existingListHeads = listObjects.filter((node) => node.termType === 'BlankNode' || node.termType === 'NamedNode')
@@ -264,7 +284,7 @@ async function mutateLanguageEntries(store: LiveStore, subject: NamedNode, langu
   existingPublicIdNodes.forEach((node) => {
     deletions.push(...store.statementsMatching(node as NamedNode, null, null, doc))
   })
-  const insertions = buildLanguageStatements(store, subject, doc, nextNames)
+  const insertions = buildLanguageStatements(store, subject, doc, nextRows)
 
   await runUpdateWithDavFallback(store, doc, deletions, insertions)
 }

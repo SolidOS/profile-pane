@@ -177,6 +177,13 @@ describe('Languages selectors and mutations', () => {
     )
     expect(publicIdStatement?.object?.termType).toBe('NamedNode')
 
+    const proficiencyStatement = insertionsCaptured.find(
+      (statement) =>
+        statement.subject.value === firstEntry.value &&
+        statement.predicate.value === ns.schema('proficiencyLevel').value
+    )
+    expect(proficiencyStatement).toBeUndefined()
+
     const nameStatement = insertionsCaptured.find(
       (statement) =>
         statement.subject.value === publicIdStatement.object.value &&
