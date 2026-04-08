@@ -65,44 +65,13 @@ function renderQRCode(subject: NamedNode) {
   `
 }
 
-function getOpenGraphAppId(): string {
-  const globalSiteKey = (globalThis as any).__PROFILE_PANE_OPENGRAPH_APP_ID
-  if (typeof globalSiteKey === 'string' && globalSiteKey.trim()) return globalSiteKey.trim()
-
-  const legacyGlobalKey = (globalThis as any).__OPENGRAPH_APP_ID
-  if (typeof legacyGlobalKey === 'string' && legacyGlobalKey.trim()) return legacyGlobalKey.trim()
-
-  const meta = typeof document !== 'undefined'
-    ? document.querySelector('meta[name="profile-pane-opengraph-app-id"]') as HTMLMetaElement | null
-    : null
-  const metaKey = meta?.content?.trim() || ''
-  if (metaKey) return metaKey
-
-  return ''
-}
-
 async function enrichProjectsForDisplay(projects: ProfileViewModelData['projects']) {
-  const apiKey = getOpenGraphAppId()
-  if (!apiKey) {
-    return projects.map((project) => ({
-      ...project,
-      category: project.category && project.category !== 'unknown'
-        ? project.category
-        : classifyLinkCategory({
-            url: project.url,
-            title: project.title,
-            description: project.description,
-            businessType: project.businessType
-          })
-    }))
-  }
-
   const enriched = await Promise.all(projects.map(async (project) => {
     const url = (project.url || '').trim()
     if (!url) return project
 
     try {
-      const preview = await fetchLinkPreview(url, apiKey)
+      const preview = await fetchLinkPreview(url)
       const category = preview.category && preview.category !== 'unknown'
         ? preview.category
         : classifyLinkCategory({

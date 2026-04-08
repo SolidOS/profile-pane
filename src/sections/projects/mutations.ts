@@ -80,7 +80,7 @@ async function runPutFallback(store: LiveStore, doc: NamedNode, deletions: any[]
 
 	const contentType = 'text/turtle'
 	const body = updater.serialize(doc.value, nextStatements, contentType)
-	const response = await fetcher.webOperation('PUT', doc.uri, {
+	const response = await fetcher.webOperation('PUT', doc.value, {
 		noMeta: true,
 		contentType,
 		body
@@ -88,7 +88,7 @@ async function runPutFallback(store: LiveStore, doc: NamedNode, deletions: any[]
 
 	if (!response || response.ok !== true) {
 		const status = response?.status || 'unknown'
-		throw new Error(`Web error: ${status} on PUT of <${doc.uri}>`)
+		throw new Error(`Web error: ${status} on PUT of <${doc.value}>`)
 	}
 
 	store.remove(deletions)

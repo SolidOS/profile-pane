@@ -22,22 +22,6 @@ type ProjectFormState = {
   projects: ProjectRow[]
 }
 
-function getOpenGraphAppId(): string {
-  const globalSiteKey = (globalThis as any).__PROFILE_PANE_OPENGRAPH_APP_ID
-  if (typeof globalSiteKey === 'string' && globalSiteKey.trim()) return globalSiteKey.trim()
-
-  const legacyGlobalKey = (globalThis as any).__OPENGRAPH_APP_ID
-  if (typeof legacyGlobalKey === 'string' && legacyGlobalKey.trim()) return legacyGlobalKey.trim()
-
-  const meta = typeof document !== 'undefined'
-    ? document.querySelector('meta[name="profile-pane-opengraph-app-id"]') as HTMLMetaElement | null
-    : null
-  const metaKey = meta?.content?.trim() || ''
-  if (metaKey) return metaKey
-
-  return ''
-}
-
 function sanitizeProjectFieldValue(value: string): string {
   return sanitizeTextValue(value)
 }
@@ -80,11 +64,8 @@ async function hydrateProjectRowMetadata(row: ProjectRow): Promise<void> {
   const url = sanitizeProjectFieldValue(row.url)
   if (!url) return
 
-  const apiKey = getOpenGraphAppId()
-  if (!apiKey) return
-
   try {
-    const preview = await fetchLinkPreview(url, apiKey)
+    const preview = await fetchLinkPreview(url)
 
     row.url = sanitizeProjectFieldValue(preview.url || row.url || '')
     row.title = sanitizeProjectFieldValue(preview.title || row.title || '')
@@ -127,11 +108,8 @@ function renderProjectInputRow({
     const url = sanitizeProjectFieldValue(rawUrl)
     if (!url || !rows[index]) return
 
-    const apiKey = getOpenGraphAppId()
-    if (!apiKey) return
-
     try {
-      const preview = await fetchLinkPreview(url, apiKey)
+      const preview = await fetchLinkPreview(url)
       if (!rows[index]) return
 
       applyRowFieldChange(rows[index], 'url', sanitizeProjectFieldValue(preview.url || url), rowHasContent)
