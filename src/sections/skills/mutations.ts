@@ -2,7 +2,7 @@ import { LiveStore, NamedNode, st, literal } from 'rdflib'
 import { ns } from 'solid-ui'
 import { SkillRow } from './types'
 import { MutationOps } from '../shared/types'
-import { applyUpdaterPatch, collectLinkStatements, collectNodeStatements, findExistingNode } from '../shared/rdfMutationHelpers'
+import { applyUpdaterPatch, collectLinkedNodeStatements, collectLinkStatements, collectNodeStatements, findExistingNode } from '../shared/rdfMutationHelpers'
 import { createIdNode } from '../shared/idNodeFactory'
 import { mutationSaveSkillsFailedPrefixText } from '../../texts'
 
@@ -27,10 +27,8 @@ async function mutateSkillsEntries(store: LiveStore, subject: NamedNode, skillOp
   const insertions: any[] = []
 
   const collectLinkedPublicIdStatements = (skillNode: NamedNode) => {
-    const publicIdNode = store.any(skillNode, ns.solid('publicId'), null, doc)
-    if (publicIdNode && publicIdNode.termType === 'NamedNode') {
-      deletions.push(...collectNodeStatements(store, publicIdNode as NamedNode, doc))
-    }
+    const linkedPublicIdStatements = collectLinkedNodeStatements(store, skillNode, ns.solid('publicId'), doc)
+    deletions.push(...linkedPublicIdStatements.linkedStatements)
   }
 
   skillOps.remove.forEach((skill) => {

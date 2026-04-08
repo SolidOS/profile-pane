@@ -2,7 +2,7 @@ import { LiveStore, NamedNode, Node, st, literal, sym } from 'rdflib'
 import { ns } from 'solid-ui'
 import { ProfileBasicRow, HeadingMutationPlan } from './types'
 import { MutationOps } from '../shared/types'
-import { applyUpdaterPatch, collectLinkStatements, collectNodeStatements, findExistingNode } from '../shared/rdfMutationHelpers'
+import { applyUpdaterPatch, collectLinkedNodeStatements, collectNodeStatements, findExistingNode } from '../shared/rdfMutationHelpers'
 import { createIdNode } from '../shared/idNodeFactory'
 import { saveHeadingUpdatesFailedPrefixText } from '../../texts'
 import { ContactAddressRow, ContactPointRow } from '../contactInfo/types'
@@ -71,7 +71,11 @@ async function mutatePhoneEntry(store: LiveStore, subject: NamedNode, phoneOps: 
   if (removePhone?.entryNode) {
     const existingNode = findExistingNode(existingPhoneNodes, removePhone.entryNode)
     if (existingNode) {
-      deletions.push(...collectLinkStatements(store, subject, ns.vcard('hasTelephone'), existingNode, doc))
+      const linkedPhoneStatements = collectLinkedNodeStatements(store, subject, ns.vcard('hasTelephone'), doc)
+      const matchingLinkStatement = linkedPhoneStatements.linkStatements.find((statement) => statement.object?.value === existingNode.value)
+      if (matchingLinkStatement) {
+        deletions.push(matchingLinkStatement)
+      }
       deletions.push(...collectNodeStatements(store, existingNode, doc))
     }
   }
@@ -104,7 +108,11 @@ async function mutateEmailEntry(store: LiveStore, subject: NamedNode, emailOps: 
   if (removeEmail?.entryNode) {
     const existingNode = findExistingNode(existingEmailNodes, removeEmail.entryNode)
     if (existingNode) {
-      deletions.push(...collectLinkStatements(store, subject, ns.vcard('hasEmail'), existingNode, doc))
+      const linkedEmailStatements = collectLinkedNodeStatements(store, subject, ns.vcard('hasEmail'), doc)
+      const matchingLinkStatement = linkedEmailStatements.linkStatements.find((statement) => statement.object?.value === existingNode.value)
+      if (matchingLinkStatement) {
+        deletions.push(matchingLinkStatement)
+      }
       deletions.push(...collectNodeStatements(store, existingNode, doc))
     }
   }
@@ -137,7 +145,11 @@ async function mutateAddressEntry(store: LiveStore, subject: NamedNode, addressO
   if (removeAddress?.entryNode) {
     const existingNode = findExistingNode(existingAddressNodes, removeAddress.entryNode)
     if (existingNode) {
-      deletions.push(...collectLinkStatements(store, subject, ns.vcard('hasAddress'), existingNode, doc))
+      const linkedAddressStatements = collectLinkedNodeStatements(store, subject, ns.vcard('hasAddress'), doc)
+      const matchingLinkStatement = linkedAddressStatements.linkStatements.find((statement) => statement.object?.value === existingNode.value)
+      if (matchingLinkStatement) {
+        deletions.push(matchingLinkStatement)
+      }
       deletions.push(...collectNodeStatements(store, existingNode, doc))
     }
   }
