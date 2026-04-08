@@ -26,6 +26,18 @@ function sanitizeProjectFieldValue(value: string): string {
   return sanitizeTextValue(value)
 }
 
+function isValidProjectUrl(value: string): boolean {
+  const text = sanitizeProjectFieldValue(value)
+  if (!text) return false
+
+  try {
+    const parsed = new URL(text)
+    return parsed.protocol === 'http:' || parsed.protocol === 'https:'
+  } catch {
+    return false
+  }
+}
+
 function rowHasContent(row: ProjectRow): boolean {
   return [
     row.url,
@@ -57,6 +69,18 @@ function validateProjectsBeforeSave(rows: ProjectRow[]): string | null {
   if (!rows.some((row) => hasNonEmptyText(row.url) || hasNonEmptyText(row.entryNode))) {
     return 'Add at least one project URL.'
   }
+
+  const visibleRows = rows.filter((row) => row.status !== 'deleted')
+  for (let index = 0; index < visibleRows.length; index++) {
+    const row = visibleRows[index]
+    if (!hasNonEmptyText(row.url)) {
+      return `Project ${index + 1}: URL is required.`
+    }
+    if (!isValidProjectUrl(row.url)) {
+      return `Project ${index + 1}: please enter a valid URL starting with http:// or https://.`
+    }
+  }
+
   return null
 }
 
@@ -147,7 +171,7 @@ function renderProjectInputRow({
     <div class="inputRow">
       <label aria-label=${`${label} Project URL`} class="inputValueRow">
         <input
-          type="text"
+          type="url"
           name=${projectUrl}
           .value=${row?.url || ''}
           required
