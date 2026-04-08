@@ -1,6 +1,7 @@
 import '../styles/dialog.css'
 
 /* Copied from issue-pane, minor typescript adjustments */
+/* Changed modal from div to dialog element */
 let modalDialog: HTMLDialogElement | null = null
 let previousFocus: Element | null = null
 
@@ -30,7 +31,6 @@ function ensureModalDialog (dom: Document): HTMLDialogElement {
   modalDialog = null
   modalDialog = dom.createElement('dialog')
   modalDialog.id = 'profile-modal'
-  modalDialog.setAttribute('role', 'dialog')
   modalDialog.setAttribute('aria-modal', 'true')
   modalDialog.setAttribute('aria-labelledby', 'modal-title')
   modalDialog.setAttribute('aria-describedby', 'modal-desc')
