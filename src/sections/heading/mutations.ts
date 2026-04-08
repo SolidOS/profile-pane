@@ -1,16 +1,18 @@
 import { LiveStore, NamedNode, Node, st, literal, sym } from 'rdflib'
 import { ns } from 'solid-ui'
-import { ProfileBasicRow, IntroMutationPlan } from './types'
+import { ProfileBasicRow, HeadingMutationPlan } from './types'
 import { MutationOps } from '../shared/types'
 import { applyUpdaterPatch, collectLinkStatements, collectNodeStatements, findExistingNode } from '../shared/rdfMutationHelpers'
-import { saveIntroUpdatesFailedPrefixText } from '../../texts'
+import { createIdNode } from '../shared/idNodeFactory'
+import { saveHeadingUpdatesFailedPrefixText } from '../../texts'
 import { ContactAddressRow, ContactPointRow } from '../contactInfo/types'
 
 function buildPhoneStatements(subject: NamedNode, doc: NamedNode, node: Node, phone: ContactPointRow) {
   const normalizedValue = phone.value.startsWith('tel:') ? phone.value : `tel:${phone.value}`
+  const valueNode = sym(normalizedValue)
   const inserts = [
     st(subject, ns.vcard('hasTelephone'), node as any, doc),
-    st(node as any, ns.vcard('value'), normalizedValue as any, doc)
+    st(node as any, ns.vcard('value'), valueNode as any, doc)
   ]
 
   if (phone.type) {
@@ -22,9 +24,10 @@ function buildPhoneStatements(subject: NamedNode, doc: NamedNode, node: Node, ph
 
 function buildEmailStatements(subject: NamedNode, doc: NamedNode, node: Node, email: ContactPointRow) {
   const normalizedValue = email.value.startsWith('mailto:') ? email.value : `mailto:${email.value}`
+  const valueNode = sym(normalizedValue)
   const inserts = [
     st(subject, ns.vcard('hasEmail'), node as any, doc),
-    st(node as any, ns.vcard('value'), normalizedValue as any, doc)
+    st(node as any, ns.vcard('value'), valueNode as any, doc)
   ]
 
   if (email.type) {
@@ -82,7 +85,7 @@ async function mutatePhoneEntry(store: LiveStore, subject: NamedNode, phoneOps: 
   }
 
   if (createPhone) {
-    insertions.push(...buildPhoneStatements(subject, doc, store.bnode(), createPhone))
+    insertions.push(...buildPhoneStatements(subject, doc, createIdNode(doc), createPhone))
   }
 
   await applyUpdaterPatch(store, deletions, insertions)
@@ -115,7 +118,7 @@ async function mutateEmailEntry(store: LiveStore, subject: NamedNode, emailOps: 
   }
 
   if (createEmail) {
-    insertions.push(...buildEmailStatements(subject, doc, store.bnode(), createEmail))
+    insertions.push(...buildEmailStatements(subject, doc, createIdNode(doc), createEmail))
   }
 
   await applyUpdaterPatch(store, deletions, insertions)
@@ -148,7 +151,7 @@ async function mutateAddressEntry(store: LiveStore, subject: NamedNode, addressO
   }
 
   if (createAddress) {
-    insertions.push(...buildAddressStatements(subject, doc, store.bnode(), createAddress))
+    insertions.push(...buildAddressStatements(subject, doc, createIdNode(doc), createAddress))
   }
 
   await applyUpdaterPatch(store, deletions, insertions)
@@ -213,7 +216,7 @@ async function mutateBasicProfileEntry(store: LiveStore, subject: NamedNode, bas
   await applyUpdaterPatch(store, deletions, insertions)
 }
 
-export async function processIntroMutations(store: LiveStore, subject: NamedNode, mutationPlan: IntroMutationPlan) {
+export async function processHeadingMutations(store: LiveStore, subject: NamedNode, mutationPlan: HeadingMutationPlan) {
   try {
     await mutateBasicProfileEntry(store, subject, mutationPlan.basicOps)
     await mutatePhoneEntry(store, subject, mutationPlan.phoneOps)
@@ -221,6 +224,6 @@ export async function processIntroMutations(store: LiveStore, subject: NamedNode
     await mutateAddressEntry(store, subject, mutationPlan.addressOps)
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error)
-    throw new Error(`${saveIntroUpdatesFailedPrefixText} ${message}`)
+    throw new Error(`${saveHeadingUpdatesFailedPrefixText} ${message}`)
   }
 } 

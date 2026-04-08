@@ -3,7 +3,44 @@ import { ns } from 'solid-ui'
 import { ResumeRow } from './types'
 import { MutationOps } from '../shared/types'
 import { applyUpdaterPatch, collectNodeStatements, findExistingNode } from '../shared/rdfMutationHelpers'
+import { createIdNode } from '../shared/idNodeFactory'
 import { mutationSaveResumeFailedPrefixText, resumeUpdateEntryNotFoundErrorMessageText } from '../../texts'
+
+function membershipTypeForRole(resumeData: ResumeRow): NamedNode {
+  if (resumeData.isCurrentRole) return ns.solid('CurrentRole')
+
+  const todayIso = new Date().toISOString().slice(0, 10)
+  const startIso = resumeData.startDate?.value?.slice(0, 10) || ''
+  const endIso = resumeData.endDate?.value?.slice(0, 10) || ''
+
+  if (startIso && startIso > todayIso) return ns.solid('FutureRole')
+  if (endIso && endIso < todayIso) return ns.solid('PastRole')
+  return ns.solid('FutureRole')
+}
+
+function organizationTypeNode(orgType: string): NamedNode | null {
+  const text = (orgType || '').trim()
+  if (!text) return null
+
+  if (text.startsWith('http://') || text.startsWith('https://')) {
+    return sym(text)
+  }
+
+  const prefixed = text.match(/^([a-zA-Z][\w-]*):(.*)$/)
+  if (prefixed) {
+    const prefix = prefixed[1].toLowerCase()
+    const local = prefixed[2].trim()
+    if (!local) return null
+    if (prefix === 'schema') return ns.schema(local)
+    if (prefix === 'vcard') return ns.vcard(local)
+    if (prefix === 'solid') return ns.solid(local)
+    if (prefix === 'org') return ns.org(local)
+    return null
+  }
+
+  // For plain values like "Corporation", map to schema:Corporation.
+  return ns.schema(text)
+}
 
 
 function buildResumeStatements(
@@ -20,6 +57,8 @@ function buildResumeStatements(
     inserts.push(st(node as any, ns.org('member'), subject, doc))
   }
 
+  inserts.push(st(node as any, ns.rdf('type'), membershipTypeForRole(resumeData), doc))
+
   if (resumeData.title) {
     inserts.push(st(node as any, ns.vcard('role'), literal(resumeData.title), doc))
   }
@@ -34,14 +73,17 @@ function buildResumeStatements(
   }
 
   if (resumeData.orgName || resumeData.orgType || resumeData.orgLocation || resumeData.orgHomePage) {
-    const organizationNode = store.bnode()
+    const organizationNode = createIdNode(doc)
     inserts.push(st(node as any, ns.org('organization'), organizationNode, doc))
+    inserts.push(st(organizationNode, ns.rdf('type'), ns.vcard('Organization'), doc))
+
+    const organizationClassNode = organizationTypeNode(resumeData.orgType || '')
+    if (organizationClassNode) {
+      inserts.push(st(organizationNode, ns.rdf('type'), organizationClassNode, doc))
+    }
 
     if (resumeData.orgName) {
       inserts.push(st(organizationNode, ns.schema('name'), literal(resumeData.orgName), doc))
-    }
-    if (resumeData.orgType) {
-      inserts.push(st(organizationNode, ns.org('classification'), literal(resumeData.orgType), doc))
     }
     if (resumeData.orgLocation) {
       inserts.push(st(organizationNode, ns.org('location'), literal(resumeData.orgLocation), doc))
@@ -55,8 +97,7 @@ function buildResumeStatements(
 }
 
 function mintResumeNode(doc: NamedNode): NamedNode {
-  const suffix = `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`
-  return sym(`${doc.value}#resume-${suffix}`)
+  return createIdNode(doc)
 }
 
 async function mutateResumeEntries(store: LiveStore, subject: NamedNode, resumeOps: MutationOps<ResumeRow>) {
@@ -88,6 +129,7 @@ async function mutateResumeEntries(store: LiveStore, subject: NamedNode, resumeO
     }
 
     // For updates on existing named memberships, keep the membership link and replace only mutable fields.
+    deletions.push(...store.statementsMatching(existingNode as any, ns.rdf('type'), null, doc as any))
     deletions.push(...store.statementsMatching(existingNode as any, ns.vcard('role'), null, doc as any))
     deletions.push(...store.statementsMatching(existingNode as any, ns.schema('startDate'), null, doc as any))
     deletions.push(...store.statementsMatching(existingNode as any, ns.schema('endDate'), null, doc as any))

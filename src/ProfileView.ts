@@ -14,12 +14,12 @@ import { LanguageDetails } from './sections/languages/types'
 import { renderCVSection } from './sections/resume/ResumeSection'
 import { renderEducationSection } from './sections/education/EducationSection'
 import { renderProjectSection } from './sections/projects/ProjectSection'
-import { renderIntroSection } from './sections/intro/IntroSection'
+import { renderHeadingSection } from './sections/heading/HeadingSection'
 import { renderBioSection } from './sections/bio/BioSection'
 import { renderSocialAccounts } from './sections/social/SocialSection'
+import { classifyLinkCategory, fetchLinkPreview } from './sections/projects/linkPreview'
 
 type ProfileViewModelData = ReturnType<typeof presentProfileViewModel>
-type ProfileDetails = ProfileViewModelData['profileDetails']
 type SocialAccounts = ProfileViewModelData['social']
 
 function getViewerMode(subject: NamedNode): ViewerMode {
@@ -36,24 +36,20 @@ function renderSidebar(
   skills: string[],
   languages: LanguageDetails[],
   contactInfo: ContactInfo,
-  profileDetails: ProfileDetails,
-  viewerMode: ViewerMode
+  viewerMode: ViewerMode,
+  onSaved?: () => Promise<void> | void
 ) {
   return html`
     <aside 
       aria-labelledby="sidebar-heading" 
-      class="profileSidebar section-bg" 
-      role="complementary"
-      tabindex="-1"
+      class="profile__sidebar section-bg" 
     >
-      <header class="sr-only">
-        <h2 id="sidebar-heading" tabindex="-1">Sidebar</h2>
-      </header>
+      <h2 id="sidebar-heading" class="sr-only">Sidebar</h2>
       <div aria-label="Sidebar Content">
-        ${renderSocialAccounts(store, subject, accounts, viewerMode)}
-        ${renderSkillsSection(store, subject, skills, viewerMode)}
-        ${renderLanguageSection(store, subject, languages, viewerMode)}
-        ${renderContactInfoSection(store, subject, contactInfo, viewerMode)}
+        ${renderSocialAccounts(store, subject, accounts, viewerMode, onSaved)}
+        ${renderSkillsSection(store, subject, skills, viewerMode, onSaved)}
+        ${renderLanguageSection(store, subject, languages, viewerMode, onSaved)}
+        ${renderContactInfoSection(store, subject, contactInfo, viewerMode, onSaved)}
         ${renderQRCode(subject)}
       </div>
     </aside>
@@ -62,15 +58,59 @@ function renderSidebar(
 
 function renderQRCode(subject: NamedNode) {
   return html`
-      <div class="qrCodeSection section-centered">
+      <section class="profile__qr-code" aria-labelledby="qr-heading">
+        <h2 id="qr-heading" class="sr-only">QR code</h2>
         ${QRCodeCard(subject)}
-      </div>
+      </section>
   `
+}
+
+async function enrichProjectsForDisplay(projects: ProfileViewModelData['projects']) {
+  const enriched = await Promise.all(projects.map(async (project) => {
+    const url = (project.url || '').trim()
+    if (!url) return project
+
+    try {
+      const preview = await fetchLinkPreview(url)
+      const category = preview.category && preview.category !== 'unknown'
+        ? preview.category
+        : classifyLinkCategory({
+            url: preview.url || project.url,
+            title: preview.title || project.title,
+            description: preview.description || project.description,
+            businessType: preview.businessType || project.businessType
+          })
+
+      return {
+        ...project,
+        title: preview.title || project.title,
+        description: preview.description || project.description,
+        imageUrl: preview.imageUrl || project.imageUrl,
+        businessType: preview.businessType || project.businessType,
+        category,
+      }
+    } catch {
+      return {
+        ...project,
+        category: project.category && project.category !== 'unknown'
+          ? project.category
+          : classifyLinkCategory({
+              url: project.url,
+              title: project.title,
+              description: project.description,
+              businessType: project.businessType
+            })
+      }
+    }
+  }))
+
+  return enriched
 }
 
 export async function ProfileView (
   subject: NamedNode,
-  context: DataBrowserContext
+  context: DataBrowserContext,
+  onSaved?: () => Promise<void> | void
 ): Promise <TemplateResult> {
   const store = context.session.store as LiveStore
   const viewerMode = getViewerMode(subject)
@@ -81,7 +121,7 @@ export async function ProfileView (
   const skills = viewModel.skills
   const languages = viewModel.languages
   const education = viewModel.education
-  const projects = viewModel.projects
+  const projects = await enrichProjectsForDisplay(viewModel.projects)
   const bioDetails = viewModel.bioDetails
   const accounts = viewModel.social
   const contactInfo = viewModel.contactInfo
@@ -90,31 +130,22 @@ export async function ProfileView (
     <main
       id="main-content"
       class="profile-grid"
-      role="main"
-      aria-label="Profile for ${profileDetails.name}"
       tabindex="-1"
     > 
-      <section
-        class="profileSection section-bg"
-        role="region"
-        aria-labelledby="profile-content-heading"
-        >
-        <h2 id="profile-content-heading" class="sr-only">Profile content</h2>
-        <article 
-          aria-labelledby="profile-card-heading" 
-          class="section-bg" 
-          role="region"
-          tabindex="-1"
-        >
-          ${renderIntroSection(context, subject, profileDetails, viewerMode)}
-        </article>
+      <h1 id="profile-content-heading" class="sr-only">Profile for ${profileDetails.name}</h1>
 
-        ${renderBioSection(store, subject, bioDetails, viewerMode)}
-        ${renderCVSection(store, subject, rolesByType, viewerMode)}
-        ${renderProjectSection(store, subject, projects, viewerMode)}
-        ${renderEducationSection(store, subject, education, viewerMode)}
+      <section
+        class="profile__main section-bg"
+        >
+        <h2 id="profile-main-heading" class="sr-only">Main Profile Content</h2>
+
+        ${renderHeadingSection(context, subject, profileDetails, viewerMode, onSaved)}
+        ${renderBioSection(store, subject, bioDetails, viewerMode, onSaved)}
+        ${renderCVSection(store, subject, rolesByType, viewerMode, onSaved)}
+        ${renderProjectSection(store, subject, projects, viewerMode, onSaved)}
+        ${renderEducationSection(store, subject, education, viewerMode, onSaved)}
       </section>
-      ${renderSidebar(store, subject, accounts, skills, languages, contactInfo, profileDetails, viewerMode)}
+      ${renderSidebar(store, subject, accounts, skills, languages, contactInfo, viewerMode, onSaved)}
     </main>
   `
 }

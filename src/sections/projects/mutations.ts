@@ -1,8 +1,7 @@
-import { LiveStore, NamedNode, Node, st, sym, literal } from 'rdflib'
+import { LiveStore, NamedNode, st, sym } from 'rdflib'
 import { ns } from 'solid-ui'
-import { ProjectMutationPlan, ProjectRow, projectType } from './types'
+import { ProjectMutationPlan, ProjectRow } from './types'
 import { MutationOps } from '../shared/types'
-import { applyUpdaterPatch, collectLinkStatements, collectNodeStatements, findExistingNode } from '../shared/rdfMutationHelpers'
 
 /* This code is AI generated from Model: GPT-5.3-Codex */
 /* Prompt: I need to store Project data only the url of the project how
@@ -10,7 +9,11 @@ import { applyUpdaterPatch, collectLinkStatements, collectNodeStatements, findEx
 function toProjectUrlNode(project: ProjectRow): NamedNode | null {
 	const value = (project.url || '').trim()
 	if (!value) return null
-	return sym(value)
+	try {
+		return sym(new URL(value).href)
+	} catch {
+		return null
+	}
 }
 
 function normalizeProjectUrlKey(value: string): string {
@@ -25,103 +28,168 @@ function normalizeProjectUrlKey(value: string): string {
 	}
 }
 
-function readNodeUrlValue(node: Node | null | undefined): string {
-	if (!node) return ''
-	if ((node as any).termType === 'NamedNode' || (node as any).termType === 'Literal') {
-		return ((node as any).value || '').trim()
-	}
-	return ''
+function isPatchFailure(message: string): boolean {
+	const text = (message || '').toLowerCase()
+	return (
+		text.includes(' on patch ') ||
+		text.includes('web error: 500') ||
+		text.includes('web error: 501') ||
+		text.includes('web error: 405') ||
+		text.includes('web error: 400')
+	)
 }
 
-function buildProjectStatements(subject: NamedNode, doc: NamedNode, projectNode: any, project: ProjectRow) {
-	const projectUrlNode = toProjectUrlNode(project)
-	if (!projectUrlNode) return []
+function isMissingGetRecordError(message: string): boolean {
+	return (message || '').toLowerCase().includes('no record of our http get request for document')
+}
 
-	const inserts: any[] = [
-		st(subject, ns.schema('memberOf'), projectNode, doc),
-		st(projectNode as any, ns.rdf('type'), projectType, doc),
-		st(projectNode as any, ns.schema('url'), projectUrlNode, doc)
-	]
+function statementKey(statement: any): string {
+	return `${statement.subject?.toNT?.() || statement.subject?.value} ${statement.predicate?.toNT?.() || statement.predicate?.value} ${statement.object?.toNT?.() || statement.object?.value} ${statement.why?.toNT?.() || statement.why?.value}`
+}
 
-	if (project.title) {
-		inserts.push(st(projectNode as any, ns.schema('name'), literal(project.title), doc))
+function sanitizePatchStatements(store: LiveStore, deletions: any[], insertions: any[]) {
+	const safeDeletions = Array.from(new Map(
+		(deletions || [])
+			.filter((statement) => {
+				if (!statement || !statement.subject || !statement.predicate || !statement.object) return false
+				return store.holds(statement.subject, statement.predicate, statement.object, statement.why)
+			})
+			.map((statement) => [statementKey(statement), statement])
+	).values())
+
+	const safeInsertions = Array.from(new Map(
+		(insertions || [])
+			.filter((statement) => Boolean(statement && statement.subject && statement.predicate && statement.object))
+			.map((statement) => [statementKey(statement), statement])
+	).values())
+
+	return { safeDeletions, safeInsertions }
+}
+
+async function runPutFallback(store: LiveStore, doc: NamedNode, deletions: any[], insertions: any[]) {
+	const updater = store.updater as any
+	const fetcher = (store as any).fetcher
+
+	if (!updater || typeof updater.serialize !== 'function' || !fetcher || typeof fetcher.webOperation !== 'function') {
+		throw new Error('Project updates are not supported by this store updater.')
 	}
 
-	if (project.businessType) {
-		inserts.push(st(projectNode as any, ns.schema('industry'), literal(project.businessType), doc))
+	const currentStatements = store.statementsMatching(undefined, undefined, undefined, doc).slice()
+	const deletionKeys = new Set((deletions || []).map((statement) => statementKey(statement)))
+	const nextStatements = currentStatements.filter((statement) => !deletionKeys.has(statementKey(statement))).concat(insertions || [])
+
+	const contentType = 'text/turtle'
+	const body = updater.serialize(doc.value, nextStatements, contentType)
+	const response = await fetcher.webOperation('PUT', doc.value, {
+		noMeta: true,
+		contentType,
+		body
+	})
+
+	if (!response || response.ok !== true) {
+		const status = response?.status || 'unknown'
+		throw new Error(`Web error: ${status} on PUT of <${doc.value}>`)
 	}
 
-	if (project.description) {
-		inserts.push(st(projectNode as any, ns.schema('description'), literal(project.description), doc))
+	store.remove(deletions)
+	insertions.forEach((statement) => {
+		store.add(statement.subject, statement.predicate, statement.object, statement.why)
+	})
+}
+
+async function runUpdateWithDavFallback(store: LiveStore, doc: NamedNode, deletions: any[], insertions: any[]) {
+	const updater = store.updater as any
+	if (!updater || typeof updater.update !== 'function') {
+		throw new Error('Project updates are not supported by this store updater.')
 	}
 
-	if (project.imageUrl) {
-		const imageValue = project.imageUrl.trim()
-		if (imageValue.startsWith('http://') || imageValue.startsWith('https://')) {
-			inserts.push(st(projectNode as any, ns.schema('image'), sym(imageValue), doc))
-		} else {
-			inserts.push(st(projectNode as any, ns.schema('image'), literal(imageValue), doc))
+	const { safeDeletions, safeInsertions } = sanitizePatchStatements(store, deletions, insertions)
+	if (safeDeletions.length === 0 && safeInsertions.length === 0) {
+		return
+	}
+
+	const tryUpdate = () => new Promise<void>((resolve, reject) => {
+		updater.update(safeDeletions, safeInsertions, (_uri: string, ok: boolean, message?: string) => {
+			if (ok === true) {
+				resolve()
+				return
+			}
+			reject(new Error(message || 'Failed to save projects'))
+		})
+	})
+
+	try {
+		await tryUpdate()
+		return
+	} catch (error) {
+		const message = error instanceof Error ? error.message : String(error)
+		if (!isPatchFailure(message) || typeof updater.updateDav !== 'function') {
+			throw error
+		}
+
+		if (store.fetcher && typeof (store.fetcher as any).load === 'function') {
+			try {
+				await (store.fetcher as any).load(doc)
+			} catch {
+				// continue to fallback
+			}
+		}
+
+		try {
+			await new Promise<void>((resolve, reject) => {
+				updater.updateDav(doc, safeDeletions, safeInsertions, (_uri: string, ok: boolean, body?: string) => {
+					if (ok === true) {
+						resolve()
+						return
+					}
+					reject(new Error(body || message || 'Failed to save projects'))
+				})
+			})
+		} catch (davError) {
+			const davMessage = davError instanceof Error ? davError.message : String(davError)
+			if (!isMissingGetRecordError(davMessage)) {
+				throw davError
+			}
+			await runPutFallback(store, doc, safeDeletions, safeInsertions)
 		}
 	}
-
-	if (project.category && project.category !== 'unknown') {
-		inserts.push(st(projectNode as any, ns.schema('additionalType'), literal(project.category), doc))
-	}
-
-	return inserts
 }
 
 async function mutateProjectEntries(store: LiveStore, subject: NamedNode, projectOps: MutationOps<ProjectRow>) {
 	const doc = subject.doc()
-	const existingProjectNodes = store
-		.each(subject, ns.schema('memberOf'), null, doc)
-		.filter((node) => store.holds(node as any, ns.rdf('type'), projectType, doc as any))
-
-	const existingByUrl = new Map<string, Node>()
-	existingProjectNodes.forEach((projectNode) => {
-		const urlNode = store.any(projectNode as NamedNode, ns.schema('url'), null, doc) as Node | null
-		const key = normalizeProjectUrlKey(readNodeUrlValue(urlNode))
+	const existingLinks = store.each(subject, ns.solid('community'), null, doc)
+	const existingByUrl = new Map<string, NamedNode>()
+	existingLinks.forEach((linkNode: any) => {
+		if (!linkNode || linkNode.termType !== 'NamedNode') return
+		const key = normalizeProjectUrlKey(linkNode.value)
 		if (key && !existingByUrl.has(key)) {
-			existingByUrl.set(key, projectNode as Node)
+			existingByUrl.set(key, linkNode as NamedNode)
 		}
 	})
 
 	const deletions: any[] = []
 	const insertions: any[] = []
+	const removeLink = (link: NamedNode) => {
+		deletions.push(st(subject, ns.solid('community'), link, doc))
+	}
+	const addLink = (link: NamedNode) => {
+		insertions.push(st(subject, ns.solid('community'), link, doc))
+	}
 
 	projectOps.remove.forEach((project) => {
-		if (!project.entryNode) return
-		const existingNode = findExistingNode(existingProjectNodes, project.entryNode)
-		if (existingNode) {
-			deletions.push(...collectLinkStatements(store, subject, ns.schema('memberOf'), existingNode, doc))
-			if ((existingNode as any).termType !== 'Literal') {
-				deletions.push(...collectNodeStatements(store, existingNode as any, doc))
-			}
-		}
+		const entryKey = normalizeProjectUrlKey(project.entryNode || '')
+		const urlKey = normalizeProjectUrlKey(project.url)
+		const existing = (entryKey && existingByUrl.get(entryKey)) || (urlKey && existingByUrl.get(urlKey))
+		if (existing) removeLink(existing)
 	})
 
 	projectOps.update.forEach((project) => {
+		const newLink = toProjectUrlNode(project)
 		const urlKey = normalizeProjectUrlKey(project.url)
-		const existingNode = project.entryNode
-			? findExistingNode(existingProjectNodes, project.entryNode) || (urlKey ? existingByUrl.get(urlKey) : undefined)
-			: (urlKey ? existingByUrl.get(urlKey) : undefined)
-		if (existingNode) {
-			deletions.push(...collectLinkStatements(store, subject, ns.schema('memberOf'), existingNode, doc))
-			if ((existingNode as any).termType !== 'Literal') {
-				deletions.push(...collectNodeStatements(store, existingNode as any, doc))
-			}
-			insertions.push(...buildProjectStatements(subject, doc, existingNode as Node, project))
-			return
-		}
-
-		if (urlKey && existingByUrl.has(urlKey)) {
-			return
-		}
-
-		insertions.push(...buildProjectStatements(subject, doc, store.bnode() as Node, project))
-		if (urlKey) {
-			existingByUrl.set(urlKey, store.bnode() as Node)
-		}
+		const entryKey = normalizeProjectUrlKey(project.entryNode || '')
+		const existing = (entryKey && existingByUrl.get(entryKey)) || (urlKey && existingByUrl.get(urlKey))
+		if (existing) removeLink(existing)
+		if (newLink) addLink(newLink)
 	})
 
 	const seenCreateUrlKeys = new Set<string>()
@@ -130,13 +198,15 @@ async function mutateProjectEntries(store: LiveStore, subject: NamedNode, projec
 		if (urlKey && (existingByUrl.has(urlKey) || seenCreateUrlKeys.has(urlKey))) {
 			return
 		}
-		insertions.push(...buildProjectStatements(subject, doc, store.bnode() as Node, project))
+		const newLink = toProjectUrlNode(project)
+		if (!newLink) return
+		addLink(newLink)
 		if (urlKey) {
 			seenCreateUrlKeys.add(urlKey)
 		}
 	})
 
-	await applyUpdaterPatch(store, deletions, insertions)
+	await runUpdateWithDavFallback(store, doc, deletions, insertions)
 }
 
 export async function processProjectsMutations(store: LiveStore, subject: NamedNode, mutationPlan: ProjectMutationPlan) {

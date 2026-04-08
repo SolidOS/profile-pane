@@ -1,11 +1,10 @@
 import { openInputDialog } from '../../ui/dialog'
 import { html, render, TemplateResult } from 'lit-html'
-import { ProfileDetails, IntroMutationPlan, ProfileBasicRow } from './types'
-import { Image } from './IntroSection'
+import { ProfileDetails, HeadingMutationPlan, ProfileBasicRow } from './types'
+import { Image } from './HeadingSection'
 import '../../styles/SectionInputRows.css'
-import '../../styles/IntroEditDialog.css'
 import { LiveStore, NamedNode } from 'rdflib'
-import { processIntroMutations } from './mutations'
+import { processHeadingMutations } from './mutations'
 import { ViewerMode } from '../../types'
 import {
   combinePhoneValue,
@@ -18,17 +17,18 @@ import { hasNonEmptyText, sanitizeTextValue, toText, toTypeLabel } from '../../t
 import {
   dialogCancelLabelText,
   dialogSubmitLabelText,
-  editIntroDialogTitleText,
+  editHeadingDialogTitleText,
   ownerLoginRequiredDialogMessageText,
-  saveIntroUpdatesFailedPrefixText
+  saveHeadingUpdatesFailedPrefixText
 } from '../../texts'
 import { ContactAddressRow, ContactPointRow } from '../contactInfo/types'
 import { sanitizeAddressFieldValue, sanitizeBasicInputFieldValue, sanitizeEmailValue, sanitizePhoneLocalValue } from '../shared/sanitizeUtils'
+import { toEditableDateDMY, toStorageDateISO } from './dateHelpers'
 
 // Notes: In the design there is no type on address, but phone and email have a type.
 // guess it depends on where we are storing this data whether we should add type or not
 // for now I've left type but can remove.
-type IntroFormState = {
+type HeadingFormState = {
   basicInfo: ProfileBasicRow
   email: ContactPointRow
   phone: ContactPointRow
@@ -77,28 +77,6 @@ function rowHasContent(row: Row): boolean {
   return false
 }
 
-function toDateInputValue(value: string | undefined): string {
-  if (!value) return ''
-  const trimmed = value.trim()
-  // Native date inputs expect yyyy-mm-dd.
-  if (/^\d{4}-\d{2}-\d{2}$/.test(trimmed)) return trimmed
-  return ''
-}
-
-function openNativeDatePicker(event: Event): void {
-  const target = event.currentTarget as HTMLInputElement | null
-  if (!target) return
-
-  // Prefer the built-in browser picker so users don't rely on extension UI icons.
-  if (typeof target.showPicker === 'function') {
-    try {
-      target.showPicker()
-    } catch {
-      // Ignore unsupported/blocked showPicker calls.
-    }
-  }
-}
-
 function normalizePronounsValue(value: string | undefined): string {
   const normalized = sanitizeTextValue(value || '').toLowerCase().replace(/\s+/g, '')
   if (!normalized) return ''
@@ -108,7 +86,7 @@ function normalizePronounsValue(value: string | undefined): string {
   return value || ''
 }
 
-function toFormState(profileData: ProfileDetails): IntroFormState {
+function toFormState(profileData: ProfileDetails): HeadingFormState {
   const basicInfo: ProfileBasicRow = {
     name: sanitizeTextValue(toText(profileData.name)),
     nickname: sanitizeTextValue(toText(profileData.nickname || '')),
@@ -450,7 +428,7 @@ function renderContactAddressInput({
   `
 }
 
-function renderIntroBasicInfoInput(
+function renderHeadingBasicInfoInput(
   basicInfo: ProfileBasicRow
 ): TemplateResult {
   const imageSrcLabel = 'Profile Photo'
@@ -467,6 +445,14 @@ function renderIntroBasicInfoInput(
     const nextValue = sanitizeBasicInputFieldValue(target.value)
     if (basicInfo) {
       applyRowFieldChange(basicInfo, field, nextValue, rowHasContent)
+    }
+  }
+
+  const handleDateOfBirthInput = (e: Event) => {
+    const target = e.target as HTMLInputElement
+    const nextValue = sanitizeBasicInputFieldValue(target.value)
+    if (basicInfo) {
+      applyRowFieldChange(basicInfo, 'dateOfBirth', toStorageDateISO(nextValue), rowHasContent)
     }
   }
    const handlePronounsInput = (e: Event) => {
@@ -580,19 +566,20 @@ function renderIntroBasicInfoInput(
       <label aria-label=${dateOfBirthLabel} class="inputValueRow">
         ${dateOfBirthLabel}
         <input
-          type="date"
+          type="text"
           name="profile-date-of-birth"
-          .value=${toDateInputValue(basicInfo?.dateOfBirth)}
+          .value=${toEditableDateDMY(basicInfo?.dateOfBirth)}
           data-contact-field="dateOfBirth"
           data-entry-node=${basicInfo?.entryNode || ''}
           data-row-status=${basicInfo?.status || 'n/a'}
+          placeholder="DD-MM-YYYY"
           autocomplete="off"
+          inputmode="numeric"
+          pattern="\d{2}-\d{2}-\d{4}"
           data-lpignore="true"
           data-1p-ignore="true"
           data-bwignore="true"
-          @focus=${openNativeDatePicker}
-          @click=${openNativeDatePicker}
-          @change=${handleBasicInfoInput('dateOfBirth')}
+          @change=${handleDateOfBirthInput}
         />
       </label>
     </div>
@@ -646,16 +633,16 @@ function renderContactPointInput(
     `
 }
 
-function renderIntroEditTemplate(form: HTMLFormElement, formState: IntroFormState) {
+function renderHeadingEditTemplate(form: HTMLFormElement, formState: HeadingFormState) {
  
   render(html`
-    ${renderIntroBasicInfoInput(formState.basicInfo)}
+    ${renderHeadingBasicInfoInput(formState.basicInfo)}
     ${renderContactPointInput(formState.phone, formState.email)}
     ${renderContactAddressInput({ address: formState.address })}
   `, form)
 }
 
-function createIntroEditForm(profileData: ProfileDetails) {
+function createHeadingEditForm(profileData: ProfileDetails) {
   const form = document.createElement('form')
   form.classList.add('section-edit-form')
   form.autocomplete = 'off'
@@ -664,12 +651,12 @@ function createIntroEditForm(profileData: ProfileDetails) {
   form.setAttribute('data-bwignore', 'true')
 
   const formState = toFormState(profileData)
-  renderIntroEditTemplate(form, formState)
+  renderHeadingEditTemplate(form, formState)
 
   return { form, formState }
 }
 
-function validateIntroDataBeforeSave(formState: IntroFormState): string | null {
+function validateHeadingDataBeforeSave(formState: HeadingFormState): string | null {
   const basicInfoOps = summarizeRowOps([formState.basicInfo], rowHasContent)
   const phoneOps = summarizeRowOps([formState.phone], rowHasContent)
   const emailOps = summarizeRowOps([formState.email], rowHasContent)
@@ -685,7 +672,7 @@ function validateIntroDataBeforeSave(formState: IntroFormState): string | null {
 }
 
 
-export async function createIntroEditDialog(
+export async function createHeadingEditDialog(
   event: Event,
   store: LiveStore,
   subject: NamedNode,
@@ -694,10 +681,10 @@ export async function createIntroEditDialog(
   onSaved?: () => Promise<void> | void
 ) {
   const dom = (event.currentTarget as HTMLElement | null)?.ownerDocument || document
-  const { form, formState } = createIntroEditForm(profileData)
+  const { form, formState } = createHeadingEditForm(profileData)
 
   const result = await openInputDialog({
-    title: editIntroDialogTitleText,
+    title: editHeadingDialogTitleText,
     dom,
     form,
     submitLabel: dialogSubmitLabelText,
@@ -706,20 +693,20 @@ export async function createIntroEditDialog(
       if (viewerMode !== 'owner') {
         return ownerLoginRequiredDialogMessageText
       }
-      return validateIntroDataBeforeSave(formState)
+      return validateHeadingDataBeforeSave(formState)
     },
     onSave: async () => {
-      const plan: IntroMutationPlan = {
+      const plan: HeadingMutationPlan = {
         basicOps: summarizeRowOps([formState.basicInfo], rowHasContent),
         phoneOps: summarizeRowOps([formState.phone], rowHasContent),
         emailOps: summarizeRowOps([formState.email], rowHasContent),
         addressOps: summarizeRowOps([formState.address], rowHasContent)
       }
-      await processIntroMutations(store, subject, plan)
+      await processHeadingMutations(store, subject, plan)
     },
     formatSaveError: (error: unknown) => {
       const message = error instanceof Error ? error.message : String(error)
-      return `${saveIntroUpdatesFailedPrefixText} ${message}`
+      return `${saveHeadingUpdatesFailedPrefixText} ${message}`
     }
   })
 

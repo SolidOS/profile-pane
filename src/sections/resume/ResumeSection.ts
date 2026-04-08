@@ -85,7 +85,8 @@ export function renderCVSection(
   store: LiveStore,
   subject: NamedNode,
   roles: RoleDetails[],
-  viewerMode: ViewerMode
+  viewerMode: ViewerMode,
+  onSaved?: () => Promise<void> | void
 ) {
   scheduleDescriptionOverflowCheck()
 
@@ -109,7 +110,7 @@ export function renderCVSection(
                 type="button"
                 class="actionButton"
                 aria-label="Edit resume details"
-                @click=${(event: Event) => createResumeEditDialog(event, store, subject, resumeDetails, viewerMode)}
+                @click=${(event: Event) => createResumeEditDialog(event, store, subject, resumeDetails, viewerMode, onSaved)}
               >
                 <span class="actionIcon" aria-hidden="true">✎ Edit</span>
               </button>

@@ -3,6 +3,53 @@ import { ns } from 'solid-ui'
 import { RoleDetails } from './types'
 
 const educationMembershipType = ns.schema('EducationalOccupationalCredential')
+const vcardOrganizationType = ns.vcard('Organization').value
+const schemaNamespace = 'http://schema.org/'
+
+function localNameFromUri(uri: string): string {
+  const value = (uri || '').trim()
+  if (!value) return ''
+  const fragmentMatch = value.match(/[#/]([^#/]+)$/)
+  return fragmentMatch?.[1] || value
+}
+
+function nodeToDisplayText(store: LiveStore, node: Node | null | undefined, doc: NamedNode): string {
+  if (!node) return ''
+  if (node.termType === 'Literal') return node.value
+  if (node.termType === 'NamedNode') {
+    const label = store.anyJS(node as NamedNode, ns.rdfs('label'), null, doc) as string | null
+    if (label) return label
+    return localNameFromUri(node.value)
+  }
+  return ''
+}
+
+function roleTypeFromMembership(store: LiveStore, membership: NamedNode, doc: NamedNode): string {
+  const roleTypes = store
+    .each(membership, ns.rdf('type'), null, doc)
+    .filter((node) => node.termType === 'NamedNode' && node.value.startsWith(ns.solid('').value))
+
+  const matched = roleTypes.find((node) => {
+    const local = localNameFromUri((node as NamedNode).value)
+    return local === 'PastRole' || local === 'CurrentRole' || local === 'FutureRole'
+  }) || roleTypes[0]
+
+  return nodeToDisplayText(store, matched as Node | undefined, doc)
+}
+
+function organizationTypeFromNode(store: LiveStore, organization: NamedNode, doc: NamedNode): string {
+  const classification = store.any(organization, ns.org('classification'), null, doc)
+  const classificationText = nodeToDisplayText(store, classification as Node | null, doc)
+  if (classificationText) return classificationText
+
+  const organizationTypes = store
+    .each(organization, ns.rdf('type'), null, doc)
+    .filter((node) => node.termType === 'NamedNode')
+    .filter((node) => (node as NamedNode).value !== vcardOrganizationType)
+
+  const preferred = organizationTypes.find((node) => (node as NamedNode).value.startsWith(schemaNamespace)) || organizationTypes[0]
+  return nodeToDisplayText(store, preferred as Node | undefined, doc)
+}
 
 function isEducationMembership(store: LiveStore, membership: Node, doc: NamedNode): boolean {
   return store.holds(membership as any, ns.rdf('type'), educationMembershipType, doc as any)
@@ -44,13 +91,18 @@ function getRoles(
     const roleDescription = store.anyJS(membership as NamedNode, ns.schema('description'), null, doc) as string | null
     const isCurrentRole = !endDate
 
+    const roleType = roleTypeFromMembership(store, membership as NamedNode, doc)
+
     const organization = store.any(membership as NamedNode, ns.org('organization'), null, doc)
     if (organization) {
       orgNameGiven = store.anyJS(organization as NamedNode, ns.schema('name'), null, doc)
       orgHomePage = store.any(organization as NamedNode, ns.schema('uri'), null, doc)
-      orgType = store.any(organization as NamedNode, ns.org('classification'), null, doc)
+      orgType = organizationTypeFromNode(store, organization as NamedNode, doc)
       orgLocation = store.any(organization as NamedNode, ns.org('location'), null, doc)
       publicId = store.any(organization as NamedNode, ns.solid('publicId'), null, doc)
+    }
+    if (roleType) {
+      orgType = roleType
     }
     if (publicId) {
       publicIdName = store.anyJS(publicId as NamedNode, ns.schema('name'), null, doc)

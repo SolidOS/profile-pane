@@ -1,8 +1,8 @@
 import { describe, expect, it } from "@jest/globals"
 import { graph, sym } from 'rdflib'
-import { presentProfile, pronounsAsText } from '../../src/sections/intro/selectors'
-import { processIntroMutations } from '../../src/sections/intro/mutations'
-import { saveIntroUpdatesFailedPrefixText } from '../../src/texts'
+import { presentProfile, pronounsAsText } from '../../src/sections/heading/selectors'
+import { processHeadingMutations } from '../../src/sections/heading/mutations'
+import { saveHeadingUpdatesFailedPrefixText } from '../../src/texts'
 
 describe('Intro selectors and mutations', () => {
   it('selectors return a stable profile shape from empty store', () => {
@@ -27,8 +27,8 @@ describe('Intro selectors and mutations', () => {
       addressOps: { create: [], update: [], remove: [] }
     }
 
-    await expect(processIntroMutations(store, subject, plan as any)).rejects.toThrow(
-      saveIntroUpdatesFailedPrefixText
+    await expect(processHeadingMutations(store, subject, plan as any)).rejects.toThrow(
+      saveHeadingUpdatesFailedPrefixText
     )
   })
 })

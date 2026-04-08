@@ -1,7 +1,7 @@
 export type LinkCategory = 'project' | 'community' | 'unknown'
 /* This code is AI generated from Model: GPT-5.3-Codex */
-/* Prompt: can you  use this https://www.opengraph.io/link-preview-api to
-  export a image, title and description and possibly whether the thing
+/* Prompt: can you use a keyless metadata API to
+  export image, title and description and possibly whether the thing
   is a project or community.  */
 export type LinkPreview = {
   url: string
@@ -13,52 +13,78 @@ export type LinkPreview = {
   category: LinkCategory
 }
 
-type OpenGraphApiResponse = {
-  hybridGraph?: {
+type LinkMetaApiResponse = {
+  status?: string
+  message?: string
+  data?: {
+    url?: string
     title?: string
     description?: string
     image?: string
-    url?: string
-    site_name?: string
+    siteName?: string
     type?: string
-    images?: string[]
-  }
-  openGraph?: {
-    title?: string
-    description?: string
-    image?: { url?: string } | string
-    url?: string
-    site_name?: string
-    type?: string
-    images?: string[]
-  }
-  htmlInferred?: {
-    title?: string
-    description?: string
-    image?: string
-    images?: string[]
-    url?: string
-    site_name?: string
-    type?: string
+    openGraph?: {
+      type?: string
+      title?: string
+      description?: string
+      image?: string
+      url?: string
+      siteName?: string
+    }
   }
 }
 
-function inferCategory(typeHint?: string, title?: string, description?: string): LinkCategory {
-  const typeText = (typeHint || '').toLowerCase()
-  const titleText = (title || '').toLowerCase()
-  const descriptionText = (description || '').toLowerCase()
-  const fullText = `${typeText} ${titleText} ${descriptionText}`
+type CategoryHints = {
+  url?: string
+  typeHint?: string
+  title?: string
+  description?: string
+  businessType?: string
+}
 
-  if (fullText.includes('community') || fullText.includes('forum') || fullText.includes('group')) {
+function tokenizeForCategory(value: string): string[] {
+  return (value || '')
+    .toLowerCase()
+    .split(/[^a-z0-9]+/)
+    .filter(Boolean)
+}
+
+function buildCategoryText(hints: CategoryHints) {
+  const raw = [
+    hints.typeHint || '',
+    hints.title || '',
+    hints.description || '',
+    hints.businessType || '',
+    hints.url || ''
+  ].join(' ')
+
+  return {
+    fullText: raw.toLowerCase(),
+    tokens: new Set(tokenizeForCategory(raw))
+  }
+}
+
+export function classifyLinkCategory(hints: CategoryHints): LinkCategory {
+  const { fullText, tokens } = buildCategoryText(hints)
+
+  const hasCommunityToken = [
+    'community', 'forum', 'group', 'club', 'team', 'association', 'society',
+    'supporter', 'supporters', 'fan', 'fans', 'fandom', 'federation',
+    'football', 'soccer', 'rugby', 'cricket', 'hockey', 'basketball',
+    'baseball', 'volleyball', 'athletics', 'esports', 'ultras', 'fc', 'afc', 'cf', 'sc'
+  ].some((token) => tokens.has(token))
+
+  if (hasCommunityToken || fullText.includes('supporters club') || fullText.includes('football club') || fullText.includes('soccer club')) {
     return 'community'
   }
 
-  if (fullText.includes('project') || fullText.includes('repo') || fullText.includes('product')) {
+  const hasProjectToken = [
+    'project', 'repo', 'repository', 'product', 'platform', 'app', 'application',
+    'tool', 'library', 'framework', 'sdk', 'plugin', 'extension', 'api', 'service', 'startup'
+  ].some((token) => tokens.has(token))
+
+  if (hasProjectToken || fullText.includes('open source')) {
     return 'project'
-  }
-
-  if (fullText.includes('club') || fullText.includes('team') || fullText.includes('association') || fullText.includes('society')) {
-    return 'community'
   }
 
   return 'unknown'
@@ -81,47 +107,31 @@ function inferBusinessType(typeHint?: string, title?: string, description?: stri
   return typeText
 }
 
-function pickImage(response: OpenGraphApiResponse): string | undefined {
-  const ogImage = response.openGraph?.image
-  if (typeof ogImage === 'string') return ogImage
-  if (ogImage && typeof ogImage === 'object' && ogImage.url) return ogImage.url
-
-  if (response.hybridGraph?.image) return response.hybridGraph.image
-  if (response.htmlInferred?.image) return response.htmlInferred.image
-
-  const inferredImages = response.htmlInferred?.images || []
-  if (Array.isArray(inferredImages) && inferredImages.length > 0) return inferredImages[0]
-
-  const hybridImages = response.hybridGraph?.images || []
-  if (Array.isArray(hybridImages) && hybridImages.length > 0) return hybridImages[0]
-
-  const ogImages = response.openGraph?.images || []
-  if (Array.isArray(ogImages) && ogImages.length > 0) return ogImages[0]
-
-  return undefined
-}
-
-export async function fetchLinkPreview(url: string, apiKey: string): Promise<LinkPreview> {
+export async function fetchLinkPreview(url: string): Promise<LinkPreview> {
   const normalizedUrl = (url || '').trim()
   if (!normalizedUrl) {
     return { url: '', category: 'unknown' }
   }
 
-  const endpoint = `https://opengraph.io/api/1.1/site/${encodeURIComponent(normalizedUrl)}?app_id=${encodeURIComponent(apiKey)}`
+  const endpoint = `https://linkmeta.dev/api/v1/extract?url=${encodeURIComponent(normalizedUrl)}`
 
   const response = await fetch(endpoint)
   if (!response.ok) {
-    throw new Error(`OpenGraph request failed (${response.status})`)
+    throw new Error(`LinkMeta request failed (${response.status})`)
   }
 
-  const payload = (await response.json()) as OpenGraphApiResponse
+  const payload = (await response.json()) as LinkMetaApiResponse
+  if (payload?.status !== 'success' || !payload?.data) {
+    throw new Error(payload?.message || 'LinkMeta API error')
+  }
 
-  const title = payload.hybridGraph?.title || payload.openGraph?.title || payload.htmlInferred?.title
-  const description = payload.hybridGraph?.description || payload.openGraph?.description || payload.htmlInferred?.description
-  const imageUrl = pickImage(payload)
-  const siteName = payload.hybridGraph?.site_name || payload.openGraph?.site_name || payload.htmlInferred?.site_name
-  const canonicalUrl = payload.hybridGraph?.url || payload.openGraph?.url || payload.htmlInferred?.url || normalizedUrl
-  const typeHint = payload.hybridGraph?.type || payload.openGraph?.type || payload.htmlInferred?.type
+  const title = payload.data.openGraph?.title || payload.data.title
+  const description = payload.data.openGraph?.description || payload.data.description
+  const imageUrl = payload.data.openGraph?.image || payload.data.image
+  const siteName = payload.data.openGraph?.siteName || payload.data.siteName
+  const canonicalUrl = payload.data.openGraph?.url || payload.data.url || normalizedUrl
+  const typeHint = payload.data.openGraph?.type || payload.data.type
+  const businessType = inferBusinessType(typeHint, title, description)
 
   return {
     url: canonicalUrl,
@@ -129,7 +139,13 @@ export async function fetchLinkPreview(url: string, apiKey: string): Promise<Lin
     description,
     imageUrl,
     siteName,
-    businessType: inferBusinessType(typeHint, title, description),
-    category: inferCategory(typeHint, title, description)
+    businessType,
+    category: classifyLinkCategory({
+      url: canonicalUrl,
+      typeHint,
+      title,
+      description,
+      businessType
+    })
   }
 }

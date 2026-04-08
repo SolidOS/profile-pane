@@ -28,14 +28,14 @@ export function presentSocial(
   ensureSocialOntologyLoaded(store)
 
   const accountNodes = store.each(subject, ns.foaf('account'))
-  let accountThings = accountNodes.flatMap(node => expandRdfList(store, node))
+  const accountThings = accountNodes.flatMap(node => expandRdfList(store, node))
   // Deduplicate by foaf:accountName value
   const accountNameSet = new Set<string>()
   const accounts: Account[] = []
   for (const ac of accountThings) {
     if (ac.termType === 'NamedNode') {
       const accountNameNode = store.any(ac as NamedNode, ns.foaf('accountName'))
-      const dedupeKey = accountNameNode ? accountNameNode.value : (ac as NamedNode).value
+      const dedupeKey = accountNameNode ? accountNameNode.value : ''
       if (!accountNameSet.has(dedupeKey)) {
         accountNameSet.add(dedupeKey)
         accounts.push(accountAsObject(ac as NamedNode))

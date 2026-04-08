@@ -21,6 +21,58 @@ type SkillFormState = {
   skills: SkillRow[]
 }
 
+type SkillSuggestion = {
+  label: string
+  uri: string
+}
+
+const ESCO_SKILL_SEARCH_URI = 'https://ec.europa.eu/esco/api/search?language=$(language)&limit=$(limit)&type=skill&text=$(name)'
+const ESCO_SEARCH_LANGUAGE = 'en'
+const ESCO_SEARCH_LIMIT = 8
+
+function buildEscoSkillSearchUrl(name: string): string {
+  return ESCO_SKILL_SEARCH_URI
+    .replace('$(language)', encodeURIComponent(ESCO_SEARCH_LANGUAGE))
+    .replace('$(limit)', encodeURIComponent(String(ESCO_SEARCH_LIMIT)))
+    .replace('$(name)', encodeURIComponent(name))
+}
+
+function toSkillLabel(result: any): string {
+  return result?.title || result?.searchHit || result?.preferredLabel?.en || result?.uri || ''
+}
+
+async function fetchEscoSkillSuggestions(name: string): Promise<SkillSuggestion[]> {
+  const query = sanitizeSkillFieldValue(name)
+  if (query.length < 2 || typeof fetch !== 'function') return []
+
+  try {
+    const response = await fetch(buildEscoSkillSearchUrl(query), {
+      headers: { Accept: 'application/json' }
+    })
+    if (!response.ok) return []
+
+    const payload = await response.json() as any
+    const results = Array.isArray(payload?._embedded?.results) ? payload._embedded.results : []
+    const seen = new Set<string>()
+
+    return results
+      .map((result: any) => {
+        const label = sanitizeSkillFieldValue(toSkillLabel(result))
+        const uri = typeof result?.uri === 'string' ? result.uri : ''
+        return { label, uri }
+      })
+      .filter((suggestion: SkillSuggestion) => {
+        if (!suggestion.label) return false
+        const key = suggestion.label.toLowerCase()
+        if (seen.has(key)) return false
+        seen.add(key)
+        return true
+      })
+  } catch {
+    return []
+  }
+}
+
 type SkillEditableField = 'name'
 
 function sanitizeSkillFieldValue(value: string): string {
@@ -60,23 +112,32 @@ type SkillsInputRowProps = {
   index: number
   displayIndex: number
   onDelete: () => void
+  onChange: () => void
+  onSkillSearch: (rowIndex: number, term: string) => void
+  suggestions: SkillSuggestion[]
 }
 
 function renderSkillInputRow({
   rows,
   index,
   displayIndex,
-  onDelete
+  onDelete,
+  onChange,
+  onSkillSearch,
+  suggestions
 }: SkillsInputRowProps) {
   const row = rows[index]
   const label = `Skill ${displayIndex + 1}`
   const skillName = `skill-${index}`
+  const datalistId = `skill-suggestions-${index}`
 
   const handleSkillInput = (field: SkillEditableField) => (e: Event) => {
     const target = e.target as HTMLInputElement
     const nextValue = sanitizeSkillFieldValue(target.value)
     if (rows[index]) {
       applyRowFieldChange(rows[index], field, nextValue, rowHasContent)
+      onSkillSearch(index, nextValue)
+      onChange()
     }
   }
 
@@ -98,9 +159,14 @@ function renderSkillInputRow({
           data-row-status=${row?.status || 'n/a'}
           placeholder="Skill"
           autocomplete="off"
+          list=${datalistId}
           inputmode="text"
-          @change=${handleSkillInput('name')}
+          @input=${handleSkillInput('name')}
         />
+        <datalist id=${datalistId}>
+          ${suggestions.map((suggestion) => html`<option value=${suggestion.label}></option>`)}
+        </datalist>
+        <small class="inputHelpText">Search ESCO skills or type your own custom skill.</small>
       </label>
       <div class="inputActions inputActions--edge">
         <button
@@ -119,7 +185,12 @@ function renderSkillInputRow({
   `
 }
 
-function renderSkillsSection(rows: SkillRow[], onAddRow: () => void) {
+function renderSkillsSection(
+  rows: SkillRow[],
+  onAddRow: () => void,
+  suggestionByIndex: Record<number, SkillSuggestion[]>,
+  handleSearch: (rowIndex: number, term: string) => void
+) {
   const createNewRow = (event: Event) => {
     event.preventDefault()
     rows.push({
@@ -159,8 +230,12 @@ function renderSkillsSection(rows: SkillRow[], onAddRow: () => void) {
           rows,
           index,
           displayIndex,
+          onChange: onAddRow,
+          onSkillSearch: handleSearch,
+          suggestions: suggestionByIndex[index] || [],
           onDelete: () => {
             deleteRow(rows, index)
+            delete suggestionByIndex[index]
             onAddRow()
           }
         }))}
@@ -170,11 +245,43 @@ function renderSkillsSection(rows: SkillRow[], onAddRow: () => void) {
 }
 
 function renderSkillsEditTemplate(form: HTMLFormElement, formState: SkillFormState) {
+  const formStateWithSearch = formState as SkillFormState & {
+    suggestionByIndex?: Record<number, SkillSuggestion[]>
+    searchSeqByIndex?: Record<number, number>
+    searchTimerByIndex?: Record<number, ReturnType<typeof setTimeout>>
+  }
+
+  const suggestionByIndex = formStateWithSearch.suggestionByIndex || (formStateWithSearch.suggestionByIndex = {})
+  const searchSeqByIndex = formStateWithSearch.searchSeqByIndex || (formStateWithSearch.searchSeqByIndex = {})
+  const searchTimerByIndex = formStateWithSearch.searchTimerByIndex || (formStateWithSearch.searchTimerByIndex = {})
+
   const rerender = () => renderSkillsEditTemplate(form, formState)
+  const handleSearch = (rowIndex: number, term: string) => {
+    if (searchTimerByIndex[rowIndex]) {
+      clearTimeout(searchTimerByIndex[rowIndex])
+    }
+
+    const normalized = sanitizeSkillFieldValue(term)
+    if (normalized.length < 2) {
+      suggestionByIndex[rowIndex] = []
+      rerender()
+      return
+    }
+
+    const seq = (searchSeqByIndex[rowIndex] || 0) + 1
+    searchSeqByIndex[rowIndex] = seq
+
+    searchTimerByIndex[rowIndex] = setTimeout(async () => {
+      const suggestions = await fetchEscoSkillSuggestions(normalized)
+      if (searchSeqByIndex[rowIndex] !== seq) return
+      suggestionByIndex[rowIndex] = suggestions
+      rerender()
+    }, 220)
+  }
 
 
   render(html`
-    ${renderSkillsSection(formState.skills, rerender)}
+    ${renderSkillsSection(formState.skills, rerender, suggestionByIndex, handleSearch)}
   `, form)
 }
 

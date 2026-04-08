@@ -89,7 +89,8 @@ export function renderSocialAccounts(
   store: LiveStore,
   subject: NamedNode,
   accounts: SocialPresentation,
-  viewerMode: ViewerMode
+  viewerMode: ViewerMode,
+  onSaved?: () => Promise<void> | void
 ) {
   const hasAccounts = accounts.accounts && accounts.accounts.length > 0
   const showSection = hasAccounts || viewerMode === 'owner'
@@ -100,7 +101,8 @@ export function renderSocialAccounts(
       store,
       subject,
       accounts.accounts,
-      viewerMode
+      viewerMode,
+      onSaved
     )
   }
 

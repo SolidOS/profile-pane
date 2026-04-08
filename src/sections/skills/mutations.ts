@@ -3,13 +3,20 @@ import { ns } from 'solid-ui'
 import { SkillRow } from './types'
 import { MutationOps } from '../shared/types'
 import { applyUpdaterPatch, collectLinkStatements, collectNodeStatements, findExistingNode } from '../shared/rdfMutationHelpers'
+import { createIdNode } from '../shared/idNodeFactory'
 import { mutationSaveSkillsFailedPrefixText } from '../../texts'
 
 export type SkillMutationPlan = MutationOps<SkillRow>
 
-function buildSkillsStatements(subject: NamedNode, doc: NamedNode, skill: SkillRow) {
+function buildSkillsStatements(subject: NamedNode, doc: NamedNode, node: NamedNode, skill: SkillRow) {
   if (!skill.name) return []
-  return [st(subject, ns.schema('skills'), literal(skill.name), doc)]
+  const publicIdNode = createIdNode(doc)
+  return [
+    st(subject, ns.schema('skills'), node, doc),
+    st(node, ns.solid('publicId'), publicIdNode, doc),
+    st(publicIdNode, ns.schema('name'), literal(skill.name), doc),
+    st(publicIdNode, ns.rdf('type'), ns.schema('Skill'), doc)
+  ]
 }
 
 async function mutateSkillsEntries(store: LiveStore, subject: NamedNode, skillOps: MutationOps<SkillRow>) {
@@ -19,6 +26,13 @@ async function mutateSkillsEntries(store: LiveStore, subject: NamedNode, skillOp
   const deletions: any[] = []
   const insertions: any[] = []
 
+  const collectLinkedPublicIdStatements = (skillNode: NamedNode) => {
+    const publicIdNode = store.any(skillNode, ns.solid('publicId'), null, doc)
+    if (publicIdNode && publicIdNode.termType === 'NamedNode') {
+      deletions.push(...collectNodeStatements(store, publicIdNode as NamedNode, doc))
+    }
+  }
+
   skillOps.remove.forEach((skill) => {
     if (!skill.entryNode) return
     const existingNode = findExistingNode(existingSkillNodes, skill.entryNode)
@@ -26,6 +40,9 @@ async function mutateSkillsEntries(store: LiveStore, subject: NamedNode, skillOp
       deletions.push(...collectLinkStatements(store, subject, ns.schema('skills'), existingNode, doc))
       if (existingNode.termType !== 'Literal') {
         deletions.push(...collectNodeStatements(store, existingNode, doc))
+        if (existingNode.termType === 'NamedNode') {
+          collectLinkedPublicIdStatements(existingNode as NamedNode)
+        }
       }
     }
   })
@@ -34,18 +51,25 @@ async function mutateSkillsEntries(store: LiveStore, subject: NamedNode, skillOp
     if (!skill.entryNode) return
     const existingNode = findExistingNode(existingSkillNodes, skill.entryNode)
     if (!existingNode) {
-      insertions.push(...buildSkillsStatements(subject, doc, skill))
+      insertions.push(...buildSkillsStatements(subject, doc, createIdNode(doc), skill))
       return
     }
     deletions.push(...collectLinkStatements(store, subject, ns.schema('skills'), existingNode, doc))
     if (existingNode.termType !== 'Literal') {
       deletions.push(...collectNodeStatements(store, existingNode, doc))
+      if (existingNode.termType === 'NamedNode') {
+        collectLinkedPublicIdStatements(existingNode as NamedNode)
+      }
     }
-    insertions.push(...buildSkillsStatements(subject, doc, skill))
+    if (existingNode.termType === 'NamedNode') {
+      insertions.push(...buildSkillsStatements(subject, doc, existingNode as NamedNode, skill))
+      return
+    }
+    insertions.push(...buildSkillsStatements(subject, doc, createIdNode(doc), skill))
   })
 
   skillOps.create.forEach((skill) => {
-    insertions.push(...buildSkillsStatements(subject, doc, skill))
+    insertions.push(...buildSkillsStatements(subject, doc, createIdNode(doc), skill))
   })
 
   await applyUpdaterPatch(store, deletions, insertions)

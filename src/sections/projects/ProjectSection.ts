@@ -25,7 +25,8 @@ function renderProject(
   project: ProjectDetails,
   store: LiveStore,
   subject: NamedNode,
-  viewerMode: ViewerMode
+  viewerMode: ViewerMode,
+  onSaved?: () => Promise<void> | void
 ) {
   if (!project) return html``
 
@@ -40,6 +41,9 @@ function renderProject(
     }
 
     await processProjectsMutations(store, subject, removePlan)
+    if (onSaved) {
+      await onSaved()
+    }
   }
 
   return html`
@@ -85,17 +89,19 @@ function renderProjects(
   projects: ProjectDetails[],
   store: LiveStore,
   subject: NamedNode,
-  viewerMode: ViewerMode
+  viewerMode: ViewerMode,
+  onSaved?: () => Promise<void> | void
 ) {
   if (!projects || !projects.length || !projects[0]) return html``
-  return html`${renderProject(projects[0], store, subject, viewerMode)}${projects.length > 1 ? renderProjects(projects.slice(1), store, subject, viewerMode) : html``}`
+  return html`${renderProject(projects[0], store, subject, viewerMode, onSaved)}${projects.length > 1 ? renderProjects(projects.slice(1), store, subject, viewerMode, onSaved) : html``}`
 }
 
 export function renderProjectSection(
   store: LiveStore,
   subject: NamedNode,
   projects: ProjectDetails[],
-  viewerMode: ViewerMode
+  viewerMode: ViewerMode,
+  onSaved?: () => Promise<void> | void
 ) {
   const hasProjects = Array.isArray(projects) && projects.length > 0
 
@@ -110,7 +116,7 @@ export function renderProjectSection(
                 class="actionButton"
                 aria-label="Add or edit projects"
                 @click=${(event: Event) => {
-                  return createProjectsEditDialog(event, store, subject, projects, viewerMode)
+                  return createProjectsEditDialog(event, store, subject, projects, viewerMode, onSaved)
                 }}
               >
                 + Add More
@@ -125,7 +131,8 @@ export function renderProjectSection(
                 projects,
                 store,
                 subject,
-                viewerMode
+                viewerMode,
+                onSaved
               )}
             </ul>
           `

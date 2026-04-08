@@ -1,36 +1,9 @@
-import { describe, expect, it } from "@jest/globals"
+import { describe, expect, it } from '@jest/globals'
 import { graph, sym } from 'rdflib'
 import { ns } from 'solid-ui'
-import { presentContactInfo } from '../../src/sections/contactInfo/selectors'
-import { processContactInfoMutations } from '../../src/sections/contactInfo/mutations'
-import { mutationSaveContactInfoFailedPrefixText } from '../../src/texts'
+import { processHeadingMutations } from '../../src/sections/heading/mutations'
 
-describe('Contact info selectors and mutations', () => {
-  it('selector returns empty contact arrays from empty store', () => {
-    const store = graph() as any
-    const subject = sym('https://example.com/profile/card#me')
-
-    const result = presentContactInfo(subject, store)
-    expect(result.emails).toEqual([])
-    expect(result.phones).toEqual([])
-    expect(result.addresses).toEqual([])
-  })
-
-  it('mutation wraps updater errors with contact prefix', async () => {
-    const store = graph() as any
-    const subject = sym('https://example.com/profile/card#me')
-
-    const plan = {
-      phoneOps: { create: [], update: [], remove: [] },
-      emailOps: { create: [], update: [], remove: [] },
-      addressOps: { create: [], update: [], remove: [] }
-    }
-
-    await expect(processContactInfoMutations(store, subject, plan as any)).rejects.toThrow(
-      mutationSaveContactInfoFailedPrefixText
-    )
-  })
-
+describe('Heading mutations id-node writes', () => {
   it('creates phone/email/address entries with #id + 13 digits and URI values', async () => {
     const store = graph() as any
     const subject = sym('https://example.com/profile/card#me')
@@ -44,24 +17,25 @@ describe('Contact info selectors and mutations', () => {
     }
 
     const plan = {
+      basicOps: { create: [], update: [], remove: [] },
       phoneOps: {
-        create: [{ value: '+1-111-222-3333', type: 'Voice', entryNode: '', status: 'new' }],
+        create: [{ value: '+1-999-888-7777', type: 'Voice', entryNode: '', status: 'new' }],
         update: [],
         remove: []
       },
       emailOps: {
-        create: [{ value: 'jane@example.com', type: 'Internet', entryNode: '', status: 'new' }],
+        create: [{ value: 'alex@example.com', type: 'Internet', entryNode: '', status: 'new' }],
         update: [],
         remove: []
       },
       addressOps: {
-        create: [{ streetAddress: 'Main St', locality: 'Boston', region: 'MA', postalCode: '02101', countryName: 'US', type: 'Home', entryNode: '', status: 'new' }],
+        create: [{ streetAddress: 'North St', locality: 'NYC', region: 'NY', postalCode: '10001', countryName: 'US', type: 'Home', entryNode: '', status: 'new' }],
         update: [],
         remove: []
       }
     }
 
-    await processContactInfoMutations(store, subject, plan as any)
+    await processHeadingMutations(store, subject, plan as any)
 
     const idPattern = /^https:\/\/example\.com\/profile\/card#id\d{13}$/
 
@@ -81,8 +55,9 @@ describe('Contact info selectors and mutations', () => {
     )
 
     expect(emailValue?.object?.termType).toBe('NamedNode')
-    expect(emailValue?.object?.value).toBe('mailto:jane@example.com')
+    expect(emailValue?.object?.value).toBe('mailto:alex@example.com')
     expect(phoneValue?.object?.termType).toBe('NamedNode')
-    expect(phoneValue?.object?.value).toBe('tel:+1-111-222-3333')
+    expect(phoneValue?.object?.value).toBe('tel:+1-999-888-7777')
   })
+
 })

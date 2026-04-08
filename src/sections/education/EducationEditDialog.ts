@@ -441,7 +441,8 @@ export async function createEducationEditDialog(
   store: LiveStore,
   subject: NamedNode,
   educationData: EducationDetails[],
-  viewerMode: ViewerMode
+  viewerMode: ViewerMode,
+  onSaved?: () => Promise<void> | void
 ) {
   const dom = (event.currentTarget as HTMLElement | null)?.ownerDocument || document
   const { form, formState, rerender } = createEducationEditForm(educationData)
@@ -482,5 +483,9 @@ export async function createEducationEditDialog(
   })
 
   if (!result) return
+  if (onSaved) {
+    await onSaved()
+    return
+  }
   await alertDialog('Education updates saved. Refresh to see latest values.', 'Saved', dom)
 }

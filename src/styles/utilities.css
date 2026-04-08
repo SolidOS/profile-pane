@@ -345,12 +345,9 @@ label:focus-visible {
 
 /* Card Section Background */
 .section-bg {
-  background: var(--color-section-bg);
-  border-radius: var(--border-radius-full);
-  box-shadow: var(--box-shadow);
-  padding: var(--spacing-md);
+  background: var(--color-section-bg); /* New design: use section background color */
+  border-radius: var(--border-radius-base); /* New design: use section background color */
 }
-
 
 /* Transparent button override (for solid-ui integration) */
 .btn-transparent {
@@ -360,6 +357,21 @@ label:focus-visible {
 .btn-transparent:hover {
   background-color: transparent;
 }
+/* New Design: utilities */
+.border-grey {
+  border: 1px solid var(--gray-200);
+}
+
+.border-slate {
+  border: 1px solid var(--slate-200);
+}
+.flex-row {
+  display: flex;
+  flex-direction: row;
+  gap: var(--spacing-md);
+}
+
+/* Below are things I've added need to change */
 .sectionHeader {
   display: flex;
   align-items: center;
