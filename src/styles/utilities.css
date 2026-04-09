@@ -365,10 +365,25 @@ label:focus-visible {
 .border-slate {
   border: 1px solid var(--slate-200);
 }
+
 .flex-row {
   display: flex;
   flex-direction: row;
-  gap: var(--spacing-md);
+  gap: var(--spacing-md, 1.25rem);
+}
+
+.inline-flex-row {
+  display: inline-flex;
+  flex-direction: row;
+  gap: var(--spacing-md, 1.25rem);
+  align-items: center;
+}
+
+.inline-flex-column {
+  display: inline-flex;
+  flex-direction: column;
+  gap: var(--spacing-md, 1.25rem);
+  align-items: center;
 }
 
 /* Below are things I've added need to change */
@@ -376,7 +391,7 @@ label:focus-visible {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: var(--spacing-sm);
+  gap: var(--spacing-sm, 0.75rem);
   width: 100%;
 }
 
