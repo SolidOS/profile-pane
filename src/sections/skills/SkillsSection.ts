@@ -45,7 +45,7 @@ export function renderSkillsSection(
       data-expanded="false"
     >
       <header class="profile__section-header profileSectionCollapsible__header">
-        <h3 id="skills-heading">${skillsHeadingText}</h3>
+        <h2 id="skills-heading">${skillsHeadingText}</h2>
         <div class="profileSectionCollapsible__actions">
           ${viewerMode === 'owner'
             ? html`

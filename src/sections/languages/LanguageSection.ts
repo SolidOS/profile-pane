@@ -38,7 +38,7 @@ export function renderLanguageSection(
       data-expanded="false"
     >
       <header class="profile__section-header profileSectionCollapsible__header">
-        <h3 id="languages-heading">${languagesHeadingText}</h3>
+        <h2 id="languages-heading">${languagesHeadingText}</h2>
         <div class="profileSectionCollapsible__actions">
           ${viewerMode === 'owner'
             ? html`

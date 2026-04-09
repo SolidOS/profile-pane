@@ -100,7 +100,7 @@ export function renderSocialAccounts(
           data-expanded="false"
         >
           <header class="profile__section-header profileSectionCollapsible__header">
-            <h3 id="social-heading" tabindex="-1">${socialAccountsHeadingText}</h3>
+            <h2 id="social-heading" tabindex="-1">${socialAccountsHeadingText}</h2>
             <div class="profileSectionCollapsible__actions">
               ${viewerMode === 'owner'
                 ? html`

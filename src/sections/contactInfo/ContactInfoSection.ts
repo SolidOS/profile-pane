@@ -126,7 +126,7 @@ export function renderContactInfoSection(
       data-expanded="false"
     >
       <header class="profile__section-header profileSectionCollapsible__header">
-        <h3 id="contact-details-heading" tabindex="-1">${contactInfoHeadingText}</h3>
+        <h2 id="contact-details-heading" tabindex="-1">${contactInfoHeadingText}</h2>
         <div class="profileSectionCollapsible__actions">
           <button 
             type="button" 

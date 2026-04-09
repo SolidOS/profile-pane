@@ -105,7 +105,7 @@ export function renderCVSection(
       data-expanded="false"
     >
       <header class="profile__section-header profileSectionCollapsible__header">
-        <h3 id="cv-heading" tabindex="-1">${resumeHeadingText}</h3>
+        <h2 id="cv-heading" tabindex="-1">${resumeHeadingText}</h2>
         <div class="profileSectionCollapsible__actions">
           ${viewerMode === 'owner'
             ? html`

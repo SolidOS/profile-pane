@@ -67,7 +67,7 @@ function renderBioSectionContent(
 
   return html`
     <header class="profile__section-header mb-md">
-      <h3 id="bio-heading" tabindex="-1">${bioHeadingText}</h3>
+      <h2 id="bio-heading" tabindex="-1">${bioHeadingText}</h2>
       ${viewerMode === 'owner'
         ? html`
             <button
