@@ -1,11 +1,20 @@
 import { LiveStore, NamedNode, sym } from 'rdflib'
 import { ns, utils } from 'solid-ui'
 import socialMediaForm from '../../ontology/socialMedia.ttl'
+import { starIconAsset } from '../../icons-svg/profileIcons'
 import { loadDocument } from '../../rdfFormsHelper'
 import { expandRdfList } from '../shared/rdfList'
 import { DEFAULT_ICON_URI, socialMediaFormName } from './constants'
 
 const OWL_DISJOINT_UNION_OF = sym('http://www.w3.org/2002/07/owl#disjointUnionOf')
+const STAR_ICON_REF = 'urn:profile-pane:starIcon'
+
+function resolveSocialIcon(classUri: string, iconValue: string): string {
+  if (classUri.endsWith('#OtherAccount') || iconValue === STAR_ICON_REF) {
+    return starIconAsset
+  }
+  return iconValue || DEFAULT_ICON_URI
+}
 
 export type SocialAccountOption = {
   classUri: string
@@ -34,7 +43,8 @@ export function getSocialAccountOptions(store: LiveStore): SocialAccountOption[]
       utils.label(classNode) ||
       classNode.value
 
-    const icon = store.any(classNode, ns.foaf('icon'))?.value || DEFAULT_ICON_URI
+    const iconValue = store.any(classNode, ns.foaf('icon'))?.value || ''
+    const icon = resolveSocialIcon(classNode.value, iconValue)
     const homepage = store.any(classNode, ns.foaf('homepage'))?.value || ''
     const userProfilePrefix = store.any(classNode, ns.foaf('userProfilePrefix'))?.value || ''
 
@@ -73,11 +83,14 @@ export function nameForAccount(store: LiveStore, accountNode: any): string {
 
 export function iconForAccount(store: LiveStore, accountNode: any): string {
   const accountIcon = store.any(accountNode, ns.foaf('icon'))
+  if (accountIcon?.value === STAR_ICON_REF) return starIconAsset
   if (accountIcon) return accountIcon.value
 
   const classes = store.each(accountNode as any, ns.rdf('type')) as any[]
   for (const classNode of classes) {
+    if (classNode?.value?.endsWith('#OtherAccount')) return starIconAsset
     const classIcon = store.any(classNode as any, ns.foaf('icon'))
+    if (classIcon?.value === STAR_ICON_REF) return starIconAsset
     if (classIcon) return classIcon.value
   }
 
