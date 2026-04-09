@@ -44,17 +44,19 @@
 foaf:Account a rdfs:Class;
     rdfs:label "Online Account Provider";
     owl:disjointUnionOf ( 
-        :BlueSkyAccount :DiggAccount :FacebookAccount :GithubAccount :InstagramAccount
+        :BlueSkyAccount :DribbleAccount :DiggAccount :DiscordAccount :FacebookAccount :GithubAccount :InstagramAccount
         :LinkedInAccount :MastodonAccount :MatrixAccount :MediumAccount :NostrAccount 
-        :OrcidAccount :PinterestAccount :RedditAccount :SnapchatAccount :StravaAccount 
-        :TiktokAccount  :TumblrAccount  :TwitterAccount :OtherAccount) .
+        :OrcidAccount :PinterestAccount :RedditAccount :SharechatAccount :SnapchatAccount :SpotifyAccount :StravaAccount 
+        :TelegramAccount :TiktokAccount  :TumblrAccount  :TwitterAccount :WhatsAppAccount :YouTubeAccount :OtherAccount) .
 
 :AccountIdField a ui:Options; 
     ui:dependingOn rdf:type; 
     ui:case
      [ ui:for :BlueSkyAccount; ui:use :BlueSkyIdField ],
+     [ ui:for :DribbleAccount; ui:use :DribbleIdField ],
      [ ui:for :DiggAccount; ui:use :DiggIdField],
      [ ui:for :FacebookAccount; ui:use :FacebookIdField ],
+     [ ui:for :DiscordAccount; ui:use :DiscordIdField ],
      [ ui:for :GithubAccount; ui:use :GithubIdField ],
      [ ui:for :InstagramAccount; ui:use :InstagramIdField ],
      [ ui:for :LinkedInAccount; ui:use :LinkedInIdField ],
@@ -66,10 +68,15 @@ foaf:Account a rdfs:Class;
      [ ui:for :PinterestAccount; ui:use :PinterestIdField ],
      [ ui:for :RedditAccount; ui:use :RedditIdField ],
      [ ui:for :StravaAccount; ui:use :StravaIdField ],
+     [ ui:for :SharechatAccount; ui:use :SharechatIdField ],
      [ ui:for :SnapchatAccount; ui:use :SnapchatIdField ],
+     [ ui:for :SpotifyAccount; ui:use :SpotifyIdField ],
+     [ ui:for :TelegramAccount; ui:use :TelegramIdField ],
      [ ui:for :TiktokAccount; ui:use :TiktokIdField ],
      [ ui:for :TumblrAccount; ui:use :TumblrIdField ],
      [ ui:for :TwitterAccount; ui:use :TwitterIdField ],
+     [ ui:for :WhatsAppAccount; ui:use :WhatsAppIdField ],
+     [ ui:for :YouTubeAccount; ui:use :YouTubeIdField ],
      [ ui:for :OtherAccount; ui:use :OtherIdForm  ] .
 
 :BlueSkyAccount rdfs:subClassOf foaf:Account ;
@@ -77,6 +84,19 @@ foaf:Account a rdfs:Class;
     foaf:userProfilePrefix "https://bsky.app/profile/";
     foaf:icon <https://solidos.github.io/solid-ui/src/icons/social/bluesky-1.svg>;
     foaf:homepage <https://bsky.app/> .
+
+:DribbleAccount rdfs:subClassOf foaf:Account ;
+    rdfs:label "Dribble";
+    foaf:userProfilePrefix "https://dribbble.com/";
+    foaf:icon <../../icons-png/dribbble.png>;
+    foaf:homepage <https://dribbble.com/> .
+
+
+:DiscordAccount rdfs:subClassOf foaf:Account ;
+    rdfs:label "Discord";
+    foaf:userProfilePrefix "https://discord.com/users/";
+    foaf:icon <../../icons-png/discord.png>;
+    foaf:homepage <https://discord.com/> .
 
 :DiggAccount rdfs:subClassOf foaf:Account ;
     rdfs:label "Digg";
@@ -87,7 +107,7 @@ foaf:Account a rdfs:Class;
 :FacebookAccount rdfs:subClassOf foaf:Account ;
     rdfs:label "Facebook";
     foaf:userProfilePrefix "https://www.facebook.com/";
-    foaf:icon <https://solidos.github.io/solid-ui/src/icons/social/facebook-2020-2-1.svg>;
+    foaf:icon <../../icons-png/facebook.png>;
     foaf:homepage <https://www.facebook.com/> .
 
 :GithubAccount rdfs:subClassOf foaf:Account ;
@@ -99,13 +119,13 @@ foaf:Account a rdfs:Class;
 :InstagramAccount rdfs:subClassOf foaf:Account ;
     rdfs:label "Instagram";
     foaf:userProfilePrefix "https://www.instagram.com/";
-    foaf:icon <https://solidos.github.io/solid-ui/src/icons/social/instagram-2016-5.svg>;
+    foaf:icon <../../icons-png/instagram.png>;
     foaf:homepage <https://www.instagram.com/> .
 
 :LinkedInAccount rdfs:subClassOf foaf:Account ;
     rdfs:label "LinkedIn";
     foaf:userProfilePrefix "https://www.linkedin.com/in/";
-    foaf:icon <https://solidos.github.io/solid-ui/src/icons/social/linkedin-icon.svg>;
+    foaf:icon <../../icons-png/linkedin.png>;
     foaf:homepage <https://linkedin.com/> .
 
 :MastodonAccount rdfs:subClassOf foaf:Account ;
@@ -141,7 +161,7 @@ foaf:Account a rdfs:Class;
 :PinterestAccount rdfs:subClassOf foaf:Account ;
     rdfs:label "Pinterest";
     foaf:userProfilePrefix "https://pin.it/";
-    foaf:icon <https://solidos.github.io/solid-ui/src/icons/social/pinterest-2-1.svg>;
+    foaf:icon <../../icons-png/pinterest.png>;
     foaf:homepage <https://pinterest.com/> .
 
 :RedditAccount rdfs:subClassOf foaf:Account ;
@@ -150,11 +170,23 @@ foaf:Account a rdfs:Class;
     foaf:icon <https://solidos.github.io/solid-ui/src/icons/social/reddit-4.svg>;
     foaf:homepage <https://reddit.com/> .
 
+:SharechatAccount rdfs:subClassOf foaf:Account ;
+    rdfs:label "ShareChat";
+    foaf:userProfilePrefix "https://www.sharechat.com/user/";
+    foaf:icon <../../icons-png/sharechat.png>;
+    foaf:homepage <https://sharechat.com/> .
+
 :SnapchatAccount rdfs:subClassOf foaf:Account ;
     rdfs:label "Snapchat";
     foaf:userProfilePrefix "https://www.snapchat.com/add/";
-    foaf:icon <https://solidos.github.io/solid-ui/src/icons/social/snapchat-1.svg>;
+    foaf:icon <../../icons-png/snapchat.png>;
     foaf:homepage <https://www.snapchat.com/> .
+
+:SpotifyAccount rdfs:subClassOf foaf:Account ;
+    rdfs:label "Spotify";
+    foaf:userProfilePrefix "https://www.spotify.com/user/";
+    foaf:icon <../../icons-png/spotify.png>;
+    foaf:homepage <https://www.spotify.com/> .
 
 :StravaAccount rdfs:subClassOf foaf:Account ;
     rdfs:label "Strava";
@@ -162,10 +194,16 @@ foaf:Account a rdfs:Class;
     foaf:icon <https://solidos.github.io/solid-ui/src/icons/social/strava-2.svg>;
     foaf:homepage <https://strava.com/> .
 
+:TelegramAccount rdfs:subClassOf foaf:Account ;
+    rdfs:label "Telegram";
+    foaf:userProfilePrefix "https://t.me/";
+    foaf:icon <../../icons-png/telegram.png>;
+    foaf:homepage <https://telegram.org/> .
+
 :TiktokAccount rdfs:subClassOf foaf:Account ;
     rdfs:label "TikTok";
     foaf:userProfilePrefix "https://www.tiktok.com/@";
-    foaf:icon <https://solidos.github.io/solid-ui/src/icons/social/tiktok-icon-2.svg>;
+    foaf:icon <../../icons-png/tiktok.png>;
     foaf:homepage <https://www.tiktok.com/> .
 
 :TumblrAccount rdfs:subClassOf foaf:Account ;
@@ -177,12 +215,24 @@ foaf:Account a rdfs:Class;
 :TwitterAccount rdfs:subClassOf foaf:Account ;
     rdfs:label "X";
     foaf:userProfilePrefix "https://x.com/";
-    foaf:icon <https://solidos.github.io/solid-ui/src/icons/social/x-2.svg>;
+    foaf:icon <../../icons-png/x.png>;
     foaf:homepage <https://x.com/> .
+
+:WhatsAppAccount rdfs:subClassOf foaf:Account ;
+    rdfs:label "WhatsApp";
+    foaf:userProfilePrefix "https://wa.me/";
+    foaf:icon <../../icons-png/whatsapp.png>;
+    foaf:homepage <https://www.whatsapp.com/> .
+
+:YouTubeAccount rdfs:subClassOf foaf:Account ;
+    rdfs:label "YouTube";
+    foaf:userProfilePrefix "https://www.youtube.com/";
+    foaf:icon <../../icons-png/youtube.png>;
+    foaf:homepage <https://www.youtube.com/> .
 
 :OtherAccount rdfs:subClassOf foaf:Account ;
     rdfs:label "Other" ;
-    foaf:icon <https://solidos.github.io/solid-ui/src/icons/noun_1689339.svg> .
+    foaf:icon <urn:profile-pane:starIcon> .
 
 :BlueSkyIdField
     a ui:SingleLineTextField ;
@@ -199,6 +249,18 @@ foaf:Account a rdfs:Class;
     ui:pattern "@[a-z0-9A-Z_-](.[a-z0-9A-Z_-])*".
 
 :FacebookIdField
+    a ui:SingleLineTextField ;
+    ui:label "Username";
+    ui:property foaf:accountName ; 
+    ui:pattern "[a-z0-9A-Z_-]*".
+
+:DiscordIdField
+    a ui:SingleLineTextField ;
+    ui:label "Username";
+    ui:property foaf:accountName ; 
+    ui:pattern "[a-z0-9A-Z_-]*".
+
+:DribbleIdField
     a ui:SingleLineTextField ;
     ui:label "Username";
     ui:property foaf:accountName ; 
@@ -288,6 +350,20 @@ foaf:Account a rdfs:Class;
     ui:property foaf:accountName ; 
     ui:pattern "@[a-z0-9A-Z_-]*".
 
+:SpotifyIdField
+    a ui:SingleLineTextField ;
+    ui:label "Username";
+    ui:maxLength "200" ;
+    ui:property foaf:accountName ; 
+    ui:pattern "@[a-z0-9A-Z_-]*".
+
+:TelegramIdField
+    a ui:SingleLineTextField ;
+    ui:label "Username";
+    ui:maxLength "200" ;
+    ui:property foaf:accountName ; 
+    ui:pattern "@[a-z0-9A-Z_-]*".
+
 :TiktokIdField
     a ui:SingleLineTextField ;
     ui:label "Username";
@@ -303,6 +379,20 @@ foaf:Account a rdfs:Class;
     ui:pattern "@[a-z0-9A-Z_-]*".
 
 :TwitterIdField
+    a ui:SingleLineTextField ;
+    ui:label "Username";
+    ui:maxLength "200" ;
+    ui:property foaf:accountName ; 
+    ui:pattern "@[a-z0-9A-Z_-]*".
+
+:WhatsAppIdField
+    a ui:SingleLineTextField ;
+    ui:label "Username";
+    ui:maxLength "200" ;
+    ui:property foaf:accountName ; 
+    ui:pattern "@[a-z0-9A-Z_-]*".
+
+:YouTubeIdField
     a ui:SingleLineTextField ;
     ui:label "Username";
     ui:maxLength "200" ;
