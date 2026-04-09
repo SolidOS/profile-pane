@@ -16,25 +16,6 @@ export const QRCodeCard = (
   const URL = 'URL:' + subject.uri + 'r\n'
   const VERSIONV = 'VERSION:4.0\r\n'
 
-  // Accessibility check: Ensure QR code is rendered as an accessible image or canvas
-  // This assumes the QR code is rendered inside the <div> below by another library or script.
-  // If you use a library, ensure it sets role="img" and an appropriate aria-label or alt attribute.
-  // If not, warn the developer.
-  setTimeout(() => {
-    const container = document.querySelector('.QRCode [role="img"]')
-    if (container) {
-      const hasAriaLabel = container.hasAttribute('aria-label')
-      const hasAlt = container.hasAttribute('alt')
-      if (!hasAriaLabel && !hasAlt) {
-         
-        console.warn('QRCodeCard: The QR code element should have an accessible label (aria-label or alt attribute) for screen readers.')
-      }
-    } else {
-       
-      console.warn('QRCodeCard: No element with role="img" found for the QR code. Ensure the QR code is rendered as an <img> or <canvas> with proper ARIA attributes.')
-    }
-  }, 0)
-
   const vCard: string = BEGIN + FN + URL + END + VERSIONV
 
   // console.log(`@@ qrcodes colours highlightColor ${highlightColor}, backgroundColor ${backgroundColor}`)
