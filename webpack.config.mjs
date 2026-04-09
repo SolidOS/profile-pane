@@ -19,6 +19,10 @@ const common = {
         use: ['style-loader', 'css-loader'],
       },
       {
+        test: /\.(png|jpe?g|gif|webp|avif|svg)$/i,
+        type: 'asset/resource'
+      },
+      {
         test: /\.ttl$/i,
         type: 'asset/source'
       }

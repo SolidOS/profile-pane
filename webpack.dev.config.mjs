@@ -34,6 +34,10 @@ export default [
           type: 'asset/source', // Load the file's content as a string
         },
         {
+          test: /\.(png|jpe?g|gif|webp|avif|svg)$/i,
+          type: 'asset/resource',
+        },
+        {
           test: /\.css$/,
           exclude: /\.module\.css$/,
           use: ['style-loader', 'css-loader'],
