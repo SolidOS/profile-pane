@@ -25,7 +25,7 @@ function mention(buttonContainer: HTMLDivElement, message: string): void {
   positiveFrontendMessageDiv.setAttribute('role', 'status')
   positiveFrontendMessageDiv.setAttribute('aria-live', 'polite')
   positiveFrontendMessageDiv.setAttribute('tabindex', '0')
-  positiveFrontendMessageDiv.classList.add('actionButton', 'licOkay')
+  positiveFrontendMessageDiv.classList.add('profile__action-button', 'licOkay')
   positiveFrontendMessageDiv.innerHTML = message
 
   // Focus the success message for screen readers

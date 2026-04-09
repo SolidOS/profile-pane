@@ -36,7 +36,7 @@ export const ChatWithMe = (
     try {
       yield html`
       <div class="buttonSubSection">
-        <div class="actionButton loading-text center" role="status" aria-live="polite">
+        <div class="profile__action-button loading-text center" role="status" aria-live="polite">
           ${loadingMessage.toUpperCase()}
         </div>
       </div>
@@ -96,7 +96,7 @@ export const ChatWithMe = (
       description.className = 'sr-only'
       description.textContent = 'Start a new conversation or sign in to continue existing chat'
       
-      button.classList.add('actionButton', 'btn-primary', 'action-button-focus')
+      button.classList.add('profile__action-button', 'btn-primary', 'action-button-focus')
       chatContainer.appendChild(button)
       chatContainer.appendChild(description)
       yield chatContainer

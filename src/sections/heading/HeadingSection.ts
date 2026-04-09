@@ -28,37 +28,12 @@ export const renderHeadingSection = (
           <div class="profile__avatar">  
             ${Image(imageSrc, name)}
           </div>
-          <div class="profile__info flex-column-lg">
+          <div class="profile__info flex-column gap-lg">
             <header class="profile__header-bar mb-md">
-              <div class="profile__header-top sectionHeader">
-                <div class="profile__identity" role="group" aria-label="Name and pronouns">
-                  <h1 id="profile-name" class="profile__name">${name}</h1>
-                  <span class="profile__pronouns">${pronouns ? `(${pronouns})` : ''}</span>
-                </div>
-                ${viewerMode === 'owner'
-                  ? html`
-                    <div class="buttonSection sectionHeader--actionsOnly" aria-label="Profile heading actions">
-                      <button
-                        type="button"
-                        class="actionButton"
-                        aria-label="Add or edit heading information"
-                        @click=${(event: Event) => {
-                          return createHeadingEditDialog(
-                            event,
-                            context.session.store,
-                            subject,
-                            profileData,
-                            viewerMode,
-                            onSaved
-                          )
-                        }}
-                      >
-                        <span class="actionIcon" aria-hidden="true">✎ Edit</span>
-                      </button>
-                    </div>
-                  `
-                  : nothing}
-              </div>   
+              <div class="profile__identity" role="group" aria-label="Name and pronouns">
+                <h1 id="profile-name" class="profile__name">${name}</h1>
+                <span class="profile__pronouns">${pronouns ? `(${pronouns})` : ''}</span>
+              </div>
               ${jobTitle ? html`<div class="profile__role-org">${jobTitle}</div>` : nothing}
             </header>
             <div class="profile__details">
@@ -73,10 +48,32 @@ export const renderHeadingSection = (
             </div>
           </div>
         </div>
-        ${viewerMode ===  'authenticated'   ? html`
-          <section class="buttonSection" aria-label="Actions">
+        ${viewerMode === 'owner'
+        ? html`
+            <div class="profile__actions profile__heading-actions" aria-label="Profile actions">
+              <button
+                type="button"
+                class="profile__action-button profile__heading-action-button u-profile-action-text"
+                aria-label="Add or edit heading information"
+                @click=${(event: Event) => {
+                  return createHeadingEditDialog(
+                    event,
+                    context.session.store,
+                    subject,
+                    profileData,
+                    viewerMode,
+                    onSaved
+                  )
+                }}
+              >
+                <span class="profile__action-icon" aria-hidden="true">✎ Edit</span>
+              </button>
+            </div>
+          `
+        : viewerMode ===  'authenticated'   ? html`
+          <div class="profile__actions profile__heading-actions" aria-label="Profile actions">
             ${addMeToYourFriendsDiv(subject, context, viewerMode)}
-          </section>` : html``}
+          </div>` : html``}
     </section>
   `
 }

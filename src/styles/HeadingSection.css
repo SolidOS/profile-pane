@@ -44,10 +44,14 @@ transform: translateX(-4px);
   padding: 0;
 }
 
-.profile__header-top {
-  width: 100%;
+.profile__heading-actions {
+  margin-left: auto;
+  align-self: flex-start;
 }
 
+.profile__heading-action-button {
+  position: static;
+}
 .profile__identity {
   display: flex;
   flex-direction: row;

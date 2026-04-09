@@ -511,14 +511,14 @@ function renderResumeSection(resumeData: ResumeRow[], onAddRow: () => void) {
     <section 
       aria-labelledby="resume-heading" 
       class="resumeEditSection section-bg">
-      <header class="sectionHeader">
+      <header class="profile__section-header">
         <h4 id="resume-heading">
           <span class="sectionTitleIcon" aria-hidden="true">&#9993;</span>
           Resume
         </h4>
         <button
           type="button"
-          class="actionButton"
+          class="profile__action-button u-profile-action-text"
           aria-label="Add another resume entry"
           @click=${createNewRow}
         >

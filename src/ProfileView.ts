@@ -12,7 +12,6 @@ import { renderSkillsSection } from './sections/skills/SkillsSection'
 import { ContactInfo } from './sections/contactInfo/types'
 import { LanguageDetails } from './sections/languages/types'
 import { renderCVSection } from './sections/resume/ResumeSection'
-import { renderEducationSection } from './sections/education/EducationSection'
 import { renderProjectSection } from './sections/projects/ProjectSection'
 import { renderHeadingSection } from './sections/heading/HeadingSection'
 import { renderBioSection } from './sections/bio/BioSection'
@@ -120,7 +119,6 @@ export async function ProfileView (
   const rolesByType = viewModel.cvDetails
   const skills = viewModel.skills
   const languages = viewModel.languages
-  const education = viewModel.education
   const projects = await enrichProjectsForDisplay(viewModel.projects)
   const bioDetails = viewModel.bioDetails
   const accounts = viewModel.social
@@ -135,7 +133,7 @@ export async function ProfileView (
       <h1 id="profile-content-heading" class="sr-only">Profile for ${profileDetails.name}</h1>
 
       <section
-        class="profile__main section-bg"
+        class="profile__main section-bg flex-column gap-md p-md"
         >
         <h2 id="profile-main-heading" class="sr-only">Main Profile Content</h2>
 
@@ -143,7 +141,7 @@ export async function ProfileView (
         ${renderBioSection(store, subject, bioDetails, viewerMode, onSaved)}
         ${renderCVSection(store, subject, rolesByType, viewerMode, onSaved)}
         ${renderProjectSection(store, subject, projects, viewerMode, onSaved)}
-        ${renderEducationSection(store, subject, education, viewerMode, onSaved)}
+        
       </section>
       ${renderSidebar(store, subject, accounts, skills, languages, contactInfo, viewerMode, onSaved)}
     </main>

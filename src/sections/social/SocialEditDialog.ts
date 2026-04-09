@@ -237,11 +237,11 @@ function renderSocialSection(rows: SocialRow[], options: SocialAccountOption[], 
 
   return html`
     <section aria-labelledby="social-heading" class="contactsEditSection section-bg">
-      <header class="sectionHeader">
+      <header class="profile__section-header">
         <h4 id="social-heading">Social Accounts</h4>
         <button
           type="button"
-          class="actionButton"
+          class="profile__action-button u-profile-action-text"
           aria-label="Add another social account"
           @click=${createNewRow}
         >

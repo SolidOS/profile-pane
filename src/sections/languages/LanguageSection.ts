@@ -37,14 +37,14 @@ export function renderLanguageSection(
       role="region"
       data-expanded="false"
     >
-      <header class="sectionHeader profileSectionCollapsible__header">
+      <header class="profile__section-header profileSectionCollapsible__header">
         <h3 id="languages-heading">${languagesHeadingText}</h3>
         <div class="profileSectionCollapsible__actions">
           ${viewerMode === 'owner'
             ? html`
                 <button
                   type="button"
-                  class="actionButton profileSectionCollapsible__editButton"
+                  class="profile__action-button u-profile-action-text profileSectionCollapsible__editButton"
                   aria-label="Add or edit languages"
                   @click=${(event: Event) => createLanguageEditDialog(event, store, subject, languagesArr, viewerMode, onSaved)}
                 >

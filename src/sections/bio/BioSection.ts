@@ -66,13 +66,13 @@ function renderBioSectionContent(
   const hasBio = hasBioContent(bioData)
 
   return html`
-    <header class="sectionHeader mb-md">
+    <header class="profile__section-header mb-md">
       <h3 id="bio-heading" tabindex="-1">${bioHeadingText}</h3>
       ${viewerMode === 'owner'
         ? html`
             <button
               type="button"
-              class="actionButton"
+              class="profile__action-button u-profile-action-text"
               aria-label="Edit bio details"
               @click=${(event: Event) => {
                 return createBioEditDialog(
@@ -85,7 +85,7 @@ function renderBioSectionContent(
                 )
               }}
             >
-              <span class="actionIcon" aria-hidden="true">✎ Edit</span>
+              <span class="profile__action-icon" aria-hidden="true">✎ Edit</span>
             </button>
           `
         : html``}

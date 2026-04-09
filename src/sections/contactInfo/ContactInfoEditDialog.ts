@@ -251,14 +251,14 @@ function renderContactInfoPhoneSection(phones: ContactPointRow[], onAddRow: () =
     <section 
       aria-labelledby="phone-numbers-heading" 
       class="contactsEditSection section-bg">
-      <header class="sectionHeader">
+      <header class="profile__section-header">
         <h4 id="phone-numbers-heading">
           <span class="sectionTitleIcon" aria-hidden="true">&#9742;</span>
           Phone Numbers
         </h4>
         <button
           type="button"
-          class="actionButton"
+          class="profile__action-button u-profile-action-text"
           aria-label="Add another phone number"
           @click=${createNewRow}
         >
@@ -370,14 +370,14 @@ function renderContactInfoEmailSection(emails: ContactPointRow[], onAddRow: () =
     <section 
       aria-labelledby="email-addresses-heading" 
       class="contactsEditSection section-bg">
-      <header class="sectionHeader">
+      <header class="profile__section-header">
         <h4 id="email-addresses-heading">
           <span class="sectionTitleIcon" aria-hidden="true">&#9993;</span>
           Email Addresses
         </h4>
         <button
           type="button"
-          class="actionButton"
+          class="profile__action-button u-profile-action-text"
           aria-label="Add another email address"
           @click=${createNewRow}
         >
@@ -571,14 +571,14 @@ function renderContactInfoAddressSection(addresses: ContactAddressRow[], onAddRo
     <section 
       aria-labelledby="address-heading" 
       class="contactsEditSection section-bg">
-      <header class="sectionHeader">
+      <header class="profile__section-header">
         <h4 id="address-heading">
           <span class="sectionTitleIcon" aria-hidden="true">&#9993;</span>
           Addresses
         </h4>
         <button
           type="button"
-          class="actionButton"
+          class="profile__action-button u-profile-action-text"
           aria-label="Add another address"
           @click=${createNewRow}
         >

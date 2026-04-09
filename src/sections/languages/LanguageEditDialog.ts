@@ -379,14 +379,14 @@ function renderLanguageSection(
     <section 
       aria-labelledby="language-heading" 
       class="contactsEditSection section-bg">
-      <header class="sectionHeader">
+      <header class="profile__section-header">
         <h4 id="language-heading">
           <span class="sectionTitleIcon" aria-hidden="true">&#9993;</span>
           Languages
         </h4>
         <button
           type="button"
-          class="actionButton"
+          class="profile__action-button u-profile-action-text"
           aria-label="Add another language"
           @click=${createNewRow}
         >

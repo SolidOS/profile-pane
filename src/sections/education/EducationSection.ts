@@ -116,14 +116,14 @@ export function renderEducationSection(
       tabindex="-1"
       data-expanded="false"
     >
-      <header class="sectionHeader profileSectionCollapsible__header">
+      <header class="profile__section-header profileSectionCollapsible__header">
         <h3 id="education-heading" tabindex="-1">${educationHeadingText}</h3>
         <div class="profileSectionCollapsible__actions">
           ${viewerMode === 'owner'
             ? html`
                 <button
                   type="button"
-                  class="actionButton profileSectionCollapsible__editButton"
+                  class="profile__action-button u-profile-action-text profileSectionCollapsible__editButton"
                   aria-label="Edit education details"
                   @click=${(event: Event) => createEducationEditDialog(event, store, subject, educationDetails, viewerMode, onSaved)}
                 >

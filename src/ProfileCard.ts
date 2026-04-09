@@ -25,7 +25,7 @@ export const ProfileCard = ({
         ${Line(pronouns, '', 'Pronouns')}
       </section>
       
-      <section class="buttonSection text-center" aria-label="Actions">
+      <section class="profile__actions text-center" aria-label="Actions">
         ${addMeToYourFriendsDiv(subject, context, viewerMode)}
       </section>
       

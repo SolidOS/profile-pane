@@ -125,12 +125,12 @@ export function renderContactInfoSection(
       tabindex="-1"
       data-expanded="false"
     >
-      <header class="sectionHeader profileSectionCollapsible__header">
+      <header class="profile__section-header profileSectionCollapsible__header">
         <h3 id="contact-details-heading" tabindex="-1">${contactInfoHeadingText}</h3>
         <div class="profileSectionCollapsible__actions">
           <button 
             type="button" 
-            class="actionButton profileSectionCollapsible__editButton" 
+            class="profile__action-button u-profile-action-text profileSectionCollapsible__editButton" 
             aria-label="Edit contact information"
             @click=${(event: Event) => {
               return createContactInfoEditDialog(

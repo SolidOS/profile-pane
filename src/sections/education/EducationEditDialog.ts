@@ -387,14 +387,14 @@ function renderEducationSection(educationData: EducationRow[], onAddRow: () => v
     <section 
       aria-labelledby="education-heading" 
       class="educationEditSection section-bg">
-      <header class="sectionHeader">
+      <header class="profile__section-header">
         <h4 id="education-heading">
           <span class="sectionTitleIcon" aria-hidden="true">&#9993;</span>
           Education
         </h4>
         <button
           type="button"
-          class="actionButton"
+          class="profile__action-button u-profile-action-text"
           aria-label="Add another education entry"
           @click=${createNewRow}
         >

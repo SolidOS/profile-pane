@@ -11,6 +11,7 @@
   box-sizing: border-box;
   margin-bottom: var(--spacing-md);
   overflow-wrap: anywhere;
+  align-items: flex-start;
 }
 
 .profile-grid .profile__sidebar {

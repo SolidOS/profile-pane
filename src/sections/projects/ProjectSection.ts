@@ -74,7 +74,7 @@ function renderProject(
         <div class="projectCardFooter">
           <button
             type="button"
-            class="actionButton projectFollowButton"
+            class="profile__action-button projectFollowButton"
             aria-label="Unfollow project"
             @click=${handleUnfollow}
           >
@@ -113,14 +113,14 @@ export function renderProjectSection(
       role="region"
       data-expanded="false"
     >
-      <header class="sectionHeader profileSectionCollapsible__header">
+      <header class="profile__section-header profileSectionCollapsible__header">
         <h3 id="projects-heading">${projectsHeadingText}</h3>
         <div class="profileSectionCollapsible__actions">
           ${viewerMode === 'owner'
             ? html`
                 <button
                   type="button"
-                  class="actionButton profileSectionCollapsible__editButton"
+                  class="profile__action-button u-profile-action-text profileSectionCollapsible__editButton"
                   aria-label="Add or edit projects"
                   @click=${(event: Event) => {
                     return createProjectsEditDialog(event, store, subject, projects, viewerMode, onSaved)

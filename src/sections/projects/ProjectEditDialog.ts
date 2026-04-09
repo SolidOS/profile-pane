@@ -242,14 +242,14 @@ function renderProjectSection(rows: ProjectRow[], onAddRow: () => void) {
     <section 
       aria-labelledby="project-heading" 
       class="editSection section-bg">
-      <header class="sectionHeader">
+      <header class="profile__section-header">
         <h4 id="project-heading">
           <span class="sectionTitleIcon" aria-hidden="true">&#9993;</span>
           Projects & Communities
         </h4>
         <button
           type="button"
-          class="actionButton"
+          class="profile__action-button u-profile-action-text"
           aria-label="Add another project"
           @click=${createNewRow}
         >

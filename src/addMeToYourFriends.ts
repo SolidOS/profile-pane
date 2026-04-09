@@ -34,7 +34,7 @@ const addMeToYourFriendsDiv = (
   buttonContainer.appendChild(heading)
 
   const button = createAddMeToYourFriendsButton(subject, context)
-  button.classList.add('actionButton', 'btn-primary', 'action-button-focus')
+  button.classList.add('profile__action-button', 'btn-friends')
   buttonContainer.appendChild(button)
   return html`${buttonContainer}`
 }
@@ -44,18 +44,13 @@ const createAddMeToYourFriendsButton = (
   context: DataBrowserContext
 ): HTMLButtonElement => {
   const me = authn.currentUser()
-  let label = checkIfAnyUserLoggedIn(me) ? addMeToYourFriendsButtonText.toUpperCase() : logInAddMeToYourFriendsButtonText.toUpperCase()
-  const button = widgets.button(
-    context.dom,
-    undefined,
-    label,
-    setButtonHandler, //sets an onclick event listener
-    {
-      needsBorder: true,
-    }
-  )
+  let label = addMeToYourFriendsButtonText
+  const button = context.dom.createElement('button')
+  button.type = 'button'
+  button.textContent = label
+  button.addEventListener('click', setButtonHandler)
 
-  function setButtonHandler(event) {
+  function setButtonHandler(event: Event) {
     event.preventDefault()
     saveNewThing(subject, context, ns.foaf('knows'))
       .then(() => {
@@ -70,7 +65,7 @@ const createAddMeToYourFriendsButton = (
       })
   }
 
-  button.refresh = refreshButton()
+  refreshButton()
 
   function refreshButton() {
     const me = authn.currentUser()
@@ -80,16 +75,13 @@ const createAddMeToYourFriendsButton = (
       checkIfThingExists(store, me, subject, ns.foaf('knows')).then((friendExists) => {
         if (friendExists) {
           //logged in and friend exists or friend was just added
-          button.innerHTML = friendExistsAlreadyButtonText.toUpperCase()
+          button.textContent = friendExistsAlreadyButtonText
         } else {
           //logged in and friend does not exist yet
-          button.innerHTML = addMeToYourFriendsButtonText.toUpperCase()
+          button.textContent = addMeToYourFriendsButtonText
         }
       })
-    } else {
-      //not logged in
-      button.innerHTML = logInAddMeToYourFriendsButtonText.toUpperCase()
-    }
+    } 
   }
 
   return button

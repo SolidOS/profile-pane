@@ -1,42 +1,9 @@
 /* ProfileCard.css */
 /* Uses utilities: .action-button-focus, .btn-primary, .flex-column-center, .text-truncate, .text-center, .text-wrap-anywhere, .section-centered, .btn-transparent */
 
-
-.introSection {
-  display: flex;
-  gap: 1.5rem;
-  padding: 1.5rem;
-}
-
-.introSectionHeader {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-}
-
-.introDetailsRow {
-  display: flex;
-  flex-direction: row;
-  gap: 1.5rem;
-}
-
-.introDetails {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.introDetailsHeader {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-
 .profileCard {
   /* Component container */
 }
-
 
 .name {
   font-size: var(--font-size-xl);
@@ -48,19 +15,9 @@
   letter-spacing: var(--letter-spacing-wide);
 }
 
-.intro {
+.profile__actions {
   color: var(--font-color-text-secondary);
-  font-size: var(--font-size-base);
-  line-height: var(--line-height-base);
-  margin-bottom: var(--spacing-xs);
-  max-width: 40ch;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.buttonSection {
-  color: var(--font-color-text-secondary);
-  font-size: 1em;
+  font-size: var(--font-size-base, 1rem);
   margin-bottom: var(--spacing-xs);
 }
 
