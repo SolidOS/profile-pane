@@ -49,7 +49,7 @@
 }
 
 .intro {
-  color: var(--color-text-secondary);
+  color: var(--font-color-text-secondary);
   font-size: var(--font-size-base);
   line-height: var(--line-height-base);
   margin-bottom: var(--spacing-xs);
@@ -59,7 +59,7 @@
 }
 
 .buttonSection {
-  color: var(--color-text-secondary);
+  color: var(--font-color-text-secondary);
   font-size: 1em;
   margin-bottom: var(--spacing-xs);
 }

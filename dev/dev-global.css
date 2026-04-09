@@ -38,16 +38,16 @@
   --color-border-accent: #88c;
   
   /* New Design: tokens */
-  --border-radius-base: 5px; /* Base border radius */
-  --border-radius-full: 10px;
+  --border-radius-base: 0.3125rem; /* 5px  Base border radius */
+  --border-radius-full: 0.625rem;  /* 10px */
 
   /* OLD --border-radius-full: 1em; /* Matches module usage */
   /* OLD --border-radius-base: 0.5em; */
-  --border-radius-xs: 0.1em;
-  --border-radius-sm: 0.2em;
-  --border-width-xthin: 0.05em;
-  --border-width-sm: 0.1em;
-  --border-width-thin: 1px;
+  --border-radius-xs: 0.1rem;
+  --border-radius-sm: 0.2rem;
+  --border-width-xthin: 0.05rem;
+  --border-width-sm: 0.1rem;
+  --border-width-thin: 0.1rem; /* changed from 1px */
 
   --box-shadow: 0 2px 8px rgba(124,77,255,0.08); /* Matches module usage */
   --box-shadow-sm: 0 1px 4px rgba(124,77,255,0.12);
@@ -75,11 +75,11 @@
   /* Note: changed from relative to absolute based on research that says em is relative to it's root */
   /*       so font sizes could compound unintentionally. To say strict to design I changed so we have absolute pixel values */
   /*.      predictability */      
-  --font-size-base: 16px; 
-  --font-size-sm: 14px; 
-  --font-size-lg: 18px; 
-  --font-size-xl: 20px; 
-  --font-size-xxl: 28px; 
+  --font-size-base: 1rem;      /* 16px */
+  --font-size-sm: 0.875rem;    /* 14px */
+  --font-size-lg: 1.125rem;    /* 18px */
+  --font-size-xl: 1.25rem;     /* 20px */
+  --font-size-xxl: 1.75rem;    /* 28px */
  /* OLD --font-size-base: 1em; /* 16px default */
  /* OLD --font-size-sm: 0.875em; /* 14px */
  /* OLD --font-size-lg: 1.125em; /* 18px */
@@ -91,10 +91,10 @@
   --font-weight-bold: 600; /* New design uses 600 for headings was 700 */
 
  /* Font colors (new design) */
-  --color-text-primary: var(--gray-700);
-  --color-text-secondary: var(--gray-600);
-  --color-text-heading: var(--black); /* New design uses pure black for headings */
-  --color-text-subheading: var(--gray-900);
+  --font-color-text-primary: var(--gray-700);
+  --font-color-text-secondary: var(--gray-600);
+  --font-color-text-heading: var(--black); /* New design uses pure black for headings */
+  --font-color-text-subheading: var(--gray-900);
   --font-color-strong: var(--slate-900);
   --font-color-strong-secondary: var(--slate-800);
 
@@ -149,7 +149,7 @@ html, body {
 /* Improved heading hierarchy */
 h1, h2, h3, h4, h5, h6 {
   /* color: var(--color-primary); maybe this is changing for all */
-  font-weight: 600;
+  font-weight: var(--font-weight-bold, 600); /* new design uses 600 */
   line-height: var(--line-height-tight);
   margin-top: 0;
   margin-bottom: var(--spacing-sm);
@@ -439,7 +439,7 @@ button:disabled, [role="button"][aria-disabled="true"] {
 }
 
 .text-secondary {
-  color: var(--color-text-secondary);
+  color: var(--font-color-text-secondary);
 }
 
 .text-muted {
