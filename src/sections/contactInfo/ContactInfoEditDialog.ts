@@ -1,7 +1,7 @@
 import { openInputDialog } from '../../ui/dialog'
 import { html, render } from 'lit-html'
 import { ContactAddressRow, ContactInfo, ContactMutationPlan, ContactPointRow } from './types'
-import '../../styles/SectionInputRows.css'
+import '../../styles/EditDialogs.css'
 import '../../styles/ContactInfoEditDialog.css'
 import { LiveStore, NamedNode } from 'rdflib'
 import { processContactInfoMutations } from './mutations'
@@ -130,7 +130,7 @@ function renderCountryPrefixSelect(
   onChange: (event: Event) => void
 ) {
   return html`
-    <label class="phonePrefixField" aria-label=${label}>
+    <label class="label phonePrefixField" aria-label=${label}>
       <select class="phonePrefixSelect" name=${name} .value=${value} @change=${onChange}>
         ${COUNTRY_PREFIX_OPTIONS.map((option) => html`
           <option value=${option.dialCode}>
@@ -190,13 +190,13 @@ function renderContactPhoneInputRow({
   }
 
   return html`
-    <div class="inputRow">
-      <div class="inputValueRow phoneCompositeRow">
+    <div class="profile-edit-dialog__row">
+      <div class="profile-edit-dialog__field phoneCompositeRow">
         ${renderCountryPrefixSelect(prefixInputName, selectedDialCode, countryCodeLabel, handleCountryCodeInput)}
         <span class="phoneCompositeDivider" aria-hidden="true">|</span>
-        <label aria-label=${label} class="phoneLocalField">
+        <label aria-label=${label} class="label phoneLocalField">
           <input
-            class="phoneLocalInput"
+            class="phoneLocalInput input"
             type="tel"
             name=${inputName}
             .value=${splitValue.localNumber}
@@ -211,7 +211,7 @@ function renderContactPhoneInputRow({
           />
         </label>
       </div>
-      <label aria-label=${typeLabel} class="inputTypeRow phoneTypeRow">
+      <label aria-label=${typeLabel} class="label profile-edit-dialog__field-type phoneTypeRow">
         <select name=${typeInputName} id="phone-type-select-${inputName}" @change=${handleTypeInput} .value=${phoneRow?.type || ''}>
           <option value="Home">Mobile</option>
           <option value="Home">Home</option>
@@ -315,9 +315,10 @@ function renderContactEmailInputRow({
   }
 
   return html`
-    <div class="inputRow">
-      <label aria-label=${label} class="inputValueRow">
+    <div class="profile-edit-dialog__row">
+      <label aria-label=${label} class="label profile-edit-dialog__field">
         <input
+          class="input"
           type="email"
           name=${inputName}
           .value=${emailRow?.value || ''}
@@ -331,7 +332,7 @@ function renderContactEmailInputRow({
           @input=${handleValueInput}
         />
       </label>
-      <label aria-label=${typeLabel} class="inputTypeRow">
+      <label aria-label=${typeLabel} class="label profile-edit-dialog__field-type">
         <select name=${typeInputName} id="email-type-select-${inputName}" @change=${handleTypeInput} .value=${emailRow?.type || ''}>
           <option value="Personal">Personal</option>
           <option value="Office">Office</option>
@@ -439,8 +440,8 @@ function renderContactAddressInputRow({
   }
 
   return html`
-    <div class="inputRow inputRow--addressHeader">
-      <label aria-label=${typeLabel} class="inputTypeRow inputTypeRow--wide">
+    <div class="profile-edit-dialog__row profile-edit-dialog__row--addressHeader">
+      <label aria-label=${typeLabel} class="label profile-edit-dialog__field-type profile-edit-dialog__field-type--wide">
         Address Type
         <select name=${typeInputName} id=${addressTypeSelectId} @change=${handleTypeInput} .value=${addressRow?.type || ''}>
           <option value="Home">Home</option>
@@ -462,9 +463,10 @@ function renderContactAddressInputRow({
         </button>
       </div>
     </div>
-    <label aria-label=${`${label} Street`} class="inputValueRow">
+    <label aria-label=${`${label} Street`} class="label profile-edit-dialog__field">
       Street Address
       <input
+        class="input"
         type="text"
         name=${streetAddressName}
         .value=${addressRow?.streetAddress || ''}
@@ -479,10 +481,11 @@ function renderContactAddressInputRow({
       />
     </label>
 
-    <div class="inputRow">
-      <label aria-label=${`${label} Locality`} class="inputValueRow">
+    <div class="profile-edit-dialog__row">
+      <label aria-label=${`${label} Locality`} class="label profile-edit-dialog__field">
         Locality
         <input
+          class="input"
           type="text"
           name=${localityName}
           .value=${addressRow?.locality || ''}
@@ -495,9 +498,10 @@ function renderContactAddressInputRow({
           @change=${handleAddressInput('locality')}
         />
       </label>
-      <label aria-label=${`${label} Postal Code`} class="inputValueRow">
+      <label aria-label=${`${label} Postal Code`} class="label profile-edit-dialog__field">
         Postal Code
         <input
+          class="input"
           type="text"
           name=${postalCodeName}
           .value=${addressRow?.postalCode || ''}
@@ -512,10 +516,11 @@ function renderContactAddressInputRow({
       </label>
     </div>
 
-    <div class="inputRow">
-      <label aria-label=${`${label} Region`} class="inputValueRow">
+    <div class="profile-edit-dialog__row">
+      <label aria-label=${`${label} Region`} class="label profile-edit-dialog__field">
         Region
         <input
+          class="input"
           type="text"
           name=${regionName}
           .value=${addressRow?.region || ''}
@@ -528,9 +533,10 @@ function renderContactAddressInputRow({
           @change=${handleAddressInput('region')}
         />
       </label>
-      <label aria-label=${`${label} Country`} class="inputValueRow">
+      <label aria-label=${`${label} Country`} class="label profile-edit-dialog__field">
         Country
         <input
+          class="input"
           type="text"
           name=${countryName}
           .value=${addressRow?.countryName || ''}
@@ -614,7 +620,7 @@ function renderContactInfoEditTemplate(form: HTMLFormElement, formState: Contact
 
 function createContactInfoEditForm(contactInfo: ContactInfo) {
   const form = document.createElement('form')
-  form.classList.add('section-edit-form')
+  form.classList.add('profile__edit-form')
 
   const formState = toFormState(contactInfo)
   renderContactInfoEditTemplate(form, formState)

@@ -307,9 +307,10 @@ function renderLanguageInputRow({
   }
 
   return html`
-    <div class="inputRow">
-      <label aria-label=${`${label} Language`} class="inputValueRow">
+    <div class="profile-edit-dialog__row">
+      <label aria-label=${`${label} Language`} class="label profile-edit-dialog__field">
         <input
+          class="input"
           type="text"
           name=${languageName}
           .value=${row?.name || ''}
@@ -328,7 +329,7 @@ function renderLanguageInputRow({
           ${suggestions.map((suggestion) => html`<option value=${suggestion.name}></option>`)}
         </datalist>
       </label>
-      <label aria-label=${proficiencyLabel} class="inputTypeRow">
+      <label aria-label=${proficiencyLabel} class="label profile-edit-dialog__field-type">
         <select name=${proficiencyInputName} id=${proficiencySelectId} @change=${handleProficiencyInput} .value=${row?.proficiency || ''}>
           <option value="Basic">Basic</option>
           <option value="Intermediate">Intermediate</option>
@@ -456,7 +457,7 @@ function renderLanguageEditTemplate(form: HTMLFormElement, formState: LanguageFo
 
 function createLanguageEditForm(details: LanguageDetails[]) {
   const form = document.createElement('form')
-  form.classList.add('section-edit-form')
+  form.classList.add('profile__edit-form')
 
   const formState = toFormState(details)
   renderLanguageEditTemplate(form, formState)

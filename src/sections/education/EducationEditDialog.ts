@@ -1,7 +1,7 @@
 import { alertDialog, openInputDialog } from '../../ui/dialog'
 import { html, render } from 'lit-html'
 import { EducationRow, EducationDetails } from './types'
-import '../../styles/SectionInputRows.css'
+import '../../styles/EditDialogs.css'
 import '../../styles/ContactInfoEditDialog.css'
 import { LiveStore, NamedNode } from 'rdflib'
 import { processEducationMutations } from './mutations'
@@ -266,7 +266,7 @@ function renderEducationInputRow({
   }
 
   return html`
-    <div class="inputRow" role="group" aria-labelledby=${educationHeadingId}>
+    <div class="profile-edit-dialog__row" role="group" aria-labelledby=${educationHeadingId}>
       <h5 id=${educationHeadingId}>${label}</h5>
       <div class="inputActions inputActions--edge">
         <button
@@ -282,9 +282,10 @@ function renderEducationInputRow({
         </button>
       </div>
     </div>
-    <label aria-label=${`${label} School/College`} class="inputValueRow">
+    <label aria-label=${`${label} School/College`} class="label profile-edit-dialog__field">
       School/College
       <input
+        class="input"
         type="text"
         name=${schoolName}
         .value=${educationData[index]?.school || ''}
@@ -297,10 +298,11 @@ function renderEducationInputRow({
         @change=${handleEducationInput('school')}
       />
     </label>
-    <div class="inputRow">
-      <label aria-label=${`${label} Degree`} class="inputValueRow">
+    <div class="profile-edit-dialog__row">
+      <label aria-label=${`${label} Degree`} class="label profile-edit-dialog__field">
         Degree
         <input
+          class="input"
           type="text"
           name=${degreeName}
           .value=${educationData[index]?.degree || ''}
@@ -315,33 +317,33 @@ function renderEducationInputRow({
         />
       </label>
     </div>  
-    <div class="inputRow">
-      <label aria-label=${startMonthLabel} class="inputTypeRow">
+    <div class="profile-edit-dialog__row">
+      <label aria-label=${startMonthLabel} class="label profile-edit-dialog__field-type">
         Start Month
         <select name=${startMonthInputName} id=${startMonthSelectId} @change=${handleStartMonthChange}>
           ${renderMonthOptions(startMonthValue)}
         </select>
       </label>
-      <label aria-label=${startYearLabel} class="inputTypeRow">
+      <label aria-label=${startYearLabel} class="label profile-edit-dialog__field-type">
         Start Year
         <select name=${startYearInputName} id=${startYearSelectId} @change=${handleStartYearChange}>
           ${renderYearOptions(startYearText)}
         </select>
       </label>
-      <label aria-label=${endMonthLabel} class="inputTypeRow">
+      <label aria-label=${endMonthLabel} class="label profile-edit-dialog__field-type">
         End Month
         <select name=${endMonthInputName} id=${endMonthSelectId} @change=${handleEndMonthChange}>
           ${renderMonthOptions(endMonthValue)}
         </select>
       </label>
-      <label aria-label=${endYearLabel} class="inputTypeRow">
+      <label aria-label=${endYearLabel} class="label profile-edit-dialog__field-type">
         End Year
         <select name=${endYearInputName} id=${endYearSelectId} @change=${handleEndYearChange}>
           ${renderYearOptions(endYearParsedText)}
         </select>
       </label>
     </div>
-    <label aria-label=${`${label} Description`} class="inputValueRow inputValueRow--full inputValueRow--stack">
+    <label aria-label=${`${label} Description`} class="label profile-edit-dialog__field profile-edit-dialog__field--full profile-edit-dialog__field--stack">
       <span>Description</span>
       <textarea
         class="inputTextarea inputTextarea--multiline"
@@ -426,7 +428,7 @@ function renderEducationEditTemplate(form: HTMLFormElement, formState: Education
 
 function createEducationEditForm(educationData: EducationDetails[]) {
   const form = document.createElement('form')
-  form.classList.add('section-edit-form')
+  form.classList.add('profile__edit-form')
 
   const formState = toFormState(educationData)
   const rerender = () => renderEducationEditTemplate(form, formState, rerender)

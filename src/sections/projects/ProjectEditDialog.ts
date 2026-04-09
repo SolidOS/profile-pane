@@ -168,9 +168,10 @@ function renderProjectInputRow({
   }
 
   return html`
-    <div class="inputRow">
-      <label aria-label=${`${label} Project URL`} class="inputValueRow">
+    <div class="profile-edit-dialog__row">
+      <label aria-label=${`${label} Project URL`} class="label profile-edit-dialog__field">
         <input
+          class="input"
           type="url"
           name=${projectUrl}
           .value=${row?.url || ''}
@@ -187,7 +188,7 @@ function renderProjectInputRow({
       </label>
       ${row?.title || row?.businessType || row?.category !== 'unknown' || row?.description
         ? html`
-          <div class="inputValueRow inputValueRow--full">
+          <div class="profile-edit-dialog__field profile-edit-dialog__field--full">
             ${row?.title ? html`<p><strong>${row.title}</strong></p>` : html``}
             ${row?.businessType ? html`<p>${row.businessType}</p>` : html``}
             ${row?.category && row.category !== 'unknown' ? html`<p>${row.category}</p>` : html``}
@@ -196,7 +197,7 @@ function renderProjectInputRow({
         `
         : html``}
       ${row?.imageUrl ? html`
-        <div class="inputValueRow inputValueRow--full">
+        <div class="profile-edit-dialog__field profile-edit-dialog__field--full">
           <img src=${row.imageUrl} alt=${row.title || 'Project preview image'} style="max-width: 180px; border-radius: 6px;" />
         </div>
       ` : html``}
@@ -283,7 +284,7 @@ function renderProjectsEditTemplate(form: HTMLFormElement, formState: ProjectFor
 
 function createProjectsEditForm(details: ProjectDetails[]) {
   const form = document.createElement('form')
-  form.classList.add('section-edit-form')
+  form.classList.add('profile__edit-form')
 
   const formState = toFormState(details)
   renderProjectsEditTemplate(form, formState)

@@ -1,7 +1,7 @@
 import { alertDialog, openInputDialog } from '../../ui/dialog'
 import { html, render } from 'lit-html'
 import { RoleDetails, ResumeRow } from './types'
-import '../../styles/SectionInputRows.css'
+import '../../styles/EditDialogs.css'
 import '../../styles/ContactInfoEditDialog.css'
 import { LiveStore, NamedNode, literal } from 'rdflib'
 import { processResumeMutations } from './mutations'
@@ -329,7 +329,7 @@ function renderResumeInputRow({
   }
 
   return html`
-    <div class="inputRow" role="group" aria-labelledby=${experienceHeadingId}>
+    <div class="profile-edit-dialog__row" role="group" aria-labelledby=${experienceHeadingId}>
       <h5 id=${experienceHeadingId}>${label}</h5>
       <div class="inputActions inputActions--edge">
         <button
@@ -345,9 +345,10 @@ function renderResumeInputRow({
         </button>
       </div>
     </div>
-    <label aria-label=${`${label} Title`} class="inputValueRow">
+    <label aria-label=${`${label} Title`} class="label profile-edit-dialog__field">
       Title
       <input
+        class="input"
         type="text"
         name=${titleName}
         .value=${resumeRow?.title || ''}
@@ -360,10 +361,11 @@ function renderResumeInputRow({
         @change=${handleResumeInput('title')}
       />
     </label>
-    <div class="inputRow">
-      <label aria-label=${`${label} Organization Name`} class="inputValueRow">
+    <div class="profile-edit-dialog__row">
+      <label aria-label=${`${label} Organization Name`} class="label profile-edit-dialog__field">
         Company or Organization 
         <input
+          class="input"
           type="text"
           name=${organizationName}
           .value=${resumeRow?.orgName || ''}
@@ -377,7 +379,7 @@ function renderResumeInputRow({
           @change=${handleResumeInput('orgName')}
         />
       </label>
-      <label aria-label=${`${label} Organization Type`} class="inputValueRow">
+      <label aria-label=${`${label} Organization Type`} class="label profile-edit-dialog__field">
         <select name=${organizationTypeName} id=${organizationTypeSelectId} @change=${handleOrganizationTypeInput} .value=${resumeRow?.orgType || ''}>
           <option value="Corporation">Corporation</option>
           <option value="EducationalOrganization">Educational Organization</option>
@@ -391,10 +393,11 @@ function renderResumeInputRow({
         </select>
       </label>
     </div>  
-    <div class="inputRow">
-      <label aria-label=${`${label} Company URL`} class="inputValueRow">
+    <div class="profile-edit-dialog__row">
+      <label aria-label=${`${label} Company URL`} class="label profile-edit-dialog__field">
         Company URL
         <input
+          class="input"
           type="text"
           name=${companyUrlName}
           .value=${resumeRow?.orgHomePage || ''}
@@ -407,9 +410,10 @@ function renderResumeInputRow({
           @change=${handleResumeInput('orgHomePage')}
         />
       </label>
-      <label aria-label=${`${label} Location`} class="inputValueRow">
+      <label aria-label=${`${label} Location`} class="label profile-edit-dialog__field">
         Location
         <input
+          class="input"
           type="text"
           name=${orgLocationName}
           .value=${resumeRow?.orgLocation || ''}
@@ -423,35 +427,36 @@ function renderResumeInputRow({
         />
       </label>
     </div>
-    <div class="inputRow">
-      <label aria-label=${startMonthLabel} class="inputTypeRow">
+    <div class="profile-edit-dialog__row">
+      <label aria-label=${startMonthLabel} class="label profile-edit-dialog__field-type">
         Start Month
         <select name=${startMonthInputName} id=${startMonthSelectId} @change=${handleStartMonthChange}>
           ${renderMonthOptions(startMonthValue)}
         </select>
       </label>
-      <label aria-label=${startYearLabel} class="inputTypeRow">
+      <label aria-label=${startYearLabel} class="label profile-edit-dialog__field-type">
         Start Year
         <select name=${startYearInputName} id=${startYearSelectId} @change=${handleStartYearChange}>
           ${renderYearOptions(startYearText)}
         </select>
       </label>
-      <label aria-label=${endMonthLabel} class="inputTypeRow">
+      <label aria-label=${endMonthLabel} class="label profile-edit-dialog__field-type">
         End Month
         <select name=${endMonthInputName} id=${endMonthSelectId} @change=${handleEndMonthChange}>
           ${renderMonthOptions(endMonthValue)}
         </select>
       </label>
-      <label aria-label=${endYearLabel} class="inputTypeRow">
+      <label aria-label=${endYearLabel} class="label profile-edit-dialog__field-type">
         End Year
         <select name=${endYearInputName} id=${endYearSelectId} @change=${handleEndYearChange}>
           ${renderYearOptions(endYearParsedText)}
         </select>
       </label>
     </div>
-    <div class="inputRow inputRow--inlineEnd">
-      <label class="inputCheckboxLabel" for=${isCurrentRoleId}>
+    <div class="profile-edit-dialog__row profile-edit-dialog__row--inlineEnd">
+      <label class="label inputCheckboxLabel" for=${isCurrentRoleId}>
         <input
+          class="input input--checkbox"
           type="checkbox"
           id=${isCurrentRoleId}
           name="isCurrentRole"
@@ -461,7 +466,7 @@ function renderResumeInputRow({
         <span>I am currently working in this role</span>
       </label>
     </div>
-    <label aria-label=${`${label} Description`} class="inputValueRow inputValueRow--full inputValueRow--stack">
+    <label aria-label=${`${label} Description`} class="label profile-edit-dialog__field profile-edit-dialog__field--full profile-edit-dialog__field--stack">
       <span>Description</span>
       <textarea
         class="inputTextarea inputTextarea--multiline"
@@ -550,7 +555,7 @@ function renderResumeEditTemplate(form: HTMLFormElement, formState: ResumeFormSt
 
 function createResumeEditForm(resumeData: RoleDetails[]) {
   const form = document.createElement('form')
-  form.classList.add('section-edit-form')
+  form.classList.add('profile__edit-form')
 
   const formState = toFormState(resumeData)
   const rerender = () => renderResumeEditTemplate(form, formState, rerender)

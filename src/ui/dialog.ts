@@ -17,6 +17,7 @@ type DialogButton = {
 type DialogElements = {
   dialog: HTMLDialogElement,
   title: HTMLHeadingElement,
+  closeButton: HTMLButtonElement,
   description: HTMLDivElement,
   error: HTMLElement,
   buttons: HTMLDivElement
@@ -37,7 +38,10 @@ function ensureModalDialog (dom: Document): HTMLDialogElement {
 
   modalDialog.innerHTML = `
     <div class="modal">
-      <h2 id="modal-title"></h2>
+      <div class="modal-header">
+        <h2 id="modal-title"></h2>
+        <button type="button" class="dialogCloseButton" aria-label="Close dialog">&times;</button>
+      </div>
       <div id="modal-desc"></div>
       <section id="modal-error" class="dialogErrorSection" aria-live="assertive" role="alert" hidden></section>
       <div id="modal-buttons"></div>
@@ -52,6 +56,7 @@ function getDialogElements (dialog: HTMLDialogElement): DialogElements {
   return {
     dialog,
     title: dialog.querySelector('#modal-title') as HTMLHeadingElement,
+    closeButton: dialog.querySelector('.dialogCloseButton') as HTMLButtonElement,
     description: dialog.querySelector('#modal-desc') as HTMLDivElement,
     error: dialog.querySelector('#modal-error') as HTMLElement,
     buttons: dialog.querySelector('#modal-buttons') as HTMLDivElement
@@ -127,7 +132,17 @@ function collectFormValues (form: HTMLFormElement): InputDialogValues {
   return values
 }
 
-function openModal ({ title, message, buttons, dom }: { title?: string, message?: string | Node, buttons: DialogButton[], dom: Document }) {
+function openModal ({
+  title,
+  message,
+  buttons,
+  dom
+}: {
+  title?: string,
+  message?: string | Node,
+  buttons: DialogButton[],
+  dom: Document
+}) {
   const dialog = ensureModalDialog(dom)
   const elements = getDialogElements(dialog)
 
@@ -151,8 +166,7 @@ function openModal ({ title, message, buttons, dom }: { title?: string, message?
       resolve(value)
     }
 
-    dialog.oncancel = (event: Event) => {
-      event.preventDefault()
+    const requestCancel = () => {
       const cancelBtn = dialog.querySelector('button[data-cancel]') as HTMLButtonElement | null
       if (cancelBtn) {
         cancelBtn.click()
@@ -160,6 +174,15 @@ function openModal ({ title, message, buttons, dom }: { title?: string, message?
       }
 
       finish(false)
+    }
+
+    dialog.oncancel = (event: Event) => {
+      event.preventDefault()
+      requestCancel()
+    }
+
+    elements.closeButton.onclick = () => {
+      requestCancel()
     }
 
     buttons.forEach((btn) => {
@@ -186,6 +209,8 @@ function closeModal (_result: DialogButtonValue): void {
   if (modalDialog) {
     closeDialogElement(modalDialog)
     modalDialog.oncancel = null
+    const closeButton = modalDialog.querySelector('.dialogCloseButton') as HTMLButtonElement | null
+    if (closeButton) closeButton.onclick = null
     if (previousFocus && 'focus' in previousFocus) (previousFocus as HTMLElement).focus()
   }
 }

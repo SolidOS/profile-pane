@@ -293,7 +293,7 @@ label:focus-visible {
   width: auto;
   min-width: 0;
   max-width: none;
-  padding: 0.375rem var(--spacing-sm, 0.75rem);
+  padding: 0.375rem 0.75rem;
   align-items: center;
   gap: var(--spacing-xxs, 0.3125rem);
   border-radius: var(--border-radius-md, 0.5rem);
@@ -309,6 +309,36 @@ label:focus-visible {
   outline-offset: 2px !important;
   box-shadow: 0 0 0 2px var(--color-background), 0 0 0 5px rgba(124, 77, 255, 0.25) !important;
   z-index: 1;
+}
+
+.input {
+  border-radius: var(--border-radius-base, 0.3125rem);
+  border: 1px solid var(--gray-400, #99A1AF);
+  background: var(--white, #FFF);
+  color: var(--gray-900, #101828);
+  font-size: var(--font-size-sm, 0.875rem);
+  font-weight: var(--font-weight-medium, 500);
+  padding: var(--spacing-2xs, 0.625rem);
+}
+
+.input--checkbox {
+  display: inline-block;
+  width: 1rem;
+  height: 1rem;
+  min-height: 1rem;
+  padding: 0;
+  border: 1px solid var(--gray-400, #99A1AF);
+  border-radius: var(--border-radius-sm, 0.25rem);
+  align-self: auto;
+}
+
+.label {
+  color: var(--gray-600, #4A5565);
+  font-family: "Neue Einstellung";
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
 }
 
 /* List Reset - used by FriendList, SocialCard, nav */
@@ -415,7 +445,7 @@ label:focus-visible {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: var(--spacing-sm, 0.75rem);
+  gap: var(--spacing-xs, 0.75rem);
   width: 100%;
 }
 

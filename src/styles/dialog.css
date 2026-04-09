@@ -4,11 +4,16 @@
   margin: 0;
   padding: 0;
   border: none;
-  background: transparent;
+  background: rgba(0, 0, 0, 0.5);
   max-width: none;
   max-height: none;
-  width: auto;
-  overflow: visible;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
   z-index: 9999;
 }
 
@@ -22,7 +27,7 @@
 
 #profile-modal .modal {
   box-sizing: border-box;
-  margin: auto;
+  margin: 0;
   background: var(--color-background);
   padding: var(--spacing-lg);
   border-radius: var(--border-radius-base);
@@ -95,17 +100,6 @@
   display: none !important;
 }
 
-#profile-modal input,
-#profile-modal select,
-#profile-modal textarea {
-  min-height: var(--min-touch-target);
-  padding: var(--spacing-xs);
-  border: 1px solid var(--color-border-pale);
-  border-radius: var(--border-radius-base);
-  font: inherit;
-  color: var(--color-text);
-  background: var(--color-background);
-}
 
 /* buttons themselves use the shared btn-primary rules */
 #profile-modal .modal button {
@@ -179,10 +173,4 @@
     width: 100%;
   }
 
-  #profile-modal input,
-  #profile-modal select,
-  #profile-modal textarea {
-    width: 100%;
-    box-sizing: border-box;
-  }
 }

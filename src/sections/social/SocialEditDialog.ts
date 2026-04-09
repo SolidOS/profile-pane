@@ -2,7 +2,7 @@ import { openInputDialog } from '../../ui/dialog'
 import { html, render } from 'lit-html'
 import type { Account, SocialRow } from './types'
 import '../../styles/ContactInfoEditDialog.css'
-import '../../styles/SectionInputRows.css'
+import '../../styles/EditDialogs.css'
 import { LiveStore, NamedNode } from 'rdflib'
 import { ViewerMode } from '../../types'
 import { applyRowFieldChange, deleteRow, summarizeRowOps } from '../shared/rowState'
@@ -173,7 +173,7 @@ function renderSocialInputRow({
   }
 
   return html`
-    <div class="inputRow">
+    <div class="profile-edit-dialog__row">
      <img 
         class="socialIcon" 
         src="${row?.icon || DEFAULT_ICON_URI}" 
@@ -182,11 +182,12 @@ function renderSocialInputRow({
         height="30"
         loading="lazy"
       />
-      <label aria-label=${nameLabel} class="inputValueRow">
+      <label aria-label=${nameLabel} class="label profile-edit-dialog__field">
         ${renderSocialAccountInputSelect(row, options, handleAccountTypeInput)}
       </label>
-      <label aria-label=${homepageLabel} class="inputValueRow">
+      <label aria-label=${homepageLabel} class="label profile-edit-dialog__field">
         <input
+          class="input"
           type="url"
           name=${`social-homepage-${index}`}
           .value=${row?.homepage || ''}
@@ -276,7 +277,7 @@ function renderSocialEditTemplate(form: HTMLFormElement, formState: SocialFormSt
 
 function createSocialEditForm(details: Account[], store: LiveStore) {
   const form = document.createElement('form')
-  form.classList.add('section-edit-form')
+  form.classList.add('profile__edit-form')
 
   const formState = toFormState(details)
   renderSocialEditTemplate(form, formState, store)

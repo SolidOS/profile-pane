@@ -12,7 +12,6 @@ export const loadingMessage = 'Loading...'
 
 //BUTTONS
 export const addMeToYourFriendsButtonText = 'Add as friend'
-export const logInAddMeToYourFriendsButtonText = 'Login to add as friend'
 export const logInToChatWithMeButtonText = 'Login to chat with me'
 export const friendExistsAlreadyButtonText = 'Already part of friends'
 export const chatWithMeButtonText = 'Chat with me'

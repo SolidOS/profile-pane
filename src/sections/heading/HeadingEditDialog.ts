@@ -2,14 +2,12 @@ import { openInputDialog } from '../../ui/dialog'
 import { html, render, TemplateResult } from 'lit-html'
 import { ProfileDetails, HeadingMutationPlan, ProfileBasicRow } from './types'
 import { Image } from './HeadingSection'
-import '../../styles/SectionInputRows.css'
+import '../../styles/EditDialogs.css'
 import { LiveStore, NamedNode } from 'rdflib'
 import { processHeadingMutations } from './mutations'
 import { ViewerMode } from '../../types'
 import {
   combinePhoneValue,
-  COUNTRY_PREFIX_OPTIONS,
-  countryCodeToFlag,
   splitPhoneValue
 } from '../shared/phoneCountries'
 import { applyRowFieldChange, applyRowSelectChange, summarizeRowOps } from '../shared/rowState'
@@ -23,11 +21,12 @@ import {
 } from '../../texts'
 import { ContactAddressRow, ContactPointRow } from '../contactInfo/types'
 import { sanitizeAddressFieldValue, sanitizeBasicInputFieldValue, sanitizeEmailValue, sanitizePhoneLocalValue } from '../shared/sanitizeUtils'
-import { toEditableDateDMY, toStorageDateISO } from './dateHelpers'
+import { toStorageDateISO } from './dateHelpers'
+/* Note: new design - has address type in More Edit Contacts for now we will leave
+         out Address Type, but a ticket will be created to add type later
+         so I will keep the code and just comment it out for now. 
+         new design - has country code, will comment out code for now and create a ticket to add later. */
 
-// Notes: In the design there is no type on address, but phone and email have a type.
-// guess it depends on where we are storing this data whether we should add type or not
-// for now I've left type but can remove.
 type HeadingFormState = {
   basicInfo: ProfileBasicRow
   email: ContactPointRow
@@ -164,14 +163,14 @@ type ContactAddressInputRowProps = {
   address: ContactAddressRow
 }
 
-function renderCountryPrefixSelect(
+/* Will use later function renderCountryPrefixSelect(
   name: string,
   value: string,
   label: string,
   onChange: (event: Event) => void
 ) {
   return html`
-    <label class="phonePrefixField" aria-label=${label}>
+    <label class="label phonePrefixField" aria-label=${label}>
       <select class="phonePrefixSelect" name=${name} .value=${value} @change=${onChange}>
         ${COUNTRY_PREFIX_OPTIONS.map((option) => html`
           <option value=${option.dialCode}>
@@ -181,15 +180,15 @@ function renderCountryPrefixSelect(
       </select>
     </label>
   `
-}
+} */
 
 function renderContactPhoneInput({
   phone
 }: ContactPhoneInputRowProps) {
   const label = 'Phone Number'
-  const countryCodeLabel = 'Country Calling Code'
+  /* const countryCodeLabel = 'Country Calling Code' */
+  /* const prefixInputName = 'phone-prefix' */
   const typeLabel = 'Phone Type'
-  const prefixInputName = 'phone-prefix'
   const inputName = 'phone-value'
   const typeInputName = 'phone-type'
   const splitValue = splitPhoneValue(phone?.value || '')
@@ -202,7 +201,7 @@ function renderContactPhoneInput({
       applyRowFieldChange(phone, 'value', combinePhoneValue(selectedDialCode, nextValue), rowHasContent)
     }
   }
-
+ /* Leaving here for when we add country code back in
   const handleCountryCodeInput = (e: Event) => {
     const target = e.target as HTMLSelectElement
     selectedDialCode = target.value
@@ -211,7 +210,7 @@ function renderContactPhoneInput({
       const localNumber = splitPhoneValue(phone.value).localNumber
       applyRowFieldChange(phone, 'value', combinePhoneValue(selectedDialCode, localNumber), rowHasContent)
     }
-  }
+  } */
 
   const handleTypeInput = (e: Event) => {
     const target = e.target as HTMLInputElement
@@ -222,13 +221,11 @@ function renderContactPhoneInput({
   }
 
   return html`
-    <div class="inputRow">
-      <div class="inputValueRow phoneCompositeRow">
-        ${renderCountryPrefixSelect(prefixInputName, selectedDialCode, countryCodeLabel, handleCountryCodeInput)}
-        <span class="phoneCompositeDivider" aria-hidden="true">|</span>
-        <label aria-label=${label} class="phoneLocalField">
+    <div class="profile-edit-dialog__row">
+      <div class="profile-edit-dialog__field phoneCompositeRow">
+        <label aria-label=${label} class="label phoneLocalField">
           <input
-            class="phoneLocalInput"
+            class="phoneLocalInput input"
             type="tel"
             name=${inputName}
             .value=${splitValue.localNumber}
@@ -243,12 +240,11 @@ function renderContactPhoneInput({
           />
         </label>
       </div>
-      <label aria-label=${typeLabel} class="inputTypeRow phoneTypeRow">
+      <label aria-label=${typeLabel} class="label profile-edit-dialog__field-type phoneTypeRow">
         <select name=${typeInputName} id="phone-type-select-${inputName}" @change=${handleTypeInput} .value=${phone?.type || ''}>
-          <option value="Home">Mobile</option>
+          <option value="Mobile">Mobile</option>
           <option value="Home">Home</option>
           <option value="Work">Work</option>
-          <option value="Other">Other</option>
         </select>
       </label>
     </div>
@@ -280,9 +276,10 @@ function renderContactEmailInputRow({
   }
 
   return html`
-    <div class="inputRow">
-      <label aria-label=${label} class="inputValueRow">
+    <div class="profile-edit-dialog__row">
+      <label aria-label=${label} class="label profile-edit-dialog__field">
         <input
+          class="input"
           type="email"
           name=${inputName}
           .value=${email?.value || ''}
@@ -296,11 +293,10 @@ function renderContactEmailInputRow({
           @input=${handleValueInput}
         />
       </label>
-      <label aria-label=${typeLabel} class="inputTypeRow">
+      <label aria-label=${typeLabel} class="label profile-edit-dialog__field-type emailTypeRow">
         <select name=${typeInputName} id="email-type-select-${inputName}" @change=${handleTypeInput} .value=${email?.type || ''}>
-          <option value="Personal">Personal</option>
+          <option value="Home">Personal</option>
           <option value="Office">Office</option>
-          <option value="Other">Other</option>
         </select>
       </label>
     </div>
@@ -311,14 +307,15 @@ function renderContactAddressInput({
   address
 }: ContactAddressInputRowProps) {
   const label = 'Address'
-  const typeLabel = 'Address Type'
+  /* const typeLabel = 'Address Type' */
+  /* const typeInputName = 'address-type' */
+  /* const addressTypeSelectId = 'address-type-select' */
   const streetAddressName = 'address-street'
   const localityName = 'address-locality'
   const regionName = 'address-region'
   const postalCodeName = 'address-postal'
   const countryName = 'address-country'
-  const typeInputName = 'address-type'
-  const addressTypeSelectId = 'address-type-select'
+
 
   const handleAddressInput = (field: ContactAddressEditableField) => (e: Event) => {
     const target = e.target as HTMLInputElement
@@ -328,28 +325,19 @@ function renderContactAddressInput({
     }
   }
 
-  const handleTypeInput = (e: Event) => {
+  /* const handleTypeInput = (e: Event) => {
     const target = e.target as HTMLInputElement
     const nextType = target.value
     if (address) {
       applyRowSelectChange(address, 'type', nextType)
-    }
-  }
+    } 
+  } */
 
   return html`
-    <div class="inputRow inputRow--addressHeader">
-      <label aria-label=${typeLabel} class="inputTypeRow inputTypeRow--wide">
-        Address Type
-        <select name=${typeInputName} id=${addressTypeSelectId} @change=${handleTypeInput} .value=${address?.type || ''}>
-          <option value="Home">Home</option>
-          <option value="Work">Work</option>
-          <option value="Other">Other</option>
-        </select>
-      </label>
-    </div>
-    <label aria-label=${`${label} Street`} class="inputValueRow">
+    <label aria-label=${`${label} Street`} class="label profile-edit-dialog__field profile-edit-dialog__field--rowWidth">
       Street Address
       <input
+        class="input"
         type="text"
         name=${streetAddressName}
         .value=${address?.streetAddress || ''}
@@ -364,10 +352,11 @@ function renderContactAddressInput({
       />
     </label>
 
-    <div class="inputRow">
-      <label aria-label=${`${label} Locality`} class="inputValueRow">
+    <div class="profile-edit-dialog__row">
+      <label aria-label=${`${label} Locality`} class="label profile-edit-dialog__field">
         Locality
         <input
+          class="input"
           type="text"
           name=${localityName}
           .value=${address?.locality || ''}
@@ -380,9 +369,10 @@ function renderContactAddressInput({
           @change=${handleAddressInput('locality')}
         />
       </label>
-      <label aria-label=${`${label} Postal Code`} class="inputValueRow">
+      <label aria-label=${`${label} Postal Code`} class="label profile-edit-dialog__field">
         Postal Code
         <input
+          class="input"
           type="text"
           name=${postalCodeName}
           .value=${address?.postalCode || ''}
@@ -397,10 +387,11 @@ function renderContactAddressInput({
       </label>
     </div>
 
-    <div class="inputRow">
-      <label aria-label=${`${label} Region`} class="inputValueRow">
+    <div class="profile-edit-dialog__row">
+      <label aria-label=${`${label} Region`} class="label profile-edit-dialog__field">
         Region
         <input
+          class="input"
           type="text"
           name=${regionName}
           .value=${address?.region || ''}
@@ -413,9 +404,10 @@ function renderContactAddressInput({
           @change=${handleAddressInput('region')}
         />
       </label>
-      <label aria-label=${`${label} Country`} class="inputValueRow">
+      <label aria-label=${`${label} Country`} class="label profile-edit-dialog__field">
         Country
         <input
+          class="input"
           type="text"
           name=${countryName}
           .value=${address?.countryName || ''}
@@ -432,8 +424,10 @@ function renderContactAddressInput({
   `
 }
 
-function renderHeadingBasicInfoInput(
-  basicInfo: ProfileBasicRow
+function renderHeadingInfoInput(
+  basicInfo: ProfileBasicRow,
+  phone: ContactPointRow,
+  email: ContactPointRow
 ): TemplateResult {
   const imageSrcLabel = 'Profile Photo'
   const recommendedImageToLoad = 'Recommended: Square JPG, PNG. Max 2MB.'
@@ -490,19 +484,19 @@ function renderHeadingBasicInfoInput(
   }
 
   return html`
-    <div class="inputRow">
+    <div class="profile-edit-dialog__row">
       <header class="mb-md" aria-label="Profile Image">
         ${Image(basicInfo.imageSrc, basicInfo.name)}
       </header>
 
-      <div class="imagePreview" aria-label="Profile Photo Preview">
-        <p class="imagePreviewLabel"><strong>${imageSrcLabel}</strong></p>
-        <p class="imagePreviewDescription">${recommendedImageToLoad}</p>
+      <div class="profile-edit-dialog__image-preview" aria-label="Profile Photo Preview">
+        <p class="profile-edit-dialog__image-preview-label"><strong>${imageSrcLabel}</strong></p>
+        <p class="profile-edit-dialog__image-preview-description">${recommendedImageToLoad}</p>
 
-        <div class="imagePreviewButtons">
+        <div class="profile-edit-dialog__image-preview-actions">
           <button
             type="button"
-            class="uploadButton"
+            class="profile-edit-dialog__image-upload-button"
             aria-label="Upload new profile photo"
             title="Upload New"
             @click=${handleUpload('imageSrc')}
@@ -511,7 +505,7 @@ function renderHeadingBasicInfoInput(
           </button>
           <button
             type="button"
-            class="deleteImageButton"
+            class="profile-edit-dialog__image-remove-button"
             aria-label="Delete profile photo"
             title="Remove"
             @click=${handleDelete('imageSrc')}
@@ -521,134 +515,122 @@ function renderHeadingBasicInfoInput(
         </div>
       </div>
     </div>
-
-    <div class="inputRow">
-      <label aria-label=${nameLabel} class="inputValueRow">
-        ${nameLabel}
-        <input
-          type="text"
-          name="name"
-          .value=${basicInfo?.name || ''}
-          required
-          data-contact-field="name"
-          data-entry-node=${basicInfo?.entryNode || ''}
-          data-row-status=${basicInfo?.status || 'n/a'}
-          placeholder="Full Name"
-          autocomplete="name"
-          inputmode="text"
-          @change=${handleBasicInfoInput('name')}
-        />
-      </label>
-
-      <label aria-label=${nicknameLabel} class="inputValueRow">
-        ${nicknameLabel}
-        <input
-          type="text"
-          name="nickname"
-          .value=${basicInfo?.nickname || ''}
-          data-contact-field="nickname"
-          data-entry-node=${basicInfo?.entryNode || ''}
-          data-row-status=${basicInfo?.status || 'n/a'}
-          placeholder="Nickname"
-          autocomplete="nickname"
-          inputmode="text"
-          @change=${handleBasicInfoInput('nickname')}
-        />
-      </label>
-    </div>
-
-    <div class="inputRow">
-      <label aria-label=${pronounsLabel} class="inputTypeRow">
-        ${pronounsLabel}
-        <select name="pronouns" @change=${handlePronounsInput} .value=${basicInfo?.pronouns || ''}>
-          <option value="He/Him">He/Him</option>
-          <option value="She/Her">She/Her</option>
-          <option value="They/Them">They/Them</option>
-        </select>
-      </label>
-
-      <label aria-label=${dateOfBirthLabel} class="inputValueRow">
-        ${dateOfBirthLabel}
-        <input
-          type="text"
-          name="profile-date-of-birth"
-          .value=${toEditableDateDMY(basicInfo?.dateOfBirth)}
-          data-contact-field="dateOfBirth"
-          data-entry-node=${basicInfo?.entryNode || ''}
-          data-row-status=${basicInfo?.status || 'n/a'}
-          placeholder="DD-MM-YYYY"
-          autocomplete="off"
-          inputmode="numeric"
-          pattern="\d{2}-\d{2}-\d{4}"
-          data-lpignore="true"
-          data-1p-ignore="true"
-          data-bwignore="true"
-          @change=${handleDateOfBirthInput}
-        />
-      </label>
-    </div>
-
-    <div class="inputRow">
-      <label aria-label=${jobTitleLabel} class="inputValueRow">
-        ${jobTitleLabel}
-        <input
-          type="text"
-          name="jobTitle"
-          .value=${basicInfo?.jobTitle || ''}
-          data-contact-field="jobTitle"
-          data-entry-node=${basicInfo?.entryNode || ''}
-          data-row-status=${basicInfo?.status || 'n/a'}
-          placeholder="Job Title"
-          autocomplete="organization-title"
-          inputmode="text"
-          @change=${handleBasicInfoInput('jobTitle')}
-        />
-      </label>
-
-      <label aria-label=${orgNameLabel} class="inputValueRow">
-        ${orgNameLabel}
-        <input
-          type="text"
-          name="orgName"
-          .value=${basicInfo?.orgName || ''}
-          data-contact-field="orgName"
-          data-entry-node=${basicInfo?.entryNode || ''}
-          data-row-status=${basicInfo?.status || 'n/a'}
-          placeholder="Organization Name"
-          autocomplete="organization-name"
-          inputmode="text"
-          @change=${handleBasicInfoInput('orgName')}
-        />
-      </label>
+    <div class="profile-edit flex-column gap-lg">
+      <div class="profile-edit-dialog__row profile-edit-dialog__row--equal">
+        <label aria-label=${nameLabel} class="label profile-edit-dialog__field">
+          ${nameLabel}
+          <input
+            class="input"
+            type="text"
+            name="name"
+            .value=${basicInfo?.name || ''}
+            required
+            data-contact-field="name"
+            data-entry-node=${basicInfo?.entryNode || ''}
+            data-row-status=${basicInfo?.status || 'n/a'}
+            placeholder="Full Name"
+            autocomplete="name"
+            inputmode="text"
+            @change=${handleBasicInfoInput('name')}
+          />
+        </label>
+        <label aria-label=${nicknameLabel} class="label profile-edit-dialog__field">
+          ${nicknameLabel}
+          <input
+            class="input"
+            type="text"
+            name="nickname"
+            .value=${basicInfo?.nickname || ''}
+            data-contact-field="nickname"
+            data-entry-node=${basicInfo?.entryNode || ''}
+            data-row-status=${basicInfo?.status || 'n/a'}
+            placeholder="Nickname"
+            autocomplete="nickname"
+            inputmode="text"
+            @change=${handleBasicInfoInput('nickname')}
+          />
+        </label>
+      </div>
+      <div class="profile-edit-dialog__row profile-edit-dialog__row--equal">
+        <label aria-label=${pronounsLabel} class="label profile-edit-dialog__field-type">
+          ${pronounsLabel}
+          <select name="pronouns" @change=${handlePronounsInput} .value=${basicInfo?.pronouns || ''}>
+            <option value="He/Him">He/Him</option>
+            <option value="She/Her">She/Her</option>
+            <option value="They/Them">They/Them</option>
+          </select>
+        </label>
+        <label aria-label=${dateOfBirthLabel} class="label profile-edit-dialog__field">
+          ${dateOfBirthLabel}
+          <input
+            class="input"
+            type="date"
+            name="profile-date-of-birth"
+            .value=${toStorageDateISO(basicInfo?.dateOfBirth)}
+            data-contact-field="dateOfBirth"
+            data-entry-node=${basicInfo?.entryNode || ''}
+            data-row-status=${basicInfo?.status || 'n/a'}
+            autocomplete="off"
+            data-lpignore="true"
+            data-1p-ignore="true"
+            data-bwignore="true"
+            @change=${handleDateOfBirthInput}
+          />
+        </label>
+      </div>
+      <div class="profile-edit-dialog__row profile-edit-dialog__row--equal">
+        <label aria-label=${jobTitleLabel} class="label profile-edit-dialog__field">
+          ${jobTitleLabel}
+          <input
+            class="input"
+            type="text"
+            name="jobTitle"
+            .value=${basicInfo?.jobTitle || ''}
+            data-contact-field="jobTitle"
+            data-entry-node=${basicInfo?.entryNode || ''}
+            data-row-status=${basicInfo?.status || 'n/a'}
+            placeholder="Job Title"
+            autocomplete="organization-title"
+            inputmode="text"
+            @change=${handleBasicInfoInput('jobTitle')}
+          />
+        </label>
+        <label aria-label=${orgNameLabel} class="label profile-edit-dialog__field">
+          ${orgNameLabel}
+          <input
+            class="input"
+            type="text"
+            name="orgName"
+            .value=${basicInfo?.orgName || ''}
+            data-contact-field="orgName"
+            data-entry-node=${basicInfo?.entryNode || ''}
+            data-row-status=${basicInfo?.status || 'n/a'}
+            placeholder="Organization Name"
+            autocomplete="organization-name"
+            inputmode="text"
+            @change=${handleBasicInfoInput('orgName')}
+          />
+        </label>
+      </div>
+      <div class="profile-edit-dialog__row profile-edit-dialog__row--equal">
+        ${renderContactPhoneInput({ phone })}
+        ${renderContactEmailInputRow({ email })}
+      </div>
     </div>
   `
-}
-
-function renderContactPointInput(
-  phone: ContactPointRow,
-  email: ContactPointRow
-): TemplateResult {
-
-  return html`
-    <div class="inputRow">
-      ${renderContactPhoneInput({ phone })}
-      ${renderContactEmailInputRow({ email })}
-    </div>   
-    `
 }
 
 function renderHeadingEditTemplate(form: HTMLFormElement, formState: HeadingFormState) {
  
   render(html`
-    ${renderHeadingBasicInfoInput(formState.basicInfo)}
-    ${renderContactPointInput(formState.phone, formState.email)}
+    ${renderHeadingInfoInput(formState.basicInfo, formState.phone, formState.email)}
     ${renderContactAddressInput({ address: formState.address })}
   `, form)
 }
 
 function createHeadingEditForm(profileData: ProfileDetails) {
   const form = document.createElement('form')
-  form.classList.add('section-edit-form')
+  form.classList.add('profile__edit-form', 'flex-column', 'gap-sm')
   form.autocomplete = 'off'
   form.setAttribute('data-lpignore', 'true')
   form.setAttribute('data-1p-ignore', 'true')
@@ -684,7 +666,7 @@ export async function createHeadingEditDialog(
   viewerMode: ViewerMode,
   onSaved?: () => Promise<void> | void
 ) {
-  const dom = (event.currentTarget as HTMLElement | null)?.ownerDocument || document
+  const dom = document
   const { form, formState } = createHeadingEditForm(profileData)
 
   const result = await openInputDialog({

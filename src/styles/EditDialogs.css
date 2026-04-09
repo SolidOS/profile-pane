@@ -4,6 +4,10 @@
   gap: var(--spacing-xs);
 }
 
+.profile__edit-form {
+  width: 100%;
+}
+
 .contactsEditSection h4 {
   margin: 0;
 }
@@ -15,44 +19,88 @@
   gap: var(--spacing-sm);
 }
 
-.inputRow {
+.profile-edit-dialog__row {
   display: flex;
   align-items: flex-start;
   gap: var(--spacing-sm);
   max-width: 34rem;
 }
 
-.inputValueRow,
-.inputTypeRow {
+/* Force two direct children to split the row into equal columns. */
+.profile-edit-dialog__row--equal > .profile-edit-dialog__field,
+.profile-edit-dialog__row--equal > .profile-edit-dialog__field-type {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+.profile-edit-dialog__image-preview {
+  display: grid;
+  gap: var(--spacing-xs);
+}
+
+.profile-edit-dialog__image-preview-label,
+.profile-edit-dialog__image-preview-description {
+  margin: 0;
+}
+
+.profile-edit-dialog__image-preview-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+}
+
+.profile-edit-dialog__image-upload-button,
+.profile-edit-dialog__image-remove-button {
+  min-height: var(--min-touch-target, 44px);
+  padding: 0 var(--spacing-sm);
+}
+
+.profile-edit-dialog__field,
+.profile-edit-dialog__field-type {
   display: block;
   margin: 0;
 }
 
-.inputValueRow {
-  flex: 1 1 auto;
+.profile-edit-dialog__field {
+  /* flex: 1 1 auto; */
   min-width: 0;
 }
 
-.inputValueRow--stack {
+.profile-edit-dialog__field--stack {
   display: grid;
   gap: var(--spacing-xxs);
 }
 
-.inputValueRow--full {
+.profile-edit-dialog__field--full {
   max-width: 100% !important;
   width: 100%;
 }
 
-.inputTypeRow {
-  flex: 0 0 10rem;
+.profile-edit-dialog__field--rowWidth {
+  max-width: 34rem;
+  width: 100%;
 }
 
-.inputRow--addressHeader {
+.profile-edit-dialog__field-type.phoneTypeRow,
+.profile-edit-dialog__field-type.emailTypeRow {
+  flex: 0 0 auto;
+  width: fit-content;
+  max-width: fit-content;
+}
+
+.profile-edit-dialog__field-type.phoneTypeRow select,
+.profile-edit-dialog__field-type.emailTypeRow select {
+  width: auto;
+  max-width: none;
+  min-width: 7.5rem;
+}
+
+.profile-edit-dialog__row--addressHeader {
   max-width: 34rem;
   align-items: flex-end;
 }
 
-.inputRow--inlineEnd {
+.profile-edit-dialog__row--inlineEnd {
   justify-content: flex-end;
   max-width: 100%;
 }
@@ -72,11 +120,11 @@
 }
 
 /* The street-address row is a standalone label, so cap its width like the flex rows. */
-.contactsEditSection fieldset > .inputValueRow {
+.contactsEditSection fieldset > .profile-edit-dialog__field {
   max-width: 34rem;
 }
 
-.inputTypeRow--wide {
+.profile-edit-dialog__field-type--wide {
   flex: 1 1 auto;
   min-width: 0;
 }
@@ -131,22 +179,31 @@
   color: var(--color-danger, #b42318);
 }
 
-.inputValueRow input,
-.inputTypeRow input,
-.inputTypeRow select {
+.profile-edit-dialog__field input,
+.profile-edit-dialog__field-type input,
+.profile-edit-dialog__field-type select {
   width: 100%;
   max-width: 100%;
   box-sizing: border-box;
   min-height: var(--min-touch-target, 44px);
   height: var(--min-touch-target, 44px);
+  font-family: var(--font-family-base, sans-serif);
 }
 
-.inputValueRow textarea,
-.inputTypeRow textarea {
+.profile-edit-dialog__field textarea,
+.profile-edit-dialog__field-type textarea {
   width: 100%;
   max-width: 100%;
   box-sizing: border-box;
   min-height: var(--min-touch-target, 44px);
+  font-family: var(--font-family-base, sans-serif);
+}
+
+/* Keep phone/email type selects compact despite generic full-width input/select rules above. */
+.profile-edit-dialog__field-type.phoneTypeRow select,
+.profile-edit-dialog__field-type.emailTypeRow select {
+  width: auto;
+  max-width: none;
 }
 
 .inputTextarea--multiline {
@@ -155,28 +212,39 @@
   resize: vertical;
 }
 
-.inputValueRow--stack small {
+.profile-edit-dialog__field--stack small {
   justify-self: end;
   text-align: right;
 }
 
 @media (max-width: 640px) {
-  .inputRow {
+  .profile-edit-dialog__row {
     max-width: 100%;
     flex-direction: column;
     align-items: stretch;
   }
 
-  .inputTypeRow {
+  .profile-edit-dialog__row--equal > .profile-edit-dialog__field,
+  .profile-edit-dialog__row--equal > .profile-edit-dialog__field-type {
     flex: 1 1 auto;
   }
 
-  .inputRow--addressHeader {
+  .profile-edit-dialog__field-type {
+    flex: 1 1 auto;
+  }
+
+  .phoneTypeRow,
+  .emailTypeRow {
+    flex: 1 1 auto;
+    max-width: 100%;
+  }
+
+  .profile-edit-dialog__row--addressHeader {
     flex-direction: row;
     align-items: flex-end;
   }
 
-  .inputRow--inlineEnd {
+  .profile-edit-dialog__row--inlineEnd {
     justify-content: flex-start;
   }
 
@@ -184,7 +252,7 @@
     justify-content: flex-start;
   }
 
-  .inputRow--addressHeader .inputActions {
+  .profile-edit-dialog__row--addressHeader .inputActions {
     justify-content: flex-end;
   }
 }

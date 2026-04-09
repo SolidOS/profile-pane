@@ -1,7 +1,7 @@
 import { openInputDialog } from '../../ui/dialog'
 import { html, render, TemplateResult } from 'lit-html'
 import type { BioDetails, BioRow } from './types'
-import '../../styles/SectionInputRows.css'
+import '../../styles/EditDialogs.css'
 import { LiveStore, NamedNode } from 'rdflib'
 import { processBioMutations } from './mutations'
 import { ViewerMode } from '../../types'
@@ -50,7 +50,7 @@ function renderBioSection(bioRow: BioRow, onChange: () => void): TemplateResult 
   return html`
     <section aria-label="Bio editor" class="section-bg">
 
-      <label aria-label="Bio description" class="inputValueRow inputValueRow--full inputValueRow--stack">
+      <label aria-label="Bio description" class="label profile-edit-dialog__field profile-edit-dialog__field--full profile-edit-dialog__field--stack">
         <span>Description</span>
         <textarea
           class="inputTextarea inputTextarea--multiline"
@@ -79,7 +79,7 @@ function renderBioEditTemplate(form: HTMLFormElement, formState: BioFormState) {
 
 function createBioEditForm(bioData: BioDetails) {
   const form = document.createElement('form')
-  form.classList.add('section-edit-form')
+  form.classList.add('profile__edit-form')
 
   const formState = toFormState(bioData)
   renderBioEditTemplate(form, formState)

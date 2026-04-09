@@ -1,4 +1,4 @@
-import { html, nothing } from 'lit-html'
+import { html, nothing, TemplateResult } from 'lit-html'
 import '../../styles/HeadingSection.css'
 import { ProfileDetails } from './types'
 import { addMeToYourFriendsDiv } from '../../addMeToYourFriends'
@@ -8,6 +8,8 @@ import { ViewerMode } from '../../types'
 import { createHeadingEditDialog } from './HeadingEditDialog'
 import { toText } from '../../textUtils'
 import { toDisplayDateDMY } from './dateHelpers'
+import { birthdayIcon } from '../../icons/profileIcons'
+import { phoneIcon } from '../../icons/contactIcons'
 
 export const renderHeadingSection = (
   context: DataBrowserContext,
@@ -38,11 +40,11 @@ export const renderHeadingSection = (
             </header>
             <div class="profile__details">
               <div class="profile__meta-row flex-row" role="group" aria-label="Additional profile information">
-                ${Line(dateOfBirthDisplay, '', '')}
+                ${Line(dateOfBirthDisplay, birthdayIcon, '')}
                 ${Line(location, '🌐', '')}
               </div>
               <div class="profile__contact-row flex-row" role="group" aria-label="Contact information">
-                ${Line(phoneValue, '', '')}
+                ${Line(phoneValue, phoneIcon, '')}
                 ${Line(emailValue, '', '')}
               </div>
             </div>
@@ -78,12 +80,12 @@ export const renderHeadingSection = (
   `
 }
 
-const Line = (value, prefix: symbol | string = nothing, label: string = '') =>
+const Line = (value, prefix: TemplateResult | symbol | string = nothing, label: string = '') =>
   value ? html`
     <div class="profile__item flex-row ${label ? '' : 'profile__item--valueOnly'}">
       ${label ? html`<span class="profile__label">${label}</span>` : nothing}
       <span class="profile__value">
-        ${prefix ? html`<span aria-hidden="true">${prefix}</span>` : nothing}
+        ${prefix !== '' && prefix !== nothing ? html`<span class="profile__prefix-icon" aria-hidden="true">${prefix}</span>` : nothing}
         ${value}
       </span>
     </div>

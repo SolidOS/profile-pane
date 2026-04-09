@@ -147,9 +147,10 @@ function renderSkillInputRow({
   }
 
   return html`
-    <div class="inputRow">
-      <label aria-label=${`${label} Name`} class="inputValueRow">
+    <div class="profile-edit-dialog__row">
+      <label aria-label=${`${label} Name`} class="label profile-edit-dialog__field">
         <input
+          class="input"
           type="text"
           name=${skillName}
           .value=${row?.name || ''}
@@ -287,7 +288,7 @@ function renderSkillsEditTemplate(form: HTMLFormElement, formState: SkillFormSta
 
 function createSkillsEditForm(details: SkillDetails[]) {
   const form = document.createElement('form')
-  form.classList.add('section-edit-form')
+  form.classList.add('profile__edit-form')
 
   const formState = toFormState(details)
   renderSkillsEditTemplate(form, formState)

@@ -9,7 +9,7 @@ font-weight: var(--font-weight-bold, 600);
 margin: 0;
 padding: 0;
 text-indent: 0;
-line-height: var(--line-height-tight, 1.4);
+line-height: 1.2;
 text-align: left;
 transform: translateX(-4px);
 }
@@ -38,7 +38,7 @@ transform: translateX(-4px);
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: var(--spacing-xxs, 0.3rem);
+  gap: 0.125rem;
   width: 100%;
   margin: 0;
   padding: 0;
@@ -66,6 +66,7 @@ transform: translateX(-4px);
   color: var(--font-color-text-secondary, #4A5565);
   font-size: var(--font-size-sm, 0.875rem); /* 14px */
   font-weight: var(--font-weight-regular, 400);
+  line-height: 1.2;
 }
 
 .profile__role-org {
@@ -75,7 +76,7 @@ transform: translateX(-4px);
   color: var(--font-color-text-subheading, #101828);
   font-size: var(--font-size-base, 1rem);
   font-weight: var(--font-weight-medium, 500);
-  line-height: var(--line-height-tight, 1.4);
+  line-height: 1.25;
   text-align: left;
 }
 
@@ -86,6 +87,18 @@ transform: translateX(-4px);
   margin: 0;
   padding: 0;
   width: 100%;
+}
+
+.profile__prefix-icon {
+  display: inline-flex;
+  align-items: center;
+  margin-right: 0.25rem;
+}
+
+.profile__detail-icon {
+  display: block;
+  width: 1rem;
+  height: 1rem;
 }
 
 .profile__hero {

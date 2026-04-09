@@ -15,20 +15,20 @@
   gap: var(--spacing-sm);
 }
 
-.inputRow {
+.profile-edit-dialog__row {
   display: flex;
   align-items: flex-start;
   gap: var(--spacing-sm);
   max-width: 34rem;
 }
 
-.inputValueRow,
-.inputTypeRow {
+.profile-edit-dialog__field,
+.profile-edit-dialog__field-type {
   display: block;
   margin: 0;
 }
 
-.inputValueRow {
+.profile-edit-dialog__field {
   flex: 1 1 auto;
   min-width: 0;
 }
@@ -84,21 +84,21 @@
   flex: 0 0 7.5rem;
 }
 
-.inputTypeRow {
+.profile-edit-dialog__field-type {
   flex: 0 0 10rem;
 }
 
-.inputRow--addressHeader {
+.profile-edit-dialog__row--addressHeader {
   max-width: 34rem;
   align-items: flex-end;
 }
 
 /* The street-address row is a standalone label, so cap its width like the flex rows. */
-.contactsEditSection fieldset > .inputValueRow {
+.contactsEditSection fieldset > .profile-edit-dialog__field {
   max-width: 34rem;
 }
 
-.inputTypeRow--wide {
+.profile-edit-dialog__field-type--wide {
   flex: 1 1 auto;
   min-width: 0;
 }
@@ -156,9 +156,9 @@
 
 /* SAM the min-touch-target height doesn't seem to be applied
  also to note the design shows a smaller input size  */
-.inputValueRow input,
-.inputTypeRow input,
-.inputTypeRow select {
+.profile-edit-dialog__field input,
+.profile-edit-dialog__field-type input,
+.profile-edit-dialog__field-type select {
   width: 100%;
   max-width: 100%;
   box-sizing: border-box;
@@ -167,13 +167,13 @@
 }
 
 @media (max-width: 640px) {
-  .inputRow {
+  .profile-edit-dialog__row {
     max-width: 100%;
     flex-direction: column;
     align-items: stretch;
   }
 
-  .inputTypeRow {
+  .profile-edit-dialog__field-type {
     flex: 1 1 auto;
   }
 
@@ -190,7 +190,7 @@
     flex: 1 1 auto;
   }
 
-  .inputRow--addressHeader {
+  .profile-edit-dialog__row--addressHeader {
     flex-direction: row;
     align-items: flex-end;
   }
@@ -199,7 +199,7 @@
     justify-content: flex-start;
   }
 
-  .inputRow--addressHeader .inputActions {
+  .profile-edit-dialog__row--addressHeader .inputActions {
     justify-content: flex-end;
   }
 }
