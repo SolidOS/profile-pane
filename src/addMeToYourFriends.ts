@@ -8,7 +8,7 @@ import {
   mention
 } from './buttonsHelper'
 import {
-  addMeToYourFriendsButtonText, friendExistsAlreadyButtonText, friendExistsMessage, friendWasAddedSuccesMessage, logInAddMeToYourFriendsButtonText, userNotLoggedInErrorMessage
+  addMeToYourFriendsButtonText, friendExistsAlreadyButtonText, friendExistsMessage, friendWasAddedSuccesMessage, userNotLoggedInErrorMessage
 } from './texts'
 import { ViewerMode } from './types'
 import './styles/ProfileCard.css'
