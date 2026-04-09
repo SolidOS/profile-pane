@@ -24,51 +24,56 @@ export const renderHeadingSection = (
  
   return html`
       <section class="profile__section flex-row section-bg border-slate" aria-labelledby="profile-name">
-        <div class="profile__avatar">  
-          ${Image(imageSrc, name)}
-        </div>
-        <div class="profile__info inline-flex-column">
-          <header class="profile__header-bar mb-md">
-            <div class="profile__identity" role="group" aria-label="Name and pronouns">
-              <h1 id="profile-name" class="profile__name">${name}</h1>
-              <span class="profile__pronouns">${pronouns ? `(${pronouns})` : ''}</span>
-            </div>   
-            ${jobTitle ? html`<div class="profile__role-org">${jobTitle}</div>` : nothing}
-          </header>
-          <div class="profile__details">
-            <div class="profile__meta-row flex-row" role="group" aria-label="Additional profile information">
-              ${Line(dateOfBirthDisplay, '', '')}
-              ${Line(location, '🌐', '')}
-            </div>
-            <div class="profile__contact-row flex-row" role="group" aria-label="Contact information">
-              ${Line(phoneValue, '', 'Phone')}
-              ${Line(emailValue, '', 'Email')}
+        <div class="inline-flex-row">
+          <div class="profile__avatar">  
+            ${Image(imageSrc, name)}
+          </div>
+          <div class="profile__info flex-column-lg">
+            <header class="profile__header-bar mb-md">
+              <div class="profile__header-top sectionHeader">
+                <div class="profile__identity" role="group" aria-label="Name and pronouns">
+                  <h1 id="profile-name" class="profile__name">${name}</h1>
+                  <span class="profile__pronouns">${pronouns ? `(${pronouns})` : ''}</span>
+                </div>
+                ${viewerMode === 'owner'
+                  ? html`
+                    <div class="buttonSection sectionHeader--actionsOnly" aria-label="Profile heading actions">
+                      <button
+                        type="button"
+                        class="actionButton"
+                        aria-label="Add or edit heading information"
+                        @click=${(event: Event) => {
+                          return createHeadingEditDialog(
+                            event,
+                            context.session.store,
+                            subject,
+                            profileData,
+                            viewerMode,
+                            onSaved
+                          )
+                        }}
+                      >
+                        <span class="actionIcon" aria-hidden="true">✎ Edit</span>
+                      </button>
+                    </div>
+                  `
+                  : nothing}
+              </div>   
+              ${jobTitle ? html`<div class="profile__role-org">${jobTitle}</div>` : nothing}
+            </header>
+            <div class="profile__details">
+              <div class="profile__meta-row flex-row" role="group" aria-label="Additional profile information">
+                ${Line(dateOfBirthDisplay, '', '')}
+                ${Line(location, '🌐', '')}
+              </div>
+              <div class="profile__contact-row flex-row" role="group" aria-label="Contact information">
+                ${Line(phoneValue, '', '')}
+                ${Line(emailValue, '', '')}
+              </div>
             </div>
           </div>
         </div>
-        ${viewerMode === 'owner'  
-        ? html`
-            <section class="buttonSection" aria-label="Profile heading actions">
-              <button
-                type="button"
-                class="actionButton"
-                aria-label="Add or edit heading information"
-                @click=${(event: Event) => {
-                  return createHeadingEditDialog(
-                    event,
-                    context.session.store,
-                    subject,
-                    profileData,
-                    viewerMode,
-                    onSaved
-                  )
-                }}
-              >
-                <span class="actionIcon" aria-hidden="true">✎ Edit</span>
-              </button>
-            </section>
-          `
-        : viewerMode ===  'authenticated'   ? html`
+        ${viewerMode ===  'authenticated'   ? html`
           <section class="buttonSection" aria-label="Actions">
             ${addMeToYourFriendsDiv(subject, context, viewerMode)}
           </section>` : html``}

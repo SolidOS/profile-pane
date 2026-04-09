@@ -15,10 +15,7 @@ transform: translateX(-4px);
 }
 
 .profile__info {
-  display: flex;
-  flex-direction: column;
   align-items: flex-start;
-  gap: var(--spacing-lg, 1.5625rem);
 }
 
 .profile__details {
@@ -45,6 +42,10 @@ transform: translateX(-4px);
   width: 100%;
   margin: 0;
   padding: 0;
+}
+
+.profile__header-top {
+  width: 100%;
 }
 
 .profile__identity {

@@ -372,6 +372,12 @@ label:focus-visible {
   gap: var(--spacing-md, 1.25rem);
 }
 
+.flex-column-lg {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg, 1.5625rem);
+}
+
 .inline-flex-row {
   display: inline-flex;
   flex-direction: row;
