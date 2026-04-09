@@ -8,7 +8,7 @@ export const presentBio = (
   store: LiveStore
 ): BioDetails => {
 
-  const description = store.anyJS(subject, ns.schema('description'))
+  const description = store.anyJS(subject, ns.vcard('note'))
 
   return {
     description,

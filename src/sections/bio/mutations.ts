@@ -1,4 +1,4 @@
-import { LiveStore, NamedNode, st, literal } from 'rdflib'
+import { LiveStore, NamedNode, literal } from 'rdflib'
 import { ns } from 'solid-ui'
 import { BioMutationPlan, BioRow } from './types'
 import { MutationOps } from '../shared/types'
@@ -23,7 +23,7 @@ async function mutateBioEntry(store: LiveStore, subject: NamedNode, bioOps: Muta
         }
       : bio
 
-    replaceLiteralField(ns.schema('description'), data.description)
+    replaceLiteralField(ns.vcard('note'), data.description)
   }
 
   const removeBio = bioOps.remove[0]
