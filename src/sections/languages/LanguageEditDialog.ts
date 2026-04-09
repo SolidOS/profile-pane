@@ -8,7 +8,7 @@ import { applyRowFieldChange, applyRowSelectChange, deleteRow, summarizeRowOps }
 import { hasNonEmptyText, sanitizeTextValue, toText } from '../../textUtils'
 import { MutationOps } from '../shared/types'
 import { processLanguageMutations } from './mutations'
-import { addMoreIconAsset } from '../../icons-svg/pngIcons'
+import { addIcon } from '../../icons-svg/profileIcons'
 import {
   deleteEntryButtonTitleText,
   dialogCancelLabelText,
@@ -393,7 +393,7 @@ function renderLanguageSection(
           @click=${createNewRow}
         >
           <span class="profile__add-more-content">
-            <img class="profile__add-more-icon" src=${addMoreIconAsset} alt="" aria-hidden="true" />
+            <span class="profile__add-more-icon" aria-hidden="true">${addIcon}</span>
             Add More
           </span>
         </button>

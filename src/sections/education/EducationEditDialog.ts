@@ -6,7 +6,7 @@ import '../../styles/ContactInfoEditDialog.css'
 import { LiveStore, NamedNode } from 'rdflib'
 import { processEducationMutations } from './mutations'
 import { ViewerMode } from '../../types'
-import { addMoreIconAsset } from '../../icons-svg/pngIcons'
+import { addIcon } from '../../icons-svg/profileIcons'
 import { applyRowFieldChange, deleteRow, summarizeRowOps } from '../shared/rowState'
 import { hasNonEmptyText, sanitizeTextValue, toText } from '../../textUtils'
 import { MutationOps } from '../shared/types'
@@ -402,7 +402,7 @@ function renderEducationSection(educationData: EducationRow[], onAddRow: () => v
           @click=${createNewRow}
         >
           <span class="profile__add-more-content">
-            <img class="profile__add-more-icon" src=${addMoreIconAsset} alt="" aria-hidden="true" />
+            <span class="profile__add-more-icon" aria-hidden="true">${addIcon}</span>
             Add More
           </span>
         </button>

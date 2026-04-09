@@ -63,7 +63,8 @@
   /* New Design: Spacing scale with root instead of parent for consistency across page. */
   /* Noted: changed em to rem */
   --spacing-xxxs: 0.2rem; /* 3.2px */
-  --spacing-xxs: 0.625rem;  /* 10px */
+  --spacing-xxs: 0.3125rem;  /* 5px */
+  --spacing-2xs: 0.625rem; /* 10px new design uses this */
   --spacing-xs: 0.75rem;   /* 12px new design uses this */
   --spacing-sm: 0.938rem;  /* 15px new design uses this */
   --spacing-md: 1.25rem;   /* 20px new design uses this */

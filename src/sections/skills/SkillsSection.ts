@@ -4,7 +4,7 @@ import { literal, LiveStore, NamedNode } from 'rdflib'
 import { ViewerMode } from '../../types'
 import { createSkillsEditDialog } from './SkillsEditDialog'
 import { SkillDetails } from './types'
-import { addMoreIconAsset } from '../../icons-svg/pngIcons'
+import { addIcon } from '../../icons-svg/profileIcons'
 import { skillsHeadingText } from '../../texts'
 import { toggleCollapsibleSection } from '../shared/collapsibleSection'
 
@@ -57,7 +57,7 @@ export function renderSkillsSection(
                   @click=${(event: Event) => createSkillsEditDialog(event, store, subject, skillDetails, viewerMode, onSaved)}
                 >
                   <span class="profileSectionCollapsible__editLabel profile__add-more-content">
-                    <img class="profile__add-more-icon" src=${addMoreIconAsset} alt="" aria-hidden="true" />
+                    <span class="profile__add-more-icon" aria-hidden="true">${addIcon}</span>
                     Add More
                   </span>
                   <span class="profileSectionCollapsible__editIcon" aria-hidden="true">✎</span>
