@@ -43,7 +43,6 @@ const createAddMeToYourFriendsButton = (
   subject: NamedNode,
   context: DataBrowserContext
 ): HTMLButtonElement => {
-  const me = authn.currentUser()
   let label = addMeToYourFriendsButtonText
   const button = context.dom.createElement('button')
   button.type = 'button'
