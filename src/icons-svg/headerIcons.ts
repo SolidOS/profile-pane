@@ -1,4 +1,4 @@
-import { html } from "lit-html";
+import { html } from 'lit-html'
 
 export const profileIcon = html`
   <svg xmlns="http://www.w3.org/2000/svg" 
@@ -117,7 +117,6 @@ export const personIcon = html`
     height="16" 
     viewBox="0 0 14 16" 
     fill="none"
-    class="profile__detail-icon"
     aria-hidden="true"
     focusable="false"
   >

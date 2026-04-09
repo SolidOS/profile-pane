@@ -6,7 +6,6 @@ export const phoneIcon = html`
   height="16" 
   viewBox="0 0 16 16" 
   fill="none"
-  class="profile__detail-icon"
   aria-hidden="true"
   focusable="false"
   >
@@ -19,7 +18,6 @@ export const emailIcon = html`
   height="16" 
   viewBox="0 0 16 16" 
   fill="none"
-  class="profile__detail-icon"
   aria-hidden="true"
   focusable="false"
   >

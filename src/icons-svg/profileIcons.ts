@@ -7,7 +7,6 @@ export const birthdayIcon = html`
     height="16"
     viewBox="0 0 16 16"
     fill="none"
-    class="profile__detail-icon"
     aria-hidden="true"
     focusable="false"
   >
@@ -28,7 +27,6 @@ export const locationIcon = html`
   height="16" 
   viewBox="0 0 16 16" 
   fill="none"
-  class="profile__detail-icon"
   aria-hidden="true"
   focusable="false"
   >
@@ -42,7 +40,6 @@ export const checkIcon = html`
     height="14" 
     viewBox="0 0 14 14" 
     fill="none"
-    class="profile__detail-icon"
     aria-hidden="true"
     focusable="false"
   >
@@ -55,7 +52,6 @@ export const plusDarkIcon = html`
     height="14" 
     viewBox="0 0 14 14" 
     fill="none"
-    class="profile__detail-icon"
     aria-hidden="true"
     focusable="false"
   >
@@ -70,7 +66,6 @@ export const plusIcon = html`
     height="12" 
     viewBox="0 0 12 12" 
     fill="none"
-    class="profile__detail-icon"
     aria-hidden="true"
     focusable="false"
   >
@@ -90,7 +85,6 @@ export const searchIcon = html`
     height="13" 
     viewBox="0 0 13 13" 
     fill="none"
-    class="profile__detail-icon"
     aria-hidden="true"
     focusable="false"
   >
