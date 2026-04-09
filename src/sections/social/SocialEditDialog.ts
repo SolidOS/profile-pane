@@ -9,6 +9,7 @@ import { applyRowFieldChange, deleteRow, summarizeRowOps } from '../shared/rowSt
 import { hasNonEmptyText, sanitizeTextValue, toText } from '../../textUtils'
 import { MutationOps } from '../shared/types'
 import { processSocialMutations } from './mutations'
+import { addMoreIconAsset } from '../../icons-svg/pngIcons'
 import {
   deleteEntryButtonTitleText,
   dialogCancelLabelText,
@@ -246,7 +247,10 @@ function renderSocialSection(rows: SocialRow[], options: SocialAccountOption[], 
           aria-label="Add another social account"
           @click=${createNewRow}
         >
-          + Add More
+          <span class="profile__add-more-content">
+            <img class="profile__add-more-icon" src=${addMoreIconAsset} alt="" aria-hidden="true" />
+            Add More
+          </span>
         </button>
       </header>
       <fieldset>

@@ -6,6 +6,7 @@ import '../../styles/ContactInfoEditDialog.css'
 import { LiveStore, NamedNode, literal } from 'rdflib'
 import { processResumeMutations } from './mutations'
 import { ViewerMode } from '../../types'
+import { addMoreIconAsset } from '../../icons-svg/pngIcons'
 import { applyRowFieldChange, applyRowSelectChange, deleteRow, summarizeRowOps } from '../shared/rowState'
 import { hasNonEmptyText, sanitizeTextValue, toText } from '../../textUtils'
 import { MutationOps } from '../shared/types'
@@ -527,7 +528,10 @@ function renderResumeSection(resumeData: ResumeRow[], onAddRow: () => void) {
           aria-label="Add another resume entry"
           @click=${createNewRow}
         >
-          + Add More
+          <span class="profile__add-more-content">
+            <img class="profile__add-more-icon" src=${addMoreIconAsset} alt="" aria-hidden="true" />
+            Add More
+          </span>
         </button>
       </header>
       <fieldset>

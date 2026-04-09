@@ -5,6 +5,7 @@ import { ProjectDetails, ProjectRow } from './types'
 import { projectsHeadingText } from '../../texts'
 import { createProjectsEditDialog } from './ProjectEditDialog'
 import { processProjectsMutations } from './mutations'
+import { addMoreIconAsset } from '../../icons-svg/pngIcons'
 import { MutationOps } from '../shared/types'
 import '../../styles/ProjectsCard.css'
 import { toggleCollapsibleSection } from '../shared/collapsibleSection'
@@ -126,7 +127,10 @@ export function renderProjectSection(
                     return createProjectsEditDialog(event, store, subject, projects, viewerMode, onSaved)
                   }}
                 >
-                  <span class="profileSectionCollapsible__editLabel">+ Add More</span>
+                  <span class="profileSectionCollapsible__editLabel profile__add-more-content">
+                    <img class="profile__add-more-icon" src=${addMoreIconAsset} alt="" aria-hidden="true" />
+                    Add More
+                  </span>
                   <span class="profileSectionCollapsible__editIcon" aria-hidden="true">✎</span>
                 </button>
               `

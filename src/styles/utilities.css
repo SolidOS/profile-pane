@@ -334,11 +334,21 @@ label:focus-visible {
 
 .label {
   color: var(--gray-600, #4A5565);
-  font-family: "Neue Einstellung";
-  font-size: 14px;
-  font-style: normal;
-  font-weight: 400;
-  line-height: normal;
+  font-size: var(--font-size-sm, 0.875rem);
+  font-weight: var(--font-weight-regular, 400);
+}
+
+.profile__add-more-content {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-xxs, 0.3125rem);
+}
+
+.profile__add-more-icon {
+  width: 0.875rem;
+  height: 0.875rem;
+  object-fit: contain;
+  flex: 0 0 auto;
 }
 
 /* List Reset - used by FriendList, SocialCard, nav */

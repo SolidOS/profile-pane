@@ -9,6 +9,7 @@ import { hasNonEmptyText, sanitizeTextValue, toText } from '../../textUtils'
 import { MutationOps } from '../shared/types'
 import { processProjectsMutations } from './mutations'
 import { fetchLinkPreview, LinkCategory } from './linkPreview'
+import { addMoreIconAsset } from '../../icons-svg/pngIcons'
 import {
   deleteEntryButtonTitleText,
   dialogCancelLabelText,
@@ -254,7 +255,10 @@ function renderProjectSection(rows: ProjectRow[], onAddRow: () => void) {
           aria-label="Add another project"
           @click=${createNewRow}
         >
-          + Add More
+          <span class="profile__add-more-content">
+            <img class="profile__add-more-icon" src=${addMoreIconAsset} alt="" aria-hidden="true" />
+            Add More
+          </span>
         </button>
       </header>
       <fieldset>
