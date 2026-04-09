@@ -1,4 +1,4 @@
-import { LiveStore, NamedNode, st, literal } from 'rdflib'
+import { LiveStore, NamedNode, literal } from 'rdflib'
 import { ns } from 'solid-ui'
 import { BioMutationPlan, BioRow } from './types'
 import { MutationOps } from '../shared/types'
