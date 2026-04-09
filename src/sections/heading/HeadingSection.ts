@@ -8,8 +8,8 @@ import { ViewerMode } from '../../types'
 import { createHeadingEditDialog } from './HeadingEditDialog'
 import { toText } from '../../textUtils'
 import { toDisplayDateDMY } from './dateHelpers'
-import { birthdayIcon } from '../../icons/profileIcons'
-import { phoneIcon } from '../../icons/contactIcons'
+import { birthdayIcon } from '../../icons-svg/profileIcons'
+import { phoneIcon } from '../../icons-svg/contactIcons'
 
 export const renderHeadingSection = (
   context: DataBrowserContext,
