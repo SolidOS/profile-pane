@@ -1,4 +1,4 @@
-import { LiveStore, NamedNode, st, literal } from 'rdflib'
+import { LiveStore, NamedNode, st, literal, sym } from 'rdflib'
 import { ns } from 'solid-ui'
 import { SkillRow } from './types'
 import { MutationOps } from '../shared/types'
@@ -10,12 +10,15 @@ export type SkillMutationPlan = MutationOps<SkillRow>
 
 function buildSkillsStatements(subject: NamedNode, doc: NamedNode, node: NamedNode, skill: SkillRow) {
   if (!skill.name) return []
-  const publicIdNode = createIdNode(doc)
+  if (!skill.publicId) {
+    throw new Error(`Missing skill publicId for skill: ${skill.name}`)
+  }
+  const publicIdNode = sym(skill.publicId)
   return [
     st(subject, ns.schema('skills'), node, doc),
+    st(node, ns.rdf('type'), ns.schema('Skill'), doc),
     st(node, ns.solid('publicId'), publicIdNode, doc),
-    st(publicIdNode, ns.schema('name'), literal(skill.name), doc),
-    st(publicIdNode, ns.rdf('type'), ns.schema('Skill'), doc)
+    st(node, ns.schema('name'), literal(skill.name), doc)
   ]
 }
 

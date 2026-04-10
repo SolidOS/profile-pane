@@ -3,6 +3,7 @@ import { RowStatus } from '../shared/types'
 
 export interface SkillFields {
   name: string
+  publicId: string
 }
 
 export interface SkillDetails extends SkillFields {

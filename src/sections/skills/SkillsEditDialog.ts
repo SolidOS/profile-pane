@@ -1,6 +1,7 @@
 import { openInputDialog } from '../../ui/dialog'
 import { html, render } from 'lit-html'
 import { SkillDetails, SkillRow } from './types'
+import '../../styles/EditDialogs.css'
 import '../../styles/ContactInfoEditDialog.css'
 import { LiveStore, NamedNode } from 'rdflib'
 import { ViewerMode } from '../../types'
@@ -90,22 +91,54 @@ function toFormState(details: SkillDetails[]): SkillFormState {
   const rows = (details || [])
     .map((detail) => ({
       name: sanitizeSkillFieldValue(toText(detail.name)),
+      publicId: sanitizeSkillFieldValue(toText(detail.publicId)),
       entryNode: toText(detail.entryNode),
       status: toText(detail.entryNode) ? 'existing' as const : 'new' as const
     }))
-    .filter((row) => Boolean(row.name || row.entryNode))
+    .filter((row) => Boolean(row.name || row.publicId || row.entryNode))
 
  
   return {
-    skills: rows.length ? rows : [{ name: '', entryNode: '', status: 'new' }],
+    skills: rows.length ? rows : [{ name: '', publicId: '', entryNode: '', status: 'new' }],
   }
+}
+
+function matchSkillSuggestion(suggestions: SkillSuggestion[], value: string): SkillSuggestion | null {
+  const normalized = sanitizeSkillFieldValue(value).toLowerCase()
+  if (!normalized) return null
+  return suggestions.find((suggestion) => suggestion.label.toLowerCase() === normalized) || null
 }
 
 function validateSkillsBeforeSave(rows: SkillRow[]): string | null {
   const ops = summarizeRowOps(rows, rowHasContent)
   const hasChanges = ops.create.length > 0 || ops.update.length > 0 || ops.remove.length > 0
   if (!hasChanges) return 'No skill changes detected.'
+
+  for (let i = 0; i < rows.length; i++) {
+    const row = rows[i]
+    if (!row || row.status === 'deleted') continue
+    if (!hasNonEmptyText(row.name)) continue
+
+    if (row.status !== 'existing' && !hasNonEmptyText(row.publicId)) {
+      return `Skill ${i + 1}: please select a skill from the ESCO suggestions.`
+    }
+  }
+
   return null
+}
+
+function hasInvalidSkillSelection(rows: SkillRow[]): boolean {
+  return rows.some((row) => {
+    if (!row || row.status === 'deleted') return false
+    if (!hasNonEmptyText(row.name)) return false
+    return !hasNonEmptyText(row.publicId)
+  })
+}
+
+function updateSkillsSubmitEnabled(rows: SkillRow[]): void {
+  const submitButton = document.querySelector('#profile-modal #modal-buttons button.btn-primary') as HTMLButtonElement | null
+  if (!submitButton) return
+  submitButton.disabled = hasInvalidSkillSelection(rows)
 }
 
 type SkillsInputRowProps = {
@@ -131,12 +164,15 @@ function renderSkillInputRow({
   const label = `Skill ${displayIndex + 1}`
   const skillName = `skill-${index}`
   const datalistId = `skill-suggestions-${index}`
+  const hasSelectionIssue = Boolean(row && row.status !== 'deleted' && hasNonEmptyText(row.name) && !hasNonEmptyText(row.publicId))
 
   const handleSkillInput = (field: SkillEditableField) => (e: Event) => {
     const target = e.target as HTMLInputElement
     const nextValue = sanitizeSkillFieldValue(target.value)
     if (rows[index]) {
       applyRowFieldChange(rows[index], field, nextValue, rowHasContent)
+      const matchedSuggestion = matchSkillSuggestion(suggestions, nextValue)
+      rows[index].publicId = matchedSuggestion?.uri || ''
       onSkillSearch(index, nextValue)
       onChange()
     }
@@ -163,12 +199,13 @@ function renderSkillInputRow({
           autocomplete="off"
           list=${datalistId}
           inputmode="text"
+          aria-invalid=${hasSelectionIssue ? 'true' : 'false'}
           @input=${handleSkillInput('name')}
         />
         <datalist id=${datalistId}>
           ${suggestions.map((suggestion) => html`<option value=${suggestion.label}></option>`)}
         </datalist>
-        <small class="inputHelpText">Search ESCO skills or type your own custom skill.</small>
+        <small class="inputHelpText">Type to search ESCO and select one suggestion.</small>
       </label>
       <div class="inputActions inputActions--edge">
         <button
@@ -197,6 +234,7 @@ function renderSkillsSection(
     event.preventDefault()
     rows.push({
       name: '',
+      publicId: '',
       entryNode: '',
       status: 'new'
     })
@@ -280,6 +318,13 @@ function renderSkillsEditTemplate(form: HTMLFormElement, formState: SkillFormSta
       const suggestions = await fetchEscoSkillSuggestions(normalized)
       if (searchSeqByIndex[rowIndex] !== seq) return
       suggestionByIndex[rowIndex] = suggestions
+
+      const row = formState.skills[rowIndex]
+      if (row) {
+        const matchedSuggestion = matchSkillSuggestion(suggestions, row.name)
+        row.publicId = matchedSuggestion?.uri || row.publicId
+      }
+
       rerender()
     }, 220)
   }
@@ -288,6 +333,8 @@ function renderSkillsEditTemplate(form: HTMLFormElement, formState: SkillFormSta
   render(html`
     ${renderSkillsSection(formState.skills, rerender, suggestionByIndex, handleSearch)}
   `, form)
+
+  updateSkillsSubmitEnabled(formState.skills)
 }
 
 function createSkillsEditForm(details: SkillDetails[]) {

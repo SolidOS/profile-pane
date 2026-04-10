@@ -18,7 +18,7 @@ describe('Skills selectors and mutations', () => {
     const subject = sym('https://example.com/profile/card#me')
 
     const plan = {
-      create: [{ name: 'TypeScript', entryNode: '', status: 'new' }],
+      create: [{ name: 'TypeScript', publicId: 'http://data.europa.eu/esco/skill/typescript', entryNode: '', status: 'new' }],
       update: [],
       remove: []
     }
@@ -27,7 +27,7 @@ describe('Skills selectors and mutations', () => {
     )
   })
 
-  it('writes created skills with solid:publicId, schema:name, and schema:Skill type', async () => {
+  it('writes created skills with solid:publicId and keeps type/name on the skill entry node', async () => {
     const store = graph() as any
     const subject = sym('https://example.com/profile/card#me')
     const doc = subject.doc()
@@ -41,7 +41,7 @@ describe('Skills selectors and mutations', () => {
     }
 
     const plan = {
-      create: [{ name: 'TypeScript', entryNode: '', status: 'new' }],
+      create: [{ name: 'TypeScript', publicId: 'http://data.europa.eu/esco/skill/typescript', entryNode: '', status: 'new' }],
       update: [],
       remove: []
     }
@@ -54,11 +54,12 @@ describe('Skills selectors and mutations', () => {
     const entryNode = skillLinks[0].object
     const publicIdLink = store.any(entryNode, ns.solid('publicId'), null, doc)
     expect(publicIdLink?.termType).toBe('NamedNode')
+    expect(publicIdLink?.value).toBe('http://data.europa.eu/esco/skill/typescript')
 
-    const skillName = publicIdLink ? store.any(publicIdLink, ns.schema('name'), null, doc) : null
+    const skillName = store.any(entryNode, ns.schema('name'), null, doc)
     expect(skillName?.value).toBe('TypeScript')
 
-    const skillType = publicIdLink ? store.any(publicIdLink, ns.rdf('type'), null, doc) : null
+    const skillType = store.any(entryNode, ns.rdf('type'), null, doc)
     expect(skillType?.value).toBe(ns.schema('Skill').value)
   })
 })

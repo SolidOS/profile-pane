@@ -1,12 +1,13 @@
 import { html } from 'lit-html'
 import { strToUpperCase } from '../../textUtils'
-import { literal, LiveStore, NamedNode } from 'rdflib'
+import { LiveStore, NamedNode } from 'rdflib'
 import { ViewerMode } from '../../types'
 import { createSkillsEditDialog } from './SkillsEditDialog'
 import { SkillDetails } from './types'
 import { addIcon } from '../../icons-svg/profileIcons'
 import { skillsHeadingText } from '../../texts'
 import { toggleCollapsibleSection } from '../shared/collapsibleSection'
+import { presentSkillDetails } from './selectors'
 
 function renderSkill(skill, asList = false) {
   if (!skill) return html``
@@ -20,13 +21,6 @@ function renderSkills(skills, asList = false) {
   return html`${renderSkill(skills[0], asList)}${skills.length > 1 ? renderSkills(skills.slice(1), asList) : html``}`
 }
 
-function toSkillDetails(skills: string[]): SkillDetails[] {
-  return (skills || []).map((name) => ({
-    name,
-    entryNode: literal(name)
-  }))
-}
-
 export function renderSkillsSection(
   store: LiveStore,
   subject: NamedNode,
@@ -36,7 +30,7 @@ export function renderSkillsSection(
 ) {
   const skillsArr = skills || []
   const hasSkills = Array.isArray(skillsArr) && skillsArr.length > 0
-  const skillDetails = toSkillDetails(skillsArr)
+  const skillDetails: SkillDetails[] = presentSkillDetails(subject, store)
 
   return html`
     <section
