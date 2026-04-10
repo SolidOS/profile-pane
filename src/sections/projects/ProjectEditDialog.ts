@@ -1,6 +1,7 @@
 import { openInputDialog } from '../../ui/dialog'
 import { html, render } from 'lit-html'
 import { ProjectDetails, ProjectRow } from './types'
+import '../../styles/EditDialogs.css'
 import '../../styles/ContactInfoEditDialog.css'
 import { LiveStore, NamedNode } from 'rdflib'
 import { ViewerMode } from '../../types'
@@ -312,6 +313,7 @@ export async function createProjectsEditDialog(
     title: editProjectsDialogTitleText,
     dom,
     form,
+    headerAction: { type: 'close' },
     submitLabel: dialogSubmitLabelText,
     cancelLabel: dialogCancelLabelText,
     validate: () => {

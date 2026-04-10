@@ -398,6 +398,7 @@ function renderEducationSection(educationData: EducationRow[], onAddRow: () => v
         <button
           type="button"
           class="profile__action-button u-profile-action-text"
+          data-dialog-add-more="true"
           aria-label="Add another education entry"
           @click=${createNewRow}
         >
@@ -452,11 +453,21 @@ export async function createEducationEditDialog(
 ) {
   const dom = (event.currentTarget as HTMLElement | null)?.ownerDocument || document
   const { form, formState, rerender } = createEducationEditForm(educationData)
+  const triggerAddMore = () => {
+    const addMoreButton = form.querySelector('[data-dialog-add-more="true"]') as HTMLButtonElement | null
+    if (addMoreButton) addMoreButton.click()
+  }
 
   const result = await openInputDialog({
     title: editEducationDialogTitleText,
     dom,
     form,
+    headerAction: {
+      type: 'button',
+      label: 'Add More',
+      ariaLabel: 'Add another education entry',
+      onClick: triggerAddMore
+    },
     submitLabel: dialogSubmitLabelText,
     cancelLabel: dialogCancelLabelText,
     validate: async () => {

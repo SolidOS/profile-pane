@@ -1,15 +1,14 @@
 import { html, nothing, TemplateResult } from 'lit-html'
 import '../../styles/HeadingSection.css'
 import { ProfileDetails } from './types'
-import { addMeToYourFriendsDiv } from '../../addMeToYourFriends'
 import { DataBrowserContext } from 'pane-registry'
 import { NamedNode } from 'rdflib'
 import { ViewerMode } from '../../types'
 import { createHeadingEditDialog } from './HeadingEditDialog'
 import { toText } from '../../textUtils'
 import { toDisplayDateDMY } from './dateHelpers'
-import { birthdayIcon } from '../../icons-svg/profileIcons'
-import { phoneIcon } from '../../icons-svg/contactIcons'
+import { birthdayIcon, locationIcon } from '../../icons-svg/profileIcons'
+import { emailIcon, phoneIcon } from '../../icons-svg/contactIcons'
 
 export const renderHeadingSection = (
   context: DataBrowserContext,
@@ -25,8 +24,8 @@ export const renderHeadingSection = (
   const dateOfBirthDisplay = toDisplayDateDMY(toText(dateOfBirth), 'DD-MM-YYYY')
  
   return html`
-      <section class="profile__section flex-row section-bg border-slate" aria-labelledby="profile-name">
-        <div class="inline-flex-row">
+      <section class="profile__section flex-row gap-md section-bg border-slate" aria-labelledby="profile-name">
+        <div class="inline-flex-row gap-md">
           <div class="profile__avatar">  
             ${Image(imageSrc, name)}
           </div>
@@ -39,19 +38,18 @@ export const renderHeadingSection = (
               ${jobTitle ? html`<div class="profile__role-org">${jobTitle}</div>` : nothing}
             </header>
             <div class="profile__details">
-              <div class="profile__meta-row flex-row" role="group" aria-label="Additional profile information">
+              <div class="profile__meta-row flex-row gap-md" role="group" aria-label="Additional profile information">
                 ${Line(dateOfBirthDisplay, birthdayIcon, '')}
-                ${Line(location, '🌐', '')}
+                ${Line(location, locationIcon, '')}
               </div>
-              <div class="profile__contact-row flex-row" role="group" aria-label="Contact information">
+              <div class="profile__contact-row flex-row gap-md" role="group" aria-label="Contact information">
                 ${Line(phoneValue, phoneIcon, '')}
-                ${Line(emailValue, '', '')}
+                ${Line(emailValue, emailIcon, '')}
               </div>
             </div>
           </div>
         </div>
-        ${viewerMode === 'owner'
-        ? html`
+        ${html`
             <div class="profile__actions profile__heading-actions" aria-label="Profile actions">
               <button
                 type="button"
@@ -71,18 +69,14 @@ export const renderHeadingSection = (
                 <span class="profile__action-icon" aria-hidden="true">✎ Edit</span>
               </button>
             </div>
-          `
-        : viewerMode ===  'authenticated'   ? html`
-          <div class="profile__actions profile__heading-actions" aria-label="Profile actions">
-            ${addMeToYourFriendsDiv(subject, context, viewerMode)}
-          </div>` : html``}
+          `}
     </section>
   `
 }
 
 const Line = (value, prefix: TemplateResult | symbol | string = nothing, label: string = '') =>
   value ? html`
-    <div class="profile__item flex-row ${label ? '' : 'profile__item--valueOnly'}">
+    <div class="profile__item flex-row gap-md ${label ? '' : 'profile__item--valueOnly'}">
       ${label ? html`<span class="profile__label">${label}</span>` : nothing}
       <span class="profile__value">
         ${prefix !== '' && prefix !== nothing ? html`<span class="profile__prefix-icon" aria-hidden="true">${prefix}</span>` : nothing}

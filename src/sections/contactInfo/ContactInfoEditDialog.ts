@@ -667,6 +667,7 @@ export async function createContactInfoEditDialog(
     title: editContactInfoDialogTitleText,
     dom,
     form,
+    headerAction: { type: 'close' },
     submitLabel: dialogSubmitLabelText,
     cancelLabel: dialogCancelLabelText,
     validate: () => {

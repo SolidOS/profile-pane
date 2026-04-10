@@ -93,7 +93,7 @@ export function renderCVSection(
 
   const resumeDetails: RoleDetails[] = roles || []
   const hasResume = resumeDetails.length > 0
-  const showSection = hasResume || viewerMode === 'owner'
+  const showSection = true
   const cv = hasResume ? CVCard(resumeDetails, viewerMode) : html``
 
   return showSection ? html`
@@ -107,19 +107,15 @@ export function renderCVSection(
       <header class="profile__section-header profileSectionCollapsible__header">
         <h2 id="cv-heading" tabindex="-1">${resumeHeadingText}</h2>
         <div class="profileSectionCollapsible__actions">
-          ${viewerMode === 'owner'
-            ? html`
-                <button
-                  type="button"
-                  class="profile__action-button u-profile-action-text profileSectionCollapsible__editButton"
-                  aria-label="Edit resume details"
-                  @click=${(event: Event) => createResumeEditDialog(event, store, subject, resumeDetails, viewerMode, onSaved)}
-                >
-                  <span class="profileSectionCollapsible__editLabel">✎ Edit</span>
-                  <span class="profileSectionCollapsible__editIcon" aria-hidden="true">✎</span>
-                </button>
-              `
-            : html``}
+          <button
+            type="button"
+            class="profile__action-button u-profile-action-text profileSectionCollapsible__editButton"
+            aria-label="Edit resume details"
+            @click=${(event: Event) => createResumeEditDialog(event, store, subject, resumeDetails, viewerMode, onSaved)}
+          >
+            <span class="profileSectionCollapsible__editLabel">✎ Edit</span>
+            <span class="profileSectionCollapsible__editIcon" aria-hidden="true">✎</span>
+          </button>
           <button
             type="button"
             class="profileSectionCollapsible__toggle"

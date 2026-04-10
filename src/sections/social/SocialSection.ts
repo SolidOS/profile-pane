@@ -78,7 +78,7 @@ export function renderSocialAccounts(
   onSaved?: () => Promise<void> | void
 ) {
   const hasAccounts = accounts.accounts && accounts.accounts.length > 0
-  const showSection = hasAccounts || viewerMode === 'owner'
+  const showSection = true
 
   const handleEdit = (event: Event) => {
     return createSocialEditDialog(
@@ -102,19 +102,15 @@ export function renderSocialAccounts(
           <header class="profile__section-header profileSectionCollapsible__header">
             <h2 id="social-heading" tabindex="-1">${socialAccountsHeadingText}</h2>
             <div class="profileSectionCollapsible__actions">
-              ${viewerMode === 'owner'
-                ? html`
-                    <button
-                      type="button"
-                      class="profile__action-button u-profile-action-text profileSectionCollapsible__editButton"
-                      aria-label="Edit social accounts"
-                      @click=${handleEdit}
-                    >
-                      <span class="profileSectionCollapsible__editLabel">✎ Edit</span>
-                      <span class="profileSectionCollapsible__editIcon" aria-hidden="true">✎</span>
-                    </button>
-                  `
-                : html``}
+              <button
+                type="button"
+                class="profile__action-button u-profile-action-text profileSectionCollapsible__editButton"
+                aria-label="Edit social accounts"
+                @click=${handleEdit}
+              >
+                <span class="profileSectionCollapsible__editLabel">✎ Edit</span>
+                <span class="profileSectionCollapsible__editIcon" aria-hidden="true">✎</span>
+              </button>
               <button
                 type="button"
                 class="profileSectionCollapsible__toggle"

@@ -365,6 +365,7 @@ label:focus-visible {
 }
 
 /* Section Title - primary colored heading */
+/* SAM - need to use and change for new design */
 .section-title {
   font-size: 1.25em;
   font-weight: 600;
@@ -424,7 +425,6 @@ label:focus-visible {
 .flex-row {
   display: flex;
   flex-direction: row;
-  gap: var(--spacing-md, 1.25rem);
 }
 
 .flex-column {
@@ -435,14 +435,18 @@ label:focus-visible {
 .inline-flex-row {
   display: inline-flex;
   flex-direction: row;
-  gap: var(--spacing-md, 1.25rem);
   align-items: center;
+}
+
+
+.u-fit-width {
+  width: fit-content !important;
+  max-width: none !important;
 }
 
 .inline-flex-column {
   display: inline-flex;
   flex-direction: column;
-  gap: var(--spacing-md, 1.25rem);
   align-items: center;
 }
 

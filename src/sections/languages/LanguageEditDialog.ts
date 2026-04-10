@@ -414,6 +414,7 @@ function renderLanguageSection(
         <button
           type="button"
           class="profile__action-button u-profile-action-text"
+          data-dialog-add-more="true"
           aria-label="Add another language"
           @click=${createNewRow}
         >
@@ -522,11 +523,21 @@ export async function createLanguageEditDialog(
 ) {
   const dom = (event.currentTarget as HTMLElement | null)?.ownerDocument || document
   const { form, formState } = createLanguageEditForm(languages)
+  const triggerAddMore = () => {
+    const addMoreButton = form.querySelector('[data-dialog-add-more="true"]') as HTMLButtonElement | null
+    if (addMoreButton) addMoreButton.click()
+  }
 
   const result = await openInputDialog({
     title: editLanguagesDialogTitleText,
     dom,
     form,
+    headerAction: {
+      type: 'button',
+      label: 'Add More',
+      ariaLabel: 'Add another language',
+      onClick: triggerAddMore
+    },
     submitLabel: dialogSubmitLabelText,
     cancelLabel: dialogCancelLabelText,
     validate: () => {

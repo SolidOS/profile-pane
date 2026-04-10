@@ -14,10 +14,21 @@ type DialogButton = {
   beforeClose?: () => Promise<boolean> | boolean
 }
 
+type DialogHeaderAction =
+  | { type: 'close' }
+  | { type: 'none' }
+  | {
+      type: 'button',
+      label: string,
+      ariaLabel?: string,
+      className?: string,
+      onClick?: () => Promise<void> | void
+    }
+
 type DialogElements = {
   dialog: HTMLDialogElement,
   title: HTMLHeadingElement,
-  closeButton: HTMLButtonElement,
+  headerAction: HTMLDivElement,
   description: HTMLDivElement,
   error: HTMLElement,
   buttons: HTMLDivElement
@@ -40,7 +51,7 @@ function ensureModalDialog (dom: Document): HTMLDialogElement {
     <div class="modal">
       <div class="modal-header">
         <h2 id="modal-title"></h2>
-        <button type="button" class="dialogCloseButton" aria-label="Close dialog">&times;</button>
+        <div id="modal-header-action"></div>
       </div>
       <div id="modal-desc"></div>
       <section id="modal-error" class="dialogErrorSection" aria-live="assertive" role="alert" hidden></section>
@@ -56,7 +67,7 @@ function getDialogElements (dialog: HTMLDialogElement): DialogElements {
   return {
     dialog,
     title: dialog.querySelector('#modal-title') as HTMLHeadingElement,
-    closeButton: dialog.querySelector('.dialogCloseButton') as HTMLButtonElement,
+    headerAction: dialog.querySelector('#modal-header-action') as HTMLDivElement,
     description: dialog.querySelector('#modal-desc') as HTMLDivElement,
     error: dialog.querySelector('#modal-error') as HTMLElement,
     buttons: dialog.querySelector('#modal-buttons') as HTMLDivElement
@@ -136,11 +147,13 @@ function openModal ({
   title,
   message,
   buttons,
+  headerAction,
   dom
 }: {
   title?: string,
   message?: string | Node,
   buttons: DialogButton[],
+  headerAction?: DialogHeaderAction,
   dom: Document
 }) {
   const dialog = ensureModalDialog(dom)
@@ -181,8 +194,28 @@ function openModal ({
       requestCancel()
     }
 
-    elements.closeButton.onclick = () => {
-      requestCancel()
+    elements.headerAction.innerHTML = ''
+    const resolvedHeaderAction = headerAction || { type: 'close' as const }
+    if (resolvedHeaderAction.type === 'close') {
+      const closeButton = dom.createElement('button')
+      closeButton.setAttribute('type', 'button')
+      closeButton.className = 'dialogCloseButton'
+      closeButton.setAttribute('aria-label', 'Close dialog')
+      closeButton.innerHTML = '&times;'
+      closeButton.onclick = () => requestCancel()
+      elements.headerAction.appendChild(closeButton)
+    } else if (resolvedHeaderAction.type === 'button') {
+      const actionButton = dom.createElement('button')
+      actionButton.setAttribute('type', 'button')
+      actionButton.className = resolvedHeaderAction.className || 'dialogHeaderActionButton profile__action-button u-profile-action-text'
+      actionButton.textContent = resolvedHeaderAction.label
+      actionButton.setAttribute('aria-label', resolvedHeaderAction.ariaLabel || resolvedHeaderAction.label)
+      actionButton.onclick = async () => {
+        if (resolvedHeaderAction.onClick) {
+          await resolvedHeaderAction.onClick()
+        }
+      }
+      elements.headerAction.appendChild(actionButton)
     }
 
     buttons.forEach((btn) => {
@@ -209,8 +242,8 @@ function closeModal (_result: DialogButtonValue): void {
   if (modalDialog) {
     closeDialogElement(modalDialog)
     modalDialog.oncancel = null
-    const closeButton = modalDialog.querySelector('.dialogCloseButton') as HTMLButtonElement | null
-    if (closeButton) closeButton.onclick = null
+    const headerActionButton = modalDialog.querySelector('#modal-header-action button') as HTMLButtonElement | null
+    if (headerActionButton) headerActionButton.onclick = null
     if (previousFocus && 'focus' in previousFocus) (previousFocus as HTMLElement).focus()
   }
 }
@@ -230,6 +263,7 @@ type OpenInputDialogCustom = {
   form: HTMLFormElement,
   submitLabel?: string,
   cancelLabel?: string,
+  headerAction?: DialogHeaderAction,
   validate?: () => Promise<string | null> | string | null,
   onSave?: () => Promise<void> | void,
   formatSaveError?: (error: unknown) => string
@@ -249,6 +283,7 @@ export function openInputDialog (options: OpenInputDialogCustom): Promise<InputD
   return openModal({
     title: options.title,
     message: options.form,
+    headerAction: options.headerAction,
     buttons: [
       { label: cancelLabel, value: null, cancel: true },
       {

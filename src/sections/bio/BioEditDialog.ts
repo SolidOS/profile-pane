@@ -102,6 +102,7 @@ export async function createBioEditDialog(
     title: 'Edit Bio',
     dom,
     form,
+    headerAction: { type: 'none' },
     submitLabel: dialogSubmitLabelText,
     cancelLabel: dialogCancelLabelText,
     validate: () => {

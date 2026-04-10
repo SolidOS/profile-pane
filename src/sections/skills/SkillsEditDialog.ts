@@ -258,6 +258,7 @@ function renderSkillsSection(
         <button
           type="button"
           class="profile__action-button u-profile-action-text"
+          data-dialog-add-more="true"
           aria-label="Add another skill"
           @click=${createNewRow}
         >
@@ -358,11 +359,21 @@ export async function createSkillsEditDialog(
 ) {
   const dom = (event.currentTarget as HTMLElement | null)?.ownerDocument || document
   const { form, formState } = createSkillsEditForm(skills)
+  const triggerAddMore = () => {
+    const addMoreButton = form.querySelector('[data-dialog-add-more="true"]') as HTMLButtonElement | null
+    if (addMoreButton) addMoreButton.click()
+  }
 
   const result = await openInputDialog({
     title: editSkillsDialogTitleText,
     dom,
     form,
+    headerAction: {
+      type: 'button',
+      label: 'Add More',
+      ariaLabel: 'Add another skill',
+      onClick: triggerAddMore
+    },
     submitLabel: dialogSubmitLabelText,
     cancelLabel: dialogCancelLabelText,
     validate: () => {

@@ -61,6 +61,10 @@
   margin: 0;
 }
 
+.profile-edit-dialog__field-type {
+  width: 100%;
+}
+
 .profile-edit-dialog__field {
   /* flex: 1 1 auto; */
   min-width: 0;
@@ -127,6 +131,15 @@
 .profile-edit-dialog__field-type--wide {
   flex: 1 1 auto;
   min-width: 0;
+  width: 100%;
+  max-width: 100%;
+}
+
+.profile-edit-dialog__field-type--contact-point {
+  flex: 0 0 auto;
+  width: auto;
+  max-width: none;
+  align-self: flex-start;
 }
 
 .inputActions {
@@ -172,6 +185,17 @@
   color: var(--color-danger, #b42318);
 }
 
+#profile-modal .modal button.socialRowDragHandle {
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.profile-edit-dialog__row--drop-target {
+  outline: 1px dashed var(--gray-400, #99A1AF);
+  outline-offset: 2px;
+}
+
 #profile-modal .modal button.deleteEntryButton:hover,
 #profile-modal .modal button.deleteEntryButton:focus-visible {
   border: 0;
@@ -187,6 +211,29 @@
   box-sizing: border-box;
   min-height: var(--min-touch-target, 44px);
   height: var(--min-touch-target, 44px);
+  border-radius: var(--border-radius-base, 0.3125rem);
+  border: 1px solid var(--gray-400, #99A1AF);
+  background: var(--white, #FFF);
+  color: var(--gray-900, #101828);
+  font-size: var(--font-size-sm, 0.875rem);
+  font-weight: var(--font-weight-medium, 500);
+  padding: var(--spacing-2xs, 0.625rem);
+}
+
+/* Keep phone/email contact-point type selects compact. */
+.profile-edit-dialog__field-type--contact-point > select {
+  display: inline-block;
+  width: auto !important;
+  max-width: none !important;
+  min-width: 0 !important;
+}
+
+/* Keep phone/email type selects compact after the generic full-width rule above. */
+.profile-edit-dialog__field-type.phoneTypeRow select,
+.profile-edit-dialog__field-type.emailTypeRow select {
+  width: fit-content;
+  max-width: none;
+  min-width: 7.5rem;
 }
 
 .profile-edit-dialog__field textarea,
@@ -195,13 +242,6 @@
   max-width: 100%;
   box-sizing: border-box;
   min-height: var(--min-touch-target, 44px);
-}
-
-/* Keep phone/email type selects compact despite generic full-width input/select rules above. */
-.profile-edit-dialog__field-type.phoneTypeRow select,
-.profile-edit-dialog__field-type.emailTypeRow select {
-  width: auto;
-  max-width: none;
 }
 
 .inputTextarea--multiline {

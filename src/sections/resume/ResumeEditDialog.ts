@@ -525,6 +525,7 @@ function renderResumeSection(resumeData: ResumeRow[], onAddRow: () => void) {
         <button
           type="button"
           class="profile__action-button u-profile-action-text"
+          data-dialog-add-more="true"
           aria-label="Add another resume entry"
           @click=${createNewRow}
         >
@@ -579,11 +580,21 @@ export async function createResumeEditDialog(
 ) {
   const dom = (event.currentTarget as HTMLElement | null)?.ownerDocument || document
   const { form, formState, rerender } = createResumeEditForm(resumeData)
+  const triggerAddMore = () => {
+    const addMoreButton = form.querySelector('[data-dialog-add-more="true"]') as HTMLButtonElement | null
+    if (addMoreButton) addMoreButton.click()
+  }
 
   const result = await openInputDialog({
     title: editResumeDialogTitleText,
     dom,
     form,
+    headerAction: {
+      type: 'button',
+      label: 'Add More',
+      ariaLabel: 'Add another resume entry',
+      onClick: triggerAddMore
+    },
     submitLabel: dialogSubmitLabelText,
     cancelLabel: dialogCancelLabelText,
     validate: async () => {

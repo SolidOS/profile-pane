@@ -41,22 +41,18 @@ export function renderLanguageSection(
       <header class="profile__section-header profileSectionCollapsible__header">
         <h2 id="languages-heading">${languagesHeadingText}</h2>
         <div class="profileSectionCollapsible__actions">
-          ${viewerMode === 'owner'
-            ? html`
-                <button
-                  type="button"
-                  class="profile__action-button u-profile-action-text profileSectionCollapsible__editButton"
-                  aria-label="Add or edit languages"
-                  @click=${(event: Event) => createLanguageEditDialog(event, store, subject, languagesArr, viewerMode, onSaved)}
-                >
-                  <span class="profileSectionCollapsible__editLabel profile__add-more-content">
-                    <span class="profile__add-more-icon" aria-hidden="true">${addIcon}</span>
-                    Add More
-                  </span>
-                  <span class="profileSectionCollapsible__editIcon" aria-hidden="true">✎</span>
-                </button>
-              `
-            : html``}
+          <button
+            type="button"
+            class="profile__action-button u-profile-action-text profileSectionCollapsible__editButton"
+            aria-label="Add or edit languages"
+            @click=${(event: Event) => createLanguageEditDialog(event, store, subject, languagesArr, viewerMode, onSaved)}
+          >
+            <span class="profileSectionCollapsible__editLabel profile__add-more-content">
+              <span class="profile__add-more-icon" aria-hidden="true">${addIcon}</span>
+              Add More
+            </span>
+            <span class="profileSectionCollapsible__editIcon" aria-hidden="true">✎</span>
+          </button>
           <button
             type="button"
             class="profileSectionCollapsible__toggle"

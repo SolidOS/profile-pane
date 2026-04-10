@@ -65,6 +65,24 @@
   color: var(--color-primary);
 }
 
+#profile-modal .modal #modal-header-action {
+  display: flex;
+  align-items: center;
+}
+
+#profile-modal .modal .dialogHeaderActionButton {
+  min-height: auto;
+  padding: var(--spacing-xxs);
+  border: none;
+  background: none;
+  color: var(--color-primary);
+  font-weight: 500;
+}
+
+#profile-modal .modal .dialogHeaderActionButton:hover {
+  text-decoration: underline;
+}
+
 /* button container: center buttons horizontally (uses id in markup) */
 #profile-modal #modal-buttons {
   margin-top: var(--spacing-md);

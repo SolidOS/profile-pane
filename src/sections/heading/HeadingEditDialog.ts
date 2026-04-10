@@ -222,10 +222,10 @@ function renderContactPhoneInput({
 
   return html`
     <div class="profile-edit-dialog__row">
-      <div class="profile-edit-dialog__field phoneCompositeRow">
-        <label aria-label=${label} class="label phoneLocalField">
+      <div class="profile-edit-dialog__field profile-edit-dialog__field--full">
+        <label aria-label=${label} class="label">
           <input
-            class="phoneLocalInput input"
+            class="input"
             type="tel"
             name=${inputName}
             .value=${splitValue.localNumber}
@@ -240,8 +240,8 @@ function renderContactPhoneInput({
           />
         </label>
       </div>
-      <label aria-label=${typeLabel} class="label profile-edit-dialog__field-type phoneTypeRow">
-        <select name=${typeInputName} id="phone-type-select-${inputName}" @change=${handleTypeInput} .value=${phone?.type || ''}>
+      <label aria-label=${typeLabel} class="label profile-edit-dialog__field-type profile-edit-dialog__field-type--contact-point">
+        <select class="input" name=${typeInputName} id="phone-type-select-${inputName}" @change=${handleTypeInput} .value=${phone?.type || ''}>
           <option value="Mobile">Mobile</option>
           <option value="Home">Home</option>
           <option value="Work">Work</option>
@@ -277,7 +277,7 @@ function renderContactEmailInputRow({
 
   return html`
     <div class="profile-edit-dialog__row">
-      <label aria-label=${label} class="label profile-edit-dialog__field">
+      <label aria-label=${label} class="label profile-edit-dialog__field profile-edit-dialog__field--full">
         <input
           class="input"
           type="email"
@@ -293,8 +293,8 @@ function renderContactEmailInputRow({
           @input=${handleValueInput}
         />
       </label>
-      <label aria-label=${typeLabel} class="label profile-edit-dialog__field-type emailTypeRow">
-        <select name=${typeInputName} id="email-type-select-${inputName}" @change=${handleTypeInput} .value=${email?.type || ''}>
+      <label aria-label=${typeLabel} class="label profile-edit-dialog__field-type profile-edit-dialog__field-type--contact-point">
+        <select class="input" name=${typeInputName} id="email-type-select-${inputName}" @change=${handleTypeInput} .value=${email?.type || ''}>
           <option value="Home">Personal</option>
           <option value="Office">Office</option>
         </select>
@@ -552,9 +552,9 @@ function renderHeadingInfoInput(
         </label>
       </div>
       <div class="profile-edit-dialog__row profile-edit-dialog__row--equal">
-        <label aria-label=${pronounsLabel} class="label profile-edit-dialog__field-type">
+        <label aria-label=${pronounsLabel} class="label profile-edit-dialog__field-type profile-edit-dialog__field--stack">
           ${pronounsLabel}
-          <select name="pronouns" @change=${handlePronounsInput} .value=${basicInfo?.pronouns || ''}>
+          <select class="input" name="pronouns" @change=${handlePronounsInput} .value=${basicInfo?.pronouns || ''}>
             <option value="He/Him">He/Him</option>
             <option value="She/Her">She/Her</option>
             <option value="They/Them">They/Them</option>
@@ -613,8 +613,12 @@ function renderHeadingInfoInput(
         </label>
       </div>
       <div class="profile-edit-dialog__row profile-edit-dialog__row--equal">
-        ${renderContactPhoneInput({ phone })}
-        ${renderContactEmailInputRow({ email })}
+        <div class="profile-edit-dialog__field profile-edit-dialog__field--full">
+          ${renderContactPhoneInput({ phone })}
+        </div>
+        <div class="profile-edit-dialog__field profile-edit-dialog__field--full">
+          ${renderContactEmailInputRow({ email })}
+        </div>
       </div>
     </div>
   `
@@ -673,6 +677,7 @@ export async function createHeadingEditDialog(
     title: editHeadingDialogTitleText,
     dom,
     form,
+    headerAction: { type: 'close' },
     submitLabel: dialogSubmitLabelText,
     cancelLabel: dialogCancelLabelText,
     validate: () => {

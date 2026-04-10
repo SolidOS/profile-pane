@@ -117,7 +117,17 @@ export function renderContactInfoSection(
   viewerMode: ViewerMode,
   onSaved?: () => Promise<void> | void
 ) {
-  return contactInfo && (contactInfo.emails.length > 0 || contactInfo.phones.length > 0 || contactInfo.addresses.length > 0) ? html`
+  const safeContactInfo = {
+    emails: contactInfo?.emails || [],
+    phones: contactInfo?.phones || [],
+    addresses: contactInfo?.addresses || []
+  }
+  const hasAnyContactInfo =
+    safeContactInfo.emails.length > 0 ||
+    safeContactInfo.phones.length > 0 ||
+    safeContactInfo.addresses.length > 0
+
+  return html`
     <section
       aria-labelledby="contact-details-heading"
       class="profileSectionCollapsible section-bg"
@@ -137,7 +147,7 @@ export function renderContactInfoSection(
                 event,
                 store,
                 subject,
-                contactInfo,
+                safeContactInfo,
                 viewerMode,
                 onSaved
               )
@@ -158,28 +168,29 @@ export function renderContactInfoSection(
         </div>
       </header>
       <div id="contact-details-panel" class="profileSectionCollapsible__content" aria-hidden="true">
-        ${contactInfo.phones.length > 0
+        ${safeContactInfo.phones.length > 0
           ? html`
               <ul role="list" aria-label="Phone numbers">
-                ${renderPhones(contactInfo.phones, store)}
+                ${renderPhones(safeContactInfo.phones, store)}
               </ul>
             `
           : html``}
-        ${contactInfo.emails.length > 0
+        ${safeContactInfo.emails.length > 0
           ? html`
               <ul role="list" aria-label="Email addresses">
-                ${renderEmails(contactInfo.emails, store)}
+                ${renderEmails(safeContactInfo.emails, store)}
               </ul>
             `
           : html``}
-        ${contactInfo.addresses.length > 0
+        ${safeContactInfo.addresses.length > 0
           ? html`
               <ul role="list" aria-label="Postal addresses">
-                ${renderAddresses(contactInfo.addresses)}
+                ${renderAddresses(safeContactInfo.addresses)}
               </ul>
             `
           : html``}
+        ${hasAnyContactInfo ? html`` : html`<p>No contact details added yet.</p>`}
       </div>
     </section>
-  ` : ''
+  `
 }

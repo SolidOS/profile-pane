@@ -106,7 +106,7 @@ export function renderEducationSection(
   const educationCard = EducationCard(educationData, viewerMode)
   const educationDetails: EducationDetails[] = educationData || []
   const hasEducation = educationDetails && educationDetails.length > 0
-  const showSection = hasEducation || viewerMode === 'owner'
+  const showSection = true
 
   return showSection ? html`
     <section 
@@ -119,19 +119,15 @@ export function renderEducationSection(
       <header class="profile__section-header profileSectionCollapsible__header">
         <h2 id="education-heading" tabindex="-1">${educationHeadingText}</h2>
         <div class="profileSectionCollapsible__actions">
-          ${viewerMode === 'owner'
-            ? html`
-                <button
-                  type="button"
-                  class="profile__action-button u-profile-action-text profileSectionCollapsible__editButton"
-                  aria-label="Edit education details"
-                  @click=${(event: Event) => createEducationEditDialog(event, store, subject, educationDetails, viewerMode, onSaved)}
-                >
-                  <span class="profileSectionCollapsible__editLabel">✎ Edit</span>
-                  <span class="profileSectionCollapsible__editIcon" aria-hidden="true">✎</span>
-                </button>
-              `
-            : html``}
+          <button
+            type="button"
+            class="profile__action-button u-profile-action-text profileSectionCollapsible__editButton"
+            aria-label="Edit education details"
+            @click=${(event: Event) => createEducationEditDialog(event, store, subject, educationDetails, viewerMode, onSaved)}
+          >
+            <span class="profileSectionCollapsible__editLabel">✎ Edit</span>
+            <span class="profileSectionCollapsible__editIcon" aria-hidden="true">✎</span>
+          </button>
           <button
             type="button"
             class="profileSectionCollapsible__toggle"

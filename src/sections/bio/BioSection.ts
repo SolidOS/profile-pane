@@ -68,27 +68,23 @@ function renderBioSectionContent(
   return html`
     <header class="profile__section-header mb-md">
       <h2 id="bio-heading" tabindex="-1">${bioHeadingText}</h2>
-      ${viewerMode === 'owner'
-        ? html`
-            <button
-              type="button"
-              class="profile__action-button u-profile-action-text"
-              aria-label="Edit bio details"
-              @click=${(event: Event) => {
-                return createBioEditDialog(
-                  event,
-                  store,
-                  subject,
-                  bioDetails,
-                  viewerMode,
-                  onSaved
-                )
-              }}
-            >
-              <span class="profile__action-icon" aria-hidden="true">✎ Edit</span>
-            </button>
-          `
-        : html``}
+      <button
+        type="button"
+        class="profile__action-button u-profile-action-text"
+        aria-label="Edit bio details"
+        @click=${(event: Event) => {
+          return createBioEditDialog(
+            event,
+            store,
+            subject,
+            bioDetails,
+            viewerMode,
+            onSaved
+          )
+        }}
+      >
+        <span class="profile__action-icon" aria-hidden="true">✎ Edit</span>
+      </button>
     </header>
     <div>
       ${hasBio ? bio : html`<p>No bio details added yet.</p>`}
@@ -106,7 +102,7 @@ export function renderBioSection(
   scheduleDescriptionOverflowCheck()
 
   const hasBio = hasBioContent(bioData)
-  const showSection = hasBio || viewerMode === 'owner'
+  const showSection = true
 
   return showSection ? html`
     <section 
