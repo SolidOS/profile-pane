@@ -15,6 +15,10 @@
 #
 # Twitter, linked In, Orkid, Mastodon, Matrix, Bluesky, Instagram, Facebook, Github,
 # Snapchat, TikTok, etc
+#
+# NOTE: Temporary icon strategy.
+# We currently use URNs like <urn:profile-pane:icon:<key>> for bundled local icons.
+# These icons are planned to move to a dedicated icons project in the future.
 
 :this
     <http://purl.org/dc/elements/1.1/title> "Social media form" ;
@@ -88,14 +92,14 @@ foaf:Account a rdfs:Class;
 :DribbleAccount rdfs:subClassOf foaf:Account ;
     rdfs:label "Dribble";
     foaf:userProfilePrefix "https://dribbble.com/";
-    foaf:icon <../../icons-png/dribbble.png>;
+    foaf:icon <urn:profile-pane:icon:dribbble>;
     foaf:homepage <https://dribbble.com/> .
 
 
 :DiscordAccount rdfs:subClassOf foaf:Account ;
     rdfs:label "Discord";
     foaf:userProfilePrefix "https://discord.com/users/";
-    foaf:icon <../../icons-png/discord.png>;
+    foaf:icon <urn:profile-pane:icon:discord>;
     foaf:homepage <https://discord.com/> .
 
 :DiggAccount rdfs:subClassOf foaf:Account ;
@@ -107,7 +111,7 @@ foaf:Account a rdfs:Class;
 :FacebookAccount rdfs:subClassOf foaf:Account ;
     rdfs:label "Facebook";
     foaf:userProfilePrefix "https://www.facebook.com/";
-    foaf:icon <../../icons-png/facebook.png>;
+    foaf:icon <urn:profile-pane:icon:facebook>;
     foaf:homepage <https://www.facebook.com/> .
 
 :GithubAccount rdfs:subClassOf foaf:Account ;
@@ -119,13 +123,13 @@ foaf:Account a rdfs:Class;
 :InstagramAccount rdfs:subClassOf foaf:Account ;
     rdfs:label "Instagram";
     foaf:userProfilePrefix "https://www.instagram.com/";
-    foaf:icon <../../icons-png/instagram.png>;
+    foaf:icon <urn:profile-pane:icon:instagram>;
     foaf:homepage <https://www.instagram.com/> .
 
 :LinkedInAccount rdfs:subClassOf foaf:Account ;
     rdfs:label "LinkedIn";
     foaf:userProfilePrefix "https://www.linkedin.com/in/";
-    foaf:icon <../../icons-png/linkedin.png>;
+    foaf:icon <urn:profile-pane:icon:linkedin>;
     foaf:homepage <https://linkedin.com/> .
 
 :MastodonAccount rdfs:subClassOf foaf:Account ;
@@ -161,7 +165,7 @@ foaf:Account a rdfs:Class;
 :PinterestAccount rdfs:subClassOf foaf:Account ;
     rdfs:label "Pinterest";
     foaf:userProfilePrefix "https://pin.it/";
-    foaf:icon <../../icons-png/pinterest.png>;
+    foaf:icon <urn:profile-pane:icon:pinterest>;
     foaf:homepage <https://pinterest.com/> .
 
 :RedditAccount rdfs:subClassOf foaf:Account ;
@@ -173,19 +177,19 @@ foaf:Account a rdfs:Class;
 :SharechatAccount rdfs:subClassOf foaf:Account ;
     rdfs:label "ShareChat";
     foaf:userProfilePrefix "https://www.sharechat.com/user/";
-    foaf:icon <../../icons-png/sharechat.png>;
+    foaf:icon <urn:profile-pane:icon:sharechat>;
     foaf:homepage <https://sharechat.com/> .
 
 :SnapchatAccount rdfs:subClassOf foaf:Account ;
     rdfs:label "Snapchat";
     foaf:userProfilePrefix "https://www.snapchat.com/add/";
-    foaf:icon <../../icons-png/snapchat.png>;
+    foaf:icon <urn:profile-pane:icon:snapchat>;
     foaf:homepage <https://www.snapchat.com/> .
 
 :SpotifyAccount rdfs:subClassOf foaf:Account ;
     rdfs:label "Spotify";
     foaf:userProfilePrefix "https://www.spotify.com/user/";
-    foaf:icon <../../icons-png/spotify.png>;
+    foaf:icon <urn:profile-pane:icon:spotify>;
     foaf:homepage <https://www.spotify.com/> .
 
 :StravaAccount rdfs:subClassOf foaf:Account ;
@@ -197,13 +201,13 @@ foaf:Account a rdfs:Class;
 :TelegramAccount rdfs:subClassOf foaf:Account ;
     rdfs:label "Telegram";
     foaf:userProfilePrefix "https://t.me/";
-    foaf:icon <../../icons-png/telegram.png>;
+    foaf:icon <urn:profile-pane:icon:telegram>;
     foaf:homepage <https://telegram.org/> .
 
 :TiktokAccount rdfs:subClassOf foaf:Account ;
     rdfs:label "TikTok";
     foaf:userProfilePrefix "https://www.tiktok.com/@";
-    foaf:icon <../../icons-png/tiktok.png>;
+    foaf:icon <urn:profile-pane:icon:tiktok>;
     foaf:homepage <https://www.tiktok.com/> .
 
 :TumblrAccount rdfs:subClassOf foaf:Account ;
@@ -215,19 +219,19 @@ foaf:Account a rdfs:Class;
 :TwitterAccount rdfs:subClassOf foaf:Account ;
     rdfs:label "X";
     foaf:userProfilePrefix "https://x.com/";
-    foaf:icon <../../icons-png/x.png>;
+    foaf:icon <urn:profile-pane:icon:x>;
     foaf:homepage <https://x.com/> .
 
 :WhatsAppAccount rdfs:subClassOf foaf:Account ;
     rdfs:label "WhatsApp";
     foaf:userProfilePrefix "https://wa.me/";
-    foaf:icon <../../icons-png/whatsapp.png>;
+    foaf:icon <urn:profile-pane:icon:whatsapp>;
     foaf:homepage <https://www.whatsapp.com/> .
 
 :YouTubeAccount rdfs:subClassOf foaf:Account ;
     rdfs:label "YouTube";
     foaf:userProfilePrefix "https://www.youtube.com/";
-    foaf:icon <../../icons-png/youtube.png>;
+    foaf:icon <urn:profile-pane:icon:youtube>;
     foaf:homepage <https://www.youtube.com/> .
 
 :OtherAccount rdfs:subClassOf foaf:Account ;
