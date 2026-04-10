@@ -9,7 +9,6 @@ import { applyRowFieldChange, deleteRow, summarizeRowOps } from '../shared/rowSt
 import { hasNonEmptyText, sanitizeTextValue, toText } from '../../textUtils'
 import { MutationOps } from '../shared/types'
 import { processSkillsMutations } from './mutations'
-import { addIcon } from '../../icons-svg/profileIcons'
 import {
   deleteEntryButtonTitleText,
   dialogCancelLabelText,
@@ -230,44 +229,12 @@ function renderSkillsSection(
   suggestionByIndex: Record<number, SkillSuggestion[]>,
   handleSearch: (rowIndex: number, term: string) => void
 ) {
-  const createNewRow = (event: Event) => {
-    event.preventDefault()
-    rows.push({
-      name: '',
-      publicId: '',
-      entryNode: '',
-      status: 'new'
-    })
-    onAddRow()
-  }
-
-
   const visibleRows = rows
     .map((row, index) => ({ row, index }))
     .filter(({ row }) => row.status !== 'deleted')
 
   return html`
-    <section 
-      aria-labelledby="skills-heading" 
-      class="contactsEditSection section-bg">
-      <header class="profile__section-header">
-        <h4 id="skills-heading">
-          <span class="sectionTitleIcon" aria-hidden="true">&#9993;</span>
-          Skills
-        </h4>
-        <button
-          type="button"
-          class="profile__action-button u-profile-action-text"
-          data-dialog-add-more="true"
-          aria-label="Add another skill"
-          @click=${createNewRow}
-        >
-          <span class="profile__add-more-content">
-            <span class="profile__add-more-icon" aria-hidden="true">${addIcon}</span>
-            Add More
-          </span>
-        </button>
-      </header>
+    <section class="contactsEditSection section-bg" aria-label="Skills">
       <fieldset>
         <legend class="sr-only">Skill entries</legend>
         ${visibleRows.map(({ index }, displayIndex) => renderSkillInputRow({
@@ -345,7 +312,17 @@ function createSkillsEditForm(details: SkillDetails[]) {
   const formState = toFormState(details)
   renderSkillsEditTemplate(form, formState)
 
-  return { form, formState }
+  const addRow = () => {
+    formState.skills.push({
+      name: '',
+      publicId: '',
+      entryNode: '',
+      status: 'new'
+    })
+    renderSkillsEditTemplate(form, formState)
+  }
+
+  return { form, formState, addRow }
 }
 
 
@@ -358,11 +335,7 @@ export async function createSkillsEditDialog(
   onSaved?: () => Promise<void> | void
 ) {
   const dom = (event.currentTarget as HTMLElement | null)?.ownerDocument || document
-  const { form, formState } = createSkillsEditForm(skills)
-  const triggerAddMore = () => {
-    const addMoreButton = form.querySelector('[data-dialog-add-more="true"]') as HTMLButtonElement | null
-    if (addMoreButton) addMoreButton.click()
-  }
+  const { form, formState, addRow } = createSkillsEditForm(skills)
 
   const result = await openInputDialog({
     title: editSkillsDialogTitleText,
@@ -370,9 +343,9 @@ export async function createSkillsEditDialog(
     form,
     headerAction: {
       type: 'button',
-      label: 'Add More',
+      label: '+ Add More',
       ariaLabel: 'Add another skill',
-      onClick: triggerAddMore
+      onClick: addRow
     },
     submitLabel: dialogSubmitLabelText,
     cancelLabel: dialogCancelLabelText,

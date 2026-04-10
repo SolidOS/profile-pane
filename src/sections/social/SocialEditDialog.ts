@@ -9,7 +9,7 @@ import { applyRowFieldChange, deleteRow, summarizeRowOps } from '../shared/rowSt
 import { hasNonEmptyText, sanitizeTextValue, toText } from '../../textUtils'
 import { MutationOps } from '../shared/types'
 import { processSocialMutations } from './mutations'
-import { addIcon, bentoIcon } from '../../icons-svg/profileIcons'
+import { bentoIcon } from '../../icons-svg/profileIcons'
 import {
   deleteEntryButtonTitleText,
   dialogCancelLabelText,
@@ -309,39 +309,12 @@ function renderSocialSection(rows: SocialRow[], options: SocialAccountOption[], 
     dropTargetIndex = null
   }
 
-  const createNewRow = (event: Event) => {
-    event.preventDefault()
-    rows.push({
-      name: '',
-      icon: '',
-      homepage: '',
-      entryNode: '',
-      status: 'new'
-    })
-    onRerender()
-  }
-
   const visibleRows = rows
     .map((row, index) => ({ row, index }))
     .filter(({ row }) => row.status !== 'deleted')
 
   return html`
-    <section aria-labelledby="social-heading" class="contactsEditSection section-bg">
-      <header class="profile__section-header">
-        <h4 id="social-heading">Social Accounts</h4>
-        <button
-          type="button"
-          class="profile__action-button u-profile-action-text"
-          data-dialog-add-more="true"
-          aria-label="Add another social account"
-          @click=${createNewRow}
-        >
-          <span class="profile__add-more-content">
-            <span class="profile__add-more-icon" aria-hidden="true">${addIcon}</span>
-            Add More
-          </span>
-        </button>
-      </header>
+    <section class="contactsEditSection section-bg" aria-label="Social Accounts">
       <fieldset>
         <legend class="sr-only">Social account entries</legend>
         ${visibleRows.map(({ index }, displayIndex) =>
@@ -383,7 +356,18 @@ function createSocialEditForm(details: Account[], store: LiveStore) {
     .map((row) => (row.entryNode || '').trim())
   renderSocialEditTemplate(form, formState, store)
 
-  return { form, formState }
+  const addRow = () => {
+    formState.socialAccounts.push({
+      name: '',
+      icon: '',
+      homepage: '',
+      entryNode: '',
+      status: 'new'
+    })
+    renderSocialEditTemplate(form, formState, store)
+  }
+
+  return { form, formState, addRow }
 }
 
 export async function createSocialEditDialog(
@@ -395,11 +379,7 @@ export async function createSocialEditDialog(
   onSaved?: () => Promise<void> | void
 ) {
   const dom = (event.currentTarget as HTMLElement | null)?.ownerDocument || document
-  const { form, formState } = createSocialEditForm(socialAccounts, store)
-  const triggerAddMore = () => {
-    const addMoreButton = form.querySelector('[data-dialog-add-more="true"]') as HTMLButtonElement | null
-    if (addMoreButton) addMoreButton.click()
-  }
+  const { form, formState, addRow } = createSocialEditForm(socialAccounts, store)
 
   const result = await openInputDialog({
     title: editSocialDialogTitleText,
@@ -407,9 +387,9 @@ export async function createSocialEditDialog(
     form,
     headerAction: {
       type: 'button',
-      label: 'Add More',
+      label: '+ Add More',
       ariaLabel: 'Add another social account',
-      onClick: triggerAddMore
+      onClick: addRow
     },
     submitLabel: dialogSubmitLabelText,
     cancelLabel: dialogCancelLabelText,

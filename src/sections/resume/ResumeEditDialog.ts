@@ -6,7 +6,6 @@ import '../../styles/ContactInfoEditDialog.css'
 import { LiveStore, NamedNode, literal } from 'rdflib'
 import { processResumeMutations } from './mutations'
 import { ViewerMode } from '../../types'
-import { addIcon } from '../../icons-svg/profileIcons'
 import { applyRowFieldChange, applyRowSelectChange, deleteRow, summarizeRowOps } from '../shared/rowState'
 import { hasNonEmptyText, sanitizeTextValue, toText } from '../../textUtils'
 import { MutationOps } from '../shared/types'
@@ -490,51 +489,12 @@ function renderResumeInputRow({
 }
 
 function renderResumeSection(resumeData: ResumeRow[], onAddRow: () => void) {
-  const createNewRow = (event: Event) => {
-    event.preventDefault()
-    resumeData.push({
-      title: '',
-      roleType: '',
-      startDate: undefined,
-      endDate: undefined,
-      isCurrentRole: false,
-      orgName: '',
-      orgType: '',
-      orgLocation: '',
-      orgHomePage: '',
-      description: '',
-      entryNode: '',
-      status: 'new'
-    })
-    onAddRow()
-  }
-
   const visibleResumeRows = resumeData
     .map((resume, index) => ({ resume, index }))
     .filter(({ resume }) => resume.status !== 'deleted')
 
   return html`
-    <section 
-      aria-labelledby="resume-heading" 
-      class="resumeEditSection section-bg">
-      <header class="profile__section-header">
-        <h4 id="resume-heading">
-          <span class="sectionTitleIcon" aria-hidden="true">&#9993;</span>
-          Resume
-        </h4>
-        <button
-          type="button"
-          class="profile__action-button u-profile-action-text"
-          data-dialog-add-more="true"
-          aria-label="Add another resume entry"
-          @click=${createNewRow}
-        >
-          <span class="profile__add-more-content">
-            <span class="profile__add-more-icon" aria-hidden="true">${addIcon}</span>
-            Add More
-          </span>
-        </button>
-      </header>
+    <section class="resumeEditSection section-bg" aria-label="Resume">
       <fieldset>
         <legend class="sr-only">Resume entries</legend>
         ${visibleResumeRows.map(({ index }, displayIndex) => renderResumeInputRow({
@@ -566,7 +526,25 @@ function createResumeEditForm(resumeData: RoleDetails[]) {
   const rerender = () => renderResumeEditTemplate(form, formState, rerender)
   rerender()
 
-  return { form, formState, rerender }
+  const addRow = () => {
+    formState.resumeData.push({
+      title: '',
+      roleType: '',
+      startDate: undefined,
+      endDate: undefined,
+      isCurrentRole: false,
+      orgName: '',
+      orgType: '',
+      orgLocation: '',
+      orgHomePage: '',
+      description: '',
+      entryNode: '',
+      status: 'new'
+    })
+    rerender()
+  }
+
+  return { form, formState, rerender, addRow }
 }
 
 
@@ -579,11 +557,7 @@ export async function createResumeEditDialog(
   onSaved?: () => Promise<void> | void
 ) {
   const dom = (event.currentTarget as HTMLElement | null)?.ownerDocument || document
-  const { form, formState, rerender } = createResumeEditForm(resumeData)
-  const triggerAddMore = () => {
-    const addMoreButton = form.querySelector('[data-dialog-add-more="true"]') as HTMLButtonElement | null
-    if (addMoreButton) addMoreButton.click()
-  }
+  const { form, formState, rerender, addRow } = createResumeEditForm(resumeData)
 
   const result = await openInputDialog({
     title: editResumeDialogTitleText,
@@ -591,9 +565,9 @@ export async function createResumeEditDialog(
     form,
     headerAction: {
       type: 'button',
-      label: 'Add More',
+      label: '+ Add More',
       ariaLabel: 'Add another resume entry',
-      onClick: triggerAddMore
+      onClick: addRow
     },
     submitLabel: dialogSubmitLabelText,
     cancelLabel: dialogCancelLabelText,

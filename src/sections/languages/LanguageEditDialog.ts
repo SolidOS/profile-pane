@@ -9,7 +9,7 @@ import { applyRowFieldChange, applyRowSelectChange, deleteRow, summarizeRowOps }
 import { hasNonEmptyText, sanitizeTextValue, toText } from '../../textUtils'
 import { MutationOps } from '../shared/types'
 import { processLanguageMutations } from './mutations'
-import { addIcon, bentoIcon } from '../../icons-svg/profileIcons'
+import { bentoIcon } from '../../icons-svg/profileIcons'
 import {
   deleteEntryButtonTitleText,
   dialogCancelLabelText,
@@ -385,45 +385,12 @@ function renderLanguageSection(
     dropTargetIndex = null
   }
 
-  const createNewRow = (event: Event) => {
-    event.preventDefault()
-    rows.push({
-      name: '',
-      publicId: '',
-      proficiency: '',
-      entryNode: '',
-      status: 'new'
-    })
-    onAddRow()
-  }
-
-
   const visibleRows = rows
     .map((row, index) => ({ row, index }))
     .filter(({ row }) => row.status !== 'deleted')
 
   return html`
-    <section 
-      aria-labelledby="language-heading" 
-      class="contactsEditSection section-bg">
-      <header class="profile__section-header">
-        <h4 id="language-heading">
-          <span class="sectionTitleIcon" aria-hidden="true">&#9993;</span>
-          Languages
-        </h4>
-        <button
-          type="button"
-          class="profile__action-button u-profile-action-text"
-          data-dialog-add-more="true"
-          aria-label="Add another language"
-          @click=${createNewRow}
-        >
-          <span class="profile__add-more-content">
-            <span class="profile__add-more-icon" aria-hidden="true">${addIcon}</span>
-            Add More
-          </span>
-        </button>
-      </header>
+    <section class="contactsEditSection section-bg" aria-label="Languages">
       <fieldset>
         <legend class="sr-only">Language entries</legend>
         ${visibleRows.map(({ index }, displayIndex) => renderLanguageInputRow({
@@ -509,7 +476,18 @@ function createLanguageEditForm(details: LanguageDetails[]) {
     .map((row) => (row.entryNode || '').trim())
   renderLanguageEditTemplate(form, formState)
 
-  return { form, formState }
+  const addRow = () => {
+    formState.languages.push({
+      name: '',
+      publicId: '',
+      proficiency: '',
+      entryNode: '',
+      status: 'new'
+    })
+    renderLanguageEditTemplate(form, formState)
+  }
+
+  return { form, formState, addRow }
 }
 
 
@@ -522,11 +500,7 @@ export async function createLanguageEditDialog(
   onSaved?: () => Promise<void> | void
 ) {
   const dom = (event.currentTarget as HTMLElement | null)?.ownerDocument || document
-  const { form, formState } = createLanguageEditForm(languages)
-  const triggerAddMore = () => {
-    const addMoreButton = form.querySelector('[data-dialog-add-more="true"]') as HTMLButtonElement | null
-    if (addMoreButton) addMoreButton.click()
-  }
+  const { form, formState, addRow } = createLanguageEditForm(languages)
 
   const result = await openInputDialog({
     title: editLanguagesDialogTitleText,
@@ -534,9 +508,9 @@ export async function createLanguageEditDialog(
     form,
     headerAction: {
       type: 'button',
-      label: 'Add More',
+      label: '+ Add More',
       ariaLabel: 'Add another language',
-      onClick: triggerAddMore
+      onClick: addRow
     },
     submitLabel: dialogSubmitLabelText,
     cancelLabel: dialogCancelLabelText,
