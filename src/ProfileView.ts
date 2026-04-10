@@ -49,17 +49,17 @@ function renderSidebar(
         ${renderSkillsSection(store, subject, skills, viewerMode, onSaved)}
         ${renderLanguageSection(store, subject, languages, viewerMode, onSaved)}
         ${renderContactInfoSection(store, subject, contactInfo, viewerMode, onSaved)}
-        ${renderQRCode(subject)}
+        ${renderQRCode(subject, store)}
       </div>
     </aside>
   `
 }
 
-function renderQRCode(subject: NamedNode) {
+function renderQRCode(subject: NamedNode, store: LiveStore) {
   return html`
       <section class="profile__qr-code" aria-labelledby="qr-heading">
         <h2 id="qr-heading" class="sr-only">QR code</h2>
-        ${QRCodeCard(subject)}
+        ${QRCodeCard(subject, store)}
       </section>
   `
 }

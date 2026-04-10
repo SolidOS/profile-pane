@@ -59,6 +59,10 @@ export function scheduleDescriptionOverflowCheck() {
 }
 
 export function toggleDescription(event: Event) {
+  event.preventDefault()
+  event.stopPropagation()
+  ;(event as any).stopImmediatePropagation?.()
+
   const button = event.currentTarget as HTMLButtonElement | null
   if (!button) return
 
