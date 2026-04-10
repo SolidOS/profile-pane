@@ -1,4 +1,4 @@
-import { LiveStore, NamedNode, sym } from 'rdflib'
+import { graph, LiveStore, NamedNode, parse, sym } from 'rdflib'
 import { ns, utils } from 'solid-ui'
 import socialMediaForm from '../../ontology/socialMedia.ttl'
 import { starIconAsset } from '../../icons-svg/profileIcons'
@@ -23,6 +23,27 @@ import youtubeIconAsset from '../../../icons-png/youtube.png'
 const OWL_DISJOINT_UNION_OF = sym('http://www.w3.org/2002/07/owl#disjointUnionOf')
 const STAR_ICON_REF = 'urn:profile-pane:starIcon'
 const ICON_KEY_REF_PREFIX = 'urn:profile-pane:icon:'
+const SOCIAL_ONTOLOGY_URI = 'https://solidos.github.io/profile-pane/src/ontology/socialMedia.ttl'
+const SOCIAL_CLASS_BASE = `${SOCIAL_ONTOLOGY_URI}#`
+
+let cachedSocialOntologyStore: LiveStore | null = null
+
+const FALLBACK_SOCIAL_OPTIONS: SocialAccountOption[] = [
+  { classUri: `${SOCIAL_CLASS_BASE}FacebookAccount`, label: 'Facebook', icon: facebookIconAsset, userProfilePrefix: 'https://www.facebook.com/', homepage: 'https://www.facebook.com/' },
+  { classUri: `${SOCIAL_CLASS_BASE}InstagramAccount`, label: 'Instagram', icon: instagramIconAsset, userProfilePrefix: 'https://www.instagram.com/', homepage: 'https://www.instagram.com/' },
+  { classUri: `${SOCIAL_CLASS_BASE}LinkedInAccount`, label: 'LinkedIn', icon: linkedinIconAsset, userProfilePrefix: 'https://www.linkedin.com/in/', homepage: 'https://linkedin.com/' },
+  { classUri: `${SOCIAL_CLASS_BASE}TiktokAccount`, label: 'TikTok', icon: tiktokIconAsset, userProfilePrefix: 'https://www.tiktok.com/@', homepage: 'https://www.tiktok.com/' },
+  { classUri: `${SOCIAL_CLASS_BASE}TwitterAccount`, label: 'X', icon: xIconAsset, userProfilePrefix: 'https://x.com/', homepage: 'https://x.com/' },
+  { classUri: `${SOCIAL_CLASS_BASE}YouTubeAccount`, label: 'YouTube', icon: youtubeIconAsset, userProfilePrefix: 'https://www.youtube.com/', homepage: 'https://www.youtube.com/' },
+  { classUri: `${SOCIAL_CLASS_BASE}DiscordAccount`, label: 'Discord', icon: discordIconAsset, userProfilePrefix: 'https://discord.com/users/', homepage: 'https://discord.com/' },
+  { classUri: `${SOCIAL_CLASS_BASE}SnapchatAccount`, label: 'Snapchat', icon: snapchatIconAsset, userProfilePrefix: 'https://www.snapchat.com/add/', homepage: 'https://www.snapchat.com/' },
+  { classUri: `${SOCIAL_CLASS_BASE}PinterestAccount`, label: 'Pinterest', icon: pinterestIconAsset, userProfilePrefix: 'https://pin.it/', homepage: 'https://pinterest.com/' },
+  { classUri: `${SOCIAL_CLASS_BASE}SpotifyAccount`, label: 'Spotify', icon: spotifyIconAsset, userProfilePrefix: 'https://www.spotify.com/user/', homepage: 'https://www.spotify.com/' },
+  { classUri: `${SOCIAL_CLASS_BASE}TelegramAccount`, label: 'Telegram', icon: telegramIconAsset, userProfilePrefix: 'https://t.me/', homepage: 'https://telegram.org/' },
+  { classUri: `${SOCIAL_CLASS_BASE}DribbleAccount`, label: 'Dribble', icon: dribbbleIconAsset, userProfilePrefix: 'https://dribbble.com/', homepage: 'https://dribbble.com/' },
+  { classUri: `${SOCIAL_CLASS_BASE}SharechatAccount`, label: 'ShareChat', icon: sharechatIconAsset, userProfilePrefix: 'https://www.sharechat.com/user/', homepage: 'https://sharechat.com/' },
+  { classUri: `${SOCIAL_CLASS_BASE}WhatsAppAccount`, label: 'WhatsApp', icon: whatsappIconAsset, userProfilePrefix: 'https://wa.me/', homepage: 'https://www.whatsapp.com/' }
+]
 
 // Temporary icon mapping for locally bundled social PNG assets.
 // These icon assets are intended to move to a dedicated icons project later.
@@ -85,6 +106,15 @@ function resolveSocialIcon(classUri: string, iconValue: string): string {
   return iconValue || DEFAULT_ICON_URI
 }
 
+function getSocialOntologyStore(): LiveStore {
+  if (cachedSocialOntologyStore) return cachedSocialOntologyStore
+
+  const ontologyStore = graph() as unknown as LiveStore
+  parse(socialMediaForm, ontologyStore as any, SOCIAL_ONTOLOGY_URI, 'text/turtle', () => null)
+  cachedSocialOntologyStore = ontologyStore
+  return ontologyStore
+}
+
 export type SocialAccountOption = {
   classUri: string
   label: string
@@ -93,29 +123,76 @@ export type SocialAccountOption = {
   userProfilePrefix?: string
 }
 
+function normalizeSocialOptionKey(value: string): string {
+  return (value || '')
+    .trim()
+    .toLowerCase()
+    .replace(/[#:/]/g, ' ')
+    .replace(/account\b/g, '')
+    .replace(/[^a-z0-9]/g, '')
+}
+
+export function findSocialAccountOption(options: SocialAccountOption[], value: string): SocialAccountOption | undefined {
+  const rawValue = (value || '').trim()
+  if (!rawValue) return undefined
+
+  const lowerValue = rawValue.toLowerCase()
+  const direct = options.find((option) => {
+    return option.classUri.toLowerCase() === lowerValue || option.label.toLowerCase() === lowerValue
+  })
+  if (direct) return direct
+
+  const key = normalizeSocialOptionKey(rawValue)
+  if (!key) return undefined
+
+  return options.find((option) => {
+    const optionLabelKey = normalizeSocialOptionKey(option.label)
+    const optionClassKey = normalizeSocialOptionKey(option.classUri)
+    return optionLabelKey === key || optionClassKey === key
+  })
+}
+
 export function ensureSocialOntologyLoaded(store: LiveStore): void {
   loadDocument(store, socialMediaForm, socialMediaFormName)
 }
 
 export function getSocialAccountOptions(store: LiveStore): SocialAccountOption[] {
   ensureSocialOntologyLoaded(store)
+  const ontologyStore = getSocialOntologyStore()
 
-  const unionNode = store.any(ns.foaf('Account'), OWL_DISJOINT_UNION_OF) as any
-  if (!unionNode) return []
+  const classNodeMap = new Map<string, NamedNode>()
 
-  const classNodes = expandRdfList(store, unionNode)
-    .filter((node): node is NamedNode => node.termType === 'NamedNode')
+  const unionNode = ontologyStore.any(ns.foaf('Account'), OWL_DISJOINT_UNION_OF) as any
+  if (unionNode) {
+    const unionClassNodes = expandRdfList(ontologyStore, unionNode)
+      .filter((node): node is NamedNode => node.termType === 'NamedNode')
+    for (const classNode of unionClassNodes) {
+      classNodeMap.set(classNode.value, classNode)
+    }
+  }
 
-  const options = classNodes.map((classNode) => {
+  // Fallback/augmentation: include any class declared as a foaf:Account subclass.
+  const subclassStatements = ontologyStore.statementsMatching(undefined as any, ns.rdfs('subClassOf'), ns.foaf('Account'))
+  for (const statement of subclassStatements) {
+    const classNode = statement.subject
+    if (classNode?.termType === 'NamedNode') {
+      classNodeMap.set(classNode.value, classNode as NamedNode)
+    }
+  }
+
+  const classNodes = Array.from(classNodeMap.values())
+  if (!classNodes.length) return []
+
+  const options: SocialAccountOption[] = classNodes.map((classNode) => {
     const label =
-      store.any(classNode, ns.rdfs('label'))?.value ||
+      ontologyStore.any(classNode, ns.rdfs('label'))?.value ||
       utils.label(classNode) ||
       classNode.value
 
-    const iconValue = store.any(classNode, ns.foaf('icon'))?.value || ''
+    const iconValue = ontologyStore.any(classNode, ns.foaf('icon'))?.value || ''
     const icon = resolveSocialIcon(classNode.value, iconValue)
-    const homepage = store.any(classNode, ns.foaf('homepage'))?.value || ''
-    const userProfilePrefix = store.any(classNode, ns.foaf('userProfilePrefix'))?.value || ''
+    const homepage = ontologyStore.any(classNode, ns.foaf('homepage'))?.value || ''
+    const userProfilePrefix = ontologyStore.any(classNode, ns.foaf('userProfilePrefix'))?.value || ''
 
     return {
       classUri: classNode.value,
@@ -128,12 +205,22 @@ export function getSocialAccountOptions(store: LiveStore): SocialAccountOption[]
 
   // Keep labels stable and avoid duplicates if ontology data repeats.
   const seen = new Set<string>()
-  return options.filter((option) => {
+  const normalizedOptions = options.filter((option) => {
     const key = option.label.toLowerCase().trim()
     if (!key || seen.has(key)) return false
     seen.add(key)
     return true
   })
+
+  for (const fallbackOption of FALLBACK_SOCIAL_OPTIONS) {
+    const key = fallbackOption.label.toLowerCase().trim()
+    if (!seen.has(key)) {
+      normalizedOptions.push(fallbackOption)
+      seen.add(key)
+    }
+  }
+
+  return normalizedOptions
 }
 
 export function nameForAccount(store: LiveStore, accountNode: any): string {
@@ -178,7 +265,9 @@ export function homepageForAccount(store: LiveStore, accountNode: any): string {
   const accountHomepage = store.any(accountNode, ns.foaf('homepage'))
   if (accountHomepage) return accountHomepage.value
 
-  const id = store.anyJS(accountNode as any, ns.foaf('accountName'), null, accountNode.doc()) || 'No_account_Name'
+  const id = String(store.anyJS(accountNode as any, ns.foaf('accountName'), null, accountNode.doc()) || 'No_account_Name').trim()
+  if (/^https?:\/\//i.test(id)) return id
+
   const classes = store.each(accountNode as any, ns.rdf('type'))
 
   for (const classNode of classes) {

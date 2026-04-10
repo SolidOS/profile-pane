@@ -19,7 +19,7 @@ import {
   saveSocialUpdatesFailedPrefixText
 } from '../../texts'
 import { DEFAULT_ICON_URI } from './constants'
-import { getSocialAccountOptions, type SocialAccountOption } from './helpers'
+import { findSocialAccountOption, getSocialAccountOptions, type SocialAccountOption } from './helpers'
 
 type SocialFormState = {
   socialAccounts: SocialRow[]
@@ -106,23 +106,27 @@ function validateSocialBeforeSave(rows: SocialRow[]): string | null {
   return null
 }
 
-function findOptionByName(options: SocialAccountOption[], name: string): SocialAccountOption | undefined {
-  const key = (name || '').trim().toLowerCase()
-  return options.find((option) => option.label.toLowerCase() === key)
-}
-
 function renderSocialAccountInputSelect(
   row: SocialRow,
+  rowIndex: number,
   options: SocialAccountOption[],
   onChange: (event: Event) => void
 ) {
-  const selected = findOptionByName(options, row?.name || '')
-  const selectedValue = selected?.label || ''
+  const selected = findSocialAccountOption(options, row?.name || '')
+  const selectedLabel = selected?.label || ''
 
   return html`
-    <select class="inputSelect" name="social-account-type" .value=${selectedValue} @change=${onChange}>
+    <select
+      class="inputSelect"
+      name=${`social-account-type-${rowIndex}`}
+      data-row-index=${String(rowIndex)}
+      autocomplete="off"
+      @change=${onChange}
+    >
       <option value="">Select account type</option>
-      ${options.map((option) => html`<option value=${option.label}>${option.label}</option>`)}
+      ${options.map((option) => html`
+        <option value=${option.label} ?selected=${option.label === selectedLabel}>${option.label}</option>
+      `)}
     </select>
   `
 }
@@ -152,7 +156,7 @@ function renderSocialInputRow({
 
   const handleAccountTypeInput = (event: Event) => {
     const target = event.target as HTMLSelectElement
-    const selected = findOptionByName(options, target.value)
+    const selected = findSocialAccountOption(options, target.value)
     if (!rows[index]) return
 
     if (!selected) {
@@ -184,7 +188,7 @@ function renderSocialInputRow({
         loading="lazy"
       />
       <label aria-label=${nameLabel} class="label profile-edit-dialog__field">
-        ${renderSocialAccountInputSelect(row, options, handleAccountTypeInput)}
+        ${renderSocialAccountInputSelect(row, index, options, handleAccountTypeInput)}
       </label>
       <label aria-label=${homepageLabel} class="label profile-edit-dialog__field">
         <input

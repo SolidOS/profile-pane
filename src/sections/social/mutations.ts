@@ -9,7 +9,7 @@ import {
 	findExistingNode
 } from '../shared/rdfMutationHelpers'
 import { saveSocialUpdatesFailedPrefixText } from '../../texts'
-import { getSocialAccountOptions } from './helpers'
+import { findSocialAccountOption, getSocialAccountOptions } from './helpers'
 import { presentSocial } from './selectors'
 import { expandRdfList } from '../shared/rdfList'
 
@@ -31,8 +31,13 @@ function toAccountNameFromHomepage(homepage: string, profilePrefix?: string): st
 	if (!homepageValue) return ''
 
 	const prefixValue = normalizeValue(profilePrefix)
-	if (prefixValue && homepageValue.toLowerCase().startsWith(prefixValue.toLowerCase())) {
-		return homepageValue.slice(prefixValue.length)
+	if (prefixValue) {
+		let trimmed = homepageValue
+		const lowerPrefix = prefixValue.toLowerCase()
+		while (trimmed.toLowerCase().startsWith(lowerPrefix)) {
+			trimmed = trimmed.slice(prefixValue.length)
+		}
+		if (trimmed) return trimmed
 	}
 
 	return homepageValue
@@ -134,8 +139,7 @@ function mergeSocialOps(existingRows: SocialRow[], socialOps: MutationOps<Social
 async function mutateSocialEntries(store: LiveStore, subject: NamedNode, socialOps: MutationOps<SocialRow>) {
 	const doc = subject.doc()
 	const accountOptions = getSocialAccountOptions(store)
-	const optionByLabel = new Map(accountOptions.map((option) => [option.label.trim().toLowerCase(), option]))
-	const optionForRow = (row: SocialRow) => optionByLabel.get(normalizeValue(row.name).toLowerCase())
+	const optionForRow = (row: SocialRow) => findSocialAccountOption(accountOptions, normalizeValue(row.name))
 
 	const existingRows: SocialRow[] = presentSocial(subject, store).accounts.map((account) => ({
 		name: normalizeValue(account.name),
