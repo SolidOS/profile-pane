@@ -1,5 +1,5 @@
 import { describe, expect, it } from "@jest/globals"
-import { graph, literal, st, sym } from 'rdflib'
+import { Collection, graph, literal, st, sym } from 'rdflib'
 import { ns } from 'solid-ui'
 import { presentLanguages } from '../../src/sections/languages/selectors'
 import { processLanguageMutations } from '../../src/sections/languages/mutations'
@@ -30,44 +30,148 @@ describe('Languages selectors and mutations', () => {
     )
   })
 
-  it('persists delete when existing languages come from RDF list entries', async () => {
+  it('reads canonical id-node list with solid publicId URI and schema name', () => {
     const store = graph() as any
     const subject = sym('https://example.com/profile/card#me')
     const doc = subject.doc()
-    const listHead = store.bnode()
+    const id1 = sym('https://example.com/profile/card#id1')
+    const id2 = sym('https://example.com/profile/card#id2')
+    store.add(subject, ns.schema('knowsLanguage'), new Collection([
+      id1,
+      id2
+    ]), doc)
+    store.add(id1, ns.solid('publicId'), sym('https://www.w3.org/ns/iana/language-code/en'), doc)
+    store.add(id1, ns.schema('name'), literal('English'), doc)
+    store.add(id2, ns.solid('publicId'), sym('https://www.w3.org/ns/iana/language-code/es'), doc)
+    store.add(id2, ns.schema('name'), literal('Spanish'), doc)
 
-    store.add(subject, ns.schema('knowsLanguage'), listHead, doc)
-    store.add(listHead, ns.rdf('first'), literal('French'), doc)
-    store.add(listHead, ns.rdf('rest'), ns.rdf('nil'), doc)
+    const languages = presentLanguages(subject, store)
+    expect(languages).toHaveLength(2)
+    expect(languages.map((item) => item.name)).toEqual(['English', 'Spanish'])
+    expect(languages.map((item) => item.publicId)).toEqual([
+      'https://www.w3.org/ns/iana/language-code/en',
+      'https://www.w3.org/ns/iana/language-code/es'
+    ])
+  })
 
-    const pre = presentLanguages(subject, store)
-    expect(pre.some((item) => item.name === 'French')).toBe(true)
+  it('reads direct IANA URI list entries', () => {
+    const store = graph() as any
+    const subject = sym('https://example.com/profile/card#me')
+    const doc = subject.doc()
+    store.add(subject, ns.schema('knowsLanguage'), new Collection([
+      sym('https://www.w3.org/ns/iana/language-code/en'),
+      sym('https://www.w3.org/ns/iana/language-code/es')
+    ]), doc)
 
-    const plan = {
-      create: [],
-      update: [],
-      remove: [{ name: 'French', publicId: '', proficiency: '', entryNode: 'French', status: 'deleted' }]
-    }
+    const languages = presentLanguages(subject, store)
+    expect(languages).toHaveLength(2)
+    expect(languages.map((item) => item.publicId)).toEqual([
+      'https://www.w3.org/ns/iana/language-code/en',
+      'https://www.w3.org/ns/iana/language-code/es'
+    ])
+  })
 
-    let deletionsCount = 0
-    let insertionsCount = 0
+  it('reads legacy entry-node list with solid:publicId literals', () => {
+    const store = graph() as any
+    const subject = sym('https://example.com/profile/card#me')
+    const doc = subject.doc()
+    const language1 = store.bnode()
+    const language2 = store.bnode()
+
+    store.add(subject, ns.schema('knowsLanguage'), new Collection([language1, language2]), doc)
+    store.add(language1, ns.solid('publicId'), literal('fr'), doc)
+    store.add(language2, ns.solid('publicId'), literal('de'), doc)
+
+    const languages = presentLanguages(subject, store)
+    expect(languages).toHaveLength(2)
+    expect(languages.map((item) => item.publicId)).toEqual(['fr', 'de'])
+  })
+
+  it('reads cumulative legacy list snapshots and keeps longest ordered list', () => {
+    const store = graph() as any
+    const subject = sym('https://example.com/profile/card#me')
+    const doc = subject.doc()
+    const id1 = sym('https://example.com/profile/card#id1')
+    const id2 = sym('https://example.com/profile/card#id2')
+    const id3 = sym('https://example.com/profile/card#id3')
+
+    store.add(subject, ns.schema('knowsLanguage'), new Collection([id1]), doc)
+    store.add(subject, ns.schema('knowsLanguage'), new Collection([id1, id2]), doc)
+    store.add(subject, ns.schema('knowsLanguage'), new Collection([id1, id2, id3]), doc)
+
+    store.add(id1, ns.solid('publicId'), sym('https://www.w3.org/ns/iana/language-code/en'), doc)
+    store.add(id2, ns.solid('publicId'), sym('https://www.w3.org/ns/iana/language-code/fr'), doc)
+    store.add(id3, ns.solid('publicId'), sym('https://www.w3.org/ns/iana/language-code/de'), doc)
+
+    const languages = presentLanguages(subject, store)
+    expect(languages).toHaveLength(3)
+    expect(languages.map((item) => item.publicId)).toEqual([
+      'https://www.w3.org/ns/iana/language-code/en',
+      'https://www.w3.org/ns/iana/language-code/fr',
+      'https://www.w3.org/ns/iana/language-code/de'
+    ])
+  })
+
+  it('writes canonical id-node list model and removes legacy entry-node model statements', async () => {
+    const store = graph() as any
+    const subject = sym('https://example.com/profile/card#me')
+    const doc = subject.doc()
+    const legacyEntry1 = sym('https://example.com/profile/card#id111')
+    const legacyEntry2 = sym('https://example.com/profile/card#id222')
+
+    store.add(subject, ns.schema('knowsLanguage'), new Collection([legacyEntry1]), doc)
+    store.add(subject, ns.schema('knowsLanguage'), new Collection([legacyEntry1, legacyEntry2]), doc)
+    store.add(legacyEntry1, ns.solid('publicId'), literal('fr'), doc)
+    store.add(legacyEntry2, ns.solid('publicId'), sym('https://www.w3.org/ns/iana/language-code/de'), doc)
+    store.add(legacyEntry1, ns.rdf('type'), ns.schema('Language'), doc)
+
+    let insertionsCaptured: any[] = []
     store.updater = {
       update: (deletions: any[], insertions: any[], callback: Function) => {
-        deletionsCount = deletions.length
-        insertionsCount = insertions.length
+        insertionsCaptured = insertions
         deletions.forEach((statement) => store.remove(st(statement.subject, statement.predicate, statement.object, statement.why)))
         insertions.forEach((statement) => store.add(statement.subject, statement.predicate, statement.object, statement.why))
         callback('', true)
       }
     }
 
-    await processLanguageMutations(store, subject, plan as any)
+    await processLanguageMutations(
+      store,
+      subject,
+      { create: [], update: [], remove: [] } as any,
+      [
+        { name: 'German', publicId: 'https://www.w3.org/ns/iana/language-code/de', proficiency: '', entryNode: '', status: 'existing' },
+        { name: 'French', publicId: 'fr', proficiency: '', entryNode: '', status: 'existing' }
+      ] as any
+    )
 
-    const post = presentLanguages(subject, store)
-    expect(post.some((item) => item.name === 'French')).toBe(false)
-    expect(store.statementsMatching(subject, ns.schema('knowsLanguage'), null, doc)).toHaveLength(0)
-    expect(deletionsCount).toBeGreaterThan(0)
-    expect(insertionsCount).toBe(0)
+    const knowsLanguageValues = store.statementsMatching(subject, ns.schema('knowsLanguage'), null, doc)
+    expect(knowsLanguageValues).toHaveLength(1)
+    expect(knowsLanguageValues[0].object.termType).toBe('Collection')
+
+    const listElements = (knowsLanguageValues[0].object as any).elements || []
+    expect(listElements).toHaveLength(2)
+    expect(listElements.every((node: any) => node.termType === 'NamedNode')).toBe(true)
+    expect(listElements.every((node: any) => node.value.includes('#id'))).toBe(true)
+
+    const publicIdStatements = listElements.map((node: any) => {
+      return store.any(node, ns.solid('publicId'), null, doc)
+    })
+    expect(publicIdStatements.map((node: any) => node?.value)).toEqual([
+      'https://www.w3.org/ns/iana/language-code/de',
+      'https://www.w3.org/ns/iana/language-code/fr'
+    ])
+
+    const nameStatements = listElements.map((node: any) => {
+      return store.any(node, ns.schema('name'), null, doc)
+    })
+    expect(nameStatements.map((node: any) => node?.value)).toEqual(['German', 'French'])
+
+    expect(insertionsCaptured.some((statement) => statement.predicate.value === ns.schema('knowsLanguage').value)).toBe(true)
+
+    const legacyPublicIdLiteralStatements = store.statementsMatching(undefined, ns.solid('publicId'), literal('fr'), doc)
+    expect(legacyPublicIdLiteralStatements).toHaveLength(0)
+    expect(store.statementsMatching(legacyEntry1, ns.rdf('type'), ns.schema('Language'), doc)).toHaveLength(0)
   })
 
   it('falls back to updateDav when update fails with PATCH error', async () => {
@@ -138,133 +242,5 @@ describe('Languages selectors and mutations', () => {
 
     expect(putCalled).toBe(true)
     expect(store.statementsMatching(subject, ns.schema('knowsLanguage'), null, doc)).toHaveLength(0)
-  })
-
-  it('writes created languages as id nodes with solid:publicId', async () => {
-    const store = graph() as any
-    const subject = sym('https://example.com/profile/card#me')
-    const doc = subject.doc()
-
-    let insertionsCaptured: any[] = []
-    store.updater = {
-      update: (deletions: any[], insertions: any[], callback: Function) => {
-        insertionsCaptured = insertions
-        deletions.forEach((statement) => store.remove(st(statement.subject, statement.predicate, statement.object, statement.why)))
-        insertions.forEach((statement) => store.add(statement.subject, statement.predicate, statement.object, statement.why))
-        callback('', true)
-      }
-    }
-
-    const plan = {
-      create: [{ name: 'French', publicId: 'https://www.w3.org/ns/iana/language-code/fr', proficiency: '', entryNode: '', status: 'new' }],
-      update: [],
-      remove: []
-    }
-
-    await processLanguageMutations(store, subject, plan as any)
-
-    const linkStatement = insertionsCaptured.find((statement) => statement.predicate.value === ns.schema('knowsLanguage').value)
-    expect(linkStatement?.object?.termType).toBe('Collection')
-
-    const firstEntry = linkStatement?.object?.elements?.[0]
-    expect(firstEntry?.termType).toBe('NamedNode')
-    expect(firstEntry?.value).toMatch(/^https:\/\/example\.com\/profile\/card#id\d{13}$/)
-
-    const publicIdStatement = insertionsCaptured.find(
-      (statement) =>
-        statement.subject.value === firstEntry.value &&
-        statement.predicate.value === ns.solid('publicId').value
-    )
-    expect(publicIdStatement?.object?.termType).toBe('NamedNode')
-    expect(publicIdStatement?.object?.value).toBe('https://www.w3.org/ns/iana/language-code/fr')
-
-    const publicIdNameStatement = insertionsCaptured.find(
-      (statement) =>
-        statement.subject.value === 'https://www.w3.org/ns/iana/language-code/fr' &&
-        statement.predicate.value === ns.schema('name').value
-    )
-    expect(publicIdNameStatement?.object?.value).toBe('French')
-
-    const proficiencyStatement = insertionsCaptured.find(
-      (statement) =>
-        statement.subject.value === firstEntry.value &&
-        statement.predicate.value === ns.schema('proficiencyLevel').value
-    )
-    expect(proficiencyStatement).toBeUndefined()
-
-    const typeStatement = insertionsCaptured.find(
-      (statement) =>
-        statement.subject.value === firstEntry.value &&
-        statement.predicate.value === ns.rdf('type').value
-    )
-    expect(typeStatement?.object?.value).toBe(ns.schema('Language').value)
-
-    const knowsLanguageValues = store.statementsMatching(subject, ns.schema('knowsLanguage'), null, doc)
-    expect(knowsLanguageValues.length).toBe(1)
-    expect(knowsLanguageValues[0].object.termType).toBe('Collection')
-  })
-
-  it('does not accumulate extra language schema:Language type nodes across repeated saves', async () => {
-    const store = graph() as any
-    const subject = sym('https://example.com/profile/card#me')
-    const doc = subject.doc()
-
-    store.updater = {
-      update: (deletions: any[], insertions: any[], callback: Function) => {
-        deletions.forEach((statement) => store.remove(statement))
-        insertions.forEach((statement) => store.add(statement.subject, statement.predicate, statement.object, statement.why))
-        callback('', true)
-      }
-    }
-
-    const plan = {
-      create: [
-        { name: 'Greek', publicId: 'https://www.w3.org/ns/iana/language-code/el', proficiency: '', entryNode: '', status: 'new' },
-        { name: 'English', publicId: 'https://www.w3.org/ns/iana/language-code/en', proficiency: '', entryNode: '', status: 'new' }
-      ],
-      update: [],
-      remove: []
-    }
-
-    await processLanguageMutations(store, subject, plan as any)
-    await processLanguageMutations(store, subject, plan as any)
-
-    const typeStatements = store.statementsMatching(undefined, ns.rdf('type'), ns.schema('Language'), doc)
-    expect(typeStatements.length).toBeGreaterThanOrEqual(2)
-
-  })
-
-  it('keeps selected language display name even when publicId is unchanged', async () => {
-    const store = graph() as any
-    const subject = sym('https://example.com/profile/card#me')
-
-    store.updater = {
-      update: (deletions: any[], insertions: any[], callback: Function) => {
-        deletions.forEach((statement) => store.remove(statement))
-        insertions.forEach((statement) => store.add(statement.subject, statement.predicate, statement.object, statement.why))
-        callback('', true)
-      }
-    }
-
-    await processLanguageMutations(store, subject, {
-      create: [{ name: 'Greek', publicId: 'https://www.w3.org/ns/iana/language-code/el', proficiency: '', entryNode: '', status: 'new' }],
-      update: [],
-      remove: []
-    } as any)
-
-    const firstPass = presentLanguages(subject, store)
-    const existingEntry = firstPass[0]?.entryNode?.value
-    expect(existingEntry).toBeTruthy()
-
-    await processLanguageMutations(store, subject, {
-      create: [],
-      update: [{ name: 'Modern Greek', publicId: 'https://www.w3.org/ns/iana/language-code/el', proficiency: '', entryNode: existingEntry, status: 'modified' }],
-      remove: []
-    } as any)
-
-    const secondPass = presentLanguages(subject, store)
-    expect(secondPass).toHaveLength(1)
-    expect(secondPass[0].publicId).toBe('https://www.w3.org/ns/iana/language-code/el')
-    expect(secondPass[0].name).toBe('Modern Greek')
   })
 })

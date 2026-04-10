@@ -1,4 +1,4 @@
-import { NamedNode, Store, Node, LiveStore } from 'rdflib'
+import { NamedNode, Store, Node, LiveStore, sym } from 'rdflib'
 import { ns } from 'solid-ui'
 import { LanguageDetails } from './types'
 import { expandRdfList } from '../shared/rdfList'
@@ -12,6 +12,17 @@ function normalizeText(value: string): string {
 function firstLiteralValue(store: Store, subject: NamedNode, predicate: NamedNode): string {
   const value = store.anyValue(subject, predicate)
   return typeof value === 'string' ? value : ''
+}
+
+function isRdfListNode(store: Store, node: Node): boolean {
+  const hasCollectionElements = Array.isArray((node as any)?.elements)
+  if (hasCollectionElements) return true
+  if (node.termType !== 'BlankNode' && node.termType !== 'NamedNode') return false
+  return Boolean(store.any(node as NamedNode, ns.rdf('first')))
+}
+
+function normalizeLanguageCode(value: string): string {
+  return (value || '').trim().toLowerCase()
 }
 
 function languageNameFromCode(code: string): string {
@@ -34,8 +45,26 @@ function languageNameFromPublicId(publicIdValue: string): string {
   if (!value) return ''
 
   if (value.startsWith(IANA_LANGUAGE_BASE)) {
-    const code = value.slice(IANA_LANGUAGE_BASE.length)
+    const code = normalizeLanguageCode(value.slice(IANA_LANGUAGE_BASE.length))
     return languageNameFromCode(code)
+  }
+
+  return languageNameFromCode(value)
+}
+
+function englishOrAnyLiteralValue(store: Store, subject: NamedNode, predicate: NamedNode): string {
+  const values = store.statementsMatching(subject, predicate)
+  const english = values.find((statement) => {
+    const language = (statement.object as any)?.lang || ''
+    return language.toLowerCase().startsWith('en')
+  })
+  if (english && typeof (english.object as any)?.value === 'string') {
+    return (english.object as any).value
+  }
+
+  const firstLiteral = values.find((statement) => statement.object?.termType === 'Literal')
+  if (firstLiteral && typeof (firstLiteral.object as any)?.value === 'string') {
+    return (firstLiteral.object as any).value
   }
 
   return ''
@@ -53,32 +82,87 @@ function englishLabelForNode(store: Store, node: NamedNode): string {
   return ''
 }
 
-export function languageAsText (store: Store, lan: Node):string {
-  if (lan.termType === 'Literal') return lan.value // Not normal but allow this
+function languageNameFromIanaNode(store: Store, node: NamedNode): string {
+  const schemaName = englishOrAnyLiteralValue(store, node, ns.schema('name'))
+  if (schemaName) return normalizeText(schemaName)
 
-  const publicIdNode = store.any(lan as NamedNode, ns.solid('publicId'))
-  if (publicIdNode && publicIdNode.termType === 'NamedNode') {
-    const publicIdName = firstLiteralValue(store, publicIdNode as NamedNode, ns.schema('name'))
-    if (publicIdName) {
-      return normalizeText(publicIdName) || ''
-    }
+  const localLabel = englishLabelForNode(store, node)
+  if (localLabel) return normalizeText(localLabel)
 
-    const localLabel = englishLabelForNode(store, publicIdNode as NamedNode)
-    if (localLabel) return localLabel
+  if (node.value.startsWith(IANA_LANGUAGE_BASE)) {
+    return languageNameFromPublicId(node.value)
+  }
 
+  return ''
+}
+
+function toStoredPublicIdValue(lan: Node, publicIdNode: Node | undefined): string | undefined {
+  if (publicIdNode?.termType === 'NamedNode') {
+    return publicIdNode.value
+  }
+
+  if (publicIdNode?.termType === 'Literal') {
+    const code = normalizeLanguageCode(publicIdNode.value)
+    return code || undefined
+  }
+
+  if (lan.termType === 'NamedNode' && lan.value.startsWith(IANA_LANGUAGE_BASE)) {
+    return lan.value
+  }
+
+  return undefined
+}
+
+function languageNameFromLanguageNode(store: Store, lan: Node, publicIdNode: Node | undefined): string {
+  if (publicIdNode?.termType === 'NamedNode') {
+    const nodeName = languageNameFromIanaNode(store, publicIdNode as NamedNode)
+    if (nodeName) return nodeName
     return languageNameFromPublicId(publicIdNode.value)
   }
 
-  return ''                                                  
+  if (publicIdNode?.termType === 'Literal') {
+    const code = normalizeLanguageCode(publicIdNode.value)
+    if (!code) return ''
+
+    const ianaNode = sym(`${IANA_LANGUAGE_BASE}${code}`)
+    const nodeName = languageNameFromIanaNode(store, ianaNode)
+    if (nodeName) return nodeName
+    return languageNameFromCode(code)
+  }
+
+  if (lan.termType === 'NamedNode') {
+    const nodeName = languageNameFromIanaNode(store, lan as NamedNode)
+    if (nodeName) return nodeName
+  }
+
+  return ''
+}
+
+export function languageAsText (store: Store, lan: Node):string {
+  if (lan.termType === 'Literal') return lan.value // Not normal but allow this
+
+  if (lan.termType !== 'NamedNode' && lan.termType !== 'BlankNode') return ''
+
+  const publicIdNode = store.any(lan as NamedNode, ns.solid('publicId')) || undefined
+  return languageNameFromLanguageNode(store, lan, publicIdNode)
 }
 
 export function presentLanguages(subject: NamedNode, store: LiveStore): LanguageDetails[] {
-  const languageNodes = store.each(subject, ns.schema('knowsLanguage'))
+  const languageObjects = store.each(subject, ns.schema('knowsLanguage'))
+  const expandedLists = languageObjects
+    .filter((node) => isRdfListNode(store, node))
+    .map((node) => expandRdfList(store, node))
+
+  const longestList = expandedLists
+    .sort((a, b) => b.length - a.length)[0] || []
+
+  const standaloneNodes = languageObjects.filter((node) => !isRdfListNode(store, node))
+  const languageNodes = [...longestList, ...standaloneNodes]
+
   const details: LanguageDetails[] = languageNodes
-    .flatMap(node => expandRdfList(store, node))
     .map((lan) => ({
       name: languageAsText(store, lan),
-      publicId: store.any(lan as NamedNode, ns.solid('publicId'))?.value || undefined,
+      publicId: toStoredPublicIdValue(lan, store.any(lan as NamedNode, ns.solid('publicId')) || undefined),
       proficiency: store.anyValue(lan as NamedNode, ns.schema('proficiencyLevel')) || undefined,
       entryNode: lan
     }))
