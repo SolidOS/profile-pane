@@ -61,7 +61,7 @@ export const QRCodeCard = (
   const BEGIN = 'BEGIN:VCARD\r\n'
   const END = 'END:VCARD\r\n'
   const FN = 'FN:' + name + '\r\n'
-  const URL = 'URL:' + subject.uri + 'r\n'
+  const URL = 'URL:' + subject.uri + '\r\n'
   const VERSIONV = 'VERSION:4.0\r\n'
 
   // Accessibility check: Ensure QR code is rendered as an accessible image or canvas
