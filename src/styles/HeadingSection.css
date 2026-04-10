@@ -3,7 +3,7 @@
 }
 
 .profile__name {
-color: var(--font-color-text-heading, #000);
+color: var(--color-text-heading, #000);
 font-size: var(--font-size-xxl, 1.75rem); /* 28px */
 font-weight: var(--font-weight-bold, 600);
 margin: 0;
@@ -19,7 +19,7 @@ transform: translateX(-4px);
 }
 
 .profile__details {
-  color: var(--font-color-text-secondary, #4A5565);
+  color: var(--color-text-secondary, #4A5565);
   font-size: var(--font-size-sm, 0.875rem); /* 14px */
   display: flex;
   align-content: flex-start;
@@ -63,7 +63,7 @@ transform: translateX(-4px);
 }
 
 .profile__pronouns {
-  color: var(--font-color-text-secondary, #4A5565);
+  color: var(--color-text-secondary, #4A5565);
   font-size: var(--font-size-sm, 0.875rem); /* 14px */
   font-weight: var(--font-weight-regular, 400);
   line-height: 1.2;
@@ -73,7 +73,7 @@ transform: translateX(-4px);
   margin: 0;
   width: 100%;
   white-space: normal;
-  color: var(--font-color-text-subheading, #101828);
+  color: var(--color-text-subheading, #101828);
   font-size: var(--font-size-base, 1rem);
   font-weight: var(--font-weight-medium, 500);
   line-height: 1.25;
@@ -126,5 +126,5 @@ transform: translateX(-4px);
   border: 1px solid var(--color-primary);
   background: var(--color-card-bg);
   box-sizing: border-box;
-  color: var(--font-color-text-secondary);
+  color: var(--color-text-secondary);
 }

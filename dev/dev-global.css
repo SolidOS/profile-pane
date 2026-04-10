@@ -5,6 +5,20 @@
 /* Accessible color palette */
 
 :root {
+  /* Card/Section backgrounds */
+  /* OLD --color-background: #FFFFFF; /* White */
+  --color-background: #F8F9FB; /* Light grey for overall background */
+  --color-card-bg: #FFFFFF; /* White for inner cards */
+  /* OLD --color-section-bg: #F5F5F5; /* Light grey for outer sections */
+  --color-section-bg: #FFFFFF; /* White for outer sections to match new design */
+
+  --color-text: #1A1A1A; /* Near-black */
+  --color-text-secondary-muted: #666; /* Added for repeated usage */
+  --color-text-muted: #444; /* Added for repeated usage */
+  --color-border-pale: #eee; /* Added for repeated borders */
+  --color-info-bg: #ccccff;
+  --color-border-accent: #88c;
+  
   /* Primary/Accent colors (profile-pane specific) */
   --color-primary: #7C4DFF; /* Vivid Purple New design: same? */
   --color-secondary: #0077B6; /* Accessible Blue */
@@ -24,19 +38,7 @@
   --slate-900: #0F172B; /* Used for: text  */
   --black: #000;  /* Used for: text heading */
 
-  /* Card/Section backgrounds */
-  /* OLD --color-background: #FFFFFF; /* White */
-  --color-background: #F8F9FB; /* Light grey for overall background */
-  --color-card-bg: #FFFFFF; /* White for inner cards */
-  /* OLD --color-section-bg: #F5F5F5; /* Light grey for outer sections */
-  --color-section-bg: #FFFFFF; /* White for outer sections to match new design */
-
-  --color-text: #1A1A1A; /* Near-black */
-  --color-text-secondary: #666; /* Added for repeated usage */
-  --color-text-muted: #444; /* Added for repeated usage */
-  --color-border-pale: #eee; /* Added for repeated borders */
-  --color-info-bg: #ccccff;
-  --color-border-accent: #88c;
+  
   
   /* New Design: tokens */
   --border-radius-base: 0.3125rem; /* 5px  Base border radius */
@@ -72,7 +74,7 @@
   --spacing-xl: 2rem;     /* 32px */
   --spacing-btn: 0.7rem;  /* 11.2px */
 
-  --font-family-base: "Neue Einstellung", sans-serif;
+  --font-family-base: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   /* OLD --font-family-base: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif; */
   /* Font sizes */
   /* Note: changed from relative to absolute based on research that says em is relative to it's root */
@@ -94,12 +96,12 @@
   --font-weight-bold: 600; /* New design uses 600 for headings was 700 */
 
  /* Font colors (new design) */
-  --font-color-text-primary: var(--gray-700);
-  --font-color-text-secondary: var(--gray-600);
-  --font-color-text-heading: var(--black); /* New design uses pure black for headings */
-  --font-color-text-subheading: var(--gray-900);
-  --font-color-strong: var(--slate-900);
-  --font-color-strong-secondary: var(--slate-800);
+  --color-text-primary: var(--gray-700, #364153);
+  --color-text-secondary: var(--gray-600, #4A5565);
+  --color-text-heading: var(--black, #000000); /* New design uses pure black for headings */
+  --color-text-subheading: var(--gray-900, #101828);
+  --color-text-strong: var(--slate-900, #0F172B);
+  --color-text-strong-secondary: var(--slate-800, #1D293D);
 
 
   --line-height-base: 1.5; /* WCAG recommended */
@@ -442,7 +444,7 @@ button:disabled, [role="button"][aria-disabled="true"] {
 }
 
 .text-secondary {
-  color: var(--font-color-text-secondary);
+  color: var(--color-text-secondary);
 }
 
 .text-muted {
@@ -461,6 +463,6 @@ button:disabled, [role="button"][aria-disabled="true"] {
 .errorMessageBlock .close:hover,
 .errorMessageBlock button[type="button"]:hover,
 .errorMessageBlock .button:hover {
-  background: var(--color-text-secondary) !important;
+  background: var(--color-text-secondary-muted) !important;
   color: var(--color-background) !important;
 }

@@ -16,7 +16,7 @@
 }
 
 .profile__actions {
-  color: var(--font-color-text-secondary);
+  color: var(--color-text-secondary);
   font-size: var(--font-size-base, 1rem);
   margin-bottom: var(--spacing-xs);
 }

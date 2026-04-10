@@ -6,7 +6,7 @@
   text-align: center;
   margin-top: 0;
   font-size: 0.95em;
-  color: var(--font-color-text-secondary);
+  color: var(--color-text-secondary);
 }
 
 .QRCode {

@@ -13,10 +13,10 @@ if (loginBanner) {
   loginBanner.appendChild(UI.login.loginStatusBox(document, null, {}))
 }
 
-// const webIdToShow = 'https://testingsolidos.solidcommunity.net/profile/card#me'
+const webIdToShow = 'https://testingsolidos.solidcommunity.net/profile/card#me'
 // const webIdToShow = 'https://sstratsianis.solidcommunity.net/profile/card#me'
 // const webIdToShow = 'https://sstratsianis2.solidcommunity.net/profile/card#me'
-const webIdToShow = 'https://sharontest.solidcommunity.net/profile/card#me'
+// const webIdToShow = 'https://sharontest.solidcommunity.net/profile/card#me'
 
 async function finishLogin() {
   await authSession.handleIncomingRedirect()

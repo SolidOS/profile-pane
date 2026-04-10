@@ -35,7 +35,7 @@
 .profile-grid .phone-type {
   font-size: var(--font-size-sm);
   line-height: var(--line-height-base);
-  color: var(--font-color-text-secondary);
+  color: var(--color-text-secondary);
 }
 
 @media (min-width: 900px) {
