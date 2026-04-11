@@ -9,6 +9,7 @@ import {
   toggleDescription
 } from '../shared/sectionCardHelpers'
 import { createBioEditDialog } from './BioEditDialog'
+import { plusDarkIcon } from '../../icons-svg/profileIcons'
 
 function renderBio(bioData: BioDetails) {
   if (!bioData) return html``
@@ -63,8 +64,7 @@ function renderBioSectionContent(
 ) {
   const bio = BioCard(bioData, viewerMode)
   const bioDetails: BioDetails = bioData
-  const hasBio = hasBioContent(bioData)
-
+  
   return html`
     <header class="profile__section-header mb-md">
       <h2 id="bio-heading" tabindex="-1">${bioHeadingText}</h2>
@@ -86,9 +86,82 @@ function renderBioSectionContent(
         <span class="profile__action-icon" aria-hidden="true">✎ Edit</span>
       </button>
     </header>
-    <div>
-      ${hasBio ? bio : html`<p>No bio details added yet.</p>`}
-    </div>
+    ${bio}
+  `
+}
+
+function renderBioSectionDefault(
+  store: LiveStore,
+  subject: NamedNode,
+  bioData: BioDetails,
+  viewerMode: ViewerMode,
+  onSaved?: () => Promise<void> | void
+) {
+  return html`
+    <section 
+      aria-labelledby="bio-heading" 
+      data-profile-section="bio"
+      class="section-bg" 
+      role="region"
+      tabindex="-1"
+    >
+      ${renderBioSectionContent(store, subject, bioData, viewerMode, onSaved)}
+    </section>
+  `
+}
+
+function renderOwnerEmptyBioContent(
+  store: LiveStore,
+  subject: NamedNode,
+  bioData: BioDetails,
+  viewerMode: ViewerMode,
+  onSaved?: () => Promise<void> | void
+) {
+  const bioDetails: BioDetails = bioData
+
+  return html`
+    <header class="profile__section-header--empty mb-md">
+      <h2 id="bio-heading" tabindex="-1">${bioHeadingText}</h2>
+    </header>
+    <p>You haven't added any professional experience yet. Adding work history can boost your Bio.</p>
+    <button
+      type="button"
+      class="profile__action-button--empty"
+      aria-label="Add bio details"
+      @click=${(event: Event) => {
+        return createBioEditDialog(
+          event,
+          store,
+          subject,
+          bioDetails,
+          viewerMode,
+          onSaved
+        )
+      }}
+    >
+      <span class="profile__action-icon" aria-hidden="true">${plusDarkIcon} Add Bio</span>
+    </button>
+
+  `
+}
+
+function renderOwnerEmptyBioSection(
+  store: LiveStore,
+  subject: NamedNode,
+  bioData: BioDetails,
+  viewerMode: ViewerMode,
+  onSaved?: () => Promise<void> | void
+) {
+  return html`
+    <section 
+      aria-labelledby="bio-heading" 
+      data-profile-section="bio"
+      class="profile__section--empty flex-column-center section-bg" 
+      role="region"
+      tabindex="-1"
+    >
+      ${renderOwnerEmptyBioContent(store, subject, bioData, viewerMode, onSaved)}
+    </section>
   `
 }
 
@@ -102,17 +175,14 @@ export function renderBioSection(
   scheduleDescriptionOverflowCheck()
 
   const hasBio = hasBioContent(bioData)
+  const showOwnerEmptyBio = !hasBio && viewerMode === 'owner'
+  // testing const showOwnerEmptyBio = true 
   const showSection = true
+  
 
   return showSection ? html`
-    <section 
-      aria-labelledby="bio-heading" 
-      data-profile-section="bio"
-      class="section-bg" 
-      role="region"
-      tabindex="-1"
-    >
-      ${renderBioSectionContent(store, subject, bioData, viewerMode, onSaved)}
-    </section>
+    ${showOwnerEmptyBio
+      ? renderOwnerEmptyBioSection(store, subject, bioData, viewerMode, onSaved)
+      : renderBioSectionDefault(store, subject, bioData, viewerMode, onSaved)}
   ` : ''
 }

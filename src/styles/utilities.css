@@ -50,6 +50,12 @@
   width: 100%;
 }
 
+.profile__section--empty {
+  padding: 40px 25px;
+  gap: 25px;
+  align-self: stretch;
+}
+
 /* Header row layout utility for profile section headers */
 .profile__section-header {
   display: flex;
