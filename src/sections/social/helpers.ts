@@ -1,7 +1,7 @@
 import { graph, LiveStore, NamedNode, parse, sym } from 'rdflib'
 import { ns, utils } from 'solid-ui'
 import socialMediaForm from '../../ontology/socialMedia.ttl'
-import { starIconAsset } from '../../icons-svg/profileIcons'
+import { starIcon } from '../../icons-svg/profileIcons'
 import { loadDocument } from '../../rdfFormsHelper'
 import { expandRdfList } from '../shared/rdfList'
 import { DEFAULT_ICON_URI, socialMediaFormName } from './constants'
@@ -25,6 +25,11 @@ const STAR_ICON_REF = 'urn:profile-pane:starIcon'
 const ICON_KEY_REF_PREFIX = 'urn:profile-pane:icon:'
 const SOCIAL_ONTOLOGY_URI = 'https://solidos.github.io/profile-pane/src/ontology/socialMedia.ttl'
 const SOCIAL_CLASS_BASE = `${SOCIAL_ONTOLOGY_URI}#`
+
+const STAR_ICON_URI = (() => {
+  const svgMarkup = (starIcon as any)?.strings?.join('') || ''
+  return svgMarkup ? `data:image/svg+xml;utf8,${encodeURIComponent(svgMarkup)}` : DEFAULT_ICON_URI
+})()
 
 let cachedSocialOntologyStore: LiveStore | null = null
 
@@ -99,7 +104,7 @@ function resolveBundledIconAsset(iconValue: string): string {
 
 function resolveSocialIcon(classUri: string, iconValue: string): string {
   if (classUri.endsWith('#OtherAccount') || iconValue === STAR_ICON_REF) {
-    return starIconAsset
+    return STAR_ICON_URI
   }
   const bundledIcon = resolveBundledIconAsset(iconValue)
   if (bundledIcon) return bundledIcon
@@ -239,7 +244,7 @@ export function nameForAccount(store: LiveStore, accountNode: any): string {
 
 export function iconForAccount(store: LiveStore, accountNode: any): string {
   const accountIcon = store.any(accountNode, ns.foaf('icon'))
-  if (accountIcon?.value === STAR_ICON_REF) return starIconAsset
+  if (accountIcon?.value === STAR_ICON_REF) return STAR_ICON_URI
   if (accountIcon) {
     const bundledIcon = resolveBundledIconAsset(accountIcon.value)
     if (bundledIcon) return bundledIcon
@@ -248,9 +253,9 @@ export function iconForAccount(store: LiveStore, accountNode: any): string {
 
   const classes = store.each(accountNode as any, ns.rdf('type')) as any[]
   for (const classNode of classes) {
-    if (classNode?.value?.endsWith('#OtherAccount')) return starIconAsset
+    if (classNode?.value?.endsWith('#OtherAccount')) return STAR_ICON_URI
     const classIcon = store.any(classNode as any, ns.foaf('icon'))
-    if (classIcon?.value === STAR_ICON_REF) return starIconAsset
+    if (classIcon?.value === STAR_ICON_REF) return STAR_ICON_URI
     if (classIcon) {
       const bundledIcon = resolveBundledIconAsset(classIcon.value)
       if (bundledIcon) return bundledIcon

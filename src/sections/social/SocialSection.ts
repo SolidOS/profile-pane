@@ -77,7 +77,7 @@ export function renderSocialAccounts(
   viewerMode: ViewerMode,
   onSaved?: () => Promise<void> | void
 ) {
-  const hasAccounts = accounts.accounts && accounts.accounts.length > 0
+  // const hasAccounts = accounts.accounts && accounts.accounts.length > 0
   const showSection = true
 
   const handleEdit = (event: Event) => {
