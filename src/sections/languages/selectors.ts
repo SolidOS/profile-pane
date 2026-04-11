@@ -9,11 +9,6 @@ function normalizeText(value: string): string {
   return value.replace(/\s+/g, ' ').trim()
 }
 
-function firstLiteralValue(store: Store, subject: NamedNode, predicate: NamedNode): string {
-  const value = store.anyValue(subject, predicate)
-  return typeof value === 'string' ? value : ''
-}
-
 function isRdfListNode(store: Store, node: Node): boolean {
   const hasCollectionElements = Array.isArray((node as any)?.elements)
   if (hasCollectionElements) return true
@@ -30,9 +25,12 @@ function languageNameFromCode(code: string): string {
   if (!normalized) return ''
 
   try {
-    const displayNames = new Intl.DisplayNames(['en'], { type: 'language' })
-    const localized = displayNames.of(normalized)
-    if (localized) return localized
+    const DisplayNamesCtor = (Intl as any)?.DisplayNames
+    if (typeof DisplayNamesCtor === 'function') {
+      const displayNames = new DisplayNamesCtor(['en'], { type: 'language' })
+      const localized = displayNames.of(normalized)
+      if (localized) return localized
+    }
   } catch {
     // Fallback below.
   }
