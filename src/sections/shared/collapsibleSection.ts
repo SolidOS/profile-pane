@@ -1,7 +1,7 @@
 export function toggleCollapsibleSection(event: Event): void {
   const button = event.currentTarget as HTMLButtonElement | null
-  const section = button?.closest('.profileSectionCollapsible') as HTMLElement | null
-  const panel = section?.querySelector('.profileSectionCollapsible__content') as HTMLElement | null
+  const section = button?.closest('.profile-section-collapsible') as HTMLElement | null
+  const panel = section?.querySelector('.profile-section-collapsible__content') as HTMLElement | null
   if (!button || !section || !panel) return
 
   const nextExpanded = section.getAttribute('data-expanded') !== 'true'

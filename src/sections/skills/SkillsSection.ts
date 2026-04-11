@@ -34,41 +34,41 @@ export function renderSkillsSection(
 
   return html`
     <section
-      class="profileSectionCollapsible section-bg"
+      class="profile-section-collapsible section-bg"
       aria-labelledby="skills-heading"
       role="region"
       data-expanded="false"
     >
-      <header class="profile__section-header profileSectionCollapsible__header">
+      <header class="profile__section-header profile-section-collapsible__header">
         <h2 id="skills-heading">${skillsHeadingText}</h2>
-        <div class="profileSectionCollapsible__actions">
+        <div class="profile-section-collapsible__actions">
           <button
             type="button"
-            class="profile__action-button u-profile-action-text profileSectionCollapsible__editButton"
+            class="profile__action-button u-profile-action-text profile-section-collapsible__edit-button"
             aria-label="Add or edit skills"
             @click=${(event: Event) => createSkillsEditDialog(event, store, subject, skillDetails, viewerMode, onSaved)}
           >
-            <span class="profileSectionCollapsible__editLabel profile__add-more-content">
+            <span class="profile-section-collapsible__edit-label profile__add-more-content">
               <span class="profile__add-more-icon" aria-hidden="true">${addIcon}</span>
               Add More
             </span>
-            <span class="profileSectionCollapsible__editIcon" aria-hidden="true">✎</span>
+            <span class="profile-section-collapsible__edit-icon" aria-hidden="true">✎</span>
           </button>
           <button
             type="button"
-            class="profileSectionCollapsible__toggle"
+            class="profile-section-collapsible__toggle"
             aria-label="Toggle skills section"
             aria-controls="skills-panel"
             aria-expanded="false"
             @click=${toggleCollapsibleSection}
           >
-            <span class="profileSectionCollapsible__chevron" aria-hidden="true">⌄</span>
+            <span class="profile-section-collapsible__chevron" aria-hidden="true">⌄</span>
           </button>
         </div>
       </header>
       <div
         id="skills-panel"
-        class="profileSectionCollapsible__content"
+        class="profile-section-collapsible__content"
         aria-hidden="true"
       >
         ${hasSkills

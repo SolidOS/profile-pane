@@ -172,9 +172,20 @@ p {
   line-height: var(--line-height-base);
   max-width: 65ch; /* Optimal reading width */
 }
+/* moved to mashlib mash.css 
+:focus-visible {
+  outline: var(--focus-ring-width, 2px) solid var(--color-primary, #7C4DFF);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 1px var(--color-background, #F8F9FB);
+}
+
+:focus:not(:focus-visible) {
+  outline: none;
+  box-shadow: none;
+} */
 
 /* Improved link accessibility */
-a {
+/* moved to mashlib mash.css a {
   color: var(--color-primary);
   text-decoration: underline;
   text-underline-offset: 0.125em;
@@ -183,7 +194,7 @@ a {
 
 a:hover, a:focus {
   text-decoration-thickness: 0.125em;
-}
+} */
 
 /* Ensure minimum font sizes are respected */
 @media screen and (max-width: 768px) {
@@ -193,6 +204,7 @@ a:hover, a:focus {
 }
 
 /* Support for larger text preferences */
+/* in dev and in mashlib mash.css */
 @media (prefers-reduced-motion: no-preference) {
   html {
     scroll-behavior: smooth;
@@ -200,33 +212,33 @@ a:hover, a:focus {
 }
 
 /* Accessibility: focus styles */
-:focus {
+/* in mashlib mash.css :focus {
   outline: 2px solid var(--color-primary);
   outline-offset: 1px;
   box-shadow: 0 0 0 1px var(--color-background);
-}
+} */
 
 /* Accessibility: Respect user motion preferences */
-@media (prefers-reduced-motion: reduce) {
+/* copied to mashlib mash.css @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
-}
+} */
 
 /* Accessibility: High contrast mode support */
-@media (prefers-contrast: high) {
+/* copied to mashlib mash.css@media (prefers-contrast: high) {
   :root {
     --color-border-pale: #000;
     --box-shadow: 0 2px 4px rgba(0,0,0,0.5);
     --box-shadow-sm: 0 1px 2px rgba(0,0,0,0.3);
   }
-}
+} */
 
 /* Accessibility: Improved focus management */
-:focus-visible {
+/* in mashlib mash.css :focus-visible {
   outline: var(--focus-ring-width) solid var(--color-primary);
   outline-offset: 2px;
   box-shadow: 0 0 0 1px var(--color-background);
@@ -234,7 +246,7 @@ a:hover, a:focus {
 
 :focus:not(:focus-visible) {
   outline: none;
-}
+} */
 
 /* Skip link for screen readers */
 .skip-link {
@@ -278,41 +290,41 @@ nav ul {
 }
 
 /* Enhanced keyboard navigation */
-*:focus-visible {
+/* copied to mashlib mash.css *:focus-visible {
   outline: var(--focus-indicator-width) solid var(--color-primary);
   outline-offset: 2px;
   box-shadow: 0 0 0 1px var(--color-background), 0 0 0 4px rgba(124, 77, 255, 0.2);
   border-radius: 2px;
-  transition: none; /* Remove transitions on focus for immediate feedback */
-}
+} */
+ /* transition: none;  Remove transitions on focus for immediate feedback */
 
 /* Improve focus management for interactive elements */
-[role="button"]:focus,
+/* in mashlib mash.css [role="button"]:focus,
 [role="link"]:focus,
 button:focus,
 a:focus {
   outline: 2px solid var(--color-primary);
   outline-offset: 2px;
   box-shadow: 0 0 0 1px var(--color-background);
-}
+} */
 
 /* Enhanced error message accessibility */
-[role="alert"] {
+/* in mashlib mash.css [role="alert"] {
   padding: var(--spacing-md);
   border: 2px solid var(--color-error);
   border-radius: var(--border-radius-base);
   background-color: rgba(176, 0, 32, 0.1);
   margin: var(--spacing-md) 0;
-}
+} */
 
 /* Success message styling */
-[role="status"] {
+/* in mashlib mash.css [role="status"] {
   padding: var(--spacing-md);
   border: 2px solid var(--color-success);
   border-radius: var(--border-radius-base);
   background-color: rgba(0, 200, 83, 0.1);
   margin: var(--spacing-md) 0;
-}
+} */
 
 /* Enhanced table accessibility */
 table {
@@ -386,18 +398,10 @@ button:disabled, [role="button"][aria-disabled="true"] {
     border-top-color: var(--color-primary);
   }
 }
-
+/* THE FOLLOWING NOT ADDED TO MASHLIB */
+/* some of the utility classes are in utilities with a dif
+    name. Saw some of them in mashlib utilites. */
 /* Utility classes */
-.u-flex {
-  display: flex;
-}
-.u-grid {
-  display: grid;
-}
-.u-center {
-  justify-content: center;
-  align-items: center;
-}
 .u-gap {
   gap: 1em;
 }
@@ -451,6 +455,8 @@ button:disabled, [role="button"][aria-disabled="true"] {
   color: var(--color-text-muted);
 }
 
+/* MAY WANT TO BRING OVER BELOW */
+/* will ask about this first */
 /* Override solid-ui error message close button styling */
 .errorMessageBlock .close,
 .errorMessageBlock button[type="button"],

@@ -109,41 +109,41 @@ export function renderProjectSection(
 
   return html`
     <section
-      class="profileSectionCollapsible section-bg"
+      class="profile-section-collapsible section-bg"
       aria-labelledby="projects-heading"
       role="region"
       data-expanded="false"
     >
-      <header class="profile__section-header profileSectionCollapsible__header">
+      <header class="profile__section-header profile-section-collapsible__header">
         <h2 id="projects-heading">${projectsHeadingText}</h2>
-        <div class="profileSectionCollapsible__actions">
+        <div class="profile-section-collapsible__actions">
           <button
             type="button"
-            class="profile__action-button u-profile-action-text profileSectionCollapsible__editButton"
+            class="profile__action-button u-profile-action-text profile-section-collapsible__edit-button"
             aria-label="Add or edit projects"
             @click=${(event: Event) => {
               return createProjectsEditDialog(event, store, subject, projects, viewerMode, onSaved)
             }}
           >
-            <span class="profileSectionCollapsible__editLabel profile__add-more-content">
+            <span class="profile-section-collapsible__edit-label profile__add-more-content">
               <span class="profile__add-more-icon" aria-hidden="true">${addIcon}</span>
               Add More
             </span>
-            <span class="profileSectionCollapsible__editIcon" aria-hidden="true">✎</span>
+            <span class="profile-section-collapsible__edit-icon" aria-hidden="true">✎</span>
           </button>
           <button
             type="button"
-            class="profileSectionCollapsible__toggle"
+            class="profile-section-collapsible__toggle"
             aria-label="Toggle projects section"
             aria-controls="projects-panel"
             aria-expanded="false"
             @click=${toggleCollapsibleSection}
           >
-            <span class="profileSectionCollapsible__chevron" aria-hidden="true">⌄</span>
+            <span class="profile-section-collapsible__chevron" aria-hidden="true">⌄</span>
           </button>
         </div>
       </header>
-      <div id="projects-panel" class="profileSectionCollapsible__content" aria-hidden="true">
+      <div id="projects-panel" class="profile-section-collapsible__content" aria-hidden="true">
         ${hasProjects
           ? html`
               <ul class="projectRail" role="list" aria-label="Known projects">
