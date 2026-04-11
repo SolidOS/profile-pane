@@ -342,6 +342,23 @@ th {
 td {
   padding: var(--spacing-sm);
 }
+/* Prevent labels from appearing focusable to keyboard users. */
+/* copied to mashlib mash.css */
+label:focus,
+label:focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
+}
+:focus-visible {
+  outline: var(--focus-ring-width, 2px) solid var(--color-primary, #7C4DFF);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 1px var(--color-background, #F8F9FB);
+}
+
+:focus:not(:focus-visible) {
+  outline: none;
+  box-shadow: none;
+}
 
 /* Focus trap for modals */
 .focus-trap {
