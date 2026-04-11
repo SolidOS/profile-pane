@@ -205,7 +205,9 @@
   background-color: rgba(0, 0, 0, 0.02);
 }
 /* END OF PROFILE PANE SPECIAL UTILITIES */
-
+/* ===========================================
+   GENERAL UTILITY CLASSES
+   =========================================== */
 :focus-visible {
   outline: var(--focus-ring-width, 2px) solid var(--color-primary, #7C4DFF);
   outline-offset: 2px;
@@ -226,11 +228,8 @@ label:focus-visible {
 }
 
 /* ===========================================
-   CONSOLIDATED COMPONENT PATTERNS
-   =========================================== */
-   /* ===========================================
-   MAIN UTILITY CLASSES FROM MASHLIB
-   =========================================== */
+MAIN UTILITY CLASSES FROM MASHLIB
+=========================================== */
 .center {
   display: flex;
   justify-content: center;

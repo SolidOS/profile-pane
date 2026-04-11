@@ -2,6 +2,7 @@ import { sym } from 'rdflib'
 //import { default as pane } from '../src/editProfilePane/EditProfileView' //uncomment for profile editor
 import { default as pane } from '../src'
 import './dev-global.css' // Import after src to override component styles
+import './dev-utilities.css'
 import { context, fetcher } from './context'
 import { authn, authSession } from 'solid-logic'
 import * as UI from 'solid-ui'
