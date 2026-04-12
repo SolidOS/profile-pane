@@ -30,6 +30,18 @@ type SkillSuggestion = {
 const ESCO_SKILL_SEARCH_URI = 'https://ec.europa.eu/esco/api/search?language=$(language)&limit=$(limit)&type=skill&text=$(name)'
 const ESCO_SEARCH_LANGUAGE = 'en'
 const ESCO_SEARCH_LIMIT = 8
+const ESCO_SKILL_BASE_URI = 'http://data.europa.eu/esco/skill/'
+
+function normalizeSkillPublicId(value: string): string {
+  const normalized = sanitizeSkillFieldValue(value)
+  if (!normalized) return ''
+  if (normalized.startsWith('skill:')) return normalized
+  if (normalized.startsWith(ESCO_SKILL_BASE_URI)) {
+    const suffix = normalized.slice(ESCO_SKILL_BASE_URI.length)
+    return suffix ? `skill:${suffix}` : normalized
+  }
+  return normalized
+}
 
 function buildEscoSkillSearchUrl(name: string): string {
   return ESCO_SKILL_SEARCH_URI
@@ -90,7 +102,7 @@ function toFormState(details: SkillDetails[]): SkillFormState {
   const rows = (details || [])
     .map((detail) => ({
       name: sanitizeSkillFieldValue(toText(detail.name)),
-      publicId: sanitizeSkillFieldValue(toText(detail.publicId)),
+      publicId: normalizeSkillPublicId(toText(detail.publicId)),
       entryNode: toText(detail.entryNode),
       status: toText(detail.entryNode) ? 'existing' as const : 'new' as const
     }))
@@ -171,7 +183,7 @@ function renderSkillInputRow({
     if (rows[index]) {
       applyRowFieldChange(rows[index], field, nextValue, rowHasContent)
       const matchedSuggestion = matchSkillSuggestion(suggestions, nextValue)
-      rows[index].publicId = matchedSuggestion?.uri || ''
+      rows[index].publicId = normalizeSkillPublicId(matchedSuggestion?.uri || '')
       onSkillSearch(index, nextValue)
       onChange()
     }
@@ -290,7 +302,7 @@ function renderSkillsEditTemplate(form: HTMLFormElement, formState: SkillFormSta
       const row = formState.skills[rowIndex]
       if (row) {
         const matchedSuggestion = matchSkillSuggestion(suggestions, row.name)
-        row.publicId = matchedSuggestion?.uri || row.publicId
+        row.publicId = matchedSuggestion ? normalizeSkillPublicId(matchedSuggestion.uri) : row.publicId
       }
 
       rerender()
