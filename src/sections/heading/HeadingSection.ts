@@ -24,7 +24,7 @@ export const renderHeadingSection = (
   const dateOfBirthDisplay = toDisplayDateDMY(toText(dateOfBirth), 'DD-MM-YYYY')
  
   return html`
-      <section class="profile__section flex-row gap-md section-bg border-slate" aria-labelledby="profile-name">
+      <section class="profile__section flex-row gap-md border-lighter" aria-labelledby="profile-name">
         <div class="inline-flex-row gap-md">
           <div class="profile__avatar">  
             ${Image(imageSrc, name)}
