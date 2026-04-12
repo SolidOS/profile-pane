@@ -176,9 +176,8 @@ export function renderBioSection(
 ) {
   scheduleDescriptionOverflowCheck()
 
-  // const hasBio = hasBioContent(bioData)
-  // const showOwnerEmptyBio = !hasBio && viewerMode === 'owner'
-  const showOwnerEmptyBio = true 
+  const hasBio = hasBioContent(bioData)
+  const showOwnerEmptyBio = !hasBio && viewerMode === 'owner'
   const showSection = true
   
 
