@@ -199,7 +199,6 @@ function openModal ({
     if (resolvedHeaderAction.type === 'close') {
       const closeButton = dom.createElement('button')
       closeButton.setAttribute('type', 'button')
-      closeButton.className = 'dialogCloseButton'
       closeButton.setAttribute('aria-label', 'Close dialog')
       closeButton.innerHTML = '&times;'
       closeButton.onclick = () => requestCancel()
@@ -223,7 +222,10 @@ function openModal ({
       b.setAttribute('type', 'button')
       b.textContent = btn.label
       if (btn.primary) b.classList.add('btn-primary')
-      if (btn.cancel) b.setAttribute('data-cancel', 'true')
+      if (btn.cancel) {
+        b.classList.add('btn-light')
+        b.setAttribute('data-cancel', 'true')
+      }
       b.addEventListener('click', async () => {
         if (btn.beforeClose) {
           const shouldClose = await btn.beforeClose()
