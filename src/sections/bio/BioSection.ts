@@ -101,7 +101,7 @@ function renderBioSectionDefault(
     <section 
       aria-labelledby="bio-heading" 
       data-profile-section="bio"
-      class="section-bg" 
+      class="profile__section border-lighter" 
       role="region"
       tabindex="-1"
     >
@@ -120,10 +120,12 @@ function renderOwnerEmptyBioContent(
   const bioDetails: BioDetails = bioData
 
   return html`
-    <header class="profile__section-header--empty mb-md">
+    <div class="profile__empty-state-content" role="group" aria-label="Empty bio section">
       <h2 id="bio-heading" tabindex="-1">${bioHeadingText}</h2>
-    </header>
-    <p>You haven't added any professional experience yet. Adding work history can boost your Bio.</p>
+      <p class="profile__empty-state-message">
+        You haven't added any professional experience yet. Adding work history can boost your Bio.
+      </p>
+    </div>
     <button
       type="button"
       class="profile__action-button--empty"
@@ -156,7 +158,7 @@ function renderOwnerEmptyBioSection(
     <section 
       aria-labelledby="bio-heading" 
       data-profile-section="bio"
-      class="profile__section--empty flex-column-center section-bg" 
+      class="profile__section--empty border-lighter flex-column-center rounded-md gap-lg" 
       role="region"
       tabindex="-1"
     >
@@ -174,9 +176,9 @@ export function renderBioSection(
 ) {
   scheduleDescriptionOverflowCheck()
 
-  const hasBio = hasBioContent(bioData)
-  const showOwnerEmptyBio = !hasBio && viewerMode === 'owner'
-  // testing const showOwnerEmptyBio = true 
+  // const hasBio = hasBioContent(bioData)
+  // const showOwnerEmptyBio = !hasBio && viewerMode === 'owner'
+  const showOwnerEmptyBio = true 
   const showSection = true
   
 
