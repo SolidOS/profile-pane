@@ -124,7 +124,7 @@ export function renderProjectSection(
 
   return html`
     <section
-      class="profile-section-collapsible section-bg"
+      class="profile__section profile-section-collapsible section-bg"
       aria-labelledby="projects-heading"
       role="region"
       data-expanded="false"

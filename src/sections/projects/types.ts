@@ -23,4 +23,12 @@ export interface ProjectRow extends ProjectFields {
   status: RowStatus
 }
 
+export type ProjectInputRowProps = {
+  rows: ProjectRow[]
+  index: number
+  displayIndex: number
+  onDelete: () => void
+  onChange: () => void
+}
+
 export type ProjectMutationPlan = MutationOps<ProjectRow>

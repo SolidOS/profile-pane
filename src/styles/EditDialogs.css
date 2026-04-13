@@ -26,6 +26,16 @@
   max-width: 34rem;
 }
 
+.profile-edit-dialog__row--full {
+  max-width: 100%;
+  width: 100%;
+}
+
+.profile-edit-dialog__row--project {
+  max-width: 100%;
+  width: 100%;
+}
+
 /* Force two direct children to split the row into equal columns. */
 .profile-edit-dialog__row--equal > .profile-edit-dialog__field,
 .profile-edit-dialog__row--equal > .profile-edit-dialog__field-type {
@@ -142,15 +152,26 @@
   align-self: flex-start;
 }
 
-.inputActions {
+.profile-edit-dialog__actions {
   flex: 0 0 auto;
   display: flex;
   align-items: center;
   justify-content: flex-end;
 }
 
-.inputActions--edge {
+.profile-edit-dialog__actions--edge {
   margin-left: auto;
+}
+
+.profile-edit-dialog__input-wrap {
+  position: relative;
+  width: 100%;
+}
+
+.profile-edit-dialog__input--with-action {
+  width: 100%;
+  box-sizing: border-box;
+  padding-right: 7.5rem;
 }
 
 .deleteEntryButton {
@@ -185,6 +206,42 @@
   color: var(--color-danger, #b42318);
 }
 
+/* Placeholder class for project paste action styling. */
+.profile-edit-dialog__paste-button {
+  position: absolute;
+  background: var(--white, #fff);
+  border: 0;
+  outline: none;
+  right: var(--spacing-2xs, 0.625rem);
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 1;
+  color: var(--gray-500, #6A7282);
+  font-size: 12px;
+  font-weight: 400;
+}
+
+.profile-edit-dialog__paste-button:focus,
+.profile-edit-dialog__paste-button:focus-visible {
+  outline: none;
+}
+
+#profile-modal .modal button.profile-edit-dialog__paste-button,
+#profile-modal .modal button.profile-edit-dialog__paste-button:hover,
+#profile-modal .modal button.profile-edit-dialog__paste-button:focus,
+#profile-modal .modal button.profile-edit-dialog__paste-button:focus-visible,
+#profile-modal .modal button.profile-edit-dialog__paste-button:active {
+  border: 0;
+  outline: none;
+  box-shadow: none;
+  -webkit-appearance: none;
+  appearance: none;
+}
+.profile__paste-icon {
+  width: 11.105px;
+  height: 13.038px;
+  fill: var(--gray-500, #6A7282);
+}
 #profile-modal .modal button.socialRowDragHandle {
   border: 0;
   background: transparent;
@@ -286,11 +343,11 @@
     justify-content: flex-start;
   }
 
-  .inputActions {
+  .profile-edit-dialog__actions {
     justify-content: flex-start;
   }
 
-  .profile-edit-dialog__row--addressHeader .inputActions {
+  .profile-edit-dialog__row--addressHeader .profile-edit-dialog__actions {
     justify-content: flex-end;
   }
 }
