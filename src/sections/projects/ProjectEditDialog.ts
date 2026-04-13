@@ -122,12 +122,12 @@ function renderProjectInputRow(row: ProjectRow, onChange: () => void) {
           />
           <button
             type="button"
-            class="profile-edit-dialog__paste-button rounded-sm"
+            class="profile-edit-dialog__paste-button rounded-sm gap-xxs"
             aria-label="Paste project or community URL from clipboard"
             title=${pasteEntryButtonTitleText}
             @click=${handlePaste}
           >
-            <span class="profile__paste-icon" aria-hidden="true">${pasteIcon}</span>
+            <span class="profile-edit-dialog__paste-icon" aria-hidden="true">${pasteIcon}</span>
             Paste
           </button>
         </div>

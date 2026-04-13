@@ -5,7 +5,7 @@ import { ProjectDetails, ProjectRow } from './types'
 import { projectsHeadingText } from '../../texts'
 import { createProjectsEditDialog } from './ProjectEditDialog'
 import { processProjectsMutations } from './mutations'
-import { addIcon } from '../../icons-svg/profileIcons'
+import { addIcon, plusDarkIcon } from '../../icons-svg/profileIcons'
 import { MutationOps } from '../shared/types'
 import '../../styles/ProjectsCard.css'
 import { toggleCollapsibleSection } from '../shared/collapsibleSection'
@@ -101,6 +101,63 @@ function renderProject(
   `
 }
 
+function renderOwnerEmptyProjectsContent(
+  store: LiveStore,
+  subject: NamedNode,
+  projectData: ProjectDetails[],
+  viewerMode: ViewerMode,
+  onSaved?: () => Promise<void> | void
+) {
+  const projectDetails: ProjectDetails[] = projectData
+
+  return html`
+    <div class="profile__empty-state-content" role="group" aria-label="Empty projects section">
+      <h2 id="projects-heading" tabindex="-1">${projectsHeadingText}</h2>
+      <p class="profile__empty-state-message">
+        You haven't added any projects yet. Consider adding a project to boost your profile.
+      </p>
+    </div>
+    <button
+      type="button"
+      class="profile__action-button--empty"
+      aria-label="Add project details"
+      @click=${(event: Event) => {
+        return createProjectsEditDialog(
+          event,
+          store,
+          subject,
+          projectDetails,
+          viewerMode,
+          onSaved
+        )
+      }}
+    >
+      <span class="profile__action-icon" aria-hidden="true">${plusDarkIcon} Add Project</span>
+    </button>
+
+  `
+}
+
+function renderOwnerEmptyProjectSection(
+  store: LiveStore,
+  subject: NamedNode,
+  projectData: ProjectDetails[],
+  viewerMode: ViewerMode,
+  onSaved?: () => Promise<void> | void
+) {
+  return html`
+    <section 
+      aria-labelledby="projects-heading" 
+      data-profile-section="projects"
+      class="profile__section--empty border-lighter flex-column-center rounded-md gap-lg" 
+      role="region"
+      tabindex="-1"
+    >
+      ${renderOwnerEmptyProjectsContent(store, subject, projectData, viewerMode, onSaved)}
+    </section>
+  `
+}
+
 function renderProjects(
   projects: ProjectDetails[],
   store: LiveStore,
@@ -113,6 +170,70 @@ function renderProjects(
   return html`${renderProject(projects[0], store, subject, viewerMode, onSaved)}${projects.length > 1 ? renderProjects(projects.slice(1), store, subject, viewerMode, onSaved) : html``}`
 }
 
+function renderProjectSectionDefault(
+  store: LiveStore, 
+  subject: NamedNode, 
+  projects: ProjectDetails[], 
+  viewerMode: ViewerMode, 
+  onSaved?: () => Promise<void> | void) {
+  const hasProjects = Array.isArray(projects) && projects.length > 0
+
+  return html`
+      <section
+        class="profile__section border-lighter profile-section-collapsible"
+        aria-labelledby="projects-heading"
+        role="region"
+        tabindex="-1"
+        data-expanded="false"
+      >
+        <header class="profile__section-header profile-section-collapsible__header">
+          <h2 id="projects-heading">${projectsHeadingText}</h2>
+          <div class="profile-section-collapsible__actions">
+            <button
+              type="button"
+              class="profile__action-button u-profile-action-text profile-section-collapsible__edit-button"
+              aria-label="Add or edit projects"
+              @click=${(event: Event) => {
+                return createProjectsEditDialog(event, store, subject, projects, viewerMode, onSaved)
+              }}
+            >
+              <span class="profile-section-collapsible__edit-label profile__add-more-content">
+                <span class="profile__add-more-icon" aria-hidden="true">${addIcon}</span>
+                Add More
+              </span>
+              <span class="profile-section-collapsible__edit-icon" aria-hidden="true">✎</span>
+            </button>
+            <button
+              type="button"
+              class="profile-section-collapsible__toggle"
+              aria-label="Toggle projects section"
+              aria-controls="projects-panel"
+              aria-expanded="false"
+              @click=${toggleCollapsibleSection}
+            >
+              <span class="profile-section-collapsible__chevron" aria-hidden="true">⌄</span>
+            </button>
+          </div>
+        </header>
+        <div id="projects-panel" class="profile-section-collapsible__content" aria-hidden="true">
+          ${hasProjects
+            ? html`
+                <ul class="projectRail" role="list" aria-label="Known projects">
+                  ${renderProjects(
+                    projects,
+                    store,
+                    subject,
+                    viewerMode,
+                    onSaved
+                  )}
+                </ul>
+              `
+            : html`<p>No projects added yet.</p>`}
+        </div>
+      </section>
+    `
+}
+
 export function renderProjectSection(
   store: LiveStore,
   subject: NamedNode,
@@ -121,58 +242,13 @@ export function renderProjectSection(
   onSaved?: () => Promise<void> | void
 ) {
   const hasProjects = Array.isArray(projects) && projects.length > 0
-
-  return html`
-    <section
-      class="profile__section profile-section-collapsible section-bg"
-      aria-labelledby="projects-heading"
-      role="region"
-      data-expanded="false"
-    >
-      <header class="profile__section-header profile-section-collapsible__header">
-        <h2 id="projects-heading">${projectsHeadingText}</h2>
-        <div class="profile-section-collapsible__actions">
-          <button
-            type="button"
-            class="profile__action-button u-profile-action-text profile-section-collapsible__edit-button"
-            aria-label="Add or edit projects"
-            @click=${(event: Event) => {
-              return createProjectsEditDialog(event, store, subject, projects, viewerMode, onSaved)
-            }}
-          >
-            <span class="profile-section-collapsible__edit-label profile__add-more-content">
-              <span class="profile__add-more-icon" aria-hidden="true">${addIcon}</span>
-              Add More
-            </span>
-            <span class="profile-section-collapsible__edit-icon" aria-hidden="true">✎</span>
-          </button>
-          <button
-            type="button"
-            class="profile-section-collapsible__toggle"
-            aria-label="Toggle projects section"
-            aria-controls="projects-panel"
-            aria-expanded="false"
-            @click=${toggleCollapsibleSection}
-          >
-            <span class="profile-section-collapsible__chevron" aria-hidden="true">⌄</span>
-          </button>
-        </div>
-      </header>
-      <div id="projects-panel" class="profile-section-collapsible__content" aria-hidden="true">
-        ${hasProjects
-          ? html`
-              <ul class="projectRail" role="list" aria-label="Known projects">
-                ${renderProjects(
-                  projects,
-                  store,
-                  subject,
-                  viewerMode,
-                  onSaved
-                )}
-              </ul>
-            `
-          : html`<p>No projects added yet.</p>`}
-      </div>
-    </section>
-  `
+  const showOwnerEmptyProject = !hasProjects && viewerMode === 'owner'
+  
+  const showSection = true
+  
+  return showSection ? html`
+    ${showOwnerEmptyProject
+      ? renderOwnerEmptyProjectSection(store, subject, projects, viewerMode, onSaved)
+      : renderProjectSectionDefault(store, subject, projects, viewerMode, onSaved)}
+  ` : ''
 }
