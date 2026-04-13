@@ -1,4 +1,6 @@
 import '../styles/dialog.css'
+import { render } from 'lit-html'
+import { closeIcon } from '../icons-svg/profileIcons'
 
 /* Copied from issue-pane, minor typescript adjustments */
 /* Changed modal from div to dialog element */
@@ -200,7 +202,7 @@ function openModal ({
       const closeButton = dom.createElement('button')
       closeButton.setAttribute('type', 'button')
       closeButton.setAttribute('aria-label', 'Close dialog')
-      closeButton.innerHTML = '&times;'
+      render(closeIcon, closeButton)
       closeButton.onclick = () => requestCancel()
       elements.headerAction.appendChild(closeButton)
     } else if (resolvedHeaderAction.type === 'button') {
