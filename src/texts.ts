@@ -27,6 +27,7 @@ export const skillsHeadingText = 'Skills'
 export const languagesHeadingText = 'Languages'
 export const projectsHeadingText = 'Projects & Communities'
 export const contactInfoHeadingText = 'More Contacts'
+export const contactInfoEmptyHeadingText = "Contact Info"
 export const editSkillsDialogTitleText = 'Edit Skills'
 export const editLanguagesDialogTitleText = 'Edit Languages'
 export const editContactInfoDialogTitleText = 'Edit More Contacts'

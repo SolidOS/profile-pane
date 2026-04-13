@@ -115,6 +115,36 @@
   line-height: var(--line-height-tight, 1.4); /* 140% from design 18.2px */
 }
 
+/* Contact info empty-state hooks for section-specific styling. */
+.contact-info__empty-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.contact-info__empty-icon svg {
+  width: 40px;
+  height: 40px;
+  display: block;
+}
+
+.contact-info__empty-icon svg path {
+  stroke-width: 4px;
+  stroke: #E5E7EB;
+}
+
+.contact-info__empty-message {
+  color: #9CA3AF;
+  text-align: center;
+  font-size: var(--font-size-xs, 0.813rem); /* 13px */
+  font-weight: var(--font-weight-normal, 400);
+  line-height: var(--line-height-tight, 1.4); /* design says 1.2 */
+}
+
+.contact-info__empty-icon-wrapper {
+  width: 3rem; /* 48px */
+  flex: 1 0 0;
+}
 .profile__empty-state-content {
   display: flex;
   flex-direction: column;

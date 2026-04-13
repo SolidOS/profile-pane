@@ -3,8 +3,10 @@ import { ViewerMode } from '../../types'
 import { createContactInfoEditDialog } from './ContactInfoEditDialog'
 import { LiveStore, NamedNode } from 'rdflib'
 import { ns } from 'solid-ui'
-import { contactInfoHeadingText } from '../../texts'
+import { contactInfoEmptyHeadingText, contactInfoHeadingText } from '../../texts'
 import { toggleCollapsibleSection } from '../shared/collapsibleSection'
+import { ContactInfo } from './types'
+import { addIcon, envelopeIcon } from '../../icons-svg/profileIcons'
 
 function toText(value: unknown): string {
   if (!value) return ''
@@ -110,22 +112,16 @@ function renderAddresses(addresses) {
   return html`${renderAddress(addresses[0])}${addresses.length > 1 ? renderAddresses(addresses.slice(1)) : html``}`
 }
 
-export function renderContactInfoSection(
-  store: LiveStore,
-  subject: NamedNode,
-  contactInfo,
-  viewerMode: ViewerMode,
-  onSaved?: () => Promise<void> | void
-) {
-  const safeContactInfo = {
-    emails: contactInfo?.emails || [],
-    phones: contactInfo?.phones || [],
-    addresses: contactInfo?.addresses || []
-  }
-  const hasAnyContactInfo =
-    safeContactInfo.emails.length > 0 ||
-    safeContactInfo.phones.length > 0 ||
-    safeContactInfo.addresses.length > 0
+function renderContactInfoSectionDefault(
+  store: LiveStore, 
+  subject: NamedNode, 
+  contactInfo: ContactInfo,
+  viewerMode: ViewerMode, 
+  onSaved?: () => Promise<void> | void) {
+    const hasAnyContactInfo =
+    contactInfo?.emails.length > 0 ||
+    contactInfo?.phones.length > 0 ||
+    contactInfo?.addresses.length > 0
 
   return html`
     <section
@@ -147,7 +143,7 @@ export function renderContactInfoSection(
                 event,
                 store,
                 subject,
-                safeContactInfo,
+                contactInfo,
                 viewerMode,
                 onSaved
               )
@@ -168,24 +164,24 @@ export function renderContactInfoSection(
         </div>
       </header>
       <div id="contact-details-panel" class="profile-section-collapsible__content" aria-hidden="true">
-        ${safeContactInfo.phones.length > 0
+        ${contactInfo.phones.length > 0
           ? html`
               <ul role="list" aria-label="Phone numbers">
-                ${renderPhones(safeContactInfo.phones, store)}
+                ${renderPhones(contactInfo.phones, store)}
               </ul>
             `
           : html``}
-        ${safeContactInfo.emails.length > 0
+        ${contactInfo.emails.length > 0
           ? html`
               <ul role="list" aria-label="Email addresses">
-                ${renderEmails(safeContactInfo.emails, store)}
+                ${renderEmails(contactInfo.emails, store)}
               </ul>
             `
           : html``}
-        ${safeContactInfo.addresses.length > 0
+        ${contactInfo.addresses.length > 0
           ? html`
               <ul role="list" aria-label="Postal addresses">
-                ${renderAddresses(safeContactInfo.addresses)}
+                ${renderAddresses(contactInfo.addresses)}
               </ul>
             `
           : html``}
@@ -193,4 +189,102 @@ export function renderContactInfoSection(
       </div>
     </section>
   `
+}
+
+function renderOwnerEmptyContactInfoContent(
+  store: LiveStore,
+  subject: NamedNode,
+  contactInfo: ContactInfo,
+  viewerMode: ViewerMode,
+  onSaved?: () => Promise<void> | void
+) {
+  return html`
+      <header class="profile__section-header profile-section-collapsible__header">
+        <h2 id="contact-details-heading" tabindex="-1">${contactInfoEmptyHeadingText}</h2>
+        <div class="profile-section-collapsible__actions">
+          <button
+            type="button"
+            class="profile__action-button u-profile-action-text profile-section-collapsible__edit-button"
+            aria-label="Add contact information"
+            @click=${(event: Event) => {
+              return createContactInfoEditDialog(
+                event,
+                store,
+                subject,
+                contactInfo,
+                viewerMode,
+                onSaved
+              )
+            }}>
+            <span class="profile-section-collapsible__edit-label">${addIcon} Add Contact</span>
+            <span class="profile-section-collapsible__edit-icon" aria-hidden="true">${addIcon}</span>
+          </button>
+          <button
+            type="button"
+            class="profile-section-collapsible__toggle"
+            aria-label="Toggle contact information section"
+            aria-controls="contact-details-panel"
+            aria-expanded="false"
+            @click=${toggleCollapsibleSection}
+          >
+            <span class="profile-section-collapsible__chevron" aria-hidden="true">⌄</span>
+          </button>
+        </div>
+      </header>
+      <div class="profile__empty-state-content" role="group" aria-label="Empty contact information section">    
+        <div class="contact-info__empty-icon-wrapper">
+          <span class="contact-info__empty-icon">${envelopeIcon}</span>
+        </div>
+        <p class="profile__empty-state-message contact-info__empty-message">
+            No additional contact info added yet.
+        </p>
+      </div>
+  `
+}
+
+function renderOwnerEmptyContactInfoSection(
+  store: LiveStore,
+  subject: NamedNode,
+  contactInfo: ContactInfo,
+  viewerMode: ViewerMode,
+  onSaved?: () => Promise<void> | void
+) {
+  return html`
+    <section 
+      aria-labelledby="contact-details-heading" 
+      data-profile-section="contact-info"
+      class="profile__section--empty border-lighter flex-column-center rounded-md gap-lg" 
+      role="region"
+      tabindex="-1"
+    >
+      ${renderOwnerEmptyContactInfoContent(store, subject, contactInfo, viewerMode, onSaved)}
+    </section>
+  `
+}
+
+export function renderContactInfoSection(
+  store: LiveStore,
+  subject: NamedNode,
+  contactInfo: ContactInfo,
+  viewerMode: ViewerMode,
+  onSaved?: () => Promise<void> | void
+) {
+  const safeContactInfo = {
+    emails: contactInfo?.emails || [],
+    phones: contactInfo?.phones || [],
+    addresses: contactInfo?.addresses || []
+  }
+  const hasAnyContactInfo =
+    safeContactInfo.emails.length > 0 ||
+    safeContactInfo.phones.length > 0 ||
+    safeContactInfo.addresses.length > 0
+  const showOwnerEmptyContactInfo = !hasAnyContactInfo && viewerMode === 'owner'
+  const showSection = true
+  
+  return showSection ? html`
+    ${showOwnerEmptyContactInfo
+      ? renderOwnerEmptyContactInfoSection(store, subject, safeContactInfo, viewerMode, onSaved)
+      : renderContactInfoSectionDefault(store, subject, safeContactInfo, viewerMode, onSaved)}
+  ` : ''
+  
 }
