@@ -24,12 +24,12 @@ export const renderHeadingSection = (
   const dateOfBirthDisplay = toDisplayDateDMY(toText(dateOfBirth), 'DD-MM-YYYY')
  
   return html`
-      <section class="profile__section flex-row gap-md border-lighter" aria-labelledby="profile-name">
-        <div class="inline-flex-row gap-md">
-          <div class="profile__avatar">  
+      <section class="profile__section border-lighter" aria-labelledby="profile-name">
+        <div class="profile__heading-top">
+          <div class="profile__avatar">
             ${Image(imageSrc, name)}
           </div>
-          <div class="profile__info flex-column gap-lg">
+          <div class="profile__info">
             <header class="profile__header-bar mb-md">
               <div class="profile__identity" role="group" aria-label="Name and pronouns">
                 <h1 id="profile-name" class="profile__name">${name}</h1>
@@ -37,39 +37,40 @@ export const renderHeadingSection = (
               </div>
               ${jobTitle ? html`<div class="profile__role-org">${jobTitle}</div>` : nothing}
             </header>
-            <div class="profile__details">
-              <div class="profile__meta-row flex-row gap-md" role="group" aria-label="Additional profile information">
-                ${Line(dateOfBirthDisplay, birthdayIcon, '')}
-                ${Line(location, locationIcon, '')}
+          </div>
+          ${html`
+              <div class="profile__actions profile__heading-actions" aria-label="Profile actions">
+                <button
+                  type="button"
+                  class="profile__action-button profile__heading-action-button u-profile-action-text"
+                  aria-label="Add or edit heading information"
+                  @click=${(event: Event) => {
+                    return createHeadingEditDialog(
+                      event,
+                      context.session.store,
+                      subject,
+                      profileData,
+                      viewerMode,
+                      onSaved
+                    )
+                  }}
+                >
+                  <span class="profile-section-collapsible__edit-label">✎ Edit</span>
+                  <span class="profile-section-collapsible__edit-icon" aria-hidden="true">✎</span>
+                </button>
               </div>
-              <div class="profile__contact-row flex-row gap-md" role="group" aria-label="Contact information">
-                ${Line(phoneValue, phoneIcon, '')}
-                ${Line(emailValue, emailIcon, '')}
-              </div>
+            `}
+          <div class="profile__details">
+            <div class="profile__meta-row flex-row gap-md" role="group" aria-label="Additional profile information">
+              ${Line(dateOfBirthDisplay, birthdayIcon, '')}
+              ${Line(location, locationIcon, '')}
+            </div>
+            <div class="profile__contact-row flex-row gap-md" role="group" aria-label="Contact information">
+              ${Line(phoneValue, phoneIcon, '')}
+              ${Line(emailValue, emailIcon, '')}
             </div>
           </div>
         </div>
-        ${html`
-            <div class="profile__actions profile__heading-actions" aria-label="Profile actions">
-              <button
-                type="button"
-                class="profile__action-button profile__heading-action-button u-profile-action-text"
-                aria-label="Add or edit heading information"
-                @click=${(event: Event) => {
-                  return createHeadingEditDialog(
-                    event,
-                    context.session.store,
-                    subject,
-                    profileData,
-                    viewerMode,
-                    onSaved
-                  )
-                }}
-              >
-                <span class="profile__action-icon" aria-hidden="true">✎ Edit</span>
-              </button>
-            </div>
-          `}
     </section>
   `
 }

@@ -28,6 +28,11 @@
   padding: var(--spacing-lg);
   border-radius: var(--border-radius-base);
   background: var(--color-section-bg);
+  box-sizing: border-box;
+}
+
+.profile-grid .profile__section--empty {
+  box-sizing: border-box;
 }
 
 

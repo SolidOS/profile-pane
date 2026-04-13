@@ -2,6 +2,18 @@
   flex: 0 0 auto;
 }
 
+.profile__heading-top {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  grid-template-areas:
+    "avatar info actions"
+    "avatar details details";
+  column-gap: var(--spacing-md, 1.25rem);
+  row-gap: var(--spacing-sm, 0.75rem);
+  align-items: start;
+  width: 100%;
+}
+
 .profile__name {
 color: var(--color-text-heading, #000);
 font-size: var(--font-size-xxl, 1.75rem); /* 28px */
@@ -15,13 +27,20 @@ transform: translateX(-4px);
 }
 
 .profile__info {
+  grid-area: info;
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-width: 0;
   align-items: flex-start;
 }
 
 .profile__details {
+  grid-area: details;
   color: var(--color-text-secondary, #4A5565);
   font-size: var(--font-size-sm, 0.875rem); /* 14px */
   display: flex;
+  width: 100%;
   align-content: flex-start;
   align-items: flex-start;
   flex-wrap: wrap;
@@ -45,12 +64,21 @@ transform: translateX(-4px);
 }
 
 .profile__heading-actions {
+  grid-area: actions;
   margin-left: auto;
   align-self: flex-start;
 }
 
+.profile__avatar {
+  grid-area: avatar;
+}
+
 .profile__heading-action-button {
   position: static;
+  min-width: 0;
+  width: auto;
+  max-width: none;
+  padding: var(--spacing-xxs, 0.3125rem);
 }
 .profile__identity {
   display: flex;
@@ -127,4 +155,40 @@ transform: translateX(-4px);
   background: var(--color-card-bg);
   box-sizing: border-box;
   color: var(--color-text-secondary);
+}
+
+@media (max-width: 640px) {
+  .profile__heading-top {
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    grid-template-areas:
+      "avatar info actions"
+      "details details details";
+    column-gap: var(--spacing-sm, 0.75rem);
+    row-gap: var(--spacing-sm, 0.75rem);
+  }
+
+  .profile__name {
+    font-size: 1.5rem;
+    line-height: 1.15;
+  }
+
+  .profile__identity {
+    gap: 0.125rem;
+  }
+
+  .profile__pronouns {
+    font-size: var(--font-size-xs, 0.75rem);
+    line-height: 1.1;
+    white-space: nowrap;
+  }
+
+  .profile__hero,
+  .profile__hero-alt {
+    width: 112px;
+    height: 112px;
+  }
+
+  .profile__details {
+    gap: var(--spacing-xs, 0.5rem);
+  }
 }
