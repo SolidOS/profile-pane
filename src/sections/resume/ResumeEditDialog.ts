@@ -331,7 +331,7 @@ function renderResumeInputRow({
   return html`
     <div class="profile-edit-dialog__row" role="group" aria-labelledby=${experienceHeadingId}>
       <h5 id=${experienceHeadingId}>${label}</h5>
-      <div class="inputActions inputActions--edge">
+      <div class="profile-edit-dialog__actions profile-edit-dialog__actions--edge">
         <button
           type="button"
           class="deleteEntryButton"

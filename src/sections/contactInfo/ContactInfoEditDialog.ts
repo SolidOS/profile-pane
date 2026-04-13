@@ -220,7 +220,7 @@ function renderContactPhoneInputRow({
           <option value="Other">Other</option>
         </select>
       </label>
-      <div class="inputActions">
+      <div class="profile-edit-dialog__actions">
         <button
           type="button"
           class="deleteEntryButton"
@@ -343,7 +343,7 @@ function renderContactEmailInputRow({
           <option value="Other">Other</option>
         </select>
       </label>
-      <div class="inputActions">
+      <div class="profile-edit-dialog__actions">
         <button
           type="button"
           class="deleteEntryButton"
@@ -456,7 +456,7 @@ function renderContactAddressInputRow({
           <option value="Other">Other</option>
         </select>
       </label>
-      <div class="inputActions inputActions--edge">
+      <div class="profile-edit-dialog__actions profile-edit-dialog__actions--edge">
         <button
           type="button"
           class="deleteEntryButton"

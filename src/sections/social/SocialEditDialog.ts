@@ -255,7 +255,7 @@ function renderSocialInputRow({
         />
         <small class="inputHelpText">Paste your full profile URL (for example: https://example.com/username)</small>
       </label>
-      <div class="inputActions inputActions--edge">
+      <div class="profile-edit-dialog__actions profile-edit-dialog__actions--edge">
         <button
           type="button"
           class="deleteEntryButton"

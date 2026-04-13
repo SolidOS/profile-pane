@@ -322,7 +322,7 @@ function renderLanguageInputRow({
           <option value="Fluent">Fluent</option>
         </select>
       </label>
-      <div class="inputActions inputActions--edge">
+      <div class="profile-edit-dialog__actions profile-edit-dialog__actions--edge">
         <button
           type="button"
           class="deleteEntryButton"

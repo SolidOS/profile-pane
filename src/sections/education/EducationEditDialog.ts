@@ -269,7 +269,7 @@ function renderEducationInputRow({
   return html`
     <div class="profile-edit-dialog__row" role="group" aria-labelledby=${educationHeadingId}>
       <h5 id=${educationHeadingId}>${label}</h5>
-      <div class="inputActions inputActions--edge">
+      <div class="profile-edit-dialog__actions profile-edit-dialog__actions--edge">
         <button
           type="button"
           class="deleteEntryButton"
