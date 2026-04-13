@@ -158,7 +158,7 @@ function renderOwnerEmptyProjectSection(
   `
 }
 
-function renderProjects(
+function renderProjectSectionContent(
   projects: ProjectDetails[],
   store: LiveStore,
   subject: NamedNode,
@@ -219,7 +219,7 @@ function renderProjectSectionDefault(
           ${hasProjects
             ? html`
                 <ul class="projectRail" role="list" aria-label="Known projects">
-                  ${renderProjects(
+                  ${renderProjectSectionContent(
                     projects,
                     store,
                     subject,
