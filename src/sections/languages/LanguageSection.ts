@@ -52,7 +52,7 @@ export function renderLanguageSection(
               <span class="profile__add-more-icon" aria-hidden="true">${addIcon}</span>
               Add More
             </span>
-            <span class="profile-section-collapsible__edit-icon" aria-hidden="true">${plusIcon}</span>
+            <span class="profile-section-collapsible__edit-icon profile-section-collapsible__edit-icon--add" aria-hidden="true">${plusIcon}</span>
           </button>
           <button
             type="button"
