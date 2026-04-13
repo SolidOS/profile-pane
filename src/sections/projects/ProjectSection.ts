@@ -167,7 +167,7 @@ function renderProjectSectionContent(
 ) {
   if (!projects || !projects.length || !projects[0]) return html``
 
-  return html`${renderProject(projects[0], store, subject, viewerMode, onSaved)}${projects.length > 1 ? renderProjects(projects.slice(1), store, subject, viewerMode, onSaved) : html``}`
+  return html`${renderProject(projects[0], store, subject, viewerMode, onSaved)}${projects.length > 1 ? renderProjectSectionContent(projects.slice(1), store, subject, viewerMode, onSaved) : html``}`
 }
 
 function renderProjectSectionDefault(
