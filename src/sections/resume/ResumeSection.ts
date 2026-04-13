@@ -99,7 +99,7 @@ export function renderCVSection(
   return showSection ? html`
     <section 
       aria-labelledby="cv-heading" 
-      class="profile-section-collapsible section-bg" 
+      class="profile__section border-lighter profile-section-collapsible" 
       role="region"
       tabindex="-1"
       data-expanded="false"

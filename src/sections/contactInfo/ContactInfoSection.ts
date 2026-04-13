@@ -130,7 +130,7 @@ export function renderContactInfoSection(
   return html`
     <section
       aria-labelledby="contact-details-heading"
-      class="profile-section-collapsible section-bg"
+      class="profile__section border-lighter profile-section-collapsible"
       role="region"
       tabindex="-1"
       data-expanded="false"

@@ -33,9 +33,10 @@ export function renderLanguageSection(
 
   return html`
     <section
-      class="profile-section-collapsible section-bg"
+      class="profile__section border-lighter profile-section-collapsible"
       aria-labelledby="languages-heading"
       role="region"
+      tabindex="-1"
       data-expanded="false"
     >
       <header class="profile__section-header profile-section-collapsible__header">

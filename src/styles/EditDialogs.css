@@ -208,17 +208,21 @@
 
 /* Placeholder class for project paste action styling. */
 .profile-edit-dialog__paste-button {
+  display: flex;
+  padding: 0.25rem 0.375rem; /* 4px 6px */
+  align-items: center;
   position: absolute;
   background: var(--white, #fff);
   border: 0;
   outline: none;
+  white-space: nowrap;
   right: var(--spacing-2xs, 0.625rem);
   top: 50%;
   transform: translateY(-50%);
   z-index: 1;
   color: var(--gray-500, #6A7282);
-  font-size: 12px;
-  font-weight: 400;
+  font-size: 0.75rem; /* 12px */
+  font-weight: var(--font-weight-normal, 400);
 }
 
 .profile-edit-dialog__paste-button:focus,
@@ -226,6 +230,7 @@
   outline: none;
 }
 
+/* remove the regular button styling for paste */
 #profile-modal .modal button.profile-edit-dialog__paste-button,
 #profile-modal .modal button.profile-edit-dialog__paste-button:hover,
 #profile-modal .modal button.profile-edit-dialog__paste-button:focus,
@@ -237,9 +242,9 @@
   -webkit-appearance: none;
   appearance: none;
 }
-.profile__paste-icon {
-  width: 11.105px;
-  height: 13.038px;
+.profile-edit-dialog__paste-icon {
+  width: 0.694rem; /* 11.105px */
+  height: 0.813rem; /* 13.038px */
   fill: var(--gray-500, #6A7282);
 }
 #profile-modal .modal button.socialRowDragHandle {

@@ -56,7 +56,7 @@ function renderSidebar(
 
 function renderQRCode(subject: NamedNode, store: LiveStore) {
   return html`
-      <section class="profile__qr-code" aria-labelledby="qr-heading">
+      <section class="profile__section border-lighter profile__qr-code" aria-labelledby="qr-heading" tabindex="-1">
         <h2 id="qr-heading" class="sr-only">QR code</h2>
         ${QRCodeCard(subject, store)}
       </section>

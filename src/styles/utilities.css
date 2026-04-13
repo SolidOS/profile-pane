@@ -37,6 +37,16 @@
 @media (max-width: 900px) {
   .profile-grid {
     grid-template-columns: 1fr;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    margin: 0 auto;
+    padding-inline: var(--spacing-sm, 0.75rem);
+    overflow-x: clip;
+  }
+
+  .profile-grid > * {
+    min-width: 0;
   }
 }
 
@@ -86,8 +96,10 @@
   /*padding: 6px 8px; Note: these are the styles from new design
   min-height: auto;   however they don't meet accessibility guidelines 
   min-width: 0;       for touch target size */ 
-  min-width: 7.813rem; /* 125px */
-  max-width: 7.813rem; /* 125px */
+  width: fit-content;
+  min-width: fit-content;
+  max-width: fit-content;
+  white-space: nowrap;
   box-sizing: border-box;
   border: var(--border-width-sm, 1px) solid var(--color-border-darker, #4A5565);
   color: var(--slate-700, #314158);
