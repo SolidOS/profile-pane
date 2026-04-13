@@ -8,8 +8,8 @@ export const projectType = ns.schema('Project')
 export interface ProjectFields {
   url: string
   title?: string
-  businessType?: string
-  description?: string
+  name?: string
+  orgName?: string
   imageUrl?: string
   category?: 'project' | 'community' | 'unknown'
 }

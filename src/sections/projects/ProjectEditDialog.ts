@@ -34,7 +34,11 @@ function isValidProjectUrl(value: string): boolean {
 
   try {
     const parsed = new URL(text)
-    return parsed.protocol === 'http:' || parsed.protocol === 'https:'
+    return (
+      parsed.protocol === 'https:' &&
+      parsed.pathname === '/profile/card' &&
+      parsed.hash === '#me'
+    )
   } catch {
     return false
   }
@@ -52,18 +56,18 @@ function toFormState(details: ProjectDetails[]): ProjectFormState {
     .map((detail) => ({
       url: sanitizeProjectFieldValue(toText(detail.url)),
       title: sanitizeProjectFieldValue(toText(detail.title)),
-      businessType: sanitizeProjectFieldValue(toText(detail.businessType)),
-      description: sanitizeProjectFieldValue(toText(detail.description)),
+      name: sanitizeProjectFieldValue(toText(detail.name)),
+      orgName: sanitizeProjectFieldValue(toText(detail.orgName)),
       imageUrl: sanitizeProjectFieldValue(toText(detail.imageUrl)),
       category: (toText(detail.category) as LinkCategory) || 'unknown',
       entryNode: toText(detail.entryNode),
       status: toText(detail.entryNode) ? 'existing' as const : 'new' as const
     }))
-    .filter((row) => Boolean(row.url || row.entryNode || row.title || row.businessType || row.description || row.imageUrl))
+    .filter((row) => Boolean(row.url || row.entryNode || row.title || row.name || row.orgName || row.imageUrl))
 
  
   return {
-    projects: rows.length ? rows : [{ url: '', title: '', businessType: '', description: '', imageUrl: '', category: 'unknown', entryNode: '', status: 'new' }]
+    projects: rows.length ? rows : [{ url: '', title: '', name: '', orgName: '', imageUrl: '', category: 'unknown', entryNode: '', status: 'new' }]
   }
 }
 
@@ -79,7 +83,7 @@ function validateProjectsBeforeSave(rows: ProjectRow[]): string | null {
       return `Project ${index + 1}: URL is required.`
     }
     if (!isValidProjectUrl(row.url)) {
-      return `Project ${index + 1}: please enter a valid URL starting with http:// or https://.`
+      return `Project ${index + 1}: please enter a valid WebID in the form https://example.com/profile/card#me.`
     }
   }
 
@@ -95,8 +99,7 @@ async function hydrateProjectRowMetadata(row: ProjectRow): Promise<void> {
 
     row.url = sanitizeProjectFieldValue(preview.url || row.url || '')
     row.title = sanitizeProjectFieldValue(preview.title || row.title || '')
-    row.businessType = sanitizeProjectFieldValue(preview.businessType || row.businessType || '')
-    row.description = sanitizeProjectFieldValue(preview.description || row.description || '')
+    row.orgName = sanitizeProjectFieldValue(preview.orgName || row.orgName || '')
     row.imageUrl = sanitizeProjectFieldValue(preview.imageUrl || row.imageUrl || '')
     row.category = preview.category || row.category || 'unknown'
   } catch {
@@ -140,8 +143,7 @@ function renderProjectInputRow({
 
       applyRowFieldChange(rows[index], 'url', sanitizeProjectFieldValue(preview.url || url), rowHasContent)
       applyRowFieldChange(rows[index], 'title', sanitizeProjectFieldValue(preview.title || rows[index].title || ''), rowHasContent)
-      applyRowFieldChange(rows[index], 'businessType', sanitizeProjectFieldValue(preview.businessType || rows[index].businessType || ''), rowHasContent)
-      applyRowFieldChange(rows[index], 'description', sanitizeProjectFieldValue(preview.description || rows[index].description || ''), rowHasContent)
+      applyRowFieldChange(rows[index], 'orgName', sanitizeProjectFieldValue(preview.orgName || rows[index].orgName || ''), rowHasContent)
       applyRowFieldChange(rows[index], 'imageUrl', sanitizeProjectFieldValue(preview.imageUrl || rows[index].imageUrl || ''), rowHasContent)
       applyRowFieldChange(rows[index], 'category', preview.category || rows[index].category || 'unknown', rowHasContent)
       onChange()
@@ -181,20 +183,20 @@ function renderProjectInputRow({
           data-contact-field="url"
           data-entry-node=${row?.entryNode || ''}
           data-row-status=${row?.status || 'n/a'}
-          placeholder="Project URL"
+          placeholder="WebID (https://example.com/profile/card#me)"
           autocomplete="off"
           inputmode="text"
           @input=${handleUrlInput}
           @blur=${handleUrlBlur}
         />
       </label>
-      ${row?.title || row?.businessType || row?.category !== 'unknown' || row?.description
+      ${row?.title || row?.name || row?.orgName || row?.category !== 'unknown'
         ? html`
           <div class="profile-edit-dialog__field profile-edit-dialog__field--full">
             ${row?.title ? html`<p><strong>${row.title}</strong></p>` : html``}
-            ${row?.businessType ? html`<p>${row.businessType}</p>` : html``}
+            ${row?.name ? html`<p>${row.name}</p>` : html``}
+            ${row?.orgName ? html`<p>${row.orgName}</p>` : html``}
             ${row?.category && row.category !== 'unknown' ? html`<p>${row.category}</p>` : html``}
-            ${row?.description ? html`<p>${row.description}</p>` : html``}
           </div>
         `
         : html``}
@@ -226,8 +228,8 @@ function renderProjectSection(rows: ProjectRow[], onAddRow: () => void) {
     rows.push({
       url: '',
       title: '',
-      businessType: '',
-      description: '',
+      name: '',
+      orgName: '',
       imageUrl: '',
       category: 'unknown',
       entryNode: '',

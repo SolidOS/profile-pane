@@ -5,11 +5,11 @@ import { presentProjects } from '../../src/sections/projects/selectors'
 import { processProjectsMutations } from '../../src/sections/projects/mutations'
 
 describe('Projects selectors and mutations', () => {
-  it('selector returns empty projects from empty store', () => {
+  it('selector returns empty projects from empty store', async () => {
     const store = graph() as any
     const subject = sym('https://example.com/profile/card#me')
 
-    expect(presentProjects(subject, store)).toEqual([])
+    await expect(presentProjects(subject, store)).resolves.toEqual([])
   })
 
   it('mutation wraps updater errors with projects prefix', async () => {
@@ -20,14 +20,14 @@ describe('Projects selectors and mutations', () => {
     await expect(processProjectsMutations(store, subject, plan as any)).rejects.toThrow('Failed to save projects:')
   })
 
-  it('selector reads projects from solid:community links', () => {
+  it('selector reads projects from solid:community links', async () => {
     const store = graph() as any
     const subject = sym('https://example.com/profile/card#me')
     const doc = subject.doc()
 
     store.add(subject, ns.solid('community'), sym('https://example.org/community'), doc)
 
-    const projects = presentProjects(subject, store)
+    const projects = await presentProjects(subject, store)
     expect(projects).toHaveLength(1)
     expect(projects[0].url).toBe('https://example.org/community')
   })

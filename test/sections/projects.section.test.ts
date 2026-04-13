@@ -14,7 +14,7 @@ describe('Projects section', () => {
         entryNode: sym('https://example.com/profile#project1'),
         url: 'https://example.com/project',
         title: 'Profile Pane',
-        businessType: 'Open Source',
+        orgName: 'Open Source',
         category: 'project',
         description: 'A project to display profile data.'
       }

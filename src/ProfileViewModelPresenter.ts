@@ -29,13 +29,13 @@ export type ProfileViewModel = {
   cvDetails: RoleDetails[]
 }
 
-export function presentProfileViewModel(subject: NamedNode, store: LiveStore): ProfileViewModel {
+export async function presentProfileViewModel(subject: NamedNode, store: LiveStore): Promise<ProfileViewModel> {
   const profileDetails = presentProfile(subject, store)
   const contactInfo = presentContactInfo(subject, store)
   const skills = presentSkills(subject, store)
   const languages = presentLanguages(subject, store)
   const education = presentEducation(subject, store)
-  const projects = presentProjects(subject, store)
+  const projects = await presentProjects(subject, store)
   const bioDetails = presentBio(subject, store)
   const social = presentSocial(subject, store)
   const cvDetails = presentCV(subject, store)

@@ -16,9 +16,8 @@ import { renderProjectSection } from './sections/projects/ProjectSection'
 import { renderHeadingSection } from './sections/heading/HeadingSection'
 import { renderBioSection } from './sections/bio/BioSection'
 import { renderSocialAccounts } from './sections/social/SocialSection'
-import { classifyLinkCategory, fetchLinkPreview } from './sections/projects/linkPreview'
 
-type ProfileViewModelData = ReturnType<typeof presentProfileViewModel>
+type ProfileViewModelData = Awaited<ReturnType<typeof presentProfileViewModel>>
 type SocialAccounts = ProfileViewModelData['social']
 
 function getViewerMode(subject: NamedNode): ViewerMode {
@@ -64,48 +63,6 @@ function renderQRCode(subject: NamedNode, store: LiveStore) {
   `
 }
 
-async function enrichProjectsForDisplay(projects: ProfileViewModelData['projects']) {
-  const enriched = await Promise.all(projects.map(async (project) => {
-    const url = (project.url || '').trim()
-    if (!url) return project
-
-    try {
-      const preview = await fetchLinkPreview(url)
-      const category = preview.category && preview.category !== 'unknown'
-        ? preview.category
-        : classifyLinkCategory({
-            url: preview.url || project.url,
-            title: preview.title || project.title,
-            description: preview.description || project.description,
-            businessType: preview.businessType || project.businessType
-          })
-
-      return {
-        ...project,
-        title: preview.title || project.title,
-        description: preview.description || project.description,
-        imageUrl: preview.imageUrl || project.imageUrl,
-        businessType: preview.businessType || project.businessType,
-        category,
-      }
-    } catch {
-      return {
-        ...project,
-        category: project.category && project.category !== 'unknown'
-          ? project.category
-          : classifyLinkCategory({
-              url: project.url,
-              title: project.title,
-              description: project.description,
-              businessType: project.businessType
-            })
-      }
-    }
-  }))
-
-  return enriched
-}
-
 export async function ProfileView (
   subject: NamedNode,
   context: DataBrowserContext,
@@ -114,12 +71,12 @@ export async function ProfileView (
   const store = context.session.store as LiveStore
   const viewerMode = getViewerMode(subject)
 
-  const viewModel = presentProfileViewModel(subject, store)
+  const viewModel = await presentProfileViewModel(subject, store)
   const profileDetails = viewModel.profileDetails
   const rolesByType = viewModel.cvDetails
   const skills = viewModel.skills
   const languages = viewModel.languages
-  const projects = await enrichProjectsForDisplay(viewModel.projects)
+  const projects = viewModel.projects
   const bioDetails = viewModel.bioDetails
   const accounts = viewModel.social
   const contactInfo = viewModel.contactInfo

@@ -6,10 +6,10 @@ export type LinkCategory = 'project' | 'community' | 'unknown'
 export type LinkPreview = {
   url: string
   title?: string
-  description?: string
+  name?: string
   imageUrl?: string
   siteName?: string
-  businessType?: string
+  orgName?: string
   category: LinkCategory
 }
 
@@ -38,8 +38,8 @@ type CategoryHints = {
   url?: string
   typeHint?: string
   title?: string
-  description?: string
-  businessType?: string
+  name?: string
+  orgName?: string
 }
 
 function tokenizeForCategory(value: string): string[] {
@@ -53,8 +53,8 @@ function buildCategoryText(hints: CategoryHints) {
   const raw = [
     hints.typeHint || '',
     hints.title || '',
-    hints.description || '',
-    hints.businessType || '',
+    hints.name || '',
+    hints.orgName || '',
     hints.url || ''
   ].join(' ')
 
@@ -90,11 +90,11 @@ export function classifyLinkCategory(hints: CategoryHints): LinkCategory {
   return 'unknown'
 }
 
-function inferBusinessType(typeHint?: string, title?: string, description?: string): string | undefined {
+function inferOrgName(typeHint?: string, title?: string, name?: string): string | undefined {
   const typeText = (typeHint || '').trim()
-  const descriptionText = (description || '').toLowerCase()
+  const nameText = (name || '').toLowerCase()
   const titleText = (title || '').toLowerCase()
-  const fullText = `${titleText} ${descriptionText}`
+  const fullText = `${titleText} ${nameText}`
 
   if (fullText.includes('soccer club')) return 'Soccer club'
   if (fullText.includes('football club')) return 'Football club'
@@ -126,26 +126,26 @@ export async function fetchLinkPreview(url: string): Promise<LinkPreview> {
   }
 
   const title = payload.data.openGraph?.title || payload.data.title
-  const description = payload.data.openGraph?.description || payload.data.description
+  const name = payload.data.openGraph?.description || payload.data.description
   const imageUrl = payload.data.openGraph?.image || payload.data.image
   const siteName = payload.data.openGraph?.siteName || payload.data.siteName
   const canonicalUrl = payload.data.openGraph?.url || payload.data.url || normalizedUrl
   const typeHint = payload.data.openGraph?.type || payload.data.type
-  const businessType = inferBusinessType(typeHint, title, description)
+  const orgName = inferOrgName(typeHint, title, name)
 
   return {
     url: canonicalUrl,
     title,
-    description,
+    name,
     imageUrl,
     siteName,
-    businessType,
+    orgName,
     category: classifyLinkCategory({
       url: canonicalUrl,
       typeHint,
       title,
-      description,
-      businessType
+      name,
+      orgName
     })
   }
 }

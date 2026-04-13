@@ -10,14 +10,31 @@ import { MutationOps } from '../shared/types'
 import '../../styles/ProjectsCard.css'
 import { toggleCollapsibleSection } from '../shared/collapsibleSection'
 
+function renderProjectImage(src: string | undefined, altText: string) {
+  return src
+    ? html`
+        <img
+          class="projectThumbImage"
+          src=${src}
+          alt=${altText}
+          loading="lazy"
+        />
+      `
+    : html`
+        <div class="projectThumbFallback" role="img" aria-label=${altText} tabindex="0">
+          ${altText}
+        </div>
+      `
+}
+
 function toProjectRow(project: ProjectDetails, status: 'existing' | 'deleted'): ProjectRow {
   return {
     url: project.url,
     title: project.title,
-    description: project.description,
     imageUrl: project.imageUrl,
     category: project.category,
-    businessType: project.businessType,
+    name: project.name,
+    orgName: project.orgName,
     entryNode: (project.entryNode as any)?.value || '',
     status
   }
@@ -59,15 +76,12 @@ function renderProject(
       >
         <div class="projectCardTop">
           <div class="projectThumb">
-            ${project.imageUrl
-              ? html`<img class="projectThumbImage" src=${project.imageUrl} alt=${project.title || 'Project preview'} />`
-              : html`<div class="projectThumbFallback" aria-hidden="true">No image</div>`}
+            ${renderProjectImage(project.imageUrl, project.title || 'Project preview')}
           </div>
           <div class="projectBody">
             <p class="projectTitle"><strong>${project.title || project.url}</strong></p>
-            <p class="projectBusinessType">${project.businessType || 'Type of business unknown'}</p>
+            <p class="projectBusinessType">${project.orgName || 'Organization unknown'}</p>
             <p class="projectKind">${project.category && project.category !== 'unknown' ? project.category : 'Uncategorized'}</p>
-            ${project.description ? html`<p class="projectDescription">${project.description}</p>` : html``}
           </div>
         </div>
       </a>
@@ -95,6 +109,7 @@ function renderProjects(
   onSaved?: () => Promise<void> | void
 ) {
   if (!projects || !projects.length || !projects[0]) return html``
+
   return html`${renderProject(projects[0], store, subject, viewerMode, onSaved)}${projects.length > 1 ? renderProjects(projects.slice(1), store, subject, viewerMode, onSaved) : html``}`
 }
 
