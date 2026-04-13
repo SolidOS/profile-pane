@@ -7,7 +7,7 @@ import { ViewerMode } from '../../types'
 import { createHeadingEditDialog } from './HeadingEditDialog'
 import { toText } from '../../textUtils'
 import { toDisplayDateDMY } from './dateHelpers'
-import { birthdayIcon, locationIcon } from '../../icons-svg/profileIcons'
+import { birthdayIcon, editIcon, locationIcon } from '../../icons-svg/profileIcons'
 import { emailIcon, phoneIcon } from '../../icons-svg/contactIcons'
 
 export const renderHeadingSection = (
@@ -55,8 +55,8 @@ export const renderHeadingSection = (
                     )
                   }}
                 >
-                  <span class="profile-section-collapsible__edit-label">✎ Edit</span>
-                  <span class="profile-section-collapsible__edit-icon" aria-hidden="true">✎</span>
+                  <span class="profile-section-collapsible__edit-label">${editIcon} Edit</span>
+                  <span class="profile-section-collapsible__edit-icon" aria-hidden="true">${editIcon}</span>
                 </button>
               </div>
             `}

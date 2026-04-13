@@ -11,6 +11,7 @@ import {
   toggleDescription,
 } from '../shared/sectionCardHelpers'
 import { toggleCollapsibleSection } from '../shared/collapsibleSection'
+import { editIcon } from '../../icons-svg/profileIcons'
 
 function formatEducationMonthYearFull(date?: string): string {
   if (!date) return ''
@@ -125,8 +126,8 @@ export function renderEducationSection(
             aria-label="Edit education details"
             @click=${(event: Event) => createEducationEditDialog(event, store, subject, educationDetails, viewerMode, onSaved)}
           >
-            <span class="profile-section-collapsible__edit-label">✎ Edit</span>
-            <span class="profile-section-collapsible__edit-icon" aria-hidden="true">✎</span>
+            <span class="profile-section-collapsible__edit-label">${editIcon} Edit</span>
+            <span class="profile-section-collapsible__edit-icon" aria-hidden="true">${editIcon}</span>
           </button>
           <button
             type="button"

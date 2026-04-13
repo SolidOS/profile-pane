@@ -6,6 +6,7 @@ import { socialAccountsHeadingText } from '../../texts'
 import { createSocialEditDialog } from './SocialEditDialog'
 import { LiveStore, NamedNode } from 'rdflib'
 import { toggleCollapsibleSection } from '../shared/collapsibleSection'
+import { editIcon } from '../../icons-svg/profileIcons'
 
 export const SocialCard = (
   SocialData: SocialPresentation,
@@ -108,8 +109,8 @@ export function renderSocialAccounts(
                 aria-label="Edit social accounts"
                 @click=${handleEdit}
               >
-                <span class="profile-section-collapsible__edit-label">✎ Edit</span>
-                <span class="profile-section-collapsible__edit-icon" aria-hidden="true">✎</span>
+                <span class="profile-section-collapsible__edit-label">${editIcon} Edit</span>
+                <span class="profile-section-collapsible__edit-icon" aria-hidden="true">${editIcon}</span>
               </button>
               <button
                 type="button"

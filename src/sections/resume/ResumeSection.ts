@@ -12,6 +12,7 @@ import {
   toggleDescription
 } from '../shared/sectionCardHelpers'
 import { toggleCollapsibleSection } from '../shared/collapsibleSection'
+import { editIcon } from '../../icons-svg/profileIcons'
 
 function renderRole(role: RoleDetails, index: number) {
   if (!role) return html``
@@ -113,8 +114,8 @@ export function renderCVSection(
             aria-label="Edit resume details"
             @click=${(event: Event) => createResumeEditDialog(event, store, subject, resumeDetails, viewerMode, onSaved)}
           >
-            <span class="profile-section-collapsible__edit-label">✎ Edit</span>
-            <span class="profile-section-collapsible__edit-icon" aria-hidden="true">✎</span>
+            <span class="profile-section-collapsible__edit-label">${editIcon} Edit</span>
+            <span class="profile-section-collapsible__edit-icon" aria-hidden="true">${editIcon}</span>
           </button>
           <button
             type="button"

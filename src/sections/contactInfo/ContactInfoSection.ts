@@ -6,7 +6,7 @@ import { ns } from 'solid-ui'
 import { contactInfoEmptyHeadingText, contactInfoHeadingText } from '../../texts'
 import { toggleCollapsibleSection } from '../shared/collapsibleSection'
 import { ContactInfo } from './types'
-import { addIcon, envelopeIcon } from '../../icons-svg/profileIcons'
+import { addIcon, editIcon, envelopeIcon } from '../../icons-svg/profileIcons'
 
 function toText(value: unknown): string {
   if (!value) return ''
@@ -148,8 +148,8 @@ function renderContactInfoSectionDefault(
                 onSaved
               )
             }}>
-            <span class="profile-section-collapsible__edit-label">✎ Edit</span>
-            <span class="profile-section-collapsible__edit-icon" aria-hidden="true">✎</span>
+            <span class="profile-section-collapsible__edit-label">${editIcon} Edit</span>
+            <span class="profile-section-collapsible__edit-icon" aria-hidden="true">${editIcon}</span>
           </button>
           <button
             type="button"

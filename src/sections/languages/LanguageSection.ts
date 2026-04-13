@@ -4,7 +4,7 @@ import { ns } from 'solid-ui'
 import { ViewerMode } from '../../types'
 import { createLanguageEditDialog } from './LanguageEditDialog'
 import { LanguageDetails } from './types'
-import { addIcon } from '../../icons-svg/profileIcons'
+import { addIcon, plusIcon } from '../../icons-svg/profileIcons'
 import { languagesHeadingText } from '../../texts'
 import { toggleCollapsibleSection } from '../shared/collapsibleSection'
 
@@ -52,7 +52,7 @@ export function renderLanguageSection(
               <span class="profile__add-more-icon" aria-hidden="true">${addIcon}</span>
               Add More
             </span>
-            <span class="profile-section-collapsible__edit-icon" aria-hidden="true">✎</span>
+            <span class="profile-section-collapsible__edit-icon" aria-hidden="true">${plusIcon}</span>
           </button>
           <button
             type="button"

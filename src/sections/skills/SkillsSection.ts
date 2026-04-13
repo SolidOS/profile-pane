@@ -4,7 +4,7 @@ import { LiveStore, NamedNode } from 'rdflib'
 import { ViewerMode } from '../../types'
 import { createSkillsEditDialog } from './SkillsEditDialog'
 import { SkillDetails } from './types'
-import { addIcon } from '../../icons-svg/profileIcons'
+import { addIcon, plusIcon } from '../../icons-svg/profileIcons'
 import { skillsHeadingText } from '../../texts'
 import { toggleCollapsibleSection } from '../shared/collapsibleSection'
 import { presentSkillDetails } from './selectors'
@@ -53,7 +53,7 @@ export function renderSkillsSection(
               <span class="profile__add-more-icon" aria-hidden="true">${addIcon}</span>
               Add More
             </span>
-            <span class="profile-section-collapsible__edit-icon" aria-hidden="true">✎</span>
+            <span class="profile-section-collapsible__edit-icon" aria-hidden="true">${plusIcon}</span>
           </button>
           <button
             type="button"

@@ -9,7 +9,7 @@ import {
   toggleDescription
 } from '../shared/sectionCardHelpers'
 import { createBioEditDialog } from './BioEditDialog'
-import { plusDarkIcon } from '../../icons-svg/profileIcons'
+import { editIcon, plusDarkIcon } from '../../icons-svg/profileIcons'
 
 function renderBio(bioData: BioDetails) {
   if (!bioData) return html``
@@ -83,7 +83,8 @@ function renderBioSectionContent(
           )
         }}
       >
-        <span class="profile__action-icon" aria-hidden="true">✎ Edit</span>
+        <span class="profile-section-collapsible__edit-label profile__action-icon">${editIcon} Edit</span>
+        <span class="profile-section-collapsible__edit-icon profile__action-icon" aria-hidden="true">${editIcon}</span>
       </button>
     </header>
     ${bio}

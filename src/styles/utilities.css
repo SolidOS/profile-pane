@@ -258,6 +258,17 @@
     display: block;
   }
 
+  .profile-section-collapsible__edit-label svg,
+  .profile__action-icon svg {
+    width: 0.875rem;
+    height: 0.875rem;
+  }
+
+  .profile-section-collapsible__edit-label svg path,
+  .profile__action-icon svg path {
+    fill: var(--color-primary, #7C4DFF);
+  }
+
   .profile-section-collapsible__toggle {
     display: none;
   }
@@ -292,6 +303,12 @@
 
   .profile-section-collapsible__edit-icon {
     display: inline;
+    color: #1E2939;
+  }
+
+  .profile-section-collapsible__edit-icon svg path {
+    fill: currentColor;
+    stroke: currentColor;
   }
 }
 
