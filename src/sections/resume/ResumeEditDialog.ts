@@ -521,6 +521,7 @@ function renderResumeEditTemplate(form: HTMLFormElement, formState: ResumeFormSt
 function createResumeEditForm(resumeData: RoleDetails[]) {
   const form = document.createElement('form')
   form.classList.add('profile__edit-form')
+  form.classList.add('profile__edit-form--resume')
 
   const formState = toFormState(resumeData)
   const rerender = () => renderResumeEditTemplate(form, formState, rerender)

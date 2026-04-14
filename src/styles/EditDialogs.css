@@ -121,6 +121,32 @@
   min-width: 0;
 }
 
+.profile__edit-form--resume .profile-edit-dialog__field,
+.profile__edit-form--resume .profile-edit-dialog__field-type:not(.hidden),
+.profile__edit-form--contact-info .profile-edit-dialog__field,
+.profile__edit-form--contact-info .profile-edit-dialog__field-type:not(.hidden) {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--spacing-xxs, 0.3125rem);
+  flex: 1 0 0;
+}
+
+.profile__edit-form--resume .profile-edit-dialog__field > input,
+.profile__edit-form--resume .profile-edit-dialog__field > select,
+.profile__edit-form--resume .profile-edit-dialog__field > textarea,
+.profile__edit-form--resume .profile-edit-dialog__field-type > input,
+.profile__edit-form--resume .profile-edit-dialog__field-type > select,
+.profile__edit-form--resume .profile-edit-dialog__field-type > textarea,
+.profile__edit-form--contact-info .profile-edit-dialog__field > input,
+.profile__edit-form--contact-info .profile-edit-dialog__field > select,
+.profile__edit-form--contact-info .profile-edit-dialog__field > textarea,
+.profile__edit-form--contact-info .profile-edit-dialog__field-type > input,
+.profile__edit-form--contact-info .profile-edit-dialog__field-type > select,
+.profile__edit-form--contact-info .profile-edit-dialog__field-type > textarea {
+  align-self: stretch;
+}
+
 .profile-edit-dialog__field--resume-location {
   flex: 0 0 16rem;
   width: 16rem;

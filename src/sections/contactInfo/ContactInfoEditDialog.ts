@@ -623,6 +623,7 @@ function renderContactInfoEditTemplate(form: HTMLFormElement, formState: Contact
 function createContactInfoEditForm(contactInfo: ContactInfo) {
   const form = document.createElement('form')
   form.classList.add('profile__edit-form')
+  form.classList.add('profile__edit-form--contact-info')
 
   const formState = toFormState(contactInfo)
   renderContactInfoEditTemplate(form, formState)
