@@ -7,6 +7,19 @@
   --profile-image-size: 3em;
 }
 
+.flex-column {
+  display: flex;
+  flex-direction: column;
+}
+
+.gap-md {
+  gap: var(--spacing-md, 1.25rem);
+}
+
+.p-md {
+  padding: var(--spacing-md, 1.25rem);
+}
+
 @media (max-width: 1000px) {
   .profile-grid {
     font-size: clamp(0.9rem, 1.1vw + 0.65rem, 1rem);
