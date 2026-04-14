@@ -37,6 +37,7 @@
 @media (max-width: 900px) {
   .profile-grid {
     grid-template-columns: 1fr;
+    gap: var(--spacing-sm, 0.75rem);
     width: 100%;
     max-width: 100%;
     box-sizing: border-box;

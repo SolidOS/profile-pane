@@ -282,8 +282,7 @@ export function renderContactInfoSection(
     safeContactInfo.emails.length > 0 ||
     safeContactInfo.phones.length > 0 ||
     safeContactInfo.addresses.length > 0
-  // const showOwnerEmptyContactInfo = !hasAnyContactInfo && viewerMode === 'owner'
-  const showOwnerEmptyContactInfo = true
+  const showOwnerEmptyContactInfo = !hasAnyContactInfo && viewerMode === 'owner'
   const showSection = true
   
   return showSection ? html`

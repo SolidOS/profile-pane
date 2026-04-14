@@ -201,8 +201,7 @@ export function renderSkillsSection(
 ) {
   const safeSkills: SkillDetails[] = skills || []
   const hasSkills = Array.isArray(safeSkills) && safeSkills.length > 0
-  // const showOwnerEmptySkills = !hasSkills && viewerMode === 'owner'
-  const showOwnerEmptySkills = true
+  const showOwnerEmptySkills = !hasSkills && viewerMode === 'owner'
   const showSection = true
     
   return showSection ? html`
