@@ -121,6 +121,12 @@
   min-width: 0;
 }
 
+.profile-edit-dialog__field--resume-location {
+  flex: 0 0 16rem;
+  width: 16rem;
+  max-width: 16rem;
+}
+
 .profile-edit-dialog__field--stack {
   display: grid;
   gap: var(--spacing-xxs);

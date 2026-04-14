@@ -410,7 +410,7 @@ function renderResumeInputRow({
           @change=${handleResumeInput('orgHomePage')}
         />
       </label>
-      <label aria-label=${`${label} Location`} class="label profile-edit-dialog__field">
+      <label aria-label=${`${label} Location`} class="label profile-edit-dialog__field profile-edit-dialog__field--resume-location">
         Location
         <input
           class="input"
