@@ -5,12 +5,26 @@
 
 .bioDescriptionText {
 	margin: 0;
+	width: 100%;
+	max-width: none;
 	display: -webkit-box;
 	-webkit-box-orient: vertical;
 	-webkit-line-clamp: 3;
 	line-clamp: 3;
-	line-height: var(--line-height-base);
+	line-height: var(--line-height-base, 1.5);
+	position: relative;
 	overflow: hidden;
+}
+
+.bioDescriptionText:not(.isExpanded)::after {
+	content: '';
+	position: absolute;
+	right: 0;
+	top: calc(100% - 1.5em);
+	width: 50%;
+	height: 1.5em;
+	background: var(--color-card-bg);
+	pointer-events: none;
 }
 
 .bioDescriptionText.isExpanded {
@@ -29,18 +43,27 @@
 	cursor: pointer;
 	font: inherit;
 	font-size: var(--font-size-sm);
-	line-height: var(--line-height-tight);
+	line-height: var(--line-height-base, 1.5);
 	position: absolute;
 	left: 50%;
-	transform: translateX(-50%);
 	bottom: 0;
 	background-color: var(--color-card-bg);
-	padding: 0 0.35em;
+	white-space: nowrap;
+	padding-left: 0.25em;
+	z-index: 1;
+}
+
+.bioDescriptionWrap .bioDescriptionText:not(.isExpanded) + .bioDescriptionToggle {
+	top: calc(100% - 1.5em + 0.28em - 15px);
+	bottom: auto;
+	transform: none;
 }
 
 .bioDescriptionText.isExpanded + .bioDescriptionToggle {
 	position: static;
 	display: inline;
+	padding-left: 0;
+	top: auto;
+	bottom: auto;
 	transform: none;
-	padding: 0;
 }
