@@ -115,48 +115,13 @@ function renderSkillsSectionDefault(store: LiveStore, subject: NamedNode, skills
 }
 
 function renderOwnerEmptySkillsContent(
-  store: LiveStore,
-  subject: NamedNode,
-  skills: SkillDetails[],
-  viewerMode: ViewerMode,
-  onSaved?: () => Promise<void> | void
+  _store: LiveStore,
+  _subject: NamedNode,
+  _skills: SkillDetails[],
+  _viewerMode: ViewerMode,
+  _onSaved?: () => Promise<void> | void
 ) {
   return html`
-      <header class="profile__section-header profile-section-collapsible__header">
-        <h2 id="skills-heading" tabindex="-1">${skillsHeadingText}</h2>
-        <div class="profile-section-collapsible__actions flex-column">
-          <button
-            type="button"
-            class="profile__action-button profile-action-text flex-center profile-section-collapsible__edit-button"
-            aria-label="Add skills"
-            @click=${(event: Event) => {
-              return createSkillsEditDialog(
-                event,
-                store,
-                subject,
-                skills,
-                viewerMode,
-                onSaved
-              )
-            }}>
-            <span class="profile-section-collapsible__edit-label profile__add-more-content inline-flex-row">
-              <span class="profile__add-more-icon inline-flex-row" aria-hidden="true">${addIcon}</span>
-              Add Skills
-            </span>
-            <span class="profile-section-collapsible__edit-icon profile-section-collapsible__edit-icon--add" aria-hidden="true">${plusIcon}</span>
-          </button>
-          <button
-            type="button"
-            class="inline-flex-row"
-            aria-label="Toggle skills section"
-            aria-controls="skills-panel"
-            aria-expanded="false"
-            @click=${toggleCollapsibleSection}
-          >
-            <span class="profile-section-collapsible__chevron" aria-hidden="true">⌄</span>
-          </button>
-        </div>
-      </header>
       <div class="profile__empty-state-content flex-column-center" role="group" aria-label="Empty skills section">    
         <div class="skills__empty-icon-wrapper">
           <span class="skills__empty-icon inline-flex-row">${lighteningIcon}</span>
@@ -179,11 +144,47 @@ function renderOwnerEmptySkillsSection(
     <section 
       aria-labelledby="skills-heading" 
       data-profile-section="skills"
-      class="profile__section--empty border-lighter flex-column-center rounded-md gap-lg profile-section-collapsible" 
+      class="profile__section--empty border-lighter rounded-md gap-lg profile-section-collapsible" 
       role="region"
       tabindex="-1"
       data-expanded="false"
     >
+      <header class="profile__section-header profile-section-collapsible__header">
+        <h2 id="skills-heading" tabindex="-1">${skillsHeadingText}</h2>
+        <div class="profile-section-collapsible__actions flex-column">
+          <button
+            type="button"
+            class="profile__action-button profile-action-text flex-center profile-section-collapsible__edit-button"
+            aria-label="Add skills"
+            @click=${(event: Event) => {
+              return createSkillsEditDialog(
+                event,
+                store,
+                subject,
+                skills,
+                viewerMode,
+                onSaved
+              )
+            }}
+          >
+            <span class="profile-section-collapsible__edit-label profile__add-more-content inline-flex-row">
+              <span class="profile__add-more-icon inline-flex-row" aria-hidden="true">${addIcon}</span>
+              Add Skills
+            </span>
+            <span class="profile-section-collapsible__edit-icon profile-section-collapsible__edit-icon--add" aria-hidden="true">${plusIcon}</span>
+          </button>
+          <button
+            type="button"
+            class="inline-flex-row"
+            aria-label="Toggle skills section"
+            aria-controls="skills-panel"
+            aria-expanded="false"
+            @click=${toggleCollapsibleSection}
+          >
+            <span class="profile-section-collapsible__chevron" aria-hidden="true">⌄</span>
+          </button>
+        </div>
+      </header>
       <div id="skills-panel" class="profile-section-collapsible__content" aria-hidden="true">
         ${renderOwnerEmptySkillsContent(store, subject, skills, viewerMode, onSaved)}
       </div>
@@ -200,7 +201,8 @@ export function renderSkillsSection(
 ) {
   const safeSkills: SkillDetails[] = skills || []
   const hasSkills = Array.isArray(safeSkills) && safeSkills.length > 0
-  const showOwnerEmptySkills = !hasSkills && viewerMode === 'owner'
+  // const showOwnerEmptySkills = !hasSkills && viewerMode === 'owner'
+  const showOwnerEmptySkills = true
   const showSection = true
     
   return showSection ? html`

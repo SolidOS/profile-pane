@@ -192,45 +192,13 @@ function renderContactInfoSectionDefault(
 }
 
 function renderOwnerEmptyContactInfoContent(
-  store: LiveStore,
-  subject: NamedNode,
-  contactInfo: ContactInfo,
-  viewerMode: ViewerMode,
-  onSaved?: () => Promise<void> | void
+  _store: LiveStore,
+  _subject: NamedNode,
+  _contactInfo: ContactInfo,
+  _viewerMode: ViewerMode,
+  _onSaved?: () => Promise<void> | void
 ) {
   return html`
-      <header class="profile__section-header profile-section-collapsible__header">
-        <h2 id="contact-details-heading" tabindex="-1">${contactInfoEmptyHeadingText}</h2>
-        <div class="profile-section-collapsible__actions flex-column">
-          <button
-            type="button"
-            class="profile__action-button profile-action-text flex-center profile-section-collapsible__edit-button"
-            aria-label="Add contact information"
-            @click=${(event: Event) => {
-              return createContactInfoEditDialog(
-                event,
-                store,
-                subject,
-                contactInfo,
-                viewerMode,
-                onSaved
-              )
-            }}>
-            <span class="profile-section-collapsible__edit-label">${addIcon} Add Contact</span>
-            <span class="profile-section-collapsible__edit-icon profile-section-collapsible__edit-icon--add" aria-hidden="true">${plusIcon}</span>
-          </button>
-          <button
-            type="button"
-            class="inline-flex-row"
-            aria-label="Toggle contact information section"
-            aria-controls="contact-details-panel"
-            aria-expanded="false"
-            @click=${toggleCollapsibleSection}
-          >
-            <span class="profile-section-collapsible__chevron" aria-hidden="true">⌄</span>
-          </button>
-        </div>
-      </header>
       <div class="profile__empty-state-content flex-column-center" role="group" aria-label="Empty contact information section">    
         <div class="contact-info__empty-icon-wrapper">
           <span class="contact-info__empty-icon inline-flex-row">${envelopeIcon}</span>
@@ -253,11 +221,44 @@ function renderOwnerEmptyContactInfoSection(
     <section 
       aria-labelledby="contact-details-heading" 
       data-profile-section="contact-info"
-      class="profile__section--empty border-lighter flex-column-center rounded-md gap-lg profile-section-collapsible" 
+      class="profile__section--empty border-lighter rounded-md gap-lg profile-section-collapsible" 
       role="region"
       tabindex="-1"
       data-expanded="false"
     >
+      <header class="profile__section-header profile-section-collapsible__header">
+        <h2 id="contact-details-heading" tabindex="-1">${contactInfoEmptyHeadingText}</h2>
+        <div class="profile-section-collapsible__actions flex-column">
+          <button
+            type="button"
+            class="profile__action-button profile-action-text flex-center profile-section-collapsible__edit-button"
+            aria-label="Add contact information"
+            @click=${(event: Event) => {
+              return createContactInfoEditDialog(
+                event,
+                store,
+                subject,
+                contactInfo,
+                viewerMode,
+                onSaved
+              )
+            }}
+          >
+            <span class="profile-section-collapsible__edit-label">${addIcon} Add Contact</span>
+            <span class="profile-section-collapsible__edit-icon profile-section-collapsible__edit-icon--add" aria-hidden="true">${plusIcon}</span>
+          </button>
+          <button
+            type="button"
+            class="inline-flex-row"
+            aria-label="Toggle contact information section"
+            aria-controls="contact-details-panel"
+            aria-expanded="false"
+            @click=${toggleCollapsibleSection}
+          >
+            <span class="profile-section-collapsible__chevron" aria-hidden="true">⌄</span>
+          </button>
+        </div>
+      </header>
       <div id="contact-details-panel" class="profile-section-collapsible__content" aria-hidden="true">
         ${renderOwnerEmptyContactInfoContent(store, subject, contactInfo, viewerMode, onSaved)}
       </div>
@@ -281,7 +282,8 @@ export function renderContactInfoSection(
     safeContactInfo.emails.length > 0 ||
     safeContactInfo.phones.length > 0 ||
     safeContactInfo.addresses.length > 0
-  const showOwnerEmptyContactInfo = !hasAnyContactInfo && viewerMode === 'owner'
+  // const showOwnerEmptyContactInfo = !hasAnyContactInfo && viewerMode === 'owner'
+  const showOwnerEmptyContactInfo = true
   const showSection = true
   
   return showSection ? html`
