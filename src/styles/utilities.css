@@ -256,6 +256,7 @@
 
 .profile-section-collapsible__actions {
   gap: var(--spacing-xs, 0.75rem);
+  margin-top: -0.25rem;
 }
 
 .profile-section-collapsible__edit-button {
@@ -264,10 +265,6 @@
 
 .profile-section-collapsible__edit-icon {
   display: none;
-}
-
-.profile-section-collapsible__actions {
-  gap: var(--spacing-xs, 0.75rem);
 }
 
 .profile-section-collapsible__actions > button.inline-flex-row {
@@ -309,6 +306,11 @@
 
   .profile-section-collapsible__edit-label {
     display: inline;
+    transform: translateY(-0.125rem);
+  }
+
+  .profile__add-more-icon {
+    transform: translateY(-0.125rem);
   }
 
   .profile-section-collapsible__edit-icon {
@@ -330,6 +332,15 @@
     gap: 0.25rem;
   }
 
+  /* Keep empty-section mobile header controls in the same order as regular sections: toggle first, add/edit below. */
+  .profile__section--empty .profile-section-collapsible__actions > button.inline-flex-row {
+    order: 1;
+  }
+
+  .profile__section--empty .profile-section-collapsible__actions > .profile-section-collapsible__edit-button {
+    order: 2;
+  }
+
   .profile-section-collapsible[data-expanded="true"] .profile-section-collapsible__chevron {
     transform: rotate(180deg);
   }
@@ -340,6 +351,15 @@
 
   .profile-section-collapsible__edit-icon {
     display: inline;
+  }
+
+  /* Empty-state action buttons use icon-only mobile controls (plus sign). */
+  .profile__section--empty .profile-section-collapsible__edit-label {
+    display: none !important;
+  }
+
+  .profile__section--empty .profile-section-collapsible__edit-icon {
+    display: inline !important;
   }
 
   .profile-section-collapsible .profile-section-collapsible__edit-button {

@@ -6,7 +6,7 @@ import { ns } from 'solid-ui'
 import { contactInfoEmptyHeadingText, contactInfoHeadingText } from '../../texts'
 import { toggleCollapsibleSection } from '../shared/collapsibleSection'
 import { ContactInfo } from './types'
-import { addIcon, editIcon, envelopeIcon } from '../../icons-svg/profileIcons'
+import { addIcon, editIcon, envelopeIcon, plusIcon } from '../../icons-svg/profileIcons'
 
 function toText(value: unknown): string {
   if (!value) return ''
@@ -217,7 +217,7 @@ function renderOwnerEmptyContactInfoContent(
               )
             }}>
             <span class="profile-section-collapsible__edit-label">${addIcon} Add Contact</span>
-            <span class="profile-section-collapsible__edit-icon" aria-hidden="true">${addIcon}</span>
+            <span class="profile-section-collapsible__edit-icon profile-section-collapsible__edit-icon--add" aria-hidden="true">${plusIcon}</span>
           </button>
           <button
             type="button"
@@ -253,11 +253,14 @@ function renderOwnerEmptyContactInfoSection(
     <section 
       aria-labelledby="contact-details-heading" 
       data-profile-section="contact-info"
-      class="profile__section--empty border-lighter flex-column-center rounded-md gap-lg" 
+      class="profile__section--empty border-lighter flex-column-center rounded-md gap-lg profile-section-collapsible" 
       role="region"
       tabindex="-1"
+      data-expanded="false"
     >
-      ${renderOwnerEmptyContactInfoContent(store, subject, contactInfo, viewerMode, onSaved)}
+      <div id="contact-details-panel" class="profile-section-collapsible__content" aria-hidden="true">
+        ${renderOwnerEmptyContactInfoContent(store, subject, contactInfo, viewerMode, onSaved)}
+      </div>
     </section>
   `
 }

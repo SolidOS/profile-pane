@@ -103,7 +103,7 @@ function renderOwnerEmptyLanguagesContent(
               <span class="profile__add-more-icon inline-flex-row" aria-hidden="true">${addIcon}</span>
               Add Languages
             </span>
-            <span class="profile-section-collapsible__edit-icon" aria-hidden="true">${addIcon}</span>
+            <span class="profile-section-collapsible__edit-icon profile-section-collapsible__edit-icon--add" aria-hidden="true">${plusIcon}</span>
           </button>
           <button
             type="button"
@@ -139,11 +139,14 @@ function renderOwnerEmptyLanguagesSection(
     <section 
       aria-labelledby="languages-heading" 
       data-profile-section="languages"
-      class="profile__section--empty border-lighter flex-column-center rounded-md gap-lg" 
+      class="profile__section--empty border-lighter flex-column-center rounded-md gap-lg profile-section-collapsible" 
       role="region"
       tabindex="-1"
+      data-expanded="false"
     >
-      ${renderOwnerEmptyLanguagesContent(store, subject, languages, viewerMode, onSaved)}
+      <div id="languages-panel" class="profile-section-collapsible__content" aria-hidden="true">
+        ${renderOwnerEmptyLanguagesContent(store, subject, languages, viewerMode, onSaved)}
+      </div>
     </section>
   `
 }

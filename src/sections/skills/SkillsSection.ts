@@ -143,7 +143,7 @@ function renderOwnerEmptySkillsContent(
               <span class="profile__add-more-icon inline-flex-row" aria-hidden="true">${addIcon}</span>
               Add Skills
             </span>
-            <span class="profile-section-collapsible__edit-icon" aria-hidden="true">${addIcon}</span>
+            <span class="profile-section-collapsible__edit-icon profile-section-collapsible__edit-icon--add" aria-hidden="true">${plusIcon}</span>
           </button>
           <button
             type="button"
@@ -179,11 +179,14 @@ function renderOwnerEmptySkillsSection(
     <section 
       aria-labelledby="skills-heading" 
       data-profile-section="skills"
-      class="profile__section--empty border-lighter flex-column-center rounded-md gap-lg" 
+      class="profile__section--empty border-lighter flex-column-center rounded-md gap-lg profile-section-collapsible" 
       role="region"
       tabindex="-1"
+      data-expanded="false"
     >
-      ${renderOwnerEmptySkillsContent(store, subject, skills, viewerMode, onSaved)}
+      <div id="skills-panel" class="profile-section-collapsible__content" aria-hidden="true">
+        ${renderOwnerEmptySkillsContent(store, subject, skills, viewerMode, onSaved)}
+      </div>
     </section>
   `
 }
