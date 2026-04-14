@@ -116,8 +116,8 @@
 }
 
 .contact-info__empty-icon svg {
-  width: 2.5rem; /* 40px */
-  height: 2.5rem; /* 40px */
+  width: var(--icon-md, 2.5rem); /* 40px */
+  height: var(--icon-md, 2.5rem); /* 40px */
   display: block;
 }
 
@@ -159,8 +159,8 @@
 }
 
 .profile__add-more-icon {
-  width: 0.75rem;
-  height: 0.75rem;
+  width: var(--icon-xxxs, 0.75rem); /* 12px */
+  height: var(--icon-xxxs, 0.75rem); /* 12px */
   line-height: 0;
   flex: 0 0 auto;
 }
@@ -197,6 +197,24 @@
   padding: 0;
   margin: 0;
   line-height: 1;
+}
+
+.languages__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.languages__item-label {
+  color: var(--gray-900, #101828);
+  font-size: var(--font-size-md, 1rem); /* 16px */
+  font-weight: var(--font-weight-md, 500);
+}
+
+.languages__empty-icon {
+  width: var(--icon-xs, 1.5rem); /* 24px new design uses this */
+  height: var(--icon-xs, 1.5rem); /* 24px new design uses this */
+  flex-shrink: 0;
 }
 /* Add-me-to-friends button style shared across profile sections. */
 .profile__btn-friends {

@@ -315,7 +315,7 @@ function renderLanguageInputRow({
         </datalist>
         <small class="inputHelpText">Type to search and select one language suggestion.</small>
       </label>
-      <label aria-label=${proficiencyLabel} class="label profile-edit-dialog__field-type">
+      <label aria-label=${proficiencyLabel} class="label" hidden>
         <select name=${proficiencyInputName} id=${proficiencySelectId} @change=${handleProficiencyInput} .value=${row?.proficiency || ''}>
           <option value="Basic">Basic</option>
           <option value="Intermediate">Intermediate</option>

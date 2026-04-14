@@ -4,7 +4,7 @@ import { ns } from 'solid-ui'
 import { ViewerMode } from '../../types'
 import { createLanguageEditDialog } from './LanguageEditDialog'
 import { LanguageDetails } from './types'
-import { addIcon, plusIcon } from '../../icons-svg/profileIcons'
+import { addIcon, commentIcon, plusIcon } from '../../icons-svg/profileIcons'
 import { languagesHeadingText } from '../../texts'
 import { toggleCollapsibleSection } from '../shared/collapsibleSection'
 
@@ -20,17 +20,10 @@ function renderLanguages(languages: LanguageDetails[], asList = false) {
   return html`${renderLan(languages[0], asList)}${languages.length > 1 ? renderLanguages(languages.slice(1), asList) : html``}`
 }
 
-export function renderLanguageSection(
-  store: LiveStore,
-  subject: NamedNode,
-  languages: LanguageDetails[],
-  viewerMode: ViewerMode,
-  onSaved?: () => Promise<void> | void
-) {
-  const languagesArr = languages || []
-  const hasLanguages = Array.isArray(languagesArr) && languagesArr.length > 0
+function renderLanguagesSectionDefault(store: LiveStore, subject: NamedNode, languages: LanguageDetails[], viewerMode: ViewerMode, onSaved?: () => Promise<void> | void) {
+  
+  const hasLanguages = Array.isArray(languages) && languages.length > 0
   const hasLanguageLinks = store.each(subject, ns.schema('knowsLanguage')).length > 0
-
   return html`
     <section
       class="profile__section border-lighter profile-section-collapsible"
@@ -46,7 +39,7 @@ export function renderLanguageSection(
             type="button"
             class="profile__action-button profile-action-text flex-center profile-section-collapsible__edit-button"
             aria-label="Add or edit languages"
-            @click=${(event: Event) => createLanguageEditDialog(event, store, subject, languagesArr, viewerMode, onSaved)}
+            @click=${(event: Event) => createLanguageEditDialog(event, store, subject, languages, viewerMode, onSaved)}
           >
             <span class="profile-section-collapsible__edit-label profile__add-more-content inline-flex-row">
               <span class="profile__add-more-icon inline-flex-row" aria-hidden="true">${addIcon}</span>
@@ -69,8 +62,8 @@ export function renderLanguageSection(
       <div id="languages-panel" class="profile-section-collapsible__content" aria-hidden="true">
         ${hasLanguages
           ? html`
-              <ul role="list" aria-label="Known languages">
-                ${renderLanguages(languagesArr, true)}
+              <ul class="languages__list" role="list" aria-label="Known languages">
+                ${renderLanguages(languages, true)}
               </ul>
             `
           : hasLanguageLinks
@@ -79,4 +72,99 @@ export function renderLanguageSection(
       </div>
     </section>
   `
+}
+
+function renderOwnerEmptyLanguagesContent(
+  store: LiveStore,
+  subject: NamedNode,
+  languages: LanguageDetails[],
+  viewerMode: ViewerMode,
+  onSaved?: () => Promise<void> | void
+) {
+  return html`
+      <header class="profile__section-header profile-section-collapsible__header">
+        <h2 id="languages-heading" tabindex="-1">${languagesHeadingText}</h2>
+        <div class="profile-section-collapsible__actions flex-column">
+          <button
+            type="button"
+            class="profile__action-button profile-action-text flex-center profile-section-collapsible__edit-button"
+            aria-label="Add languages"
+            @click=${(event: Event) => {
+              return createLanguageEditDialog(
+                event,
+                store,
+                subject,
+                languages,
+                viewerMode,
+                onSaved
+              )
+            }}>
+            <span class="profile-section-collapsible__edit-label profile__add-more-content inline-flex-row">
+              <span class="profile__add-more-icon inline-flex-row" aria-hidden="true">${addIcon}</span>
+              Add Languages
+            </span>
+            <span class="profile-section-collapsible__edit-icon" aria-hidden="true">${addIcon}</span>
+          </button>
+          <button
+            type="button"
+            class="inline-flex-row"
+            aria-label="Toggle languages section"
+            aria-controls="languages-panel"
+            aria-expanded="false"
+            @click=${toggleCollapsibleSection}
+          >
+            <span class="profile-section-collapsible__chevron" aria-hidden="true">⌄</span>
+          </button>
+        </div>
+      </header>
+      <div class="profile__empty-state-content flex-column-center" role="group" aria-label="Empty languages section">    
+        <div class="languages__empty-icon-wrapper">
+          <span class="languages__empty-icon inline-flex-row">${commentIcon}</span>
+        </div>
+        <p class="profile__empty-state-message languages__empty-message">
+            No languages added yet.
+        </p>
+      </div>
+  `
+}
+
+function renderOwnerEmptyLanguagesSection(
+  store: LiveStore,
+  subject: NamedNode,
+  languages: LanguageDetails[],
+  viewerMode: ViewerMode,
+  onSaved?: () => Promise<void> | void
+) {
+  return html`
+    <section 
+      aria-labelledby="languages-heading" 
+      data-profile-section="languages"
+      class="profile__section--empty border-lighter flex-column-center rounded-md gap-lg" 
+      role="region"
+      tabindex="-1"
+    >
+      ${renderOwnerEmptyLanguagesContent(store, subject, languages, viewerMode, onSaved)}
+    </section>
+  `
+}
+
+export function renderLanguageSection(
+  store: LiveStore,
+  subject: NamedNode,
+  languages: LanguageDetails[],
+  viewerMode: ViewerMode,
+  onSaved?: () => Promise<void> | void
+) {
+  const safeLanguages = languages || []
+  const hasLanguages = Array.isArray(safeLanguages) && safeLanguages.length > 0
+
+  const showOwnerEmptyLanguages = !hasLanguages && viewerMode === 'owner'
+  const showSection = true
+    
+  return showSection ? html`
+    ${showOwnerEmptyLanguages
+      ? renderOwnerEmptyLanguagesSection(store, subject, safeLanguages, viewerMode, onSaved)
+      : renderLanguagesSectionDefault(store, subject, safeLanguages, viewerMode, onSaved)}
+  ` : ''
+  
 }
