@@ -41,7 +41,7 @@ function renderSidebar(
   return html`
     <aside 
       aria-labelledby="sidebar-heading" 
-      class="profile__sidebar section-bg" 
+      class="profile__sidebar p-sm" 
     >
       <h2 id="sidebar-heading" class="sr-only">Sidebar</h2>
       <div aria-label="Sidebar Content">
@@ -93,7 +93,7 @@ export async function ProfileView (
       <h1 id="profile-content-heading" class="sr-only">Profile for ${profileDetails.name}</h1>
 
       <section
-        class="profile__main section-bg flex-column gap-md p-md"
+        class="profile__main flex-column gap-md p-sm"
         >
         <h2 id="profile-main-heading" class="sr-only">Main Profile Content</h2>
 

@@ -30,19 +30,19 @@
 .profile-grid {
   display: grid;
   grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
-  gap: var(--spacing-lg, 1.5625rem);
+  gap: var(--spacing-xxs, 0.3125rem);
   background: var(--color-background, #F8F9FB);
 }
 
 @media (max-width: 900px) {
   .profile-grid {
     grid-template-columns: 1fr;
-    gap: var(--spacing-sm, 0.75rem);
+    gap: var(--spacing-xxs, 0.3125rem);
     width: 100%;
     max-width: 100%;
     box-sizing: border-box;
     margin: 0 auto;
-    padding-inline: var(--spacing-sm, 0.75rem);
+    padding-inline: var(--spacing-xxs, 0.3125rem);
     overflow-x: clip;
   }
 
