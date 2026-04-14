@@ -12,7 +12,7 @@ import {
   toggleDescription
 } from '../shared/sectionCardHelpers'
 import { toggleCollapsibleSection } from '../shared/collapsibleSection'
-import { editIcon } from '../../icons-svg/profileIcons'
+import { editIcon, plusDarkIcon } from '../../icons-svg/profileIcons'
 
 function renderRole(role: RoleDetails, index: number) {
   if (!role) return html``
@@ -83,16 +83,14 @@ export const CVCard = (
   `
 }
 
-export function renderCVSection(
-  store: LiveStore,
-  subject: NamedNode,
-  roles: RoleDetails[],
-  viewerMode: ViewerMode,
-  onSaved?: () => Promise<void> | void
-) {
-  scheduleDescriptionOverflowCheck()
+function renderResumeSectionDefault(
+  store: LiveStore, 
+  subject: NamedNode, 
+  resumeDetails: RoleDetails[], 
+  viewerMode: ViewerMode, 
+  onSaved?: () => Promise<void> | void) {
+    scheduleDescriptionOverflowCheck()
 
-  const resumeDetails: RoleDetails[] = roles || []
   const hasResume = resumeDetails.length > 0
   const showSection = true
   const cv = hasResume ? CVCard(resumeDetails, viewerMode) : html``
@@ -133,5 +131,80 @@ export function renderCVSection(
         ${hasResume ? cv : html`<p>No resume details added yet.</p>`}
       </div>
     </section>
+  ` : ''
+}
+
+function renderOwnerEmptyResumeContent(
+  store: LiveStore,
+  subject: NamedNode,
+  resumeDetails: RoleDetails[],
+  viewerMode: ViewerMode,
+  onSaved?: () => Promise<void> | void) {
+
+  return html`
+    <div class="profile__empty-state-content flex-column-center" role="group" aria-label="Empty resume section">
+      <h2 id="resume-heading" tabindex="-1">${resumeHeadingText}</h2>
+      <p class="profile__empty-state-message">
+        You haven't included any professional experience yet. Consider adding your work history to enhance your resume.
+      </p>
+    </div>
+    <button
+      type="button"
+      class="profile__action-button--empty"
+      aria-label="Add resume details"
+      @click=${(event: Event) => {
+        return createResumeEditDialog(
+          event,
+          store,
+          subject,
+          resumeDetails,
+          viewerMode,
+          onSaved
+        )
+      }}
+    >
+      <span class="profile__action-icon" aria-hidden="true">${plusDarkIcon} Add Resume</span>
+    </button>
+
+  `
+}
+
+function renderOwnerEmptyResumeSection(
+  store: LiveStore,
+  subject: NamedNode,
+  resumeDetails: RoleDetails[],
+  viewerMode: ViewerMode,
+  onSaved?: () => Promise<void> | void
+) {
+  return html`
+    <section 
+      aria-labelledby="resume-heading" 
+      data-profile-section="resume"
+      class="profile__section--empty border-lighter flex-column-center rounded-md gap-lg" 
+      role="region"
+      tabindex="-1"
+    >
+      ${renderOwnerEmptyResumeContent(store, subject, resumeDetails, viewerMode, onSaved)}
+    </section>
+  `
+}
+
+export function renderCVSection(
+  store: LiveStore,
+  subject: NamedNode,
+  roles: RoleDetails[],
+  viewerMode: ViewerMode,
+  onSaved?: () => Promise<void> | void
+) {
+
+  const resumeDetails: RoleDetails[] = roles || []
+  const hasResume = resumeDetails.length > 0
+  const showOwnerEmptyResume = !hasResume && viewerMode === 'owner'
+  const showSection = true
+
+  return showSection ? html`
+    ${showOwnerEmptyResume
+      ? renderOwnerEmptyResumeSection(store, subject, resumeDetails, viewerMode, onSaved)
+      : renderResumeSectionDefault(store, subject, resumeDetails, viewerMode, onSaved)}
   ` : ''
 }
