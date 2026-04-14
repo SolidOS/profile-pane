@@ -3,34 +3,66 @@ import { strToUpperCase } from '../../textUtils'
 import { LiveStore, NamedNode } from 'rdflib'
 import { ViewerMode } from '../../types'
 import { createSkillsEditDialog } from './SkillsEditDialog'
-import { SkillDetails } from './types'
-import { addIcon, plusIcon } from '../../icons-svg/profileIcons'
+import { SkillDetails, SkillRow } from './types'
+import { addIcon, deleteIcon, lighteningIcon, plusIcon } from '../../icons-svg/profileIcons'
 import { skillsHeadingText } from '../../texts'
 import { toggleCollapsibleSection } from '../shared/collapsibleSection'
 import { presentSkillDetails } from './selectors'
+import { processSkillsMutations } from './mutations'
 
-function renderSkill(skill, asList = false) {
-  if (!skill) return html``
-  return asList
-    ? html`<li class="skill" role="listitem">${strToUpperCase(skill)}</li>`
-    : html``
-}
-
-function renderSkills(skills, asList = false) {
-  if (!skills || !skills.length || !skills[0]) return html``
-  return html`${renderSkill(skills[0], asList)}${skills.length > 1 ? renderSkills(skills.slice(1), asList) : html``}`
-}
-
-export function renderSkillsSection(
+function renderSkillItem(
+  detail: SkillDetails,
   store: LiveStore,
   subject: NamedNode,
-  skills: string[],
   viewerMode: ViewerMode,
   onSaved?: () => Promise<void> | void
 ) {
-  const skillsArr = skills || []
-  const hasSkills = Array.isArray(skillsArr) && skillsArr.length > 0
+  if (!detail) return html``
+
+  const handleRemove = async (event: Event) => {
+    event.preventDefault()
+    if (viewerMode !== 'owner') return
+
+    const removeRow: SkillRow = {
+      name: detail.name,
+      publicId: detail.publicId,
+      entryNode: detail.entryNode.value,
+      status: 'deleted'
+    }
+
+    await processSkillsMutations(store, subject, {
+      create: [],
+      update: [],
+      remove: [removeRow]
+    })
+
+    if (onSaved) {
+      await onSaved()
+    }
+  }
+
+  return html`
+    <li class="skills__item inline-flex-row" role="listitem">
+      <span class="skills__item-label">${strToUpperCase(detail.name)}</span>
+      ${viewerMode === 'owner'
+        ? html`
+            <button
+              type="button"
+              class="skills__remove-button inline-flex-row"
+              aria-label="Remove ${detail.name} skill"
+              @click=${handleRemove}
+            >
+              ${deleteIcon}
+            </button>
+          `
+        : ''}
+    </li>
+  `
+}
+
+function renderSkillsSectionDefault(store: LiveStore, subject: NamedNode, skills: string[], viewerMode: ViewerMode, onSaved?: () => Promise<void> | void) {
   const skillDetails: SkillDetails[] = presentSkillDetails(subject, store)
+  const hasSkills = Array.isArray(skillDetails) && skillDetails.length > 0
 
   return html`
     <section
@@ -74,12 +106,107 @@ export function renderSkillsSection(
       >
         ${hasSkills
           ? html`
-              <ul role="list" aria-label="Professional skills and competencies">
-                ${renderSkills(skillsArr, true)}
+              <ul class="skills__list flex-column" role="list" aria-label="Professional skills and competencies">
+                ${skillDetails.map((detail) => renderSkillItem(detail, store, subject, viewerMode, onSaved))}
               </ul>
             `
           : html`<p>No skills added yet.</p>`}
       </div>
     </section>
   `
+}
+
+function renderOwnerEmptySkillsContent(
+  store: LiveStore,
+  subject: NamedNode,
+  skills: string[],
+  viewerMode: ViewerMode,
+  onSaved?: () => Promise<void> | void
+) {
+  const skillDetails: SkillDetails[] = presentSkillDetails(subject, store)
+
+  return html`
+      <header class="profile__section-header profile-section-collapsible__header">
+        <h2 id="skills-heading" tabindex="-1">${skillsHeadingText}</h2>
+        <div class="profile-section-collapsible__actions flex-column">
+          <button
+            type="button"
+            class="profile__action-button profile-action-text flex-center profile-section-collapsible__edit-button"
+            aria-label="Add skills"
+            @click=${(event: Event) => {
+              return createSkillsEditDialog(
+                event,
+                store,
+                subject,
+                skillDetails,
+                viewerMode,
+                onSaved
+              )
+            }}>
+            <span class="profile-section-collapsible__edit-label profile__add-more-content inline-flex-row">
+              <span class="profile__add-more-icon inline-flex-row" aria-hidden="true">${addIcon}</span>
+              Add Skills
+            </span>
+            <span class="profile-section-collapsible__edit-icon" aria-hidden="true">${addIcon}</span>
+          </button>
+          <button
+            type="button"
+            class="inline-flex-row"
+            aria-label="Toggle skills section"
+            aria-controls="skills-panel"
+            aria-expanded="false"
+            @click=${toggleCollapsibleSection}
+          >
+            <span class="profile-section-collapsible__chevron" aria-hidden="true">⌄</span>
+          </button>
+        </div>
+      </header>
+      <div class="profile__empty-state-content flex-column-center" role="group" aria-label="Empty skills section">    
+        <div class="skills__empty-icon-wrapper">
+          <span class="skills__empty-icon inline-flex-row">${lighteningIcon}</span>
+        </div>
+        <p class="profile__empty-state-message skills__empty-message">
+            No skills added yet.
+        </p>
+      </div>
+  `
+}
+
+function renderOwnerEmptySkillsSection(
+  store: LiveStore,
+  subject: NamedNode,
+  skills: string[],
+  viewerMode: ViewerMode,
+  onSaved?: () => Promise<void> | void
+) {
+  return html`
+    <section 
+      aria-labelledby="skills-heading" 
+      data-profile-section="skills"
+      class="profile__section--empty border-lighter flex-column-center rounded-md gap-lg" 
+      role="region"
+      tabindex="-1"
+    >
+      ${renderOwnerEmptySkillsContent(store, subject, skills, viewerMode, onSaved)}
+    </section>
+  `
+}
+
+export function renderSkillsSection(
+  store: LiveStore,
+  subject: NamedNode,
+  skills: string[],
+  viewerMode: ViewerMode,
+  onSaved?: () => Promise<void> | void
+) {
+  const safeSkills = skills || []
+  const hasSkills = Array.isArray(skills) && skills.length > 0
+  const showOwnerEmptySkills = !hasSkills && viewerMode === 'owner'
+  const showSection = true
+    
+  return showSection ? html`
+    ${showOwnerEmptySkills
+      ? renderOwnerEmptySkillsSection(store, subject, safeSkills, viewerMode, onSaved)
+      : renderSkillsSectionDefault(store, subject, safeSkills, viewerMode, onSaved)}
+  ` : ''
 }

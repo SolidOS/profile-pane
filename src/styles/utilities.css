@@ -170,6 +170,34 @@
   height: 100%;
   display: block;
 }
+
+.skills__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  align-items: flex-start;
+  gap: 0.5rem; /* 8px */
+}
+
+.skills__item {
+  gap: 0.2rem;
+}
+
+.skills__item-label {
+  color: var(--slate-900, #0F172B);
+  font-size: var(--font-size-sm, 0.875rem); /* 14px */
+  font-weight: var(--font-weight-md, 500);
+  line-height: 1.2;
+}
+
+.skills__remove-button {
+  border: none;
+  background: none;
+  cursor: pointer;
+  padding: 0;
+  margin: 0;
+  line-height: 1;
+}
 /* Add-me-to-friends button style shared across profile sections. */
 .profile__btn-friends {
   width: auto;
@@ -224,7 +252,7 @@
   gap: var(--spacing-xs, 0.75rem);
 }
 
-.profile-section-collapsible__actions .inline-flex-row {
+.profile-section-collapsible__actions > button.inline-flex-row {
   display: none;
   min-height: auto;
   min-width: auto;
@@ -306,7 +334,7 @@
   }
   /* Reassert toggle button layout in collapsible action rows on mobile 
   so utility resets never hide/misalign the control. */
-  .profile-section-collapsible__actions .inline-flex-row {
+  .profile-section-collapsible__actions > button.inline-flex-row {
     display: inline-flex;
     align-items: center;
     justify-content: center;
