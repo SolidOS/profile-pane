@@ -111,7 +111,7 @@ function renderOwnerEmptyProjectsContent(
   const projectDetails: ProjectDetails[] = projectData
 
   return html`
-    <div class="profile__empty-state-content" role="group" aria-label="Empty projects section">
+    <div class="profile__empty-state-content flex-column-center" role="group" aria-label="Empty projects section">
       <h2 id="projects-heading" tabindex="-1">${projectsHeadingText}</h2>
       <p class="profile__empty-state-message">
         You haven't added any projects yet. Consider adding a project to boost your profile.
@@ -188,24 +188,24 @@ function renderProjectSectionDefault(
       >
         <header class="profile__section-header profile-section-collapsible__header">
           <h2 id="projects-heading">${projectsHeadingText}</h2>
-          <div class="profile-section-collapsible__actions">
+          <div class="profile-section-collapsible__actions flex-column">
             <button
               type="button"
-              class="profile__action-button u-profile-action-text profile-section-collapsible__edit-button"
+              class="profile__action-button profile-action-text flex-center profile-section-collapsible__edit-button"
               aria-label="Add or edit projects"
               @click=${(event: Event) => {
                 return createProjectsEditDialog(event, store, subject, projects, viewerMode, onSaved)
               }}
             >
-              <span class="profile-section-collapsible__edit-label profile__add-more-content">
-                <span class="profile__add-more-icon" aria-hidden="true">${addIcon}</span>
+              <span class="profile-section-collapsible__edit-label profile__add-more-content inline-flex-row">
+                <span class="profile__add-more-icon inline-flex-row" aria-hidden="true">${addIcon}</span>
                 Add More
               </span>
               <span class="profile-section-collapsible__edit-icon profile-section-collapsible__edit-icon--add" aria-hidden="true">${plusIcon}</span>
             </button>
             <button
               type="button"
-              class="profile-section-collapsible__toggle"
+              class="inline-flex-row"
               aria-label="Toggle projects section"
               aria-controls="projects-panel"
               aria-expanded="false"

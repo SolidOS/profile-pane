@@ -259,12 +259,12 @@ function renderContactInfoPhoneSection(phones: ContactPointRow[], onAddRow: () =
         </h4>
         <button
           type="button"
-          class="profile__action-button u-profile-action-text"
+          class="profile__action-button profile-action-text flex-center"
           aria-label="Add another phone number"
           @click=${createNewRow}
         >
-          <span class="profile__add-more-content">
-            <span class="profile__add-more-icon" aria-hidden="true">${addIcon}</span>
+          <span class="profile__add-more-content inline-flex-row">
+            <span class="profile__add-more-icon inline-flex-row" aria-hidden="true">${addIcon}</span>
             Add More
           </span>
         </button>
@@ -382,12 +382,12 @@ function renderContactInfoEmailSection(emails: ContactPointRow[], onAddRow: () =
         </h4>
         <button
           type="button"
-          class="profile__action-button u-profile-action-text"
+          class="profile__action-button profile-action-text flex-center"
           aria-label="Add another email address"
           @click=${createNewRow}
         >
-          <span class="profile__add-more-content">
-            <span class="profile__add-more-icon" aria-hidden="true">${addIcon}</span>
+          <span class="profile__add-more-content inline-flex-row">
+            <span class="profile__add-more-icon inline-flex-row" aria-hidden="true">${addIcon}</span>
             Add More
           </span>
         </button>
@@ -591,12 +591,12 @@ function renderContactInfoAddressSection(addresses: ContactAddressRow[], onAddRo
         </h4>
         <button
           type="button"
-          class="profile__action-button u-profile-action-text"
+          class="profile__action-button profile-action-text flex-center"
           aria-label="Add another address"
           @click=${createNewRow}
         >
-          <span class="profile__add-more-content">
-            <span class="profile__add-more-icon" aria-hidden="true">${addIcon}</span>
+          <span class="profile__add-more-content inline-flex-row">
+            <span class="profile__add-more-icon inline-flex-row" aria-hidden="true">${addIcon}</span>
             Add More
           </span>
         </button>

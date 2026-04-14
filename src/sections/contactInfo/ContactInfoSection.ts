@@ -133,10 +133,10 @@ function renderContactInfoSectionDefault(
     >
       <header class="profile__section-header profile-section-collapsible__header">
         <h2 id="contact-details-heading" tabindex="-1">${contactInfoHeadingText}</h2>
-        <div class="profile-section-collapsible__actions">
+        <div class="profile-section-collapsible__actions flex-column">
           <button 
             type="button" 
-            class="profile__action-button u-profile-action-text profile-section-collapsible__edit-button" 
+            class="profile__action-button profile-action-text flex-center profile-section-collapsible__edit-button" 
             aria-label="Edit contact information"
             @click=${(event: Event) => {
               return createContactInfoEditDialog(
@@ -153,7 +153,7 @@ function renderContactInfoSectionDefault(
           </button>
           <button
             type="button"
-            class="profile-section-collapsible__toggle"
+            class="inline-flex-row"
             aria-label="Toggle contact information section"
             aria-controls="contact-details-panel"
             aria-expanded="false"
@@ -201,10 +201,10 @@ function renderOwnerEmptyContactInfoContent(
   return html`
       <header class="profile__section-header profile-section-collapsible__header">
         <h2 id="contact-details-heading" tabindex="-1">${contactInfoEmptyHeadingText}</h2>
-        <div class="profile-section-collapsible__actions">
+        <div class="profile-section-collapsible__actions flex-column">
           <button
             type="button"
-            class="profile__action-button u-profile-action-text profile-section-collapsible__edit-button"
+            class="profile__action-button profile-action-text flex-center profile-section-collapsible__edit-button"
             aria-label="Add contact information"
             @click=${(event: Event) => {
               return createContactInfoEditDialog(
@@ -221,7 +221,7 @@ function renderOwnerEmptyContactInfoContent(
           </button>
           <button
             type="button"
-            class="profile-section-collapsible__toggle"
+            class="inline-flex-row"
             aria-label="Toggle contact information section"
             aria-controls="contact-details-panel"
             aria-expanded="false"
@@ -231,9 +231,9 @@ function renderOwnerEmptyContactInfoContent(
           </button>
         </div>
       </header>
-      <div class="profile__empty-state-content" role="group" aria-label="Empty contact information section">    
+      <div class="profile__empty-state-content flex-column-center" role="group" aria-label="Empty contact information section">    
         <div class="contact-info__empty-icon-wrapper">
-          <span class="contact-info__empty-icon">${envelopeIcon}</span>
+          <span class="contact-info__empty-icon inline-flex-row">${envelopeIcon}</span>
         </div>
         <p class="profile__empty-state-message contact-info__empty-message">
             No additional contact info added yet.

@@ -102,10 +102,10 @@ export function renderSocialAccounts(
         >
           <header class="profile__section-header profile-section-collapsible__header">
             <h2 id="social-heading" tabindex="-1">${socialAccountsHeadingText}</h2>
-            <div class="profile-section-collapsible__actions">
+            <div class="profile-section-collapsible__actions flex-column">
               <button
                 type="button"
-                class="profile__action-button u-profile-action-text profile-section-collapsible__edit-button"
+                class="profile__action-button profile-action-text flex-center profile-section-collapsible__edit-button"
                 aria-label="Edit social accounts"
                 @click=${handleEdit}
               >
@@ -114,7 +114,7 @@ export function renderSocialAccounts(
               </button>
               <button
                 type="button"
-                class="profile-section-collapsible__toggle"
+                class="inline-flex-row"
                 aria-label="Toggle social accounts section"
                 aria-controls="social-panel"
                 aria-expanded="false"

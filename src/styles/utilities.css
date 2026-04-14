@@ -115,21 +115,14 @@
   line-height: var(--line-height-tight, 1.4); /* 140% from design 18.2px */
 }
 
-/* Contact info empty-state hooks for section-specific styling. */
-.contact-info__empty-icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
-
 .contact-info__empty-icon svg {
-  width: 40px;
-  height: 40px;
+  width: 2.5rem; /* 40px */
+  height: 2.5rem; /* 40px */
   display: block;
 }
 
 .contact-info__empty-icon svg path {
-  stroke-width: 4px;
+  stroke-width: 0.25rem; /* 4px */
   stroke: #E5E7EB;
 }
 
@@ -146,9 +139,6 @@
   flex: 1 0 0;
 }
 .profile__empty-state-content {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
   gap: var(--spacing-2xs, 0.625rem); /* 10px */
 }
 
@@ -165,15 +155,10 @@
 }
 
 .profile__add-more-content {
-  display: inline-flex;
-  align-items: center;
   gap: var(--spacing-xxs, 0.3125rem);
 }
 
 .profile__add-more-icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
   width: 0.75rem;
   height: 0.75rem;
   line-height: 0;
@@ -187,12 +172,10 @@
 }
 /* Add-me-to-friends button style shared across profile sections. */
 .profile__btn-friends {
-  display: flex;
   width: auto;
   min-width: 0;
   max-width: none;
   padding: 0.375rem 0.75rem;
-  align-items: center;
   gap: var(--spacing-xxs, 0.3125rem);
   border-radius: var(--border-radius-md, 0.5rem);
   border: 1px solid var(--color-primary, #7C4DFF);
@@ -201,7 +184,7 @@
 }
 
 /* Text-style action button utility (used for section header/edit actions). */
-.u-profile-action-text {
+.profile-action-text {
   width: auto;
   min-width: 0;
   max-width: none;
@@ -211,11 +194,9 @@
   color: var(--color-primary, #7C4DFF);
   cursor: pointer;
   font-size: var(--font-size-sm, 0.875rem);
-  display: flex;
-  align-items: center;
 }
 
-.u-profile-action-text:hover {
+.profile-action-text:hover {
   text-decoration: underline;
 }
 
@@ -228,8 +209,6 @@
 }
 
 .profile-section-collapsible__actions {
-  display: flex;
-  align-items: center;
   gap: var(--spacing-xs, 0.75rem);
 }
 
@@ -241,7 +220,11 @@
   display: none;
 }
 
-.profile-section-collapsible__toggle {
+.profile-section-collapsible__actions {
+  gap: var(--spacing-xs, 0.75rem);
+}
+
+.profile-section-collapsible__actions .inline-flex-row {
   display: none;
   min-height: auto;
   min-width: auto;
@@ -278,10 +261,6 @@
     fill: var(--color-primary, #7C4DFF);
   }
 
-  .profile-section-collapsible__toggle {
-    display: none;
-  }
-
   .profile-section-collapsible__edit-label {
     display: inline;
   }
@@ -292,14 +271,17 @@
 }
 
 @media (max-width: 1000px) {
+  .profile__section-header h2 {
+    font-size: var(--font-size-lg, 1.125rem);
+  }
+
   .profile-section-collapsible[data-expanded="false"] .profile-section-collapsible__content {
     display: none;
   }
 
-  .profile-section-collapsible__toggle {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
+  .profile-section-collapsible__actions.flex-column {
+    align-items: flex-end;
+    gap: 0.25rem;
   }
 
   .profile-section-collapsible[data-expanded="true"] .profile-section-collapsible__chevron {
@@ -307,11 +289,27 @@
   }
 
   .profile-section-collapsible__edit-label {
-    display: none;
+    display: none !important;
   }
 
   .profile-section-collapsible__edit-icon {
     display: inline;
+  }
+
+  .profile-section-collapsible .profile-section-collapsible__edit-button {
+    display: none !important;
+    order: 2;
+  }
+
+  .profile-section-collapsible[data-expanded="true"] .profile-section-collapsible__edit-button {
+    display: inline-flex !important;
+  }
+  /* Reassert toggle button layout in collapsible action rows on mobile 
+  so utility resets never hide/misalign the control. */
+  .profile-section-collapsible__actions .inline-flex-row {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
   }
 
   .profile-section-collapsible__edit-icon--add svg path {

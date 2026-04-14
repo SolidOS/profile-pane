@@ -107,10 +107,10 @@ export function renderCVSection(
     >
       <header class="profile__section-header profile-section-collapsible__header">
         <h2 id="cv-heading" tabindex="-1">${resumeHeadingText}</h2>
-        <div class="profile-section-collapsible__actions">
+        <div class="profile-section-collapsible__actions flex-column">
           <button
             type="button"
-            class="profile__action-button u-profile-action-text profile-section-collapsible__edit-button"
+            class="profile__action-button profile-action-text flex-center profile-section-collapsible__edit-button"
             aria-label="Edit resume details"
             @click=${(event: Event) => createResumeEditDialog(event, store, subject, resumeDetails, viewerMode, onSaved)}
           >
@@ -119,7 +119,7 @@ export function renderCVSection(
           </button>
           <button
             type="button"
-            class="profile-section-collapsible__toggle"
+            class="inline-flex-row"
             aria-label="Toggle resume section"
             aria-controls="cv-panel"
             aria-expanded="false"

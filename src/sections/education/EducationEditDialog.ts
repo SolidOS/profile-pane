@@ -397,13 +397,13 @@ function renderEducationSection(educationData: EducationRow[], onAddRow: () => v
         </h4>
         <button
           type="button"
-          class="profile__action-button u-profile-action-text"
+          class="profile__action-button profile-action-text flex-center"
           data-dialog-add-more="true"
           aria-label="Add another education entry"
           @click=${createNewRow}
         >
-          <span class="profile__add-more-content">
-            <span class="profile__add-more-icon" aria-hidden="true">${addIcon}</span>
+          <span class="profile__add-more-content inline-flex-row">
+            <span class="profile__add-more-icon inline-flex-row" aria-hidden="true">${addIcon}</span>
             Add More
           </span>
         </button>

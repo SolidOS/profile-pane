@@ -208,7 +208,7 @@ function openModal ({
     } else if (resolvedHeaderAction.type === 'button') {
       const actionButton = dom.createElement('button')
       actionButton.setAttribute('type', 'button')
-      actionButton.className = resolvedHeaderAction.className || 'dialogHeaderActionButton profile__action-button u-profile-action-text'
+      actionButton.className = resolvedHeaderAction.className || 'dialogHeaderActionButton profile__action-button profile-action-text flex-center'
       actionButton.textContent = resolvedHeaderAction.label
       actionButton.setAttribute('aria-label', resolvedHeaderAction.ariaLabel || resolvedHeaderAction.label)
       actionButton.onclick = async () => {

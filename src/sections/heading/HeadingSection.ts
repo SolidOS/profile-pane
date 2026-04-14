@@ -42,7 +42,7 @@ export const renderHeadingSection = (
               <div class="profile__actions profile__heading-actions" aria-label="Profile actions">
                 <button
                   type="button"
-                  class="profile__action-button profile__heading-action-button u-profile-action-text"
+                  class="profile__action-button profile__heading-action-button profile-action-text flex-center"
                   aria-label="Add or edit heading information"
                   @click=${(event: Event) => {
                     return createHeadingEditDialog(

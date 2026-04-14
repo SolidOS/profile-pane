@@ -70,7 +70,7 @@ function renderBioSectionContent(
       <h2 id="bio-heading" tabindex="-1">${bioHeadingText}</h2>
       <button
         type="button"
-        class="profile__action-button u-profile-action-text"
+        class="profile__action-button profile-action-text flex-center"
         aria-label="Edit bio details"
         @click=${(event: Event) => {
           return createBioEditDialog(
@@ -121,7 +121,7 @@ function renderOwnerEmptyBioContent(
   const bioDetails: BioDetails = bioData
 
   return html`
-    <div class="profile__empty-state-content" role="group" aria-label="Empty bio section">
+    <div class="profile__empty-state-content flex-column-center" role="group" aria-label="Empty bio section">
       <h2 id="bio-heading" tabindex="-1">${bioHeadingText}</h2>
       <p class="profile__empty-state-message">
         You haven't added any professional experience yet. Adding work history can boost your Bio.

@@ -34,7 +34,7 @@ const addMeToYourFriendsDiv = (
   buttonContainer.appendChild(heading)
 
   const button = createAddMeToYourFriendsButton(subject, context)
-  button.classList.add('profile__action-button', 'profile__btn-friends')
+  button.classList.add('profile__action-button', 'profile__btn-friends', 'flex-center')
   buttonContainer.appendChild(button)
   return html`${buttonContainer}`
 }

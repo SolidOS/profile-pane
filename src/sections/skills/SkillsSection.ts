@@ -42,22 +42,22 @@ export function renderSkillsSection(
     >
       <header class="profile__section-header profile-section-collapsible__header">
         <h2 id="skills-heading">${skillsHeadingText}</h2>
-        <div class="profile-section-collapsible__actions">
+        <div class="profile-section-collapsible__actions flex-column">
           <button
             type="button"
-            class="profile__action-button u-profile-action-text profile-section-collapsible__edit-button"
+            class="profile__action-button profile-action-text flex-center profile-section-collapsible__edit-button"
             aria-label="Add or edit skills"
             @click=${(event: Event) => createSkillsEditDialog(event, store, subject, skillDetails, viewerMode, onSaved)}
           >
-            <span class="profile-section-collapsible__edit-label profile__add-more-content">
-              <span class="profile__add-more-icon" aria-hidden="true">${addIcon}</span>
+            <span class="profile-section-collapsible__edit-label profile__add-more-content inline-flex-row">
+              <span class="profile__add-more-icon inline-flex-row" aria-hidden="true">${addIcon}</span>
               Add More
             </span>
             <span class="profile-section-collapsible__edit-icon profile-section-collapsible__edit-icon--add" aria-hidden="true">${plusIcon}</span>
           </button>
           <button
             type="button"
-            class="profile-section-collapsible__toggle"
+            class="inline-flex-row"
             aria-label="Toggle skills section"
             aria-controls="skills-panel"
             aria-expanded="false"

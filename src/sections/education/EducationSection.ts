@@ -119,10 +119,10 @@ export function renderEducationSection(
     >
       <header class="profile__section-header profile-section-collapsible__header">
         <h2 id="education-heading" tabindex="-1">${educationHeadingText}</h2>
-        <div class="profile-section-collapsible__actions">
+        <div class="profile-section-collapsible__actions flex-column">
           <button
             type="button"
-            class="profile__action-button u-profile-action-text profile-section-collapsible__edit-button"
+            class="profile__action-button profile-action-text flex-center profile-section-collapsible__edit-button"
             aria-label="Edit education details"
             @click=${(event: Event) => createEducationEditDialog(event, store, subject, educationDetails, viewerMode, onSaved)}
           >
@@ -131,7 +131,7 @@ export function renderEducationSection(
           </button>
           <button
             type="button"
-            class="profile-section-collapsible__toggle"
+            class="inline-flex-row"
             aria-label="Toggle education section"
             aria-controls="education-panel"
             aria-expanded="false"
