@@ -115,6 +115,57 @@
   font-weight: var(--font-weight-normal, 400);
   line-height: var(--line-height-tight, 1.4); /* 140% from design 18.2px */
 }
+.contact-info__icon-wrapper {
+  width: 36px;
+  height: 36px;
+  padding: 0 0.575rem; /* 9.2px - from design, but also ensures icons are centered in the circle */
+  flex-shrink: 0;
+}
+
+.contact-info__icon {
+  width: var(--icon-xxs, 1rem); /* 16px */
+  height: var(--icon-xxs, 1rem); /* 16px */
+  flex-shrink: 0;
+  stroke-width: 1.333px;
+  stroke: #90A1B9;
+}
+
+.contact-info__contact-point-value {
+  color: var(--slate-800, #1D293D);
+  font-size: var(--font-size-sm, 0.875rem); /* 14px */
+  font-weight: var(--font-weight-bold, 600);
+}
+
+.contact-info__contact-point-type {
+  color: var(--slate-500, #62748E);
+  font-size: var(--font-size-xxs, 0.75rem); /* 12px */
+  font-weight: var(--font-weight-md, 500);
+}
+
+.contact-info__address {
+  color: var(--slate-500, #62748E);
+  font-size: var(--font-size-xxs, 0.75rem); /* 12px */
+  font-weight: var(--font-weight-md, 500);
+}
+
+.contact-info__list {
+  list-style: none;
+  margin: 0;
+  padding: 0 0 var(--spacing-2xs, 0.625rem) 0;
+  gap: var(--spacing-2xs, 0.625rem);
+}
+
+.contact-info__list:last-of-type {
+  padding-bottom: 0;
+}
+
+.contact-info__list + .contact-info__list {
+  margin-top: var(--spacing-2xs, 0.625rem);
+}
+
+.contact-info__item {
+  margin-inline-start: -0.25rem;
+}
 
 .contact-info__empty-icon svg {
   width: var(--icon-md, 2.5rem); /* 40px */

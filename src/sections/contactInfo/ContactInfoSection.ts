@@ -6,7 +6,8 @@ import { ns } from 'solid-ui'
 import { contactInfoEmptyHeadingText, contactInfoHeadingText } from '../../texts'
 import { toggleCollapsibleSection } from '../shared/collapsibleSection'
 import { ContactInfo } from './types'
-import { addIcon, editIcon, envelopeIcon, plusIcon } from '../../icons-svg/profileIcons'
+import { addIcon, editIcon, envelopeIcon, locationIcon, plusIcon } from '../../icons-svg/profileIcons'
+import { emailIcon, phoneIcon } from '../../icons-svg/contactIcons'
 
 function toText(value: unknown): string {
   if (!value) return ''
@@ -66,9 +67,14 @@ function renderPhone(phone, store: LiveStore) {
   const phoneValue = resolveContactValue(store, phone, 'phone')
   const phoneType = formatTypeLabel(phone.type)
 
-  return html`<li class="phone" role="listitem">
-        ${phoneValue}
-        ${phoneType ? html`<span class="phone-type"> (${phoneType})</span>` : html``}
+  return html`<li class="contact-info__item flex gap-2xs" role="listitem">
+        <div class="contact-info__icon-wrapper flex-center">
+          <span class="contact-info__icon" aria-hidden="true">${phoneIcon}</span>
+        </div>
+        <div class="flex-column">
+          <span class="contact-info__contact-point-value">${phoneValue}</span>
+          ${phoneType ? html`<span class="contact-info__contact-point-type"> ${phoneType}</span>` : html``}
+        </div>
       </li>`
 }
 
@@ -82,9 +88,14 @@ function renderEmail(email, store: LiveStore) {
   const emailValue = resolveContactValue(store, email, 'email')
   const emailType = formatTypeLabel(email.type)
 
-  return html`<li class="email" role="listitem">
-        ${emailValue}
-        ${emailType ? html`<span class="email-type"> (${emailType})</span>` : html``}
+  return html`<li class="contact-info__item flex gap-2xs" role="listitem">
+        <div class="contact-info__icon-wrapper flex-center">
+          <span class="contact-info__icon" aria-hidden="true">${emailIcon}</span>
+        </div>
+        <div class="flex-column">
+          <span class="contact-info__contact-point-value">${emailValue}</span>
+          ${emailType ? html`<span class="contact-info__contact-point-type">${emailType}</span>` : html``}
+        </div>
       </li>`
 }
 
@@ -104,7 +115,13 @@ function renderAddress(address) {
     address.countryName?.value || address.countryName,
   ].filter(Boolean)
   const formattedAddress = pieces.join(', ')
-  return html`<li class="address" role="listitem">${formattedAddress}</li>`
+  return html`
+        <li class="contact-info__item flex gap-2xs" role="listitem">
+          <div class="contact-info__icon-wrapper flex-center">
+            <span class="contact-info__icon" aria-hidden="true">${locationIcon}</span>
+          </div>
+          ${formattedAddress}
+        </li>`
 }
 
 function renderAddresses(addresses) {
@@ -166,21 +183,21 @@ function renderContactInfoSectionDefault(
       <div id="contact-details-panel" class="profile-section-collapsible__content" aria-hidden="true">
         ${contactInfo.phones.length > 0
           ? html`
-              <ul role="list" aria-label="Phone numbers">
+              <ul class="contact-info__list flex-column" role="list" aria-label="Phone numbers">
                 ${renderPhones(contactInfo.phones, store)}
               </ul>
             `
           : html``}
         ${contactInfo.emails.length > 0
           ? html`
-              <ul role="list" aria-label="Email addresses">
+              <ul class="contact-info__list flex-column" role="list" aria-label="Email addresses">
                 ${renderEmails(contactInfo.emails, store)}
               </ul>
             `
           : html``}
         ${contactInfo.addresses.length > 0
           ? html`
-              <ul role="list" aria-label="Postal addresses">
+              <ul class="contact-info__list flex-column" role="list" aria-label="Postal addresses">
                 ${renderAddresses(contactInfo.addresses)}
               </ul>
             `

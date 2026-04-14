@@ -17,6 +17,7 @@
   --gray-900: #101828; /* Used for: text  */
   --slate-200: #E2E8F0; /* Used for: border of sections */
   --slate-400: #90A1B9; /* Used for: edit dialog cancel */
+  --slate-500: #62748E; /* Used for: text */
   --slate-800: #1D293D; /* Used for: text  */
   --slate-900: #0F172B; /* Used for: text  */
   --black: #000;  /* Used for: text heading */
@@ -162,6 +163,7 @@
   --line-height-tight: 1.4;
   --line-height-loose: 1.6;
   --letter-spacing-wide: 0.025em;
+  --font-size-xxs: 0.75rem; /* 12px */
   --font-size-xs: 0.813rem; /* 13px */
   --font-size-sm: 0.875rem; /* 14px */
   --font-size-md: 1rem;     /* 16px */
