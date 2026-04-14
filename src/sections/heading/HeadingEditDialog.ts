@@ -86,6 +86,26 @@ function normalizePronounsValue(value: string | undefined): string {
   return value || ''
 }
 
+function normalizeHeadingPhoneType(value: unknown): string {
+  const label = toTypeLabel(value).trim().toLowerCase()
+  if (!label) return ''
+
+  if (label === 'cell') return 'Cell'
+  if (label === 'mobile') return 'Cell'
+  if (label === 'home') return 'Home'
+  if (label === 'work' || label === 'office') return 'Work'
+  return ''
+}
+
+function normalizeHeadingEmailType(value: unknown): string {
+  const label = toTypeLabel(value).trim().toLowerCase()
+  if (!label) return ''
+
+  if (label === 'personal' || label === 'home') return 'Personal'
+  if (label === 'office' || label === 'work') return 'Office'
+  return ''
+}
+
 function toFormState(profileData: ProfileDetails): HeadingFormState {
   const basicInfo: ProfileBasicRow = {
     name: sanitizeTextValue(toText(profileData.name)),
@@ -103,9 +123,35 @@ function toFormState(profileData: ProfileDetails): HeadingFormState {
   const primaryPhone = profileData.primaryPhone
   const primaryAddress = profileData.primaryAddress
 
+  const normalizedEmailType = normalizeHeadingEmailType(primaryEmail?.type)
+  const normalizedPhoneType = normalizeHeadingPhoneType(primaryPhone?.type)
+
+  console.log('[heading-edit] Type prefill debug', {
+    rawPhoneTypeValue: toText(primaryPhone?.type),
+    rawPhoneTypeLabel: toTypeLabel(primaryPhone?.type),
+    normalizedPhoneType,
+    rawEmailTypeValue: toText(primaryEmail?.type),
+    rawEmailTypeLabel: toTypeLabel(primaryEmail?.type),
+    normalizedEmailType
+  })
+
+  if (primaryEmail?.type && !normalizedEmailType) {
+    console.info('[heading-edit] Unmapped email type', {
+      rawType: toText(primaryEmail?.type),
+      label: toTypeLabel(primaryEmail?.type)
+    })
+  }
+
+  if (primaryPhone?.type && !normalizedPhoneType) {
+    console.info('[heading-edit] Unmapped phone type', {
+      rawType: toText(primaryPhone?.type),
+      label: toTypeLabel(primaryPhone?.type)
+    })
+  }
+
   const email: ContactPointRow = {
     value: sanitizeEmailValue(toText(primaryEmail?.valueNode).replace(/^mailto:/i, '')),
-    type: toTypeLabel(primaryEmail?.type),
+    type: normalizedEmailType,
     entryNode: toText(primaryEmail?.entryNode),
     status: toText(primaryEmail?.entryNode) ? 'existing' as const : 'new' as const
   }
@@ -113,7 +159,7 @@ function toFormState(profileData: ProfileDetails): HeadingFormState {
       value: sanitizeTextValue(
         toText(primaryPhone?.valueNode || primaryPhone?.entryNode || '').replace(/^tel:/i, '')
       ),
-      type: toTypeLabel(primaryPhone?.type),
+      type: normalizedPhoneType,
       entryNode: toText(primaryPhone?.entryNode || ''),
       status: toText(primaryPhone?.entryNode || '') ? 'existing' as const : 'new' as const
   }
@@ -162,6 +208,40 @@ type ContactEmailInputRowProps = {
 
 type ContactAddressInputRowProps = {
   address: ContactAddressRow
+}
+
+function toSavedHeadingEmailType(type: string | undefined): string {
+  return type === 'Personal' ? 'Home' : (type || '')
+}
+
+function toSavedHeadingPhoneType(type: string | undefined): string {
+  return type === 'Mobile' ? 'Cell' : (type || '')
+}
+
+function mapEmailOpsForSave(ops: { create: ContactPointRow[], update: ContactPointRow[], remove: ContactPointRow[] }) {
+  const mapRow = (row: ContactPointRow): ContactPointRow => ({
+    ...row,
+    type: toSavedHeadingEmailType(row.type)
+  })
+
+  return {
+    create: ops.create.map(mapRow),
+    update: ops.update.map(mapRow),
+    remove: ops.remove.map(mapRow)
+  }
+}
+
+function mapPhoneOpsForSave(ops: { create: ContactPointRow[], update: ContactPointRow[], remove: ContactPointRow[] }) {
+  const mapRow = (row: ContactPointRow): ContactPointRow => ({
+    ...row,
+    type: toSavedHeadingPhoneType(row.type)
+  })
+
+  return {
+    create: ops.create.map(mapRow),
+    update: ops.update.map(mapRow),
+    remove: ops.remove.map(mapRow)
+  }
 }
 
 /* Will use later function renderCountryPrefixSelect(
@@ -243,7 +323,7 @@ function renderContactPhoneInput({
       </div>
       <label aria-label=${typeLabel} class="label profile-edit-dialog__field-type profile-edit-dialog__field-type--contact-point phoneTypeRow">
         <select class="input" name=${typeInputName} id="phone-type-select-${inputName}" @change=${handleTypeInput} .value=${phone?.type || ''}>
-          <option value="Mobile">Mobile</option>
+          <option value="Cell">Mobile</option>
           <option value="Home">Home</option>
           <option value="Work">Work</option>
         </select>
@@ -298,7 +378,6 @@ function renderContactEmailInputRow({
         <select class="input" name=${typeInputName} id="email-type-select-${inputName}" @change=${handleTypeInput} .value=${email?.type || ''}>
           <option value="Personal">Personal</option>
           <option value="Office">Office</option>
-          <option value="Other">Other</option>
         </select>
       </label>
     </div>
@@ -688,6 +767,7 @@ export async function createHeadingEditDialog(
   onSaved?: () => Promise<void> | void
 ) {
   const dom = document
+  console.log('[heading-edit] Opening heading edit dialog')
   const originalPhotoUri = sanitizeTextValue(toText(profileData.imageSrc || ''))
   const { form, formState } = createHeadingEditForm(store, subject, profileData)
 
@@ -705,10 +785,12 @@ export async function createHeadingEditDialog(
       return validateHeadingDataBeforeSave(formState)
     },
     onSave: async () => {
+      const phoneOps = summarizeRowOps([formState.phone], rowHasContent)
+      const emailOps = summarizeRowOps([formState.email], rowHasContent)
       const plan: HeadingMutationPlan = {
         basicOps: summarizeRowOps([formState.basicInfo], rowHasContent),
-        phoneOps: summarizeRowOps([formState.phone], rowHasContent),
-        emailOps: summarizeRowOps([formState.email], rowHasContent),
+        phoneOps: mapPhoneOpsForSave(phoneOps),
+        emailOps: mapEmailOpsForSave(emailOps),
         addressOps: summarizeRowOps([formState.address], rowHasContent)
       }
       await processHeadingMutations(store, subject, plan)
