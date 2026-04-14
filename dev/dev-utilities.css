@@ -584,17 +584,6 @@
   padding: var(--spacing-2xs, 0.625rem);
 }
 
-.input--checkbox {
-  display: inline-block;
-  width: 1rem;
-  height: 1rem;
-  min-height: 1rem;
-  padding: 0;
-  border: 1px solid var(--gray-400, #99A1AF);
-  border-radius: var(--border-radius-sm, 0.25rem);
-  align-self: auto;
-}
-
 .label {
   color: var(--gray-600, #4A5565);
   font-size: var(--font-size-sm, 0.875rem);

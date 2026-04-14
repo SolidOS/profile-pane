@@ -277,3 +277,16 @@ export const deleteIcon = html`
     <path d="M3.5 3.5L10.5 10.5" stroke="#6A7282" stroke-width="1.16667" stroke-linecap="round" stroke-linejoin="round"/>
   </svg>
 `
+export const checkboxIcon = html`
+  <svg xmlns="http://www.w3.org/2000/svg" 
+    width="16" 
+    height="16" 
+    viewBox="0 0 16 16" 
+    fill="none"
+    aria-hidden="true" 
+    focusable="false"
+    >
+    <rect width="16" height="16" rx="3.6" fill="#7C4DFF"/>
+    <path d="M12.0706 4.85043C11.8859 4.85649 11.7106 4.94316 11.5817 5.0921L7.28169 9.92959L5.17057 8.09209C4.97061 7.90176 4.69384 7.85048 4.45019 7.95862C4.20654 8.06677 4.03545 8.31682 4.00487 8.60948C3.9743 8.90213 4.08919 9.19001 4.30391 9.35876L6.91132 11.6254C7.19508 11.8702 7.59625 11.8398 7.84835 11.5546L12.5891 6.22126C12.7979 5.99072 12.86 5.63979 12.7454 5.3369C12.6308 5.03401 12.3631 4.84097 12.0706 4.85043V4.85043Z" fill="white"/>
+  </svg>
+`

@@ -9,7 +9,7 @@ import { ViewerMode } from '../../types'
 import { applyRowFieldChange, applyRowSelectChange, deleteRow, summarizeRowOps } from '../shared/rowState'
 import { hasNonEmptyText, sanitizeTextValue, toText } from '../../textUtils'
 import { MutationOps } from '../shared/types'
-import { trashIcon } from '../../icons-svg/profileIcons'
+import { checkboxIcon, trashIcon } from '../../icons-svg/profileIcons'
 import {
   deleteEntryButtonTitleText,
   dialogCancelLabelText,
@@ -469,13 +469,16 @@ function renderResumeInputRow({
     <div class="profile-edit-dialog__row profile-edit-dialog__row--inlineEnd">
       <label class="label inputCheckboxLabel" for=${isCurrentRoleId}>
         <input
-          class="input input--checkbox"
+          class="inputCheckboxLabel__input"
           type="checkbox"
           id=${isCurrentRoleId}
           name="isCurrentRole"
           .checked=${Boolean(resumeRow?.isCurrentRole)}
           @change=${handleCurrentRoleToggle}
         />
+        <span class="inputCheckboxLabel__visual" aria-hidden="true">
+          ${resumeRow?.isCurrentRole ? checkboxIcon : ''}
+        </span>
         <span>I am currently working in this role</span>
       </label>
     </div>
