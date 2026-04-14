@@ -2,7 +2,8 @@ import { NamedNode, LiveStore } from 'rdflib'
 import { ContactInfo  } from './sections/contactInfo/types'
 import { presentSocial } from './sections/social/selectors'
 import { SocialPresentation } from './sections/social/types'
-import { presentSkills } from './sections/skills/selectors'
+import { presentSkillDetails } from './sections/skills/selectors'
+import { SkillDetails } from './sections/skills/types'
 import { presentLanguages } from './sections/languages/selectors'
 import { LanguageDetails } from './sections/languages/types'
 import { presentCV } from './sections/resume/selectors'
@@ -20,7 +21,7 @@ import { presentBio } from './sections/bio/selectors'
 export type ProfileViewModel = {
   profileDetails: ProfileDetails,
   contactInfo: ContactInfo,
-  skills: string[],
+  skills: SkillDetails[],
   languages: LanguageDetails[], 
   education: EducationDetails[],
   projects: ProjectDetails[],
@@ -32,7 +33,7 @@ export type ProfileViewModel = {
 export async function presentProfileViewModel(subject: NamedNode, store: LiveStore): Promise<ProfileViewModel> {
   const profileDetails = presentProfile(subject, store)
   const contactInfo = presentContactInfo(subject, store)
-  const skills = presentSkills(subject, store)
+  const skills = presentSkillDetails(subject, store)
   const languages = presentLanguages(subject, store)
   const education = presentEducation(subject, store)
   const projects = await presentProjects(subject, store)

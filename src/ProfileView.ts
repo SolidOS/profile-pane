@@ -9,6 +9,7 @@ import { presentProfileViewModel } from './ProfileViewModelPresenter'
 import { renderContactInfoSection } from './sections/contactInfo/ContactInfoSection'
 import { renderLanguageSection } from './sections/languages/LanguageSection'
 import { renderSkillsSection } from './sections/skills/SkillsSection'
+import { SkillDetails } from './sections/skills/types'
 import { ContactInfo } from './sections/contactInfo/types'
 import { LanguageDetails } from './sections/languages/types'
 import { renderCVSection } from './sections/resume/ResumeSection'
@@ -31,7 +32,7 @@ function renderSidebar(
   store: LiveStore,
   subject: NamedNode,
   accounts: SocialAccounts,
-  skills: string[],
+  skills: SkillDetails[],
   languages: LanguageDetails[],
   contactInfo: ContactInfo,
   viewerMode: ViewerMode,

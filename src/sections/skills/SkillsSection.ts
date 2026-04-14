@@ -7,7 +7,6 @@ import { SkillDetails, SkillRow } from './types'
 import { addIcon, deleteIcon, lighteningIcon, plusIcon } from '../../icons-svg/profileIcons'
 import { skillsHeadingText } from '../../texts'
 import { toggleCollapsibleSection } from '../shared/collapsibleSection'
-import { presentSkillDetails } from './selectors'
 import { processSkillsMutations } from './mutations'
 
 function renderSkillItem(
@@ -60,9 +59,8 @@ function renderSkillItem(
   `
 }
 
-function renderSkillsSectionDefault(store: LiveStore, subject: NamedNode, skills: string[], viewerMode: ViewerMode, onSaved?: () => Promise<void> | void) {
-  const skillDetails: SkillDetails[] = presentSkillDetails(subject, store)
-  const hasSkills = Array.isArray(skillDetails) && skillDetails.length > 0
+function renderSkillsSectionDefault(store: LiveStore, subject: NamedNode, skills: SkillDetails[], viewerMode: ViewerMode, onSaved?: () => Promise<void> | void) {
+  const hasSkills = Array.isArray(skills) && skills.length > 0
 
   return html`
     <section
@@ -79,7 +77,7 @@ function renderSkillsSectionDefault(store: LiveStore, subject: NamedNode, skills
             type="button"
             class="profile__action-button profile-action-text flex-center profile-section-collapsible__edit-button"
             aria-label="Add or edit skills"
-            @click=${(event: Event) => createSkillsEditDialog(event, store, subject, skillDetails, viewerMode, onSaved)}
+            @click=${(event: Event) => createSkillsEditDialog(event, store, subject, skills, viewerMode, onSaved)}
           >
             <span class="profile-section-collapsible__edit-label profile__add-more-content inline-flex-row">
               <span class="profile__add-more-icon inline-flex-row" aria-hidden="true">${addIcon}</span>
@@ -107,7 +105,7 @@ function renderSkillsSectionDefault(store: LiveStore, subject: NamedNode, skills
         ${hasSkills
           ? html`
               <ul class="skills__list flex-column" role="list" aria-label="Professional skills and competencies">
-                ${skillDetails.map((detail) => renderSkillItem(detail, store, subject, viewerMode, onSaved))}
+                ${skills.map((detail) => renderSkillItem(detail, store, subject, viewerMode, onSaved))}
               </ul>
             `
           : html`<p>No skills added yet.</p>`}
@@ -119,12 +117,10 @@ function renderSkillsSectionDefault(store: LiveStore, subject: NamedNode, skills
 function renderOwnerEmptySkillsContent(
   store: LiveStore,
   subject: NamedNode,
-  skills: string[],
+  skills: SkillDetails[],
   viewerMode: ViewerMode,
   onSaved?: () => Promise<void> | void
 ) {
-  const skillDetails: SkillDetails[] = presentSkillDetails(subject, store)
-
   return html`
       <header class="profile__section-header profile-section-collapsible__header">
         <h2 id="skills-heading" tabindex="-1">${skillsHeadingText}</h2>
@@ -138,7 +134,7 @@ function renderOwnerEmptySkillsContent(
                 event,
                 store,
                 subject,
-                skillDetails,
+                skills,
                 viewerMode,
                 onSaved
               )
@@ -175,7 +171,7 @@ function renderOwnerEmptySkillsContent(
 function renderOwnerEmptySkillsSection(
   store: LiveStore,
   subject: NamedNode,
-  skills: string[],
+  skills: SkillDetails[],
   viewerMode: ViewerMode,
   onSaved?: () => Promise<void> | void
 ) {
@@ -195,12 +191,12 @@ function renderOwnerEmptySkillsSection(
 export function renderSkillsSection(
   store: LiveStore,
   subject: NamedNode,
-  skills: string[],
+  skills: SkillDetails[],
   viewerMode: ViewerMode,
   onSaved?: () => Promise<void> | void
 ) {
-  const safeSkills = skills || []
-  const hasSkills = Array.isArray(skills) && skills.length > 0
+  const safeSkills: SkillDetails[] = skills || []
+  const hasSkills = Array.isArray(safeSkills) && safeSkills.length > 0
   const showOwnerEmptySkills = !hasSkills && viewerMode === 'owner'
   const showSection = true
     
