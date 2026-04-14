@@ -330,7 +330,7 @@ function renderResumeInputRow({
   }
 
   return html`
-    <div class="profile-edit-dialog__row" role="group" aria-labelledby=${experienceHeadingId}>
+    <div class="profile-edit-dialog__row profile-edit-dialog__row--resume-entry-header" role="group" aria-labelledby=${experienceHeadingId}>
       <h5 id=${experienceHeadingId}>${label}</h5>
       <div class="profile-edit-dialog__actions profile-edit-dialog__actions--edge">
         <button
@@ -494,7 +494,7 @@ function renderResumeSection(resumeData: ResumeRow[], onAddRow: () => void) {
     .filter(({ resume }) => resume.status !== 'deleted')
 
   return html`
-    <section class="profile-edit-dialog__section section-bg" aria-label="Resume">
+    <section class="profile-edit-dialog__section profile-edit-dialog__section--resume section-bg" aria-label="Resume">
       <fieldset>
         <legend class="sr-only">Resume entries</legend>
         ${visibleResumeRows.map(({ index }, displayIndex) => renderResumeInputRow({

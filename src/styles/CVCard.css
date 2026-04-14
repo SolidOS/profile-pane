@@ -5,6 +5,12 @@
   margin-bottom: 1.25em;
 }
 
+.cvSection > ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
 .cvRole {
   margin: var(--spacing-xs) 0;
   font-size: var(--font-size-base);
@@ -53,6 +59,8 @@
 
 .cvDescriptionText {
   margin: 0;
+  width: 100%;
+  max-width: none;
   display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
@@ -79,18 +87,28 @@
   cursor: pointer;
   font: inherit;
   font-size: var(--font-size-sm);
-  line-height: var(--line-height-tight);
+  line-height: var(--line-height-base, 1.5);
   position: absolute;
   right: 0;
   bottom: 0;
   background-color: var(--color-card-bg);
+  white-space: nowrap;
   padding-left: 0.25em;
+}
+
+.cvDescriptionWrap .cvDescriptionText:not(.isExpanded) + .cvDescriptionToggle {
+  top: calc(100% - 1.5em + 0.28em - 14px);
+  bottom: auto;
+  transform: none;
 }
 
 .cvDescriptionText.isExpanded + .cvDescriptionToggle {
   position: static;
   display: inline;
   padding-left: 0;
+  top: auto;
+  bottom: auto;
+  transform: none;
 }
 
 .cvSkill, .cvLanguage {

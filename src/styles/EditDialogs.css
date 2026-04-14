@@ -46,6 +46,10 @@
   max-width: 34rem;
 }
 
+.profile-edit-dialog__section--resume fieldset {
+  gap: var(--spacing-xs, 0.75rem);
+}
+
 .profile-edit-dialog__row--language {
   margin-left: calc(-1 * var(--spacing-xs, 0.75rem));
 }
@@ -75,6 +79,20 @@
 .profile-edit-dialog__row--project {
   max-width: 100%;
   width: 100%;
+}
+
+.profile-edit-dialog__row--resume-entry-header {
+  align-items: center;
+}
+
+.profile-edit-dialog__row--resume-entry-header > h5 {
+  margin: 0;
+}
+
+.profile-edit-dialog__row--resume-entry-header .profile-edit-dialog__delete-button,
+#profile-modal .modal .profile-edit-dialog__row--resume-entry-header button.profile-edit-dialog__delete-button {
+  min-height: 1.75rem;
+  min-width: 1.75rem;
 }
 
 /* Force two direct children to split the row into equal columns. */
