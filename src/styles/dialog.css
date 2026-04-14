@@ -122,7 +122,9 @@
 
 #profile-modal .modal button.btn-primary {
   background: var(--color-primary);
-  color: var(--color-background);
+  color: var(--white, #FFF);
+  font-size: var(--font-size-lg, 1.125rem); /* 18px */
+  font-weight: var(--font-weight-bold, 600);
 }
 
 #profile-modal .modal button.btn-primary:hover {
@@ -138,6 +140,8 @@
   color: var(--gray-800, #1E2939);
   border: var(--border-width-thin) solid var(--slate-400, #90A1B9);
   background: var(--white, #FFF);
+  font-size: var(--font-size-lg, 1.125rem); /* 18px */
+  font-weight: var(--font-weight-bold, 600);
 }
 
 #profile-modal .modal button.btn-light:hover {
