@@ -206,14 +206,14 @@ function renderResumeInputRow({
   ]
 
   const renderMonthOptions = (selectedMonth: string) => html`
-    <option value="" ?selected=${!selectedMonth}>Select month</option>
+    <option value="" ?selected=${!selectedMonth}>Select Month</option>
     ${monthOptions.map((month) => html`
       <option value=${month.value} ?selected=${month.value === selectedMonth}>${month.label}</option>
     `)}
   `
 
   const renderYearOptions = (selectedYear: string) => html`
-    <option value="" ?selected=${!selectedYear}>Select year</option>
+    <option value="" ?selected=${!selectedYear}>Select Year</option>
     ${yearOptions.map((year) => html`
       <option value=${year} ?selected=${year === selectedYear}>${year}</option>
     `)}
@@ -428,7 +428,7 @@ function renderResumeInputRow({
       </label>
     </div>
     <div class="profile-edit-dialog__row">
-      <label aria-label=${startMonthLabel} class="label profile-edit-dialog__field-type">
+      <label aria-label=${startMonthLabel} class="label profile-edit-dialog__field-type profile-edit-dialog__field-type--month">
         Start Month
         <select name=${startMonthInputName} id=${startMonthSelectId} @change=${handleStartMonthChange}>
           ${renderMonthOptions(startMonthValue)}
@@ -440,7 +440,7 @@ function renderResumeInputRow({
           ${renderYearOptions(startYearText)}
         </select>
       </label>
-      <label aria-label=${endMonthLabel} class="label profile-edit-dialog__field-type">
+      <label aria-label=${endMonthLabel} class="label profile-edit-dialog__field-type profile-edit-dialog__field-type--month">
         End Month
         <select name=${endMonthInputName} id=${endMonthSelectId} @change=${handleEndMonthChange}>
           ${renderMonthOptions(endMonthValue)}

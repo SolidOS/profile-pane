@@ -134,6 +134,10 @@
   width: 100%;
 }
 
+.profile-edit-dialog__section--resume .profile-edit-dialog__field-type--month {
+  min-width: 8rem;
+}
+
 .profile-edit-dialog__field {
   /* flex: 1 1 auto; */
   min-width: 0;
