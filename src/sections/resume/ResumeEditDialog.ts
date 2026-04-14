@@ -205,15 +205,15 @@ function renderResumeInputRow({
     { value: '12', label: 'December' }
   ]
 
-  const renderMonthOptions = (selectedMonth: string) => html`
-    <option value="" ?selected=${!selectedMonth}>Select Month</option>
+  const renderMonthOptions = (selectedMonth: string, emptyLabel = 'Select Month') => html`
+    <option value="" ?selected=${!selectedMonth}>${emptyLabel}</option>
     ${monthOptions.map((month) => html`
       <option value=${month.value} ?selected=${month.value === selectedMonth}>${month.label}</option>
     `)}
   `
 
-  const renderYearOptions = (selectedYear: string) => html`
-    <option value="" ?selected=${!selectedYear}>Select Year</option>
+  const renderYearOptions = (selectedYear: string, emptyLabel = 'Select Year') => html`
+    <option value="" ?selected=${!selectedYear}>${emptyLabel}</option>
     ${yearOptions.map((year) => html`
       <option value=${year} ?selected=${year === selectedYear}>${year}</option>
     `)}
@@ -316,6 +316,9 @@ function renderResumeInputRow({
     const target = event.target as HTMLInputElement
     if (resumeData[index]) {
       applyRowFieldChange(resumeData[index], 'isCurrentRole', target.checked, rowHasContent)
+      if (target.checked) {
+        applyRowFieldChange(resumeData[index], 'endDate', undefined, rowHasContent)
+      }
       onChange()
     }
   }
@@ -442,14 +445,24 @@ function renderResumeInputRow({
       </label>
       <label aria-label=${endMonthLabel} class="label profile-edit-dialog__field-type profile-edit-dialog__field-type--month">
         End Month
-        <select name=${endMonthInputName} id=${endMonthSelectId} @change=${handleEndMonthChange}>
-          ${renderMonthOptions(endMonthValue)}
+        <select
+          name=${endMonthInputName}
+          id=${endMonthSelectId}
+          @change=${handleEndMonthChange}
+          ?disabled=${Boolean(resumeRow?.isCurrentRole)}
+        >
+          ${renderMonthOptions(endMonthValue, resumeRow?.isCurrentRole ? 'Present' : 'Select Month')}
         </select>
       </label>
       <label aria-label=${endYearLabel} class="label profile-edit-dialog__field-type">
         End Year
-        <select name=${endYearInputName} id=${endYearSelectId} @change=${handleEndYearChange}>
-          ${renderYearOptions(endYearParsedText)}
+        <select
+          name=${endYearInputName}
+          id=${endYearSelectId}
+          @change=${handleEndYearChange}
+          ?disabled=${Boolean(resumeRow?.isCurrentRole)}
+        >
+          ${renderYearOptions(endYearParsedText, resumeRow?.isCurrentRole ? '' : 'Select Year')}
         </select>
       </label>
     </div>
