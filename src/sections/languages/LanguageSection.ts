@@ -11,7 +11,7 @@ import { toggleCollapsibleSection } from '../shared/collapsibleSection'
 function renderLan(language: LanguageDetails, asList = false) {
   if (!language) return html``
   return asList
-    ? html`<li class="language" role="listitem">${language.name}</li>`
+    ? html`<li class="languages__item-label" role="listitem">${language.name}</li>`
     : html``
 }
 
