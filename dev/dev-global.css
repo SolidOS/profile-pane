@@ -10,11 +10,13 @@
   --gray-100: #F3F4F6; /* Used for: background of QR code frame */
   --gray-200: #E5E7EB; /* Used for: border of sections */
   --gray-400: #99A1AF; /* Used for: input borders */
+  --gray-300: #D1D5DC; /* Used for: text */
   --gray-500: #6A7282; /* Used for: text */
   --gray-600: #4A5565; /* Used for: text  */
   --gray-700: #364153; /* Used for: text */
   --gray-800: #1E2939; /* Used for: text  */
   --gray-900: #101828; /* Used for: text  */
+  --red-600: #B00020; /* Used for: error text */
   --slate-200: #E2E8F0; /* Used for: border of sections */
   --slate-400: #90A1B9; /* Used for: edit dialog cancel */
   --slate-500: #62748E; /* Used for: text */
@@ -159,6 +161,7 @@
   --font-weight-md: 500; /* New design uses 500 for body text was normal */
   --font-weight-bold-old: bold;
   --font-weight-bold: 600; /* New design uses 600 for headings was 700 */
+  --font-weight-xbold: 700; /* New design uses 700 for strong text was bold */
   --line-height-base: 1.5;
   --line-height-tight: 1.4;
   --line-height-loose: 1.6;

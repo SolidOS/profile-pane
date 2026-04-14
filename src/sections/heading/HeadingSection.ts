@@ -61,11 +61,11 @@ export const renderHeadingSection = (
               </div>
             `}
           <div class="profile__details">
-            <div class="profile__meta-row flex-row gap-md" role="group" aria-label="Additional profile information">
+            <div class="profile__meta-row" role="group" aria-label="Additional profile information">
               ${Line(dateOfBirthDisplay, birthdayIcon, '')}
               ${Line(location, locationIcon, '')}
             </div>
-            <div class="profile__contact-row flex-row gap-md" role="group" aria-label="Contact information">
+            <div class="profile__contact-row" role="group" aria-label="Contact information">
               ${Line(phoneValue, phoneIcon, '')}
               ${Line(emailValue, emailIcon, '')}
             </div>
@@ -77,7 +77,7 @@ export const renderHeadingSection = (
 
 const Line = (value, prefix: TemplateResult | symbol | string = nothing, label: string = '') =>
   value ? html`
-    <div class="profile__item flex-row gap-md ${label ? '' : 'profile__item--valueOnly'}">
+    <div class="profile__item ${label ? '' : 'profile__item--valueOnly'}">
       ${label ? html`<span class="profile__label">${label}</span>` : nothing}
       <span class="profile__value">
         ${prefix !== '' && prefix !== nothing ? html`<span class="profile__prefix-icon" aria-hidden="true">${prefix}</span>` : nothing}

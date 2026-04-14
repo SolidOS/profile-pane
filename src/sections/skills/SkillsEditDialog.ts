@@ -9,6 +9,7 @@ import { applyRowFieldChange, deleteRow, summarizeRowOps } from '../shared/rowSt
 import { hasNonEmptyText, sanitizeTextValue, toText } from '../../textUtils'
 import { MutationOps } from '../shared/types'
 import { processSkillsMutations } from './mutations'
+import { searchIcon, trashIcon } from '../../icons-svg/profileIcons'
 import {
   deleteEntryButtonTitleText,
   dialogCancelLabelText,
@@ -197,22 +198,25 @@ function renderSkillInputRow({
   return html`
     <div class="profile-edit-dialog__row">
       <label aria-label=${`${label} Name`} class="label profile-edit-dialog__field">
-        <input
-          class="input"
-          type="text"
-          name=${skillName}
-          .value=${row?.name || ''}
-          required
-          data-contact-field="name"
-          data-entry-node=${row?.entryNode || ''}
-          data-row-status=${row?.status || 'n/a'}
-          placeholder="Skill"
-          autocomplete="off"
-          list=${datalistId}
-          inputmode="text"
-          aria-invalid=${hasSelectionIssue ? 'true' : 'false'}
-          @input=${handleSkillInput('name')}
-        />
+        <div class="profile-edit-dialog__input-wrap">
+          <span class="profile-edit-dialog__search-icon" aria-hidden="true">${searchIcon}</span>
+          <input
+            class="input profile-edit-dialog__input--with-leading-icon"
+            type="text"
+            name=${skillName}
+            .value=${row?.name || ''}
+            required
+            data-contact-field="name"
+            data-entry-node=${row?.entryNode || ''}
+            data-row-status=${row?.status || 'n/a'}
+            placeholder="Skill"
+            autocomplete="off"
+            list=${datalistId}
+            inputmode="text"
+            aria-invalid=${hasSelectionIssue ? 'true' : 'false'}
+            @input=${handleSkillInput('name')}
+          />
+        </div>
         <datalist id=${datalistId}>
           ${suggestions.map((suggestion) => html`<option value=${suggestion.label}></option>`)}
         </datalist>
@@ -221,14 +225,12 @@ function renderSkillInputRow({
       <div class="profile-edit-dialog__actions profile-edit-dialog__actions--edge">
         <button
           type="button"
-          class="deleteEntryButton"
+          class="profile-edit-dialog__delete-button"
           aria-label=${`Delete skill ${displayIndex + 1}`}
           title=${deleteEntryButtonTitleText}
           @click=${handleDelete}
         >
-          <svg class="deleteEntryIcon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-            <path d="M9 3h6l1 2h4v2H4V5h4l1-2zm-1 6h2v9H8V9zm6 0h2v9h-2V9zM6 9h12l-1 12H7L6 9z" />
-          </svg>
+          <span class="profile-edit-dialog__delete-icon" aria-hidden="true">${trashIcon}</span>
         </button>
       </div>
     </div>

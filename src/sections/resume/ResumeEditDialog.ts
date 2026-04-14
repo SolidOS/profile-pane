@@ -9,6 +9,7 @@ import { ViewerMode } from '../../types'
 import { applyRowFieldChange, applyRowSelectChange, deleteRow, summarizeRowOps } from '../shared/rowState'
 import { hasNonEmptyText, sanitizeTextValue, toText } from '../../textUtils'
 import { MutationOps } from '../shared/types'
+import { trashIcon } from '../../icons-svg/profileIcons'
 import {
   deleteEntryButtonTitleText,
   dialogCancelLabelText,
@@ -111,7 +112,7 @@ function validateResumeBeforeSave(rows: ResumeRow[]): ResumeValidationResult {
     if (!row.isCurrentRole && !endDateText) {
       return {
         ok: false,
-        message: `Experience ${i + 1}: End Year is required unless "I am currently working in this role" is selected.`
+        message: `Resume ${i + 1}: End Year is required unless "I am currently working in this role" is selected.`
       }
     }
   }
@@ -146,7 +147,7 @@ function renderResumeInputRow({
   onChange
 }: ResumeRowProps) {
   const resumeRow = resumeData[index]
-  const label = `Experience ${displayIndex + 1}`
+  const label = `Resume ${displayIndex + 1}`
   const experienceHeadingId = `resume-experience-heading-${index}`
   
   const titleName = `resume-title-${index}`
@@ -334,14 +335,12 @@ function renderResumeInputRow({
       <div class="profile-edit-dialog__actions profile-edit-dialog__actions--edge">
         <button
           type="button"
-          class="deleteEntryButton"
-          aria-label=${`Delete experience ${displayIndex + 1}`}
+          class="profile-edit-dialog__delete-button"
+          aria-label=${`Delete resume ${displayIndex + 1}`}
           title=${deleteEntryButtonTitleText}
           @click=${handleDelete}
         >
-          <svg class="deleteEntryIcon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-            <path d="M9 3h6l1 2h4v2H4V5h4l1-2zm-1 6h2v9H8V9zm6 0h2v9h-2V9zM6 9h12l-1 12H7L6 9z" />
-          </svg>
+          <span class="profile-edit-dialog__delete-icon" aria-hidden="true">${trashIcon}</span>
         </button>
       </div>
     </div>
@@ -380,6 +379,7 @@ function renderResumeInputRow({
         />
       </label>
       <label aria-label=${`${label} Organization Type`} class="label profile-edit-dialog__field">
+        Organization Type
         <select name=${organizationTypeName} id=${organizationTypeSelectId} @change=${handleOrganizationTypeInput} .value=${resumeRow?.orgType || ''}>
           <option value="Corporation">Corporation</option>
           <option value="EducationalOrganization">Educational Organization</option>
@@ -494,7 +494,7 @@ function renderResumeSection(resumeData: ResumeRow[], onAddRow: () => void) {
     .filter(({ resume }) => resume.status !== 'deleted')
 
   return html`
-    <section class="resumeEditSection section-bg" aria-label="Resume">
+    <section class="contactsEditSection section-bg" aria-label="Resume">
       <fieldset>
         <legend class="sr-only">Resume entries</legend>
         ${visibleResumeRows.map(({ index }, displayIndex) => renderResumeInputRow({

@@ -222,8 +222,8 @@ function renderContactPhoneInput({
   }
 
   return html`
-    <div class="profile-edit-dialog__row">
-      <div class="profile-edit-dialog__field profile-edit-dialog__field--full">
+    <div class="profile-edit-dialog__row profile-edit-dialog__row--equal profile-edit-dialog__row--contact-point">
+      <div class="profile-edit-dialog__field">
         <label aria-label=${label} class="label">
           <input
             class="input"
@@ -241,7 +241,7 @@ function renderContactPhoneInput({
           />
         </label>
       </div>
-      <label aria-label=${typeLabel} class="label profile-edit-dialog__field-type profile-edit-dialog__field-type--contact-point">
+      <label aria-label=${typeLabel} class="label profile-edit-dialog__field-type profile-edit-dialog__field-type--contact-point phoneTypeRow">
         <select class="input" name=${typeInputName} id="phone-type-select-${inputName}" @change=${handleTypeInput} .value=${phone?.type || ''}>
           <option value="Mobile">Mobile</option>
           <option value="Home">Home</option>
@@ -277,8 +277,8 @@ function renderContactEmailInputRow({
   }
 
   return html`
-    <div class="profile-edit-dialog__row">
-      <label aria-label=${label} class="label profile-edit-dialog__field profile-edit-dialog__field--full">
+    <div class="profile-edit-dialog__row profile-edit-dialog__row--equal profile-edit-dialog__row--contact-point">
+      <label aria-label=${label} class="label profile-edit-dialog__field">
         <input
           class="input"
           type="email"
@@ -294,10 +294,11 @@ function renderContactEmailInputRow({
           @input=${handleValueInput}
         />
       </label>
-      <label aria-label=${typeLabel} class="label profile-edit-dialog__field-type profile-edit-dialog__field-type--contact-point">
+      <label aria-label=${typeLabel} class="label profile-edit-dialog__field-type profile-edit-dialog__field-type--contact-point emailTypeRow">
         <select class="input" name=${typeInputName} id="email-type-select-${inputName}" @change=${handleTypeInput} .value=${email?.type || ''}>
-          <option value="Home">Personal</option>
+          <option value="Personal">Personal</option>
           <option value="Office">Office</option>
+          <option value="Other">Other</option>
         </select>
       </label>
     </div>
@@ -353,7 +354,7 @@ function renderContactAddressInput({
       />
     </label>
 
-    <div class="profile-edit-dialog__row">
+    <div class="profile-edit-dialog__row profile-edit-dialog__row--equal profile-edit-dialog__row--full">
       <label aria-label=${`${label} Locality`} class="label profile-edit-dialog__field">
         Locality
         <input
@@ -388,7 +389,7 @@ function renderContactAddressInput({
       </label>
     </div>
 
-    <div class="profile-edit-dialog__row">
+    <div class="profile-edit-dialog__row profile-edit-dialog__row--equal profile-edit-dialog__row--full">
       <label aria-label=${`${label} Region`} class="label profile-edit-dialog__field">
         Region
         <input
@@ -400,7 +401,6 @@ function renderContactAddressInput({
           data-entry-node=${address?.entryNode || ''}
           data-row-status=${address?.status || 'n/a'}
           placeholder="State / Region"
-          autocomplete="address-level1"
           inputmode="text"
           @change=${handleAddressInput('region')}
         />
@@ -507,7 +507,7 @@ function renderHeadingInfoInput(
         <div class="profile-edit-dialog__image-preview-actions">
           <button
             type="button"
-            class="profile-edit-dialog__image-upload-button"
+            class="profile-edit-dialog__image-button profile-edit-dialog__image-upload-button flex-center"
             aria-label="Upload new profile photo"
             title="Upload New"
             @click=${handleUpload}
@@ -516,7 +516,7 @@ function renderHeadingInfoInput(
           </button>
           <button
             type="button"
-            class="profile-edit-dialog__image-remove-button"
+            class="profile-edit-dialog__image-button profile-edit-dialog__image-remove-button flex-center"
             aria-label="Delete profile photo"
             title="Remove"
             @click=${handleDelete}
@@ -651,7 +651,7 @@ function renderHeadingEditTemplate(
 
 function createHeadingEditForm(store: LiveStore, subject: NamedNode, profileData: ProfileDetails) {
   const form = document.createElement('form')
-  form.classList.add('profile__edit-form', 'flex-column', 'gap-sm')
+  form.classList.add('profile__edit-form', 'profile-edit-dialog--heading', 'flex-column', 'gap-sm')
   form.autocomplete = 'off'
   form.setAttribute('data-lpignore', 'true')
   form.setAttribute('data-1p-ignore', 'true')

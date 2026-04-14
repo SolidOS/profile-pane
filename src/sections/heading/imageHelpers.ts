@@ -58,17 +58,19 @@ export async function uploadPhotoFile(store: LiveStore, subject: NamedNode, file
     const fallbackName = `image_${index}.${extension}`
     candidateUri = `${directoryUri}${fallbackName}`
   }
-
-  const data = await file.arrayBuffer()
-  const response = await store.fetcher.webOperation('PUT', candidateUri, {
-    data: data as unknown as string,
-    contentType: detectedContentType
-  } as any)
-
-  if (!response.ok) {
-    throw new Error(`Error uploading picture: ${response.status} ${response.statusText}`)
+  try {
+    const data = await file.arrayBuffer()
+    const response = await store.fetcher.webOperation('PUT', candidateUri, {
+      data: data as unknown as string,
+      contentType: detectedContentType
+    } as any)
+    if (!response.ok) {
+      throw new Error(`Error uploading picture: ${response.status} ${response.statusText}`)
+    }
+  } catch (error) {
+    throw new Error(`Error uploading picture: ${error}`)
   }
-
+  
   return candidateUri
 }
 
@@ -77,6 +79,11 @@ export async function deletePhotoFile(store: LiveStore, subject: NamedNode, phot
   if (!photoUri) return
 
   if (store.fetcher) {
-    await store.fetcher.webOperation('DELETE', photoUri)
+    try {
+      await store.fetcher.webOperation('DELETE', photoUri)
+    } catch (error) {
+      console.error(`Error deleting picture: ${error}`)
+    }
+    
   }
 }

@@ -9,7 +9,7 @@ import { applyRowFieldChange, applyRowSelectChange, deleteRow, summarizeRowOps }
 import { hasNonEmptyText, sanitizeTextValue, toText } from '../../textUtils'
 import { MutationOps } from '../shared/types'
 import { processLanguageMutations } from './mutations'
-import { bentoIcon } from '../../icons-svg/profileIcons'
+import { bentoIcon, trashIcon } from '../../icons-svg/profileIcons'
 import {
   deleteEntryButtonTitleText,
   dialogCancelLabelText,
@@ -277,13 +277,13 @@ function renderLanguageInputRow({
 
   return html`
     <div
-      class="profile-edit-dialog__row ${isDropTarget ? 'profile-edit-dialog__row--drop-target' : ''}"
+      class="profile-edit-dialog__row profile-edit-dialog__row--language ${isDropTarget ? 'profile-edit-dialog__row--drop-target' : ''}"
       @dragover=${(event: DragEvent) => onDragOver(event)}
       @drop=${() => onDrop(index)}
     >
       <button
         type="button"
-        class="socialRowDragHandle"
+        class="profile-edit-dialog__drag-handle"
         aria-label=${`Reorder language ${displayIndex + 1}`}
         title="Drag to reorder"
         draggable="true"
@@ -325,14 +325,12 @@ function renderLanguageInputRow({
       <div class="profile-edit-dialog__actions profile-edit-dialog__actions--edge">
         <button
           type="button"
-          class="deleteEntryButton"
+          class="profile-edit-dialog__delete-button"
           aria-label=${`Delete language ${displayIndex + 1}`}
           title=${deleteEntryButtonTitleText}
           @click=${handleDelete}
         >
-          <svg class="deleteEntryIcon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-            <path d="M9 3h6l1 2h4v2H4V5h4l1-2zm-1 6h2v9H8V9zm6 0h2v9h-2V9zM6 9h12l-1 12H7L6 9z" />
-          </svg>
+          <span class="profile-edit-dialog__delete-icon" aria-hidden="true">${trashIcon}</span>
         </button>
       </div>
     </div>

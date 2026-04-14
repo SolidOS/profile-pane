@@ -120,7 +120,7 @@ function renderAddress(address) {
           <div class="contact-info__icon-wrapper flex-center">
             <span class="contact-info__icon" aria-hidden="true">${locationIcon}</span>
           </div>
-          ${formattedAddress}
+          <span class="contact-info__address">${formattedAddress}</span>
         </li>`
 }
 

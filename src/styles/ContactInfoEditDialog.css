@@ -49,6 +49,68 @@
   flex: 0 0 7.5rem;
 }
 
+.profile-edit-dialog__row--contact-point {
+  max-width: 100%;
+  width: 100%;
+  border: 0;
+  outline: 0;
+  box-shadow: none;
+}
+
+.profile-edit-dialog__row--contact-point > .profile-edit-dialog__field,
+.profile-edit-dialog__row--contact-point > .profile-edit-dialog__field-type,
+.profile-edit-dialog__row--contact-point > .profile-edit-dialog__field > .label {
+  border: 0;
+  outline: 0;
+  box-shadow: none;
+  background: transparent;
+}
+
+.profile-edit-dialog__row--contact-point > .profile-edit-dialog__field {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.profile-edit-dialog__row--contact-point > .profile-edit-dialog__field > .label {
+  display: block;
+  width: 100%;
+}
+
+.profile-edit-dialog__row--contact-point > .profile-edit-dialog__field-type.phoneTypeRow {
+  flex: 0 0 6.5rem;
+  width: 6.5rem;
+  min-width: 6.5rem;
+}
+
+.profile-edit-dialog__row--contact-point > .profile-edit-dialog__field-type.emailTypeRow {
+  flex: 0 0 6.5rem;
+  width: 6.5rem;
+  min-width: 6.5rem;
+}
+
+.profile-edit-dialog__row--addressHeader.profile-edit-dialog__row--full {
+  max-width: 100%;
+  width: 100%;
+  align-items: center;
+}
+
+.profile-edit-dialog__row--addressHeader.profile-edit-dialog__row--full .profile-edit-dialog__actions {
+  align-self: center;
+}
+
+.profile-edit-dialog__row--addressHeader.profile-edit-dialog__row--full .profile-edit-dialog__delete-button,
+#profile-modal .modal .profile-edit-dialog__row--addressHeader.profile-edit-dialog__row--full button.profile-edit-dialog__delete-button {
+  min-height: 1.75rem;
+  min-width: 1.75rem;
+}
+
+.profile-edit-dialog__address-title {
+  margin: 0;
+  font-size: var(--font-size-sm, 0.875rem);
+  font-weight: var(--font-weight-medium, 500);
+  line-height: var(--line-height-base, 1.5);
+}
+
 @media (max-width: 640px) {
   .phonePrefixField {
     flex: 0 0 5.75rem;

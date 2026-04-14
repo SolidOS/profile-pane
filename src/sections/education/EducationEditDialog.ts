@@ -6,7 +6,7 @@ import '../../styles/ContactInfoEditDialog.css'
 import { LiveStore, NamedNode } from 'rdflib'
 import { processEducationMutations } from './mutations'
 import { ViewerMode } from '../../types'
-import { addIcon } from '../../icons-svg/profileIcons'
+import { addIcon, trashIcon } from '../../icons-svg/profileIcons'
 import { applyRowFieldChange, deleteRow, summarizeRowOps } from '../shared/rowState'
 import { hasNonEmptyText, sanitizeTextValue, toText } from '../../textUtils'
 import { MutationOps } from '../shared/types'
@@ -272,14 +272,12 @@ function renderEducationInputRow({
       <div class="profile-edit-dialog__actions profile-edit-dialog__actions--edge">
         <button
           type="button"
-          class="deleteEntryButton"
+          class="profile-edit-dialog__delete-button"
           aria-label=${`Delete education ${displayIndex + 1}`}
           title=${deleteEntryButtonTitleText}
           @click=${handleDelete}
         >
-          <svg class="deleteEntryIcon" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-            <path d="M9 3h6l1 2h4v2H4V5h4l1-2zm-1 6h2v9H8V9zm6 0h2v9h-2V9zM6 9h12l-1 12H7L6 9z" />
-          </svg>
+          <span class="profile-edit-dialog__delete-icon" aria-hidden="true">${trashIcon}</span>
         </button>
       </div>
     </div>
