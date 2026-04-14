@@ -1,4 +1,4 @@
-.contactsEditSection {
+.profile-edit-dialog__section {
   display: flex;
   flex-direction: column;
   gap: var(--spacing-xs);
@@ -8,11 +8,11 @@
   width: 100%;
 }
 
-.contactsEditSection h4 {
+.profile-edit-dialog__section h4 {
   margin: 0;
 }
 
-.contactsEditSection fieldset {
+.profile-edit-dialog__section fieldset {
   width: 100%;
   margin: 0;
   display: grid;
@@ -220,7 +220,7 @@
 }
 
 /* The street-address row is a standalone label, so cap its width like the flex rows. */
-.contactsEditSection fieldset > .profile-edit-dialog__field {
+.profile-edit-dialog__section fieldset > .profile-edit-dialog__field {
   max-width: 34rem;
 }
 

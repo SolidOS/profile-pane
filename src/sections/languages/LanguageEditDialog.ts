@@ -388,7 +388,7 @@ function renderLanguageSection(
     .filter(({ row }) => row.status !== 'deleted')
 
   return html`
-    <section class="contactsEditSection section-bg" aria-label="Languages">
+    <section class="profile-edit-dialog__section section-bg" aria-label="Languages">
       <fieldset>
         <legend class="sr-only">Language entries</legend>
         ${visibleRows.map(({ index }, displayIndex) => renderLanguageInputRow({

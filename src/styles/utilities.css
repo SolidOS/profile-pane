@@ -7,19 +7,6 @@
   --profile-image-size: 3em;
 }
 
-.flex-column {
-  display: flex;
-  flex-direction: column;
-}
-
-.gap-md {
-  gap: var(--spacing-md, 1.25rem);
-}
-
-.p-md {
-  padding: var(--spacing-md, 1.25rem);
-}
-
 @media (max-width: 1000px) {
   .profile-grid {
     font-size: clamp(0.9rem, 1.1vw + 0.65rem, 1rem);
@@ -156,9 +143,9 @@
 }
 
 .contact-info__address {
-  color: var(--slate-500, #62748E);
-  font-size: var(--font-size-xxs, 0.75rem); /* 12px */
-  font-weight: var(--font-weight-md, 500);
+  color: var(--slate-800, #1D293D);
+  font-size: var(--font-size-sm, 0.875rem); /* 14px */
+  font-weight: var(--font-weight-bold, 600);
 }
 
 .contact-info__list {

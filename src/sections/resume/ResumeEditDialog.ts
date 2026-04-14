@@ -494,7 +494,7 @@ function renderResumeSection(resumeData: ResumeRow[], onAddRow: () => void) {
     .filter(({ resume }) => resume.status !== 'deleted')
 
   return html`
-    <section class="contactsEditSection section-bg" aria-label="Resume">
+    <section class="profile-edit-dialog__section section-bg" aria-label="Resume">
       <fieldset>
         <legend class="sr-only">Resume entries</legend>
         ${visibleResumeRows.map(({ index }, displayIndex) => renderResumeInputRow({

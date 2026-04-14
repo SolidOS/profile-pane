@@ -20,8 +20,8 @@ describe('QRCodeCard accessibility', () => {
     document.body.appendChild(container)
     render(QRCodeCard('#000', '#fff', subject), container)
 
-    // Find the inner div with role="img" and tabindex="0"
-    const qr = container.querySelector('.QRCode [role="img"][tabindex="0"]')
+    // Find the inner focusable QR container used for keyboard accessibility
+    const qr = container.querySelector('[data-testid="qrcode-card"] [role="img"][tabindex="0"]')
     expect(qr).not.toBeNull()
     expect(qr.getAttribute('tabindex')).toBe('0')
   })
