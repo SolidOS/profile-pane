@@ -16,10 +16,10 @@ if (loginBanner) {
   loginBanner.appendChild(UI.login.loginStatusBox(document, null, {}))
 }
 
-const webIdToShow = 'https://testingsolidos.solidcommunity.net/profile/card#me'
+// const webIdToShow = 'https://testingsolidos.solidcommunity.net/profile/card#me'
 // const webIdToShow = 'https://sstratsianis.solidcommunity.net/profile/card#me'
 // const webIdToShow = 'https://sstratsianis2.solidcommunity.net/profile/card#me'
-// const defaultWebIdToShow = 'https://sharontest.solidcommunity.net/profile/card#me'
+const webIdToShow = 'https://sharontest.solidcommunity.net/profile/card#me'
 // const webIdToShow = 'https://sstratsianis.solidweb.org/profile/card#me'
 // const webIdToShow = 'https://timea.solidcommunity.net/profile/card#me'
 

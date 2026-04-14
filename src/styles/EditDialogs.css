@@ -25,7 +25,7 @@
   line-height: var(--line-height-base, 1.5); /* 21px */
 }
 
-.profile-edit-dialog__field.profile-edit-dialog__bio-field-container {
+.profile-edit-dialog__bio-field-container {
   display: flex;
   width: min(710px, 100%);
   padding: 25px;
@@ -100,11 +100,6 @@
 .profile-edit-dialog__field--stack {
   display: grid;
   gap: var(--spacing-xxs);
-}
-
-.profile-edit-dialog__field--stack.profile-edit-dialog__bio-field-container {
-  display: flex;
-  gap: 20px;
 }
 
 .profile-edit-dialog__bio-field-container > small {
@@ -333,6 +328,13 @@
 
 .profile-edit-dialog__field textarea,
 .profile-edit-dialog__field-type textarea {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  min-height: var(--min-touch-target, 44px);
+}
+
+.profile-edit-dialog__bio-field-container textarea {
   width: 100%;
   max-width: 100%;
   box-sizing: border-box;

@@ -22,6 +22,7 @@ import {
 import { ContactAddressRow, ContactPointRow } from '../contactInfo/types'
 import { sanitizeAddressFieldValue, sanitizeBasicInputFieldValue, sanitizeEmailValue, sanitizePhoneLocalValue } from '../shared/sanitizeUtils'
 import { toStorageDateISO } from './dateHelpers'
+import { deletePhotoFile, uploadPhotoFile } from './imageHelpers'
 /* Note: new design - has address type in More Edit Contacts for now we will leave
          out Address Type, but a ticket will be created to add type later
          so I will keep the code and just comment it out for now. 
@@ -425,9 +426,12 @@ function renderContactAddressInput({
 }
 
 function renderHeadingInfoInput(
+  store: LiveStore,
+  subject: NamedNode,
   basicInfo: ProfileBasicRow,
   phone: ContactPointRow,
-  email: ContactPointRow
+  email: ContactPointRow,
+  rerender: () => void
 ): TemplateResult {
   const imageSrcLabel = 'Profile Photo'
   const recommendedImageToLoad = 'Recommended: Square JPG, PNG. Max 2MB.'
@@ -461,26 +465,33 @@ function renderHeadingInfoInput(
     }
   }
 
-  // Need to write the logic for uploading an image and getting the URL to update the 
-  // imageSrc field, for now just clearing the field to trigger a change and let user 
-  // input the URL manually if they want to upload an image.
-  const handleUpload = (field: ProfileBasicEditableField) => (e: Event) => {
-    const target = e.target as HTMLInputElement
-    const nextValue = sanitizeBasicInputFieldValue(target.value)
-    if (basicInfo) {
-      applyRowFieldChange(basicInfo, field, nextValue, rowHasContent)
-    }
+  const handleUpload = async (e: Event) => {
+    const button = e.currentTarget as HTMLButtonElement | null
+    const dom = button?.ownerDocument || document
+    const fileInput = dom.createElement('input')
+    fileInput.type = 'file'
+    fileInput.accept = 'image/*'
+
+    fileInput.addEventListener('change', async () => {
+      const file = fileInput.files?.[0]
+      if (!file || !basicInfo) return
+
+      try {
+        const uploadedUri = await uploadPhotoFile(store, subject, file)
+        applyRowFieldChange(basicInfo, 'imageSrc', uploadedUri, rowHasContent)
+        rerender()
+      } catch (error) {
+        console.error('Profile image upload failed', error)
+      }
+    })
+
+    fileInput.click()
   }
 
-    // Need to write the logic for deleting an image and getting the URL to update the 
-  // imageSrc field, for now just clearing the field to trigger a change and let user 
-  // input the URL manually if they want to upload an image.
-  const handleDelete = (field: ProfileBasicEditableField) => (e: Event) => {
-    const target = e.target as HTMLInputElement
-    const nextValue = sanitizeBasicInputFieldValue(target.value)
-    if (basicInfo) {
-      applyRowFieldChange(basicInfo, field, nextValue, rowHasContent)
-    }
+  const handleDelete = async (_e: Event) => {
+    if (!basicInfo) return
+    applyRowFieldChange(basicInfo, 'imageSrc', '', rowHasContent)
+    rerender()
   }
 
   return html`
@@ -499,7 +510,7 @@ function renderHeadingInfoInput(
             class="profile-edit-dialog__image-upload-button"
             aria-label="Upload new profile photo"
             title="Upload New"
-            @click=${handleUpload('imageSrc')}
+            @click=${handleUpload}
           >
             Upload New
           </button>
@@ -508,7 +519,7 @@ function renderHeadingInfoInput(
             class="profile-edit-dialog__image-remove-button"
             aria-label="Delete profile photo"
             title="Remove"
-            @click=${handleDelete('imageSrc')}
+            @click=${handleDelete}
           >
             Remove
           </button>
@@ -624,15 +635,21 @@ function renderHeadingInfoInput(
   `
 }
 
-function renderHeadingEditTemplate(form: HTMLFormElement, formState: HeadingFormState) {
+function renderHeadingEditTemplate(
+  form: HTMLFormElement,
+  formState: HeadingFormState,
+  store: LiveStore,
+  subject: NamedNode
+) {
+  const rerender = () => renderHeadingEditTemplate(form, formState, store, subject)
  
   render(html`
-    ${renderHeadingInfoInput(formState.basicInfo, formState.phone, formState.email)}
+    ${renderHeadingInfoInput(store, subject, formState.basicInfo, formState.phone, formState.email, rerender)}
     ${renderContactAddressInput({ address: formState.address })}
   `, form)
 }
 
-function createHeadingEditForm(profileData: ProfileDetails) {
+function createHeadingEditForm(store: LiveStore, subject: NamedNode, profileData: ProfileDetails) {
   const form = document.createElement('form')
   form.classList.add('profile__edit-form', 'flex-column', 'gap-sm')
   form.autocomplete = 'off'
@@ -641,7 +658,7 @@ function createHeadingEditForm(profileData: ProfileDetails) {
   form.setAttribute('data-bwignore', 'true')
 
   const formState = toFormState(profileData)
-  renderHeadingEditTemplate(form, formState)
+  renderHeadingEditTemplate(form, formState, store, subject)
 
   return { form, formState }
 }
@@ -671,7 +688,8 @@ export async function createHeadingEditDialog(
   onSaved?: () => Promise<void> | void
 ) {
   const dom = document
-  const { form, formState } = createHeadingEditForm(profileData)
+  const originalPhotoUri = sanitizeTextValue(toText(profileData.imageSrc || ''))
+  const { form, formState } = createHeadingEditForm(store, subject, profileData)
 
   const result = await openInputDialog({
     title: editHeadingDialogTitleText,
@@ -694,6 +712,15 @@ export async function createHeadingEditDialog(
         addressOps: summarizeRowOps([formState.address], rowHasContent)
       }
       await processHeadingMutations(store, subject, plan)
+
+      const nextPhotoUri = sanitizeTextValue(formState.basicInfo.imageSrc || '')
+      if (originalPhotoUri && originalPhotoUri !== nextPhotoUri) {
+        try {
+          await deletePhotoFile(store, subject, originalPhotoUri)
+        } catch (error) {
+          console.warn('Profile image file delete failed', error)
+        }
+      }
     },
     formatSaveError: (error: unknown) => {
       const message = error instanceof Error ? error.message : String(error)
