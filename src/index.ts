@@ -51,7 +51,7 @@ const Pane = {
 
     const renderWithData = async () => {
       render(await ProfileView(subject, context, renderWithData), target)
-      const QRCodeEles = Array.from(target.getElementsByClassName('QRCode'))
+      const QRCodeEles = Array.from(target.getElementsByClassName('qrcode-card'))
       if (!QRCodeEles.length) return console.error('QRCode Ele missing')
       for (const QRCodeElement of QRCodeEles as HTMLElement[]) {
         const value = QRCodeElement.getAttribute('data-value')
@@ -75,9 +75,9 @@ const Pane = {
               return
             }
             imageContainer.innerHTML = svg
-            imageContainer.style.width = '80%'
-            imageContainer.style.height = '80%'
-            imageContainer.style.margin = '10%'
+            imageContainer.style.width = '100%'
+            imageContainer.style.height = '100%'
+            imageContainer.style.margin = '0'
           }
         })
       }

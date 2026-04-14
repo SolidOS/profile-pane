@@ -118,7 +118,7 @@ export const QRCodeCard = (
    
   return html`
     <figure 
-      class="QRCode"
+      class="qrcode-card flex-column-center"
       data-value="${vCard}"
       data-testid="qrcode-card"
       aria-labelledby="qr-code-caption"
@@ -132,7 +132,7 @@ export const QRCodeCard = (
       ></div>
       <figcaption 
         id="qr-code-caption" 
-        class="qrCaption"
+        class="qrcode-card__caption"
       >
         ${scanQrToConnectText}
       </figcaption>

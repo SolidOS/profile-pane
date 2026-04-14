@@ -1,5 +1,5 @@
 // QR CODE
-export const scanQrToConnectText = 'View Your Profile'
+export const scanQrToConnectText = 'Link to Profile'
 //ERRORS & SUCCESS
 //Same 'not logged in' error message like on 'Chat with me' button
 export const userNotLoggedInErrorMessage = 'Current user not found! Not logged in?'
