@@ -48,12 +48,15 @@ function renderBioSection(bioRow: BioRow, onChange: () => void): TemplateResult 
   }
 
   return html`
-    <section aria-label="Bio editor" class="section-bg">
+    <section aria-label="Bio editor">
 
-      <label aria-label="Bio description" class="label profile-edit-dialog__field profile-edit-dialog__field--full profile-edit-dialog__field--stack">
-        <span>Description</span>
+      <label aria-label="Bio description" class="label profile-edit-dialog__field profile-edit-dialog__field--full profile-edit-dialog__field--stack profile-edit-dialog__bio-field-container">
+        <span class="profile-edit-dialog__field-description">
+          You can write about your years of experience, industry, or skills.
+          People also talk about their achievements or previous job experiences.
+        </span>
         <textarea
-          class="inputTextarea inputTextarea--multiline"
+          class="profile-edit-dialog__textarea profile-edit-dialog__textarea--multiline"
           name=${descriptionName}
           rows="5"
           .value=${bioRow?.description || ''}

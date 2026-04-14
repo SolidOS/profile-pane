@@ -18,6 +18,23 @@
   display: grid;
   gap: var(--spacing-sm);
 }
+.profile-edit-dialog__field-description {
+  color: var(--gray-600, #4A5565);
+  font-size: var(--font-size-sm, 0.875rem); /* 14px */
+  font-weight: var(--font-weight-normal, normal);
+  line-height: var(--line-height-base, 1.5); /* 21px */
+}
+
+.profile-edit-dialog__field.profile-edit-dialog__bio-field-container {
+  display: flex;
+  width: min(710px, 100%);
+  padding: 25px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 20px;
+  box-sizing: border-box;
+  margin: 0 auto;
+}
 
 .profile-edit-dialog__row {
   display: flex;
@@ -83,6 +100,16 @@
 .profile-edit-dialog__field--stack {
   display: grid;
   gap: var(--spacing-xxs);
+}
+
+.profile-edit-dialog__field--stack.profile-edit-dialog__bio-field-container {
+  display: flex;
+  gap: 20px;
+}
+
+.profile-edit-dialog__bio-field-container > small {
+  align-self: flex-end;
+  text-align: right;
 }
 
 .profile-edit-dialog__field--full {
@@ -297,6 +324,12 @@
   max-width: none;
   min-width: 7.5rem;
 }
+.profile-edit-dialog__textarea {
+  color: var(--gray-900, #101828);
+  font-size: var(--font-size-sm, 0.875rem);
+  font-weight: var(--font-weight-md, 500);
+  line-height: var(--line-height-loose, 1.6); /* 22.4px */
+}
 
 .profile-edit-dialog__field textarea,
 .profile-edit-dialog__field-type textarea {
@@ -306,7 +339,7 @@
   min-height: var(--min-touch-target, 44px);
 }
 
-.inputTextarea--multiline {
+.profile-edit-dialog__textarea--multiline {
   min-height: calc(4 * 1.4em + var(--spacing-sm));
   height: auto;
   resize: vertical;
