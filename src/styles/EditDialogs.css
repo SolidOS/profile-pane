@@ -624,6 +624,17 @@
     align-items: flex-end;
   }
 
+  .profile-edit-dialog__row--language {
+    flex-direction: row;
+    align-items: center;
+    flex-wrap: nowrap;
+  }
+
+  .profile-edit-dialog__row--language > .profile-edit-dialog__field {
+    flex: 1 1 0;
+    min-width: 0;
+  }
+
   .profile-edit-dialog__row--inlineEnd {
     justify-content: flex-start;
   }
