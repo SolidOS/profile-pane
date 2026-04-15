@@ -106,21 +106,25 @@ function renderEmails(emails, store: LiveStore) {
 
 function renderAddress(address) {
   if (!address) return html``
-  const pieces = [
-    address.fullAddress?.value || address.fullAddress,
-    address.streetAddress?.value || address.streetAddress,
-    address.locality?.value || address.locality,
-    address.region?.value || address.region,
-    address.postalCode?.value || address.postalCode,
-    address.countryName?.value || address.countryName,
-  ].filter(Boolean)
-  const formattedAddress = pieces.join(', ')
+  const streetAddress = toText(address.streetAddress || address.fullAddress).trim()
+  const locality = toText(address.locality).trim()
+  const region = toText(address.region).trim()
+  const postalCode = toText(address.postalCode).trim()
+  const countryName = toText(address.countryName).trim()
+
+  const localityRegion = [locality, region].filter(Boolean).join(', ')
+  const localityRegionPostal = [localityRegion, postalCode].filter(Boolean).join(' ')
+
   return html`
         <li class="contact-info__item flex gap-2xs" role="listitem">
           <div class="contact-info__icon-wrapper flex-center">
             <span class="contact-info__icon" aria-hidden="true">${locationIcon}</span>
           </div>
-          <span class="contact-info__address">${formattedAddress}</span>
+          <span class="contact-info__address">
+            ${streetAddress ? html`${streetAddress}<br />` : html``}
+            ${localityRegionPostal ? html`${localityRegionPostal}<br />` : html``}
+            ${countryName}
+          </span>
         </li>`
 }
 
