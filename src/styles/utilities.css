@@ -81,6 +81,12 @@
   width: 100%;
 }
 
+.profile__section-header h2,
+.profile__section-header h3,
+.profile__section-header h4 {
+  margin: 0;
+}
+
 .profile__section-header--actionsOnly {
   justify-content: flex-end;
 }
@@ -337,7 +343,15 @@
 }
 
 .profile-section-collapsible__content {
-  margin-top: var(--spacing-md, 1.25rem);
+  margin-top: var(--spacing-2xs, 0.625rem);
+}
+
+.profile-section-collapsible__content > :first-child {
+  margin-top: 0;
+}
+
+.profile-section-collapsible__content > :last-child {
+  margin-bottom: 0;
 }
 
 @media (min-width: 1001px) {

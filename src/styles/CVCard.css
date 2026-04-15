@@ -12,12 +12,16 @@
 }
 
 .cvRole {
-  margin: var(--spacing-xs) 0;
+  margin: 0 0 var(--spacing-xs) 0;
   font-size: var(--font-size-base);
   line-height: var(--line-height-base);
   display: flex;
   flex-direction: column;
   gap: 0;
+}
+
+.cvRole:last-child {
+  margin-bottom: 0;
 }
 
 .cvRoleHeader {

@@ -66,7 +66,7 @@ function renderBioSectionContent(
   const bioDetails: BioDetails = bioData
   
   return html`
-    <header class="profile__section-header mb-md">
+    <header class="profile__section-header profile-section-collapsible__header">
       <h2 id="bio-heading" tabindex="-1">${bioHeadingText}</h2>
       <button
         type="button"
@@ -87,7 +87,9 @@ function renderBioSectionContent(
         <span class="profile-section-collapsible__edit-icon profile__action-icon" aria-hidden="true">${editIcon}</span>
       </button>
     </header>
-    ${bio}
+    <div class="profile-section-collapsible__content">
+      ${bio}
+    </div>
   `
 }
 
