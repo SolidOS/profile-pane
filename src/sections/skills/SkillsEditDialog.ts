@@ -248,7 +248,7 @@ function renderSkillsSection(
     .filter(({ row }) => row.status !== 'deleted')
 
   return html`
-    <section class="profile-edit-dialog__section section-bg" aria-label="Skills">
+    <section class="profile-edit-dialog__section" aria-label="Skills">
       <fieldset>
         <legend class="sr-only">Skill entries</legend>
         ${visibleRows.map(({ index }, displayIndex) => renderSkillInputRow({

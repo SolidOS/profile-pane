@@ -196,12 +196,21 @@
   }
 
   #profile-modal #modal-buttons {
-    flex-direction: column-reverse;
+    flex-direction: row;
     align-items: stretch;
+    gap: var(--spacing-2xs, 0.625rem);
   }
 
   #profile-modal #modal-buttons button {
-    width: 100%;
+    flex: 1 1 0;
+    min-width: 0;
+    padding: var(--spacing-2xs, 0.625rem) var(--spacing-sm, 0.75rem);
+    font-size: var(--font-size-base, 1rem);
+  }
+
+  #profile-modal .modal button.btn-primary,
+  #profile-modal .modal button.btn-light {
+    font-size: var(--font-size-base, 1rem);
   }
 
 }

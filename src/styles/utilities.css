@@ -170,7 +170,7 @@
 }
 
 .contact-info__item {
-  margin-inline-start: -0.25rem;
+  margin-inline-start: 0;
 }
 
 .contact-info__empty-icon svg {
@@ -344,6 +344,10 @@
 
 .profile-section-collapsible__content {
   margin-top: var(--spacing-2xs, 0.625rem);
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
 }
 
 .profile-section-collapsible__content > :first-child {
@@ -352,6 +356,19 @@
 
 .profile-section-collapsible__content > :last-child {
   margin-bottom: 0;
+}
+
+.bioCard,
+.bioSection,
+.socialCard,
+.socialList,
+.skills__list,
+.languages__list,
+.contact-info__list {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
 }
 
 @media (min-width: 1001px) {

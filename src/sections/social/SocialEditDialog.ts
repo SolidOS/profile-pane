@@ -312,7 +312,7 @@ function renderSocialSection(rows: SocialRow[], options: SocialAccountOption[], 
     .filter(({ row }) => row.status !== 'deleted')
 
   return html`
-    <section class="profile-edit-dialog__section section-bg" aria-label="Social Accounts">
+    <section class="profile-edit-dialog__section" aria-label="Social Accounts">
       <fieldset>
         <legend class="sr-only">Social account entries</legend>
         ${visibleRows.map(({ index }, displayIndex) =>

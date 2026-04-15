@@ -245,7 +245,7 @@ function renderContactInfoPhoneSection(phones: ContactPointRow[], onAddRow: () =
   return html`
     <section 
       aria-labelledby="phone-numbers-heading" 
-      class="profile-edit-dialog__section section-bg">
+      class="profile-edit-dialog__section">
       <header class="profile__section-header">
         <h4 id="phone-numbers-heading">
           <span class="sectionTitleIcon" aria-hidden="true">&#9742;</span>
@@ -366,7 +366,7 @@ function renderContactInfoEmailSection(emails: ContactPointRow[], onAddRow: () =
   return html`
     <section 
       aria-labelledby="email-addresses-heading" 
-      class="profile-edit-dialog__section section-bg">
+      class="profile-edit-dialog__section">
       <header class="profile__section-header">
         <h4 id="email-addresses-heading">
           <span class="sectionTitleIcon" aria-hidden="true">&#9993;</span>
@@ -575,7 +575,7 @@ function renderContactInfoAddressSection(addresses: ContactAddressRow[], onAddRo
   return html`
     <section 
       aria-labelledby="address-heading" 
-      class="profile-edit-dialog__section section-bg">
+      class="profile-edit-dialog__section">
       <header class="profile__section-header">
         <h4 id="address-heading">
           <span class="sectionTitleIcon" aria-hidden="true">&#9993;</span>
