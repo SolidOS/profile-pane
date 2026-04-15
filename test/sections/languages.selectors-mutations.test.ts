@@ -112,7 +112,7 @@ describe('Languages selectors and mutations', () => {
     ])
   })
 
-  it('writes canonical id-node list model and removes legacy entry-node model statements', async () => {
+  it('writes canonical id-node rdf:list model and removes legacy entry-node model statements', async () => {
     const store = graph() as any
     const subject = sym('https://example.com/profile/card#me')
     const doc = subject.doc()
@@ -147,12 +147,21 @@ describe('Languages selectors and mutations', () => {
 
     const knowsLanguageValues = store.statementsMatching(subject, ns.schema('knowsLanguage'), null, doc)
     expect(knowsLanguageValues).toHaveLength(1)
-    expect(knowsLanguageValues[0].object.termType).toBe('Collection')
+    const listHead = knowsLanguageValues[0].object
+    expect(listHead.termType).toBe('BlankNode')
 
-    const listElements = (knowsLanguageValues[0].object as any).elements || []
-    expect(listElements).toHaveLength(2)
-    expect(listElements.every((node: any) => node.termType === 'NamedNode')).toBe(true)
-    expect(listElements.every((node: any) => node.value.includes('#id'))).toBe(true)
+    const firstEntry = store.any(listHead as any, ns.rdf('first'), null, doc)
+    expect(firstEntry?.termType).toBe('NamedNode')
+    const secondListNode = store.any(listHead as any, ns.rdf('rest'), null, doc)
+    expect(secondListNode?.termType).toBe('BlankNode')
+    const secondEntry = store.any(secondListNode as any, ns.rdf('first'), null, doc)
+    expect(secondEntry?.termType).toBe('NamedNode')
+    const tail = store.any(secondListNode as any, ns.rdf('rest'), null, doc)
+    expect(tail?.value).toBe(ns.rdf('nil').value)
+
+    const listElements = [firstEntry, secondEntry]
+    expect(listElements.every((node: any) => node?.termType === 'NamedNode')).toBe(true)
+    expect(listElements.every((node: any) => node?.value.includes('#id'))).toBe(true)
 
     const publicIdStatements = listElements.map((node: any) => {
       return store.any(node, ns.solid('publicId'), null, doc)
@@ -162,10 +171,11 @@ describe('Languages selectors and mutations', () => {
       'https://www.w3.org/ns/iana/language-code/fr'
     ])
 
-    const nameStatements = listElements.map((node: any) => {
+    const nameStatements = publicIdStatements.map((node: any) => {
       return store.any(node, ns.schema('name'), null, doc)
     })
     expect(nameStatements.map((node: any) => node?.value)).toEqual(['German', 'French'])
+    expect(nameStatements.map((node: any) => node?.lang)).toEqual(['en', 'en'])
 
     expect(insertionsCaptured.some((statement) => statement.predicate.value === ns.schema('knowsLanguage').value)).toBe(true)
 
@@ -242,5 +252,39 @@ describe('Languages selectors and mutations', () => {
 
     expect(putCalled).toBe(true)
     expect(store.statementsMatching(subject, ns.schema('knowsLanguage'), null, doc)).toHaveLength(0)
+  })
+
+  it('removes schema:name on publicId node when language row is deleted', async () => {
+    const store = graph() as any
+    const subject = sym('https://example.com/profile/card#me')
+    const doc = subject.doc()
+    const languageEntry = sym('https://example.com/profile/card#id-es')
+    const publicIdNode = sym('https://www.w3.org/ns/iana/language-code/es')
+
+    store.add(subject, ns.schema('knowsLanguage'), new Collection([languageEntry]), doc)
+    store.add(languageEntry, ns.solid('publicId'), publicIdNode, doc)
+    store.add(publicIdNode, ns.schema('name'), literal('Spanish', 'en'), doc)
+
+    store.updater = {
+      update: (deletions: any[], insertions: any[], callback: Function) => {
+        deletions.forEach((statement) => store.remove(st(statement.subject, statement.predicate, statement.object, statement.why)))
+        insertions.forEach((statement) => store.add(statement.subject, statement.predicate, statement.object, statement.why))
+        callback('', true)
+      }
+    }
+
+    await processLanguageMutations(
+      store,
+      subject,
+      {
+        create: [],
+        update: [],
+        remove: [{ name: 'Spanish', publicId: 'es', proficiency: '', entryNode: languageEntry.value, status: 'deleted' }]
+      } as any,
+      []
+    )
+
+    expect(store.statementsMatching(subject, ns.schema('knowsLanguage'), null, doc)).toHaveLength(0)
+    expect(store.statementsMatching(publicIdNode, ns.schema('name'), null, doc)).toHaveLength(0)
   })
 })

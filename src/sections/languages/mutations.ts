@@ -1,4 +1,4 @@
-import { LiveStore, NamedNode, st, Collection, sym, literal } from 'rdflib'
+import { blankNode, LiveStore, NamedNode, st, sym, literal } from 'rdflib'
 import { ns } from 'solid-ui'
 import { LanguageRow } from './types'
 import { MutationOps } from '../shared/types'
@@ -13,15 +13,21 @@ export type LanguageMutationPlan = MutationOps<LanguageRow>
 const LANGUAGE_IANA_NS = 'https://www.w3.org/ns/iana/language-code/'
 
 function ensureLanguagePrefix(store: LiveStore) {
+  const registerPrefix = (target: any) => {
+    if (!target) return
+    if (typeof target.setPrefixForURI === 'function') {
+      target.setPrefixForURI('l', LANGUAGE_IANA_NS)
+      return
+    }
+    if (!target.namespaces) {
+      target.namespaces = {}
+    }
+    target.namespaces.l = LANGUAGE_IANA_NS
+  }
+
   const anyStore = store as any
-  if (typeof anyStore.setPrefixForURI === 'function') {
-    anyStore.setPrefixForURI('l', LANGUAGE_IANA_NS)
-    return
-  }
-  if (!anyStore.namespaces) {
-    anyStore.namespaces = {}
-  }
-  anyStore.namespaces.l = LANGUAGE_IANA_NS
+  registerPrefix(anyStore)
+  registerPrefix(anyStore?.updater?.store)
 }
 
 function normalizeText(value: string | undefined): string {
@@ -52,6 +58,30 @@ function rowsFromOrderedInput(orderedRows: LanguageRow[]): LanguageRow[] {
     }))
 }
 
+function buildRdfListStatements(items: NamedNode[], doc: NamedNode) {
+  if (!items.length) {
+    return {
+      head: ns.rdf('nil'),
+      statements: [] as any[]
+    }
+  }
+
+  const listNodes = items.map(() => blankNode())
+  const statements: any[] = []
+
+  items.forEach((item, index) => {
+    const current = listNodes[index]
+    const next = listNodes[index + 1] || ns.rdf('nil')
+    statements.push(st(current as any, ns.rdf('first'), item as any, doc))
+    statements.push(st(current as any, ns.rdf('rest'), next as any, doc))
+  })
+
+  return {
+    head: listNodes[0],
+    statements
+  }
+}
+
 function buildLanguageStatements(subject: NamedNode, doc: NamedNode, rows: LanguageRow[]) {
   const languageRows = rows
     .map((row) => ({
@@ -65,14 +95,15 @@ function buildLanguageStatements(subject: NamedNode, doc: NamedNode, rows: Langu
   const entryNodes = languageRows.map(() => createIdNode(doc))
   const statements: any[] = []
 
-  // Canonical ordered representation: single rdf:List object with id-node entries.
-  statements.push(st(subject, ns.schema('knowsLanguage'), new Collection(entryNodes as any) as any, doc))
+  const rdfList = buildRdfListStatements(entryNodes, doc)
+  statements.push(st(subject, ns.schema('knowsLanguage'), rdfList.head as any, doc))
+  statements.push(...rdfList.statements)
 
   entryNodes.forEach((entryNode, index) => {
     const publicIdNode = sym(`${LANGUAGE_IANA_NS}${languageRows[index].publicId}`)
     statements.push(st(entryNode, ns.solid('publicId'), publicIdNode, doc))
     if (languageRows[index].name) {
-      statements.push(st(entryNode, ns.schema('name'), literal(languageRows[index].name), doc))
+      statements.push(st(publicIdNode, ns.schema('name'), literal(languageRows[index].name, 'en'), doc))
     }
   })
 
@@ -309,6 +340,13 @@ async function mutateLanguageEntries(
     return termType === 'BlankNode' ? store.bnode(value) : store.sym(value)
   })
 
+  const existingPublicIdNodes = Array.from(new Map(
+    existingLanguageNodes
+      .map((node) => store.any(node as NamedNode, ns.solid('publicId'), null, doc))
+      .filter((node): node is NamedNode => Boolean(node && node.termType === 'NamedNode'))
+      .map((node) => [`${node.termType}:${node.value}`, node])
+  ).values())
+
   const deletions = store.statementsMatching(subject, ns.schema('knowsLanguage'), null, doc)
   existingListNodes.forEach((node) => {
     deletions.push(...store.statementsMatching(node as any, null, null, doc))
@@ -316,6 +354,10 @@ async function mutateLanguageEntries(
   existingLanguageNodes.forEach((node) => {
     // Remove old language-entry statements so save always rewrites canonical shape.
     deletions.push(...store.statementsMatching(node as NamedNode, null, null, doc))
+  })
+  existingPublicIdNodes.forEach((node) => {
+    // Language labels are attached to the publicId resource (l:xx) and should be removed for deleted rows.
+    deletions.push(...store.statementsMatching(node as NamedNode, ns.schema('name'), null, doc))
   })
   const insertions = buildLanguageStatements(subject, doc, nextRows)
 
