@@ -9,6 +9,14 @@
   background: var(--color-background, #fff);
 }
 
+.profile__edit-form--contact-info .profile-edit-dialog__section {
+  gap: var(--spacing-xxs, 0.5rem);
+}
+
+.profile__edit-form--contact-info .profile-edit-dialog__section fieldset {
+  gap: var(--spacing-xs, 0.75rem);
+}
+
 .phonePrefixField {
   flex: 0 0 6.1rem;
   margin: 0;
@@ -55,6 +63,14 @@
   border: 0;
   outline: 0;
   box-shadow: none;
+}
+
+.profile-edit-dialog__section fieldset > .profile-edit-dialog__row--contact-point {
+  margin-bottom: var(--spacing-xs, 0.75rem);
+}
+
+.profile-edit-dialog__section fieldset > .profile-edit-dialog__row--contact-point:last-child {
+  margin-bottom: var(--spacing-sm, 0.9375rem);
 }
 
 .profile-edit-dialog__row--contact-point > .profile-edit-dialog__field,
@@ -112,6 +128,32 @@
 }
 
 @media (max-width: 640px) {
+  .profile-edit-dialog__row--contact-point {
+    flex-direction: row;
+    align-items: center;
+    flex-wrap: nowrap;
+    gap: var(--spacing-2xs, 0.625rem);
+  }
+
+  .profile-edit-dialog__row--contact-point > .profile-edit-dialog__field {
+    flex: 1 1 0;
+    min-width: 0;
+  }
+
+  .profile-edit-dialog__row--contact-point > .profile-edit-dialog__field-type.phoneTypeRow,
+  .profile-edit-dialog__row--contact-point > .profile-edit-dialog__field-type.emailTypeRow {
+    flex: 0 0 5.5rem;
+    width: 5.5rem;
+    min-width: 5.5rem;
+    max-width: 5.5rem;
+  }
+
+  .profile-edit-dialog__row--contact-point > .profile-edit-dialog__actions {
+    flex: 0 0 auto;
+    margin-left: 0;
+    justify-content: flex-end;
+  }
+
   .phonePrefixField {
     flex: 0 0 5.75rem;
   }

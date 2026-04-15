@@ -31,7 +31,7 @@
   background: var(--color-background);
   padding: var(--spacing-lg);
   border-radius: var(--border-radius-base);
-  max-width: 90%;
+  max-width: 100%;
   width: min(640px, 92vw);
   max-height: 85vh;
   overflow: auto;
@@ -40,9 +40,14 @@
 
 #profile-modal .modal .modal-header {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
-  gap: var(--spacing-sm);
+  gap: var(--spacing-lg);
+  margin: calc(-1 * var(--spacing-lg)) calc(-1 * var(--spacing-lg)) var(--spacing-sm) calc(-1 * var(--spacing-lg));
+  padding: var(--spacing-lg);
+  border-radius: var(--border-radius-base, 0.3125rem) var(--border-radius-base, 0.3125rem) 0 0;
+  border: 1px solid var(--slate-200, #E2E8F0);
+  background: var(--slate-50, #F8FAFC);
 }
 
 #profile-modal .modal #modal-title {
@@ -195,22 +200,30 @@
     margin: 0;
   }
 
+  #profile-modal .modal .modal-header {
+    gap: var(--spacing-md);
+    margin: calc(-1 * var(--spacing-md)) calc(-1 * var(--spacing-md)) var(--spacing-sm) calc(-1 * var(--spacing-md));
+    padding: var(--spacing-md);
+  }
+
   #profile-modal #modal-buttons {
     flex-direction: row;
-    align-items: stretch;
-    gap: var(--spacing-2xs, 0.625rem);
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-xxs, 0.5rem);
   }
 
   #profile-modal #modal-buttons button {
-    flex: 1 1 0;
-    min-width: 0;
-    padding: var(--spacing-2xs, 0.625rem) var(--spacing-sm, 0.75rem);
-    font-size: var(--font-size-base, 1rem);
+    flex: 1 1 auto;
+    min-width: 6.25rem;
+    max-width: 9rem;
+    padding: var(--spacing-xs, 0.75rem) var(--spacing-xs, 0.75rem);
+    font-size: var(--font-size-md, 1rem);
   }
 
   #profile-modal .modal button.btn-primary,
   #profile-modal .modal button.btn-light {
-    font-size: var(--font-size-base, 1rem);
+    font-size: var(--font-size-md, 1rem);
   }
 
 }

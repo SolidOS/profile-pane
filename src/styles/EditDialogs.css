@@ -490,6 +490,9 @@
   fill: var(--gray-500, #6A7282);
 }
 #profile-modal .modal button.profile-edit-dialog__drag-handle {
+  min-height: 1.75rem;
+  min-width: 1.75rem;
+  padding: 0;
   border: 0;
   background: transparent;
   box-shadow: none;
@@ -624,6 +627,30 @@
     align-items: flex-end;
   }
 
+  .profile-edit-dialog__row--social {
+    margin-left: 0;
+    gap: var(--spacing-2xs, 0.625rem);
+    flex-direction: row;
+    align-items: center;
+    flex-wrap: nowrap;
+  }
+
+  .profile-edit-dialog__row--social .socialIcon {
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+
+  .profile-edit-dialog__field--social-type {
+    flex: 0 0 5.5rem;
+    width: 5.5rem;
+    max-width: 5.5rem;
+  }
+
+  .profile-edit-dialog__field--social-url {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
   .profile-edit-dialog__row--language {
     flex-direction: row;
     align-items: center;
@@ -633,6 +660,23 @@
   .profile-edit-dialog__row--language > .profile-edit-dialog__field {
     flex: 1 1 0;
     min-width: 0;
+  }
+
+  .profile-edit-dialog__row--skill {
+    flex-direction: row;
+    align-items: center;
+    flex-wrap: nowrap;
+    gap: var(--spacing-2xs, 0.625rem);
+  }
+
+  .profile-edit-dialog__row--skill > .profile-edit-dialog__field {
+    flex: 1 1 0;
+    min-width: 0;
+  }
+
+  .profile-edit-dialog__row--skill > .profile-edit-dialog__actions {
+    flex: 0 0 auto;
+    margin-left: 0;
   }
 
   .profile-edit-dialog__row--inlineEnd {
@@ -645,5 +689,13 @@
 
   .profile-edit-dialog__row--addressHeader .profile-edit-dialog__actions {
     justify-content: flex-end;
+  }
+
+  .profile-edit-dialog__field-description {
+    display: none;
+  }
+
+  .inputHelpText {
+    display: none;
   }
 }

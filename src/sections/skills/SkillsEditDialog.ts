@@ -196,7 +196,7 @@ function renderSkillInputRow({
   }
 
   return html`
-    <div class="profile-edit-dialog__row profile-edit-dialog__row--full">
+    <div class="profile-edit-dialog__row profile-edit-dialog__row--full profile-edit-dialog__row--skill">
       <label aria-label=${`${label} Name`} class="label profile-edit-dialog__field profile-edit-dialog__field--full">
         <div class="profile-edit-dialog__input-wrap">
           <span class="profile-edit-dialog__search-icon" aria-hidden="true">${searchIcon}</span>

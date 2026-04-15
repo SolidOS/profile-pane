@@ -402,7 +402,9 @@
 }
 
 @media (max-width: 1000px) {
-  .profile__section-header h2 {
+  .profile__section-header h2,
+  .profile__section-header h3,
+  .profile__section-header h4 {
     font-size: var(--font-size-lg, 1.125rem);
   }
 
