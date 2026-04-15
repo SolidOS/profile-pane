@@ -180,6 +180,12 @@
   gap: var(--spacing-xxs);
 }
 
+.profile-edit-dialog__field--stack > small {
+  display: block;
+  width: 100%;
+  text-align: right;
+}
+
 .profile-edit-dialog__bio-field-container > small {
   align-self: flex-end;
   text-align: right;
