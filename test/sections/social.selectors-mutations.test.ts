@@ -124,6 +124,48 @@ describe('Social selectors and mutations', () => {
     expect(accountName?.value).toBe('sharon.stratsianis')
   })
 
+  it('normalizes GitHub www homepage to username accountName', async () => {
+    const store = graph() as any
+    const subject = sym('https://example.com/profile/card#me')
+    const doc = subject.doc()
+
+    store.updater = {
+      update: (deletions: any[], insertions: any[], callback: Function) => {
+        deletions.forEach((statement) => store.remove(st(statement.subject, statement.predicate, statement.object, statement.why)))
+        insertions.forEach((statement) => store.add(statement.subject, statement.predicate, statement.object, statement.why))
+        callback('', true)
+      },
+      serialize: jest.fn(() => ''),
+    }
+
+    store.fetcher = {
+      webOperation: jest.fn(async () => ({ ok: true, status: 200 }))
+    }
+
+    const plan = {
+      create: [{
+        name: 'Github',
+        icon: '',
+        homepage: 'https://www.github.com/SharonStrat',
+        entryNode: '',
+        status: 'new'
+      }],
+      update: [],
+      remove: []
+    }
+
+    await processSocialMutations(store, subject, plan as any)
+
+    const accountLinks = store.statementsMatching(subject, ns.foaf('account'), null, doc)
+    const expandedAccounts = accountLinks
+      .flatMap((statement: any) => expandRdfList(store, statement.object))
+      .filter((node: any) => node.termType === 'NamedNode')
+
+    const entryNode = expandedAccounts[0]
+    const accountName = store.any(entryNode, ns.foaf('accountName'), null, doc)
+    expect(accountName?.value).toBe('SharonStrat')
+  })
+
   it('uses full accountName URL as homepage without re-prefixing', () => {
     const store = graph() as any
     const accountNode = sym('https://example.com/profile/card#id1')
