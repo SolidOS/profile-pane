@@ -10,6 +10,12 @@ import {
   combinePhoneValue,
   splitPhoneValue
 } from '../shared/phoneCountries'
+import {
+  normalizeEmailTypeForEdit,
+  normalizePhoneTypeForEdit,
+  toSavedHeadingEmailType,
+  toSavedHeadingPhoneType
+} from '../shared/contactTypeUtils'
 import { applyRowFieldChange, applyRowSelectChange, summarizeRowOps } from '../shared/rowState'
 import { hasNonEmptyText, sanitizeTextValue, toText, toTypeLabel } from '../../textUtils'
 import {
@@ -86,26 +92,6 @@ function normalizePronounsValue(value: string | undefined): string {
   return value || ''
 }
 
-function normalizeHeadingPhoneType(value: unknown): string {
-  const label = toTypeLabel(value).trim().toLowerCase()
-  if (!label) return ''
-
-  if (label === 'cell') return 'Cell'
-  if (label === 'mobile') return 'Cell'
-  if (label === 'home') return 'Home'
-  if (label === 'work' || label === 'office') return 'Work'
-  return ''
-}
-
-function normalizeHeadingEmailType(value: unknown): string {
-  const label = toTypeLabel(value).trim().toLowerCase()
-  if (!label) return ''
-
-  if (label === 'personal' || label === 'home') return 'Personal'
-  if (label === 'office' || label === 'work') return 'Office'
-  return ''
-}
-
 function toFormState(profileData: ProfileDetails): HeadingFormState {
   const basicInfo: ProfileBasicRow = {
     name: sanitizeTextValue(toText(profileData.name)),
@@ -123,8 +109,8 @@ function toFormState(profileData: ProfileDetails): HeadingFormState {
   const primaryPhone = profileData.primaryPhone
   const primaryAddress = profileData.primaryAddress
 
-  const normalizedEmailType = normalizeHeadingEmailType(primaryEmail?.type)
-  const normalizedPhoneType = normalizeHeadingPhoneType(primaryPhone?.type)
+  const normalizedEmailType = normalizeEmailTypeForEdit(primaryEmail?.type)
+  const normalizedPhoneType = normalizePhoneTypeForEdit(primaryPhone?.type)
 
   const email: ContactPointRow = {
     value: sanitizeEmailValue(toText(primaryEmail?.valueNode).replace(/^mailto:/i, '')),
@@ -185,14 +171,6 @@ type ContactEmailInputRowProps = {
 
 type ContactAddressInputRowProps = {
   address: ContactAddressRow
-}
-
-function toSavedHeadingEmailType(type: string | undefined): string {
-  return type === 'Personal' ? 'Home' : (type || '')
-}
-
-function toSavedHeadingPhoneType(type: string | undefined): string {
-  return type === 'Mobile' ? 'Cell' : (type || '')
 }
 
 function mapEmailOpsForSave(ops: { create: ContactPointRow[], update: ContactPointRow[], remove: ContactPointRow[] }) {
@@ -300,7 +278,7 @@ function renderContactPhoneInput({
       </div>
       <label aria-label=${typeLabel} class="label profile-edit-dialog__field-type profile-edit-dialog__field-type--contact-point phoneTypeRow">
         <select class="input" name=${typeInputName} id="phone-type-select-${inputName}" @change=${handleTypeInput} .value=${phone?.type || ''}>
-          <option value="Cell">Mobile</option>
+          <option value="Mobile">Mobile</option>
           <option value="Home">Home</option>
           <option value="Work">Work</option>
         </select>

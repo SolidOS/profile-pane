@@ -10,8 +10,9 @@ import {
   combinePhoneValue,
   splitPhoneValue
 } from '../shared/phoneCountries'
+import { normalizeEmailTypeForContactInfoEdit, normalizePhoneTypeForContactInfoEdit } from '../shared/contactTypeUtils'
 import { applyRowFieldChange, applyRowSelectChange, deleteRow, summarizeRowOps } from '../shared/rowState'
-import { hasNonEmptyText, sanitizeTextValue, toText, toTypeLabel } from '../../textUtils'
+import { hasNonEmptyText, sanitizeTextValue, toText } from '../../textUtils'
 import {
   deleteEntryButtonTitleText,
   dialogCancelLabelText,
@@ -58,7 +59,7 @@ function toFormState(contactInfo: ContactInfo): ContactInfoFormState {
   const emails = (contactInfo.emails || [])
     .map((email) => ({
       value: sanitizeEmailValue(toText(email.valueNode).replace(/^mailto:/i, '')),
-      type: toTypeLabel(email.type),
+      type: normalizeEmailTypeForContactInfoEdit(email.type),
       entryNode: toText(email.entryNode),
       status: toText(email.entryNode) ? 'existing' as const : 'new' as const
     }))
@@ -67,7 +68,7 @@ function toFormState(contactInfo: ContactInfo): ContactInfoFormState {
   const phones = (contactInfo.phones || [])
     .map((phone) => ({
       value: sanitizeTextValue(toText(phone.valueNode).replace(/^tel:/i, '')),
-      type: toTypeLabel(phone.type),
+      type: normalizePhoneTypeForContactInfoEdit(phone.type),
       entryNode: toText(phone.entryNode),
       status: 'existing' as const
     }))
@@ -79,7 +80,7 @@ function toFormState(contactInfo: ContactInfo): ContactInfoFormState {
       region: sanitizeAddressFieldValue(toText(address.region)),
       postalCode: sanitizeAddressFieldValue(toText(address.postalCode)),
       countryName: sanitizeAddressFieldValue(toText(address.countryName)),
-      type: toTypeLabel(address.type),
+      type: toText(address.type),
       entryNode: toText(address.entryNode),
       status: toText(address.entryNode) ? 'existing' as const : 'new' as const
     }))
@@ -210,10 +211,9 @@ function renderContactPhoneInputRow({
       </div>
       <label aria-label=${typeLabel} class="label profile-edit-dialog__field-type phoneTypeRow">
         <select name=${typeInputName} id="phone-type-select-${inputName}" @change=${handleTypeInput} .value=${phoneRow?.type || ''}>
-          <option value="Mobile">Mobile</option>
+          <option value="Cell">Mobile</option>
           <option value="Home">Home</option>
           <option value="Work">Work</option>
-          <option value="Other">Other</option>
         </select>
       </label>
       <div class="profile-edit-dialog__actions">
@@ -332,9 +332,8 @@ function renderContactEmailInputRow({
       </label>
       <label aria-label=${typeLabel} class="label profile-edit-dialog__field-type emailTypeRow">
         <select name=${typeInputName} id="email-type-select-${inputName}" @change=${handleTypeInput} .value=${emailRow?.type || ''}>
-          <option value="Personal">Personal</option>
+          <option value="Home">Personal</option>
           <option value="Office">Office</option>
-          <option value="Other">Other</option>
         </select>
       </label>
       <div class="profile-edit-dialog__actions">
@@ -446,7 +445,6 @@ function renderContactAddressInputRow({
         <select name=${typeInputName} id=${addressTypeSelectId} @change=${handleTypeInput} .value=${addressRow?.type || ''}>
           <option value="Home">Home</option>
           <option value="Work">Work</option>
-          <option value="Other">Other</option>
         </select>
       </label>
       <div class="profile-edit-dialog__actions profile-edit-dialog__actions--edge">
