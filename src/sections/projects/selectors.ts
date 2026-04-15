@@ -101,14 +101,7 @@ export async function ensureProjectDocumentsLoaded(subject: NamedNode, store: Li
   const profileDoc = subject.doc()
   const fetcher = (store as any)?.fetcher
 
-  console.info('[profile-pane/projects] ensureProjectDocumentsLoaded:start', {
-    subject: subject.value,
-    profileDoc: profileDoc.value,
-    hasFetcher: Boolean(fetcher && typeof fetcher.load === 'function')
-  })
-
   if (!fetcher || typeof fetcher.load !== 'function') {
-    console.warn('[profile-pane/projects] ensureProjectDocumentsLoaded:no-fetcher')
     return
   }
 
@@ -122,13 +115,7 @@ export async function ensureProjectDocumentsLoaded(subject: NamedNode, store: Li
     docsToLoad.set(projectDoc.value, projectDoc)
   }
 
-  console.info('[profile-pane/projects] ensureProjectDocumentsLoaded:candidates', {
-    communityNodes: communityNodes.length,
-    docsToLoad: docsToLoad.size
-  })
-
   if (!docsToLoad.size) {
-    console.info('[profile-pane/projects] ensureProjectDocumentsLoaded:no-docs')
     return
   }
 
@@ -136,21 +123,9 @@ export async function ensureProjectDocumentsLoaded(subject: NamedNode, store: Li
     Array.from(docsToLoad.values()).map(async (doc) => {
       const previousRequested = clearStaleRequestedState(fetcher, doc.value)
       try {
-        console.debug('[profile-pane/projects] loading linked profile document', {
-          doc: doc.value,
-          previousRequested
-        })
+        void previousRequested
         await fetcher.load(doc)
-        const statementsInDoc = store.statementsMatching(undefined, undefined, undefined, doc).length
-        console.debug('[profile-pane/projects] loaded linked profile document', {
-          doc: doc.value,
-          statementsInDoc
-        })
       } catch {
-        console.warn('[profile-pane/projects] failed to load linked profile document', {
-          doc: doc.value,
-          requested: fetcher?.requested?.[doc.value]
-        })
         // Ignore individual project doc load failures so one bad doc doesn't block others.
       }
     })

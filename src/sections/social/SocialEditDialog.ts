@@ -408,7 +408,9 @@ export async function createSocialEditDialog(
     },
     formatSaveError: (error: unknown) => {
       const message = error instanceof Error ? error.message : String(error)
-      return `${saveSocialUpdatesFailedPrefixText} ${message}`
+      return message.startsWith(saveSocialUpdatesFailedPrefixText)
+        ? message
+        : `${saveSocialUpdatesFailedPrefixText} ${message}`
     }
   })
 

@@ -131,7 +131,6 @@ async function checkIfThingExists(
 
 function extractFriends(editable: boolean, subject: NamedNode, { dom }: DataBrowserContext): HTMLDivElement | null {
   const target = dom.createElement('div')
-  console.log('Extracting friends for subject:', subject.doc()) // Debug log to check the subject
   widgets.attachmentList(dom, subject, target, {
     doc: subject.doc(),
     modify: editable,
@@ -140,7 +139,6 @@ function extractFriends(editable: boolean, subject: NamedNode, { dom }: DataBrow
   })
   if (target.textContent === '')
     return null
-  console.log('Extracted friends:', target.innerHTML) // Debug log to check the generated HTML
   return target
 }
 

@@ -219,25 +219,6 @@ function renderResumeInputRow({
     `)}
   `
 
-  if (startDateText || endDateText) {
-    console.log('[resume-date-dropdown] parsed row dates', {
-      index,
-      entryNode: resumeRow?.entryNode || '',
-      startDateText,
-      startYearText,
-      startMonthValue,
-      endDateText,
-      endYearText: endYearParsedText,
-      endMonthValue,
-      selectedStartYearInOptions: yearOptions.includes(startYearText),
-      selectedEndYearInOptions: yearOptions.includes(endYearParsedText),
-      yearOptionsSample: yearOptions.slice(0, 6)
-    })
-  }
-
-
-
-
   const handleResumeInput = (field: ResumeEditableField) => (e: Event) => {
     const target = e.target as HTMLInputElement
     const nextValue = sanitizeResumeFieldValue(target.value)

@@ -126,29 +126,6 @@ function toFormState(profileData: ProfileDetails): HeadingFormState {
   const normalizedEmailType = normalizeHeadingEmailType(primaryEmail?.type)
   const normalizedPhoneType = normalizeHeadingPhoneType(primaryPhone?.type)
 
-  console.log('[heading-edit] Type prefill debug', {
-    rawPhoneTypeValue: toText(primaryPhone?.type),
-    rawPhoneTypeLabel: toTypeLabel(primaryPhone?.type),
-    normalizedPhoneType,
-    rawEmailTypeValue: toText(primaryEmail?.type),
-    rawEmailTypeLabel: toTypeLabel(primaryEmail?.type),
-    normalizedEmailType
-  })
-
-  if (primaryEmail?.type && !normalizedEmailType) {
-    console.info('[heading-edit] Unmapped email type', {
-      rawType: toText(primaryEmail?.type),
-      label: toTypeLabel(primaryEmail?.type)
-    })
-  }
-
-  if (primaryPhone?.type && !normalizedPhoneType) {
-    console.info('[heading-edit] Unmapped phone type', {
-      rawType: toText(primaryPhone?.type),
-      label: toTypeLabel(primaryPhone?.type)
-    })
-  }
-
   const email: ContactPointRow = {
     value: sanitizeEmailValue(toText(primaryEmail?.valueNode).replace(/^mailto:/i, '')),
     type: normalizedEmailType,
@@ -767,7 +744,6 @@ export async function createHeadingEditDialog(
   onSaved?: () => Promise<void> | void
 ) {
   const dom = document
-  console.log('[heading-edit] Opening heading edit dialog')
   const originalPhotoUri = sanitizeTextValue(toText(profileData.imageSrc || ''))
   const { form, formState } = createHeadingEditForm(store, subject, profileData)
 

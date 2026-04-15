@@ -202,9 +202,7 @@ async function mutateSocialEntries(
 
 	const insertions: any[] = []
 	if (rowEntryNodes.length > 0) {
-		for (let size = rowEntryNodes.length; size >= 1; size -= 1) {
-			insertions.push(st(subject, ns.foaf('account'), new Collection(rowEntryNodes.slice(0, size) as any) as any, doc))
-		}
+		insertions.push(st(subject, ns.foaf('account'), new Collection(rowEntryNodes as any) as any, doc))
 	}
 
 	nextRows.forEach((row, index) => {
