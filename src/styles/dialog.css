@@ -91,13 +91,17 @@
 /* button container: center buttons horizontally (uses id in markup) */
 #profile-modal #modal-buttons {
   display: flex;
-  padding: 20px 30px;
+  padding: 20px 0 20px 30px;
   justify-content: flex-end;
   align-items: center;
   gap: 15px;
   align-self: stretch;
   border-top: var(--border-width-sm, 0.1rem) solid var(--slate-200, #E2E8F0);
   background: var(--gray-50, #F9FAFB);
+}
+
+#profile-modal #modal-buttons button {
+  width: 10.8rem;
 }
 
 #profile-modal .modal__inline-error {
