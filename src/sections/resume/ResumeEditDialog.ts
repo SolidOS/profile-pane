@@ -9,7 +9,7 @@ import { ViewerMode } from '../../types'
 import { applyRowFieldChange, applyRowSelectChange, deleteRow, summarizeRowOps } from '../shared/rowState'
 import { hasNonEmptyText, sanitizeTextValue, toText } from '../../textUtils'
 import { MutationOps } from '../shared/types'
-import { checkboxIcon, trashIcon } from '../../icons-svg/profileIcons'
+import { purpleFilledCheckboxIcon, trashIcon } from '../../icons-svg/profileIcons'
 import {
   deleteEntryButtonTitleText,
   dialogCancelLabelText,
@@ -458,7 +458,7 @@ function renderResumeInputRow({
           @change=${handleCurrentRoleToggle}
         />
         <span class="inputCheckboxLabel__visual" aria-hidden="true">
-          ${resumeRow?.isCurrentRole ? checkboxIcon : ''}
+          ${resumeRow?.isCurrentRole ? purpleFilledCheckboxIcon : ''}
         </span>
         <span>I am currently working in this role</span>
       </label>
