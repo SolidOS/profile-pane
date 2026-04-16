@@ -90,10 +90,14 @@
 
 /* button container: center buttons horizontally (uses id in markup) */
 #profile-modal #modal-buttons {
-  margin-top: var(--spacing-md);
   display: flex;
+  padding: 20px 30px;
   justify-content: flex-end;
-  gap: var(--spacing-sm);
+  align-items: center;
+  gap: 15px;
+  align-self: stretch;
+  border-top: var(--border-width-sm, 0.1rem) solid var(--slate-200, #E2E8F0);
+  background: var(--gray-50, #F9FAFB);
 }
 
 #profile-modal .dialogInlineError {
@@ -210,19 +214,16 @@
     flex-direction: row;
     align-items: center;
     justify-content: center;
-    gap: var(--spacing-xxs, 0.5rem);
+    gap: var(--spacing-sm, 0.938rem);
+    margin: var(--spacing-md) auto 0;
+    box-sizing: border-box;
   }
 
   #profile-modal #modal-buttons button {
-    flex: 1 1 auto;
-    min-width: 6.25rem;
-    max-width: 9rem;
-    padding: var(--spacing-xs, 0.75rem) var(--spacing-xs, 0.75rem);
-    font-size: var(--font-size-md, 1rem);
-  }
-
-  #profile-modal .modal button.btn-primary,
-  #profile-modal .modal button.btn-light {
+    flex: 0 0 auto;
+    width: 10.8rem;
+    min-width: 8.5rem;
+    padding: var(--spacing-sm) var(--spacing-md);
     font-size: var(--font-size-md, 1rem);
   }
 
