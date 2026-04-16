@@ -435,7 +435,6 @@
   font-size: var(--font-size-xxs, 0.75rem); /* 12 px */
   font-weight: var(--font-weight-xbold, 700);
   line-height: var(--line-height-base, 1.5); /* 150% */
-  
   border-radius: var(--border-radius-base, 0.3125rem);
   border: 0.8px solid var(--gray-300, #D1D5DC);
 }
@@ -738,8 +737,6 @@
   .profile-edit-dialog--heading .profile-edit-dialog__row--heading-photo .profile-edit-dialog__image-button {
     flex: 1 1 0;
     width: 100%;
-    min-height: var(--min-touch-target, 44px);
-    font-size: 0.8125rem;
     padding: 0 0.75rem;
   }
 
