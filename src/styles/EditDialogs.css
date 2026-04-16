@@ -87,8 +87,27 @@
   border-bottom: 1px solid var(--gray-400, #99A1AF);
 }
 
-.profile-edit-dialog__row--resume-entry-header > h5 {
+.profile-edit-dialog__row--resume-entry-header > .profile-edit-dialog__entry-heading {
   margin: 0;
+}
+
+.profile-edit-dialog__entry-heading {
+  margin: 0;
+  color: var(--gray-700, #364153);
+  font-size: var(--font-size-sm, 0.875rem);
+  font-style: normal;
+  font-weight: var(--font-weight-md, 500);
+  line-height: normal;
+}
+
+.educationEditSection .profile-edit-dialog__section-heading {
+  margin: 0;
+  color: var(--gray-700, #364153);
+  font-family: "Neue Einstellung", sans-serif;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
 }
 
 .profile-edit-dialog__row--resume-entry-header .profile-edit-dialog__delete-button,

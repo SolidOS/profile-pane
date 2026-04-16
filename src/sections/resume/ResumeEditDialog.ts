@@ -315,7 +315,7 @@ function renderResumeInputRow({
 
   return html`
     <div class="profile-edit-dialog__row profile-edit-dialog__row--resume-entry-header" role="group" aria-labelledby=${experienceHeadingId}>
-      <h5 id=${experienceHeadingId}>${label}</h5>
+      <h3 id=${experienceHeadingId} class="profile-edit-dialog__entry-heading">${label}</h3>
       <div class="profile-edit-dialog__actions profile-edit-dialog__actions--edge">
         <button
           type="button"

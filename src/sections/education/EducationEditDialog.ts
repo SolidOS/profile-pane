@@ -268,7 +268,7 @@ function renderEducationInputRow({
 
   return html`
     <div class="profile-edit-dialog__row" role="group" aria-labelledby=${educationHeadingId}>
-      <h5 id=${educationHeadingId}>${label}</h5>
+      <h4 id=${educationHeadingId} class="profile-edit-dialog__entry-heading">${label}</h4>
       <div class="profile-edit-dialog__actions profile-edit-dialog__actions--edge">
         <button
           type="button"
@@ -389,10 +389,10 @@ function renderEducationSection(educationData: EducationRow[], onAddRow: () => v
       aria-labelledby="education-heading" 
       class="educationEditSection section-bg">
       <header class="profile__section-header">
-        <h4 id="education-heading">
+        <h3 id="education-heading" class="profile-edit-dialog__section-heading">
           <span class="sectionTitleIcon" aria-hidden="true">&#9993;</span>
           Education
-        </h4>
+        </h3>
         <button
           type="button"
           class="profile__action-button profile-action-text flex-center"
