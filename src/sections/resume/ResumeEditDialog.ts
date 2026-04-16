@@ -411,40 +411,40 @@ function renderResumeInputRow({
         />
       </label>
     </div>
-    <div class="profile-edit-dialog__row">
-      <label aria-label=${startMonthLabel} class="label profile-edit-dialog__field-type profile-edit-dialog__field-type--month">
-        Start Month
-        <select name=${startMonthInputName} id=${startMonthSelectId} @change=${handleStartMonthChange}>
-          ${renderMonthOptions(startMonthValue)}
-        </select>
+    <div class="profile-edit-dialog__row profile-edit-dialog__row--resume-dates">
+      <label aria-label=${`Start Date ${displayIndex + 1}`} class="label profile-edit-dialog__field profile-edit-dialog__field--date-group">
+        <span>Start Date</span>
+        <div class="profile-edit-dialog__date-pair">
+          <select name=${startMonthInputName} id=${startMonthSelectId} aria-label=${startMonthLabel} @change=${handleStartMonthChange}>
+            ${renderMonthOptions(startMonthValue)}
+          </select>
+          <select name=${startYearInputName} id=${startYearSelectId} aria-label=${startYearLabel} @change=${handleStartYearChange}>
+            ${renderYearOptions(startYearText)}
+          </select>
+        </div>
       </label>
-      <label aria-label=${startYearLabel} class="label profile-edit-dialog__field-type">
-        Start Year
-        <select name=${startYearInputName} id=${startYearSelectId} @change=${handleStartYearChange}>
-          ${renderYearOptions(startYearText)}
-        </select>
-      </label>
-      <label aria-label=${endMonthLabel} class="label profile-edit-dialog__field-type profile-edit-dialog__field-type--month">
-        End Month
-        <select
-          name=${endMonthInputName}
-          id=${endMonthSelectId}
-          @change=${handleEndMonthChange}
-          ?disabled=${Boolean(resumeRow?.isCurrentRole)}
-        >
-          ${renderMonthOptions(endMonthValue, resumeRow?.isCurrentRole ? 'Present' : 'Select Month')}
-        </select>
-      </label>
-      <label aria-label=${endYearLabel} class="label profile-edit-dialog__field-type">
-        End Year
-        <select
-          name=${endYearInputName}
-          id=${endYearSelectId}
-          @change=${handleEndYearChange}
-          ?disabled=${Boolean(resumeRow?.isCurrentRole)}
-        >
-          ${renderYearOptions(endYearParsedText, resumeRow?.isCurrentRole ? '' : 'Select Year')}
-        </select>
+      <label aria-label=${`End Date ${displayIndex + 1}`} class="label profile-edit-dialog__field profile-edit-dialog__field--date-group">
+        <span>End Date</span>
+        <div class="profile-edit-dialog__date-pair">
+          <select
+            name=${endMonthInputName}
+            id=${endMonthSelectId}
+            aria-label=${endMonthLabel}
+            @change=${handleEndMonthChange}
+            ?disabled=${Boolean(resumeRow?.isCurrentRole)}
+          >
+            ${renderMonthOptions(endMonthValue, resumeRow?.isCurrentRole ? 'Present' : 'Select Month')}
+          </select>
+          <select
+            name=${endYearInputName}
+            id=${endYearSelectId}
+            aria-label=${endYearLabel}
+            @change=${handleEndYearChange}
+            ?disabled=${Boolean(resumeRow?.isCurrentRole)}
+          >
+            ${renderYearOptions(endYearParsedText, resumeRow?.isCurrentRole ? '' : 'Select Year')}
+          </select>
+        </div>
       </label>
     </div>
     <div class="profile-edit-dialog__row profile-edit-dialog__row--inlineEnd">
@@ -491,7 +491,7 @@ function renderResumeSection(resumeData: ResumeRow[], onAddRow: () => void) {
     .filter(({ resume }) => resume.status !== 'deleted')
 
   return html`
-    <section class="profile-edit-dialog__section profile-edit-dialog__section--resume section-bg" aria-label="Resume">
+    <section class="profile-edit-dialog__section profile-edit-dialog__section--resume" aria-label="Resume">
       <fieldset>
         <legend class="sr-only">Resume entries</legend>
         ${visibleResumeRows.map(({ index }, displayIndex) => renderResumeInputRow({

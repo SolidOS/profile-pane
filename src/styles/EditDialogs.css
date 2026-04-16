@@ -84,6 +84,7 @@
 
 .profile-edit-dialog__row--resume-entry-header {
   align-items: center;
+  border-bottom: 1px solid var(--gray-400, #99A1AF);
 }
 
 .profile-edit-dialog__row--resume-entry-header > h5 {
@@ -155,6 +156,15 @@
   flex: 1 0 0;
 }
 
+.profile__edit-form--resume .profile-edit-dialog__row {
+  max-width: 100%;
+  width: 100%;
+}
+
+.profile__edit-form--resume .profile-edit-dialog__section fieldset > .profile-edit-dialog__field {
+  max-width: 100%;
+}
+
 .profile__edit-form--resume .profile-edit-dialog__field > input,
 .profile__edit-form--resume .profile-edit-dialog__field > select,
 .profile__edit-form--resume .profile-edit-dialog__field > textarea,
@@ -171,9 +181,31 @@
 }
 
 .profile-edit-dialog__field--resume-location {
-  flex: 0 0 16rem;
-  width: 16rem;
-  max-width: 16rem;
+  flex: 1 0 0;
+  width: auto;
+  max-width: none;
+}
+
+.profile-edit-dialog__row--resume-dates {
+  max-width: 100%;
+  width: 100%;
+}
+
+.profile-edit-dialog__field--date-group {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+.profile-edit-dialog__date-pair {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  width: 100%;
+}
+
+.profile-edit-dialog__date-pair > select {
+  flex: 1 1 0;
+  min-width: 0;
 }
 
 .profile-edit-dialog__field--stack {
@@ -654,6 +686,12 @@
     min-width: 0;
   }
 
+  .profile-edit-dialog__field--resume-location {
+    flex: 1 1 100%;
+    width: 100%;
+    max-width: 100%;
+  }
+
   .profile-edit-dialog__row--language {
     flex-direction: row;
     align-items: center;
@@ -663,6 +701,18 @@
   .profile-edit-dialog__row--language > .profile-edit-dialog__field {
     flex: 1 1 0;
     min-width: 0;
+  }
+
+  .profile-edit-dialog__row--resume-entry-header {
+    flex-direction: row;
+    align-items: center;
+    flex-wrap: nowrap;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .profile-edit-dialog__row--resume-entry-header > .profile-edit-dialog__actions--edge {
+    margin-left: auto;
   }
 
   .profile-edit-dialog__row--skill {
