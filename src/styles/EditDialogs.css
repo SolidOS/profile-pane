@@ -143,6 +143,7 @@
 }
 
 .profile-edit-dialog__image-camera-button {
+  display: none;
   position: absolute;
   right: var(--spacing-2xs, 0.625rem);
   bottom: var(--spacing-2xs, 0.625rem);
@@ -151,6 +152,7 @@
 
 /* Override modal-wide button defaults for the small camera overlay control. */
 #profile-modal .modal button.profile-edit-dialog__image-camera-button {
+  display: none !important;
   position: absolute;
   right: var(--spacing-2xs, 0.625rem);
   bottom: var(--spacing-2xs, 0.625rem);
@@ -926,11 +928,16 @@
   }
 
   .profile-edit-dialog--heading .profile-edit-dialog__row--heading-photo .profile-edit-dialog__image-camera-button {
+    display: inline-flex;
     right: var(--spacing-xxs, 0.3125rem);
     bottom: var(--spacing-xxs, 0.3125rem);
     width: 1.875rem;
     min-width: 1.875rem;
     min-height: 1.875rem;
+  }
+
+  #profile-modal .modal button.profile-edit-dialog__image-camera-button {
+    display: inline-flex !important;
   }
 
   .profile-edit-dialog--heading .profile-edit-dialog__row--heading-photo .profile-edit-dialog__image-preview {
