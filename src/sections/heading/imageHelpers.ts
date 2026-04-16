@@ -87,3 +87,4 @@ export async function deletePhotoFile(store: LiveStore, subject: NamedNode, phot
     
   }
 }
+

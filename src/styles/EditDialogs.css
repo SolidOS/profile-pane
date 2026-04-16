@@ -103,11 +103,8 @@
 .educationEditSection .profile-edit-dialog__section-heading {
   margin: 0;
   color: var(--gray-700, #364153);
-  font-family: "Neue Einstellung", sans-serif;
   font-size: 16px;
-  font-style: normal;
   font-weight: 500;
-  line-height: normal;
 }
 
 .profile-edit-dialog__row--resume-entry-header .profile-edit-dialog__delete-button,
@@ -137,6 +134,152 @@
   display: flex;
   align-items: center;
   gap: var(--spacing-xs);
+}
+
+.profile-edit-dialog__image-frame {
+  position: relative;
+  display: inline-block;
+  line-height: 0;
+}
+
+.profile-edit-dialog__image-camera-button {
+  position: absolute;
+  right: var(--spacing-2xs, 0.625rem);
+  bottom: var(--spacing-2xs, 0.625rem);
+  z-index: 1;
+}
+
+/* Override modal-wide button defaults for the small camera overlay control. */
+#profile-modal .modal button.profile-edit-dialog__image-camera-button {
+  position: absolute;
+  right: var(--spacing-2xs, 0.625rem);
+  bottom: var(--spacing-2xs, 0.625rem);
+  width: 1.25rem;
+  height: 1.25rem;
+  min-width: 1.25rem;
+  min-height: 1.25rem;
+  padding: 3px;
+  background: var(--white, #FFF);
+  border-radius: 3.333px;
+  box-shadow: 0 0 4.444px 0 rgba(0, 0, 0, 0.25);
+  flex-shrink: 0;
+}
+
+.profile-edit-dialog__image-camera-button svg {
+  width: 0.875rem !important;
+  height: 0.875rem !important;
+  display: block;
+  flex-shrink: 0;
+}
+
+.profile-edit-dialog__image-camera-capture-row {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.profile-edit-dialog__image-camera-capture-host {
+  margin-top: var(--spacing-xs, 0.625rem);
+  margin-bottom: var(--spacing-xs, 0.625rem);
+  width: min(100%, 260px);
+  max-width: 260px;
+  transform: translateX(1rem) !important;
+}
+
+.profile-edit-dialog__image-camera-capture-host[hidden] {
+  display: none;
+}
+
+.profile-edit-dialog__image-camera-capture-host table {
+  border-collapse: collapse;
+  width: 100%;
+  table-layout: fixed;
+}
+
+.profile-edit-dialog__image-camera-capture-host td {
+  text-align: center;
+  vertical-align: middle;
+}
+
+.profile-edit-dialog__image-camera-capture-host tr:last-child {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: var(--spacing-2xs, 0.625rem);
+}
+
+.profile-edit-dialog__image-camera-capture-host tr:last-child td {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  width: auto;
+}
+
+.profile-edit-dialog__image-camera-capture-host tr:last-child td:first-child {
+  margin-right: auto;
+}
+
+#profile-modal .modal .profile-edit-dialog__image-camera-capture-host tr:last-child td:first-child button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.profile-edit-dialog__camera-control-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center !important;
+  gap: var(--spacing-2xs, 0.625rem);
+  width: max-content;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: var(--spacing-2xs, 0.625rem);
+  align-self: center;
+}
+
+.profile-edit-dialog__camera-control {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.profile-edit-dialog__camera-control-cancel {
+  margin-right: 0 !important;
+}
+
+#profile-modal .modal .profile-edit-dialog__camera-control-actions button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2rem;
+  padding: 0.25rem 0.625rem;
+  border: 1px solid var(--gray-300, #D5D7DA) !important;
+  background: var(--gray-200, #E5E7EB) !important;
+  color: var(--gray-700, #364153) !important;
+  box-shadow: none !important;
+  border-radius: 0.375rem;
+  font-weight: var(--font-weight-md, 500);
+}
+
+#profile-modal .modal .profile-edit-dialog__camera-control-actions button:hover,
+#profile-modal .modal .profile-edit-dialog__camera-control-actions button:focus-visible {
+  background: var(--gray-100, #F3F4F6) !important;
+  border-color: var(--gray-400, #99A1AF) !important;
+}
+
+.profile-edit-dialog__image-camera-capture-host video,
+.profile-edit-dialog__image-camera-capture-host canvas {
+  display: block;
+  width: 100%;
+  max-width: 260px;
+  height: auto;
+  border-radius: 0.5rem;
+  margin: 0 auto;
+}
+
+#profile-modal .modal .profile-edit-dialog__image-camera-capture-host button {
+  font-size: var(--font-size-sm, 0.875rem);
 }
 
 .profile-edit-dialog__image-upload-button,
@@ -780,6 +923,14 @@
     align-items: center;
     justify-content: center;
     padding: 0;
+  }
+
+  .profile-edit-dialog--heading .profile-edit-dialog__row--heading-photo .profile-edit-dialog__image-camera-button {
+    right: var(--spacing-xxs, 0.3125rem);
+    bottom: var(--spacing-xxs, 0.3125rem);
+    width: 1.875rem;
+    min-width: 1.875rem;
+    min-height: 1.875rem;
   }
 
   .profile-edit-dialog--heading .profile-edit-dialog__row--heading-photo .profile-edit-dialog__image-preview {

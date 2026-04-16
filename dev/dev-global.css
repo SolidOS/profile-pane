@@ -7,6 +7,7 @@
 :root {
   /* New Design: Colors (possibly change to primary secondary etc for now add here  */
   /* Adding used for comment so we can decide later */
+  --gray-50: #F9FAFB; /* Used for: background of dialog buttons */
   --gray-100: #F3F4F6; /* Used for: background of QR code frame */
   --gray-200: #E5E7EB; /* Used for: border of sections */
   --gray-400: #99A1AF; /* Used for: input borders */
