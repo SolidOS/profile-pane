@@ -42,6 +42,7 @@ type HeadingFormState = {
 }
 
 type Row = ProfileBasicRow | ContactPointRow | ContactAddressRow
+
 function isContactPointRow(row: Row): row is ContactPointRow {
   return 'value' in row
 }
@@ -529,7 +530,7 @@ function renderHeadingInfoInput(
   }
 
   return html`
-    <div class="profile-edit-dialog__row">
+    <div class="profile-edit-dialog__row profile-edit-dialog__row--heading-photo">
       <header class="mb-md" aria-label="Profile Image">
         ${Image(basicInfo.imageSrc, basicInfo.name)}
       </header>
@@ -673,17 +674,26 @@ function renderHeadingEditTemplate(
   form: HTMLFormElement,
   formState: HeadingFormState,
   store: LiveStore,
-  subject: NamedNode
+  subject: NamedNode,
+  viewerMode: ViewerMode
 ) {
-  const rerender = () => renderHeadingEditTemplate(form, formState, store, subject)
+  const rerender = () => renderHeadingEditTemplate(form, formState, store, subject, viewerMode)
  
   render(html`
     ${renderHeadingInfoInput(store, subject, formState.basicInfo, formState.phone, formState.email, rerender)}
     ${renderContactAddressInput({ address: formState.address })}
+    ${viewerMode !== 'owner'
+      ? html`<p class="profile-edit-dialog__login-message">${ownerLoginRequiredDialogMessageText}</p>`
+      : null}
   `, form)
 }
 
-function createHeadingEditForm(store: LiveStore, subject: NamedNode, profileData: ProfileDetails) {
+function createHeadingEditForm(
+  store: LiveStore,
+  subject: NamedNode,
+  profileData: ProfileDetails,
+  viewerMode: ViewerMode
+) {
   const form = document.createElement('form')
   form.classList.add('profile__edit-form', 'profile-edit-dialog--heading', 'flex-column', 'gap-sm')
   form.autocomplete = 'off'
@@ -692,7 +702,7 @@ function createHeadingEditForm(store: LiveStore, subject: NamedNode, profileData
   form.setAttribute('data-bwignore', 'true')
 
   const formState = toFormState(profileData)
-  renderHeadingEditTemplate(form, formState, store, subject)
+  renderHeadingEditTemplate(form, formState, store, subject, viewerMode)
 
   return { form, formState }
 }
@@ -723,7 +733,7 @@ export async function createHeadingEditDialog(
 ) {
   const dom = document
   const originalPhotoUri = sanitizeTextValue(toText(profileData.imageSrc || ''))
-  const { form, formState } = createHeadingEditForm(store, subject, profileData)
+  const { form, formState } = createHeadingEditForm(store, subject, profileData, viewerMode)
 
   const result = await openInputDialog({
     title: editHeadingDialogTitleText,

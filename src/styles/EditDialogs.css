@@ -207,6 +207,12 @@
   width: 100%;
 }
 
+.profile-edit-dialog__login-message {
+  margin: 0;
+  font-size: var(--font-size-xs, 0.75rem);
+  color: var(--red-600, #E7000B);
+}
+
 .profile-edit-dialog--heading .profile-edit-dialog__row--contact-point {
   max-width: 100%;
   width: 100%;
@@ -677,6 +683,64 @@
   .profile-edit-dialog__row--skill > .profile-edit-dialog__actions {
     flex: 0 0 auto;
     margin-left: 0;
+  }
+
+  .profile-edit-dialog--heading .profile-edit-dialog__row--heading-photo {
+    flex-direction: row;
+    align-items: center;
+    flex-wrap: nowrap;
+    gap: var(--spacing-xs, 0.75rem);
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .profile-edit-dialog--heading .profile-edit-dialog__row--heading-photo > header {
+    margin-bottom: 0;
+    flex: 0 0 auto;
+  }
+
+  .profile-edit-dialog--heading .profile-edit-dialog__row--heading-photo .profile__hero,
+  .profile-edit-dialog--heading .profile-edit-dialog__row--heading-photo .profile__hero-alt {
+    width: 5.5rem;
+    height: 5.5rem;
+  }
+
+  .profile-edit-dialog--heading .profile-edit-dialog__row--heading-photo .profile__hero-alt {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+  }
+
+  .profile-edit-dialog--heading .profile-edit-dialog__row--heading-photo .profile-edit-dialog__image-preview {
+    flex: 1 1 auto;
+    min-width: 0;
+    gap: var(--spacing-xxs, 0.3125rem);
+    width: 100%;
+  }
+
+  .profile-edit-dialog--heading .profile-edit-dialog__row--heading-photo .profile-edit-dialog__image-preview-label {
+    font-size: var(--font-size-sm, 0.875rem);
+    line-height: var(--line-height-tight, 1.25);
+  }
+
+  .profile-edit-dialog--heading .profile-edit-dialog__row--heading-photo .profile-edit-dialog__image-preview-description {
+    font-size: 10px;
+    line-height: var(--line-height-base, 1.4);
+  }
+
+  .profile-edit-dialog--heading .profile-edit-dialog__row--heading-photo .profile-edit-dialog__image-preview-actions {
+    flex-wrap: nowrap;
+    gap: var(--spacing-xs, 0.5rem);
+    width: 100%;
+  }
+
+  .profile-edit-dialog--heading .profile-edit-dialog__row--heading-photo .profile-edit-dialog__image-button {
+    flex: 1 1 0;
+    width: 100%;
+    min-height: var(--min-touch-target, 44px);
+    font-size: 0.8125rem;
+    padding: 0 0.75rem;
   }
 
   .profile-edit-dialog__row--inlineEnd {
