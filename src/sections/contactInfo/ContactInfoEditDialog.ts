@@ -131,7 +131,7 @@ function renderCountryPrefixSelect(
   onChange: (event: Event) => void
 ) {
   return html`
-    <label class="label phonePrefixField" aria-label=${label}>
+    <label class="label profile-edit-dialog__phone-prefix-field" aria-label=${label}>
       <select class="phonePrefixSelect" name=${name} .value=${value} @change=${onChange}>
         ${COUNTRY_PREFIX_OPTIONS.map((option) => html`
           <option value=${option.dialCode}>
@@ -210,7 +210,7 @@ function renderContactPhoneInputRow({
           />
         </label>
       </div>
-      <label aria-label=${typeLabel} class="label profile-edit-dialog__field-type phoneTypeRow">
+      <label aria-label=${typeLabel} class="label profile-edit-dialog__field-type profile-edit-dialog__phone-type-row">
         <select name=${typeInputName} id="phone-type-select-${inputName}" @change=${handleTypeInput} .value=${phoneRow?.type || ''}>
           <option value="Cell">Mobile</option>
           <option value="Home">Home</option>

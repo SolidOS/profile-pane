@@ -207,7 +207,7 @@ function mapPhoneOpsForSave(ops: { create: ContactPointRow[], update: ContactPoi
   onChange: (event: Event) => void
 ) {
   return html`
-    <label class="label phonePrefixField" aria-label=${label}>
+    <label class="label profile-edit-dialog__phone-prefix-field" aria-label=${label}>
       <select class="phonePrefixSelect" name=${name} .value=${value} @change=${onChange}>
         ${COUNTRY_PREFIX_OPTIONS.map((option) => html`
           <option value=${option.dialCode}>
