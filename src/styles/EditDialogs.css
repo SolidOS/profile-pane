@@ -252,6 +252,14 @@
   color: var(--red-600, #E7000B);
 }
 
+.profile-edit-dialog__section + .profile-edit-dialog__login-message {
+  margin-top: var(--spacing-sm, 0.938rem);
+}
+
+.profile__edit-form--projects .profile-edit-dialog__login-message {
+  margin-top: var(--spacing-sm, 0.938rem);
+}
+
 .profile-edit-dialog--heading .profile-edit-dialog__row--contact-point {
   max-width: 100%;
   width: 100%;
