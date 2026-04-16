@@ -236,29 +236,10 @@
   max-width: 6.4375rem;
 }
 
-.profile-edit-dialog--heading .profile-edit-dialog__row--contact-point.profile-edit-dialog__row--equal > .profile-edit-dialog__field-type.profile-edit-dialog__field-type--contact-point.phoneTypeRow {
-  flex: 0 0 6.25rem;
-  width: 6.25rem;
-  min-width: 6.25rem;
-  max-width: 6.25rem;
-}
-
-.profile-edit-dialog__field-type.phoneTypeRow,
-.profile-edit-dialog__field-type.emailTypeRow {
-  flex: 0 0 auto;
-  width: fit-content;
-  max-width: fit-content;
-}
-
-.profile-edit-dialog__field-type.phoneTypeRow select,
-.profile-edit-dialog__field-type.emailTypeRow select {
+.profile-edit-dialog__field-type--contact-point select {
   width: auto;
   max-width: none;
   min-width: 6.4375rem;
-}
-
-.profile-edit-dialog--heading .profile-edit-dialog__field-type.phoneTypeRow select {
-  min-width: 6.25rem;
 }
 
 .profile-edit-dialog__row--addressHeader {
@@ -545,13 +526,21 @@
   min-width: 0 !important;
 }
 
+/* In heading edit, force both type selects to fill the same fixed wrapper width. */
+.profile-edit-dialog--heading .profile-edit-dialog__row--contact-point > .profile-edit-dialog__field-type.profile-edit-dialog__field-type--contact-point > select {
+  display: block;
+  width: 100% !important;
+  min-width: 0 !important;
+  max-width: 100% !important;
+}
+
 /* Keep phone/email type selects compact after the generic full-width rule above. */
-.profile-edit-dialog__field-type.phoneTypeRow select,
-.profile-edit-dialog__field-type.emailTypeRow select {
+.profile-edit-dialog__field-type--contact-point select {
   width: fit-content;
   max-width: none;
   min-width: 6.4375rem;
 }
+
 .profile-edit-dialog__textarea {
   color: var(--gray-900, #101828);
   font-size: var(--font-size-sm, 0.875rem);
@@ -621,8 +610,7 @@
     flex: 1 1 auto;
   }
 
-  .phoneTypeRow,
-  .emailTypeRow {
+  .profile-edit-dialog__field-type--contact-point {
     flex: 1 1 auto;
     max-width: 100%;
   }

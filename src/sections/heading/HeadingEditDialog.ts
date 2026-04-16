@@ -277,7 +277,7 @@ function renderContactPhoneInput({
           />
         </label>
       </div>
-      <label aria-label=${typeLabel} class="label profile-edit-dialog__field-type profile-edit-dialog__field-type--contact-point phoneTypeRow">
+      <label aria-label=${typeLabel} class="label profile-edit-dialog__field-type profile-edit-dialog__field-type--contact-point">
         <select class="input" name=${typeInputName} id="phone-type-select-${inputName}" @change=${handleTypeInput} .value=${phone?.type || ''}>
           <option value="Mobile">Mobile</option>
           <option value="Home">Home</option>
@@ -330,7 +330,7 @@ function renderContactEmailInputRow({
           @input=${handleValueInput}
         />
       </label>
-      <label aria-label=${typeLabel} class="label profile-edit-dialog__field-type profile-edit-dialog__field-type--contact-point emailTypeRow">
+      <label aria-label=${typeLabel} class="label profile-edit-dialog__field-type profile-edit-dialog__field-type--contact-point">
         <select class="input" name=${typeInputName} id="email-type-select-${inputName}" @change=${handleTypeInput} .value=${email?.type || ''}>
           <option value="Personal">Personal</option>
           <option value="Office">Office</option>
