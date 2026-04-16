@@ -56,7 +56,7 @@ function ensureModalDialog (dom: Document): HTMLDialogElement {
         <div id="modal-header-action"></div>
       </div>
       <div id="modal-desc"></div>
-      <section id="modal-error" class="dialogErrorSection" aria-live="assertive" role="alert" hidden></section>
+      <section id="modal-error" class="modal__error-section" aria-live="assertive" role="alert" hidden></section>
       <div id="modal-buttons"></div>
     </div>
   `
@@ -208,7 +208,7 @@ function openModal ({
     } else if (resolvedHeaderAction.type === 'button') {
       const actionButton = dom.createElement('button')
       actionButton.setAttribute('type', 'button')
-      actionButton.className = resolvedHeaderAction.className || 'dialogHeaderActionButton profile__action-button profile-action-text flex-center'
+      actionButton.className = resolvedHeaderAction.className || 'modal__header-action-button profile__action-button profile-action-text flex-center'
       actionButton.textContent = resolvedHeaderAction.label
       actionButton.setAttribute('aria-label', resolvedHeaderAction.ariaLabel || resolvedHeaderAction.label)
       actionButton.onclick = async () => {

@@ -75,7 +75,7 @@
   align-items: center;
 }
 
-#profile-modal .modal .dialogHeaderActionButton {
+#profile-modal .modal .modal__header-action-button {
   min-height: auto;
   padding: var(--spacing-xxs);
   border: none;
@@ -84,7 +84,7 @@
   font-weight: 500;
 }
 
-#profile-modal .modal .dialogHeaderActionButton:hover {
+#profile-modal .modal .modal__header-action-button:hover {
   text-decoration: underline;
 }
 
@@ -100,7 +100,7 @@
   background: var(--gray-50, #F9FAFB);
 }
 
-#profile-modal .dialogInlineError {
+#profile-modal .modal__inline-error {
   margin: 0 0 var(--spacing-sm) 0;
   padding: var(--spacing-xs) var(--spacing-sm);
   border: 1px solid var(--color-border-pale);
@@ -109,11 +109,11 @@
   color: var(--color-text);
 }
 
-#profile-modal .dialogErrorSection {
+#profile-modal .modal__error-section {
   margin-top: var(--spacing-sm);
 }
 
-#profile-modal .dialogErrorSection[hidden] {
+#profile-modal .modal__error-section[hidden] {
   display: none !important;
 }
 
