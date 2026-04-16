@@ -7,7 +7,7 @@ import { ViewerMode } from '../../types'
 import { createHeadingEditDialog } from './HeadingEditDialog'
 import { toText } from '../../textUtils'
 import { toDisplayDateDMY } from './dateHelpers'
-import { birthdayIcon, editIcon, locationIcon } from '../../icons-svg/profileIcons'
+import { birthdayIcon, editIcon, locationIcon, personInCircleIcon } from '../../icons-svg/profileIcons'
 import { emailIcon, phoneIcon } from '../../icons-svg/contactIcons'
 
 export const renderHeadingSection = (
@@ -99,7 +99,7 @@ export const Image = (src, alt) =>
         />
       `
     : html`
-        <div class="profile__hero-alt" role="img" aria-label="${alt}" tabindex="0">
-          ${alt}
+        <div class="profile__hero-alt flex-center" role="img" aria-label="${alt}" tabindex="0">
+          <span class="profile__hero-icon">${personInCircleIcon}</span>
         </div>
       `
