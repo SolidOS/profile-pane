@@ -313,7 +313,7 @@ function renderLanguageInputRow({
         <datalist id=${datalistId}>
           ${suggestions.map((suggestion) => html`<option value=${suggestion.name}></option>`)}
         </datalist>
-        <small class="inputHelpText">Type to search and select one language suggestion.</small>
+        <small class="profile-edit-dialog__input-help-text">Type to search and select one language suggestion.</small>
       </label>
       <label aria-label=${proficiencyLabel} class="label" hidden>
         <select name=${proficiencyInputName} id=${proficiencySelectId} @change=${handleProficiencyInput} .value=${row?.proficiency || ''}>

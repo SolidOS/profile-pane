@@ -371,7 +371,7 @@ function renderContactAddressInput({
   } */
 
   return html`
-    <label aria-label=${`${label} Street`} class="label profile-edit-dialog__field profile-edit-dialog__field--rowWidth">
+    <label aria-label=${`${label} Street`} class="label profile-edit-dialog__field profile-edit-dialog__field--row-width">
       Street Address
       <input
         class="input"

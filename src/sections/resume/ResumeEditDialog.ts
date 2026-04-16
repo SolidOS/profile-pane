@@ -447,17 +447,17 @@ function renderResumeInputRow({
         </div>
       </label>
     </div>
-    <div class="profile-edit-dialog__row profile-edit-dialog__row--inlineEnd">
-      <label class="label inputCheckboxLabel" for=${isCurrentRoleId}>
+    <div class="profile-edit-dialog__row profile-edit-dialog__row--inline-end">
+      <label class="label profile-edit-dialog__checkbox-label" for=${isCurrentRoleId}>
         <input
-          class="inputCheckboxLabel__input"
+          class="profile-edit-dialog__checkbox-input"
           type="checkbox"
           id=${isCurrentRoleId}
           name="isCurrentRole"
           .checked=${Boolean(resumeRow?.isCurrentRole)}
           @change=${handleCurrentRoleToggle}
         />
-        <span class="inputCheckboxLabel__visual" aria-hidden="true">
+        <span class="profile-edit-dialog__checkbox-visual" aria-hidden="true">
           ${resumeRow?.isCurrentRole ? purpleFilledCheckboxIcon : ''}
         </span>
         <span>I am currently working in this role</span>

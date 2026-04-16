@@ -155,10 +155,6 @@
   width: 100%;
 }
 
-.profile-edit-dialog__section--resume .profile-edit-dialog__field-type--month {
-  min-width: 8rem;
-}
-
 .profile-edit-dialog__field {
   /* flex: 1 1 auto; */
   min-width: 0;
@@ -248,13 +244,13 @@
   width: 100%;
 }
 
-.profile-edit-dialog__field--rowWidth {
+.profile-edit-dialog__field--row-width {
   max-width: 34rem;
   width: 100%;
 }
 
 .profile-edit-dialog--heading .profile-edit-dialog__row,
-.profile-edit-dialog--heading .profile-edit-dialog__field--rowWidth {
+.profile-edit-dialog--heading .profile-edit-dialog__field--row-width {
   max-width: 100%;
   width: 100%;
 }
@@ -308,17 +304,17 @@
   min-width: 6.4375rem;
 }
 
-.profile-edit-dialog__row--addressHeader {
+.profile-edit-dialog__row--address-header {
   max-width: 34rem;
   align-items: flex-end;
 }
 
-.profile-edit-dialog__row--inlineEnd {
+.profile-edit-dialog__row--inline-end {
   justify-content: flex-end;
   max-width: 100%;
 }
 
-.inputCheckboxLabel {
+.profile-edit-dialog__checkbox-label {
   display: inline-flex;
   align-items: center;
   gap: var(--spacing-xs);
@@ -326,7 +322,7 @@
   cursor: pointer;
 }
 
-.inputCheckboxLabel__input {
+.profile-edit-dialog__checkbox-input {
   position: absolute;
   width: 1px;
   height: 1px;
@@ -338,7 +334,7 @@
   border: 0;
 }
 
-.inputCheckboxLabel__visual {
+.profile-edit-dialog__checkbox-visual {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -350,24 +346,24 @@
   flex: 0 0 auto;
 }
 
-.inputCheckboxLabel__visual > svg {
+.profile-edit-dialog__checkbox-visual > svg {
   display: block;
 }
 
-.inputCheckboxLabel__input:focus-visible + .inputCheckboxLabel__visual {
+.profile-edit-dialog__checkbox-input:focus-visible + .profile-edit-dialog__checkbox-visual {
   outline: var(--focus-indicator-width, 2px) solid var(--color-primary, #7C4DFF);
   outline-offset: 2px;
 }
 
-.inputCheckboxLabel__input:disabled + .inputCheckboxLabel__visual {
+.profile-edit-dialog__checkbox-input:disabled + .profile-edit-dialog__checkbox-visual {
   opacity: var(--opacity-disabled, 0.5);
 }
 
-.inputCheckboxLabel__input:not(:checked) + .inputCheckboxLabel__visual > svg {
+.profile-edit-dialog__checkbox-input:not(:checked) + .profile-edit-dialog__checkbox-visual > svg {
   display: none;
 }
 
-.inputCheckboxLabel__input:checked + .inputCheckboxLabel__visual {
+.profile-edit-dialog__checkbox-input:checked + .profile-edit-dialog__checkbox-visual {
   border-color: transparent;
 }
 
@@ -684,7 +680,7 @@
     max-width: 100%;
   }
 
-  .profile-edit-dialog__row--addressHeader {
+  .profile-edit-dialog__row--address-header {
     flex-direction: row;
     align-items: flex-end;
   }
@@ -697,7 +693,7 @@
     flex-wrap: nowrap;
   }
 
-  .profile-edit-dialog__row--social .socialIcon {
+  .profile-edit-dialog__row--social .profile-edit-dialog__social-icon {
     width: 1.5rem;
     height: 1.5rem;
   }
@@ -815,7 +811,7 @@
     padding: 0 0.75rem;
   }
 
-  .profile-edit-dialog__row--inlineEnd {
+  .profile-edit-dialog__row--inline-end {
     justify-content: flex-start;
   }
 
@@ -823,7 +819,7 @@
     justify-content: flex-start;
   }
 
-  .profile-edit-dialog__row--addressHeader .profile-edit-dialog__actions {
+  .profile-edit-dialog__row--address-header .profile-edit-dialog__actions {
     justify-content: flex-end;
   }
 
@@ -831,7 +827,7 @@
     min-height: 15rem !important;
   }
 
-  .inputHelpText {
+  .profile-edit-dialog__input-help-text {
     display: none;
   }
 }

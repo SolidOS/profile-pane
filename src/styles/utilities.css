@@ -13,10 +13,8 @@
   }
 
   .profile-grid .profile__action-button,
-  .profile-grid .searchInput,
-  .profile-grid .flatButton,
   .profile-grid .profile__actions button,
-  .profile-grid .groupButtonsList button {
+  .profile-grid .profile__actions button {
     min-height: calc(var(--min-touch-target, 44px) + 0.5em) !important;
     font-size: clamp(0.9rem, 2.1vw, 1rem) !important;
     padding: 0.75em 0.9em !important;
@@ -51,10 +49,6 @@
   }
 }
 
-.profile-header,
-.profile-footer {
-  grid-column: 1 / -1;
-}
 /* END GRID LAYOUT */
 
 .profile__section {
@@ -85,10 +79,6 @@
 .profile__section-header h3,
 .profile__section-header h4 {
   margin: 0;
-}
-
-.profile__section-header--actionsOnly {
-  justify-content: flex-end;
 }
 
 .profile__action-button {

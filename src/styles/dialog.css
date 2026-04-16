@@ -104,15 +104,6 @@
   width: 10.8rem;
 }
 
-#profile-modal .modal__inline-error {
-  margin: 0 0 var(--spacing-sm) 0;
-  padding: var(--spacing-xs) var(--spacing-sm);
-  border: 1px solid var(--color-border-pale);
-  border-radius: var(--border-radius-base);
-  background: color-mix(in srgb, var(--color-warning) 12%, var(--color-background));
-  color: var(--color-text);
-}
-
 #profile-modal .modal__error-section {
   margin-top: var(--spacing-sm);
 }

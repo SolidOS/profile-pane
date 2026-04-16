@@ -227,8 +227,8 @@ function renderSocialInputRow({
       >
         ${bentoIcon}
       </button>
-     <img 
-        class="socialIcon" 
+      <img 
+        class="profile-edit-dialog__social-icon" 
         src="${row?.icon || DEFAULT_ICON_URI}" 
         alt="${row?.name || 'Social'} icon"
         width="30"
@@ -253,7 +253,7 @@ function renderSocialInputRow({
           required
           @input=${handleTextInput('homepage')}
         />
-        <small class="inputHelpText">Paste your full profile URL (for example: https://example.com/username)</small>
+          <small class="profile-edit-dialog__input-help-text">Paste your full profile URL (for example: https://example.com/username)</small>
       </label>
       <div class="profile-edit-dialog__actions profile-edit-dialog__actions--edge">
         <button

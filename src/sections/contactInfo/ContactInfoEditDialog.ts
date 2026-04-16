@@ -439,7 +439,7 @@ function renderContactAddressInputRow({
   }
 
   return html`
-    <div class="profile-edit-dialog__row profile-edit-dialog__row--addressHeader profile-edit-dialog__row--full">
+    <div class="profile-edit-dialog__row profile-edit-dialog__row--address-header profile-edit-dialog__row--full">
       <p class="profile-edit-dialog__address-title">${label}</p>
       <label aria-label=${typeLabel} class="label profile-edit-dialog__field-type profile-edit-dialog__field-type--wide hidden">
         Address Type

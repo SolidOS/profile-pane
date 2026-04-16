@@ -220,7 +220,7 @@ function renderSkillInputRow({
         <datalist id=${datalistId}>
           ${suggestions.map((suggestion) => html`<option value=${suggestion.label}></option>`)}
         </datalist>
-        <small class="inputHelpText">Type to search ESCO and select one suggestion.</small>
+        <small class="profile-edit-dialog__input-help-text">Type to search ESCO and select one suggestion.</small>
       </label>
       <div class="profile-edit-dialog__actions profile-edit-dialog__actions--edge">
         <button

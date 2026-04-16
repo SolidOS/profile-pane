@@ -1,14 +1,3 @@
-.profile-edit-dialog__phone-composite-row {
-  display: flex;
-  align-items: center;
-  gap: 0;
-  border: 1px solid var(--color-border-pale, #ccc);
-  border-radius: var(--border-radius-base, 0.375rem);
-  min-height: var(--min-touch-target, 44px);
-  padding: 0 var(--spacing-xxs);
-  background: var(--color-background, #fff);
-}
-
 .profile__edit-form--contact-info .profile-edit-dialog__section {
   gap: 0;
 }
@@ -40,15 +29,8 @@
   margin: 0;
 }
 
-.phoneLocalField {
-  flex: 1 1 auto;
-  min-width: 0;
-  display: block;
-  margin: 0;
-}
-
 .phonePrefixSelect,
-.phoneLocalInput {
+.profile-edit-dialog__phone-local-input {
   border: 0 !important;
   background: transparent;
   min-height: calc(var(--min-touch-target, 44px) - 2px);
@@ -60,15 +42,8 @@
 }
 
 .phonePrefixSelect:focus,
-.phoneLocalInput:focus {
+.profile-edit-dialog__phone-local-input:focus {
   outline: none;
-}
-
-.profile-edit-dialog__phone-composite-divider {
-  flex: 0 0 auto;
-  color: var(--color-border, #999);
-  padding: 0 0.25rem;
-  user-select: none;
 }
 
 .profile-edit-dialog__phone-type-row {
@@ -122,18 +97,18 @@
   min-width: 6.5rem;
 }
 
-.profile-edit-dialog__row--addressHeader.profile-edit-dialog__row--full {
+.profile-edit-dialog__row--address-header.profile-edit-dialog__row--full {
   max-width: 100%;
   width: 100%;
   align-items: center;
 }
 
-.profile-edit-dialog__row--addressHeader.profile-edit-dialog__row--full .profile-edit-dialog__actions {
+.profile-edit-dialog__row--address-header.profile-edit-dialog__row--full .profile-edit-dialog__actions {
   align-self: center;
 }
 
-.profile-edit-dialog__row--addressHeader.profile-edit-dialog__row--full .profile-edit-dialog__delete-button,
-#profile-modal .modal .profile-edit-dialog__row--addressHeader.profile-edit-dialog__row--full button.profile-edit-dialog__delete-button {
+.profile-edit-dialog__row--address-header.profile-edit-dialog__row--full .profile-edit-dialog__delete-button,
+#profile-modal .modal .profile-edit-dialog__row--address-header.profile-edit-dialog__row--full button.profile-edit-dialog__delete-button {
   min-height: 1.75rem;
   min-width: 1.75rem;
 }
