@@ -150,6 +150,7 @@ function renderProjectsEditTemplate(form: HTMLFormElement, formState: ProjectFor
 function createProjectsEditForm(details: ProjectDetails[], viewerMode: ViewerMode) {
   const form = document.createElement('form')
   form.classList.add('profile__edit-form')
+  form.classList.add('profile__edit-form--projects')
 
   const formState = toFormState(details)
   renderProjectsEditTemplate(form, formState, viewerMode)
