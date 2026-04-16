@@ -207,6 +207,12 @@
   width: 100%;
 }
 
+.profile-edit-dialog--heading .profile-edit-dialog__row--heading-photo {
+  padding-bottom: var(--spacing-sm, 0.938rem);
+  margin-bottom: var(--spacing-sm, 0.938rem);
+  border-bottom: 1px solid var(--slate-200, #E2E8F0);
+}
+
 .profile-edit-dialog__login-message {
   margin: 0;
   font-size: var(--font-size-xs, 0.75rem);
