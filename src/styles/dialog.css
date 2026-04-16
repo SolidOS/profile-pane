@@ -219,8 +219,10 @@
     align-items: center;
     justify-content: center;
     gap: var(--spacing-sm, 0.938rem);
+    padding: var(--spacing-md) 0 0;
     margin: var(--spacing-md) auto 0;
     box-sizing: border-box;
+    width: 100%;
   }
 
   #profile-modal #modal-buttons button {
