@@ -48,7 +48,7 @@ function renderBioSection(bioRow: BioRow, onChange: () => void): TemplateResult 
   }
 
   return html`
-    <section aria-label="Bio editor">
+    <section class="profile-edit-dialog__section" aria-label="Bio editor">
 
       <label aria-label="Bio description" class="label profile-edit-dialog__bio-field-container">
         <span class="profile-edit-dialog__field-description">
@@ -56,7 +56,7 @@ function renderBioSection(bioRow: BioRow, onChange: () => void): TemplateResult 
           People also talk about their achievements or previous job experiences.
         </span>
         <textarea
-          class="profile-edit-dialog__textarea profile-edit-dialog__textarea--multiline"
+          class="profile-edit-dialog__textarea"
           name=${descriptionName}
           rows="5"
           .value=${bioRow?.description || ''}

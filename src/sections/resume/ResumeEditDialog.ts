@@ -466,7 +466,7 @@ function renderResumeInputRow({
     <label aria-label=${`${label} Description`} class="label profile-edit-dialog__field profile-edit-dialog__field--full profile-edit-dialog__field--stack">
       <span>Description</span>
       <textarea
-        class="profile-edit-dialog__textarea profile-edit-dialog__textarea--multiline"
+        class="profile-edit-dialog__textarea"
         name=${descriptionName}
         rows="4"
         .value=${resumeRow?.description || ''}
