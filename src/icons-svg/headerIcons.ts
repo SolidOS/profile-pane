@@ -217,3 +217,29 @@ export const grayPlusIcon = html`
     <path d="M5.96094 0C6.43411 0.000226318 6.81832 0.384206 6.81836 0.857422V5.10449H11.0654C11.5388 5.10449 11.9229 5.48853 11.9229 5.96191C11.9227 6.43517 11.5387 6.81934 11.0654 6.81934H6.81836V11.0654C6.81836 11.5387 6.43413 11.9226 5.96094 11.9229C5.48755 11.9229 5.10352 11.5388 5.10352 11.0654V6.81934H0.857422C0.38432 6.81911 0.000150713 6.43503 0 5.96191C0 5.48867 0.384227 5.10472 0.857422 5.10449H5.10352V0.857422C5.10355 0.384067 5.48757 0 5.96094 0Z" fill="#99A1AF"/>
   </svg>
 `
+export const clockIcon = html`
+  <svg xmlns="http://www.w3.org/2000/svg" 
+    width="20" 
+    height="20" 
+    viewBox="0 0 20 20" 
+    fill="none"
+    aria-hidden="true"
+    focusable="false"
+  >
+    <path d="M9.99935 18.3334C14.6017 18.3334 18.3327 14.6025 18.3327 10.0001C18.3327 5.39771 14.6017 1.66675 9.99935 1.66675C5.39698 1.66675 1.66602 5.39771 1.66602 10.0001C1.66602 14.6025 5.39698 18.3334 9.99935 18.3334Z" stroke="#314158" stroke-width="1.66667" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M10 5V10L13.3333 8.33333" stroke="#314158" stroke-width="1.66667" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>
+`
+export const favStarIcon = html`
+  <svg xmlns="http://www.w3.org/2000/svg" 
+    width="20" 
+    height="20" 
+    viewBox="0 0 20 20" 
+    fill="none"
+    aria-hidden="true"
+    focusable="false"
+  >
+    <path d="M9.99935 18.3334C14.6017 18.3334 18.3327 14.6025 18.3327 10.0001C18.3327 5.39771 14.6017 1.66675 9.99935 1.66675C5.39698 1.66675 1.66602 5.39771 1.66602 10.0001C1.66602 14.6025 5.39698 18.3334 9.99935 18.3334Z" stroke="#314158" stroke-width="1.66667" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M10 5V10L13.3333 8.33333" stroke="#314158" stroke-width="1.66667" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>
+`
