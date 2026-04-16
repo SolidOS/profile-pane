@@ -423,18 +423,26 @@ function renderEducationSection(educationData: EducationRow[], onAddRow: () => v
   `
 }
 
-function renderEducationEditTemplate(form: HTMLFormElement, formState: EducationFormState, rerender: () => void) {
+function renderEducationEditTemplate(
+  form: HTMLFormElement,
+  formState: EducationFormState,
+  rerender: () => void,
+  viewerMode: ViewerMode
+) {
   render(html`
     ${renderEducationSection(formState.educationData, rerender)}
+    ${viewerMode !== 'owner'
+      ? html`<p class="profile-edit-dialog__login-message">${ownerLoginRequiredDialogMessageText}</p>`
+      : null}
   `, form)
 }
 
-function createEducationEditForm(educationData: EducationDetails[]) {
+function createEducationEditForm(educationData: EducationDetails[], viewerMode: ViewerMode) {
   const form = document.createElement('form')
   form.classList.add('profile__edit-form')
 
   const formState = toFormState(educationData)
-  const rerender = () => renderEducationEditTemplate(form, formState, rerender)
+  const rerender = () => renderEducationEditTemplate(form, formState, rerender, viewerMode)
   rerender()
 
   return { form, formState, rerender }
@@ -450,7 +458,7 @@ export async function createEducationEditDialog(
   onSaved?: () => Promise<void> | void
 ) {
   const dom = (event.currentTarget as HTMLElement | null)?.ownerDocument || document
-  const { form, formState, rerender } = createEducationEditForm(educationData)
+  const { form, formState, rerender } = createEducationEditForm(educationData, viewerMode)
   const triggerAddMore = () => {
     const addMoreButton = form.querySelector('[data-dialog-add-more="true"]') as HTMLButtonElement | null
     if (addMoreButton) addMoreButton.click()

@@ -338,13 +338,23 @@ function renderSocialSection(rows: SocialRow[], options: SocialAccountOption[], 
   `
 }
 
-function renderSocialEditTemplate(form: HTMLFormElement, formState: SocialFormState, store: LiveStore) {
-  const rerender = () => renderSocialEditTemplate(form, formState, store)
+function renderSocialEditTemplate(
+  form: HTMLFormElement,
+  formState: SocialFormState,
+  store: LiveStore,
+  viewerMode: ViewerMode
+) {
+  const rerender = () => renderSocialEditTemplate(form, formState, store, viewerMode)
   const options = getSocialAccountOptions(store)
-  render(html`${renderSocialSection(formState.socialAccounts, options, rerender)}`, form)
+  render(html`
+    ${renderSocialSection(formState.socialAccounts, options, rerender)}
+    ${viewerMode !== 'owner'
+      ? html`<p class="profile-edit-dialog__login-message">${ownerLoginRequiredDialogMessageText}</p>`
+      : null}
+  `, form)
 }
 
-function createSocialEditForm(details: Account[], store: LiveStore) {
+function createSocialEditForm(details: Account[], store: LiveStore, viewerMode: ViewerMode) {
   const form = document.createElement('form')
   form.classList.add('profile__edit-form')
 
@@ -352,7 +362,7 @@ function createSocialEditForm(details: Account[], store: LiveStore) {
   formState.initialExistingOrder = formState.socialAccounts
     .filter((row) => Boolean((row.entryNode || '').trim()))
     .map((row) => (row.entryNode || '').trim())
-  renderSocialEditTemplate(form, formState, store)
+  renderSocialEditTemplate(form, formState, store, viewerMode)
 
   const addRow = () => {
     formState.socialAccounts.push({
@@ -362,7 +372,7 @@ function createSocialEditForm(details: Account[], store: LiveStore) {
       entryNode: '',
       status: 'new'
     })
-    renderSocialEditTemplate(form, formState, store)
+    renderSocialEditTemplate(form, formState, store, viewerMode)
   }
 
   return { form, formState, addRow }
@@ -377,7 +387,7 @@ export async function createSocialEditDialog(
   onSaved?: () => Promise<void> | void
 ) {
   const dom = (event.currentTarget as HTMLElement | null)?.ownerDocument || document
-  const { form, formState, addRow } = createSocialEditForm(socialAccounts, store)
+  const { form, formState, addRow } = createSocialEditForm(socialAccounts, store, viewerMode)
 
   const result = await openInputDialog({
     title: editSocialDialogTitleText,

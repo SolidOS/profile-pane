@@ -269,7 +269,7 @@ function renderSkillsSection(
   `
 }
 
-function renderSkillsEditTemplate(form: HTMLFormElement, formState: SkillFormState) {
+function renderSkillsEditTemplate(form: HTMLFormElement, formState: SkillFormState, viewerMode: ViewerMode) {
   const formStateWithSearch = formState as SkillFormState & {
     suggestionByIndex?: Record<number, SkillSuggestion[]>
     searchSeqByIndex?: Record<number, number>
@@ -280,7 +280,7 @@ function renderSkillsEditTemplate(form: HTMLFormElement, formState: SkillFormSta
   const searchSeqByIndex = formStateWithSearch.searchSeqByIndex || (formStateWithSearch.searchSeqByIndex = {})
   const searchTimerByIndex = formStateWithSearch.searchTimerByIndex || (formStateWithSearch.searchTimerByIndex = {})
 
-  const rerender = () => renderSkillsEditTemplate(form, formState)
+  const rerender = () => renderSkillsEditTemplate(form, formState, viewerMode)
   const handleSearch = (rowIndex: number, term: string) => {
     if (searchTimerByIndex[rowIndex]) {
       clearTimeout(searchTimerByIndex[rowIndex])
@@ -314,17 +314,20 @@ function renderSkillsEditTemplate(form: HTMLFormElement, formState: SkillFormSta
 
   render(html`
     ${renderSkillsSection(formState.skills, rerender, suggestionByIndex, handleSearch)}
+    ${viewerMode !== 'owner'
+      ? html`<p class="profile-edit-dialog__login-message">${ownerLoginRequiredDialogMessageText}</p>`
+      : null}
   `, form)
 
   updateSkillsSubmitEnabled(formState.skills)
 }
 
-function createSkillsEditForm(details: SkillDetails[]) {
+function createSkillsEditForm(details: SkillDetails[], viewerMode: ViewerMode) {
   const form = document.createElement('form')
   form.classList.add('profile__edit-form')
 
   const formState = toFormState(details)
-  renderSkillsEditTemplate(form, formState)
+  renderSkillsEditTemplate(form, formState, viewerMode)
 
   const addRow = () => {
     formState.skills.push({
@@ -333,7 +336,7 @@ function createSkillsEditForm(details: SkillDetails[]) {
       entryNode: '',
       status: 'new'
     })
-    renderSkillsEditTemplate(form, formState)
+    renderSkillsEditTemplate(form, formState, viewerMode)
   }
 
   return { form, formState, addRow }
@@ -349,7 +352,7 @@ export async function createSkillsEditDialog(
   onSaved?: () => Promise<void> | void
 ) {
   const dom = (event.currentTarget as HTMLElement | null)?.ownerDocument || document
-  const { form, formState, addRow } = createSkillsEditForm(skills)
+  const { form, formState, addRow } = createSkillsEditForm(skills, viewerMode)
 
   const result = await openInputDialog({
     title: editSkillsDialogTitleText,

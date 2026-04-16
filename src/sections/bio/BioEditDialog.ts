@@ -75,17 +75,22 @@ function renderBioSection(bioRow: BioRow, onChange: () => void): TemplateResult 
   `
 }
 
-function renderBioEditTemplate(form: HTMLFormElement, formState: BioFormState) {
-  const rerender = () => renderBioEditTemplate(form, formState)
-  render(html`${renderBioSection(formState.bio, rerender)}`, form)
+function renderBioEditTemplate(form: HTMLFormElement, formState: BioFormState, viewerMode: ViewerMode) {
+  const rerender = () => renderBioEditTemplate(form, formState, viewerMode)
+  render(html`
+    ${renderBioSection(formState.bio, rerender)}
+    ${viewerMode !== 'owner'
+      ? html`<p class="profile-edit-dialog__login-message">${ownerLoginRequiredDialogMessageText}</p>`
+      : null}
+  `, form)
 }
 
-function createBioEditForm(bioData: BioDetails) {
+function createBioEditForm(bioData: BioDetails, viewerMode: ViewerMode) {
   const form = document.createElement('form')
   form.classList.add('profile__edit-form')
 
   const formState = toFormState(bioData)
-  renderBioEditTemplate(form, formState)
+  renderBioEditTemplate(form, formState, viewerMode)
 
   return { form, formState }
 }
@@ -99,7 +104,7 @@ export async function createBioEditDialog(
   onSaved?: () => Promise<void> | void
 ) {
   const dom = (event.currentTarget as HTMLElement | null)?.ownerDocument || document
-  const { form, formState } = createBioEditForm(bioData)
+  const { form, formState } = createBioEditForm(bioData, viewerMode)
 
   const result = await openInputDialog({
     title: 'Edit Bio',

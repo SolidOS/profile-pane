@@ -414,7 +414,7 @@ function renderLanguageSection(
   `
 }
 
-function renderLanguageEditTemplate(form: HTMLFormElement, formState: LanguageFormState) {
+function renderLanguageEditTemplate(form: HTMLFormElement, formState: LanguageFormState, viewerMode: ViewerMode) {
   const formStateWithSearch = formState as LanguageFormState & {
     suggestionByIndex?: Record<number, LanguageSuggestion[]>
     searchSeqByIndex?: Record<number, number>
@@ -425,7 +425,7 @@ function renderLanguageEditTemplate(form: HTMLFormElement, formState: LanguageFo
   const searchSeqByIndex = formStateWithSearch.searchSeqByIndex || (formStateWithSearch.searchSeqByIndex = {})
   const searchTimerByIndex = formStateWithSearch.searchTimerByIndex || (formStateWithSearch.searchTimerByIndex = {})
 
-  const rerender = () => renderLanguageEditTemplate(form, formState)
+  const rerender = () => renderLanguageEditTemplate(form, formState, viewerMode)
   const onSearch = (index: number, term: string) => {
     if (searchTimerByIndex[index]) {
       clearTimeout(searchTimerByIndex[index])
@@ -459,12 +459,15 @@ function renderLanguageEditTemplate(form: HTMLFormElement, formState: LanguageFo
 
   render(html`
     ${renderLanguageSection(formState.languages, rerender, suggestionByIndex, onSearch)}
+    ${viewerMode !== 'owner'
+      ? html`<p class="profile-edit-dialog__login-message">${ownerLoginRequiredDialogMessageText}</p>`
+      : null}
   `, form)
 
   updateLanguagesSubmitEnabled(formState.languages)
 }
 
-function createLanguageEditForm(details: LanguageDetails[]) {
+function createLanguageEditForm(details: LanguageDetails[], viewerMode: ViewerMode) {
   const form = document.createElement('form')
   form.classList.add('profile__edit-form')
 
@@ -472,7 +475,7 @@ function createLanguageEditForm(details: LanguageDetails[]) {
   formState.initialExistingOrder = formState.languages
     .filter((row) => Boolean((row.entryNode || '').trim()))
     .map((row) => (row.entryNode || '').trim())
-  renderLanguageEditTemplate(form, formState)
+  renderLanguageEditTemplate(form, formState, viewerMode)
 
   const addRow = () => {
     formState.languages.push({
@@ -482,7 +485,7 @@ function createLanguageEditForm(details: LanguageDetails[]) {
       entryNode: '',
       status: 'new'
     })
-    renderLanguageEditTemplate(form, formState)
+    renderLanguageEditTemplate(form, formState, viewerMode)
   }
 
   return { form, formState, addRow }
@@ -498,7 +501,7 @@ export async function createLanguageEditDialog(
   onSaved?: () => Promise<void> | void
 ) {
   const dom = (event.currentTarget as HTMLElement | null)?.ownerDocument || document
-  const { form, formState, addRow } = createLanguageEditForm(languages)
+  const { form, formState, addRow } = createLanguageEditForm(languages, viewerMode)
 
   const result = await openInputDialog({
     title: editLanguagesDialogTitleText,

@@ -607,24 +607,27 @@ function renderContactInfoAddressSection(addresses: ContactAddressRow[], onAddRo
   `
 }
 
-function renderContactInfoEditTemplate(form: HTMLFormElement, formState: ContactInfoFormState) {
-  const rerender = () => renderContactInfoEditTemplate(form, formState)
+function renderContactInfoEditTemplate(form: HTMLFormElement, formState: ContactInfoFormState, viewerMode: ViewerMode) {
+  const rerender = () => renderContactInfoEditTemplate(form, formState, viewerMode)
 
 
   render(html`
     ${renderContactInfoPhoneSection(formState.phones, rerender)}
     ${renderContactInfoEmailSection(formState.emails, rerender)}
     ${renderContactInfoAddressSection(formState.addresses, rerender)}
+    ${viewerMode !== 'owner'
+      ? html`<p class="profile-edit-dialog__login-message">${ownerLoginRequiredDialogMessageText}</p>`
+      : null}
   `, form)
 }
 
-function createContactInfoEditForm(contactInfo: ContactInfo) {
+function createContactInfoEditForm(contactInfo: ContactInfo, viewerMode: ViewerMode) {
   const form = document.createElement('form')
   form.classList.add('profile__edit-form')
   form.classList.add('profile__edit-form--contact-info')
 
   const formState = toFormState(contactInfo)
-  renderContactInfoEditTemplate(form, formState)
+  renderContactInfoEditTemplate(form, formState, viewerMode)
 
   return { form, formState }
 }
@@ -652,7 +655,7 @@ export async function createContactInfoEditDialog(
   onSaved?: () => Promise<void> | void
 ) {
   const dom = (event.currentTarget as HTMLElement | null)?.ownerDocument || document
-  const { form, formState } = createContactInfoEditForm(contactInfo)
+  const { form, formState } = createContactInfoEditForm(contactInfo, viewerMode)
 
   const result = await openInputDialog({
     title: editContactInfoDialogTitleText,

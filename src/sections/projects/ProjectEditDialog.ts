@@ -136,20 +136,23 @@ function renderProjectInputRow(row: ProjectRow, onChange: () => void) {
   `
 }
 
-function renderProjectsEditTemplate(form: HTMLFormElement, formState: ProjectFormState) {
-  const rerender = () => renderProjectsEditTemplate(form, formState)
+function renderProjectsEditTemplate(form: HTMLFormElement, formState: ProjectFormState, viewerMode: ViewerMode) {
+  const rerender = () => renderProjectsEditTemplate(form, formState, viewerMode)
 
   render(html`
     ${renderProjectInputRow(formState.project, rerender)}
+    ${viewerMode !== 'owner'
+      ? html`<p class="profile-edit-dialog__login-message">${ownerLoginRequiredDialogMessageText}</p>`
+      : null}
   `, form)
 }
 
-function createProjectsEditForm(details: ProjectDetails[]) {
+function createProjectsEditForm(details: ProjectDetails[], viewerMode: ViewerMode) {
   const form = document.createElement('form')
   form.classList.add('profile__edit-form')
 
   const formState = toFormState(details)
-  renderProjectsEditTemplate(form, formState)
+  renderProjectsEditTemplate(form, formState, viewerMode)
 
   return { form, formState }
 }
@@ -164,7 +167,7 @@ export async function createProjectsEditDialog(
   onSaved?: () => Promise<void> | void
 ) {
   const dom = (event.currentTarget as HTMLElement | null)?.ownerDocument || document
-  const { form, formState } = createProjectsEditForm(projects)
+  const { form, formState } = createProjectsEditForm(projects, viewerMode)
 
   const dialogPromise = openInputDialog({
     title: editProjectsDialogTitleText,

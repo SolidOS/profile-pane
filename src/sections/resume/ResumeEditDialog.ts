@@ -509,19 +509,27 @@ function renderResumeSection(resumeData: ResumeRow[], onAddRow: () => void) {
   `
 }
 
-function renderResumeEditTemplate(form: HTMLFormElement, formState: ResumeFormState, rerender: () => void) {
+function renderResumeEditTemplate(
+  form: HTMLFormElement,
+  formState: ResumeFormState,
+  rerender: () => void,
+  viewerMode: ViewerMode
+) {
   render(html`
     ${renderResumeSection(formState.resumeData, rerender)}
+    ${viewerMode !== 'owner'
+      ? html`<p class="profile-edit-dialog__login-message">${ownerLoginRequiredDialogMessageText}</p>`
+      : null}
   `, form)
 }
 
-function createResumeEditForm(resumeData: RoleDetails[]) {
+function createResumeEditForm(resumeData: RoleDetails[], viewerMode: ViewerMode) {
   const form = document.createElement('form')
   form.classList.add('profile__edit-form')
   form.classList.add('profile__edit-form--resume')
 
   const formState = toFormState(resumeData)
-  const rerender = () => renderResumeEditTemplate(form, formState, rerender)
+  const rerender = () => renderResumeEditTemplate(form, formState, rerender, viewerMode)
   rerender()
 
   const addRow = () => {
@@ -555,7 +563,7 @@ export async function createResumeEditDialog(
   onSaved?: () => Promise<void> | void
 ) {
   const dom = (event.currentTarget as HTMLElement | null)?.ownerDocument || document
-  const { form, formState, rerender, addRow } = createResumeEditForm(resumeData)
+  const { form, formState, rerender, addRow } = createResumeEditForm(resumeData, viewerMode)
 
   const result = await openInputDialog({
     title: editResumeDialogTitleText,
