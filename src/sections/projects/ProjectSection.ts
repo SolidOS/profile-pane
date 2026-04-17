@@ -5,10 +5,22 @@ import { ProjectDetails, ProjectRow } from './types'
 import { projectsHeadingText } from '../../texts'
 import { createProjectsEditDialog } from './ProjectEditDialog'
 import { processProjectsMutations } from './mutations'
-import { addIcon, checkMarkIcon, plusDarkIcon } from '../../icons-svg/profileIcons'
+import { addIcon, checkMarkIcon, plusDarkIcon, twoDownArrowsIcon } from '../../icons-svg/profileIcons'
 import { MutationOps } from '../shared/types'
 import '../../styles/ProjectsCard.css'
 import { toggleCollapsibleSection } from '../shared/collapsibleSection'
+
+const MAX_VISIBLE_PROJECTS_MOBILE = 2
+
+function expandProjectsMobileList(event: Event): void {
+  const button = event.currentTarget as HTMLButtonElement | null
+  const section = button?.closest('.profile-section-collapsible') as HTMLElement | null
+  if (!button || !section) return
+
+  section.setAttribute('data-mobile-expanded', 'true')
+  button.setAttribute('aria-expanded', 'true')
+  button.hidden = true
+}
 
 function renderProjectImage(src: string | undefined, altText: string) {
   return src
@@ -187,6 +199,7 @@ function renderProjectSectionDefault(
   viewerMode: ViewerMode, 
   onSaved?: () => Promise<void> | void) {
   const hasProjects = Array.isArray(projects) && projects.length > 0
+  const hiddenProjectsCount = Math.max(0, projects.length - MAX_VISIBLE_PROJECTS_MOBILE)
 
   return html`
       <section
@@ -195,6 +208,7 @@ function renderProjectSectionDefault(
         role="region"
         tabindex="-1"
         data-expanded="false"
+        data-mobile-expanded="${hiddenProjectsCount > 0 ? 'false' : 'true'}"
       >
         <header class="profile__section-header profile-section-collapsible__header">
           <h2 id="projects-heading">${projectsHeadingText}</h2>
@@ -228,7 +242,7 @@ function renderProjectSectionDefault(
         <div id="projects-panel" class="profile-section-collapsible__content" aria-hidden="true">
           ${hasProjects
             ? html`
-                <ul class="project-card__rail" role="list" aria-label="Known projects">
+                <ul id="projects-rail" class="project-card__rail" role="list" aria-label="Known projects">
                   ${renderProjectSectionContent(
                     projects,
                     store,
@@ -237,6 +251,20 @@ function renderProjectSectionDefault(
                     onSaved
                   )}
                 </ul>
+                ${hiddenProjectsCount > 0
+                  ? html`
+                      <button
+                        type="button"
+                        class="project-card__more-button"
+                        aria-controls="projects-rail"
+                        aria-expanded="false"
+                        @click=${expandProjectsMobileList}
+                      >
+                        <span class="project-card__more-icon" aria-hidden="true">${twoDownArrowsIcon}</span>
+                        <span>View More</span>
+                      </button>
+                    `
+                  : html``}
               `
             : html`<p>No projects added yet.</p>`}
         </div>

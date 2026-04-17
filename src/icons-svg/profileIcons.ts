@@ -303,3 +303,16 @@ export const cameraIcon = html`
   <path d="M7 9.33337C7.9665 9.33337 8.75 8.54987 8.75 7.58337C8.75 6.61688 7.9665 5.83337 7 5.83337C6.0335 5.83337 5.25 6.61688 5.25 7.58337C5.25 8.54987 6.0335 9.33337 7 9.33337Z" stroke="#1E2939" stroke-width="1.02083" stroke-linecap="round" stroke-linejoin="round"/>
 </svg>
 `
+export const twoDownArrowsIcon = html`
+  <svg xmlns="http://www.w3.org/2000/svg" 
+    width="16" 
+    height="16" 
+    viewBox="0 0 16 16" 
+    fill="none"
+  aria-hidden="true" 
+  focusable="false"
+  >
+    <path d="M3.5 4L8 8L12.5 4" stroke="#7C4DFF" stroke-width="1.16667" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M3.5 8L8 12L12.5 8" stroke="#7C4DFF" stroke-width="1.16667" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>
+`

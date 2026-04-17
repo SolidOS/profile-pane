@@ -27,4 +27,47 @@ describe('Projects section', () => {
 
     container.remove()
   })
+
+  it('shows a mobile view more button when there are more than two projects', () => {
+    const container = document.createElement('div')
+    document.body.appendChild(container)
+
+    const projects = [
+      {
+        entryNode: sym('https://example.com/profile#project1'),
+        url: 'https://example.com/project-1',
+        title: 'Project One',
+        orgName: 'Open Source',
+        category: 'project'
+      },
+      {
+        entryNode: sym('https://example.com/profile#project2'),
+        url: 'https://example.com/project-2',
+        title: 'Project Two',
+        orgName: 'Open Source',
+        category: 'project'
+      },
+      {
+        entryNode: sym('https://example.com/profile#project3'),
+        url: 'https://example.com/project-3',
+        title: 'Project Three',
+        orgName: 'Open Source',
+        category: 'community'
+      }
+    ]
+
+    render(renderProjectSection(context.session.store, subject, projects as any, 'owner'), container)
+
+    const moreButton = container.querySelector('.project-card__more-button') as HTMLButtonElement | null
+    const section = container.querySelector('.profile-section-collapsible') as HTMLElement | null
+
+    expect(moreButton?.textContent).toContain('View More')
+    expect(section?.getAttribute('data-mobile-expanded')).toBe('false')
+
+    moreButton?.click()
+
+    expect(section?.getAttribute('data-mobile-expanded')).toBe('true')
+
+    container.remove()
+  })
 })
