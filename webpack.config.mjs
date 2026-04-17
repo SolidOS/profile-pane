@@ -5,7 +5,7 @@ import CopyPlugin from 'copy-webpack-plugin'
 const common = {
   entry: './src/index.ts',
   resolve: {
-    extensions: ['.ts', '.js', '.json'],
+    extensions: ['.ts', '.js', '.json']
   },
   module: {
     rules: [

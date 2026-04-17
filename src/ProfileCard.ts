@@ -2,12 +2,12 @@ import { html, nothing } from 'lit-html'
 import './styles/ProfileCard.css'
 import { ProfilePresentation } from './presenter'
 import { addMeToYourFriendsDiv } from './addMeToYourFriends'
+import { addMeToYourContactsDiv } from './addMeToYourContacts'
 import { DataBrowserContext } from 'pane-registry'
 import { NamedNode } from 'rdflib'
 import { QRCodeCard } from './QRCodeCard'
 
-
-export const ProfileCard = ({
+export const ProfileCard = async ({
   name, imageSrc, introduction, location, pronouns, highlightColor, backgroundColor
 }: ProfilePresentation, context: DataBrowserContext, subject: NamedNode) => {
 
@@ -24,10 +24,14 @@ export const ProfileCard = ({
         ${Line(pronouns, '', 'Pronouns')}
       </section>
       
-      <section class="buttonSection text-center" aria-label="Actions">
+      <section class="buttonSection text-center" aria-label="Friend actions">
         ${addMeToYourFriendsDiv(subject, context)}
       </section>
-      
+
+      <section class="buttonSection text-center" aria-label="Contact actions">
+        ${await addMeToYourContactsDiv(subject, context)}
+      </section>
+
       <div class="qrCodeSection section-centered">
         ${QRCodeCard(highlightColor, backgroundColor, subject)}
       </div>
