@@ -316,3 +316,15 @@ export const twoDownArrowsIcon = html`
     <path d="M3.5 8L8 12L12.5 8" stroke="#7C4DFF" stroke-width="1.16667" stroke-linecap="round" stroke-linejoin="round"/>
   </svg>
 `
+export const downArrowIcon = html`
+  <svg xmlns="http://www.w3.org/2000/svg" 
+    width="12" 
+    height="7" 
+    viewBox="0 0 12 7" 
+    fill="none"
+    aria-hidden="true" 
+    focusable="false"
+    >
+    <path d="M10.1831 0.183058C10.4271 -0.061018 10.8228 -0.061015 11.0668 0.183058C11.3109 0.427136 11.3109 0.82277 11.0668 1.06685L6.06685 6.06685C5.82277 6.31093 5.42714 6.31093 5.18306 6.06685L0.183058 1.06685C-0.0610194 0.82277 -0.0610194 0.427136 0.183058 0.183058C0.427136 -0.0610194 0.82277 -0.0610194 1.06685 0.183058L5.62495 4.74116L10.1831 0.183058Z" fill="#6A7282"/>
+  </svg>
+`
