@@ -51,3 +51,35 @@
   background: var(--color-card-bg);
   flex-shrink: 0;
 }
+
+.socialCard__more-button {
+  display: none;
+}
+
+@media (max-width: 1000px) {
+  .socialCard .socialList {
+    display: grid;
+    grid-template-columns: repeat(5, max-content);
+    justify-content: flex-start;
+  }
+
+  .socialCard[data-mobile-expanded="false"] .socialItem:nth-child(n + 11) {
+    display: none;
+  }
+
+  .socialCard__more-button {
+    display: inline-flex;
+    margin-top: var(--spacing-xs);
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: var(--color-primary, #7C4DFF);
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+  }
+
+  .socialCard[data-mobile-expanded="true"] .socialCard__more-button {
+    display: none;
+  }
+}
