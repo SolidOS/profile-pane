@@ -30,7 +30,7 @@ import { ContactAddressRow, ContactPointRow } from '../contactInfo/types'
 import { sanitizeAddressFieldValue, sanitizeBasicInputFieldValue, sanitizeEmailValue, sanitizePhoneLocalValue } from '../shared/sanitizeUtils'
 import { toStorageDateISO } from './dateHelpers'
 import { deletePhotoFile, uploadPhotoFile } from './imageHelpers'
-import { cameraCaptureControl } from '../education/camera'
+import { cameraCaptureControl } from './camera'
 /* Note: new design - has address type in More Edit Contacts for now we will leave
          out Address Type, but a ticket will be created to add type later
          so I will keep the code and just comment it out for now. 
@@ -534,12 +534,12 @@ function renderHeadingInfoInput(
     const dom = button?.ownerDocument || document
     const headingPhotoRow = button?.closest('.profile-edit-dialog__row--heading-photo') as HTMLElement | null
     const hostRow = headingPhotoRow?.nextElementSibling as HTMLElement | null
-    const host = hostRow?.querySelector('.profile-edit-dialog__image-camera-capture-host') as HTMLDivElement | null
-    if (!host || host.dataset.active === 'true') return
+    const frame = hostRow?.querySelector('.profile-edit-dialog__image-camera-capture-frame') as HTMLDivElement | null
+    if (!frame || frame.dataset.active === 'true') return
 
-    host.hidden = false
-    host.dataset.active = 'true'
-    host.replaceChildren()
+    frame.hidden = false
+    frame.dataset.active = 'true'
+    frame.replaceChildren()
 
     const getImageDoc = () => {
       const docUri = subject.doc().uri
@@ -553,9 +553,9 @@ function renderHeadingInfoInput(
     }
 
     const onCameraDone = async (imageDoc: NamedNode | null) => {
-      host.replaceChildren()
-      host.hidden = true
-      host.dataset.active = 'false'
+      frame.replaceChildren()
+      frame.hidden = true
+      frame.dataset.active = 'false'
       if (imageDoc?.uri && basicInfo) {
         applyRowFieldChange(basicInfo, 'imageSrc', imageDoc.uri, rowHasContent)
         rerender()
@@ -564,11 +564,11 @@ function renderHeadingInfoInput(
 
     try {
       const control = cameraCaptureControl(dom, store as any, getImageDoc, onCameraDone)
-      host.appendChild(control)
+      frame.appendChild(control)
     } catch (error) {
-      host.hidden = true
-      host.dataset.active = 'false'
-      host.replaceChildren()
+      frame.hidden = true
+      frame.dataset.active = 'false'
+      frame.replaceChildren()
       console.error('Camera control failed to initialize', error)
     }
   }
@@ -623,7 +623,7 @@ function renderHeadingInfoInput(
       </div>
     </div>
     <div class="profile-edit-dialog__image-camera-capture-row">
-      <div class="profile-edit-dialog__image-camera-capture-host" hidden></div>
+      <div class="profile-edit-dialog__image-camera-capture-frame" hidden></div>
     </div>
     <div class="profile-edit flex-column gap-lg">
       <div class="profile-edit-dialog__row profile-edit-dialog__row--equal">

@@ -19,6 +19,7 @@
   background: var(--white, #FFF);
   cursor: pointer;
 }
+
 .project-card__follow-button:hover {
   background: var(--lavender-400, #cbb9ff);
 }

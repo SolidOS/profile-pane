@@ -15,6 +15,8 @@
 // Copied from solid-ui needed to change somethings, have made a PR in solid-ui 
 import { widgets, icons, style } from 'solid-ui'
 import { IndexedFormula, NamedNode } from 'rdflib'
+import { render } from 'lit-html'
+import { closeIcon } from '../../icons-svg/profileIcons'
 
 const cameraIcon = icons.iconBase + 'noun_Camera_1618446_000000.svg' // Get it from github
 const retakeIcon = icons.iconBase + 'noun_479395.svg' // Get it from github
@@ -34,7 +36,7 @@ export function cameraCaptureControl (
   doneCallback: (imageDoc: NamedNode | null) => Promise<void>
 ) {
   const div = dom.createElement('div')
-  div.className = 'profile-edit-dialog__camera-control'
+  div.className = 'profile-edit-dialog__camera-control flex-column-center'
   let destination, imageBlob, player, canvas
 
   const setButtonVisible = (button: HTMLElement, visible: boolean) => {
@@ -50,8 +52,13 @@ export function cameraCaptureControl (
   const actionBar = div.appendChild(dom.createElement('div'))
   actionBar.className = 'profile-edit-dialog__camera-control-actions'
 
-  const cancelButton = actionBar.appendChild(widgets.cancelButton(dom))
+  /* Had to move away from widgets.button because of styling */
+  const cancelButton = div.appendChild(dom.createElement('button'))
+  cancelButton.type = 'button'
   cancelButton.classList.add('profile-edit-dialog__camera-control-cancel')
+  cancelButton.setAttribute('aria-label', 'Close camera')
+  cancelButton.setAttribute('title', 'Close')
+  render(closeIcon, cancelButton)
   cancelButton.addEventListener('click', _event => {
     stopVideo()
     doneCallback(null)
