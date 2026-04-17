@@ -4,7 +4,7 @@ import { LiveStore, NamedNode } from 'rdflib'
 import { ViewerMode } from '../../types'
 import { createSkillsEditDialog } from './SkillsEditDialog'
 import { SkillDetails, SkillRow } from './types'
-import { addIcon, deleteIcon, lighteningIcon, plusIcon } from '../../icons-svg/profileIcons'
+import { addIcon, deleteIcon, editIcon, lighteningIcon } from '../../icons-svg/profileIcons'
 import { skillsHeadingText } from '../../texts'
 import { toggleCollapsibleSection } from '../shared/collapsibleSection'
 import { processSkillsMutations } from './mutations'
@@ -64,7 +64,7 @@ function renderSkillsSectionDefault(store: LiveStore, subject: NamedNode, skills
 
   return html`
     <section
-      class="profile__section border-lighter profile-section-collapsible"
+      class="profile__section border-lighter profile-section-collapsible profile-section-collapsible--inline-mobile-actions"
       aria-labelledby="skills-heading"
       role="region"
       tabindex="-1"
@@ -83,7 +83,7 @@ function renderSkillsSectionDefault(store: LiveStore, subject: NamedNode, skills
               <span class="profile__add-more-icon inline-flex-row" aria-hidden="true">${addIcon}</span>
               Add More
             </span>
-            <span class="profile-section-collapsible__edit-icon profile-section-collapsible__edit-icon--add" aria-hidden="true">${plusIcon}</span>
+            <span class="profile-section-collapsible__edit-icon" aria-hidden="true">${editIcon}</span>
           </button>
           <button
             type="button"
@@ -144,7 +144,7 @@ function renderOwnerEmptySkillsSection(
     <section 
       aria-labelledby="skills-heading" 
       data-profile-section="skills"
-      class="profile__section--empty border-lighter rounded-md gap-lg profile-section-collapsible" 
+      class="profile__section--empty border-lighter rounded-md gap-lg profile-section-collapsible profile-section-collapsible--inline-mobile-actions" 
       role="region"
       tabindex="-1"
       data-expanded="false"
@@ -171,7 +171,7 @@ function renderOwnerEmptySkillsSection(
               <span class="profile__add-more-icon inline-flex-row" aria-hidden="true">${addIcon}</span>
               Add Skills
             </span>
-            <span class="profile-section-collapsible__edit-icon profile-section-collapsible__edit-icon--add" aria-hidden="true">${plusIcon}</span>
+            <span class="profile-section-collapsible__edit-icon" aria-hidden="true">${editIcon}</span>
           </button>
           <button
             type="button"

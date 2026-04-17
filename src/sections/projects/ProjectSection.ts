@@ -5,7 +5,7 @@ import { ProjectDetails, ProjectRow } from './types'
 import { projectsHeadingText } from '../../texts'
 import { createProjectsEditDialog } from './ProjectEditDialog'
 import { processProjectsMutations } from './mutations'
-import { addIcon, checkMarkIcon, plusDarkIcon, plusIcon } from '../../icons-svg/profileIcons'
+import { addIcon, checkMarkIcon, plusDarkIcon } from '../../icons-svg/profileIcons'
 import { MutationOps } from '../shared/types'
 import '../../styles/ProjectsCard.css'
 import { toggleCollapsibleSection } from '../shared/collapsibleSection'
@@ -190,7 +190,7 @@ function renderProjectSectionDefault(
 
   return html`
       <section
-        class="profile__section border-lighter profile-section-collapsible"
+        class="profile__section border-lighter profile-section-collapsible profile-section-collapsible--inline-mobile-actions"
         aria-labelledby="projects-heading"
         role="region"
         tabindex="-1"
@@ -211,7 +211,7 @@ function renderProjectSectionDefault(
                 <span class="profile__add-more-icon inline-flex-row" aria-hidden="true">${addIcon}</span>
                 Add More
               </span>
-              <span class="profile-section-collapsible__edit-icon profile-section-collapsible__edit-icon--add" aria-hidden="true">${plusIcon}</span>
+              <span class="profile-section-collapsible__edit-icon profile-section-collapsible__edit-icon--add profile-section-collapsible__edit-icon--projects" aria-hidden="true">${plusDarkIcon}</span>
             </button>
             <button
               type="button"

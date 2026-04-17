@@ -98,7 +98,7 @@ function renderResumeSectionDefault(
   return showSection ? html`
     <section 
       aria-labelledby="cv-heading" 
-      class="profile__section border-lighter profile-section-collapsible" 
+      class="profile__section border-lighter profile-section-collapsible profile-section-collapsible--inline-mobile-actions" 
       role="region"
       tabindex="-1"
       data-expanded="false"

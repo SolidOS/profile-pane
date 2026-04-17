@@ -392,6 +392,37 @@
 }
 
 @media (max-width: 1000px) {
+  .profile-section-collapsible--inline-mobile-actions > .profile-section-collapsible__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+  }
+
+  .profile-section-collapsible--inline-mobile-actions > .profile-section-collapsible__header h2 {
+    margin: 0;
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  .profile-section-collapsible--inline-mobile-actions .profile-section-collapsible__actions {
+    display: inline-flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.25rem;
+    margin-top: 0;
+    flex: 0 0 auto;
+  }
+
+  .profile-section-collapsible--inline-mobile-actions .profile-section-collapsible__edit-button {
+    display: inline-flex !important;
+    order: 1;
+  }
+
+  .profile-section-collapsible--inline-mobile-actions .profile-section-collapsible__actions > button.inline-flex-row {
+    order: 2;
+  }
+
   .profile__section-header h2,
   .profile__section-header h3,
   .profile__section-header h4 {
@@ -456,6 +487,12 @@
   .profile-section-collapsible__edit-icon--add svg path {
     fill: #1E2939 !important;
     stroke: #1E2939 !important;
+  }
+
+  .profile-section-collapsible__edit-icon--projects svg path {
+    stroke-width: 1.714px !important;
+    stroke: var(--gray-800, #1E2939) !important;
+    fill: none !important;
   }
 
 }

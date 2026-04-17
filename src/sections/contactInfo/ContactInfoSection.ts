@@ -147,7 +147,7 @@ function renderContactInfoSectionDefault(
   return html`
     <section
       aria-labelledby="contact-details-heading"
-      class="profile__section border-lighter profile-section-collapsible"
+      class="profile__section border-lighter profile-section-collapsible profile-section-collapsible--inline-mobile-actions"
       role="region"
       tabindex="-1"
       data-expanded="false"
@@ -242,7 +242,7 @@ function renderOwnerEmptyContactInfoSection(
     <section 
       aria-labelledby="contact-details-heading" 
       data-profile-section="contact-info"
-      class="profile__section--empty border-lighter rounded-md gap-lg profile-section-collapsible" 
+      class="profile__section--empty border-lighter rounded-md gap-lg profile-section-collapsible profile-section-collapsible--inline-mobile-actions" 
       role="region"
       tabindex="-1"
       data-expanded="false"

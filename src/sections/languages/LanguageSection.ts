@@ -4,7 +4,7 @@ import { ns } from 'solid-ui'
 import { ViewerMode } from '../../types'
 import { createLanguageEditDialog } from './LanguageEditDialog'
 import { LanguageDetails } from './types'
-import { addIcon, commentIcon, plusIcon } from '../../icons-svg/profileIcons'
+import { addIcon, commentIcon, editIcon, plusIcon } from '../../icons-svg/profileIcons'
 import { languagesHeadingText } from '../../texts'
 import { toggleCollapsibleSection } from '../shared/collapsibleSection'
 
@@ -26,7 +26,7 @@ function renderLanguagesSectionDefault(store: LiveStore, subject: NamedNode, lan
   const hasLanguageLinks = store.each(subject, ns.schema('knowsLanguage')).length > 0
   return html`
     <section
-      class="profile__section border-lighter profile-section-collapsible"
+      class="profile__section border-lighter profile-section-collapsible profile-section-collapsible--inline-mobile-actions"
       aria-labelledby="languages-heading"
       role="region"
       tabindex="-1"
@@ -45,7 +45,7 @@ function renderLanguagesSectionDefault(store: LiveStore, subject: NamedNode, lan
               <span class="profile__add-more-icon inline-flex-row" aria-hidden="true">${addIcon}</span>
               Add More
             </span>
-            <span class="profile-section-collapsible__edit-icon profile-section-collapsible__edit-icon--add" aria-hidden="true">${plusIcon}</span>
+            <span class="profile-section-collapsible__edit-icon" aria-hidden="true">${editIcon}</span>
           </button>
           <button
             type="button"
@@ -104,7 +104,7 @@ function renderOwnerEmptyLanguagesSection(
     <section 
       aria-labelledby="languages-heading" 
       data-profile-section="languages"
-      class="profile__section--empty border-lighter rounded-md gap-lg profile-section-collapsible" 
+      class="profile__section--empty border-lighter rounded-md gap-lg profile-section-collapsible profile-section-collapsible--inline-mobile-actions" 
       role="region"
       tabindex="-1"
       data-expanded="false"

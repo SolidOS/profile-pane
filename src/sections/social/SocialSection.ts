@@ -6,7 +6,7 @@ import { socialAccountsHeadingText } from '../../texts'
 import { createSocialEditDialog } from './SocialEditDialog'
 import { LiveStore, NamedNode } from 'rdflib'
 import { toggleCollapsibleSection } from '../shared/collapsibleSection'
-import { addIcon, editIcon, globeIcon, plusIcon } from '../../icons-svg/profileIcons'
+import { addIcon, editIcon, globeIcon } from '../../icons-svg/profileIcons'
 
 export const SocialCard = (
   SocialData: SocialPresentation,
@@ -93,7 +93,7 @@ function renderSocialSectionDefault(
   return showSection ? html`
         <section 
           aria-labelledby="social-heading" 
-          class="profile__section border-lighter profile-section-collapsible" 
+          class="profile__section border-lighter profile-section-collapsible profile-section-collapsible--inline-mobile-actions" 
           role="region"
           tabindex="-1"
           data-expanded="false"
@@ -159,7 +159,7 @@ function renderOwnerEmptySocialSection(
     <section 
       aria-labelledby="social-heading" 
       data-profile-section="social"
-      class="profile__section--empty border-lighter flex-column-center rounded-md gap-lg profile-section-collapsible" 
+      class="profile__section--empty border-lighter flex-column-center rounded-md gap-lg profile-section-collapsible profile-section-collapsible--inline-mobile-actions" 
       role="region"
       tabindex="-1"
       data-expanded="false"
@@ -186,7 +186,7 @@ function renderOwnerEmptySocialSection(
               <span class="profile__add-more-icon inline-flex-row" aria-hidden="true">${addIcon}</span>
               Add Account
             </span>
-            <span class="profile-section-collapsible__edit-icon profile-section-collapsible__edit-icon--add" aria-hidden="true">${plusIcon}</span>
+            <span class="profile-section-collapsible__edit-icon" aria-hidden="true">${editIcon}</span>
           </button>
           <button
             type="button"
