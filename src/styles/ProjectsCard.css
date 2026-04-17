@@ -179,7 +179,9 @@
   .project-card__more-button {
     display: inline-flex;
     align-items: center;
+    justify-content: center;
     gap: 0.375rem;
+    width: 100%;
     margin-top: 0.75rem;
     padding: 0;
     border: 0;
@@ -197,5 +199,6 @@
   .project-card__more-icon {
     display: inline-flex;
     align-items: center;
+    justify-content: center;
   }
 }

@@ -419,6 +419,15 @@
     order: 1;
   }
 
+  .profile-section-collapsible--inline-mobile-actions .profile-section-collapsible__edit-button:active,
+  .profile-section-collapsible--inline-mobile-actions .profile-section-collapsible__edit-button:focus,
+  .profile-section-collapsible--inline-mobile-actions .profile-section-collapsible__edit-button:focus-visible {
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+    background: transparent !important;
+  }
+
   .profile-section-collapsible--inline-mobile-actions .profile-section-collapsible__actions > button.inline-flex-row {
     order: 2;
   }

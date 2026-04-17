@@ -283,6 +283,19 @@ export function openInputDialog (options: OpenInputDialogCustom): Promise<InputD
   const cancelLabel = options.cancelLabel || 'Cancel'
   const dialog = ensureModalDialog(options.dom)
   const elements = getDialogElements(dialog)
+  const submitProxy = options.dom.createElement('button')
+  submitProxy.type = 'submit'
+  submitProxy.hidden = true
+  submitProxy.tabIndex = -1
+  options.form.appendChild(submitProxy)
+
+  const handleSubmit = (event: SubmitEvent) => {
+    event.preventDefault()
+    const saveButton = dialog.querySelector('#modal-buttons .btn-primary') as HTMLButtonElement | null
+    saveButton?.click()
+  }
+
+  options.form.addEventListener('submit', handleSubmit)
 
   return openModal({
     title: options.title,
@@ -320,8 +333,13 @@ export function openInputDialog (options: OpenInputDialogCustom): Promise<InputD
       }
     ],
     dom: options.dom
-  }).then((result) => {
-    if (result !== 'save') return null
-    return collectFormValues(options.form)
   })
+    .then((result) => {
+      if (result !== 'save') return null
+      return collectFormValues(options.form)
+    })
+    .finally(() => {
+      options.form.removeEventListener('submit', handleSubmit)
+      submitProxy.remove()
+    })
 }

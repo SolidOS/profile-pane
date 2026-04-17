@@ -81,7 +81,6 @@ function renderProjectInputRow(row: ProjectRow, onChange: () => void) {
     const target = e.target as HTMLInputElement
     const nextValue = sanitizeProjectFieldValue(target.value)
     applyRowFieldChange(row, 'url', nextValue, rowHasContent)
-    onChange()
   }
 
   const handlePaste = async (event: Event) => {
@@ -103,19 +102,19 @@ function renderProjectInputRow(row: ProjectRow, onChange: () => void) {
 
   return html`
     <div class="profile-edit-dialog__row profile-edit-dialog__row--project">
-      <label aria-label="Project or community URL" class="label profile-edit-dialog__field profile-edit-dialog__field--full">
-      <p>Add a project or community by pasting a link.</p>  
+      <label aria-label="Project or community WebID" class="label profile-edit-dialog__field profile-edit-dialog__field--full">
+      <p>Type or paste a project or community WebID.</p>  
       <div class="profile-edit-dialog__input-wrap">
           <input
             class="input profile-edit-dialog__input--with-action"
-            type="url"
+            type="text"
             name=${projectUrl}
             .value=${row?.url || ''}
             required
             data-contact-field="url"
             data-entry-node=${row?.entryNode || ''}
             data-row-status=${row?.status || 'n/a'}
-            placeholder="Paste project or community URL here"
+            placeholder="Type or paste project/community WebID here"
             autocomplete="off"
             inputmode="text"
             @input=${handleUrlInput}
