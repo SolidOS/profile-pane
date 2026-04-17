@@ -63,6 +63,10 @@
     justify-content: flex-start;
   }
 
+  .socialCard[data-mobile-expanded="true"] .socialList {
+    grid-template-columns: repeat(3, max-content);
+  }
+
   .socialCard[data-mobile-expanded="false"] .socialItem:nth-child(n + 11) {
     display: none;
   }
