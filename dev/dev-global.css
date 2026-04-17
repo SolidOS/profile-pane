@@ -5,25 +5,49 @@
 /* Accessible color palette */
 
 :root {
-  /* New Design: Colors (possibly change to primary secondary etc for now add here  */
+   /* New Design: Colors (possibly change to primary secondary etc for now add here  */
   /* Adding used for comment so we can decide later */
   --gray-50: #F9FAFB; /* Used for: background of dialog buttons */
-  --gray-100: #F3F4F6; /* Used for: background of QR code frame */
+  --gray-100: #F3F4F6;
   --gray-200: #E5E7EB; /* Used for: border of sections */
-  --gray-400: #99A1AF; /* Used for: input borders */
   --gray-300: #D1D5DC; /* Used for: text */
+  --gray-400: #99A1AF; /* Used for: input borders */
   --gray-500: #6A7282; /* Used for: text */
   --gray-600: #4A5565; /* Used for: text  */
   --gray-700: #364153; /* Used for: text */
   --gray-800: #1E2939; /* Used for: text  */
   --gray-900: #101828; /* Used for: text  */
+  --purple-500: #AD46FF;
   --red-600: #B00020; /* Used for: error text */
-  --slate-50: #F8FAFC; /* Used for: background of dialog title */
+  --slate-50: #F8FAFC;
   --slate-200: #E2E8F0; /* Used for: border of sections */
   --slate-400: #90A1B9; /* Used for: edit dialog cancel */
   --slate-500: #62748E; /* Used for: text */
-  --slate-800: #1D293D; /* Used for: text  */
+  --slate-700: #314158; /* Used for: side menu bar text */
+  --slate-800: #1D293D; /* Used for: text and top header background */
   --slate-900: #0F172B; /* Used for: text  */
+  --utility-colours-body-grey: #666; /* used in header drop down behind the picture */
+  --lavender-300: #e6dcff;
+  --lavender-400: #cbb9ff;
+  --lavender-500: #b295ff;
+  --lavender-700: #9672ff;
+  --lavender-900: #7c4cff;
+  --grey-purple-200: #d8d6db;
+  --grey-purple-300: #b1acb7;
+  --grey-purple-500: #878192;
+  --grey-purple-700: #5e546d;
+  --grey-purple-900: #332746; /* Used for: header background */
+  --orange-200: #ffefdd;
+  --orange-300: #ffdeba;
+  --orange-400: #ffce97;
+  --orange-500: #ffbd74;
+  --orange-600: #ffad4f;
+  --pink-500: #ffdde6;
+  --pink-600: #ffbbcd;
+  --pink-700: #ff98b3;
+  --pink-800: #ff769a;
+  --pink-900: #ff5180;
+  --yellow-700: #A65F00;
   --black: #000;  /* Used for: text heading */
   --white: #FFF;
 

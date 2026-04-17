@@ -5,7 +5,7 @@ import { ProjectDetails, ProjectRow } from './types'
 import { projectsHeadingText } from '../../texts'
 import { createProjectsEditDialog } from './ProjectEditDialog'
 import { processProjectsMutations } from './mutations'
-import { addIcon, plusDarkIcon, plusIcon } from '../../icons-svg/profileIcons'
+import { addIcon, checkMarkIcon, plusDarkIcon, plusIcon } from '../../icons-svg/profileIcons'
 import { MutationOps } from '../shared/types'
 import '../../styles/ProjectsCard.css'
 import { toggleCollapsibleSection } from '../shared/collapsibleSection'
@@ -14,14 +14,14 @@ function renderProjectImage(src: string | undefined, altText: string) {
   return src
     ? html`
         <img
-          class="projectThumbImage"
+          class="project-card__thumb-image"
           src=${src}
           alt=${altText}
           loading="lazy"
         />
       `
     : html`
-        <div class="projectThumbFallback" role="img" aria-label=${altText} tabindex="0">
+        <div class="project-card__thumb-fallback flex-center" role="img" aria-label=${altText} tabindex="0">
           ${altText}
         </div>
       `
@@ -65,35 +65,45 @@ function renderProject(
     }
   }
 
+  const normalizedCategory = (project.category || '').trim().toLowerCase()
+  const categoryModifier = normalizedCategory === 'project'
+    ? 'project'
+    : normalizedCategory === 'community'
+      ? 'community'
+      : 'unknown'
+  const categoryLabel = normalizedCategory && normalizedCategory !== 'unknown'
+    ? normalizedCategory.charAt(0).toUpperCase() + normalizedCategory.slice(1)
+    : 'Uncategorized'
+
   return html`
-    <li class="projectCard" role="listitem">
+    <li class="project-card flex-column" role="listitem">
       <a
-        class="projectCardLink"
+        class="project-card__link"
         href=${project.url}
         target="_blank"
         rel="noopener noreferrer"
         aria-label=${project.title ? `Open ${project.title}` : 'Open project link'}
       >
-        <div class="projectCardTop">
-          <div class="projectThumb">
+        <div class="project-card__wrapper">
+          <div class="project-card__thumb flex-center">
             ${renderProjectImage(project.imageUrl, project.title || 'Project preview')}
           </div>
-          <div class="projectBody">
-            <p class="projectTitle"><strong>${project.title || project.url}</strong></p>
-            <p class="projectBusinessType">${project.orgName || 'Organization unknown'}</p>
-            <p class="projectKind">${project.category && project.category !== 'unknown' ? project.category : 'Uncategorized'}</p>
+          <div class="project-card__content">
+            <p class="project-card__title"><strong>${project.title || project.url}</strong></p>
+            <p class="project-card__organization">${project.orgName || 'Organization unknown'}</p>
+            <p class="project-card__category project-card__category--${categoryModifier}">${categoryLabel}</p>
           </div>
         </div>
       </a>
       ${viewerMode === 'owner' ? html`
-        <div class="projectCardFooter">
+        <div class="project-card__footer">
           <button
             type="button"
-            class="profile__action-button projectFollowButton"
+            class="project-card__follow-button flex-center gap-xxs"
             aria-label="Unfollow project"
             @click=${handleUnfollow}
           >
-            Following
+            <span>${checkMarkIcon} Following</span>
           </button>
         </div>
       ` : html``}
@@ -218,7 +228,7 @@ function renderProjectSectionDefault(
         <div id="projects-panel" class="profile-section-collapsible__content" aria-hidden="true">
           ${hasProjects
             ? html`
-                <ul class="projectRail" role="list" aria-label="Known projects">
+                <ul class="project-card__rail" role="list" aria-label="Known projects">
                   ${renderProjectSectionContent(
                     projects,
                     store,

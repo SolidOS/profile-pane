@@ -34,7 +34,7 @@ export const locationIcon = html`
     <path d="M8 8.66675C9.10457 8.66675 10 7.77132 10 6.66675C10 5.56218 9.10457 4.66675 8 4.66675C6.89543 4.66675 6 5.56218 6 6.66675C6 7.77132 6.89543 8.66675 8 8.66675Z" stroke="#4A5565" stroke-width="1.33333" stroke-linecap="round" stroke-linejoin="round"/>
   </svg>
 `
-export const checkIcon = html`
+export const checkMarkIcon = html`
   <svg xmlns="http://www.w3.org/2000/svg" 
     width="14" 
     height="14" 
