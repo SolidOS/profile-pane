@@ -1,6 +1,6 @@
 import { html, nothing } from 'lit-html'
 import './styles/ProfileCard.css'
-import { ProfilePresentation } from './presenter'
+import { ProfilePresentation } from './legacy/presenter'
 import { addMeToYourFriendsDiv } from './addMeToYourFriends'
 import { DataBrowserContext } from 'pane-registry'
 import { NamedNode } from 'rdflib'

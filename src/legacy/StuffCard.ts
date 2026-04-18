@@ -3,7 +3,7 @@ import { NamedNode } from 'rdflib'
 import { DataBrowserContext } from 'pane-registry'
 import { widgets } from 'solid-ui'
 import { ProfilePresentation } from './presenter'
-import { ViewerMode } from './types'
+import { ViewerMode } from '../types'
 import './styles/StuffCard.css'
 // Deprecated: unused after page redesign (April 2026); kept temporarily for reference.
 export const StuffCard = (profileBasics: ProfilePresentation,

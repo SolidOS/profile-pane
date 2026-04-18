@@ -7,10 +7,10 @@ import { html } from 'lit-html'
 import { contactHeadingText, friendsHeadingText, sharedItemsHeadingText } from './texts'
 import { ChatWithMe } from './ChatWithMe'
 import { FriendList } from './FriendList'
-import { StuffCard } from './StuffCard'
+import { StuffCard } from './legacy/StuffCard'
 import { ViewerMode } from './types'
 import { DataBrowserContext } from 'pane-registry'
-import { presentProfile } from './presenter'
+import { presentProfile } from './legacy/presenter'
 
 type ProfileBasics = ReturnType<typeof presentProfile>
 type StuffData = Awaited<ReturnType<typeof presentStuff>>

@@ -1,8 +1,8 @@
 import { LiveStore, NamedNode, Node } from 'rdflib'
 import { ns, utils, icons } from 'solid-ui'
 import socialMediaForm from './ontology/socialMedia.ttl'
-import { loadDocument } from './rdfFormsHelper'
-import { expandRdfList } from './sections/shared/rdfList'
+import { loadDocument } from '../rdfFormsHelper'
+import { expandRdfList } from '../sections/shared/rdfList'
 
 // Note: This file was copied to src/sections/social/selectors.ts and edited there. Edits here will not be reflected in the app. Please make any necessary edits in the selectors file.
 const socialMediaFormName = 'socialMedia.ttl' // The name of the file to upload

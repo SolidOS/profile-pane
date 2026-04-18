@@ -1,5 +1,5 @@
 import { render } from 'lit-html'
-import { SocialCard } from '../src/SocialCard'
+import { SocialCard } from '../src/legacy/SocialCard'
 import axe from 'axe-core'
 
 describe('SocialCard accessibility', () => {

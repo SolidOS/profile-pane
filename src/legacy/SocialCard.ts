@@ -1,6 +1,6 @@
 import { html, TemplateResult } from 'lit-html'
 import { SocialPresentation } from './SocialPresenter'
-import { ViewerMode } from './types'
+import { ViewerMode } from '../types'
 import './styles/SocialCard.css'
 
 const MAX_VISIBLE_SOCIAL_ACCOUNTS_MOBILE = 10
