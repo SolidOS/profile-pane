@@ -61,6 +61,7 @@ function renderSkillItem(
 
 function renderSkillsSectionDefault(store: LiveStore, subject: NamedNode, skills: SkillDetails[], viewerMode: ViewerMode, onSaved?: () => Promise<void> | void) {
   const hasSkills = Array.isArray(skills) && skills.length > 0
+  const isOwner = viewerMode === 'owner'
 
   return html`
     <section
@@ -73,18 +74,20 @@ function renderSkillsSectionDefault(store: LiveStore, subject: NamedNode, skills
       <header class="profile__section-header profile-section-collapsible__header">
         <h2 id="skills-heading">${skillsHeadingText}</h2>
         <div class="profile-section-collapsible__actions flex-column">
-          <button
-            type="button"
-            class="profile__action-button profile-action-text flex-center profile-section-collapsible__edit-button"
-            aria-label="Add or edit skills"
-            @click=${(event: Event) => createSkillsEditDialog(event, store, subject, skills, viewerMode, onSaved)}
-          >
-            <span class="profile-section-collapsible__edit-label profile__add-more-content inline-flex-row">
-              <span class="profile__add-more-icon inline-flex-row" aria-hidden="true">${addIcon}</span>
-              Add More
-            </span>
-            <span class="profile-section-collapsible__edit-icon" aria-hidden="true">${editIcon}</span>
-          </button>
+          ${isOwner ? html`
+            <button
+              type="button"
+              class="profile__action-button profile-action-text flex-center profile-section-collapsible__edit-button"
+              aria-label="Add or edit skills"
+              @click=${(event: Event) => createSkillsEditDialog(event, store, subject, skills, viewerMode, onSaved)}
+            >
+              <span class="profile-section-collapsible__edit-label profile__add-more-content inline-flex-row">
+                <span class="profile__add-more-icon inline-flex-row" aria-hidden="true">${addIcon}</span>
+                Add More
+              </span>
+              <span class="profile-section-collapsible__edit-icon" aria-hidden="true">${editIcon}</span>
+            </button>
+          ` : html``}
           <button
             type="button"
             class="inline-flex-row"

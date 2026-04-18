@@ -200,6 +200,7 @@ function renderProjectSectionDefault(
   onSaved?: () => Promise<void> | void) {
   const hasProjects = Array.isArray(projects) && projects.length > 0
   const hiddenProjectsCount = Math.max(0, projects.length - MAX_VISIBLE_PROJECTS_MOBILE)
+  const isOwner = viewerMode === 'owner'
 
   return html`
       <section
@@ -213,20 +214,22 @@ function renderProjectSectionDefault(
         <header class="profile__section-header profile-section-collapsible__header">
           <h2 id="projects-heading">${projectsHeadingText}</h2>
           <div class="profile-section-collapsible__actions flex-column">
-            <button
-              type="button"
-              class="profile__action-button profile-action-text flex-center profile-section-collapsible__edit-button"
-              aria-label="Add or edit projects"
-              @click=${(event: Event) => {
-                return createProjectsEditDialog(event, store, subject, projects, viewerMode, onSaved)
-              }}
-            >
-              <span class="profile-section-collapsible__edit-label profile__add-more-content inline-flex-row">
-                <span class="profile__add-more-icon inline-flex-row" aria-hidden="true">${addIcon}</span>
-                Add More
-              </span>
-              <span class="profile-section-collapsible__edit-icon profile-section-collapsible__edit-icon--add profile-section-collapsible__edit-icon--projects" aria-hidden="true">${plusDarkIcon}</span>
-            </button>
+            ${isOwner ? html`
+              <button
+                type="button"
+                class="profile__action-button profile-action-text flex-center profile-section-collapsible__edit-button"
+                aria-label="Add or edit projects"
+                @click=${(event: Event) => {
+                  return createProjectsEditDialog(event, store, subject, projects, viewerMode, onSaved)
+                }}
+              >
+                <span class="profile-section-collapsible__edit-label profile__add-more-content inline-flex-row">
+                  <span class="profile__add-more-icon inline-flex-row" aria-hidden="true">${addIcon}</span>
+                  Add More
+                </span>
+                <span class="profile-section-collapsible__edit-icon profile-section-collapsible__edit-icon--add profile-section-collapsible__edit-icon--projects" aria-hidden="true">${plusDarkIcon}</span>
+              </button>
+            ` : html``}
             <button
               type="button"
               class="inline-flex-row"

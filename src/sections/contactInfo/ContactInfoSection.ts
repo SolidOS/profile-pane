@@ -143,6 +143,7 @@ function renderContactInfoSectionDefault(
     contactInfo?.emails.length > 0 ||
     contactInfo?.phones.length > 0 ||
     contactInfo?.addresses.length > 0
+    const isOwner = viewerMode === 'owner'
 
   return html`
     <section
@@ -155,23 +156,25 @@ function renderContactInfoSectionDefault(
       <header class="profile__section-header profile-section-collapsible__header">
         <h2 id="contact-details-heading" tabindex="-1">${contactInfoHeadingText}</h2>
         <div class="profile-section-collapsible__actions flex-column">
-          <button 
-            type="button" 
-            class="profile__action-button profile-action-text flex-center profile-section-collapsible__edit-button" 
-            aria-label="Edit contact information"
-            @click=${(event: Event) => {
-              return createContactInfoEditDialog(
-                event,
-                store,
-                subject,
-                contactInfo,
-                viewerMode,
-                onSaved
-              )
-            }}>
-            <span class="profile-section-collapsible__edit-label">${editIcon} Edit</span>
-            <span class="profile-section-collapsible__edit-icon" aria-hidden="true">${editIcon}</span>
-          </button>
+          ${isOwner ? html`
+            <button 
+              type="button" 
+              class="profile__action-button profile-action-text flex-center profile-section-collapsible__edit-button" 
+              aria-label="Edit contact information"
+              @click=${(event: Event) => {
+                return createContactInfoEditDialog(
+                  event,
+                  store,
+                  subject,
+                  contactInfo,
+                  viewerMode,
+                  onSaved
+                )
+              }}>
+              <span class="profile-section-collapsible__edit-label">${editIcon} Edit</span>
+              <span class="profile-section-collapsible__edit-icon" aria-hidden="true">${editIcon}</span>
+            </button>
+          ` : html``}
           <button
             type="button"
             class="inline-flex-row"

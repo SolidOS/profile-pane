@@ -109,6 +109,7 @@ function renderSocialSectionDefault(
   onSaved?: () => Promise<void> | void) {
   // const hasAccounts = socialData.accounts && socialData.accounts.length > 0
   const showSection = true
+  const isOwner = viewerMode === 'owner'
 
   const handleEdit = (event: Event) => {
     return createSocialEditDialog(
@@ -131,15 +132,17 @@ function renderSocialSectionDefault(
           <header class="profile__section-header profile-section-collapsible__header">
             <h2 id="social-heading" tabindex="-1">${socialAccountsHeadingText}</h2>
             <div class="profile-section-collapsible__actions flex-column">
-              <button
-                type="button"
-                class="profile__action-button profile-action-text flex-center profile-section-collapsible__edit-button"
-                aria-label="Edit social accounts"
-                @click=${handleEdit}
-              >
-                <span class="profile-section-collapsible__edit-label">${editIcon} Edit</span>
-                <span class="profile-section-collapsible__edit-icon" aria-hidden="true">${editIcon}</span>
-              </button>
+              ${isOwner ? html`
+                <button
+                  type="button"
+                  class="profile__action-button profile-action-text flex-center profile-section-collapsible__edit-button"
+                  aria-label="Edit social accounts"
+                  @click=${handleEdit}
+                >
+                  <span class="profile-section-collapsible__edit-label">${editIcon} Edit</span>
+                  <span class="profile-section-collapsible__edit-icon" aria-hidden="true">${editIcon}</span>
+                </button>
+              ` : html``}
               <button
                 type="button"
                 class="inline-flex-row"

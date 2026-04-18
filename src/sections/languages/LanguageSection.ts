@@ -24,6 +24,7 @@ function renderLanguagesSectionDefault(store: LiveStore, subject: NamedNode, lan
   
   const hasLanguages = Array.isArray(languages) && languages.length > 0
   const hasLanguageLinks = store.each(subject, ns.schema('knowsLanguage')).length > 0
+  const isOwner = viewerMode === 'owner'
   return html`
     <section
       class="profile__section border-lighter profile-section-collapsible profile-section-collapsible--inline-mobile-actions"
@@ -35,18 +36,20 @@ function renderLanguagesSectionDefault(store: LiveStore, subject: NamedNode, lan
       <header class="profile__section-header profile-section-collapsible__header">
         <h2 id="languages-heading">${languagesHeadingText}</h2>
         <div class="profile-section-collapsible__actions flex-column">
-          <button
-            type="button"
-            class="profile__action-button profile-action-text flex-center profile-section-collapsible__edit-button"
-            aria-label="Add or edit languages"
-            @click=${(event: Event) => createLanguageEditDialog(event, store, subject, languages, viewerMode, onSaved)}
-          >
-            <span class="profile-section-collapsible__edit-label profile__add-more-content inline-flex-row">
-              <span class="profile__add-more-icon inline-flex-row" aria-hidden="true">${addIcon}</span>
-              Add More
-            </span>
-            <span class="profile-section-collapsible__edit-icon" aria-hidden="true">${editIcon}</span>
-          </button>
+          ${isOwner ? html`
+            <button
+              type="button"
+              class="profile__action-button profile-action-text flex-center profile-section-collapsible__edit-button"
+              aria-label="Add or edit languages"
+              @click=${(event: Event) => createLanguageEditDialog(event, store, subject, languages, viewerMode, onSaved)}
+            >
+              <span class="profile-section-collapsible__edit-label profile__add-more-content inline-flex-row">
+                <span class="profile__add-more-icon inline-flex-row" aria-hidden="true">${addIcon}</span>
+                Add More
+              </span>
+              <span class="profile-section-collapsible__edit-icon" aria-hidden="true">${editIcon}</span>
+            </button>
+          ` : html``}
           <button
             type="button"
             class="inline-flex-row"

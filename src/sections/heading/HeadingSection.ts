@@ -18,6 +18,7 @@ export const renderHeadingSection = (
   onSaved?: () => Promise<void> | void
 ) => {
   const { name, pronouns, jobTitle, dateOfBirth, location, primaryPhone, primaryEmail, imageSrc } = profileData
+  const isOwner = viewerMode === 'owner'
   
   const phoneValue = toText(primaryPhone?.valueNode).replace(/^tel:/i, '')
   const emailValue = toText(primaryEmail?.valueNode).replace(/^mailto:/i, '')
@@ -38,7 +39,7 @@ export const renderHeadingSection = (
               ${jobTitle ? html`<div class="profile__role-org">${jobTitle}</div>` : nothing}
             </header>
           </div>
-          ${html`
+          ${isOwner ? html`
               <div class="profile__actions profile__heading-actions" aria-label="Profile actions">
                 <button
                   type="button"
@@ -59,7 +60,7 @@ export const renderHeadingSection = (
                   <span class="profile-section-collapsible__edit-icon" aria-hidden="true">${editIcon}</span>
                 </button>
               </div>
-            `}
+            ` : nothing}
           <div class="profile__details">
             <div class="profile__meta-row" role="group" aria-label="Additional profile information">
               ${Line(dateOfBirthDisplay, birthdayIcon, '')}

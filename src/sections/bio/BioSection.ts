@@ -64,28 +64,31 @@ function renderBioSectionContent(
 ) {
   const bio = BioCard(bioData, viewerMode)
   const bioDetails: BioDetails = bioData
+  const isOwner = viewerMode === 'owner'
   
   return html`
     <header class="profile__section-header profile-section-collapsible__header">
       <h2 id="bio-heading" tabindex="-1">${bioHeadingText}</h2>
-      <button
-        type="button"
-        class="profile__action-button profile-action-text flex-center"
-        aria-label="Edit bio details"
-        @click=${(event: Event) => {
-          return createBioEditDialog(
-            event,
-            store,
-            subject,
-            bioDetails,
-            viewerMode,
-            onSaved
-          )
-        }}
-      >
-        <span class="profile-section-collapsible__edit-label profile__action-icon">${editIcon} Edit</span>
-        <span class="profile-section-collapsible__edit-icon profile__action-icon" aria-hidden="true">${editIcon}</span>
-      </button>
+      ${isOwner ? html`
+        <button
+          type="button"
+          class="profile__action-button profile-action-text flex-center"
+          aria-label="Edit bio details"
+          @click=${(event: Event) => {
+            return createBioEditDialog(
+              event,
+              store,
+              subject,
+              bioDetails,
+              viewerMode,
+              onSaved
+            )
+          }}
+        >
+          <span class="profile-section-collapsible__edit-label profile__action-icon">${editIcon} Edit</span>
+          <span class="profile-section-collapsible__edit-icon profile__action-icon" aria-hidden="true">${editIcon}</span>
+        </button>
+      ` : html``}
     </header>
     <div class="profile-section-collapsible__content">
       ${bio}
