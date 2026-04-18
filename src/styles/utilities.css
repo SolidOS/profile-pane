@@ -56,7 +56,7 @@
   }
 }
 
-@container profile-pane (max-width: 1200px) {
+@container profile-pane (max-width: 1000px) {
   .profile-grid {
     grid-template-columns: 1fr;
     gap: var(--spacing-xxs, 0.3125rem);
@@ -69,7 +69,7 @@
   }
 }
 
-@media (max-width: 900px) {
+@media (max-width: 1000px) {
   .profile-grid {
     grid-template-columns: 1fr;
     gap: var(--spacing-xxs, 0.3125rem);
@@ -352,7 +352,7 @@
 }
 
 .profile-section-collapsible__actions > button.inline-flex-row {
-  display: none;
+  display: none !important;
   min-height: auto;
   min-width: auto;
   padding: var(--spacing-xxs, 0.3125rem);
@@ -397,7 +397,7 @@
   box-sizing: border-box;
 }
 
-@media (min-width: 1001px) {
+@media (min-width: 769px) {
   .profile-section-collapsible > .profile-section-collapsible__content {
     display: block;
   }
@@ -427,7 +427,7 @@
   }
 }
 
-@media (max-width: 1000px) {
+@media (max-width: 576px) {
   .profile-section-collapsible--inline-mobile-actions > .profile-section-collapsible__header {
     display: flex;
     align-items: center;
@@ -524,7 +524,7 @@
   /* Reassert toggle button layout in collapsible action rows on mobile 
   so utility resets never hide/misalign the control. */
   .profile-section-collapsible__actions > button.inline-flex-row {
-    display: inline-flex;
+    display: inline-flex !important;
     align-items: center;
     justify-content: center;
   }
@@ -542,7 +542,7 @@
 
 }
 
-@container profile-pane (max-width: 1000px) {
+@container profile-pane (max-width: 576px) {
   .profile-section-collapsible--inline-mobile-actions > .profile-section-collapsible__header {
     display: flex;
     align-items: center;
@@ -635,7 +635,7 @@
   }
 
   .profile-section-collapsible__actions > button.inline-flex-row {
-    display: inline-flex;
+    display: inline-flex !important;
     align-items: center;
     justify-content: center;
   }
