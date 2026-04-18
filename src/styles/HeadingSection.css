@@ -111,7 +111,7 @@ transform: translateX(-4px);
 .profile__meta-row,
 .profile__contact-row {
   display: grid;
-  grid-template-columns: 11.5rem max-content;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   justify-content: flex-start;
   column-gap: 0.25rem; /* 4px */
   row-gap: var(--spacing-xs, 0.5rem);
@@ -131,9 +131,21 @@ transform: translateX(-4px);
 
 .profile__meta-row .profile__value,
 .profile__contact-row .profile__value {
-  display: inline-flex;
-  align-items: center;
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-xxs, 0.3125rem);
   min-width: 0;
+  white-space: normal !important;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.profile__meta-row .profile__value-text,
+.profile__contact-row .profile__value-text {
+  min-width: 0;
+  white-space: normal !important;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 .profile__prefix-icon {
@@ -235,7 +247,63 @@ transform: translateX(-4px);
 
   .profile__meta-row,
   .profile__contact-row {
-    grid-template-columns: 8rem minmax(0, 1fr);
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 0.25rem;
+  }
+}
+
+@container profile-pane (max-width: 640px) {
+  .profile__heading-top {
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    grid-template-areas:
+      "avatar info actions"
+      "details details details";
+    column-gap: var(--spacing-sm, 0.75rem);
+    row-gap: var(--spacing-sm, 0.75rem);
+  }
+
+  .profile__name {
+    font-size: 1.5rem;
+    line-height: 1.15;
+  }
+
+  .profile__identity {
+    gap: 0.125rem;
+  }
+
+  .profile__pronouns {
+    font-size: var(--font-size-xs, 0.75rem);
+    line-height: 1.1;
+    white-space: nowrap;
+  }
+
+  .profile__hero,
+  .profile__hero-alt {
+    width: 112px;
+    height: 112px;
+  }
+
+  .profile__hero-alt {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+  }
+
+  .profile__hero-icon {
+    display: block;
+    margin: 0 auto;
+    width: 48px;
+    height: 48px;
+  }
+
+  .profile__details {
+    gap: var(--spacing-xs, 0.5rem);
+  }
+
+  .profile__meta-row,
+  .profile__contact-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     column-gap: 0.25rem;
   }
 }

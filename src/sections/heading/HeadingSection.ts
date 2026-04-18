@@ -81,7 +81,7 @@ const Line = (value, prefix: TemplateResult | symbol | string = nothing, label: 
       ${label ? html`<span class="profile__label">${label}</span>` : nothing}
       <span class="profile__value">
         ${prefix !== '' && prefix !== nothing ? html`<span class="profile__prefix-icon" aria-hidden="true">${prefix}</span>` : nothing}
-        ${value}
+        <span class="profile__value-text">${value}</span>
       </span>
     </div>
   ` : nothing

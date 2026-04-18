@@ -85,25 +85,27 @@ export async function ProfileView (
   const contactInfo = viewModel.contactInfo
   
   return html` 
-    <main
-      id="main-content"
-      class="profile-grid"
-      tabindex="-1"
-    > 
-      <h1 id="profile-content-heading" class="sr-only">Profile for ${profileDetails.name}</h1>
+    <div class="profile-pane-root">
+      <main
+        id="main-content"
+        class="profile-grid"
+        tabindex="-1"
+      > 
+        <h1 id="profile-content-heading" class="sr-only">Profile for ${profileDetails.name}</h1>
 
-      <section
-        class="profile__main flex-column gap-md p-sm"
-        >
-        <h2 id="profile-main-heading" class="sr-only">Main Profile Content</h2>
+        <section
+          class="profile__main flex-column gap-md p-sm"
+          >
+          <h2 id="profile-main-heading" class="sr-only">Main Profile Content</h2>
 
-        ${renderHeadingSection(context, subject, profileDetails, viewerMode, onSaved)}
-        ${renderBioSection(store, subject, bioDetails, viewerMode, onSaved)}
-        ${renderCVSection(store, subject, rolesByType, viewerMode, onSaved)}
-        ${renderProjectSection(store, subject, projects, viewerMode, onSaved)}
-        
-      </section>
-      ${renderSidebar(store, subject, accounts, skills, languages, contactInfo, viewerMode, onSaved)}
-    </main>
+          ${renderHeadingSection(context, subject, profileDetails, viewerMode, onSaved)}
+          ${renderBioSection(store, subject, bioDetails, viewerMode, onSaved)}
+          ${renderCVSection(store, subject, rolesByType, viewerMode, onSaved)}
+          ${renderProjectSection(store, subject, projects, viewerMode, onSaved)}
+          
+        </section>
+        ${renderSidebar(store, subject, accounts, skills, languages, contactInfo, viewerMode, onSaved)}
+      </main>
+    </div>
   `
 }
