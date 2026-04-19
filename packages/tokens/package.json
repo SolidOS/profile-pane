@@ -1,0 +1,21 @@
+{
+  "name": "@solidos/tokens",
+  "version": "0.1.0",
+  "description": "SolidOS theme tokens as CSS variables",
+  "license": "MIT",
+  "sideEffects": [
+    "*.css"
+  ],
+  "files": [
+    "src/themes.css",
+    "README.md"
+  ],
+  "style": "./src/themes.css",
+  "exports": {
+    "./themes.css": "./src/themes.css",
+    "./src/themes.css": "./src/themes.css"
+  },
+  "scripts": {
+    "build": "node -e \"console.log('tokens: no build step required')\""
+  }
+}

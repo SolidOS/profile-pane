@@ -18,7 +18,7 @@
   ],
   "scripts": {
     "clean": "rm -rf lib",
-    "build": "npm run clean && npm run typecheck && npm run build-dist && npm run build-js",
+    "build": "npm run build:profile && npm run build:workspaces",
     "build-js": "babel src --out-dir lib --extensions '.ts' && tsc --emitDeclarationOnly",
     "build-dist": "webpack --progress",
     "lint": "eslint",
@@ -30,7 +30,9 @@
     "prepublishOnly": "npm run test && npm run build",
     "preversion": "npm run lint && npm run typecheck && npm test",
     "postpublish": "git push origin main --follow-tags",
-    "start": "webpack serve --config webpack.dev.config.mjs --open"
+    "start": "webpack serve --config webpack.dev.config.mjs --open",
+    "build:profile": "npm run clean && npm run typecheck && npm run build-dist && npm run build-js",
+    "build:workspaces": "npm run build --workspaces --if-present"
   },
   "keywords": [
     "solid",
@@ -93,6 +95,10 @@
     "typescript": "^5.9.3",
     "webpack": "^5.105.2",
     "webpack-cli": "^7.0.2",
-    "webpack-dev-server": "^5.2.3"
-  }
+    "webpack-dev-server": "^5.2.3",
+    "svgo": "^3.3.2"
+  },
+  "workspaces": [
+    "packages/*"
+  ]
 }
