@@ -2,8 +2,20 @@ import { DataBrowserContext } from 'pane-registry'
 import { html, TemplateResult } from 'lit-html'
 import { ViewerMode } from '../types'
 import { FriendDetails } from './types'
-import { personInCircleIcon } from '../icons-svg/profileIcons'
+import { locationIcon, personInCircleIcon } from '../icons-svg/profileIcons'
 import '../styles/FriendList.css'
+
+function getFriendLabel(friend: FriendDetails): string {
+  if (friend.name) return friend.name
+  if (friend.nickname) return friend.nickname
+
+  try {
+    const hostname = new URL(friend.url).hostname
+    return hostname.split('.')[0] || friend.url
+  } catch {
+    return friend.url
+  }
+}
 
 function renderFriendImage(src?: string, alt?: string): TemplateResult {
   return src
@@ -12,8 +24,8 @@ function renderFriendImage(src?: string, alt?: string): TemplateResult {
           class="profile__hero"
           src=${src}
           alt=${alt || ''}
-          width="80"
-          height="80"
+          width="60"
+          height="60"
           loading="eager"
         />
       `
@@ -25,17 +37,20 @@ function renderFriendImage(src?: string, alt?: string): TemplateResult {
 }
 
 function renderFriend(friend: FriendDetails): TemplateResult {
-  const label = friend.name || friend.nickname || friend.url
+  const label = getFriendLabel(friend)
   const secondary = [friend.jobTitle, friend.organization].filter(Boolean).join(' | ')
 
   return html`
     <li class="friends__item" role="listitem">
-      <a href=${friend.url} class="friends__link p-md" target="_blank" rel="noopener noreferrer" aria-label="Visit ${label} profile (opens in new tab)">
+      <a href=${friend.url} class="friends__link" target="_blank" rel="noopener noreferrer" aria-label="Visit ${label} profile (opens in new tab)">
         ${renderFriendImage(friend.imageUrl, label)}
         <div class="friends__content">
-          <div class="friends__label">${label}</div>
-          ${secondary ? html`<div class="friends__meta">${secondary}</div>` : html``}
-          ${friend.birthdate ? html`<div class="friends__meta">${friend.birthdate}</div>` : html``}
+          <div class="friends-pane__friend-identity" role="group" aria-label="Name and pronouns">
+            <h2 class="friends__label">${label}</h2>
+            <span class="friends-pane__friends-pronouns">${friend.pronouns ? `(${friend.pronouns})` : ''}</span>
+          </div>
+            ${secondary ? html`<h3 class="friends-pane__friend-role-org">${secondary}</h3>` : html``}
+          ${friend.location ? html`<p class="friends__meta">${locationIcon} ${friend.location}</p>` : html``}
         </div>
       </a>
     </li>
@@ -56,7 +71,7 @@ export const FriendList = (
     >
       <h2 id="friends-section-title" class="sr-only">Friends</h2>
       <nav aria-label="Friend profiles">
-        <ul class="friends__list list-reset zebra-stripe" role="list">
+        <ul class="friends__list list-reset" role="list">
           ${friends.map(renderFriend)}
         </ul>
       </nav>
