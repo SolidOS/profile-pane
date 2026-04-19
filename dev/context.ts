@@ -23,6 +23,13 @@ export const context: DataBrowserContext = {
     logic: solidLogicSingleton
   },
   dom: document,
+  environment: {
+    layout: 'desktop',
+    theme: 'light',
+    layoutPreference: 'auto',
+    inputMode: 'pointer',
+    viewport: { width: 1024, height: 768 }
+  },
   getOutliner: () => null,
 }
 
