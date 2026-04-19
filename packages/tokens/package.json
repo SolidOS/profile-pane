@@ -16,6 +16,6 @@
     "./src/themes.css": "./src/themes.css"
   },
   "scripts": {
-    "build": "node -e \"console.log('tokens: no build step required')\""
+    "build": "node -e \"process.exit(0)\""
   }
 }
