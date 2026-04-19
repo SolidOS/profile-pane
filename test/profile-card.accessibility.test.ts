@@ -1,4 +1,4 @@
-import { ProfileCard } from '../src/ProfileCard'
+import { ProfileCard } from '../src/legacy/ProfileCard'
 import { render } from 'lit-html'
 import axe from 'axe-core'
 
@@ -17,7 +17,7 @@ describe('ProfileCard accessibility', () => {
     }
     // Use shared context and subject mocks
     const { context, subject } = require('./setup')
-    render(ProfileCard(profile, context, subject), container)
+    render(ProfileCard(profile, context, subject, 'owner'), container)
     const results = await axe.run(container)
     expect(results.violations.length).toBe(0)
   })

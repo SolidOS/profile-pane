@@ -11,8 +11,11 @@ fetchMock.enableMocks()
 
 // Workaround for axe-core calling canvas.getContext in jsdom
 // (jsdom does not implement canvas without installing the canvas package)
-if (typeof HTMLCanvasElement !== 'undefined' && !HTMLCanvasElement.prototype.getContext) {
-  HTMLCanvasElement.prototype.getContext = function () {
+if (typeof HTMLCanvasElement !== 'undefined') {
+  Object.defineProperty(HTMLCanvasElement.prototype, 'getContext', {
+    configurable: true,
+    writable: true,
+    value: function () {
     return {
       canvas: this,
       getImageData: () => ({ data: new Uint8ClampedArray() }),
@@ -29,7 +32,8 @@ if (typeof HTMLCanvasElement !== 'undefined' && !HTMLCanvasElement.prototype.get
       fill: () => {},
       stroke: () => {},
     } as any
-  }
+    }
+  })
 }
 
 // Added 2024-09

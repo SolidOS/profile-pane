@@ -1,4 +1,4 @@
-import { presentSocial } from '../src/SocialPresenter'
+import { presentSocial } from '../src/sections/social/selectors'
 import { presentCV } from '../src/sections/resume/selectors'
 import { blankNode, sym, parse } from 'rdflib'
 import { ns } from 'solid-ui'

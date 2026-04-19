@@ -1,10 +1,10 @@
 import { html, nothing } from 'lit-html'
-import './styles/ProfileCard.css'
-import { ProfilePresentation } from './legacy/presenter'
-import { addMeToYourFriendsDiv } from './addMeToYourFriends'
+import '../styles/ProfileCard.css'
+import { ProfilePresentation } from './presenter'
+import { addMeToYourFriendsDiv } from '../addMeToYourFriends'
 import { DataBrowserContext } from 'pane-registry'
 import { NamedNode } from 'rdflib'
-import { ViewerMode } from './types'
+import { ViewerMode } from '../types'
 
 /* moved from sections/profileOverview to src/ProfileCard.ts to be used in multiple sections; 
 renamed from ProfileOverviewCard to ProfileCard; updated to match new presenter output and design */

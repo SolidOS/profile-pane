@@ -1,4 +1,4 @@
-import { presentProfile } from '../src/presenter'
+import { presentProfile } from '../src/legacy/presenter'
 import { blankNode, sym } from 'rdflib'
 import { ns } from 'solid-ui'
 import { store } from 'solid-logic'
