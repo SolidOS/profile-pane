@@ -1,0 +1,20 @@
+{
+  "name": "@solidos/icons",
+  "version": "0.1.0",
+  "description": "SolidOS icon and logo SVG assets",
+  "license": "MIT",
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "exports": {
+    "./icons/*": "./dist/icons/*",
+    "./logos/*": "./dist/logos/*"
+  },
+  "scripts": {
+    "build": "node ./scripts/build.mjs"
+  },
+  "devDependencies": {
+    "svgo": "^3.3.2"
+  }
+}
