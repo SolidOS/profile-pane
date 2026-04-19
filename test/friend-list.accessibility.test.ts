@@ -1,4 +1,5 @@
 import { render } from 'lit-html'
+import { sym } from 'rdflib'
 import { FriendList } from '../src/friendsPane/FriendList'
 import axe from 'axe-core'
 
@@ -13,7 +14,7 @@ describe('FriendList accessibility', () => {
       pronouns: 'she/her',
       jobTitle: 'Engineer',
       location: 'Hamburg, Germany',
-      subjectNode: { value: 'https://friend.example/profile/card#me' }
+      subjectNode: sym('https://friend.example/profile/card#me')
     }]
 
     render(FriendList(context, friends, 'anonymous'), container)

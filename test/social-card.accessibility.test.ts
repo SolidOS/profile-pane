@@ -20,7 +20,7 @@ describe('SocialCard accessibility', () => {
     }
     const container = document.createElement('div')
     document.body.appendChild(container)
-    render(SocialCard(SocialData), container)
+    render(SocialCard(SocialData, 'anonymous'), container)
 
     const results = await axe.run(container)
     expect(results.violations.length).toBe(0)
@@ -37,7 +37,7 @@ describe('SocialCard accessibility', () => {
 
     const container = document.createElement('div')
     document.body.appendChild(container)
-    render(SocialCard(SocialData, 'viewer'), container)
+    render(SocialCard(SocialData, 'anonymous'), container)
 
     const moreButton = container.querySelector('.socialCard__more-button') as HTMLButtonElement | null
     expect(moreButton?.textContent).toContain('1 more')
