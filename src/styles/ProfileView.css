@@ -1,20 +1,65 @@
 /* ProfileView.css */
 /* Uses utilities: .section-bg, .text-center */
 
-/* Horizontal layout for cards */
-.profile-grid .profileSection {
+
+.profile-grid .profile__main {
   width: 100%;
   max-width: 100%;
   min-width: 0;
   box-sizing: border-box;
-  margin-bottom: var(--spacing-md);
-  box-sizing: border-box;
-  margin-bottom: var(--spacing-md);
+  margin-bottom: 0;
   overflow-wrap: anywhere;
+  align-items: flex-start;
 }
 
-@media (min-width: 900px) {
-  .profile-grid .profileSection {
-    margin-bottom: 0;
+.profile-grid .profile__sidebar {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  text-align: left;
+  border-radius: var(--border-radius-base);
+  background: var(--color-section-bg);
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  overflow-x: clip;
+}
+
+.profile-grid .profile__section {
+  padding: var(--spacing-lg);
+  border-radius: var(--border-radius-base);
+  background: var(--color-section-bg);
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  overflow-x: clip;
+}
+
+.profile-grid .profile__section--empty {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  overflow-x: clip;
+}
+
+
+/* SAM Not sure this is needed, and potentially should be moved somewhere else */
+.profile-grid .phone-type {
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-base);
+  color: var(--color-text-secondary);
+}
+
+@container profile-pane (max-width: 1000px) {
+  #main-content.profile-grid {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    margin-inline: auto !important;
+    padding-inline: var(--spacing-sm, 0.75rem) !important;
   }
 }
+

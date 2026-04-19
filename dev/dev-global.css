@@ -5,81 +5,308 @@
 /* Accessible color palette */
 
 :root {
-  /* Primary/Accent colors (profile-pane specific) */
-  --color-primary: #7C4DFF; /* Vivid Purple */
-  --color-secondary: #0077B6; /* Accessible Blue */
-  --color-accent: #FFD600; /* Bright Yellow */
-  --color-error: #B00020; /* Accessible Red */
-  --color-success: #00C853; /* Accessible Green */
+   /* New Design: Colors (possibly change to primary secondary etc for now add here  */
+  /* Adding used for comment so we can decide later */
+  --blue-900: #083575;
+  --gray-50: #F9FAFB; /* Used for: background of dialog buttons */
+  --gray-100: #F3F4F6;
+  --gray-200: #E5E7EB; /* Used for: border of sections */
+  --gray-300: #D1D5DC; /* Used for: text */
+  --gray-400: #99A1AF; /* Used for: input borders */
+  --gray-500: #6A7282; /* Used for: text */
+  --gray-600: #4A5565; /* Used for: text  */
+  --gray-700: #364153; /* Used for: text */
+  --gray-800: #1E2939; /* Used for: text  */
+  --gray-900: #101828; /* Used for: text  */
+  --purple-500: #AD46FF;
+  --red-600: #B00020; /* Used for: error text */
+  --slate-50: #F8FAFC;
+  --slate-200: #E2E8F0; /* Used for: border of sections */
+  --slate-400: #90A1B9; /* Used for: edit dialog cancel */
+  --slate-500: #62748E; /* Used for: text */
+  --slate-700: #314158; /* Used for: side menu bar text */
+  --slate-800: #1D293D; /* Used for: text and top header background */
+  --slate-900: #0F172B; /* Used for: text  */
+  --utility-colours-body-grey: #666; /* used in header drop down behind the picture */
+  --lavender-200: #E4DBFE; /* background of Follow button and side menu */
+  --lavender-300: #e6dcff;
+  --lavender-400: #cbb9ff;
+  --lavender-500: #b295ff;
+  --lavender-700: #9672ff;
+  --lavender-900: #7c4cff;
+  --grey-purple-200: #d8d6db;
+  --grey-purple-300: #b1acb7;
+  --grey-purple-500: #878192;
+  --grey-purple-700: #5e546d;
+  --grey-purple-900: #332746; /* Used for: header background */
+  --orange-200: #ffefdd;
+  --orange-300: #ffdeba;
+  --orange-400: #ffce97;
+  --orange-500: #ffbd74;
+  --orange-600: #ffad4f;
+  --pink-500: #ffdde6;
+  --pink-600: #ffbbcd;
+  --pink-700: #ff98b3;
+  --pink-800: #ff769a;
+  --pink-900: #ff5180;
+  --yellow-700: #A65F00;
+  --black: #000;  /* Used for: text heading */
+  --white: #FFF;
 
-  /* Card/Section backgrounds */
-  --color-background: #FFFFFF; /* White */
-  --color-card-bg: #FFFFFF; /* White for inner cards */
-  --color-section-bg: #F5F5F5; /* Light grey for outer sections */
-
-  --color-text: #1A1A1A; /* Near-black */
-  --color-text-secondary: #666; /* Added for repeated usage */
-  --color-text-muted: #444; /* Added for repeated usage */
-  --color-border-pale: #eee; /* Added for repeated borders */
-  --color-info-bg: #ccccff;
+  /* Background and Text */
+  --color-background-old: #FFFFFF; /* White */
+  --color-background: #F8F9FB; /* Light grey for overall background */
+  --color-background-row-default: white;
+  --color-background-row-alternate: #f0f0f0;
+  --color-text: #1A1A1A;
+  --color-text-primary: var(--gray-700, #364153); /* new design */
+  --color-text-secondary-old: #666;
+  --color-text-secondary: var(--gray-600, #4A5565);
+  --color-text-heading: var(--black, #000000); /* New design uses pure black for headings */
+  --color-text-subheading: var(--gray-900, #101828); /* new design */
+  --color-text-strong: var(--slate-900, #0F172B); /* new design */
+  --color-text-strong-secondary: var(--slate-800, #1D293D); /* new design */
+  --color-text-light: #aaa;
+  --color-text-link: #3B5998;
+  --color-text-link-visited: #3B5998;
+  --color-text-link-hover: #3B5998;
+  --color-text-link-active: #888;
+  --color-text-answer: #00c;
+  --color-text-muted: #444;
+  --color-text-dark-gray: #202;
+  --color-text-blue: #004;
+  --color-text-brown: #440;
+  
+  /* Borders */
+  --color-border: var(--gray-200, #E5E7EB); /* used to be #ccc */
+  --color-border-lighter: var(--slate-200, #E2E8F0);
+  --color-border-dark: #777;
+  --color-border-darker: #444;
+  --color-border-light: #aaa;
+  --color-border-pale: #eee;
   --color-border-accent: #88c;
-
-  --border-radius-full: 1em; /* Matches module usage */
-  --border-radius-base: 0.5em;
-  --border-radius-xs: 0.1em;
-  --border-radius-sm: 0.2em;
-  --border-width-xthin: 0.05em;
-  --border-width-sm: 0.1em;
-  --border-width-thin: 1px;
-
-  --box-shadow: 0 2px 8px rgba(124,77,255,0.08); /* Matches module usage */
-  --box-shadow-sm: 0 1px 4px rgba(124,77,255,0.12);
-  --box-shadow-hover: 0 2px 4px rgba(124, 77, 255, 0.2);
-  --box-shadow-active: 0 1px 2px rgba(124, 77, 255, 0.2);
-  --box-shadow-focus: 0 0 0 5px rgba(124, 77, 255, 0.25);
-  --box-shadow-overlay: 0 4px 24px rgba(0, 0, 0, 0.2);
-  --box-shadow-modal: 0 2px 10px rgba(0, 0, 0, 0.3);
-  --box-shadow-popup: 0 0.5em 0.9em rgba(0, 0, 0, 0.2);
-
-  --spacing-xs: 0.5em;
-  --spacing-sm: 0.75em;
-  --spacing-md: 1em;
-  --spacing-lg: 1.5em;
-  --spacing-xl: 2em;
-  --spacing-xxs: 0.3em;
-  --spacing-xxxs: 0.2em;
-  --spacing-btn: 0.7em;
-
-  --font-family-base: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-  --font-weight-bold: 700;
-  --font-size-base: 1em; /* 16px default */
-  --font-size-sm: 0.875em; /* 14px */
-  --font-size-lg: 1.125em; /* 18px */
-  --font-size-xl: 1.25em; /* 20px */
-  --line-height-base: 1.5; /* WCAG recommended */
+  
+  /* Status Colors */
+  --color-selected-bg: #8F3;
+  --color-warning: red;
+  --color-success-bg: #dfd;
+  --color-success-border: green;
+  --color-failure-bg: white;
+  --color-failure-border: red;
+  
+  /* Info and Alert Colors */
+  --color-info-bg: #ccccff;
+  --color-info-border: #3399ff;
+  --color-alert-bg: #ffffdd;
+  --color-alert-border: yellow;
+  --color-fetch-bg: #eeffee;
+  --color-request-bg: yellow;
+  --color-error-bg: white;
+  --color-error-notice-bg: #fee;
+  --color-unparseable-bg: #ffcc00;
+  
+  /* Component Colors */
+  --color-container-border: black;
+  --color-iframe-bg: white;
+  --color-main-block-bg: #fff;
+  --color-nav-block-bg: #eee;
+  --color-nav-block-border: gray;
+  --color-category-bg: #f8fff8;
+  --color-category-border: #777777;
+  --color-category-class-bg: #efe;
+  --color-category-class-border: green;
+  --color-pubs-pane-bg: #F2F6DA;
+  --color-pubs-pane-border: #777777;
+  --color-cv-pane-bg: LightSkyBlue;
+  
+  /* Data Content Pane */
+  --color-data-pane-border-top: black;
+  --color-data-pane-border-side: #777;
+  --color-table-header-bg: #ddf;
+  --color-table-result-bg: #fff;
+  --color-table-border-dark: #777;
+  
+  /* Notification Colors */
+  --color-log-normal: black;
+  --color-log-info: black;
+  --color-log-warn: black;
+  --color-log-warn-bg: #ffd;
+  --color-log-error: black;
+  --color-log-error-bg: #fdd;
+  --color-log-message: green;
+  --color-log-debug: black;
+  --color-log-debug-bg: #ddf;
+  
+  /* Suggestion List */
+  --color-suggestion-bg: white;
+  --color-suggestion-border: navy;
+  --color-suggestion-link: navy;
+  --color-suggestion-selected-bg: navy;
+  --color-suggestion-selected-text: white;
+  
+  /* Photo Pane */
+  --color-photo-border: #AAAAAA;
+  --color-photo-tag-highlight: #DDEEFF;
+  --color-photo-tag-highlight-border: #DDBB99;
+  --color-photo-thumb-border: #CCCCCC;
+  
+  /* Header */
+  --color-header-row-bg: #332746;
+  
+  /* Menu and Tab Colors */
+  --color-menu-bg: #FFFFFF;
+  --color-menu-item-text: #654d6c;
+  --color-menu-item-active: #D1C6DA;
+  --color-view-tab-bg: #fff;
+  --color-view-window-bg: #ccc;
+  --color-query-select-bg: #ccc;
+  --color-tab-inactive-bg: #eee;
+  --color-tab-inactive-border: #ddd;
+  --color-tab-inactive-border-light: #aaa;
+  --color-tab-inactive-text: #99f;
+  --color-tab-active-bg: #ccc;
+  --color-tab-active-border: #ddd;
+  --color-tab-active-border-light: #aaa;
+  --color-tab-active-text: #22f;
+  
+  /* Special Highlights */
+  --color-source-highlight: yellow;
+  --color-hover-visibility: visible;
+  --color-hidden-visibility: hidden;
+  --color-mild-notice-bg: #ffe;
+  --color-bottom-border-highlight: rgb(100%,65%,0%);
+  --color-col-close: #aaa;
+  --color-sort-arrow: #aaa;
+  --color-pending-edit: #bbb;
+  
+  /* Typography */
+  --font-family-base: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-family-ui: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --font-size-base-old: 100%;
+  --font-size-base: 1rem;      /* 16px */
+  --font-size-strong: 120%;
+  --font-weight-normal: normal;
+  --font-weight-md: 500; /* New design uses 500 for body text was normal */
+  --font-weight-bold-old: bold;
+  --font-weight-bold: 600; /* New design uses 600 for headings was 700 */
+  --font-weight-xbold: 700; /* New design uses 700 for strong text was bold */
+  --line-height-base: 1.5;
   --line-height-tight: 1.4;
   --line-height-loose: 1.6;
   --letter-spacing-wide: 0.025em;
+  --font-size-xxs: 0.75rem; /* 12px */
+  --font-size-xs: 0.813rem; /* 13px */
+  --font-size-sm: 0.875rem; /* 14px */
+  --font-size-md: 1rem;     /* 16px */
+  --font-size-lg: 1.125rem; /* 18px */
+  --font-size-xl-old: 1.25rem; /* 20px */
+  --font-size-xl: 1.375rem;     /* 22px */
+  --font-size-xxl: 1.75rem;    /* 28px */
 
-  /* Minimum font sizes for accessibility */
+  /* Spacing and Sizing */
+  --spacing-tiny: 0.05em;
+  --spacing-small: 0.1em;
+  --spacing-xxxs: 0.2rem; /* was em */
+  --spacing-xxs-old: 0.3rem; /* was em */
+  --spacing-xxs: 0.3125rem;  /* 5px */
+  --spacing-2xs: 0.625rem; /* 10px new design uses this */
+  --spacing-xs-old: 0.5rem;
+  --spacing-xs: 0.75rem;   /* 12px new design uses this */
+  --spacing-sm-old: 0.75rem; /* was em */
+  --spacing-sm: 0.938rem;  /* 15px new design uses this */
+  --spacing-btn: 0.7rem; /* was em */
+  --spacing-base: 0.5rem; /* was em */
+  --spacing-md-old: 1rem; /* was em */
+  --spacing-md: 1.25rem;   /* 20px new design uses this */
+  --spacing-lg-old: 1.5rem; /* was em */
+  --spacing-lg: 1.5625rem;   /* 25px new design uses this */
+  --spacing-xl: 2rem; /* was em */
+  --spacing-1xl: 2.5rem; /* 40px new design uses this */
+  --spacing-2xl: 3rem; /* was em */
+  --border-width-xthin: 0.05rem; /* was em */
+  --border-width-sm: 0.1rem; /* was em */
+  --border-width-thin-old: 1px;
+  --border-width-thin: 0.1rem; /* changed from 1px */
+  --border-width-medium: 2px;
+  --border-width-bold: 5px;
+   
+
+  --border-radius-xs: 0.1rem; /* 2px Extra small border radius was em */
+  --border-radius-sm: 0.2rem; /* 4px Small border radius was em */
+  --border-radius-base-old: 0.5em;
+  --border-radius-base: 0.3125rem; /* 5px  Base border radius */
+  --border-radius-md: 0.5rem; /* 8px Medium border radius */
+  --border-radius-lg: 0.75rem; /* 12px Large border radius was em */
+  --border-radius-full-old: 1em;
+  --border-radius-full: 0.625rem;  /* 10px */
+
+  
+  /* icons */
+  --icon-xxxs: 0.75rem; /* 12px new design uses this */
+  --icon-xxs: 1rem; /* 16px new design uses this */
+  --icon-xs: 1.5rem; /* 24px new design uses this */
+  --icon-sm: 1.8rem; /* 28px new design uses this */
+  --icon-base: 2rem; /* 32px new design uses this */
+  --icon-md: 2.5rem; /* 40px new design uses this */
+  --icon-xl: 3.1rem; /* 50px new design uses this */
+
+  /* Primary/Accent Colors */
+  --color-primary: #7C4DFF;
+  --color-primary-alpha: rgba(124, 77, 255, 0.25);
+  --color-primary-alpha-light: rgba(124, 77, 255, 0.1);
+  --color-secondary: #0077B6;
+  --color-accent: #FFD600;
+  --color-error: #B00020;
+  --color-success: #00C853;
+  
+  /* Card/Section Backgrounds */
+  --color-section-bg-old: #F5F5F5; /* Light grey for outer sections */
+  --color-section-bg: #FFFFFF; /* White for outer sections to match new design */
+
+  --color-card-bg: #FFFFFF; /* White for inner cards */
+  --color-zebra-stripe: rgba(0, 0, 0, 0.02);
+  --color-hover-bg: rgba(0, 0, 0, 0.05);
+  
+  /* Shadows */
+  --box-shadow: 0 2px 8px rgba(124,77,255,0.08);
+  --box-shadow-sm: 0 1px 4px rgba(124,77,255,0.12);
+  --box-shadow-active: 0 1px 2px rgba(124, 77, 255, 0.2);
+  --box-shadow-focus: 0 0 0 5px rgba(124, 77, 255, 0.25);
+  --box-shadow-hover: 0 2px 4px rgba(124, 77, 255, 0.2);
+  --box-shadow-modal: 0 2px 10px rgba(0, 0, 0, 0.3);
+  --box-shadow-overlay: 0 4px 24px rgba(0, 0, 0, 0.2);
+  --box-shadow-popup: 0 0.5em 0.9em rgba(0, 0, 0, 0.2);
+  
+  /* Accessibility */
+  --min-touch-target: 44px;
+  --focus-ring-width: 2px;
+  --focus-indicator-width: 3px;
+  --animation-duration: 0.2s;
+  --animation-duration-slow: 0.3s;
   --min-font-size: 14px;
   --min-line-height: 1.4;
-
-  /* Accessibility improvements */
-  --min-touch-target: 44px; /* WCAG minimum touch target */
-  --focus-ring-width: 2px;
-  --animation-duration: 0.2s; /* Reduced motion friendly */
-
-  /* Additional accessibility variables */
-  --focus-indicator-width: 3px;
-  --animation-duration-slow: 0.3s;
   --high-contrast-ratio: 7:1; /* WCAG AAA standard */
-
-  --opacity-disabled: 0.6;
-  --opacity-input-disabled: 0.75;
-
+  
+  /* Overlay and Modal */
   --overlay-bg: rgba(0, 0, 0, 0.5);
   --overlay-bg-muted: rgba(0, 0, 0, 0.3);
+  --z-index-modal: 9999;
+  --z-index-skip-links: 1000;
+  
+  /* Opacity */
+  --opacity-disabled: 0.6;
+  --opacity-input-disabled: 0.75;
+  
+  /* Layout Values */
+  --max-width-readable: 65ch;
+  --max-width-readable-wide: 70ch;
+  --grid-min-column: 30em;
+  
+  /* Outline Offsets */
+  --outline-offset-sm: 2px;
+  
+  /* Success Alpha */
+  --color-success-alpha: rgba(0, 200, 83, 0.1);
 }
 
 
@@ -99,18 +326,18 @@ html, body {
 
 /* Improved heading hierarchy */
 h1, h2, h3, h4, h5, h6 {
-  color: var(--color-primary);
-  font-weight: 600;
+  /* color: var(--color-primary); maybe this is changing for all */
+  font-weight: var(--font-weight-bold, 600); /* new design uses 600 */
   line-height: var(--line-height-tight);
   margin-top: 0;
   margin-bottom: var(--spacing-sm);
 }
 
-h1 { font-size: 2em; }    /* 32px */
+h1 { font-size: 2em; }    /* 32px */ 
 h2 { font-size: 1.5em; }  /* 24px */
-h3 { font-size: 1.25em; } /* 20px */
-h4 { font-size: 1.125em; }/* 18px */
-h5, h6 { font-size: 1em; }/* 16px */
+h3 { font-size: var(--font-size-xl, 1.375rem); } /* New design: 22px was 20px*/
+h4 { font-size: var(--font-size-lg, 1.125rem); }/* 18px */
+h5, h6 { font-size: var(--font-size-base, 1rem); }/* 16px */
 
 /* Better paragraph spacing */
 p {
@@ -118,6 +345,17 @@ p {
   line-height: var(--line-height-base);
   max-width: 65ch; /* Optimal reading width */
 }
+
+:focus-visible {
+  outline: var(--focus-ring-width, 2px) solid var(--color-primary, #7C4DFF);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 1px var(--color-background, #F8F9FB);
+}
+
+:focus:not(:focus-visible) {
+  outline: none;
+  box-shadow: none;
+} 
 
 /* Improved link accessibility */
 a {
@@ -129,7 +367,7 @@ a {
 
 a:hover, a:focus {
   text-decoration-thickness: 0.125em;
-}
+} 
 
 /* Ensure minimum font sizes are respected */
 @media screen and (max-width: 768px) {
@@ -150,7 +388,7 @@ a:hover, a:focus {
   outline: 2px solid var(--color-primary);
   outline-offset: 1px;
   box-shadow: 0 0 0 1px var(--color-background);
-}
+} 
 
 /* Accessibility: Respect user motion preferences */
 @media (prefers-reduced-motion: reduce) {
@@ -160,7 +398,7 @@ a:hover, a:focus {
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }
-}
+} 
 
 /* Accessibility: High contrast mode support */
 @media (prefers-contrast: high) {
@@ -169,7 +407,7 @@ a:hover, a:focus {
     --box-shadow: 0 2px 4px rgba(0,0,0,0.5);
     --box-shadow-sm: 0 1px 2px rgba(0,0,0,0.3);
   }
-}
+} 
 
 /* Accessibility: Improved focus management */
 :focus-visible {
@@ -180,7 +418,7 @@ a:hover, a:focus {
 
 :focus:not(:focus-visible) {
   outline: none;
-}
+} 
 
 /* Skip link for screen readers */
 .skip-link {
@@ -225,12 +463,13 @@ nav ul {
 
 /* Enhanced keyboard navigation */
 *:focus-visible {
-  outline: var(--focus-indicator-width) solid var(--color-primary);
+  outline: var(--focus-indicator-width) solid var(--color-primary); 
   outline-offset: 2px;
   box-shadow: 0 0 0 1px var(--color-background), 0 0 0 4px rgba(124, 77, 255, 0.2);
   border-radius: 2px;
-  transition: none; /* Remove transitions on focus for immediate feedback */
-}
+  transition: none;  /* Remove transitions on focus for immediate feedback */
+} 
+ 
 
 /* Improve focus management for interactive elements */
 [role="button"]:focus,
@@ -240,7 +479,7 @@ a:focus {
   outline: 2px solid var(--color-primary);
   outline-offset: 2px;
   box-shadow: 0 0 0 1px var(--color-background);
-}
+} 
 
 /* Enhanced error message accessibility */
 [role="alert"] {
@@ -249,7 +488,7 @@ a:focus {
   border-radius: var(--border-radius-base);
   background-color: rgba(176, 0, 32, 0.1);
   margin: var(--spacing-md) 0;
-}
+} 
 
 /* Success message styling */
 [role="status"] {
@@ -258,7 +497,7 @@ a:focus {
   border-radius: var(--border-radius-base);
   background-color: rgba(0, 200, 83, 0.1);
   margin: var(--spacing-md) 0;
-}
+} 
 
 /* Enhanced table accessibility */
 table {
@@ -275,6 +514,23 @@ th {
 
 td {
   padding: var(--spacing-sm);
+}
+/* Prevent labels from appearing focusable to keyboard users. */
+/* copied to mashlib mash.css */
+label:focus,
+label:focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
+}
+:focus-visible {
+  outline: var(--focus-ring-width, 2px) solid var(--color-primary, #7C4DFF);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 1px var(--color-background, #F8F9FB);
+}
+
+:focus:not(:focus-visible) {
+  outline: none;
+  box-shadow: none;
 }
 
 /* Focus trap for modals */
@@ -332,18 +588,10 @@ button:disabled, [role="button"][aria-disabled="true"] {
     border-top-color: var(--color-primary);
   }
 }
-
+/* THE FOLLOWING NOT ADDED TO MASHLIB */
+/* some of the utility classes are in utilities with a dif
+    name. Saw some of them in mashlib utilites. */
 /* Utility classes */
-.u-flex {
-  display: flex;
-}
-.u-grid {
-  display: grid;
-}
-.u-center {
-  justify-content: center;
-  align-items: center;
-}
 .u-gap {
   gap: 1em;
 }
@@ -397,6 +645,8 @@ button:disabled, [role="button"][aria-disabled="true"] {
   color: var(--color-text-muted);
 }
 
+/* MAY WANT TO BRING OVER BELOW */
+/* will ask about this first */
 /* Override solid-ui error message close button styling */
 .errorMessageBlock .close,
 .errorMessageBlock button[type="button"],
@@ -409,6 +659,6 @@ button:disabled, [role="button"][aria-disabled="true"] {
 .errorMessageBlock .close:hover,
 .errorMessageBlock button[type="button"]:hover,
 .errorMessageBlock .button:hover {
-  background: var(--color-text-secondary) !important;
+  background: var(--color-text-secondary-muted) !important;
   color: var(--color-background) !important;
 }

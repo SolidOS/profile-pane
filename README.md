@@ -20,6 +20,22 @@ To run all tests:
 npm test
 ```
 
+Focused accessibility check:
+```shell script
+npm test -- test/profile-view.accessibility.test.ts
+```
+
+Accessibility markup baseline checklist:
+[docs/accessibility-baseline-checklist.md](docs/accessibility-baseline-checklist.md)
+
+Refactor test plan (temporary skips and revisit checklist):
+[docs/refactor-test-plan.md](docs/refactor-test-plan.md)
+
+### Legacy Files
+
+Legacy refactor artifacts are kept in [src/legacy](src/legacy).
+These files are intentionally retained for historical/reference purposes and are not part of the active sections-based flow.
+
 If you are a first time developer/user on Windows 10, the repository may give package issues regarding webpack or jest.
 If this is the case, simply run "npm audit fix" and upgrade the repository. It should work fine.
 

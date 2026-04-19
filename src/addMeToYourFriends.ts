@@ -8,15 +8,17 @@ import {
   mention
 } from './buttonsHelper'
 import {
-  addMeToYourFriendsButtonText, friendExistsAlreadyButtonText, friendExistsMessage, friendWasAddedSuccesMessage, logInAddMeToYourFriendsButtonText, userNotLoggedInErrorMessage
+  addMeToYourFriendsButtonText, friendExistsAlreadyButtonText, friendExistsMessage, friendWasAddedSuccesMessage, userNotLoggedInErrorMessage
 } from './texts'
+import { ViewerMode } from './types'
 import './styles/ProfileCard.css'
 
 let buttonContainer = <HTMLDivElement>document.createElement('section')
 
 const addMeToYourFriendsDiv = (
   subject: NamedNode,
-  context: DataBrowserContext
+  context: DataBrowserContext,
+  viewerMode: ViewerMode
 ): TemplateResult => {
 
   buttonContainer = context.dom.createElement('section') as HTMLDivElement
@@ -32,7 +34,7 @@ const addMeToYourFriendsDiv = (
   buttonContainer.appendChild(heading)
 
   const button = createAddMeToYourFriendsButton(subject, context)
-  button.classList.add('actionButton', 'btn-primary', 'action-button-focus')
+  button.classList.add('profile__action-button', 'profile__btn-friends', 'flex-center')
   buttonContainer.appendChild(button)
   return html`${buttonContainer}`
 }
@@ -41,19 +43,13 @@ const createAddMeToYourFriendsButton = (
   subject: NamedNode,
   context: DataBrowserContext
 ): HTMLButtonElement => {
-  const me = authn.currentUser()
-  let label = checkIfAnyUserLoggedIn(me) ? addMeToYourFriendsButtonText.toUpperCase() : logInAddMeToYourFriendsButtonText.toUpperCase()
-  const button = widgets.button(
-    context.dom,
-    undefined,
-    label,
-    setButtonHandler, //sets an onclick event listener
-    {
-      needsBorder: true,
-    }
-  )
+  let label = addMeToYourFriendsButtonText
+  const button = context.dom.createElement('button')
+  button.type = 'button'
+  button.textContent = label
+  button.addEventListener('click', setButtonHandler)
 
-  function setButtonHandler(event) {
+  function setButtonHandler(event: Event) {
     event.preventDefault()
     saveNewThing(subject, context, ns.foaf('knows'))
       .then(() => {
@@ -68,7 +64,7 @@ const createAddMeToYourFriendsButton = (
       })
   }
 
-  button.refresh = refreshButton()
+  refreshButton()
 
   function refreshButton() {
     const me = authn.currentUser()
@@ -78,16 +74,13 @@ const createAddMeToYourFriendsButton = (
       checkIfThingExists(store, me, subject, ns.foaf('knows')).then((friendExists) => {
         if (friendExists) {
           //logged in and friend exists or friend was just added
-          button.innerHTML = friendExistsAlreadyButtonText.toUpperCase()
+          button.textContent = friendExistsAlreadyButtonText
         } else {
           //logged in and friend does not exist yet
-          button.innerHTML = addMeToYourFriendsButtonText.toUpperCase()
+          button.textContent = addMeToYourFriendsButtonText
         }
       })
-    } else {
-      //not logged in
-      button.innerHTML = logInAddMeToYourFriendsButtonText.toUpperCase()
-    }
+    } 
   }
 
   return button
@@ -136,25 +129,9 @@ async function checkIfThingExists(
   else return true
 }
 
-function extractFriends(editable: boolean, subject: NamedNode, { dom }: DataBrowserContext): HTMLDivElement | null {
-  const target = dom.createElement('div')
-  console.log('Extracting friends for subject:', subject.doc()) // Debug log to check the subject
-  widgets.attachmentList(dom, subject, target, {
-    doc: subject.doc(),
-    modify: editable,
-    predicate: ns.foaf('knows'),
-    noun: 'friend',
-  })
-  if (target.textContent === '')
-    return null
-  console.log('Extracted friends:', target.innerHTML) // Debug log to check the generated HTML
-  return target
-}
-
 export {
   addMeToYourFriendsDiv,
   createAddMeToYourFriendsButton,
   saveNewThing,
-  extractFriends,
   checkIfThingExists
 }

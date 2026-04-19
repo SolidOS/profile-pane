@@ -5,18 +5,114 @@
   margin-bottom: 1.25em;
 }
 
+.cvSection > ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
 .cvRole {
-  margin: var(--spacing-xs) 0;
+  margin: 0 0 var(--spacing-xs) 0;
   font-size: var(--font-size-base);
   line-height: var(--line-height-base);
   display: flex;
   flex-direction: column;
-  gap: 0.2em;
+  gap: 0;
+}
+
+.cvRole:last-child {
+  margin-bottom: 0;
+}
+
+.cvRoleHeader {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--spacing-sm);
+}
+
+.cvRoleHeader h4,
+.cvRoleHeader time {
+  margin: 0;
+}
+
+.cvRolePeriod {
+  margin: 0;
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-tight);
+}
+
+@media (max-width: 640px) {
+  .cvRoleHeader {
+    flex-direction: column;
+    align-items: flex-start;
+  }
 }
 
 .cvOrg {
   font-weight: 600;
   color: var(--color-primary);
+  margin: 0;
+}
+
+.cvDescriptionWrap {
+  margin: 0;
+  position: relative;
+}
+
+.cvDescriptionText {
+  margin: 0;
+  width: 100%;
+  max-width: none;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  line-height: var(--line-height-base);
+  padding-right: 4.5em;
+  overflow: hidden;
+}
+
+.cvDescriptionText.isExpanded {
+  display: block;
+  -webkit-line-clamp: unset;
+  line-clamp: unset;
+  padding-right: 0;
+  overflow: visible;
+}
+
+.cvDescriptionToggle {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--color-primary);
+  cursor: pointer;
+  font: inherit;
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-base, 1.5);
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  background-color: var(--color-card-bg);
+  white-space: nowrap;
+  padding-left: 0.25em;
+}
+
+.cvDescriptionWrap .cvDescriptionText:not(.isExpanded) + .cvDescriptionToggle {
+  top: calc(100% - 1.5em + 0.28em - 14px);
+  bottom: auto;
+  transform: none;
+}
+
+.cvDescriptionText.isExpanded + .cvDescriptionToggle {
+  position: static;
+  display: inline;
+  padding-left: 0;
+  top: auto;
+  bottom: auto;
+  transform: none;
 }
 
 .cvSkill, .cvLanguage {

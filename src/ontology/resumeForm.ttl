@@ -11,6 +11,7 @@
 @prefix esco: <http://data.europa.eu/esco/model#>.
 @prefix wd: <http://www.wikidata.org/entity/>.
 @prefix wdt: <http://www.wikidata.org/prop/direct/>.
+@prefix l: <https://www.w3.org/ns/iana/language-code/>.
 
 @prefix : <#>.
 

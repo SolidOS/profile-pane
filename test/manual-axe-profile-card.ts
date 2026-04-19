@@ -14,8 +14,8 @@ import axe from 'axe-core';
 				<div class="details" role="text" aria-label="Location: Hamburg, Germany">🌐 Hamburg, Germany</div>
 				<div class="details" role="text" aria-label="Pronouns: their/they/them">their/they/them</div>
 			</section>
-			<section class="buttonSection" aria-label="Actions" role="complementary">
-				<div class="center"><section class="buttonSubSection" aria-labelledby="add-me-to-your-friends-button-section" role="region" data-testid="button"><button class="actionButton">ADD ME TO YOUR FRIENDS</button></section></div>
+			<section class="profile__actions" aria-label="Actions" role="complementary">
+				<div class="center"><section class="buttonSubSection" aria-labelledby="add-me-to-your-friends-button-section" role="region" data-testid="button"><button class="profile__action-button">ADD ME TO YOUR FRIENDS</button></section></div>
 			</section>
 			<aside class="qrCodeSection" aria-label="Contact QR Code" role="complementary">
 				<div>QR code here</div>

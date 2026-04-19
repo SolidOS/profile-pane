@@ -1,3 +1,4 @@
+/** Project-local: currently unused component. Keep temporarily; do not add new usage. */
 import { NamedNode, sym } from 'rdflib'
 import { store } from 'solid-logic'
 import { ns, utils, widgets, icons } from 'solid-ui'

@@ -1,0 +1,59 @@
+import { html, nothing } from 'lit-html'
+import '../styles/ProfileCard.css'
+import { ProfilePresentation } from './presenter'
+import { addMeToYourFriendsDiv } from '../addMeToYourFriends'
+import { DataBrowserContext } from 'pane-registry'
+import { NamedNode } from 'rdflib'
+import { ViewerMode } from '../types'
+
+/* moved from sections/profileOverview to src/ProfileCard.ts to be used in multiple sections; 
+renamed from ProfileOverviewCard to ProfileCard; updated to match new presenter output and design */
+export const ProfileCard = ({
+  name, imageSrc, introduction, location, pronouns, highlightColor, backgroundColor
+}: ProfilePresentation, context: DataBrowserContext, subject: NamedNode, viewerMode: ViewerMode) => {
+
+  return html`
+    <article class="profileCard" aria-labelledby="profile-name">
+      <h2 id="profile-name" class="sr-only">${name}</h2>
+      <header class="header flex-column-center mb-md" aria-label="Profile information">
+        ${Image(imageSrc, name)}
+      </header>
+      
+      <section class="intro text-center" aria-label="About">
+        ${Line(introduction, '', 'About')}
+        ${Line(location, '🌐', 'Location')}
+        ${Line(pronouns, '', 'Pronouns')}
+      </section>
+      
+      <section class="profile__actions text-center" aria-label="Actions">
+        ${addMeToYourFriendsDiv(subject, context, viewerMode)}
+      </section>
+      
+    </article>
+  `
+}
+
+const Line = (value, prefix: symbol | string = nothing, label: string = '') =>
+  value ? html`
+    <div class="details" role="text" ${label ? `aria-label="${label}: ${value}"` : ''}>
+      ${prefix} ${value}
+    </div>
+  ` : nothing
+
+const Image = (src, alt) =>
+  src
+    ? html`
+        <img
+          class="image"
+          src=${src}
+          alt="Profile photo of ${alt}"
+          width="160"
+          height="160"
+          loading="eager"
+        />
+      `
+    : html`
+        <div class="image-alt" role="img" aria-label="${alt}" tabindex="0">
+          ${alt}
+        </div>
+      `
