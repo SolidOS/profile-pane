@@ -1,12 +1,65 @@
 /* FriendList.css */
 /* Uses utilities: .list-reset, .section-title, .zebra-stripe, .flex, .gap-xs, .mb-md */
 
-.friendItem {
+.profile__hero-icon {
+  width: 80px;
+  height: 80px;
+  border-radius: var(--border-radius-base);
+  background: var(--color-card-bg);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 0;
+  flex-shrink: 0;
+}
+
+.profile__hero-icon svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.friends__item {
   padding: var(--spacing-xs) 0;
   font-size: 1em;
   color: var(--color-text-muted);
+  min-width: 0;
+  box-sizing: border-box;
 }
 
-.friendItem:last-child {
+.friends__item:last-child {
   border-bottom: none;
+}
+
+.friends__link {
+  display: grid;
+  grid-template-columns: 80px minmax(0, 1fr);
+  gap: var(--spacing-md);
+  align-items: start;
+  min-width: 0;
+}
+
+.friends__content {
+  min-width: 0;
+}
+
+.friends__label {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.friends__meta {
+  margin-top: var(--spacing-xxs);
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.friends__list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--spacing-sm);
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }

@@ -129,23 +129,9 @@ async function checkIfThingExists(
   else return true
 }
 
-function extractFriends(editable: boolean, subject: NamedNode, { dom }: DataBrowserContext): HTMLDivElement | null {
-  const target = dom.createElement('div')
-  widgets.attachmentList(dom, subject, target, {
-    doc: subject.doc(),
-    modify: editable,
-    predicate: ns.foaf('knows'),
-    noun: 'friend',
-  })
-  if (target.textContent === '')
-    return null
-  return target
-}
-
 export {
   addMeToYourFriendsDiv,
   createAddMeToYourFriendsButton,
   saveNewThing,
-  extractFriends,
   checkIfThingExists
 }
