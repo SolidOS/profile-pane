@@ -23,7 +23,7 @@ This runs SVGO with separate configs for icons and logos, then writes files to:
 - `dist/icons/*.svg`
 - `dist/logos/*.svg`
 
-## Consumer usage (webpack)
+## Usage (webpack)
 
 Configure SVG as assets so imports become URLs:
 

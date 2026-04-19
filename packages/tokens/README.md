@@ -29,6 +29,6 @@ Toggle light/dark by setting `data-theme` on the root element:
 
 ```ts
 document.documentElement.dataset.theme = 'dark'
-// later
-// document.documentElement.dataset.theme = 'light'
+// Toggle back to light theme
+document.documentElement.dataset.theme = 'light'
 ```

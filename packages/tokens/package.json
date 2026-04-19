@@ -16,6 +16,6 @@
     "./src/themes.css": "./src/themes.css"
   },
   "scripts": {
-    "build": "node -e \"process.exit(0)\""
+    "build": "echo \"tokens: static CSS, no build required\""
   }
 }

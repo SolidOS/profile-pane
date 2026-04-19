@@ -24,7 +24,7 @@ Root build runs:
 ## Package consumption in webpack 5 apps
 
 ```js
-// webpack.config.js
+// webpack.config.mjs
 export default {
   module: {
     rules: [
@@ -45,8 +45,10 @@ import searchIconUrl from '@solidos/icons/icons/search.svg'
 const root = document.documentElement
 root.dataset.theme = root.dataset.theme === 'dark' ? 'light' : 'dark'
 
-const iconElement = document.querySelector<HTMLElement>('.icon-search')!
-iconElement.style.setProperty('--icon-url', `url(${searchIconUrl})`)
+const iconElement = document.querySelector<HTMLElement>('.icon-search')
+if (iconElement) {
+  iconElement.style.setProperty('--icon-url', `url(${searchIconUrl})`)
+}
 ```
 
 ```css
@@ -69,7 +71,10 @@ For multi-color brand assets, use logos as `<img src="...">`:
 
 ```ts
 import logoUrl from '@solidos/icons/logos/solidos-logo.svg'
-document.querySelector<HTMLImageElement>('#brand-logo')!.src = logoUrl
+const logo = document.querySelector<HTMLImageElement>('#brand-logo')
+if (logo) {
+  logo.src = logoUrl
+}
 ```
 
 ## Existing profile-pane development
