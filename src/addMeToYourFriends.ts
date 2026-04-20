@@ -2,7 +2,7 @@ import { html, TemplateResult } from 'lit-html'
 import { DataBrowserContext } from 'pane-registry'
 import { authn } from 'solid-logic'
 import { LiveStore, NamedNode, st } from 'rdflib'
-import { ns, widgets } from 'solid-ui'
+import { ns } from 'solid-ui'
 import {
   clearPreviousMessage, complain,
   mention

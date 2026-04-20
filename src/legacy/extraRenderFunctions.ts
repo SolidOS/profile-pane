@@ -34,7 +34,8 @@ export function renderChatWithMeSection(subject: NamedNode, context: DataBrowser
 }
 
 export function renderFriendsSection(subject: NamedNode, context: DataBrowserContext, viewerMode: ViewerMode) {
-  const friends = FriendList(subject, context, viewerMode)
+  void subject
+  const friends = FriendList(context, null, viewerMode)
   return friends ? html`
     <aside
       aria-labelledby="friends-heading"

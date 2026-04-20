@@ -1,9 +1,7 @@
 import { html, nothing, TemplateResult } from 'lit-html'
 import '../../src/styles/FriendPane.css'
 import { ProfileDetails } from './types'
-import { toText } from '../../src/textUtils'
-import { toDisplayDateDMY } from '../../src/sections/heading/dateHelpers'
-import { birthdayIcon, locationIcon, personInCircleIcon } from '../../src/icons-svg/profileIcons'
+import { locationIcon, personInCircleIcon } from '../../src/icons-svg/profileIcons'
 
 export const renderHeadingSection = (
   profileData: ProfileDetails
