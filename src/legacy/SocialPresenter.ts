@@ -1,6 +1,6 @@
 import { LiveStore, NamedNode, Node } from 'rdflib'
 import { ns, utils, icons } from 'solid-ui'
-import socialMediaForm from './ontology/socialMedia.ttl'
+import socialMediaForm from '../ontology/socialMedia.ttl'
 import { loadDocument } from '../rdfFormsHelper'
 import { expandRdfList } from '../sections/shared/rdfList'
 
