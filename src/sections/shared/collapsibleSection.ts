@@ -1,3 +1,5 @@
+import { scheduleDescriptionOverflowCheck } from './sectionCardHelpers'
+
 export function toggleCollapsibleSection(event: Event): void {
   const button = event.currentTarget as HTMLButtonElement | null
   const section = button?.closest('.profile-section-collapsible') as HTMLElement | null
@@ -8,4 +10,12 @@ export function toggleCollapsibleSection(event: Event): void {
   section.setAttribute('data-expanded', String(nextExpanded))
   button.setAttribute('aria-expanded', String(nextExpanded))
   panel.setAttribute('aria-hidden', String(!nextExpanded))
+
+  if (nextExpanded && typeof window !== 'undefined') {
+    window.requestAnimationFrame(() => {
+      window.requestAnimationFrame(() => {
+        scheduleDescriptionOverflowCheck()
+      })
+    })
+  }
 }

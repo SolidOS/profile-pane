@@ -1,6 +1,7 @@
 .bioDescriptionWrap {
 	margin: 0;
 	position: relative;
+	isolation: isolate;
 }
 
 .bioDescriptionText {
@@ -49,14 +50,21 @@
 	bottom: 0;
 	background-color: var(--color-card-bg);
 	white-space: nowrap;
-	padding-left: 0.25em;
-	z-index: 1;
+	min-height: auto;
+	min-width: auto;
+	padding-left: 0;
+	padding-right: 0;
+	padding-top: 0;
+	padding-bottom: 0;
+	margin-left: 0;
+	margin-right: 0;
+	z-index: 0;
 }
 
 .bioDescriptionWrap .bioDescriptionText:not(.isExpanded) + .bioDescriptionToggle {
-	top: calc(100% - 1.5em + 0.28em - 15px);
+	top: calc(100% - 1.5em + 0.28em - 12px);
 	bottom: auto;
-	transform: none;
+	transform: translateY(7px);
 }
 
 .bioDescriptionText.isExpanded + .bioDescriptionToggle {

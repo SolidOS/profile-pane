@@ -59,6 +59,7 @@
 .cvDescriptionWrap {
   margin: 0;
   position: relative;
+  isolation: isolate;
 }
 
 .cvDescriptionText {
@@ -97,13 +98,21 @@
   bottom: 0;
   background-color: var(--color-card-bg);
   white-space: nowrap;
-  padding-left: 0.25em;
+  min-height: auto;
+  min-width: auto;
+  padding-left: 0;
+  padding-right: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+  margin-left: 0;
+  margin-right: 0;
+  z-index: 0;
 }
 
 .cvDescriptionWrap .cvDescriptionText:not(.isExpanded) + .cvDescriptionToggle {
-  top: calc(100% - 1.5em + 0.28em - 14px);
+  top: calc(100% - 1.5em + 0.28em - 11px);
   bottom: auto;
-  transform: none;
+  transform: translateY(7px);
 }
 
 .cvDescriptionText.isExpanded + .cvDescriptionToggle {
