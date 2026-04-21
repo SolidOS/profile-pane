@@ -6,6 +6,7 @@ import { ns } from 'solid-ui'
 import { contactInfoEmptyHeadingText, contactInfoHeadingText } from '../../texts'
 import { toggleCollapsibleSection } from '../shared/collapsibleSection'
 import { ContactInfo } from './types'
+import { normalizeEmailTypeForEdit, normalizePhoneTypeForEdit } from '../shared/contactTypeUtils'
 import { addIcon, editIcon, envelopeIcon, locationIcon, plusIcon } from '../../icons-svg/profileIcons'
 import { emailIcon, phoneIcon } from '../../icons-svg/contactIcons'
 
@@ -18,20 +19,6 @@ function toText(value: unknown): string {
   }
   return ''
 }
-/* AI generated helper code Model: GPT-5.3-Codex */
-/* Prompt: can you convert http://www.w3.org/2006/vcard/ns#Home now display as Home */
-function formatTypeLabel(value: unknown): string {
-  const raw = toText(value).trim()
-  if (!raw) return ''
-
-  // Keep labels human-friendly when rdf type is a full URI.
-  const withoutAngles = raw.replace(/^<|>$/g, '')
-  const hashParts = withoutAngles.split('#')
-  const lastByHash = hashParts[hashParts.length - 1]
-  const slashParts = lastByHash.split('/')
-  return slashParts[slashParts.length - 1]
-}
-
 function normalizeContactValue(rawValue: string, kind: 'email' | 'phone'): string {
   if (!rawValue) return ''
   return kind === 'email'
@@ -65,7 +52,7 @@ function resolveContactValue(store: LiveStore, point: any, kind: 'email' | 'phon
 function renderPhone(phone, store: LiveStore) {
   if (!phone) return html``
   const phoneValue = resolveContactValue(store, phone, 'phone')
-  const phoneType = formatTypeLabel(phone.type)
+  const phoneType = normalizePhoneTypeForEdit(phone.type)
 
   return html`<li class="contact-info__item flex gap-2xs" role="listitem">
         <div class="contact-info__icon-wrapper flex-center">
@@ -86,7 +73,7 @@ function renderPhones(phones, store: LiveStore) {
 function renderEmail(email, store: LiveStore) {
   if (!email) return html``
   const emailValue = resolveContactValue(store, email, 'email')
-  const emailType = formatTypeLabel(email.type)
+  const emailType = normalizeEmailTypeForEdit(email.type)
 
   return html`<li class="contact-info__item flex gap-2xs" role="listitem">
         <div class="contact-info__icon-wrapper flex-center">
