@@ -428,6 +428,16 @@
 }
 
 @media (max-width: 576px) {
+  .profile-grid .profile__section-header h2,
+  .profile-grid .profile__section-header h3,
+  .profile-grid .profile__section-header h4,
+  .profile-grid .profile__empty-state-content > h2,
+  .profile-grid .cvSection h3,
+  .profile-grid .profile__name,
+  .profile-grid .friends-pane__header-name {
+    font-family: inherit !important;
+  }
+
   .profile-section-collapsible--inline-mobile-actions > .profile-section-collapsible__header {
     display: flex;
     align-items: center;
@@ -471,7 +481,28 @@
   .profile__section-header h2,
   .profile__section-header h3,
   .profile__section-header h4 {
-    font-size: var(--font-size-lg, 1.125rem);
+    font-size: var(--font-size-lg, 1.125rem) !important;
+    line-height: 1.2 !important;
+  }
+
+  .profile-grid .profile__empty-state-content > h2,
+  .profile-grid .cvSection h3 {
+    font-size: var(--font-size-lg, 1.125rem) !important;
+    line-height: 1.2 !important;
+  }
+
+  .profile-grid .profile__name,
+  .profile-grid .friends-pane__header-name {
+    font-size: 1.5rem !important;
+    line-height: 1.15 !important;
+  }
+
+  .profile-grid .profile__pronouns,
+  .profile-grid .friends-pane__header-pronouns,
+  .profile-grid .friends-pane__friends-pronouns {
+    font-family: inherit !important;
+    font-size: 0.6875rem !important;
+    line-height: 1.1 !important;
   }
 
   .profile-section-collapsible[data-expanded="false"] .profile-section-collapsible__content {
@@ -543,6 +574,16 @@
 }
 
 @container profile-pane (max-width: 576px) {
+  .profile-grid .profile__section-header h2,
+  .profile-grid .profile__section-header h3,
+  .profile-grid .profile__section-header h4,
+  .profile-grid .profile__empty-state-content > h2,
+  .profile-grid .cvSection h3,
+  .profile-grid .profile__name,
+  .profile-grid .friends-pane__header-name {
+    font-family: inherit !important;
+  }
+
   .profile-section-collapsible--inline-mobile-actions > .profile-section-collapsible__header {
     display: flex;
     align-items: center;
@@ -585,7 +626,28 @@
   .profile__section-header h2,
   .profile__section-header h3,
   .profile__section-header h4 {
-    font-size: var(--font-size-lg, 1.125rem);
+    font-size: var(--font-size-lg, 1.125rem) !important;
+    line-height: 1.2 !important;
+  }
+
+  .profile-grid .profile__empty-state-content > h2,
+  .profile-grid .cvSection h3 {
+    font-size: var(--font-size-lg, 1.125rem) !important;
+    line-height: 1.2 !important;
+  }
+
+  .profile-grid .profile__name,
+  .profile-grid .friends-pane__header-name {
+    font-size: 1.5rem !important;
+    line-height: 1.15 !important;
+  }
+
+  .profile-grid .profile__pronouns,
+  .profile-grid .friends-pane__header-pronouns,
+  .profile-grid .friends-pane__friends-pronouns {
+    font-family: inherit !important;
+    font-size: 0.6875rem !important;
+    line-height: 1.1 !important;
   }
 
   .profile-section-collapsible[data-expanded="false"] .profile-section-collapsible__content {
