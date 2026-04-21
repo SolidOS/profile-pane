@@ -9,7 +9,7 @@ import { ViewerMode } from '../../types'
 import { applyRowFieldChange, applyRowSelectChange, deleteRow, summarizeRowOps } from '../shared/rowState'
 import { hasNonEmptyText, sanitizeTextValue, toText } from '../../textUtils'
 import { MutationOps } from '../shared/types'
-import { purpleFilledCheckboxIcon, trashIcon } from '../../icons-svg/profileIcons'
+import { trashIcon } from '../../icons-svg/profileIcons'
 import {
   deleteEntryButtonTitleText,
   dialogCancelLabelText,
@@ -300,7 +300,28 @@ function renderResumeInputRow({
       if (target.checked) {
         applyRowFieldChange(resumeData[index], 'endDate', undefined, rowHasContent)
       }
-      onChange()
+
+      const formRoot = target.form || target.closest('form')
+      const endMonthSelect = formRoot?.querySelector(`#${endMonthSelectId}`) as HTMLSelectElement | null
+      const endYearSelect = formRoot?.querySelector(`#${endYearSelectId}`) as HTMLSelectElement | null
+
+      if (endMonthSelect) {
+        endMonthSelect.disabled = target.checked
+        endMonthSelect.value = ''
+        const emptyOption = endMonthSelect.options[0]
+        if (emptyOption) {
+          emptyOption.text = target.checked ? 'Present' : 'Select Month'
+        }
+      }
+
+      if (endYearSelect) {
+        endYearSelect.disabled = target.checked
+        endYearSelect.value = ''
+        const emptyOption = endYearSelect.options[0]
+        if (emptyOption) {
+          emptyOption.text = target.checked ? '' : 'Select Year'
+        }
+      }
     }
   }
 
@@ -457,9 +478,6 @@ function renderResumeInputRow({
           .checked=${Boolean(resumeRow?.isCurrentRole)}
           @change=${handleCurrentRoleToggle}
         />
-        <span class="profile-edit-dialog__checkbox-visual" aria-hidden="true">
-          ${resumeRow?.isCurrentRole ? purpleFilledCheckboxIcon : ''}
-        </span>
         <span>I am currently working in this role</span>
       </label>
     </div>
@@ -523,13 +541,64 @@ function renderResumeEditTemplate(
   `, form)
 }
 
+type ResumeDialogRenderState = {
+  dialogScrollTop: number
+  descriptionScrollTop: number
+  activeId: string
+  activeName: string
+}
+
+function captureResumeDialogRenderState(form: HTMLFormElement): ResumeDialogRenderState {
+  const dialog = form.closest('dialog') as HTMLDialogElement | null
+  const description = dialog?.querySelector('#modal-desc') as HTMLDivElement | null
+  const activeElement = form.ownerDocument.activeElement as HTMLElement | null
+
+  return {
+    dialogScrollTop: dialog?.scrollTop || 0,
+    descriptionScrollTop: description?.scrollTop || 0,
+    activeId: activeElement?.id || '',
+    activeName: activeElement?.getAttribute('name') || ''
+  }
+}
+
+function restoreResumeDialogRenderState(form: HTMLFormElement, state: ResumeDialogRenderState): void {
+  const dialog = form.closest('dialog') as HTMLDialogElement | null
+  const description = dialog?.querySelector('#modal-desc') as HTMLDivElement | null
+
+  if (dialog) dialog.scrollTop = state.dialogScrollTop
+  if (description) description.scrollTop = state.descriptionScrollTop
+
+  const escapedId = state.activeId && typeof CSS !== 'undefined' && typeof CSS.escape === 'function'
+    ? CSS.escape(state.activeId)
+    : state.activeId
+  const escapedName = state.activeName && typeof CSS !== 'undefined' && typeof CSS.escape === 'function'
+    ? CSS.escape(state.activeName)
+    : state.activeName
+
+  let nextActive: HTMLElement | null = null
+  if (escapedId) {
+    nextActive = form.querySelector(`#${escapedId}`) as HTMLElement | null
+  }
+  if (!nextActive && escapedName) {
+    nextActive = form.querySelector(`[name="${escapedName}"]`) as HTMLElement | null
+  }
+
+  if (nextActive && typeof nextActive.focus === 'function') {
+    nextActive.focus({ preventScroll: true })
+  }
+}
+
 function createResumeEditForm(resumeData: RoleDetails[], viewerMode: ViewerMode) {
   const form = document.createElement('form')
   form.classList.add('profile__edit-form')
   form.classList.add('profile__edit-form--resume')
 
   const formState = toFormState(resumeData)
-  const rerender = () => renderResumeEditTemplate(form, formState, rerender, viewerMode)
+  const rerender = () => {
+    const renderState = captureResumeDialogRenderState(form)
+    renderResumeEditTemplate(form, formState, rerender, viewerMode)
+    restoreResumeDialogRenderState(form, renderState)
+  }
   rerender()
 
   const addRow = () => {
