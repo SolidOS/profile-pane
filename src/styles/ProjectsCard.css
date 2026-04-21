@@ -193,13 +193,14 @@
     cursor: pointer;
   }
 
-  .profile-section-collapsible[data-mobile-expanded="true"] .project-card__more-button {
-    display: none;
+  .project-card__more-button[data-mobile-expanded="true"] .project-card__more-icon {
+    transform: rotate(180deg);
   }
 
   .project-card__more-icon {
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    transition: transform var(--animation-duration, 0.2s) ease;
   }
 }

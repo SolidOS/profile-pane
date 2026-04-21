@@ -12,14 +12,20 @@ import { toggleCollapsibleSection } from '../shared/collapsibleSection'
 
 const MAX_VISIBLE_PROJECTS_MOBILE = 2
 
-function expandProjectsMobileList(event: Event): void {
+function toggleProjectsMobileList(event: Event): void {
   const button = event.currentTarget as HTMLButtonElement | null
   const section = button?.closest('.profile-section-collapsible') as HTMLElement | null
   if (!button || !section) return
 
-  section.setAttribute('data-mobile-expanded', 'true')
-  button.setAttribute('aria-expanded', 'true')
-  button.hidden = true
+  const nextExpanded = section.getAttribute('data-mobile-expanded') !== 'true'
+  section.setAttribute('data-mobile-expanded', String(nextExpanded))
+  button.setAttribute('aria-expanded', String(nextExpanded))
+  button.setAttribute('data-mobile-expanded', String(nextExpanded))
+
+  const label = button.querySelector('.project-card__more-label') as HTMLSpanElement | null
+  if (label) {
+    label.textContent = nextExpanded ? 'View Less' : 'View More'
+  }
 }
 
 function renderProjectImage(src: string | undefined, altText: string) {
@@ -261,10 +267,11 @@ function renderProjectSectionDefault(
                         class="project-card__more-button"
                         aria-controls="projects-rail"
                         aria-expanded="false"
-                        @click=${expandProjectsMobileList}
+                        data-mobile-expanded="false"
+                        @click=${toggleProjectsMobileList}
                       >
                         <span class="project-card__more-icon" aria-hidden="true">${twoDownArrowsIcon}</span>
-                        <span>View More</span>
+                        <span class="project-card__more-label">View More</span>
                       </button>
                     `
                   : html``}
