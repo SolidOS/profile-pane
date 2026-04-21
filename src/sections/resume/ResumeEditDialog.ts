@@ -548,6 +548,11 @@ type ResumeDialogRenderState = {
   activeName: string
 }
 
+type ResumeRerenderOptions = {
+  preserveState?: boolean
+  focusSelector?: string
+}
+
 function captureResumeDialogRenderState(form: HTMLFormElement): ResumeDialogRenderState {
   const dialog = form.closest('dialog') as HTMLDialogElement | null
   const description = dialog?.querySelector('#modal-desc') as HTMLDivElement | null
@@ -588,21 +593,37 @@ function restoreResumeDialogRenderState(form: HTMLFormElement, state: ResumeDial
   }
 }
 
+function focusResumeField(form: HTMLFormElement, selector: string): void {
+  const nextField = form.querySelector(selector) as HTMLElement | null
+  if (!nextField || typeof nextField.focus !== 'function') return
+
+  nextField.focus({ preventScroll: true })
+  if (nextField instanceof HTMLInputElement || nextField instanceof HTMLTextAreaElement) {
+    nextField.select()
+  }
+}
+
 function createResumeEditForm(resumeData: RoleDetails[], viewerMode: ViewerMode) {
   const form = document.createElement('form')
   form.classList.add('profile__edit-form')
   form.classList.add('profile__edit-form--resume')
 
   const formState = toFormState(resumeData)
-  const rerender = () => {
-    const renderState = captureResumeDialogRenderState(form)
+  const rerender = (options: ResumeRerenderOptions = {}) => {
+    const { preserveState = true, focusSelector } = options
+    const renderState = preserveState ? captureResumeDialogRenderState(form) : null
     renderResumeEditTemplate(form, formState, rerender, viewerMode)
-    restoreResumeDialogRenderState(form, renderState)
+    if (renderState) {
+      restoreResumeDialogRenderState(form, renderState)
+    }
+    if (focusSelector) {
+      focusResumeField(form, focusSelector)
+    }
   }
   rerender()
 
   const addRow = () => {
-    formState.resumeData.push({
+    formState.resumeData.unshift({
       title: '',
       roleType: '',
       startDate: undefined,
@@ -616,7 +637,7 @@ function createResumeEditForm(resumeData: RoleDetails[], viewerMode: ViewerMode)
       entryNode: '',
       status: 'new'
     })
-    rerender()
+    rerender({ preserveState: false, focusSelector: '[name="resume-title-0"]' })
   }
 
   return { form, formState, rerender, addRow }

@@ -1,7 +1,7 @@
 import { sym } from 'rdflib'
 //import { default as pane } from '../src/editProfilePane/EditProfileView' //uncomment for profile editor
-// import { default as pane } from '../src'
-import { default as pane } from '../src/friendsPane/index'
+import { default as pane } from '../src'
+// import { default as pane } from '../src/friendsPane/index'
 // @ts-ignore side-effect CSS import for dev webpack bundle
 import './dev-global.css' // Import after src to override component styles
 // @ts-ignore side-effect CSS import for dev webpack bundle
@@ -18,9 +18,9 @@ if (loginBanner) {
 }
 
 // const webIdToShow = 'https://testingsolidos.solidcommunity.net/profile/card#me'
-const webIdToShow = 'https://sstratsianis.solidcommunity.net/profile/card#me'
+// const webIdToShow = 'https://sstratsianis.solidcommunity.net/profile/card#me'
 // const webIdToShow = 'https://sstratsianis2.solidcommunity.net/profile/card#me'
-// const webIdToShow = 'https://sharontest.solidcommunity.net/profile/card#me'
+const webIdToShow = 'https://sharontest.solidcommunity.net/profile/card#me'
 // const webIdToShow = 'https://sstratsianis.solidweb.org/profile/card#me'
 // const webIdToShow = 'https://timea.solidcommunity.net/profile/card#me'
 

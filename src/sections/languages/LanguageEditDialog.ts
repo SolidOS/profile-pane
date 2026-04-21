@@ -35,6 +35,10 @@ const LANGUAGE_OBJECT_URI_BASE = 'https://www.w3.org/ns/iana/language-code/'
 
 type LanguageEditableField = 'name' | 'proficiency'
 
+type LanguageRerenderOptions = {
+  focusSelector?: string
+}
+
 function sanitizeLanguageFieldValue(value: string): string {
   return sanitizeTextValue(value)
 }
@@ -204,6 +208,17 @@ function updateLanguagesSubmitEnabled(rows: LanguageRow[]): void {
   submitButton.disabled = hasInvalidLanguageSelection(rows)
 }
 
+function focusLanguageField(form: HTMLFormElement, selector: string): void {
+  const nextField = form.querySelector(selector) as HTMLElement | null
+  if (!nextField || typeof nextField.focus !== 'function') return
+
+  nextField.scrollIntoView({ block: 'start', behavior: 'auto' })
+  nextField.focus()
+  if (nextField instanceof HTMLInputElement || nextField instanceof HTMLTextAreaElement) {
+    nextField.select()
+  }
+}
+
 type ContactLanguageInputRowProps = {
   rows: LanguageRow[]
   index: number
@@ -339,7 +354,7 @@ function renderLanguageInputRow({
 
 function renderLanguageSection(
   rows: LanguageRow[],
-  onAddRow: () => void,
+  onAddRow: (options?: LanguageRerenderOptions) => void,
   suggestionByIndex: Record<number, LanguageSuggestion[]>,
   onSearch: (index: number, term: string) => void
 ) {
@@ -414,7 +429,12 @@ function renderLanguageSection(
   `
 }
 
-function renderLanguageEditTemplate(form: HTMLFormElement, formState: LanguageFormState, viewerMode: ViewerMode) {
+function renderLanguageEditTemplate(
+  form: HTMLFormElement,
+  formState: LanguageFormState,
+  viewerMode: ViewerMode,
+  options: LanguageRerenderOptions = {}
+) {
   const formStateWithSearch = formState as LanguageFormState & {
     suggestionByIndex?: Record<number, LanguageSuggestion[]>
     searchSeqByIndex?: Record<number, number>
@@ -425,7 +445,7 @@ function renderLanguageEditTemplate(form: HTMLFormElement, formState: LanguageFo
   const searchSeqByIndex = formStateWithSearch.searchSeqByIndex || (formStateWithSearch.searchSeqByIndex = {})
   const searchTimerByIndex = formStateWithSearch.searchTimerByIndex || (formStateWithSearch.searchTimerByIndex = {})
 
-  const rerender = () => renderLanguageEditTemplate(form, formState, viewerMode)
+  const rerender = (nextOptions: LanguageRerenderOptions = {}) => renderLanguageEditTemplate(form, formState, viewerMode, nextOptions)
   const onSearch = (index: number, term: string) => {
     if (searchTimerByIndex[index]) {
       clearTimeout(searchTimerByIndex[index])
@@ -465,6 +485,10 @@ function renderLanguageEditTemplate(form: HTMLFormElement, formState: LanguageFo
   `, form)
 
   updateLanguagesSubmitEnabled(formState.languages)
+
+  if (options.focusSelector) {
+    focusLanguageField(form, options.focusSelector)
+  }
 }
 
 function createLanguageEditForm(details: LanguageDetails[], viewerMode: ViewerMode) {
@@ -478,14 +502,22 @@ function createLanguageEditForm(details: LanguageDetails[], viewerMode: ViewerMo
   renderLanguageEditTemplate(form, formState, viewerMode)
 
   const addRow = () => {
-    formState.languages.push({
+    formState.languages.unshift({
       name: '',
       publicId: '',
       proficiency: '',
       entryNode: '',
       status: 'new'
     })
-    renderLanguageEditTemplate(form, formState, viewerMode)
+    const formStateWithSearch = formState as LanguageFormState & {
+      suggestionByIndex?: Record<number, LanguageSuggestion[]>
+      searchSeqByIndex?: Record<number, number>
+      searchTimerByIndex?: Record<number, ReturnType<typeof setTimeout>>
+    }
+    formStateWithSearch.suggestionByIndex = {}
+    formStateWithSearch.searchSeqByIndex = {}
+    formStateWithSearch.searchTimerByIndex = {}
+    renderLanguageEditTemplate(form, formState, viewerMode, { focusSelector: '[name="language-0"]' })
   }
 
   return { form, formState, addRow }

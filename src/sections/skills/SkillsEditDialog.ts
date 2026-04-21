@@ -28,6 +28,10 @@ type SkillSuggestion = {
   uri: string
 }
 
+type SkillRerenderOptions = {
+  focusSelector?: string
+}
+
 const ESCO_SKILL_SEARCH_URI = 'https://ec.europa.eu/esco/api/search?language=$(language)&limit=$(limit)&type=skill&text=$(name)'
 const ESCO_SEARCH_LANGUAGE = 'en'
 const ESCO_SEARCH_LIMIT = 8
@@ -153,6 +157,17 @@ function updateSkillsSubmitEnabled(rows: SkillRow[]): void {
   submitButton.disabled = hasInvalidSkillSelection(rows)
 }
 
+function focusSkillField(form: HTMLFormElement, selector: string): void {
+  const nextField = form.querySelector(selector) as HTMLElement | null
+  if (!nextField || typeof nextField.focus !== 'function') return
+
+  nextField.scrollIntoView({ block: 'start', behavior: 'auto' })
+  nextField.focus()
+  if (nextField instanceof HTMLInputElement || nextField instanceof HTMLTextAreaElement) {
+    nextField.select()
+  }
+}
+
 type SkillsInputRowProps = {
   rows: SkillRow[]
   index: number
@@ -239,7 +254,7 @@ function renderSkillInputRow({
 
 function renderSkillsSection(
   rows: SkillRow[],
-  onAddRow: () => void,
+  onAddRow: (options?: SkillRerenderOptions) => void,
   suggestionByIndex: Record<number, SkillSuggestion[]>,
   handleSearch: (rowIndex: number, term: string) => void
 ) {
@@ -269,7 +284,12 @@ function renderSkillsSection(
   `
 }
 
-function renderSkillsEditTemplate(form: HTMLFormElement, formState: SkillFormState, viewerMode: ViewerMode) {
+function renderSkillsEditTemplate(
+  form: HTMLFormElement,
+  formState: SkillFormState,
+  viewerMode: ViewerMode,
+  options: SkillRerenderOptions = {}
+) {
   const formStateWithSearch = formState as SkillFormState & {
     suggestionByIndex?: Record<number, SkillSuggestion[]>
     searchSeqByIndex?: Record<number, number>
@@ -280,7 +300,7 @@ function renderSkillsEditTemplate(form: HTMLFormElement, formState: SkillFormSta
   const searchSeqByIndex = formStateWithSearch.searchSeqByIndex || (formStateWithSearch.searchSeqByIndex = {})
   const searchTimerByIndex = formStateWithSearch.searchTimerByIndex || (formStateWithSearch.searchTimerByIndex = {})
 
-  const rerender = () => renderSkillsEditTemplate(form, formState, viewerMode)
+  const rerender = (nextOptions: SkillRerenderOptions = {}) => renderSkillsEditTemplate(form, formState, viewerMode, nextOptions)
   const handleSearch = (rowIndex: number, term: string) => {
     if (searchTimerByIndex[rowIndex]) {
       clearTimeout(searchTimerByIndex[rowIndex])
@@ -320,6 +340,10 @@ function renderSkillsEditTemplate(form: HTMLFormElement, formState: SkillFormSta
   `, form)
 
   updateSkillsSubmitEnabled(formState.skills)
+
+  if (options.focusSelector) {
+    focusSkillField(form, options.focusSelector)
+  }
 }
 
 function createSkillsEditForm(details: SkillDetails[], viewerMode: ViewerMode) {
@@ -330,13 +354,21 @@ function createSkillsEditForm(details: SkillDetails[], viewerMode: ViewerMode) {
   renderSkillsEditTemplate(form, formState, viewerMode)
 
   const addRow = () => {
-    formState.skills.push({
+    formState.skills.unshift({
       name: '',
       publicId: '',
       entryNode: '',
       status: 'new'
     })
-    renderSkillsEditTemplate(form, formState, viewerMode)
+    const formStateWithSearch = formState as SkillFormState & {
+      suggestionByIndex?: Record<number, SkillSuggestion[]>
+      searchSeqByIndex?: Record<number, number>
+      searchTimerByIndex?: Record<number, ReturnType<typeof setTimeout>>
+    }
+    formStateWithSearch.suggestionByIndex = {}
+    formStateWithSearch.searchSeqByIndex = {}
+    formStateWithSearch.searchTimerByIndex = {}
+    renderSkillsEditTemplate(form, formState, viewerMode, { focusSelector: '[name="skill-0"]' })
   }
 
   return { form, formState, addRow }

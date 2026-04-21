@@ -38,6 +38,10 @@ type ContactInfoFormState = {
   addresses: ContactAddressRow[]
 }
 
+type ContactInfoRerenderOptions = {
+  focusSelector?: string
+}
+
 function isContactPointRow(row: ContactPointRow | ContactAddressRow): row is ContactPointRow {
   return 'value' in row
 }
@@ -232,11 +236,11 @@ function renderContactPhoneInputRow({
   `
 }
 
-function renderContactInfoPhoneSection(phones: ContactPointRow[], onAddRow: () => void) {
+function renderContactInfoPhoneSection(phones: ContactPointRow[], onAddRow: (options?: ContactInfoRerenderOptions) => void) {
   const createNewRow = (event: Event) => {
     event.preventDefault()
-    phones.push({ value: '', type: '', entryNode: '', status: 'new' })
-    onAddRow()
+    phones.unshift({ value: '', type: '', entryNode: '', status: 'new' })
+    onAddRow({ focusSelector: '[name="phone-value-0"]' })
   }
 
   const visiblePhones = phones
@@ -352,11 +356,11 @@ function renderContactEmailInputRow({
   `
 }
 
-function renderContactInfoEmailSection(emails: ContactPointRow[], onAddRow: () => void) {
+function renderContactInfoEmailSection(emails: ContactPointRow[], onAddRow: (options?: ContactInfoRerenderOptions) => void) {
   const createNewRow = (event: Event) => {
     event.preventDefault()
-    emails.push({ value: '', type: '', entryNode: '', status: 'new' })
-    onAddRow()
+    emails.unshift({ value: '', type: '', entryNode: '', status: 'new' })
+    onAddRow({ focusSelector: '[name="email-value-0"]' })
   }
 
   const visibleEmails = emails
@@ -551,10 +555,10 @@ function renderContactAddressInputRow({
   `
 }
 
-function renderContactInfoAddressSection(addresses: ContactAddressRow[], onAddRow: () => void) {
+function renderContactInfoAddressSection(addresses: ContactAddressRow[], onAddRow: (options?: ContactInfoRerenderOptions) => void) {
   const createNewRow = (event: Event) => {
     event.preventDefault()
-    addresses.push({
+    addresses.unshift({
       streetAddress: '',
       locality: '',
       region: '',
@@ -564,7 +568,7 @@ function renderContactInfoAddressSection(addresses: ContactAddressRow[], onAddRo
       entryNode: '',
       status: 'new'
     })
-    onAddRow()
+    onAddRow({ focusSelector: '[name="address-street-0"]' })
   }
 
   const visibleAddresses = addresses
@@ -608,8 +612,24 @@ function renderContactInfoAddressSection(addresses: ContactAddressRow[], onAddRo
   `
 }
 
-function renderContactInfoEditTemplate(form: HTMLFormElement, formState: ContactInfoFormState, viewerMode: ViewerMode) {
-  const rerender = () => renderContactInfoEditTemplate(form, formState, viewerMode)
+function focusContactInfoField(form: HTMLFormElement, selector: string): void {
+  const nextField = form.querySelector(selector) as HTMLElement | null
+  if (!nextField || typeof nextField.focus !== 'function') return
+
+  nextField.scrollIntoView({ block: 'start', behavior: 'auto' })
+  nextField.focus()
+  if (nextField instanceof HTMLInputElement || nextField instanceof HTMLTextAreaElement) {
+    nextField.select()
+  }
+}
+
+function renderContactInfoEditTemplate(
+  form: HTMLFormElement,
+  formState: ContactInfoFormState,
+  viewerMode: ViewerMode,
+  options: ContactInfoRerenderOptions = {}
+) {
+  const rerender = (nextOptions: ContactInfoRerenderOptions = {}) => renderContactInfoEditTemplate(form, formState, viewerMode, nextOptions)
 
 
   render(html`
@@ -620,6 +640,10 @@ function renderContactInfoEditTemplate(form: HTMLFormElement, formState: Contact
       ? html`<p class="profile-edit-dialog__login-message">${ownerLoginRequiredDialogMessageText}</p>`
       : null}
   `, form)
+
+  if (options.focusSelector) {
+    focusContactInfoField(form, options.focusSelector)
+  }
 }
 
 function createContactInfoEditForm(contactInfo: ContactInfo, viewerMode: ViewerMode) {

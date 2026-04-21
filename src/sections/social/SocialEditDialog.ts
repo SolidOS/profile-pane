@@ -34,6 +34,10 @@ type SocialFormState = {
 
 type SocialEditableField = 'name' | 'icon' | 'homepage'
 
+type SocialRerenderOptions = {
+  focusSelector?: string
+}
+
 type SocialRowInputProps = {
   rows: SocialRow[]
   index: number
@@ -270,7 +274,7 @@ function renderSocialInputRow({
   `
 }
 
-function renderSocialSection(rows: SocialRow[], options: SocialAccountOption[], onRerender: () => void) {
+function renderSocialSection(rows: SocialRow[], options: SocialAccountOption[], onRerender: (options?: SocialRerenderOptions) => void) {
   let dragSourceIndex: number | null = null
   let dropTargetIndex: number | null = null
 
@@ -338,20 +342,33 @@ function renderSocialSection(rows: SocialRow[], options: SocialAccountOption[], 
   `
 }
 
+function focusSocialField(form: HTMLFormElement, selector: string): void {
+  const nextField = form.querySelector(selector) as HTMLElement | null
+  if (!nextField || typeof nextField.focus !== 'function') return
+
+  nextField.scrollIntoView({ block: 'start', behavior: 'auto' })
+  nextField.focus()
+}
+
 function renderSocialEditTemplate(
   form: HTMLFormElement,
   formState: SocialFormState,
   store: LiveStore,
-  viewerMode: ViewerMode
+  viewerMode: ViewerMode,
+  rerenderOptions: SocialRerenderOptions = {}
 ) {
-  const rerender = () => renderSocialEditTemplate(form, formState, store, viewerMode)
-  const options = getSocialAccountOptions(store)
+  const rerender = (nextOptions: SocialRerenderOptions = {}) => renderSocialEditTemplate(form, formState, store, viewerMode, nextOptions)
+  const socialOptions = getSocialAccountOptions(store)
   render(html`
-    ${renderSocialSection(formState.socialAccounts, options, rerender)}
+    ${renderSocialSection(formState.socialAccounts, socialOptions, rerender)}
     ${viewerMode !== 'owner'
       ? html`<p class="profile-edit-dialog__login-message">${ownerLoginRequiredDialogMessageText}</p>`
       : null}
   `, form)
+
+  if (rerenderOptions.focusSelector) {
+    focusSocialField(form, rerenderOptions.focusSelector)
+  }
 }
 
 function createSocialEditForm(details: Account[], store: LiveStore, viewerMode: ViewerMode) {
@@ -365,14 +382,14 @@ function createSocialEditForm(details: Account[], store: LiveStore, viewerMode: 
   renderSocialEditTemplate(form, formState, store, viewerMode)
 
   const addRow = () => {
-    formState.socialAccounts.push({
+    formState.socialAccounts.unshift({
       name: '',
       icon: '',
       homepage: '',
       entryNode: '',
       status: 'new'
     })
-    renderSocialEditTemplate(form, formState, store, viewerMode)
+    renderSocialEditTemplate(form, formState, store, viewerMode, { focusSelector: '[name="social-account-type-0"]' })
   }
 
   return { form, formState, addRow }
