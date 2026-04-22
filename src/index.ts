@@ -12,6 +12,12 @@ import { render } from 'lit-html'
 import { ProfileView } from './ProfileView'
 import { icons, ns } from 'solid-ui'
 import * as qrcode from 'qrcode'
+export {
+  addMeToYourFriendsDiv,
+  createAddMeToYourFriendsButton,
+  saveNewThing,
+  checkIfThingExists
+} from './addMeToYourFriends'
 
 async function loadExtendedProfile(store: LiveStore, subject: NamedNode) {
   const otherProfiles = store.each(

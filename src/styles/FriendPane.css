@@ -1,11 +1,11 @@
-.friends-pane__header-section {
+.social-pane__header-section {
   background: var(--gray-100, #F3F4F6);
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
-.friends-pane__header-hero-icon {
+.social-pane__header-hero-icon {
   width: 180px;
   height: 180px;
   border-radius: var(--border-radius-base);
@@ -17,7 +17,7 @@
   flex-shrink: 0;
 }
 
-.friends-pane__header-hero-icon svg {
+.social-pane__header-hero-icon svg {
   display: block;
   width: 100%;
   height: 100%;
@@ -28,9 +28,7 @@
   flex: 0 0 auto;
 }
 
-.friends-pane__header-heading-top {
- 
-}
+
 
 .friends-pane__header-name {
   color: var(--color-text-heading, #000);
@@ -156,7 +154,7 @@
   margin-right: 0.125rem;
 }
 
-.friends-pane__header-hero {
+.social-pane__header-hero {
   width: 180px;
   height: 180px;
   border-radius: var(--border-radius-full, 0.625rem); /* 10px */;
