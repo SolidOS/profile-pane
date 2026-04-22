@@ -1,4 +1,4 @@
-import { presentProfile } from '../src/legacy/presenter'
+import { presentProfile } from '../src/sections/heading/selectors'
 import { blankNode, sym } from 'rdflib'
 import { ns } from 'solid-ui'
 import { store } from 'solid-logic'
@@ -15,7 +15,8 @@ describe('presenter', () => {
     const result = presentProfile(jane, store)
     expect(result.name).toBe('jane.doe.example')
     expect(result.imageSrc).toBeNull()
-    expect(result.introduction).toBeNull()
+    expect(result.jobTitle).toBeUndefined()
+    expect(result.orgName).toBeUndefined()
     expect(result.location).toBeNull()
   })
 
@@ -36,23 +37,24 @@ describe('presenter', () => {
     expect(result.imageSrc).toBe('https://jane.doe.example/profile/me.jpg')
   })
 
-  it('presents role in introduction', () => {
+  it('presents role in jobTitle', () => {
     store.add(jane, ns.vcard('role'), 'Test Double', doc)
     const result = presentProfile(jane, store)
-    expect(result.introduction).toBe('Test Double')
+    expect(result.jobTitle).toBe('Test Double')
   })
 
-  it('presents organization name in introduction', () => {
+  it('presents organization name in orgName', () => {
     store.add(jane, ns.vcard('organization-name'), 'Solid Community', doc)
     const result = presentProfile(jane, store)
-    expect(result.introduction).toBe('Solid Community')
+    expect(result.orgName).toBe('Solid Community')
   })
 
-  it('presents both role and organization name in introduction', () => {
+  it('presents both role and organization name independently', () => {
     store.add(jane, ns.vcard('role'), 'Test Double', doc)
     store.add(jane, ns.vcard('organization-name'), 'Solid Community', doc)
     const result = presentProfile(jane, store)
-    expect(result.introduction).toBe('Test Double at Solid Community')
+    expect(result.jobTitle).toBe('Test Double')
+    expect(result.orgName).toBe('Solid Community')
   })
 
   it('presents country in location', () => {
@@ -85,19 +87,7 @@ describe('presenter', () => {
     store.add(jane, ns.solid('preferredObjectPronoun'), 'them', doc)
     store.add(jane, ns.solid('preferredRelativePronoun'), 'their', doc)
     const result = presentProfile(jane, store)
-    expect(result.pronouns).toBe(' (they/them/their) ')
+    expect(result.pronouns).toBe('they/them')
   })
   
-  describe('coloring', () => {
-    it('uses background color from profile settings', () => {
-      store.add(jane, ns.solid('profileBackgroundColor'), '#123456', doc)
-      const { backgroundColor } = presentProfile(jane, store)
-      expect(backgroundColor).toBe('#123456')
-    })
-    it('uses highlight color from profile settings', () => {
-      store.add(jane, ns.solid('profileHighlightColor'), '#987654', doc)
-      const { highlightColor } = presentProfile(jane, store)
-      expect(highlightColor).toBe('#987654')
-    })
-  })
 })
