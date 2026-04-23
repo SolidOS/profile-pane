@@ -40,6 +40,19 @@
   max-width: 100%;
   min-width: 0;
   container-name: profile-pane;
+  container-type: inline-size;
+}
+
+/* Fallback for embedded rendering inside outline table cells. */
+td.obj .profile-grid {
+  grid-template-columns: 1fr;
+  gap: var(--spacing-xxs, 0.3125rem);
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  margin: 0 auto;
+  padding-inline: var(--spacing-small, 0.1rem);
+  overflow-x: clip;
 }
 
 @container profile-pane (max-width: 1000px) {
@@ -55,7 +68,7 @@
   }
 }
 
-@container profile-pane (max-width: 1000px) {
+@container profile-pane (max-width: 1024px) {
   .profile-grid {
     grid-template-columns: 1fr;
     gap: var(--spacing-xxs, 0.3125rem);
@@ -68,7 +81,7 @@
   }
 }
 
-@media (max-width: 1000px) {
+@media (max-width: 1024px) {
   .profile-grid {
     grid-template-columns: 1fr;
     gap: var(--spacing-xxs, 0.3125rem);
