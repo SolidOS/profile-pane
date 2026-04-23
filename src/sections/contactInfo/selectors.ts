@@ -79,23 +79,36 @@ function selectPhones(subject: NamedNode, store: LiveStore): PointDetails[] {
 }
 
 function selectAddresses(subject: NamedNode, store: LiveStore): AddressDetails[] {
-  let addresses: AddressDetails[] = []
-  let type = null
-  let streetAddress = null
-  let locality = null
-  let region = null
-  let postalCode = null
-  let countryName = null
+  const addresses: AddressDetails[] = []
 
   const addressNodes = store.each(subject, ns.vcard('hasAddress'), null, subject.doc()) || null
   addressNodes.map((node) => {
-    streetAddress = store.any(node as NamedNode, ns.vcard('street-address'), null, subject.doc())
-    locality = store.any(node as NamedNode, ns.vcard('locality'), null, subject.doc())
-    region = store.any(node as NamedNode, ns.vcard('region'), null, subject.doc())
-    postalCode = store.any(node as NamedNode, ns.vcard('postal-code'), null, subject.doc())
-    countryName = store.any(node as NamedNode, ns.vcard('country-name'), null, subject.doc())
-    type = store.any(node as NamedNode, ns.rdf('type'), null, subject.doc())
-    addresses.push({entryNode: node, type, streetAddress, locality, region, postalCode, countryName})  
+    const streetAddress = termValue(
+      store.any(node as NamedNode, ns.vcard('street-address'), null, subject.doc())
+    )
+    const locality = termValue(
+      store.any(node as NamedNode, ns.vcard('locality'), null, subject.doc())
+    )
+    const region = termValue(
+      store.any(node as NamedNode, ns.vcard('region'), null, subject.doc())
+    )
+    const postalCode = termValue(
+      store.any(node as NamedNode, ns.vcard('postal-code'), null, subject.doc())
+    )
+    const countryName = termValue(
+      store.any(node as NamedNode, ns.vcard('country-name'), null, subject.doc())
+    )
+    const type = store.any(node as NamedNode, ns.rdf('type'), null, subject.doc())
+
+    addresses.push({
+      entryNode: node,
+      ...(type ? { type } : {}),
+      streetAddress,
+      locality,
+      region,
+      postalCode,
+      countryName,
+    })
   })
   return addresses
 }
