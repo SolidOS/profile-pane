@@ -44,7 +44,7 @@ function renderSidebar(
       class="profile__sidebar p-sm" 
     >
       <h2 id="sidebar-heading" class="sr-only">Sidebar</h2>
-      <div aria-label="Sidebar Content">
+      <div aria-label="Sidebar Content" class="flex-column gap-md">
         ${renderSocialAccounts(store, subject, accounts, viewerMode, onSaved)}
         ${renderSkillsSection(store, subject, skills, viewerMode, onSaved)}
         ${renderLanguageSection(store, subject, languages, viewerMode, onSaved)}

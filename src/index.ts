@@ -1,7 +1,6 @@
 import { DataBrowserContext } from 'pane-registry'
 import './styles/CVCard.css'
 import './styles/ChatWithMe.css'
-import './styles/FriendList.css'
 import './styles/ProfileCard.css'
 import './styles/ProfileView.css'
 import './styles/QRCodeCard.css'
