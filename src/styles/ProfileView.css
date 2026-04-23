@@ -18,6 +18,7 @@
   align-items: stretch;
   text-align: left;
   border-radius: var(--border-radius-base);
+  background: var(--color-background, #F8F9FB);
   width: 100%;
   max-width: 100%;
   min-width: 0;
