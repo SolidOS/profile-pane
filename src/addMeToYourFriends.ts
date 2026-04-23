@@ -8,7 +8,7 @@ import {
   mention
 } from './buttonsHelper'
 import {
-  addMeToYourFriendsButtonText, friendExistsAlreadyButtonText, friendExistsMessage, friendWasAddedSuccesMessage, userNotLoggedInErrorMessage
+  addMeToYourFriendsButtonText, friendExistsAlreadyButtonText, friendExistsMessage, friendWasAddedSuccesMessage, logInAddMeToYourFriendsButtonText, userNotLoggedInErrorMessage
 } from './texts'
 import { ViewerMode } from './types'
 import './styles/ProfileCard.css'
@@ -71,6 +71,7 @@ const createAddMeToYourFriendsButton = (
     const store: LiveStore = context.session.store
 
     if (checkIfAnyUserLoggedIn(me)) {
+      button.disabled = false
       checkIfThingExists(store, me, subject, ns.foaf('knows')).then((friendExists) => {
         if (friendExists) {
           //logged in and friend exists or friend was just added
@@ -80,7 +81,11 @@ const createAddMeToYourFriendsButton = (
           button.textContent = addMeToYourFriendsButtonText
         }
       })
-    } 
+    } else {
+      //not logged in — disable and indicate login is required
+      button.textContent = logInAddMeToYourFriendsButtonText
+      button.disabled = true
+    }
   }
 
   return button

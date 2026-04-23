@@ -75,6 +75,11 @@ async function mutatePhoneEntries(store: LiveStore, subject: NamedNode, phoneOps
       insertions.push(...buildPhoneStatements(subject, doc, createIdNode(doc), phone))
       return
     }
+    const linkedPhoneStatements = collectLinkedNodeStatements(store, subject, ns.vcard('hasTelephone'), doc)
+    const matchingLinkStatement = linkedPhoneStatements.linkStatements.find((statement) => statement.object?.value === existingNode.value)
+    if (matchingLinkStatement) {
+      deletions.push(matchingLinkStatement)
+    }
     deletions.push(...collectNodeStatements(store, existingNode, doc))
     insertions.push(...buildPhoneStatements(subject, doc, existingNode, phone))
   })
