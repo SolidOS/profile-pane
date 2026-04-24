@@ -1,5 +1,5 @@
 import { describe, expect, it } from "@jest/globals"
-import { graph, st, sym } from 'rdflib'
+import { graph, literal, st, sym } from 'rdflib'
 import { ns } from 'solid-ui'
 import { presentProfile, pronounsAsText } from '../../src/sections/heading/selectors'
 import { processHeadingMutations } from '../../src/sections/heading/mutations'
@@ -95,5 +95,70 @@ describe('Intro selectors and mutations', () => {
 
     expect(profile.primaryEmail?.entryNode.value).toBe(firstEmail.value)
     expect(profile.primaryPhone?.entryNode.value).toBe(firstPhone.value)
+  })
+
+  it('writes trimmed basic heading fields and keeps nicknames in sync', async () => {
+    const store = graph() as any
+    const subject = sym('https://example.com/profile/card#me')
+    const doc = subject.doc()
+
+    store.updater = {
+      update: (deletions: any[], insertions: any[], callback: Function) => {
+        deletions.forEach((statement) => store.remove(st(statement.subject, statement.predicate, statement.object, statement.why)))
+        insertions.forEach((statement) => store.add(statement.subject, statement.predicate, statement.object, statement.why))
+        callback('', true)
+      }
+    }
+
+    await processHeadingMutations(store, subject, {
+      basicOps: {
+        create: [{
+          entryNode: subject.value,
+          name: '  Jane Doe  ',
+          nickname: '  janey  ',
+          dateOfBirth: '2000-01-01',
+          jobTitle: '  Engineer  ',
+          orgName: '  Inrupt  ',
+          imageSrc: 'https://example.com/jane.png',
+          status: 'new'
+        }],
+        update: [],
+        remove: []
+      },
+      phoneOps: { create: [], update: [], remove: [] },
+      emailOps: { create: [], update: [], remove: [] },
+      addressOps: { create: [], update: [], remove: [] }
+    } as any)
+
+    expect(store.any(subject, ns.vcard('fn'), null, doc)?.value).toBe('Jane Doe')
+    expect(store.any(subject, ns.foaf('nick'), null, doc)?.value).toBe('janey')
+    expect(store.any(subject, ns.vcard('nickname'), null, doc)?.value).toBe('janey')
+    expect(store.any(subject, ns.vcard('role'), null, doc)?.value).toBe('Engineer')
+    expect(store.any(subject, ns.vcard('organization-name'), null, doc)?.value).toBe('Inrupt')
+    expect(store.any(subject, ns.vcard('hasPhoto'), null, doc)?.termType).toBe('NamedNode')
+
+    await processHeadingMutations(store, subject, {
+      basicOps: {
+        create: [],
+        update: [],
+        remove: [{
+          entryNode: subject.value,
+          name: '',
+          nickname: '',
+          dateOfBirth: '',
+          jobTitle: '',
+          orgName: '',
+          imageSrc: '',
+          status: 'deleted'
+        }]
+      },
+      phoneOps: { create: [], update: [], remove: [] },
+      emailOps: { create: [], update: [], remove: [] },
+      addressOps: { create: [], update: [], remove: [] }
+    } as any)
+
+    expect(store.any(subject, ns.vcard('fn'), null, doc)).toBeNull()
+    expect(store.any(subject, ns.foaf('nick'), null, doc)).toBeNull()
+    expect(store.any(subject, ns.vcard('hasPhoto'), null, doc)).toBeNull()
   })
 })

@@ -218,4 +218,67 @@ describe('Social selectors and mutations', () => {
 
     expect(expanded.map((node: any) => node.value)).toEqual([instagramNode.value, facebookNode.value])
   })
+
+  it('writes other accounts with homepage and icon instead of accountName', async () => {
+    const store = graph() as any
+    const subject = sym('https://example.com/profile/card#me')
+    const doc = subject.doc()
+
+    store.updater = {
+      update: (deletions: any[], insertions: any[], callback: Function) => {
+        deletions.forEach((statement) => store.remove(st(statement.subject, statement.predicate, statement.object, statement.why)))
+        insertions.forEach((statement) => store.add(statement.subject, statement.predicate, statement.object, statement.why))
+        callback('', true)
+      }
+    }
+
+    await processSocialMutations(store, subject, {
+      create: [{
+        name: 'Other',
+        icon: 'https://example.com/icon.svg',
+        homepage: 'https://example.com/custom-profile',
+        entryNode: '',
+        status: 'new'
+      }],
+      update: [],
+      remove: []
+    } as any)
+
+    const accountLinks = store.statementsMatching(subject, ns.foaf('account'), null, doc)
+    const expandedAccounts = accountLinks
+      .flatMap((statement: any) => expandRdfList(store, statement.object))
+      .filter((node: any) => node.termType === 'NamedNode')
+    const entryNode = expandedAccounts[0]
+
+    expect(store.any(entryNode, ns.foaf('homepage'), null, doc)?.value).toBe('https://example.com/custom-profile')
+    expect(store.any(entryNode, ns.foaf('icon'), null, doc)?.value).toBe('https://example.com/icon.svg')
+    expect(store.any(entryNode, ns.foaf('accountName'), null, doc)).toBeNull()
+  })
+
+  it('falls back to PUT when patch update fails with a supported patch error', async () => {
+    const store = graph() as any
+    const subject = sym('https://example.com/profile/card#me')
+    const doc = subject.doc()
+
+    const serialize = jest.fn((_docValue: string, _statements: any[], _contentType: string) => 'serialized-body')
+    const webOperation = jest.fn(async () => ({ ok: true, status: 200 }))
+
+    store.fetcher = { webOperation }
+    store.updater = {
+      update: (_deletions: any[], _insertions: any[], callback: Function) => callback('', false, 'Web error: 405 on patch'),
+      serialize
+    }
+
+    await processSocialMutations(store, subject, {
+      create: [{ name: 'Github', icon: '', homepage: 'https://github.com/sharon', entryNode: '', status: 'new' }],
+      update: [],
+      remove: []
+    } as any)
+
+    expect(serialize).toHaveBeenCalledTimes(1)
+    expect(webOperation).toHaveBeenCalledWith('PUT', doc.value, expect.objectContaining({
+      contentType: 'text/turtle',
+      body: 'serialized-body'
+    }))
+  })
 })
