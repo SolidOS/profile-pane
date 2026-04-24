@@ -1,4 +1,5 @@
-/** Project-local: currently unused component. Keep temporarily; do not add new usage. */
+/** Project-local: currently unused component.  */
+/* will bring forms back so keeping the file */
 import { NamedNode, Store, Namespace, sym, parse } from 'rdflib'
 import { widgets } from 'solid-ui'
 
