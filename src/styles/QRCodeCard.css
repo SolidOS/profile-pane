@@ -25,18 +25,13 @@
   background: var(--gray-100, #F3F4F6);
 }
 
-.qrcode-card [role="img"]:focus {
-  outline: var(--border-width-medium, 2px) solid var(--color-primary, #7C4DFF);
-  outline-offset: 2px;
-  box-shadow: 0 0 0 2px rgba(124,77,255,0.2);
+.qrcode-card > div[aria-hidden="true"] {
+  width: 100%;
+  height: 100%;
+  margin: 0;
 }
 
-.qrcode-card [role="img"] {
-  width: 136px;
-  height: 136px;
-}
-
-.qrcode-card [role="img"] svg {
+.qrcode-card > div[aria-hidden="true"] svg {
   width: 100%;
   height: 100%;
   display: block;

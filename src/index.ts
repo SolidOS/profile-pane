@@ -30,7 +30,6 @@ async function loadExtendedProfile(store: LiveStore, subject: NamedNode) {
   }
 }
 
-
 const Pane = {
   global: false,
   icon: icons.iconBase + 'noun_15059.svg',
@@ -79,9 +78,6 @@ const Pane = {
               return
             }
             imageContainer.innerHTML = svg
-            imageContainer.style.width = '100%'
-            imageContainer.style.height = '100%'
-            imageContainer.style.margin = '0'
           }
         })
       }
