@@ -13,6 +13,7 @@
   "types": "lib/index.d.ts",
   "files": [
     "/lib",
+    "/icons-png",
     "README.md",
     "LICENSE"
   ],
