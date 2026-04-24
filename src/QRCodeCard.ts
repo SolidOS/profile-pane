@@ -47,6 +47,20 @@ function normalizeTelephone(value: string): string {
   return (value || '').trim().replace(/^tel:/i, '')
 }
 
+function isEmailValue(value: string): boolean {
+  const normalized = (value || '').trim()
+  if (!normalized) return false
+  if (/^mailto:/i.test(normalized)) return true
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalized)
+}
+
+function isPhoneValue(value: string): boolean {
+  const normalized = (value || '').trim()
+  if (!normalized) return false
+  if (/^tel:/i.test(normalized)) return true
+  return /^[+()\-\s\d]{5,}$/.test(normalized)
+}
+
 function firstContactValue(
   store: LiveStore | undefined,
   subject: NamedNode,
@@ -56,18 +70,25 @@ function firstContactValue(
   if (!store) return ''
 
   const candidates = store.each(subject, predicate)
+  const isExpectedValue = kind === 'email' ? isEmailValue : isPhoneValue
   for (const node of candidates) {
     if (!node) continue
 
     const direct = (node as any).value
-    if (typeof direct === 'string' && direct.trim()) {
+    if (typeof direct === 'string' && isExpectedValue(direct)) {
       return kind === 'email' ? normalizeEmail(direct) : normalizeTelephone(direct)
     }
 
     if (node.termType === 'NamedNode' || node.termType === 'BlankNode') {
-      const viaValue = store.anyValue(node as any, ns.vcard('value'))
-      if (typeof viaValue === 'string' && viaValue.trim()) {
-        return kind === 'email' ? normalizeEmail(viaValue) : normalizeTelephone(viaValue)
+      const doc = subject.doc()
+      const inDocStatements = store.statementsMatching(node as any, ns.vcard('value'), null, doc)
+      const anyGraphStatements = store.statementsMatching(node as any, ns.vcard('value'))
+
+      for (const statement of [...inDocStatements, ...anyGraphStatements]) {
+        const viaValue = statement.object?.value
+        if (typeof viaValue === 'string' && isExpectedValue(viaValue)) {
+          return kind === 'email' ? normalizeEmail(viaValue) : normalizeTelephone(viaValue)
+        }
       }
     }
   }

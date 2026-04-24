@@ -616,7 +616,7 @@ function focusContactInfoField(form: HTMLFormElement, selector: string): void {
   const nextField = form.querySelector(selector) as HTMLElement | null
   if (!nextField || typeof nextField.focus !== 'function') return
 
-  nextField.scrollIntoView({ block: 'start', behavior: 'auto' })
+  nextField.scrollIntoView({ block: 'nearest', behavior: 'auto' })
   nextField.focus()
   if (nextField instanceof HTMLInputElement || nextField instanceof HTMLTextAreaElement) {
     nextField.select()
