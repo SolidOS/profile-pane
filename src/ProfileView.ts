@@ -16,10 +16,8 @@ import { renderProjectSection } from './sections/projects/ProjectSection'
 import { renderHeadingSection } from './sections/heading/HeadingSection'
 import { renderBioSection } from './sections/bio/BioSection'
 import { renderSocialAccounts } from './sections/social/SocialSection'
+import { SocialPresentation } from './sections/social/types'
 import { renderQRCode } from './sections/qrcode/QRCodeSection'
-
-type ProfileViewModelData = Awaited<ReturnType<typeof presentProfileViewModel>>
-type SocialAccounts = ProfileViewModelData['social']
 
 function getViewerMode(subject: NamedNode): ViewerMode {
   let mode: ViewerMode = 'anonymous'
@@ -31,7 +29,7 @@ function getViewerMode(subject: NamedNode): ViewerMode {
 function renderSidebar(
   store: LiveStore,
   subject: NamedNode,
-  accounts: SocialAccounts,
+  accounts: SocialPresentation,
   skills: SkillDetails[],
   languages: LanguageDetails[],
   contactInfo: ContactInfo,
