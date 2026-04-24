@@ -6,12 +6,12 @@ import { ns } from 'solid-ui'
 import {
   clearPreviousMessage, complain,
   mention
-} from './buttonsHelper'
+} from '../buttonsHelper'
 import {
   addMeToYourFriendsButtonText, friendExistsAlreadyButtonText, friendExistsMessage, friendWasAddedSuccesMessage, logInAddMeToYourFriendsButtonText, userNotLoggedInErrorMessage
-} from './texts'
-import { ViewerMode } from './types'
-import './styles/ProfileCard.css'
+} from '../texts'
+import { ViewerMode } from '../types'
+import '../styles/ProfileCard.css'
 
 let buttonContainer = <HTMLDivElement>document.createElement('section')
 

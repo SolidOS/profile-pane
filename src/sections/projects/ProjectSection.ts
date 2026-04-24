@@ -39,7 +39,7 @@ function renderProjectImage(src: string | undefined, altText: string) {
         />
       `
     : html`
-        <div class="project-card__thumb-fallback flex-center" role="img" aria-label=${altText} tabindex="0">
+        <div class="project-card__thumb-fallback flex-center" role="img" aria-label=${altText}>
           ${altText}
         </div>
       `
@@ -248,7 +248,7 @@ function renderProjectSectionDefault(
             </button>
           </div>
         </header>
-        <div id="projects-panel" class="profile-section-collapsible__content" aria-hidden="true">
+        <div id="projects-panel" class="profile-section-collapsible__content" aria-hidden="true" hidden>
           ${hasProjects
             ? html`
                 <ul id="projects-rail" class="project-card__rail" role="list" aria-label="Known projects">

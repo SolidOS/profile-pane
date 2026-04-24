@@ -174,7 +174,7 @@ function renderContactInfoSectionDefault(
           </button>
         </div>
       </header>
-      <div id="contact-details-panel" class="profile-section-collapsible__content" aria-hidden="true">
+      <div id="contact-details-panel" class="profile-section-collapsible__content" aria-hidden="true" hidden>
         ${contactInfo.phones.length > 0
           ? html`
               <ul class="contact-info__list flex-column" role="list" aria-label="Phone numbers">
@@ -270,7 +270,7 @@ function renderOwnerEmptyContactInfoSection(
           </button>
         </div>
       </header>
-      <div id="contact-details-panel" class="profile-section-collapsible__content" aria-hidden="true">
+      <div id="contact-details-panel" class="profile-section-collapsible__content" aria-hidden="true" hidden>
         ${renderOwnerEmptyContactInfoContent(store, subject, contactInfo, viewerMode, onSaved)}
       </div>
     </section>

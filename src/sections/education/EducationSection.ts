@@ -144,7 +144,7 @@ export function renderEducationSection(
           </button>
         </div>
       </header>
-      <div id="education-panel" class="profile-section-collapsible__content" aria-hidden="true">
+      <div id="education-panel" class="profile-section-collapsible__content" aria-hidden="true" hidden>
         ${hasEducation ? educationCard : html`<p>No education details added yet.</p>`}
       </div>
     </section>

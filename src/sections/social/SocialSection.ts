@@ -37,6 +37,7 @@ export const SocialCard = (
 
     return html`
       <section
+        id="social-media"
         class="socialCard"
         aria-label="Social media"
         data-testid="social-media"
@@ -155,7 +156,7 @@ function renderSocialSectionDefault(
               </button>
             </div>
           </header>
-          <div id="social-panel" class="profile-section-collapsible__content" aria-hidden="true">
+          <div id="social-panel" class="profile-section-collapsible__content" aria-hidden="true" hidden>
             ${renderSocialSectionContent(socialData, viewerMode)}
           </div>
         </section>
@@ -233,7 +234,7 @@ function renderOwnerEmptySocialSection(
           </button>
         </div>
       </header>
-      <div id="social-panel" class="profile-section-collapsible__content" aria-hidden="true">
+      <div id="social-panel" class="profile-section-collapsible__content" aria-hidden="true" hidden>
         ${renderOwnerEmptySocialContent(store, subject, socialData, viewerMode, onSaved)}
       </div>
     </section>

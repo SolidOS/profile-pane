@@ -10,6 +10,7 @@ export function toggleCollapsibleSection(event: Event): void {
   section.setAttribute('data-expanded', String(nextExpanded))
   button.setAttribute('aria-expanded', String(nextExpanded))
   panel.setAttribute('aria-hidden', String(!nextExpanded))
+  panel.hidden = !nextExpanded
 
   if (nextExpanded && typeof window !== 'undefined') {
     window.requestAnimationFrame(() => {

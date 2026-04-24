@@ -1,5 +1,5 @@
 import { render } from 'lit-html'
-import { QRCodeCard } from '../src/QRCodeCard'
+import { QRCodeCard } from '../src/sections/qrcode/QRCodeCard'
 import { NamedNode, graph, parse, sym } from 'rdflib'
 import axe from 'axe-core'
 
@@ -8,22 +8,20 @@ describe('QRCodeCard accessibility', () => {
     const subject = { uri: 'https://example.com', value: 'https://example.com' } as NamedNode
     const container = document.createElement('div')
     document.body.appendChild(container)
-    render(QRCodeCard('#000', '#fff', subject), container)
+    render(QRCodeCard(subject), container)
 
     const results = await axe.run(container)
     expect(results.violations.length).toBe(0)
   })
 
-  it('has tabindex for keyboard accessibility', () => {
+  it('does not create a redundant focus target inside the QR image', () => {
     const subject = { uri: 'https://example.com', value: 'https://example.com' } as NamedNode
     const container = document.createElement('div')
     document.body.appendChild(container)
-    render(QRCodeCard('#000', '#fff', subject), container)
+    render(QRCodeCard(subject), container)
 
-    // Find the inner focusable QR container used for keyboard accessibility
-    const qr = container.querySelector('[data-testid="qrcode-card"] [role="img"][tabindex="0"]')
-    expect(qr).not.toBeNull()
-    expect(qr.getAttribute('tabindex')).toBe('0')
+    const redundantFocusTarget = container.querySelector('[data-testid="qrcode-card"] [tabindex="0"]')
+    expect(redundantFocusTarget).toBeNull()
   })
 
   it('uses linked contact values instead of contact entry node ids in the vCard payload', () => {
