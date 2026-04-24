@@ -16,7 +16,7 @@ export {
   createAddMeToYourFriendsButton,
   saveNewThing,
   checkIfThingExists
-} from './addMeToYourFriends'
+} from './specialButtons/addMeToYourFriends'
 
 async function loadExtendedProfile(store: LiveStore, subject: NamedNode) {
   const otherProfiles = store.each(
