@@ -1,0 +1,209 @@
+/* CSS for the accessible modal dialogs created by dialog.ts */
+/* dialog host */
+#profile-modal {
+  margin: 0;
+  padding: 0;
+  border: none;
+  background: rgba(0, 0, 0, 0.5);
+  max-width: none;
+  max-height: none;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  z-index: 9999;
+}
+
+#profile-modal:not([open]) {
+  display: none;
+}
+
+#profile-modal::backdrop {
+  background: rgba(0, 0, 0, 0.5);
+}
+
+#profile-modal .modal {
+  box-sizing: border-box;
+  margin: 0;
+  background: var(--color-background);
+  padding: var(--spacing-lg);
+  border-radius: var(--border-radius-base);
+  max-width: 100%;
+  width: min(640px, 92vw);
+  max-height: 85vh;
+  overflow: auto;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+}
+
+#profile-modal .modal .modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-lg);
+  margin: calc(-1 * var(--spacing-lg)) calc(-1 * var(--spacing-lg)) var(--spacing-sm) calc(-1 * var(--spacing-lg));
+  padding: var(--spacing-lg);
+  border-radius: var(--border-radius-base, 0.3125rem) var(--border-radius-base, 0.3125rem) 0 0;
+  border: var(--border-width-sm, 0.1rem) solid var(--slate-200, #E2E8F0);
+  background: var(--slate-50, #F8FAFC);
+}
+
+#profile-modal .modal #modal-title {
+  margin: 0;
+}
+
+#profile-modal .modal #modal-header-action > button[aria-label="Close dialog"] {
+  min-height: 2rem;
+  min-width: 2rem;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--color-text);
+  font-size: 1.5rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+#profile-modal .modal #modal-header-action > button[aria-label="Close dialog"]:hover {
+  color: var(--color-primary);
+}
+
+#profile-modal .modal #modal-header-action {
+  display: flex;
+  align-items: center;
+}
+
+#profile-modal .modal .modal__header-action-button {
+  min-height: auto;
+  padding: var(--spacing-xxs);
+  border: none;
+  background: none;
+  color: var(--color-primary);
+  font-weight: 500;
+}
+
+#profile-modal .modal .modal__header-action-button:hover {
+  text-decoration: underline;
+}
+
+/* button container: center buttons horizontally (uses id in markup) */
+#profile-modal #modal-buttons {
+  display: flex;
+  padding: 20px 0 20px 30px;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 15px;
+  align-self: stretch;
+  border-top: var(--border-width-sm, 0.1rem) solid var(--slate-200, #E2E8F0);
+  background: var(--gray-50, #F9FAFB);
+}
+
+#profile-modal #modal-buttons button {
+  width: 10.8rem;
+}
+
+#profile-modal .modal__error-section {
+  margin-top: var(--spacing-sm);
+}
+
+#profile-modal .modal__error-section[hidden] {
+  display: none !important;
+}
+
+
+/* buttons themselves use the shared btn-primary rules */
+#profile-modal .modal button {
+  min-height: var(--min-touch-target);
+  padding: var(--spacing-sm) var(--spacing-md);
+  border: 1px solid var(--color-primary);
+  border-radius: var(--border-radius-base);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--animation-duration) ease;
+}
+
+#profile-modal .modal button.btn-primary {
+  background: var(--color-primary);
+  color: var(--white, #FFF);
+  font-size: var(--font-size-lg, 1.125rem); /* 18px */
+  font-weight: var(--font-weight-bold, 600);
+}
+
+#profile-modal .modal button.btn-primary:hover {
+  background: color-mix(in srgb, var(--color-primary) 90%, black);
+  box-shadow: 0 2px 4px rgba(124, 77, 255, 0.2);
+}
+
+#profile-modal .modal button.btn-primary:active {
+  box-shadow: 0 1px 2px rgba(124, 77, 255, 0.2);
+}
+
+#profile-modal .modal button:disabled {
+  opacity: var(--opacity-disabled, 0.6);
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Keep text-style actions in section headers while preserving footer button styling. */
+#profile-modal .modal .profile__section-header .profile__action-button {
+  min-height: auto;
+  padding: var(--spacing-xxs);
+  border: none;
+  background: none;
+  color: var(--color-primary);
+  font-weight: 500;
+}
+
+#profile-modal .modal .profile__section-header .profile__action-button:hover {
+  text-decoration: underline;
+}
+
+@media (max-width: 640px) {
+  #profile-modal {
+    padding-top: max(var(--spacing-sm), env(safe-area-inset-top));
+    padding-right: var(--spacing-sm);
+    padding-bottom: max(var(--spacing-sm), env(safe-area-inset-bottom));
+    padding-left: var(--spacing-sm);
+    place-items: center;
+  }
+
+  #profile-modal .modal {
+    width: min(420px, calc(100% - 2 * var(--spacing-sm)));
+    max-width: 420px;
+    max-height: calc(100dvh - 2 * var(--spacing-sm));
+    padding: var(--spacing-md);
+    border-radius: calc(var(--border-radius-base) * 0.75);
+    overscroll-behavior: contain;
+    justify-self: center;
+    align-self: center;
+    margin: 0;
+  }
+
+  #profile-modal .modal .modal-header {
+    gap: var(--spacing-md);
+    margin: calc(-1 * var(--spacing-md)) calc(-1 * var(--spacing-md)) var(--spacing-sm) calc(-1 * var(--spacing-md));
+    padding: var(--spacing-md);
+  }
+
+  #profile-modal #modal-buttons {
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: var(--spacing-sm, 0.938rem);
+    padding: var(--spacing-md) 0 0;
+    margin: var(--spacing-md) auto 0;
+    box-sizing: border-box;
+    width: 100%;
+  }
+
+  #profile-modal #modal-buttons button {
+    flex: 0 0 auto;
+    width: 10.8rem;
+    min-width: 8.5rem;
+    padding: var(--spacing-sm) var(--spacing-md);
+    font-size: var(--font-size-md, 1rem);
+  }
+
+}

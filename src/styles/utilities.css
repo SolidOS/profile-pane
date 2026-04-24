@@ -1,32 +1,31 @@
 /* Utility-first CSS classes for layout, spacing, and responsiveness */
-
+/* These utilities are designed specfically for the profile pane */
+/* Utilities that can be shared by all panes should be added to dev-globals.css 
+   and to mashlib repo mash-utilities.css and then updated accross all pane
+   development environments */
 :root {
   --profile-image-size: 3em;
 }
 
-@media (max-width: 1000px) {
-  .profile-grid,
-  .profile-grid * {
-    font-size: 2rem !important;
-  }
-
-  .profile-grid .actionButton,
-  .profile-grid .searchInput,
-  .profile-grid .flatButton,
-  .profile-grid .buttonSection button,
-  .profile-grid .groupButtonsList button {
-    min-height: calc(var(--min-touch-target) + 0.5em) !important;
-    font-size: 2rem !important;
-    padding: 1em 1em !important;
-  }
+.profile-pane-host {
+  display: block;
+  width: 100%;
+  min-width: 100%;
+  max-width: none;
+  box-sizing: border-box;
 }
 
-.actionButton {
-  width: 100%;
-  min-width: 180px;
-  max-width: 320px;
-  box-sizing: border-box;
-  display: inline-block;
+@media (max-width: 768px) {
+  .profile-grid {
+    font-size: clamp(0.9rem, 1.1vw + 0.65rem, 1rem);
+  }
+
+  .profile-grid .profile__action-button,
+  .profile-grid .profile__actions button {
+    min-height: calc(var(--min-touch-target, 44px) + 0.5em) !important;
+    font-size: clamp(0.9rem, 2.1vw, 1rem) !important;
+    padding: 0.75em 0.9em !important;
+  }
 }
 
 /* ===========================================
@@ -35,268 +34,702 @@
 
 .profile-grid {
   display: grid;
-  /* Allow the grid to shrink below 30em on small viewports to avoid overflow */
-  grid-template-columns: repeat(auto-fit, minmax(min(100%, 30em), 1fr));
-  gap: var(--spacing-lg);
-  background: var(--color-background);
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+  gap: var(--spacing-xxs, 0.3125rem);
+  background: var(--color-background, #F8F9FB);
 }
 
-.profile-header,
-.profile-footer {
-  grid-column: 1 / -1;
+.profile-grid > * {
+  min-width: 0;
 }
 
-.center {
-  justify-content: center;
-  align-items: center;
+.profile-pane-root {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  display: block;
+  container-name: profile-pane;
+  container-type: inline-size;
 }
 
-.flex {
+/* Embedded rendering inside SolidOS outline table cells needs a single-column fallback.
+   The outline reserves space for icon/predicate columns, so the available content width
+   is effectively much narrower than the viewport. */
+td.obj .profile-pane-root {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+}
+
+@container profile-pane (max-width: 768px) {
+  .profile-grid {
+    font-size: clamp(0.9rem, 1.1vw + 0.65rem, 1rem);
+  }
+
+  .profile-grid .profile__action-button,
+  .profile-grid .profile__actions button {
+    min-height: calc(var(--min-touch-target, 44px) + 0.5em) !important;
+    font-size: clamp(0.9rem, 2.1vw, 1rem) !important;
+    padding: 0.75em 0.9em !important;
+  }
+}
+
+@container profile-pane (max-width: 768px) {
+  .profile-grid {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-xxs, 0.3125rem);
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    margin: 0 auto;
+    padding-inline: var(--spacing-xxs, 0.3125rem);
+    overflow-x: clip;
+  }
+}
+
+@media (max-width: 768px) {
+  .profile-grid {
+    grid-template-columns: 1fr;
+    gap: var(--spacing-xxs, 0.3125rem);
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    margin: 0 auto;
+    padding-inline: var(--spacing-xxs, 0.3125rem);
+    overflow-x: clip;
+  }
+}
+
+/* END GRID LAYOUT */
+
+.profile__section {
+  width: 100%;
+}
+
+.profile__section--empty {
+  padding: var(--spacing-1xl, 2.5rem) var(--spacing-lg, 1.5625rem); /* 40px 25px */
+  width: 100%;
+}
+
+.profile__section,
+.profile__section--empty,
+.profile__action-button--empty {
+  background: var(--color-card-bg, #fff);
+}
+
+/* Header row layout utility for profile section headers */
+.profile__section-header {
   display: flex;
-}
-.grid {
-  display: grid;
-}
-
-/* Spacing utilities using CSS variables */
-.gap-xs { gap: var(--spacing-xs); }
-.gap-sm { gap: var(--spacing-sm); }
-.gap-md { gap: var(--spacing-md); }
-.gap-lg { gap: var(--spacing-lg); }
-.gap-xl { gap: var(--spacing-xl); }
-
-.mt-xs { margin-top: var(--spacing-xs); }
-.mt-sm { margin-top: var(--spacing-sm); }
-.mt-md { margin-top: var(--spacing-md); }
-.mt-lg { margin-top: var(--spacing-lg); }
-
-.mb-xs { margin-bottom: var(--spacing-xs); }
-.mb-sm { margin-bottom: var(--spacing-sm); }
-.mb-md { margin-bottom: var(--spacing-md); }
-.mb-lg { margin-bottom: var(--spacing-lg); }
-
-.p-xs { padding: var(--spacing-xs); }
-.p-sm { padding: var(--spacing-sm); }
-.p-md { padding: var(--spacing-md); }
-.p-lg { padding: var(--spacing-lg); }
-
-.rounded { border-radius: var(--border-radius-full); }
-.rounded-sm { border-radius: var(--border-radius-base); }
-
-.shadow { box-shadow: var(--box-shadow); }
-.shadow-sm { box-shadow: var(--box-shadow-sm); }
-
-.bg-primary {
-  background: var(--color-primary);
-  color: #fff;
-}
-.bg-card {
-  background: var(--color-card-bg);
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-xs, 0.75rem);
+  width: 100%;
 }
 
-/* Accessibility utilities */
-.sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
+.profile__section-header h2,
+.profile__section-header h3,
+.profile__section-header h4 {
+  margin: 0;
+}
+
+.profile__action-button {
+  width: 100%;
+  min-width: 11.25rem; /* 180px */
+  max-width: 20rem; /* 320px */
+  box-sizing: border-box;
+  display: inline-block;
+}
+
+.profile__action-button--empty {
+  /*padding: 6px 8px; Note: these are the styles from new design
+  min-height: auto;   however they don't meet accessibility guidelines 
+  min-width: 0;       for touch target size */ 
+  width: fit-content;
+  min-width: fit-content;
+  max-width: fit-content;
   white-space: nowrap;
-  border: 0;
+  box-sizing: border-box;
+  border: var(--border-width-sm, 1px) solid var(--color-border-darker, #4A5565);
+  color: var(--slate-700, #314158);
+  font-size: var(--font-size-sm, 0.875rem); /* 14px */
+  font-weight: var(--font-weight-medium, 500);
+  line-height: var(--line-height-tight, 1.4);
+}
+.profile__empty-state-message {
+  color: #62748E;
+  text-align: center;
+  font-size: var(--font-size-xs, 0.813rem); /* 13px */
+  font-weight: var(--font-weight-normal, 400);
+  line-height: var(--line-height-tight, 1.4); /* 140% from design 18.2px */
+}
+.contact-info__icon-wrapper {
+  width: 36px;
+  height: 36px;
+  padding: 0 0.575rem; /* 9.2px - from design, but also ensures icons are centered in the circle */
+  flex-shrink: 0;
 }
 
-.min-touch-target {
-  min-height: var(--min-touch-target);
-  min-width: var(--min-touch-target);
+.contact-info__icon {
+  width: var(--icon-xxs, 1rem); /* 16px */
+  height: var(--icon-xxs, 1rem); /* 16px */
+  flex-shrink: 0;
+  stroke-width: 1.333px;
+  stroke: #90A1B9;
 }
 
-/* Enhanced accessibility utilities */
-.visually-hidden {
-  position: absolute !important;
-  width: 1px !important;
-  height: 1px !important;
-  padding: 0 !important;
-  margin: -1px !important;
-  overflow: hidden !important;
-  clip: rect(0, 0, 0, 0) !important;
-  white-space: nowrap !important;
-  border: 0 !important;
+.contact-info__contact-point-value {
+  color: var(--slate-800, #1D293D);
+  font-size: var(--font-size-sm, 0.875rem); /* 14px */
+  font-weight: var(--font-weight-bold, 600);
+  white-space: normal !important;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
-.visually-hidden.focusable:focus,
-.visually-hidden.focusable:active {
-  position: static !important;
-  width: auto !important;
-  height: auto !important;
-  padding: inherit !important;
-  margin: inherit !important;
-  overflow: visible !important;
-  clip: auto !important;
-  white-space: inherit !important;
+.contact-info__contact-point-type {
+  color: var(--slate-500, #62748E);
+  font-size: var(--font-size-xxs, 0.75rem); /* 12px */
+  font-weight: var(--font-weight-md, 500);
 }
 
-/* Skip links utility */
-.skip-links {
-  position: absolute;
-  top: -100px;
-  left: 0;
-  z-index: 1000;
+.contact-info__address {
+  color: var(--slate-800, #1D293D);
+  font-size: var(--font-size-sm, 0.875rem); /* 14px */
+  font-weight: var(--font-weight-bold, 600);
 }
 
-.skip-links a {
-  position: absolute;
-  left: 6px;
-  top: 6px;
-  padding: var(--spacing-sm);
-  background: var(--color-primary);
-  color: white;
-  text-decoration: none;
-  border-radius: var(--border-radius-base);
-}
-
-.skip-links a:focus {
-  top: 6px;
-}
-
-.reduced-motion {
-  animation: none !important;
-  transition: none !important;
-}
-
-/* Focus management */
-.focus-ring {
-  outline: 2px solid var(--color-primary);
-  outline-offset: 2px;
-}
-
-.no-focus-ring {
-  outline: none;
-}
-
-.no-focus-ring:focus-visible {
-  outline: none;
-  box-shadow: none;
-}
-
-/* ARIA live regions */
-.live-region {
-  position: absolute;
-  left: -10000px;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-}
-
-/* Note: Use aria-live="polite" or aria-live="assertive" HTML attributes with .live-region */
-
-/* Text scaling utilities */
-.text-scale-friendly {
-  line-height: 1.5;
-  max-width: 70ch; /* Optimal reading length */
-}
-
-/* Text accessibility utilities */
-.text-readable {
-  line-height: var(--line-height-base);
-  max-width: 65ch;
-}
-
-.text-lg {
-  font-size: var(--font-size-lg);
-  line-height: var(--line-height-base);
-}
-
-.text-small {
-  font-size: max(var(--font-size-sm), var(--min-font-size));
-  line-height: var(--min-line-height);
-}
-
-.text-contrast-high {
-  color: var(--color-text);
-  font-weight: 600;
-}
-
-:focus-visible {
-  outline: var(--focus-ring-width) solid var(--color-primary);
-  outline-offset: 2px;
-  box-shadow: 0 0 0 1px var(--color-background);
-}
-
-:focus:not(:focus-visible) {
-  outline: none;
-  box-shadow: none;
-}
-
-/* Prevent labels from appearing focusable to keyboard users. */
-label:focus,
-label:focus-visible {
-  outline: none !important;
-  box-shadow: none !important;
-}
-
-/* Better focus for text elements */
-.focusable-text:focus {
-  background-color: rgba(124, 77, 255, 0.1);
-  outline: 2px solid var(--color-primary);
-  outline-offset: 2px;
-  border-radius: 2px;
-}
-
-/* High contrast text */
-.high-contrast {
-  color: var(--color-text);
-  background: var(--color-background);
-  border: 1px solid var(--color-border-pale);
-}
-
-/* ===========================================
-   CONSOLIDATED COMPONENT PATTERNS
-   =========================================== */
-
-/* Primary Button - used by ChatWithMe, ProfileCard */
-.btn-primary {
-  min-height: var(--min-touch-target);
-  padding: var(--spacing-sm) var(--spacing-md);
-  border: 1px solid var(--color-primary);
-  border-radius: var(--border-radius-base);
-  background: var(--color-primary);
-  color: white;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all var(--animation-duration) ease;
-}
-
-.btn-primary:hover {
-  background: color-mix(in srgb, var(--color-primary) 90%, black);
-  box-shadow: 0 2px 4px rgba(124, 77, 255, 0.2);
-}
-
-.btn-primary:active {
-  box-shadow: 0 1px 2px rgba(124, 77, 255, 0.2);
-}
-
-.btn-primary:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-  transform: none;
-}
-
-/* Action Button Focus - used by ChatWithMe, ProfileCard */
-.action-button-focus:focus,
-.action-button-focus:focus-visible {
-  outline: 3px solid var(--color-primary) !important;
-  outline-offset: 2px !important;
-  box-shadow: 0 0 0 2px var(--color-background), 0 0 0 5px rgba(124, 77, 255, 0.25) !important;
-  z-index: 1;
-}
-
-/* List Reset - used by FriendList, SocialCard, nav */
-.list-reset {
+.contact-info__list {
   list-style: none;
+  margin: 0;
+  padding: 0 0 var(--spacing-2xs, 0.625rem) 0;
+  gap: var(--spacing-2xs, 0.625rem);
+}
+
+.contact-info__list:last-of-type {
+  padding-bottom: 0;
+}
+
+.contact-info__list + .contact-info__list {
+  margin-top: var(--spacing-2xs, 0.625rem);
+}
+
+.contact-info__item {
+  margin-inline-start: 0;
+}
+
+.contact-info__empty-icon svg {
+  width: var(--icon-md, 2.5rem); /* 40px */
+  height: var(--icon-md, 2.5rem); /* 40px */
+  display: block;
+}
+
+.contact-info__empty-icon svg path {
+  stroke-width: 0.25rem; /* 4px */
+  stroke: #E5E7EB;
+}
+
+.contact-info__empty-message {
+  color: #9CA3AF;
+  text-align: center;
+  font-size: var(--font-size-xs, 0.813rem); /* 13px */
+  font-weight: var(--font-weight-normal, 400);
+  line-height: var(--line-height-tight, 1.4); /* design says 1.2 */
+}
+
+.contact-info__empty-icon-wrapper {
+  width: 3rem; /* 48px */
+  flex: 1 0 0;
+}
+.profile__empty-state-content {
+  gap: var(--spacing-2xs, 0.625rem); /* 10px */
+}
+
+.profile__empty-state-content > h2,
+.profile__empty-state-content > p {
+  margin: 0;
+}
+
+/* SAM - generated by ai below need to check design and change */
+.profile__action-button--empty:hover {
+  background: var(--color-primary, #7C4DFF);
+  border-color: var(--color-primary, #7C4DFF);
+  color: white;
+}
+
+.profile__add-more-content {
+  gap: var(--spacing-xxs, 0.3125rem);
+}
+
+.profile__add-more-icon {
+  width: var(--icon-xxxs, 0.75rem); /* 12px */
+  height: var(--icon-xxxs, 0.75rem); /* 12px */
+  line-height: 0;
+  flex: 0 0 auto;
+}
+
+.profile__add-more-icon svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.skills__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  align-items: flex-start;
+  gap: 0.5rem; /* 8px */
+}
+
+.skills__item {
+  gap: 0.2rem;
+}
+
+.skills__item-label {
+  color: var(--slate-900, #0F172B);
+  font-size: var(--font-size-sm, 0.875rem); /* 14px */
+  font-weight: var(--font-weight-md, 500);
+  line-height: 1.2;
+}
+
+.skills__remove-button {
+  border: none;
+  background: none;
+  cursor: pointer;
   padding: 0;
   margin: 0;
+  line-height: 1;
+}
+
+.languages__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.languages__item-label {
+  color: var(--gray-900, #101828);
+  font-size: var(--font-size-md, 1rem); /* 16px */
+  font-weight: var(--font-weight-md, 500);
+}
+
+.languages__empty-icon {
+  width: var(--icon-xs, 1.5rem); /* 24px new design uses this */
+  height: var(--icon-xs, 1.5rem); /* 24px new design uses this */
+  flex-shrink: 0;
+}
+/* Add-me-to-friends button style shared across profile sections. */
+.profile__btn-friends {
+  width: auto;
+  min-width: 0;
+  max-width: none;
+  padding: 0.375rem 0.75rem;
+  gap: var(--spacing-xxs, 0.3125rem);
+  border-radius: var(--border-radius-md, 0.5rem);
+  border: 1px solid var(--color-primary, #7C4DFF);
+  background: transparent;
+  color: var(--color-primary, #7C4DFF);
+}
+
+/* Text-style action button utility (used for section header/edit actions). */
+.profile-action-text {
+  width: auto;
+  min-width: 0;
+  max-width: none;
+  padding: var(--spacing-xxs, 0.3125rem);
+  border: none;
+  background: none;
+  color: var(--color-primary, #7C4DFF);
+  cursor: pointer;
+  font-size: var(--font-size-sm, 0.875rem);
+}
+
+.profile-action-text:hover {
+  text-decoration: underline;
+}
+
+.profile-section-collapsible {
+  display: block;
+}
+
+.profile-section-collapsible__header {
+  margin-bottom: 0;
+}
+
+.profile-section-collapsible__actions {
+  gap: var(--spacing-xs, 0.75rem);
+  margin-top: -0.25rem;
+}
+
+.profile-section-collapsible__edit-button {
+  min-width: 0;
+}
+
+.profile-section-collapsible__edit-icon {
+  display: none;
+}
+
+.profile-section-collapsible__actions > button.inline-flex-row {
+  display: none !important;
+  min-height: auto;
+  min-width: auto;
+  padding: var(--spacing-xxs, 0.3125rem);
+  border: none;
+  background: none;
+  color: var(--color-text, #1A1A1A);
+  cursor: pointer;
+}
+
+.profile-section-collapsible__chevron {
+  display: inline-block;
+  flex: 0 0 auto;
+  transition: transform var(--animation-duration, 0.2s) ease;
+}
+
+.profile-section-collapsible__content {
+  margin-top: var(--spacing-2xs, 0.625rem);
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+.profile-section-collapsible__content > :first-child {
+  margin-top: 0;
+}
+
+.profile-section-collapsible__content > :last-child {
+  margin-bottom: 0;
+}
+
+.bioCard,
+.bioSection,
+.socialCard,
+.socialList,
+.skills__list,
+.languages__list,
+.contact-info__list {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+@media (min-width: 769px) {
+  .profile-section-collapsible > .profile-section-collapsible__content {
+    display: block;
+  }
+
+  .profile-section-collapsible__edit-label svg,
+  .profile__action-icon svg {
+    width: 0.875rem;
+    height: 0.875rem;
+  }
+
+  .profile-section-collapsible__edit-label svg path,
+  .profile__action-icon svg path {
+    fill: var(--color-primary, #7C4DFF);
+  }
+
+  .profile-section-collapsible__edit-label {
+    display: inline;
+    transform: translateY(-0.125rem);
+  }
+
+  .profile__add-more-icon {
+    transform: translateY(-0.125rem);
+  }
+
+  .profile-section-collapsible__edit-icon {
+    display: none;
+  }
+}
+
+@media (max-width: 576px) {
+  .profile-grid .profile__section-header h2,
+  .profile-grid .profile__section-header h3,
+  .profile-grid .profile__section-header h4,
+  .profile-grid .profile__empty-state-content > h2,
+  .profile-grid .cvSection h3,
+  .profile-grid .profile__name,
+  .profile-grid .friends-pane__header-name {
+    font-family: inherit !important;
+  }
+
+  .profile-section-collapsible--inline-mobile-actions > .profile-section-collapsible__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+  }
+
+  .profile-section-collapsible--inline-mobile-actions > .profile-section-collapsible__header h2 {
+    margin: 0;
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  .profile-section-collapsible--inline-mobile-actions .profile-section-collapsible__actions {
+    display: inline-flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.25rem;
+    margin-top: 0;
+    flex: 0 0 auto;
+  }
+
+  .profile-section-collapsible--inline-mobile-actions .profile-section-collapsible__edit-button {
+    display: inline-flex !important;
+    order: 1;
+  }
+
+  .profile-section-collapsible--inline-mobile-actions .profile-section-collapsible__edit-button:active,
+  .profile-section-collapsible--inline-mobile-actions .profile-section-collapsible__edit-button:focus,
+  .profile-section-collapsible--inline-mobile-actions .profile-section-collapsible__edit-button:focus-visible {
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+    background: transparent !important;
+  }
+
+  .profile-section-collapsible--inline-mobile-actions .profile-section-collapsible__actions > button.inline-flex-row {
+    order: 2;
+  }
+
+  .profile__section-header h2,
+  .profile__section-header h3,
+  .profile__section-header h4 {
+    font-size: var(--font-size-lg, 1.125rem) !important;
+    line-height: 1.2 !important;
+  }
+
+  .profile-grid .profile__empty-state-content > h2,
+  .profile-grid .cvSection h3 {
+    font-size: var(--font-size-lg, 1.125rem) !important;
+    line-height: 1.2 !important;
+  }
+
+  .profile-grid .profile__name,
+  .profile-grid .friends-pane__header-name {
+    font-size: 1.5rem !important;
+    line-height: 1.15 !important;
+  }
+
+  .profile-grid .profile__pronouns,
+  .profile-grid .friends-pane__header-pronouns,
+  .profile-grid .friends-pane__friends-pronouns {
+    font-family: inherit !important;
+    font-size: 0.6875rem !important;
+    line-height: 1.1 !important;
+  }
+
+  .profile-section-collapsible[data-expanded="false"] .profile-section-collapsible__content {
+    display: none;
+  }
+
+  .profile-section-collapsible__actions.flex-column {
+    align-items: flex-end;
+    gap: 0.25rem;
+  }
+
+  /* Keep empty-section mobile header controls in the same order as regular sections: toggle first, add/edit below. */
+  .profile__section--empty .profile-section-collapsible__actions > button.inline-flex-row {
+    order: 1;
+  }
+
+  .profile__section--empty .profile-section-collapsible__actions > .profile-section-collapsible__edit-button {
+    order: 2;
+  }
+
+  .profile-section-collapsible[data-expanded="true"] .profile-section-collapsible__chevron {
+    transform: rotate(180deg);
+  }
+
+  .profile-section-collapsible__edit-label {
+    display: none !important;
+  }
+
+  .profile-section-collapsible__edit-icon {
+    display: inline;
+  }
+
+  /* Empty-state action buttons use icon-only mobile controls (plus sign). */
+  .profile__section--empty .profile-section-collapsible__edit-label {
+    display: none !important;
+  }
+
+  .profile__section--empty .profile-section-collapsible__edit-icon {
+    display: inline !important;
+  }
+
+  .profile-section-collapsible .profile-section-collapsible__edit-button {
+    display: none !important;
+    order: 2;
+  }
+
+  .profile-section-collapsible[data-expanded="true"] .profile-section-collapsible__edit-button {
+    display: inline-flex !important;
+  }
+  /* Reassert toggle button layout in collapsible action rows on mobile 
+  so utility resets never hide/misalign the control. */
+  .profile-section-collapsible__actions > button.inline-flex-row {
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .profile-section-collapsible__edit-icon--add svg path {
+    fill: #1E2939 !important;
+    stroke: #1E2939 !important;
+  }
+
+  .profile-section-collapsible__edit-icon--projects svg path {
+    stroke-width: 1.714px !important;
+    stroke: var(--gray-800, #1E2939) !important;
+    fill: none !important;
+  }
+
+}
+
+@container profile-pane (max-width: 576px) {
+  .profile-grid .profile__section-header h2,
+  .profile-grid .profile__section-header h3,
+  .profile-grid .profile__section-header h4,
+  .profile-grid .profile__empty-state-content > h2,
+  .profile-grid .cvSection h3,
+  .profile-grid .profile__name,
+  .profile-grid .friends-pane__header-name {
+    font-family: inherit !important;
+  }
+
+  .profile-section-collapsible--inline-mobile-actions > .profile-section-collapsible__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+  }
+
+  .profile-section-collapsible--inline-mobile-actions > .profile-section-collapsible__header h2 {
+    margin: 0;
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  .profile-section-collapsible--inline-mobile-actions .profile-section-collapsible__actions {
+    display: inline-flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.25rem;
+    margin-top: 0;
+    flex: 0 0 auto;
+  }
+
+  .profile-section-collapsible--inline-mobile-actions .profile-section-collapsible__edit-button {
+    order: 1;
+  }
+
+  .profile-section-collapsible--inline-mobile-actions .profile-section-collapsible__edit-button:active,
+  .profile-section-collapsible--inline-mobile-actions .profile-section-collapsible__edit-button:focus,
+  .profile-section-collapsible--inline-mobile-actions .profile-section-collapsible__edit-button:focus-visible {
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+    background: transparent !important;
+  }
+
+  .profile-section-collapsible--inline-mobile-actions .profile-section-collapsible__actions > button.inline-flex-row {
+    order: 2;
+  }
+
+  .profile__section-header h2,
+  .profile__section-header h3,
+  .profile__section-header h4 {
+    font-size: var(--font-size-lg, 1.125rem) !important;
+    line-height: 1.2 !important;
+  }
+
+  .profile-grid .profile__empty-state-content > h2,
+  .profile-grid .cvSection h3 {
+    font-size: var(--font-size-lg, 1.125rem) !important;
+    line-height: 1.2 !important;
+  }
+
+  .profile-grid .profile__name,
+  .profile-grid .friends-pane__header-name {
+    font-size: 1.5rem !important;
+    line-height: 1.15 !important;
+  }
+
+  .profile-grid .profile__pronouns,
+  .profile-grid .friends-pane__header-pronouns,
+  .profile-grid .friends-pane__friends-pronouns {
+    font-family: inherit !important;
+    font-size: 0.6875rem !important;
+    line-height: 1.1 !important;
+  }
+
+  .profile-section-collapsible[data-expanded="false"] .profile-section-collapsible__content {
+    display: none;
+  }
+
+  .profile-section-collapsible__actions.flex-column {
+    align-items: flex-end;
+    gap: 0.25rem;
+  }
+
+  .profile__section--empty .profile-section-collapsible__actions > button.inline-flex-row {
+    order: 1;
+  }
+
+  .profile__section--empty .profile-section-collapsible__actions > .profile-section-collapsible__edit-button {
+    order: 2;
+  }
+
+  .profile-section-collapsible[data-expanded="true"] .profile-section-collapsible__chevron {
+    transform: rotate(180deg);
+  }
+
+  .profile-section-collapsible__edit-label {
+    display: none !important;
+  }
+
+  .profile-section-collapsible__edit-icon {
+    display: inline;
+  }
+
+  .profile__section--empty .profile-section-collapsible__edit-label {
+    display: none !important;
+  }
+
+  .profile__section--empty .profile-section-collapsible__edit-icon {
+    display: inline !important;
+  }
+
+  .profile-section-collapsible .profile-section-collapsible__edit-button {
+    display: none !important;
+    order: 2;
+  }
+
+  .profile-section-collapsible[data-expanded="true"] .profile-section-collapsible__edit-button {
+    display: inline-flex !important;
+  }
+
+  .profile-section-collapsible__actions > button.inline-flex-row {
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .profile-section-collapsible__edit-icon--add svg path {
+    fill: #1E2939 !important;
+    stroke: #1E2939 !important;
+  }
+
+  .profile-section-collapsible__edit-icon--projects svg path {
+    stroke-width: 1.714px !important;
+    stroke: var(--gray-800, #1E2939) !important;
+    fill: none !important;
+  }
 }
 
 /* Zebra Striping - used by FriendList, StuffCard tables */
@@ -305,54 +738,3 @@ label:focus-visible {
   background-color: rgba(0, 0, 0, 0.02);
 }
 
-/* Section Title - primary colored heading */
-.section-title {
-  font-size: 1.25em;
-  font-weight: 600;
-  color: var(--color-primary);
-  margin: 0;
-}
-
-/* Text Overflow - used by ProfileCard, SocialCard */
-.text-truncate {
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  overflow: hidden;
-}
-
-.text-wrap-anywhere {
-  overflow-wrap: anywhere;
-  word-break: break-word;
-}
-
-/* Loading Text - primary colored centered loading indicator */
-.loading-text {
-  color: var(--color-primary);
-  text-align: center;
-  margin: var(--spacing-md) 0;
-}
-
-/* Centered Section - flex column with center alignment */
-.section-centered {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-/* Card Section Background */
-.section-bg {
-  background: var(--color-section-bg);
-  border-radius: var(--border-radius-full);
-  box-shadow: var(--box-shadow);
-  padding: var(--spacing-md);
-}
-
-
-/* Transparent button override (for solid-ui integration) */
-.btn-transparent {
-  background-color: transparent;
-}
-
-.btn-transparent:hover {
-  background-color: transparent;
-}

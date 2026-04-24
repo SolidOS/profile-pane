@@ -1,10 +1,10 @@
+/** Project-local: currently unused component. Keep temporarily; do not add new usage. */
 import { DataBrowserContext } from 'pane-registry'
 import { NamedNode } from 'rdflib'
 import { ns, widgets, icons } from 'solid-ui'
 import { communitiesHeadingText } from '../texts'
 import { store } from 'solid-logic'
 import '../styles/editProfile.css'
-import '../styles/profileRDFFormsEnforced.css'
 import {
   clearPreviousMessage, complain
 } from '../buttonsHelper'

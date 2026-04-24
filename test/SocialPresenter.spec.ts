@@ -1,5 +1,5 @@
-import { presentSocial } from '../src/SocialPresenter'
-import { presentCV} from '../src/CVPresenter'
+import { presentSocial } from '../src/sections/social/selectors'
+import { presentCV } from '../src/sections/resume/selectors'
 import { blankNode, sym, parse } from 'rdflib'
 import { ns } from 'solid-ui'
 import { store } from 'solid-logic'
@@ -15,8 +15,7 @@ describe('CVPresenter', () => {
 
   it.skip('presents minimum available info', () => {
     const result = presentCV(jane, store)
-    expect(result.rolesByType).toBeNull()
-    expect(result.skills).toBeNull()
+    expect(result).toEqual([])
   })
 
   it.skip('presents minimum available info', () => {
@@ -24,7 +23,8 @@ describe('CVPresenter', () => {
     store.add(jane, ns.org('member'), organization, doc)
     store.add(organization, ns.schema('name'), 'Inrupt', doc)
     const result = presentCV(jane, store)
-    expect(result.rolesByType).toBe('Inrupt')
+    expect(result).toHaveLength(1)
+    expect(result[0].orgName).toBe('Inrupt')
   })
 })
 

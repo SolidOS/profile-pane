@@ -6,11 +6,14 @@ import { authn } from 'solid-logic'
 import { asyncReplace } from 'lit-html/directives/async-replace.js'
 import { chatWithMeButtonText, logInToChatWithMeButtonText, loadingMessage } from './texts'
 import { checkIfAnyUserLoggedIn, complain } from './buttonsHelper'
+import { ViewerMode } from './types'
 import './styles/ChatWithMe.css'
+
 
 export const ChatWithMe = (
   subject: NamedNode,
-  context: DataBrowserContext
+  context: DataBrowserContext,
+  viewerMode: ViewerMode
 ): TemplateResult => {
   const logic = context.session.logic
   const longChatPane = context.session.paneRegistry.byName('long chat')
@@ -33,7 +36,7 @@ export const ChatWithMe = (
     try {
       yield html`
       <div class="buttonSubSection">
-        <div class="actionButton loading-text center" role="status" aria-live="polite">
+        <div class="profile__action-button loading-text center" role="status" aria-live="polite">
           ${loadingMessage.toUpperCase()}
         </div>
       </div>
@@ -93,7 +96,7 @@ export const ChatWithMe = (
       description.className = 'sr-only'
       description.textContent = 'Start a new conversation or sign in to continue existing chat'
       
-      button.classList.add('actionButton', 'btn-primary', 'action-button-focus')
+      button.classList.add('profile__action-button', 'btn-primary', 'action-button-focus')
       chatContainer.appendChild(button)
       chatContainer.appendChild(description)
       yield chatContainer

@@ -1,3 +1,4 @@
+/** Project-local: currently unused component. Keep temporarily; do not add new usage. */
 /**
  * Profile Editing App Pane
  *
@@ -16,7 +17,6 @@ import { EditFriendsSection } from './EditFriendsCard'
 import { EditSocialSection } from './EditSocialCard'
 import { EditProfileCommunitiesSection } from './EditCommunitiesCard'
 import '../styles/utilities.css'
-import '../styles/profileRDFFormsEnforced.css'
 import { EditCVSection } from './EditCVCard'
 import { EditOtherPreferencesSection } from './EditOtherPreferences'
 import { skipLabelsFromTabbing } from '../rdfFormsHelper'

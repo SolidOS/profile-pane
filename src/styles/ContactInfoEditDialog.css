@@ -1,0 +1,153 @@
+.profile__edit-form--contact-info .profile-edit-dialog__section {
+  gap: 0;
+}
+
+.profile__edit-form--contact-info .profile-edit-dialog__section + .profile-edit-dialog__section {
+  border-top: var(--border-width-sm, 0.1rem) solid var(--slate-200, #E2E8F0);
+  padding-top: var(--spacing-xs, 0.75rem);
+}
+
+.profile__edit-form--contact-info .profile__section-header {
+  margin-bottom: 0;
+}
+
+.profile__edit-form--contact-info .profile-edit-dialog__section fieldset {
+  margin-top: 0.25rem;
+  gap: var(--spacing-xs, 0.75rem);
+}
+
+.profile__edit-form--contact-info .profile-edit-dialog__section-heading {
+  margin: 0;
+  color: var(--gray-700, #364153);
+  font-size: var(--font-size-md, 1rem); /* 16px */
+  font-weight: var(--font-weight-md, 500);
+  line-height: normal;
+}
+
+.profile-edit-dialog__phone-prefix-field {
+  flex: 0 0 6.1rem;
+  margin: 0;
+}
+
+.phonePrefixSelect,
+.profile-edit-dialog__phone-local-input {
+  border: 0 !important;
+  background: transparent;
+  min-height: calc(var(--min-touch-target, 44px) - 2px);
+  height: calc(var(--min-touch-target, 44px) - 2px);
+}
+
+.phonePrefixSelect {
+  padding: 0 0.2rem 0 0;
+}
+
+.phonePrefixSelect:focus,
+.profile-edit-dialog__phone-local-input:focus {
+  outline: none;
+}
+
+.profile-edit-dialog__phone-type-row {
+  flex: 0 0 7.5rem;
+}
+
+.profile-edit-dialog__row--contact-point {
+  max-width: 100%;
+  width: 100%;
+  border: 0;
+  outline: 0;
+  box-shadow: none;
+}
+
+.profile-edit-dialog__section fieldset > .profile-edit-dialog__row--contact-point {
+  margin-bottom: var(--spacing-xs, 0.75rem);
+}
+
+.profile-edit-dialog__section fieldset > .profile-edit-dialog__row--contact-point:last-child {
+  margin-bottom: var(--spacing-sm, 0.9375rem);
+}
+
+.profile-edit-dialog__row--contact-point > .profile-edit-dialog__field,
+.profile-edit-dialog__row--contact-point > .profile-edit-dialog__field-type,
+.profile-edit-dialog__row--contact-point > .profile-edit-dialog__field > .label {
+  border: 0;
+  outline: 0;
+  box-shadow: none;
+  background: transparent;
+}
+
+.profile-edit-dialog__row--contact-point > .profile-edit-dialog__field {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.profile-edit-dialog__row--contact-point > .profile-edit-dialog__field > .label {
+  display: block;
+  width: 100%;
+}
+
+.profile-edit-dialog__row--contact-point > .profile-edit-dialog__field-type.profile-edit-dialog__phone-type-row {
+  flex: 0 0 6.5rem;
+  width: 6.5rem;
+  min-width: 6.5rem;
+}
+
+.profile-edit-dialog__row--contact-point > .profile-edit-dialog__field-type.emailTypeRow {
+  flex: 0 0 6.5rem;
+  width: 6.5rem;
+  min-width: 6.5rem;
+}
+
+.profile-edit-dialog__row--address-header.profile-edit-dialog__row--full {
+  max-width: 100%;
+  width: 100%;
+  align-items: center;
+}
+
+.profile-edit-dialog__row--address-header.profile-edit-dialog__row--full .profile-edit-dialog__actions {
+  align-self: center;
+}
+
+.profile-edit-dialog__row--address-header.profile-edit-dialog__row--full .profile-edit-dialog__delete-button,
+#profile-modal .modal .profile-edit-dialog__row--address-header.profile-edit-dialog__row--full button.profile-edit-dialog__delete-button {
+  min-height: 1.75rem;
+  min-width: 1.75rem;
+}
+
+.profile-edit-dialog__address-title {
+  margin: 0;
+  font-size: var(--font-size-sm, 0.875rem);
+  font-weight: var(--font-weight-medium, 500);
+  line-height: var(--line-height-base, 1.5);
+}
+
+@media (max-width: 640px) {
+  .profile-edit-dialog__row--contact-point {
+    flex-direction: row;
+    align-items: center;
+    flex-wrap: nowrap;
+    gap: var(--spacing-2xs, 0.625rem);
+  }
+
+  .profile-edit-dialog__row--contact-point > .profile-edit-dialog__field {
+    flex: 1 1 0;
+    min-width: 0;
+  }
+
+  .profile-edit-dialog__row--contact-point > .profile-edit-dialog__field-type.profile-edit-dialog__phone-type-row,
+  .profile-edit-dialog__row--contact-point > .profile-edit-dialog__field-type.emailTypeRow {
+    flex: 0 0 5.5rem;
+    width: 5.5rem;
+    min-width: 5.5rem;
+    max-width: 5.5rem;
+  }
+
+  .profile-edit-dialog__row--contact-point > .profile-edit-dialog__actions {
+    flex: 0 0 auto;
+    margin-left: 0;
+    justify-content: flex-end;
+  }
+
+  .profile-edit-dialog__phone-prefix-field {
+    flex: 0 0 5.75rem;
+  }
+}

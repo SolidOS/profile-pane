@@ -17,6 +17,7 @@ module.exports = {
   },
   roots: ['<rootDir>/src', '<rootDir>/test', '<rootDir>/__mocks__'],
   moduleNameMapper: {
+    '\\.(png|jpe?g|gif|webp|avif|svg)$': '<rootDir>/__mocks__/fileMock.js',
     '\\.module\\.css$': 'identity-obj-proxy',
     '\\.css$': '<rootDir>/__mocks__/fileMock.js',
     '^SolidLogic$': 'solid-logic',

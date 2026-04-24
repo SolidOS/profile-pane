@@ -1,0 +1,23 @@
+import { Node } from 'rdflib'
+import { MutationOps, RowStatus } from '../shared/types'
+
+export interface SocialFields {
+  name?: string
+  icon?: string
+  homepage?: string 
+}
+
+export interface Account extends SocialFields {
+  entryNode: Node
+}
+
+export interface SocialPresentation { 
+  accounts: Account[]
+}
+
+export interface SocialRow extends SocialFields {
+  entryNode: string
+  status: RowStatus
+}
+
+export type SocialMutationPlan = MutationOps<SocialRow>

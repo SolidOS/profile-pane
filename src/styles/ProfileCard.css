@@ -5,33 +5,6 @@
   /* Component container */
 }
 
-.image {
-  width: 160px;
-  height: 160px;
-  border-radius: 50%;
-  object-fit: cover;
-  margin-bottom: var(--spacing-sm);
-  box-shadow: var(--box-shadow-sm);
-  border: 3px solid var(--color-primary);
-  background: var(--color-card-bg);
-  box-sizing: border-box;
-}
-
-.image-alt {
-  width: 160px;
-  height: 160px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  margin-bottom: var(--spacing-sm);
-  box-shadow: var(--box-shadow-sm);
-  border: 3px solid var(--color-primary);
-  background: var(--color-card-bg);
-  box-sizing: border-box;
-  color: var(--color-text-secondary);
-}
-
 .name {
   font-size: var(--font-size-xl);
   font-weight: 700;
@@ -42,19 +15,9 @@
   letter-spacing: var(--letter-spacing-wide);
 }
 
-.intro {
+.profile__actions {
   color: var(--color-text-secondary);
-  font-size: var(--font-size-base);
-  line-height: var(--line-height-base);
-  margin-bottom: var(--spacing-xs);
-  max-width: 40ch;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.buttonSection {
-  color: var(--color-text-secondary);
-  font-size: 1em;
+  font-size: var(--font-size-base, 1rem);
   margin-bottom: var(--spacing-xs);
 }
 
@@ -75,10 +38,15 @@
   box-sizing: border-box;
 }
 
-.qrCodeSection {
-  color: var(--color-text-secondary);
+.profile__qr-code {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  align-self: stretch;
+  /* OLD color: var(--color-text-secondary);
   font-size: 1em;
-  margin-bottom: var(--spacing-xs);
+  margin-bottom: var(--spacing-xs); */
 }
 
 .details {

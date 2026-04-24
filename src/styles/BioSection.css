@@ -1,0 +1,77 @@
+.bioDescriptionWrap {
+	margin: 0;
+	position: relative;
+	isolation: isolate;
+}
+
+.bioDescriptionText {
+	margin: 0;
+	width: 100%;
+	max-width: none;
+	display: -webkit-box;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 3;
+	line-clamp: 3;
+	line-height: var(--line-height-base, 1.5);
+	position: relative;
+	overflow: hidden;
+}
+
+.bioDescriptionText:not(.isExpanded)::after {
+	content: '';
+	position: absolute;
+	right: 0;
+	top: calc(100% - 1.5em);
+	width: 50%;
+	height: 1.5em;
+	background: var(--color-card-bg);
+	pointer-events: none;
+}
+
+.bioDescriptionText.isExpanded {
+	display: block;
+	-webkit-line-clamp: unset;
+	line-clamp: unset;
+	overflow: visible;
+}
+
+.bioDescriptionToggle {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	background: none;
+	color: var(--color-primary);
+	cursor: pointer;
+	font: inherit;
+	font-size: var(--font-size-sm);
+	line-height: var(--line-height-base, 1.5);
+	position: absolute;
+	left: 50%;
+	bottom: 0;
+	background-color: var(--color-card-bg);
+	white-space: nowrap;
+	min-height: auto;
+	min-width: auto;
+	padding-left: 0;
+	padding-right: 0;
+	padding-top: 0;
+	padding-bottom: 0;
+	margin-left: 0;
+	margin-right: 0;
+	z-index: 0;
+}
+
+.bioDescriptionWrap .bioDescriptionText:not(.isExpanded) + .bioDescriptionToggle {
+	top: calc(100% - 1.5em + 0.28em - 12px);
+	bottom: auto;
+	transform: translateY(7px);
+}
+
+.bioDescriptionText.isExpanded + .bioDescriptionToggle {
+	position: static;
+	display: inline;
+	padding-left: 0;
+	top: auto;
+	bottom: auto;
+	transform: none;
+}

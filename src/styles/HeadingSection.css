@@ -1,0 +1,309 @@
+.profile__avatar {
+  flex: 0 0 auto;
+}
+
+.profile__heading-top {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  grid-template-areas:
+    "avatar info actions"
+    "avatar details details";
+  column-gap: var(--spacing-md, 1.25rem);
+  row-gap: var(--spacing-sm, 0.75rem);
+  align-items: start;
+  width: 100%;
+}
+
+.profile__name {
+color: var(--color-text-heading, #000);
+font-size: var(--font-size-xxl, 1.75rem); /* 28px */
+font-weight: var(--font-weight-bold, 600);
+margin: 0;
+padding: 0;
+text-indent: 0;
+line-height: 1.2;
+text-align: left;
+transform: translateX(-4px);
+}
+
+.profile__info {
+  grid-area: info;
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-width: 0;
+  align-items: flex-start;
+}
+
+.profile__details {
+  grid-area: details;
+  color: var(--color-text-secondary, #4A5565);
+  font-size: var(--font-size-sm, 0.875rem); /* 14px */
+  display: flex;
+  width: 100%;
+  align-content: flex-start;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: var(--spacing-sm, 0.75rem) 2rem; /* 12px vertical, 32px horizontal */
+}
+
+.profile__info > .profile__header-bar {
+  margin-left: 0;
+  padding-left: 0;
+  align-self: stretch;
+}
+
+.profile__header-bar {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.125rem;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+.profile__heading-actions {
+  grid-area: actions;
+  margin-left: auto;
+  align-self: flex-start;
+}
+
+.profile__avatar {
+  grid-area: avatar;
+}
+
+.profile__heading-action-button {
+  position: static;
+  min-width: 0;
+  width: auto;
+  max-width: none;
+  padding: var(--spacing-xxs, 0.3125rem);
+}
+.profile__identity {
+  display: flex;
+  flex-direction: row;
+  align-items: baseline;
+  gap: 0.4375rem; /* 7px */
+  justify-content: flex-start;
+  width: 100%;
+  flex-wrap: nowrap;
+}
+
+.profile__pronouns {
+  color: var(--color-text-secondary, #4A5565);
+  font-size: var(--font-size-sm, 0.875rem); /* 14px */
+  font-weight: var(--font-weight-regular, 400);
+  line-height: 1.2;
+}
+
+.profile__role-org {
+  margin: 0;
+  width: 100%;
+  white-space: normal;
+  color: var(--color-text-subheading, #101828);
+  font-size: var(--font-size-base, 1rem);
+  font-weight: var(--font-weight-medium, 500);
+  line-height: 1.25;
+  text-align: left;
+}
+
+.profile__meta-row,
+.profile__contact-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  justify-content: flex-start;
+  column-gap: 0.25rem; /* 4px */
+  row-gap: var(--spacing-xs, 0.5rem);
+  align-items: start;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+}
+
+.profile__meta-row .profile__item,
+.profile__contact-row .profile__item {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-2xs, 0.625rem);
+  min-width: 0;
+}
+
+.profile__meta-row .profile__value,
+.profile__contact-row .profile__value {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-xxs, 0.3125rem);
+  min-width: 0;
+  white-space: normal !important;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.profile__meta-row .profile__value-text,
+.profile__contact-row .profile__value-text {
+  min-width: 0;
+  white-space: normal !important;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.profile__prefix-icon {
+  display: inline-flex;
+  align-items: center;
+  margin-right: 0.125rem;
+}
+
+.profile__detail-icon {
+  display: block;
+  width: 1rem;
+  height: 1rem;
+}
+
+.profile__hero {
+  width: 140px;
+  height: 140px;
+  border-radius: var(--border-radius-full, 0.625rem); /* 10px */;
+  border: var(--border-width-sm, 0.1rem) solid var(--color-primary, #7C4DFF);
+  background: lightgray 50% / cover no-repeat;
+  background-position: 50%;
+  object-fit: cover;
+  object-position: center;
+}
+
+.profile__hero-alt {
+  width: 140px;
+  height: 140px;
+  padding: 0 36.4px; 
+  border-radius: var(--border-radius-full, 0.625rem); /* 10px */;
+  border: 1.6px dashed #CBD5E1;
+  background: #F8FAFC;
+  box-sizing: border-box;
+}
+
+/* added because the icon wasn't centering on mobile
+   due to styles in mashlib */
+.profile__hero-alt .profile__hero-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 0;
+}
+
+.profile__hero-alt .profile__hero-icon svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+@media (max-width: 640px) {
+  .profile__heading-top {
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    grid-template-areas:
+      "avatar info actions"
+      "details details details";
+    column-gap: var(--spacing-sm, 0.75rem);
+    row-gap: var(--spacing-sm, 0.75rem);
+  }
+
+  .profile__name {
+    font-size: 1.5rem;
+    line-height: 1.15;
+  }
+
+  .profile__identity {
+    gap: 0.125rem;
+  }
+
+  .profile__pronouns {
+    font-size: var(--font-size-xs, 0.75rem);
+    line-height: 1.1;
+    white-space: nowrap;
+  }
+
+  .profile__hero,
+  .profile__hero-alt {
+    width: 112px;
+    height: 112px;
+  }
+
+  .profile__hero-alt {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+  }
+
+  .profile__hero-icon {
+    display: block;
+    margin: 0 auto;
+    width: 48px;
+    height: 48px;
+  }
+
+  .profile__details {
+    gap: var(--spacing-xs, 0.5rem);
+  }
+
+  .profile__meta-row,
+  .profile__contact-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 0.25rem;
+  }
+}
+
+@container profile-pane (max-width: 640px) {
+  .profile__heading-top {
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    grid-template-areas:
+      "avatar info actions"
+      "details details details";
+    column-gap: var(--spacing-sm, 0.75rem);
+    row-gap: var(--spacing-sm, 0.75rem);
+  }
+
+  .profile__name {
+    font-size: 1.5rem;
+    line-height: 1.15;
+  }
+
+  .profile__identity {
+    gap: 0.125rem;
+  }
+
+  .profile__pronouns {
+    font-size: var(--font-size-xs, 0.75rem);
+    line-height: 1.1;
+    white-space: nowrap;
+  }
+
+  .profile__hero,
+  .profile__hero-alt {
+    width: 112px;
+    height: 112px;
+  }
+
+  .profile__hero-alt {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+  }
+
+  .profile__hero-icon {
+    display: block;
+    margin: 0 auto;
+    width: 48px;
+    height: 48px;
+  }
+
+  .profile__details {
+    gap: var(--spacing-xs, 0.5rem);
+  }
+
+  .profile__meta-row,
+  .profile__contact-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 0.25rem;
+  }
+}
