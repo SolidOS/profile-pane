@@ -151,11 +151,8 @@ export function presentLanguages(subject: NamedNode, store: LiveStore): Language
     .filter((node) => isRdfListNode(store, node))
     .map((node) => expandRdfList(store, node))
 
-  const longestList = expandedLists
-    .sort((a, b) => b.length - a.length)[0] || []
-
   const standaloneNodes = languageObjects.filter((node) => !isRdfListNode(store, node))
-  const languageNodes = [...longestList, ...standaloneNodes]
+  const languageNodes = [...expandedLists.flat(), ...standaloneNodes]
 
   const details: LanguageDetails[] = languageNodes
     .map((lan) => ({

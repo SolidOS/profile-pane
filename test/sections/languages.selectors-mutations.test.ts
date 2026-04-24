@@ -87,7 +87,7 @@ describe('Languages selectors and mutations', () => {
     expect(languages.map((item) => item.publicId)).toEqual(['fr', 'de'])
   })
 
-  it('reads cumulative legacy list snapshots and keeps longest ordered list', () => {
+  it('reads cumulative legacy list snapshots and keeps merged ordered languages', () => {
     const store = graph() as any
     const subject = sym('https://example.com/profile/card#me')
     const doc = subject.doc()
@@ -104,6 +104,31 @@ describe('Languages selectors and mutations', () => {
     store.add(id3, ns.solid('publicId'), sym('https://www.w3.org/ns/iana/language-code/de'), doc)
 
     const languages = presentLanguages(subject, store)
+    expect(languages).toHaveLength(3)
+    expect(languages.map((item) => item.publicId)).toEqual([
+      'https://www.w3.org/ns/iana/language-code/en',
+      'https://www.w3.org/ns/iana/language-code/fr',
+      'https://www.w3.org/ns/iana/language-code/de'
+    ])
+  })
+
+  it('merges fragmented knowsLanguage rdf lists before deduping', () => {
+    const store = graph() as any
+    const subject = sym('https://example.com/profile/card#me')
+    const doc = subject.doc()
+    const id1 = sym('https://example.com/profile/card#id1')
+    const id2 = sym('https://example.com/profile/card#id2')
+    const id3 = sym('https://example.com/profile/card#id3')
+
+    store.add(subject, ns.schema('knowsLanguage'), new Collection([id1, id2]), doc)
+    store.add(subject, ns.schema('knowsLanguage'), new Collection([id2, id3]), doc)
+
+    store.add(id1, ns.solid('publicId'), sym('https://www.w3.org/ns/iana/language-code/en'), doc)
+    store.add(id2, ns.solid('publicId'), sym('https://www.w3.org/ns/iana/language-code/fr'), doc)
+    store.add(id3, ns.solid('publicId'), sym('https://www.w3.org/ns/iana/language-code/de'), doc)
+
+    const languages = presentLanguages(subject, store)
+
     expect(languages).toHaveLength(3)
     expect(languages.map((item) => item.publicId)).toEqual([
       'https://www.w3.org/ns/iana/language-code/en',
