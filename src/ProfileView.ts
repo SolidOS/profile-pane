@@ -3,7 +3,6 @@ import { DataBrowserContext } from 'pane-registry'
 import { NamedNode, LiveStore } from 'rdflib'
 import { authn } from 'solid-logic'
 import './styles/ProfileView.css'
-import { QRCodeCard } from './sections/qrcode/QRCodeCard'
 import { ViewerMode } from './types'
 import { presentProfileViewModel } from './ProfileViewModelPresenter'
 import { renderContactInfoSection } from './sections/contactInfo/ContactInfoSection'
@@ -17,6 +16,7 @@ import { renderProjectSection } from './sections/projects/ProjectSection'
 import { renderHeadingSection } from './sections/heading/HeadingSection'
 import { renderBioSection } from './sections/bio/BioSection'
 import { renderSocialAccounts } from './sections/social/SocialSection'
+import { renderQRCode } from './sections/qrcode/QRCodeSection'
 
 type ProfileViewModelData = Awaited<ReturnType<typeof presentProfileViewModel>>
 type SocialAccounts = ProfileViewModelData['social']
@@ -52,17 +52,6 @@ function renderSidebar(
         ${renderQRCode(subject, store)}
       </div>
     </aside>
-  `
-}
-
-function renderQRCode(subject: NamedNode, store: LiveStore) {
-  return html`
-      <section class="profile__section border-lighter profile__qr-code" aria-labelledby="qr-heading" tabindex="-1">
-        <h2 id="qr-heading" class="sr-only">QR code</h2>
-        <div class="qrcode-card__frame flex-center">
-          ${QRCodeCard(subject, store)}
-        </div>
-      </section>
   `
 }
 
