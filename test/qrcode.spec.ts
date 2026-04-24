@@ -1,8 +1,9 @@
+import { beforeEach, describe, expect, it } from '@jest/globals'
 import pane from '../src/index'
 import { parse } from 'rdflib'
 import { store } from 'solid-logic'
-import { findByTestId } from '@testing-library/dom'
-import { context, delay, doc, subject } from './setup'
+import { waitFor } from '@testing-library/dom'
+import { context, doc, subject } from './setup'
 
 // This was at testingsolidos.solidcommunity.net
 const exampleProfile = `@prefix : <#>.
@@ -158,29 +159,21 @@ l:de schema:name "germano"@ia.
 l:fr schema:name "French"@en.
 
 `
-// TODO(refactor): Re-enable after QR styling/color contract is finalized.
-describe.skip('profile-pane', () => {
-  let element: HTMLElement
+describe('profile pane qrcode integration', () => {
+    beforeEach(() => {
+        store.removeDocument(doc)
+})
 
-  describe('qrcode', () => {
-    beforeAll(async () => {
-      store.removeDocument(doc)
-      parse(exampleProfile, store, doc.uri)
-      const result = pane.render(subject, context)
-      await delay(3000)
-      element = await findByTestId(result, 'qrcode-card')
+    it('renders the QR code card and injects SVG markup', async () => {
+        parse(exampleProfile, store, doc.uri)
+        const result = pane.render(subject, context)
+
+        await waitFor(() => {
+            const qrCard = result.querySelector('[data-testid="qrcode-card"]') as HTMLElement | null
+            expect(qrCard).not.toBeNull()
+            expect(qrCard?.getAttribute('data-value')).toContain('BEGIN:VCARD')
+            const qrImageContainer = qrCard?.querySelector('div[aria-hidden="true"]') as HTMLElement | null
+            expect(qrImageContainer?.innerHTML).toContain('<svg')
+        })
     })
-
-    it('renders the QRCode element', () => {
-      expect(element.innerHTML).toContain('<svg')
-    })
-
-    it('renders the right QRCode colors', () => {
-      expect(element.innerHTML).toContain('stroke="#06b74a"')
-      expect(element.innerHTML).toContain('fill="#f4f5c2"')
-    })
-
-
-  })
-
 })

@@ -1,44 +1,37 @@
+import { describe, expect, it } from '@jest/globals'
 import { render } from 'lit-html'
 import { CVCard } from '../src/sections/resume/ResumeSection'
 import axe from 'axe-core'
-import { Literal } from 'rdflib'
+import { literal, sym } from 'rdflib'
 
-// TODO(refactor): Update fixture shape and assertions for the current CVCard contract.
-describe.skip('CVCard accessibility', () => {
+describe('CVCard accessibility', () => {
   it('has no accessibility violations', async () => {
-    // Helper to create a fake Literal (rdflib Literal is a class, but for type check, a string cast is enough for tests)
-    const fakeLiteral = (val: string | undefined): Literal => val ? (val as unknown as Literal) : undefined as unknown as Literal
-
-    const cvData = {
-      rolesByType: {
-        FutureRole: [{
-          orgName: 'FutureOrg',
-          roleText: 'future developer',
-          dates: '2027-',
-          startDate: fakeLiteral('2027-01-01'),
-          endDate: undefined as unknown as Literal
-        }],
-        CurrentRole: [{
-          orgName: 'CurrentOrg',
-          roleText: 'developer',
-          dates: '2023-2026',
-          startDate: fakeLiteral('2023-01-01'),
-          endDate: fakeLiteral('2026-12-31')
-        }],
-        PastRole: [{
-          orgName: 'PastOrg',
-          roleText: 'junior dev',
-          dates: '2020-2022',
-          startDate: fakeLiteral('2020-01-01'),
-          endDate: fakeLiteral('2022-12-31')
-        }],
+    const cvData = [
+      {
+        entryNode: sym('https://example.com/profile#role-future'),
+        title: 'Future Developer',
+        orgName: 'FutureOrg',
+        startDate: literal('2027-01-01')
       },
-      skills: ['JavaScript', 'Accessibility'],
-      languages: ['English', 'German']
-    }
+      {
+        entryNode: sym('https://example.com/profile#role-current'),
+        title: 'Developer',
+        orgName: 'CurrentOrg',
+        startDate: literal('2023-01-01'),
+        endDate: literal('2026-12-31'),
+        description: 'Building accessible profile tooling.'
+      },
+      {
+        entryNode: sym('https://example.com/profile#role-past'),
+        title: 'Junior Dev',
+        orgName: 'PastOrg',
+        startDate: literal('2020-01-01'),
+        endDate: literal('2022-12-31')
+      }
+    ]
     const container = document.createElement('div')
     document.body.appendChild(container)
-    render(CVCard(cvData), container)
+    render(CVCard(cvData as any, 'anonymous'), container)
 
     const results = await axe.run(container)
     expect(results.violations.length).toBe(0)

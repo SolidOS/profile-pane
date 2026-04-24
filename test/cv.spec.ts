@@ -1,6 +1,7 @@
+import { beforeEach, describe, expect, it } from '@jest/globals'
 import pane from '../src/index'
 import { parse } from 'rdflib'
-import { findByTestId } from '@testing-library/dom'
+import { waitFor } from '@testing-library/dom'
 import { store } from 'solid-logic'
 import { context, doc, subject } from './setup'
 
@@ -170,70 +171,23 @@ l:du schema:name "Dutch"@en.
     <http://www.w3.org/1999/02/22-rdf-syntax-ns#rest> :b5591_n3-000.
 
 `
-// TODO(refactor): Revisit CV assertions after resume data model and rendering are finalized.
-describe.skip('profile-pane', () => {
-  let element: HTMLElement
+describe('profile pane curriculum vitae', () => {
+  beforeEach(() => {
+    store.removeDocument(doc)
+})
 
-  describe('curriculum vitae', () => {
-        it('returns the correct number of unique known languages', () => {
-          const { presentCV } = require('../src/legacy/CVPresenter')
-          const result = presentCV(subject, store)
-          // You can adjust the expected count if the profile changes
-          expect(result.languages.length).toBe(4)
-          expect(result.languages).toEqual(expect.arrayContaining([
-            expect.stringMatching(/French/i),
-            expect.stringMatching(/germano|german/i),
-            expect.stringMatching(/Spanish/i),
-            expect.stringMatching(/Dutch/i)
-          ]))
-        })
-    beforeAll(async () => {
-      store.removeDocument(doc)
-      parse(exampleProfile, store, doc.uri)
-      const result = pane.render(subject, context)
-      element = await findByTestId(result, 'curriculum-vitae')
+  it('renders resume roles using the current CV section contract', async () => {
+    parse(exampleProfile, store, doc.uri)
+    const result = pane.render(subject, context)
+
+    await waitFor(() => {
+      const cv = result.querySelector('[data-testid="curriculum-vitae"]') as HTMLElement | null
+      expect(cv).not.toBeNull()
+      expect(cv?.textContent).toContain('Apple')
+      expect(cv?.textContent).toContain('The Beatles')
     })
 
-    it('renders role testeuse d’accessibilité in bio', () => {
-      expect(element).toContainHTML('testeuse D’accessibilité')
-    })
-    it('renders organization Apple in list', () => {
-      expect(element).toContainHTML('Apple')
-    })
-    it('renders lone start date in list', () => {
-      expect(element).toContainHTML('(2021-04-01 to')
-    })
-    it('renders start and end dates in role', () => {
-      expect(element).toContainHTML('(1960-04-01 to 1963-04-01)')
-    })
-    it('renders skill 1 in CV', () => {
-      expect(element).toContainHTML('Tester Du Matériel D’instrumentation')
-    })
-    it('renders skill 2 in CV', () => {
-      expect(element).toContainHTML('Travailler Dans De Mauvaises Conditions')
-    })
-    it('renders skill 3 vcard role in CV', () => {
-      expect(element).toContainHTML('Sitting')
-    })
-    // If we have an empty skill node we do not display it at all ANYMORE
-    it('renders three skills in CV', () => {
-      const skills = element.querySelectorAll('.cvSkill')
-      expect(skills.length).toBe(3)
-    })
-    it('renders languages', () => {
-      expect(element).toContainHTML('Fr')
-    })
-
-    it('renders languages', () => {
-      expect(element).toContainHTML('De')
-    })
-    
-    it('renders languages', () => {
-      expect(element).toContainHTML('Spanish')
-    })
-     it('renders languages', () => {
-      expect(element).toContainHTML('Dutch')
-    })
+    const roles = result.querySelectorAll('.cvRole')
+    expect(roles.length).toBe(4)
   })
-
 })

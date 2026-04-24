@@ -73,7 +73,7 @@ const Pane = {
           if (error) {
             console.error('QRcode error!', error)
           } else {
-            const imageContainer = QRCodeElement.querySelector('div[role="img"]') as HTMLElement | null
+            const imageContainer = QRCodeElement.querySelector('div[aria-hidden="true"]') as HTMLElement | null
             if (!imageContainer) {
               console.error('QRCode image container missing')
               return

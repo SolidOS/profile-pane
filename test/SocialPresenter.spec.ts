@@ -1,35 +1,12 @@
+import { beforeAll, describe, expect, it } from '@jest/globals'
 import { presentSocial } from '../src/sections/social/selectors'
-import { presentCV } from '../src/sections/resume/selectors'
-import { blankNode, sym, parse } from 'rdflib'
-import { ns } from 'solid-ui'
+import { sym, parse } from 'rdflib'
 import { store } from 'solid-logic'
 import { subject, doc } from './setup'
 
-describe('CVPresenter', () => {
-  const jane = sym('https://jane.doe.example/profile/card#me')
-  const doc = jane.doc()
-
-  beforeEach(() => {
-    store.removeDocument(doc)
-  })
-
-  it.skip('presents minimum available info', () => {
-    const result = presentCV(jane, store)
-    expect(result).toEqual([])
-  })
-
-  it.skip('presents minimum available info', () => {
-    const organization = blankNode()
-    store.add(jane, ns.org('member'), organization, doc)
-    store.add(organization, ns.schema('name'), 'Inrupt', doc)
-    const result = presentCV(jane, store)
-    expect(result).toHaveLength(1)
-    expect(result[0].orgName).toBe('Inrupt')
-  })
-})
-
 describe('SocialPresenter', () => {
    beforeAll(async () => {
+        store.removeDocument(doc)
         const turtle = `
         @prefix : <#>.
         @prefix foaf: <http://xmlns.com/foaf/0.1/> .
@@ -97,6 +74,13 @@ describe('SocialPresenter', () => {
     `
         parse(turtle, store, doc.uri)
     })
+
+  it('returns an empty account list when no social accounts exist', () => {
+    const jane = sym('https://example.com/no-social#me')
+    const result = presentSocial(jane, store)
+    expect(result).toEqual({ accounts: [] })
+  })
+
   it('deduplicates accounts in presentSocial', () => {
     // Call presentSocial
     const result = presentSocial(subject, store)
