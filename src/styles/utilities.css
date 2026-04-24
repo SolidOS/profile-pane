@@ -7,7 +7,15 @@
   --profile-image-size: 3em;
 }
 
-@media (max-width: 1000px) {
+.profile-pane-host {
+  display: block;
+  width: 100%;
+  min-width: 100%;
+  max-width: none;
+  box-sizing: border-box;
+}
+
+@media (max-width: 768px) {
   .profile-grid {
     font-size: clamp(0.9rem, 1.1vw + 0.65rem, 1rem);
   }
@@ -39,23 +47,21 @@
   width: 100%;
   max-width: 100%;
   min-width: 0;
+  display: block;
   container-name: profile-pane;
   container-type: inline-size;
 }
 
-/* Fallback for embedded rendering inside outline table cells. */
-td.obj .profile-grid {
-  grid-template-columns: 1fr;
-  gap: var(--spacing-xxs, 0.3125rem);
+/* Embedded rendering inside SolidOS outline table cells needs a single-column fallback.
+   The outline reserves space for icon/predicate columns, so the available content width
+   is effectively much narrower than the viewport. */
+td.obj .profile-pane-root {
   width: 100%;
   max-width: 100%;
-  box-sizing: border-box;
-  margin: 0 auto;
-  padding-inline: var(--spacing-small, 0.1rem);
-  overflow-x: clip;
+  min-width: 0;
 }
 
-@container profile-pane (max-width: 1000px) {
+@container profile-pane (max-width: 768px) {
   .profile-grid {
     font-size: clamp(0.9rem, 1.1vw + 0.65rem, 1rem);
   }
@@ -68,7 +74,7 @@ td.obj .profile-grid {
   }
 }
 
-@container profile-pane (max-width: 1024px) {
+@container profile-pane (max-width: 768px) {
   .profile-grid {
     grid-template-columns: 1fr;
     gap: var(--spacing-xxs, 0.3125rem);
@@ -81,7 +87,7 @@ td.obj .profile-grid {
   }
 }
 
-@media (max-width: 1024px) {
+@media (max-width: 768px) {
   .profile-grid {
     grid-template-columns: 1fr;
     gap: var(--spacing-xxs, 0.3125rem);
