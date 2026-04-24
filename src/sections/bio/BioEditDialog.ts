@@ -10,6 +10,7 @@ import { hasNonEmptyText, sanitizeTextValue, toText } from '../../textUtils'
 import {
   dialogCancelLabelText,
   dialogSubmitLabelText,
+  editBioDialogTitleText,
   ownerLoginRequiredDialogMessageText,
   saveBioUpdatesFailedPrefixText
 } from '../../texts'
@@ -107,7 +108,7 @@ export async function createBioEditDialog(
   const { form, formState } = createBioEditForm(bioData, viewerMode)
 
   const result = await openInputDialog({
-    title: 'Edit Bio',
+    title: editBioDialogTitleText,
     dom,
     form,
     headerAction: { type: 'none' },
