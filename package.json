@@ -1,6 +1,6 @@
 {
   "name": "profile-pane",
-  "version": "3.1.5",
+  "version": "3.2.1",
   "description": "A SolidOS compatible pane to display a personal profile page",
   "sideEffects": [
     "*.css"
@@ -13,6 +13,7 @@
   "types": "lib/index.d.ts",
   "files": [
     "/lib",
+    "/icons-png",
     "README.md",
     "LICENSE"
   ],
@@ -56,7 +57,7 @@
   "peerDependencies": {
     "rdflib": "^2.3.6",
     "solid-logic": "^4.0.6",
-    "solid-ui": "^3.0.5"
+    "solid-ui": "^3.1.0"
   },
   "overrides": {
     "solid-ui": "$solid-ui"
@@ -76,7 +77,7 @@
     "babel-loader": "^10.0.0",
     "babel-plugin-inline-import": "^3.0.0",
     "chat-pane": "^3.0.3",
-    "contacts-pane": "^3.1.0",
+    "contacts-pane": "^3.2.0",
     "copy-webpack-plugin": "^14.0.0",
     "css-loader": "^7.1.4",
     "eslint": "^9.39.2",
@@ -88,11 +89,11 @@
     "node-polyfill-webpack-plugin": "^4.1.0",
     "rdflib": "^2.3.6",
     "solid-logic": "^4.0.6",
-    "solid-ui": "^3.0.6",
+    "solid-ui": "^3.1.0",
     "style-loader": "^4.0.0",
     "terser-webpack-plugin": "^5.3.16",
     "ts-loader": "^9.5.4",
-    "typescript": "^5.9.3",
+    "typescript": "^6.0.3",
     "webpack": "^5.105.2",
     "webpack-cli": "^7.0.2",
     "webpack-dev-server": "^5.2.3"
