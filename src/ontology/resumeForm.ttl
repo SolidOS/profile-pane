@@ -75,7 +75,7 @@ org:member owl:inverse [ ui:label "Work experience" ]. # timelimited involvement
         schema:name "ESCO";
         ui:targetClass schema:Occupation ;
         schema:logo <https://ec.europa.eu/esco/portal/static_resource2/images/logo/logo_en.gif>;
-        ui:searchByNameURI "https://ec.europa.eu/esco/api/search?language=$(language)&type=occupation&text=$(name)".
+        ui:searchByNameURI "https://ec.europa.eu/esco/api/search?language=$(language)&type=occupation&text=$(name)&selectedVersion=v1.2.0".
 
 :orgField a ui:Choice; 
     ui:label "For organization"@en, "Pour l'organisation"@fr;
@@ -311,7 +311,7 @@ schema:ResearchOrganization a rdfs:Class;
         schema:name "ESCO skill";
         ui:targetClass esco:Skill ;
         schema:logo <https://ec.europa.eu/esco/portal/static_resource2/images/logo/logo_en.gif>;
-        ui:searchByNameURI "https://ec.europa.eu/esco/api/search?language=$(language)&limit=$(limit)&type=skill&text=$(name)".
+        ui:searchByNameURI "https://ec.europa.eu/esco/api/search?language=$(language)&limit=$(limit)&type=skill&text=$(name)&selectedVersion=v1.2.0".
 
 #################### Languages
 

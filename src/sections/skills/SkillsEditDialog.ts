@@ -32,7 +32,7 @@ type SkillRerenderOptions = {
   focusSelector?: string
 }
 
-const ESCO_SKILL_SEARCH_URI = 'https://ec.europa.eu/esco/api/search?language=$(language)&limit=$(limit)&type=skill&text=$(name)'
+const ESCO_SKILL_SEARCH_URI = 'https://ec.europa.eu/esco/api/search?language=$(language)&limit=$(limit)&type=skill&text=$(name)&selectedVersion=v1.2.0'
 const ESCO_SEARCH_LANGUAGE = 'en'
 const ESCO_SEARCH_LIMIT = 8
 const ESCO_SKILL_BASE_URI = 'http://data.europa.eu/esco/skill/'
