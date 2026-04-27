@@ -296,13 +296,12 @@ td.obj .profile-pane-root {
 }
 
 .skills__remove-button {
-  display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 1rem;
-  height: 1rem;
-  min-width: 1rem;
-  min-height: 1rem;
+  width: var(--icon-xxs, 1rem);
+  height: var(--icon-xxs, 1rem);
+  min-width: var(--icon-xxs, 1rem);
+  min-height: var(--icon-xxs, 1rem);
   border: none;
   background: none;
   cursor: pointer;
@@ -314,14 +313,17 @@ td.obj .profile-pane-root {
 
 .skills__remove-button svg {
   display: block;
-  width: 1rem;
-  height: 1rem;
+  width: var(--icon-xxs, 1rem);
+  height: var(--icon-xxs, 1rem);
 }
 
 .languages__list {
   list-style: none;
   margin: 0;
   padding: 0;
+  align-items: flex-start;
+  gap: var(--spacing-sm, 0.938rem);
+  align-self: stretch;
 }
 
 .languages__item-label {

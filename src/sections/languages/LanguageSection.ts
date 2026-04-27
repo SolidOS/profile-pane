@@ -65,7 +65,7 @@ function renderLanguagesSectionDefault(store: LiveStore, subject: NamedNode, lan
       <div id="languages-panel" class="profile-section-collapsible__content" aria-hidden="true">
         ${hasLanguages
           ? html`
-              <ul class="languages__list" role="list" aria-label="Known languages">
+              <ul class="languages__list flex-column" role="list" aria-label="Known languages">
                 ${renderLanguages(languages, true)}
               </ul>
             `
