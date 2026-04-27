@@ -41,7 +41,7 @@ function renderSkillItem(
   }
 
   return html`
-    <li class="skills__item inline-flex-row" role="listitem">
+    <li class="skills__item flex-center" role="listitem">
       <span class="skills__item-label">${strToUpperCase(detail.name)}</span>
       ${viewerMode === 'owner'
         ? html`
