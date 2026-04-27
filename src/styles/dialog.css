@@ -56,6 +56,10 @@
 #profile-modal .modal #modal-desc {
   min-height: 0;
   overflow: auto;
+  padding-top: var(--spacing-xxs, 0.3125rem);
+  padding-bottom: var(--spacing-xxs, 0.3125rem);
+  padding-inline: var(--spacing-xxs, 0.3125rem);
+  box-sizing: border-box;
 }
 
 #profile-modal .modal #modal-title {
