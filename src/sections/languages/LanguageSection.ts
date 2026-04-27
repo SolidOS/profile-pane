@@ -43,9 +43,11 @@ function renderLanguagesSectionDefault(store: LiveStore, subject: NamedNode, lan
               aria-label="Add or edit languages"
               @click=${(event: Event) => createLanguageEditDialog(event, store, subject, languages, viewerMode, onSaved)}
             >
-              <span class="profile-section-collapsible__edit-label profile__add-more-content inline-flex-row">
-                <span class="profile__add-more-icon inline-flex-row" aria-hidden="true">${addIcon}</span>
-                Add More
+              <span class="profile-section-collapsible__edit-label profile__add-more-content">
+                <span class="profile__add-more-inline">
+                  <span class="profile__add-more-icon" aria-hidden="true">${addIcon}</span>
+                  <span>Add More</span>
+                </span>
               </span>
               <span class="profile-section-collapsible__edit-icon" aria-hidden="true">${editIcon}</span>
             </button>
@@ -130,9 +132,11 @@ function renderOwnerEmptyLanguagesSection(
               )
             }}
           >
-            <span class="profile-section-collapsible__edit-label profile__add-more-content inline-flex-row">
-              <span class="profile__add-more-icon inline-flex-row" aria-hidden="true">${addIcon}</span>
-              Add Languages
+            <span class="profile-section-collapsible__edit-label profile__add-more-content">
+              <span class="profile__add-more-inline">
+                <span class="profile__add-more-icon" aria-hidden="true">${addIcon}</span>
+                <span>Add Languages</span>
+              </span>
             </span>
             <span class="profile-section-collapsible__edit-icon profile-section-collapsible__edit-icon--add" aria-hidden="true">${plusIcon}</span>
           </button>

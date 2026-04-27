@@ -41,18 +41,20 @@ function renderSkillItem(
   }
 
   return html`
-    <li class="skills__item flex-center" role="listitem">
+    <li class="skills__item" role="listitem">
       <span class="skills__item-label">${strToUpperCase(detail.name)}</span>
       ${viewerMode === 'owner'
         ? html`
-            <button
-              type="button"
-              class="skills__remove-button inline-flex-row"
-              aria-label="Remove ${detail.name} skill"
-              @click=${handleRemove}
-            >
-              ${deleteIcon}
-            </button>
+            <span class="skills__item-tail">
+              <button
+                type="button"
+                class="skills__remove-button"
+                aria-label="Remove ${detail.name} skill"
+                @click=${handleRemove}
+              >
+                ${deleteIcon}
+              </button>
+            </span>
           `
         : ''}
     </li>
@@ -81,9 +83,11 @@ function renderSkillsSectionDefault(store: LiveStore, subject: NamedNode, skills
               aria-label="Add or edit skills"
               @click=${(event: Event) => createSkillsEditDialog(event, store, subject, skills, viewerMode, onSaved)}
             >
-              <span class="profile-section-collapsible__edit-label profile__add-more-content inline-flex-row">
-                <span class="profile__add-more-icon inline-flex-row" aria-hidden="true">${addIcon}</span>
-                Add More
+              <span class="profile-section-collapsible__edit-label profile__add-more-content">
+                <span class="profile__add-more-inline">
+                  <span class="profile__add-more-icon" aria-hidden="true">${addIcon}</span>
+                  <span>Add More</span>
+                </span>
               </span>
               <span class="profile-section-collapsible__edit-icon" aria-hidden="true">${editIcon}</span>
             </button>
@@ -171,9 +175,11 @@ function renderOwnerEmptySkillsSection(
               )
             }}
           >
-            <span class="profile-section-collapsible__edit-label profile__add-more-content inline-flex-row">
-              <span class="profile__add-more-icon inline-flex-row" aria-hidden="true">${addIcon}</span>
-              Add Skills
+            <span class="profile-section-collapsible__edit-label profile__add-more-content">
+              <span class="profile__add-more-inline">
+                <span class="profile__add-more-icon" aria-hidden="true">${addIcon}</span>
+                <span>Add Skills</span>
+              </span>
             </span>
             <span class="profile-section-collapsible__edit-icon" aria-hidden="true">${editIcon}</span>
           </button>

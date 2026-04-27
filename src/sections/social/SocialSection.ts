@@ -216,9 +216,11 @@ function renderOwnerEmptySocialSection(
               )
             }}
           >
-            <span class="profile-section-collapsible__edit-label profile__add-more-content inline-flex-row">
-              <span class="profile__add-more-icon inline-flex-row" aria-hidden="true">${addIcon}</span>
-              Add Account
+            <span class="profile-section-collapsible__edit-label profile__add-more-content">
+              <span class="profile__add-more-inline">
+                <span class="profile__add-more-icon" aria-hidden="true">${addIcon}</span>
+                <span>Add Account</span>
+              </span>
             </span>
             <span class="profile-section-collapsible__edit-icon" aria-hidden="true">${editIcon}</span>
           </button>

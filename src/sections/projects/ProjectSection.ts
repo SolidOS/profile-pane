@@ -229,9 +229,11 @@ function renderProjectSectionDefault(
                   return createProjectsEditDialog(event, store, subject, projects, viewerMode, onSaved)
                 }}
               >
-                <span class="profile-section-collapsible__edit-label profile__add-more-content inline-flex-row">
-                  <span class="profile__add-more-icon inline-flex-row" aria-hidden="true">${addIcon}</span>
-                  Add More
+                <span class="profile-section-collapsible__edit-label profile__add-more-content">
+                  <span class="profile__add-more-inline">
+                    <span class="profile__add-more-icon" aria-hidden="true">${addIcon}</span>
+                    <span>Add More</span>
+                  </span>
                 </span>
                 <span class="profile-section-collapsible__edit-icon profile-section-collapsible__edit-icon--add profile-section-collapsible__edit-icon--projects" aria-hidden="true">${plusDarkIcon}</span>
               </button>

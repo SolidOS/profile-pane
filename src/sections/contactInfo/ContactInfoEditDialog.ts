@@ -262,9 +262,11 @@ function renderContactInfoPhoneSection(phones: ContactPointRow[], onAddRow: (opt
           aria-label="Add another phone number"
           @click=${createNewRow}
         >
-          <span class="profile__add-more-content inline-flex-row">
-            <span class="profile__add-more-icon inline-flex-row" aria-hidden="true">${addIcon}</span>
-            Add More
+          <span class="profile__add-more-content">
+            <span class="profile__add-more-inline">
+              <span class="profile__add-more-icon" aria-hidden="true">${addIcon}</span>
+              <span>Add More</span>
+            </span>
           </span>
         </button>
       </header>
@@ -382,9 +384,11 @@ function renderContactInfoEmailSection(emails: ContactPointRow[], onAddRow: (opt
           aria-label="Add another email address"
           @click=${createNewRow}
         >
-          <span class="profile__add-more-content inline-flex-row">
-            <span class="profile__add-more-icon inline-flex-row" aria-hidden="true">${addIcon}</span>
-            Add More
+          <span class="profile__add-more-content">
+            <span class="profile__add-more-inline">
+              <span class="profile__add-more-icon" aria-hidden="true">${addIcon}</span>
+              <span>Add More</span>
+            </span>
           </span>
         </button>
       </header>
@@ -590,9 +594,11 @@ function renderContactInfoAddressSection(addresses: ContactAddressRow[], onAddRo
           aria-label="Add another address"
           @click=${createNewRow}
         >
-          <span class="profile__add-more-content inline-flex-row">
-            <span class="profile__add-more-icon inline-flex-row" aria-hidden="true">${addIcon}</span>
-            Add More
+          <span class="profile__add-more-content">
+            <span class="profile__add-more-inline">
+              <span class="profile__add-more-icon" aria-hidden="true">${addIcon}</span>
+              <span>Add More</span>
+            </span>
           </span>
         </button>
       </header>
