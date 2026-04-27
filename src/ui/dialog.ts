@@ -1,6 +1,7 @@
 import '../styles/dialog.css'
-import { render } from 'lit-html'
+import { html, render } from 'lit-html'
 import { closeIcon } from '../icons-svg/profileIcons'
+import { createSpinner } from './spinner'
 
 /* Copied from issue-pane, minor typescript adjustments */
 /* Changed modal from div to dialog element */
@@ -33,7 +34,8 @@ type DialogElements = {
   headerAction: HTMLDivElement,
   description: HTMLDivElement,
   error: HTMLElement,
-  buttons: HTMLDivElement
+  buttons: HTMLDivElement,
+  savingOverlay: HTMLDivElement
 }
 
 function ensureModalDialog (dom: Document): HTMLDialogElement {
@@ -58,6 +60,7 @@ function ensureModalDialog (dom: Document): HTMLDialogElement {
       <div id="modal-desc"></div>
       <section id="modal-error" class="modal__error-section" aria-live="assertive" role="alert" hidden></section>
       <div id="modal-buttons"></div>
+      <div id="modal-saving-overlay" hidden></div>
     </div>
   `
 
@@ -72,7 +75,8 @@ function getDialogElements (dialog: HTMLDialogElement): DialogElements {
     headerAction: dialog.querySelector('#modal-header-action') as HTMLDivElement,
     description: dialog.querySelector('#modal-desc') as HTMLDivElement,
     error: dialog.querySelector('#modal-error') as HTMLElement,
-    buttons: dialog.querySelector('#modal-buttons') as HTMLDivElement
+    buttons: dialog.querySelector('#modal-buttons') as HTMLDivElement,
+    savingOverlay: dialog.querySelector('#modal-saving-overlay') as HTMLDivElement
   }
 }
 
@@ -261,6 +265,32 @@ export function alertDialog (message: string, title = 'Information', dom: Docume
   })
 }
 
+function updateSavingUI (dialog: HTMLDialogElement, submitLabel: string, isSaving: boolean) {
+  const elements = getDialogElements(dialog)
+  const saveButton = dialog.querySelector('#modal-buttons .btn-primary') as HTMLButtonElement | null
+  const cancelButton = dialog.querySelector('#modal-buttons button[data-cancel]') as HTMLButtonElement | null
+
+  if (saveButton) {
+    saveButton.disabled = isSaving
+    saveButton.setAttribute('aria-busy', String(isSaving))
+    saveButton.textContent = submitLabel
+  }
+
+  if (cancelButton) {
+    cancelButton.disabled = isSaving
+  }
+
+  elements.savingOverlay.hidden = !isSaving
+  if (isSaving) {
+    render(html`
+      <div class="modal__saving-indicator" aria-live="polite" aria-label="Saving changes">
+        ${createSpinner()}
+      </div>
+    `, elements.savingOverlay)
+  } else {
+    render(html``, elements.savingOverlay)
+  }
+}
 type OpenInputDialogCustom = {
   title: string,
   dom: Document,
@@ -268,6 +298,7 @@ type OpenInputDialogCustom = {
   submitLabel?: string,
   cancelLabel?: string,
   headerAction?: DialogHeaderAction,
+  hideFooterButtons?: boolean,
   validate?: () => Promise<string | null> | string | null,
   onSave?: () => Promise<void> | void,
   formatSaveError?: (error: unknown) => string
@@ -297,7 +328,7 @@ export function openInputDialog (options: OpenInputDialogCustom): Promise<InputD
 
   options.form.addEventListener('submit', handleSubmit)
 
-  return openModal({
+  const dialogPromise = openModal({
     title: options.title,
     message: options.form,
     headerAction: options.headerAction,
@@ -321,9 +352,12 @@ export function openInputDialog (options: OpenInputDialogCustom): Promise<InputD
           if (!options.onSave) return true
 
           try {
+            updateSavingUI(dialog, submitLabel, true)
+
             await options.onSave()
             return true
           } catch (error) {
+            updateSavingUI(dialog, submitLabel, false)
             const fallback = error instanceof Error ? error.message : String(error)
             const message = options.formatSaveError ? options.formatSaveError(error) : fallback
             setModalError(elements, message)
@@ -334,11 +368,17 @@ export function openInputDialog (options: OpenInputDialogCustom): Promise<InputD
     ],
     dom: options.dom
   })
+
+  elements.buttons.hidden = Boolean(options.hideFooterButtons)
+
+  return dialogPromise
     .then((result) => {
       if (result !== 'save') return null
       return collectFormValues(options.form)
     })
     .finally(() => {
+      elements.buttons.hidden = false
+      updateSavingUI(dialog, submitLabel, false)
       options.form.removeEventListener('submit', handleSubmit)
       submitProxy.remove()
     })

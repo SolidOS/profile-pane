@@ -30,4 +30,34 @@ describe('Dialog accessibility', () => {
 
     await expect(resultPromise).resolves.toBeNull()
   })
+
+  it('keeps the submit label singular after a failed save attempt', async () => {
+    const form = document.createElement('form')
+    const input = document.createElement('input')
+    input.name = 'displayName'
+    form.appendChild(input)
+
+    const resultPromise = openInputDialog({
+      title: 'Edit display name',
+      dom: document,
+      form,
+      headerAction: { type: 'none' },
+      onSave: async () => {
+        throw new Error('Save failed')
+      }
+    })
+
+    const saveButton = document.querySelector('#modal-buttons .btn-primary') as HTMLButtonElement | null
+    expect(saveButton?.textContent).toBe('Save Changes')
+
+    saveButton?.click()
+    await new Promise(resolve => setTimeout(resolve, 0))
+
+    expect(saveButton?.textContent).toBe('Save Changes')
+
+    const cancelButton = document.querySelector('#modal-buttons button[data-cancel]') as HTMLButtonElement | null
+    cancelButton?.click()
+
+    await expect(resultPromise).resolves.toBeNull()
+  })
 })

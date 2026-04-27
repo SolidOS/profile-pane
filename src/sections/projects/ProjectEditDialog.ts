@@ -174,6 +174,7 @@ export async function createProjectsEditDialog(
     dom,
     form,
     headerAction: { type: 'close' },
+    hideFooterButtons: true,
     validate: () => {
       if (viewerMode !== 'owner') {
         return ownerLoginRequiredDialogMessageText
@@ -195,20 +196,8 @@ export async function createProjectsEditDialog(
     }
   })
 
-  const modalButtons = dom.querySelector('#profile-modal #modal-buttons') as HTMLElement | null
-  const previousButtonsDisplay = modalButtons?.style.display
-  if (modalButtons) {
-    modalButtons.style.display = 'none'
-  }
-
   let result: Record<string, string> | null = null
-  try {
-    result = await dialogPromise
-  } finally {
-    if (modalButtons) {
-      modalButtons.style.display = previousButtonsDisplay || ''
-    }
-  }
+  result = await dialogPromise
 
   if (!result) return
 
