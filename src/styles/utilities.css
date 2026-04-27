@@ -278,7 +278,7 @@ td.obj .profile-pane-root {
   margin: 0;
   padding: 0;
   align-items: flex-start;
-  gap: 0.5rem; /* 8px */
+  gap: var(--spacing-sm, 0.938rem);
 }
 
 .skills__item {
