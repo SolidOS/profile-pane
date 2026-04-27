@@ -171,7 +171,7 @@ function buildRdfListStatements(doc: NamedNode, items: NamedNode[]) {
 
 function isPatchFailure(message: string): boolean {
 	const text = (message || '').toLowerCase()
-	return text.includes(' on patch ') || text.includes('web error: 400') || text.includes('web error: 405') || text.includes('web error: 501')
+	return text.includes('fetch error for patch') || text.includes('failed to fetch') || text.includes(' on patch ') || text.includes('web error: 400') || text.includes('web error: 405') || text.includes('web error: 501')
 }
 
 function sanitizePatchStatements(store: LiveStore, deletions: any[], insertions: any[]) {

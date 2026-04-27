@@ -134,7 +134,7 @@ function collectListChainNodes(store: LiveStore, listHead: any, doc: NamedNode):
 function isPatchFailure(message: string): boolean {
   const text = (message || '').toLowerCase()
   // Different pods surface PATCH incompatibility with different status codes/messages.
-  return text.includes(' on patch ') || text.includes('web error: 501') || text.includes('web error: 405') || text.includes('web error: 400')
+  return text.includes('fetch error for patch') || text.includes('failed to fetch') || text.includes(' on patch ') || text.includes('web error: 501') || text.includes('web error: 405') || text.includes('web error: 400')
 }
 
 function isMissingGetRecordError(message: string): boolean {

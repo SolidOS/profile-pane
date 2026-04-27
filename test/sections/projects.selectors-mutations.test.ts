@@ -167,4 +167,39 @@ describe('Projects selectors and mutations', () => {
     expect(links).toHaveLength(1)
     expect(links[0].object.value).toBe('https://example.org/project-b')
   })
+
+  it('falls back to updateDav after a fetch error for patch', async () => {
+    const store = graph() as any
+    const subject = sym('https://example.com/profile/card#me')
+    const doc = subject.doc()
+    const existing = sym('https://example.org/project-a')
+
+    store.add(subject, ns.solid('community'), existing, doc)
+
+    const updateDav = jest.fn((passedDoc: any, deletions: any[], insertions: any[], callback: Function) => {
+      deletions.forEach((statement) => store.remove(st(statement.subject, statement.predicate, statement.object, statement.why)))
+      insertions.forEach((statement) => store.add(statement.subject, statement.predicate, statement.object, statement.why))
+      callback(passedDoc.value, true)
+    })
+
+    store.fetcher = {
+      load: jest.fn(async () => undefined)
+    }
+
+    store.updater = {
+      update: (_deletions: any[], _insertions: any[], callback: Function) => callback('', false, 'Fetch error for PATCH of <https://example.com/profile/card>:TypeError: Failed to fetch'),
+      updateDav
+    }
+
+    await processProjectsMutations(store, subject, {
+      create: [],
+      update: [{ url: 'https://example.org/project-b', entryNode: existing.value, status: 'modified' }],
+      remove: []
+    } as any)
+
+    expect(updateDav).toHaveBeenCalledTimes(1)
+    const links = store.statementsMatching(subject, ns.solid('community'), null, doc)
+    expect(links).toHaveLength(1)
+    expect(links[0].object.value).toBe('https://example.org/project-b')
+  })
 })

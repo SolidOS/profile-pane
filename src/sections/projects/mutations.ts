@@ -31,6 +31,8 @@ function normalizeProjectUrlKey(value: string): string {
 function isPatchFailure(message: string): boolean {
 	const text = (message || '').toLowerCase()
 	return (
+		text.includes('fetch error for patch') ||
+		text.includes('failed to fetch') ||
 		text.includes(' on patch ') ||
 		text.includes('web error: 500') ||
 		text.includes('web error: 501') ||
