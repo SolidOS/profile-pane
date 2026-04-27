@@ -85,7 +85,7 @@
     background: transparent;
     color: var(--color-primary, #7C4DFF);
     font: inherit;
-    font-weight: 600;
+    font-weight: var(--font-weight-bold, 600);
     cursor: pointer;
   }
 
