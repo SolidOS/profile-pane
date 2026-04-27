@@ -187,7 +187,7 @@ describe('profile pane curriculum vitae', () => {
       expect(cv?.textContent).toContain('The Beatles')
     })
 
-    const roles = result.querySelectorAll('.cvRole')
+        const roles = result.querySelectorAll('.resume-card__item')
     expect(roles.length).toBe(4)
   })
 })

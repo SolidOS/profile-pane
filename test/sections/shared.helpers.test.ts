@@ -217,14 +217,14 @@ describe('shared helper utilities', () => {
 
     it('shows and toggles description overflow controls', () => {
       document.body.innerHTML = `
-        <div class="cvDescriptionWrap">
-          <div id="desc" class="cvDescriptionText"></div>
-          <button class="cvDescriptionToggle" aria-controls="desc" aria-expanded="false" hidden>...more</button>
+        <div class="resume-card__description-wrap">
+          <div id="desc" class="resume-card__description-text"></div>
+          <button class="resume-card__description-toggle" aria-controls="desc" aria-expanded="false" hidden>...more</button>
         </div>
       `
 
       const textEl = document.getElementById('desc') as HTMLElement
-      const button = document.querySelector('.cvDescriptionToggle') as HTMLButtonElement
+      const button = document.querySelector('.resume-card__description-toggle') as HTMLButtonElement
 
       Object.defineProperty(textEl, 'scrollHeight', { configurable: true, value: 80 })
       Object.defineProperty(textEl, 'clientHeight', { configurable: true, value: 40 })
@@ -236,12 +236,12 @@ describe('shared helper utilities', () => {
       Object.defineProperty(event, 'currentTarget', { configurable: true, value: button })
 
       toggleDescription(event)
-      expect(textEl.classList.contains('isExpanded')).toBe(true)
+  expect(textEl.classList.contains('resume-card__description-text--expanded')).toBe(true)
       expect(button.getAttribute('aria-expanded')).toBe('true')
       expect(button.textContent).toBe('...less')
 
       toggleDescription(event)
-      expect(textEl.classList.contains('isExpanded')).toBe(false)
+  expect(textEl.classList.contains('resume-card__description-text--expanded')).toBe(false)
       expect(button.getAttribute('aria-expanded')).toBe('false')
       expect(button.textContent).toBe('...more')
     })
