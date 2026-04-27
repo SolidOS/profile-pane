@@ -1,7 +1,7 @@
 import { html } from 'lit-html'
 import { EducationDetails } from './types'
 import { ViewerMode } from '../../types'
-import '../../styles/EducationCard.css'
+import '../../styles/EducationSection.css'
 import { educationHeadingText } from '../../texts'
 import { LiveStore, NamedNode } from 'rdflib'
 import { createEducationEditDialog } from './EducationEditDialog'
@@ -40,24 +40,24 @@ function renderEducationEntry(educationEntry: EducationDetails, index: number) {
     : `${educationPeriodId} ${educationOrgId}`
 
   return html`
-    <li class="education" role="listitem" aria-labelledby=${schoolId} aria-describedby=${ariaDescribedBy}>
-      <div class="educationHeader">
+    <li class="education-card__item" role="listitem" aria-labelledby=${schoolId} aria-describedby=${ariaDescribedBy}>
+      <div class="education-card__header">
         <h4 id=${schoolId}>${educationEntry.school}</h4>
-        <p id=${educationPeriodId} class="educationPeriod">
+        <p id=${educationPeriodId} class="education-card__period">
           ${educationEntry.endDate
             ? html`<time datetime=${toMonthDateTime(educationEntry.endDate)}>${formatEducationMonthYearFull(educationEntry.endDate)}</time>`
             : html`<span>End date unknown</span>`}
         </p>
       </div>
-      <p class="educationOrg" id=${educationOrgId}>
+      <p class="education-card__organization" id=${educationOrgId}>
         <strong>${educationEntry.degree}</strong>${educationEntry.location ? html` | ${educationEntry.location}` : ''}
       </p>
       ${educationEntry.description ? html`
-        <div class="cvDescriptionWrap">
-          <p class="cvDescriptionText" id=${educationDescriptionId}>${educationEntry.description}</p>
+        <div class="education-card__description-wrap">
+          <p class="education-card__description-text" id=${educationDescriptionId}>${educationEntry.description}</p>
           <button
             type="button"
-            class="cvDescriptionToggle"
+            class="education-card__description-toggle"
             aria-controls=${educationDescriptionId}
             aria-expanded="false"
             hidden
@@ -85,8 +85,8 @@ export const EducationCard = (
   if (!hasEducation) return html``
 
   return html`
-    <article class="educationCard" aria-label="Education" data-testid="education">
-      <section class="educationSection">
+    <article class="education-card" aria-label="Education" data-testid="education">
+      <section class="education-card__section">
         <ul role="list" aria-label="Education in chronological order">
           ${renderEducation(educationData)}
         </ul>

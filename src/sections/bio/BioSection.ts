@@ -18,11 +18,11 @@ function renderBio(bioData: BioDetails) {
 
   return html`
       ${bioData.description ? html`
-        <div class="bioDescriptionWrap">
-          <p class="bioDescriptionText" id=${bioDescriptionId}>${bioData.description}</p>
+        <div class="bio-card__description-wrap">
+          <p class="bio-card__description-text" id=${bioDescriptionId}>${bioData.description}</p>
           <button
             type="button"
-            class="bioDescriptionToggle"
+            class="bio-card__description-toggle"
             aria-controls=${bioDescriptionId}
             aria-expanded="false"
             hidden
@@ -47,8 +47,8 @@ export const BioCard = (
   void viewerMode
 
   return html`
-    <article class="bioCard" aria-label="Bio" data-testid="bio-card">
-      <section class="bioSection">
+    <article class="bio-card" aria-label="Bio" data-testid="bio-card">
+      <section class="bio-card__section">
         ${renderBio(bioData)}
       </section>
     </article>

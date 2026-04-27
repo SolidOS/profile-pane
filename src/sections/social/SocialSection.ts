@@ -1,7 +1,7 @@
 import { html, TemplateResult } from 'lit-html'
 import { Account, SocialPresentation } from './types'
 import { ViewerMode } from '../../types'
-import '../../styles/SocialCard.css'
+import '../../styles/SocialSection.css'
 import { socialAccountsHeadingText } from '../../texts'
 import { createSocialEditDialog } from './SocialEditDialog'
 import { LiveStore, NamedNode } from 'rdflib'
@@ -16,7 +16,7 @@ function isRenderableAccount(account: Account): boolean {
 
 function expandSocialAccounts(event: Event): void {
   const button = event.currentTarget as HTMLButtonElement | null
-  const socialCard = button?.closest('.socialCard') as HTMLElement | null
+  const socialCard = button?.closest('.social-card') as HTMLElement | null
   if (!button || !socialCard) return
 
   socialCard.setAttribute('data-mobile-expanded', 'true')
@@ -38,13 +38,13 @@ export const SocialCard = (
     return html`
       <section
         id="social-media"
-        class="socialCard"
+        class="social-card"
         aria-label="Social media"
         data-testid="social-media"
         data-mobile-expanded="${hiddenAccountsCount > 0 ? 'false' : 'true'}"
       >
         <nav aria-label="Social media profiles">
-          <ul class="socialList list-reset" role="list">
+          <ul class="social-card__list list-reset" role="list">
             ${accounts.map(account => renderAccount(account))}
           </ul>
         </nav>
@@ -52,7 +52,7 @@ export const SocialCard = (
           ? html`
               <button
                 type="button"
-                class="socialCard__more-button"
+                class="social-card__more-button"
                 aria-controls="social-media"
                 aria-expanded="false"
                 @click=${expandSocialAccounts}
@@ -69,15 +69,16 @@ export const SocialCard = (
 
   function renderAccount(account: Account) {
     return html`
-      <li class="socialItem" role="listitem">
+      <li class="social-card__item" role="listitem">
         <a 
+          class="social-card__link"
           href="${account.homepage}" 
           target="_blank" 
           rel="noopener noreferrer" 
           aria-label="Visit ${account.name} profile (opens in new tab)"
         >
           <img 
-            class="socialIcon" 
+            class="social-card__icon" 
             src="${account.icon}" 
             alt="${account.name} icon"
             width="40"

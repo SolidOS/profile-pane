@@ -1,0 +1,175 @@
+/* Profile layout styles. */
+
+.profile-grid .profile__main {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  margin-bottom: 0;
+  overflow-wrap: anywhere;
+  align-items: flex-start;
+}
+
+.profile-grid .profile__sidebar {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  text-align: left;
+  border-radius: var(--border-radius-base);
+  background: var(--color-background, #F8F9FB);
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  overflow-x: clip;
+}
+
+.profile-grid .profile__section {
+  padding: var(--spacing-lg);
+  border-radius: var(--border-radius-base);
+  background: var(--white, #FFF);
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  overflow-x: clip;
+}
+
+.profile-grid .profile__section--empty {
+  padding: var(--spacing-1xl, 2.5rem) var(--spacing-lg, 1.5625rem);
+  background: var(--color-card-bg, #fff);
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  overflow-x: clip;
+}
+
+.profile-grid .profile__action-button--empty {
+  background: var(--color-card-bg, #fff);
+  width: fit-content;
+  min-width: fit-content;
+  max-width: fit-content;
+  white-space: nowrap;
+  box-sizing: border-box;
+  border: var(--border-width-sm, 1px) solid var(--color-border-darker, #4A5565);
+  color: var(--slate-700, #314158);
+  font-size: var(--font-size-sm, 0.875rem);
+  font-weight: var(--font-weight-medium, 500);
+  line-height: var(--line-height-tight, 1.4);
+}
+
+.profile-grid .profile__action-button--empty:hover {
+  background: var(--color-primary, #7C4DFF);
+  border-color: var(--color-primary, #7C4DFF);
+  color: white;
+}
+
+.profile-grid .profile__empty-state-message {
+  color: #62748E;
+  text-align: center;
+  font-size: var(--font-size-xs, 0.813rem);
+  font-weight: var(--font-weight-normal, 400);
+  line-height: var(--line-height-tight, 1.4);
+}
+
+.profile-grid .profile__empty-state-content {
+  gap: var(--spacing-2xs, 0.625rem);
+}
+
+.profile-grid .profile__empty-state-content > h2,
+.profile-grid .profile__empty-state-content > p {
+  margin: 0;
+}
+
+@container profile-pane (max-width: 1000px) {
+  #main-content.profile-grid {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    margin-inline: auto !important;
+    padding-inline: var(--spacing-sm, 0.75rem) !important;
+  }
+}
+
+@media (max-width: 576px) {
+  .profile-grid .profile__empty-state-content > h2,
+  .profile-grid .resume-card__section h3,
+  .profile-grid .profile__name {
+    font-family: inherit !important;
+  }
+
+  .profile-grid .profile__empty-state-content > h2,
+  .profile-grid .resume-card__section h3 {
+    font-size: var(--font-size-lg, 1.125rem) !important;
+    line-height: 1.2 !important;
+  }
+
+  .profile-grid .profile__name {
+    font-size: 1.5rem !important;
+    line-height: 1.15 !important;
+  }
+
+  .profile-grid .profile__pronouns {
+    font-family: inherit !important;
+    font-size: 0.6875rem !important;
+    line-height: 1.1 !important;
+  }
+
+  .profile__section--empty .profile-section-collapsible__actions > button.inline-flex-row {
+    order: 1;
+  }
+
+  .profile__section--empty .profile-section-collapsible__actions > .profile-section-collapsible__edit-button {
+    order: 2;
+  }
+
+  .profile__section--empty .profile-section-collapsible__edit-label {
+    display: none !important;
+  }
+
+  .profile__section--empty .profile-section-collapsible__edit-icon {
+    display: inline !important;
+  }
+}
+
+@container profile-pane (max-width: 576px) {
+  .profile-grid .profile__empty-state-content > h2,
+  .profile-grid .resume-card__section h3,
+  .profile-grid .profile__name {
+    font-family: inherit !important;
+  }
+
+  .profile-grid .profile__empty-state-content > h2,
+  .profile-grid .resume-card__section h3 {
+    font-size: var(--font-size-lg, 1.125rem) !important;
+    line-height: 1.2 !important;
+  }
+
+  .profile-grid .profile__name {
+    font-size: 1.5rem !important;
+    line-height: 1.15 !important;
+  }
+
+  .profile-grid .profile__pronouns {
+    font-family: inherit !important;
+    font-size: 0.6875rem !important;
+    line-height: 1.1 !important;
+  }
+
+  .profile__section--empty .profile-section-collapsible__actions > button.inline-flex-row {
+    order: 1;
+  }
+
+  .profile__section--empty .profile-section-collapsible__actions > .profile-section-collapsible__edit-button {
+    order: 2;
+  }
+
+  .profile__section--empty .profile-section-collapsible__edit-label {
+    display: none !important;
+  }
+
+  .profile__section--empty .profile-section-collapsible__edit-icon {
+    display: inline !important;
+  }
+}

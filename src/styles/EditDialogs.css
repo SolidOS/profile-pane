@@ -100,7 +100,7 @@
   line-height: normal;
 }
 
-.educationEditSection .profile-edit-dialog__section-heading {
+.profile-edit-dialog__section--education .profile-edit-dialog__section-heading {
   margin: 0;
   color: var(--gray-700, #364153);
   font-size: 16px;

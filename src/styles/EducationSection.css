@@ -1,15 +1,14 @@
-/* EducationCard.css */
-/* Mirrors Resume/CV card typography and spacing patterns. */
+/* Education section styles. */
 
-.educationCard {
+.education-card {
   width: 100%;
 }
 
-.educationSection {
+.education-card__section {
   margin-bottom: 1.25em;
 }
 
-.education {
+.education-card__item {
   margin: var(--spacing-xs) 0;
   font-size: var(--font-size-base);
   line-height: var(--line-height-base);
@@ -18,11 +17,11 @@
   gap: 0;
 }
 
-.education + .education {
+.education-card__item + .education-card__item {
   margin-top: var(--spacing-sm);
 }
 
-.educationHeader {
+.education-card__header {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -30,30 +29,30 @@
   gap: var(--spacing-sm);
 }
 
-.educationHeader h4,
-.educationHeader time,
-.educationHeader p {
+.education-card__header h4,
+.education-card__header time,
+.education-card__header p {
   margin: 0;
 }
 
-.educationPeriod {
+.education-card__period {
   margin: 0;
   font-size: var(--font-size-sm);
   line-height: var(--line-height-tight);
 }
 
-.educationOrg {
+.education-card__organization {
   font-weight: 600;
   color: var(--color-primary);
   margin: 0;
 }
 
-.cvDescriptionWrap {
+.education-card__description-wrap {
   margin: 0;
   position: relative;
 }
 
-.cvDescriptionText {
+.education-card__description-text {
   margin: 0;
   display: -webkit-box;
   -webkit-box-orient: vertical;
@@ -64,7 +63,7 @@
   overflow: hidden;
 }
 
-.cvDescriptionText.isExpanded {
+.education-card__description-text--expanded {
   display: block;
   -webkit-line-clamp: unset;
   line-clamp: unset;
@@ -72,7 +71,7 @@
   overflow: visible;
 }
 
-.cvDescriptionToggle {
+.education-card__description-toggle {
   margin: 0;
   padding: 0;
   border: 0;
@@ -89,14 +88,14 @@
   padding-left: 0.25em;
 }
 
-.cvDescriptionText.isExpanded + .cvDescriptionToggle {
+.education-card__description-text--expanded + .education-card__description-toggle {
   position: static;
   display: inline;
   padding-left: 0;
 }
 
 @media (max-width: 640px) {
-  .educationHeader {
+  .education-card__header {
     flex-direction: column;
     align-items: flex-start;
   }

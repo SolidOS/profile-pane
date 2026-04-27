@@ -253,7 +253,7 @@ function renderContactInfoPhoneSection(phones: ContactPointRow[], onAddRow: (opt
       class="profile-edit-dialog__section">
       <header class="profile__section-header">
         <h3 id="phone-numbers-heading" class="profile-edit-dialog__section-heading">
-          <span class="sectionTitleIcon" aria-hidden="true">${phoneIcon}</span>
+          <span class="profile-edit-dialog__section-title-icon" aria-hidden="true">${phoneIcon}</span>
           Phone Numbers
         </h3>
         <button
@@ -375,7 +375,7 @@ function renderContactInfoEmailSection(emails: ContactPointRow[], onAddRow: (opt
       class="profile-edit-dialog__section">
       <header class="profile__section-header">
         <h3 id="email-addresses-heading" class="profile-edit-dialog__section-heading">
-          <span class="sectionTitleIcon" aria-hidden="true">${emailIcon}</span>
+          <span class="profile-edit-dialog__section-title-icon" aria-hidden="true">${emailIcon}</span>
           Email Addresses
         </h3>
         <button
@@ -585,7 +585,7 @@ function renderContactInfoAddressSection(addresses: ContactAddressRow[], onAddRo
       class="profile-edit-dialog__section">
       <header class="profile__section-header">
         <h3 id="address-heading" class="profile-edit-dialog__section-heading">
-          <span class="sectionTitleIcon" aria-hidden="true">${locationIcon}</span>
+          <span class="profile-edit-dialog__section-title-icon" aria-hidden="true">${locationIcon}</span>
           Addresses
         </h3>
         <button

@@ -1,7 +1,7 @@
 import { html } from 'lit-html'
 import { RoleDetails } from './types'
 import { ViewerMode } from '../../types'
-import '../../styles/CVCard.css'
+import '../../styles/ResumeSection.css'
 import { resumeHeadingText } from '../../texts'
 import { LiveStore, NamedNode } from 'rdflib'
 import { createResumeEditDialog } from './ResumeEditDialog'
@@ -26,10 +26,10 @@ function renderRole(role: RoleDetails, index: number) {
     : `${rolePeriodId} ${roleOrgId}`
 
   return html`
-    <li class="cvRole" role="listitem" aria-labelledby=${roleTitleId} aria-describedby=${ariaDescribedBy}>
-    <div class="cvRoleHeader">
+    <li class="resume-card__item" role="listitem" aria-labelledby=${roleTitleId} aria-describedby=${ariaDescribedBy}>
+    <div class="resume-card__item-header">
       <h4 id=${roleTitleId}>${role.title}</h4>
-      <p id=${rolePeriodId} class="cvRolePeriod">
+      <p id=${rolePeriodId} class="resume-card__item-period">
         <time datetime=${toMonthDateTime(role.startDate)}>${formatMonthYear(role.startDate)}</time>
         <span aria-hidden="true"> to </span>
         ${role.endDate
@@ -37,15 +37,15 @@ function renderRole(role: RoleDetails, index: number) {
           : html`<span>Present</span>`}
       </p>
     </div>
-      <p class="cvOrg" id=${roleOrgId}>
+      <p class="resume-card__organization" id=${roleOrgId}>
         <strong>${role.orgName}</strong>${role.orgLocation ? html` | ${role.orgLocation}` : ''}
       </p>
       ${role.description ? html`
-        <div class="cvDescriptionWrap">
-          <p class="cvDescriptionText" id=${roleDescriptionId}>${role.description}</p>
+        <div class="resume-card__description-wrap">
+          <p class="resume-card__description-text" id=${roleDescriptionId}>${role.description}</p>
           <button
             type="button"
-            class="cvDescriptionToggle"
+            class="resume-card__description-toggle"
             aria-controls=${roleDescriptionId}
             aria-expanded="false"
             hidden
@@ -73,8 +73,8 @@ export const CVCard = (
   if (!hasRoles) return html``
 
   return html`
-    <article class="cvCard" aria-label="Resume" data-testid="curriculum-vitae">
-      <section class="cvSection">
+    <article class="resume-card" aria-label="Resume" data-testid="curriculum-vitae">
+      <section class="resume-card__section">
         <ul role="list" aria-label="Work experience in chronological order">
           ${renderRoles(cvData)}
         </ul>

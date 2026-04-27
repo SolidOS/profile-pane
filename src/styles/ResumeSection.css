@@ -1,17 +1,16 @@
-/* CVCard.css */
-/* Note: Uses utilities: .section-title for cvOrg styling */
+/* Resume section styles. */
 
-.cvSection {
+.resume-card__section {
   margin-bottom: 1.25em;
 }
 
-.cvSection > ul {
+.resume-card__section > ul {
   list-style: none;
   margin: 0;
   padding: 0;
 }
 
-.cvRole {
+.resume-card__item {
   margin: 0 0 var(--spacing-xs) 0;
   font-size: var(--font-size-base);
   line-height: var(--line-height-base);
@@ -20,11 +19,11 @@
   gap: 0;
 }
 
-.cvRole:last-child {
+.resume-card__item:last-child {
   margin-bottom: 0;
 }
 
-.cvRoleHeader {
+.resume-card__item-header {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -32,37 +31,37 @@
   gap: var(--spacing-sm);
 }
 
-.cvRoleHeader h4,
-.cvRoleHeader time {
+.resume-card__item-header h4,
+.resume-card__item-header time {
   margin: 0;
 }
 
-.cvRolePeriod {
+.resume-card__item-period {
   margin: 0;
   font-size: var(--font-size-sm);
   line-height: var(--line-height-tight);
 }
 
 @media (max-width: 640px) {
-  .cvRoleHeader {
+  .resume-card__item-header {
     flex-direction: column;
     align-items: flex-start;
   }
 }
 
-.cvOrg {
+.resume-card__organization {
   font-weight: 600;
   color: var(--color-primary);
   margin: 0;
 }
 
-.cvDescriptionWrap {
+.resume-card__description-wrap {
   margin: 0;
   position: relative;
   isolation: isolate;
 }
 
-.cvDescriptionText {
+.resume-card__description-text {
   margin: 0;
   width: 100%;
   max-width: none;
@@ -75,7 +74,7 @@
   overflow: hidden;
 }
 
-.cvDescriptionText.isExpanded {
+.resume-card__description-text--expanded {
   display: block;
   -webkit-line-clamp: unset;
   line-clamp: unset;
@@ -83,7 +82,7 @@
   overflow: visible;
 }
 
-.cvDescriptionToggle {
+.resume-card__description-toggle {
   margin: 0;
   padding: 0;
   border: 0;
@@ -109,13 +108,13 @@
   z-index: 0;
 }
 
-.cvDescriptionWrap .cvDescriptionText:not(.isExpanded) + .cvDescriptionToggle {
+.resume-card__description-wrap .resume-card__description-text:not(.resume-card__description-text--expanded) + .resume-card__description-toggle {
   top: calc(100% - 1.5em + 0.28em - 11px);
   bottom: auto;
   transform: translateY(7px);
 }
 
-.cvDescriptionText.isExpanded + .cvDescriptionToggle {
+.resume-card__description-text--expanded + .resume-card__description-toggle {
   position: static;
   display: inline;
   padding-left: 0;
@@ -124,14 +123,15 @@
   transform: none;
 }
 
-.cvSkill, .cvLanguage {
+.resume-card__skill,
+.resume-card__language {
   text-align: left;
   margin: var(--spacing-xs) 0;
   font-size: var(--font-size-base);
   line-height: var(--line-height-base);
 }
 
-.cvSection h3 {
+.resume-card__section h3 {
   color: var(--color-text);
   font-size: var(--font-size-lg);
   font-weight: 600;

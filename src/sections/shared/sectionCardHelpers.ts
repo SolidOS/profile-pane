@@ -14,25 +14,33 @@ function toDateValue(date?: DateLike): string {
 export function updateDescriptionOverflow(root: ParentNode = document) {
   const selectorGroups = [
     {
-      wrap: '.cvDescriptionWrap',
-      text: '.cvDescriptionText',
-      toggle: '.cvDescriptionToggle'
+      wrap: '.resume-card__description-wrap',
+      text: '.resume-card__description-text',
+      toggle: '.resume-card__description-toggle',
+      expanded: 'resume-card__description-text--expanded'
     },
     {
-      wrap: '.bioDescriptionWrap',
-      text: '.bioDescriptionText',
-      toggle: '.bioDescriptionToggle'
+      wrap: '.education-card__description-wrap',
+      text: '.education-card__description-text',
+      toggle: '.education-card__description-toggle',
+      expanded: 'education-card__description-text--expanded'
+    },
+    {
+      wrap: '.bio-card__description-wrap',
+      text: '.bio-card__description-text',
+      toggle: '.bio-card__description-toggle',
+      expanded: 'bio-card__description-text--expanded'
     }
   ]
 
-  selectorGroups.forEach(({ wrap, text, toggle }) => {
+  selectorGroups.forEach(({ wrap, text, toggle, expanded }) => {
     const wraps = root.querySelectorAll(wrap)
     wraps.forEach((container) => {
       const textEl = container.querySelector(text) as HTMLElement | null
       const button = container.querySelector(toggle) as HTMLButtonElement | null
       if (!textEl || !button) return
 
-      const isExpanded = textEl.classList.contains('isExpanded')
+      const isExpanded = textEl.classList.contains(expanded)
       if (isExpanded) {
         button.hidden = false
         return
@@ -72,7 +80,16 @@ export function toggleDescription(event: Event) {
   const textEl = document.getElementById(descriptionId)
   if (!textEl) return
 
-  const isExpanded = textEl.classList.toggle('isExpanded')
+  const expandedClass =
+    textEl.matches('.resume-card__description-text')
+      ? 'resume-card__description-text--expanded'
+      : textEl.matches('.education-card__description-text')
+        ? 'education-card__description-text--expanded'
+        : textEl.matches('.bio-card__description-text')
+          ? 'bio-card__description-text--expanded'
+          : 'isExpanded'
+
+  const isExpanded = textEl.classList.toggle(expandedClass)
   button.setAttribute('aria-expanded', isExpanded ? 'true' : 'false')
   button.textContent = isExpanded ? '...less' : '...more'
   if (!isExpanded) {

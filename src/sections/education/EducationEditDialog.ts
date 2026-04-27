@@ -387,10 +387,10 @@ function renderEducationSection(educationData: EducationRow[], onAddRow: () => v
   return html`
     <section 
       aria-labelledby="education-heading" 
-      class="educationEditSection section-bg">
+      class="profile-edit-dialog__section--education section-bg">
       <header class="profile__section-header">
         <h3 id="education-heading" class="profile-edit-dialog__section-heading">
-          <span class="sectionTitleIcon" aria-hidden="true">&#9993;</span>
+          <span class="profile-edit-dialog__section-title-icon" aria-hidden="true">&#9993;</span>
           Education
         </h3>
         <button

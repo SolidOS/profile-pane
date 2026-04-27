@@ -63,6 +63,12 @@ transform: translateX(-4px);
   padding: 0;
 }
 
+.profile__actions {
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-base, 1rem);
+  margin-bottom: var(--spacing-xs);
+}
+
 .profile__heading-actions {
   grid-area: actions;
   margin-left: auto;

@@ -1,0 +1,15 @@
+.profile-friends-button__section {
+  width: 100%;
+  min-width: 0;
+  display: grid;
+}
+
+.profile-friends-button__section button {
+  width: 100%;
+  min-width: 0;
+}
+
+.profile-friends-button__container input[type="text"] {
+  width: 100%;
+  box-sizing: border-box;
+}

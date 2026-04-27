@@ -1,10 +1,18 @@
-.bioDescriptionWrap {
+.bio-card,
+.bio-card__section {
+	width: 100%;
+	max-width: 100%;
+	min-width: 0;
+	box-sizing: border-box;
+}
+
+.bio-card__description-wrap {
 	margin: 0;
 	position: relative;
 	isolation: isolate;
 }
 
-.bioDescriptionText {
+.bio-card__description-text {
 	margin: 0;
 	width: 100%;
 	max-width: none;
@@ -17,7 +25,7 @@
 	overflow: hidden;
 }
 
-.bioDescriptionText:not(.isExpanded)::after {
+.bio-card__description-text:not(.bio-card__description-text--expanded)::after {
 	content: '';
 	position: absolute;
 	right: 0;
@@ -28,14 +36,14 @@
 	pointer-events: none;
 }
 
-.bioDescriptionText.isExpanded {
+.bio-card__description-text--expanded {
 	display: block;
 	-webkit-line-clamp: unset;
 	line-clamp: unset;
 	overflow: visible;
 }
 
-.bioDescriptionToggle {
+.bio-card__description-toggle {
 	margin: 0;
 	padding: 0;
 	border: 0;
@@ -61,13 +69,13 @@
 	z-index: 0;
 }
 
-.bioDescriptionWrap .bioDescriptionText:not(.isExpanded) + .bioDescriptionToggle {
+.bio-card__description-wrap .bio-card__description-text:not(.bio-card__description-text--expanded) + .bio-card__description-toggle {
 	top: calc(100% - 1.5em + 0.28em - 12px);
 	bottom: auto;
 	transform: translateY(7px);
 }
 
-.bioDescriptionText.isExpanded + .bioDescriptionToggle {
+.bio-card__description-text--expanded + .bio-card__description-toggle {
 	position: static;
 	display: inline;
 	padding-left: 0;

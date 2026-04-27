@@ -1,7 +1,14 @@
-/* SocialCard.css */
-/* Uses utilities: .list-reset, .text-wrap-anywhere, .flex, .gap-sm, .gap-lg, .rounded-sm */
+/* Social section styles. */
 
-.socialList {
+.social-card,
+.social-card__list {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+.social-card__list {
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
@@ -9,18 +16,18 @@
   justify-content: flex-start;
 }
 
-.socialItem {
+.social-card__item {
   display: flex;
   align-items: center;
 }
 
-.socialItem a {
+.social-card__link {
   color: var(--color-primary);
   text-decoration: none;
   display: flex;
   align-items: center;
-  min-height: var(--min-touch-target);
-  padding: var(--spacing-xxs); 
+  gap: var(--spacing-xs);
+  padding: var(--spacing-xs);
   border-radius: var(--border-radius-base);
   transition: background-color var(--animation-duration) ease;
   position: relative;
@@ -28,14 +35,13 @@
   min-width: 0;
 }
 
-.socialItem a:hover,
-.socialItem a:focus {
+.social-card__link:hover,
+.social-card__link:focus {
   text-decoration: underline;
   background-color: rgba(124, 77, 255, 0.1);
 }
 
-/* Screen reader only external link indication */
-.socialItem a[href^="http"]:after {
+.social-card__link[href^="http"]:after {
   content: " (external link)";
   position: absolute;
   left: -10000px;
@@ -44,7 +50,7 @@
   overflow: hidden;
 }
 
-.socialIcon {
+.social-card__icon {
   width: var(--icon-base);
   height: var(--icon-base);
   border-radius: var(--border-radius-base);
@@ -52,26 +58,26 @@
   flex-shrink: 0;
 }
 
-.socialCard__more-button {
+.social-card__more-button {
   display: none;
 }
 
 @media (max-width: 1000px) {
-  .socialCard .socialList {
+  .social-card .social-card__list {
     display: grid;
     grid-template-columns: repeat(5, max-content);
     justify-content: flex-start;
   }
 
-  .socialCard[data-mobile-expanded="true"] .socialList {
+  .social-card[data-mobile-expanded="true"] .social-card__list {
     grid-template-columns: repeat(3, max-content);
   }
 
-  .socialCard[data-mobile-expanded="false"] .socialItem:nth-child(n + 11) {
+  .social-card[data-mobile-expanded="false"] .social-card__item:nth-child(n + 11) {
     display: none;
   }
 
-  .socialCard__more-button {
+  .social-card__more-button {
     display: inline-flex;
     margin-top: var(--spacing-xs);
     padding: 0;
@@ -83,7 +89,7 @@
     cursor: pointer;
   }
 
-  .socialCard[data-mobile-expanded="true"] .socialCard__more-button {
+  .social-card[data-mobile-expanded="true"] .social-card__more-button {
     display: none;
   }
 }

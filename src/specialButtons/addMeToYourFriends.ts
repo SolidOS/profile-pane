@@ -11,7 +11,7 @@ import {
   addMeToYourFriendsButtonText, friendExistsAlreadyButtonText, friendExistsMessage, friendWasAddedSuccesMessage, logInAddMeToYourFriendsButtonText, userNotLoggedInErrorMessage
 } from '../texts'
 import { ViewerMode } from '../types'
-import '../styles/ProfileCard.css'
+import '../styles/AddMeToYourFriends.css'
 
 let buttonContainer = <HTMLDivElement>document.createElement('section')
 
@@ -22,7 +22,7 @@ const addMeToYourFriendsDiv = (
 ): TemplateResult => {
 
   buttonContainer = context.dom.createElement('section') as HTMLDivElement
-  buttonContainer.setAttribute('class', 'buttonSubSection text-truncate text-center section-centered')
+  buttonContainer.setAttribute('class', 'profile-friends-button__section text-truncate text-center section-centered')
   buttonContainer.setAttribute('aria-labelledby', 'add-me-to-your-friends-button-section')
   buttonContainer.setAttribute('data-testid', 'button')
 
