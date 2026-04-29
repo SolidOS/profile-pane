@@ -1,5 +1,6 @@
 import { openInputDialog } from '../../ui/dialog'
 import { html, render } from 'lit-html'
+import 'solid-ui/components/select'
 import type { Account, SocialRow } from './types'
 import '../../styles/ContactInfoEditDialog.css'
 import '../../styles/EditDialogs.css'
@@ -38,6 +39,17 @@ type SocialRerenderOptions = {
   focusSelector?: string
 }
 
+type SocialAccountSelectOption = {
+  label: string
+  value: string
+}
+
+type SocialAccountSelectElement = HTMLElement & {
+  options?: SocialAccountSelectOption[]
+  value?: string
+  label?: string
+}
+
 type SocialRowInputProps = {
   rows: SocialRow[]
   index: number
@@ -50,6 +62,49 @@ type SocialRowInputProps = {
   onDrop: (index: number) => void
   onDragEnd: () => void
   isDropTarget: boolean
+}
+
+function toSocialAccountSelectOptions(options: SocialAccountOption[]): SocialAccountSelectOption[] {
+  return options.map((option) => ({
+    label: option.label,
+    value: option.label
+  }))
+}
+
+function getSocialAccountSelectValue(row: SocialRow, options: SocialAccountOption[]): string {
+  const selected = findSocialAccountOption(options, row?.name || '')
+  return selected?.label || ''
+}
+
+function readSocialAccountTypeChange(event: Event): string {
+  const customEvent = event as CustomEvent<{ value?: string }>
+  if (typeof customEvent.detail?.value === 'string') {
+    return customEvent.detail.value
+  }
+
+  const target = event.target as HTMLSelectElement | HTMLInputElement | null
+  return typeof target?.value === 'string' ? target.value : ''
+}
+
+function initializeSocialAccountSelects(
+  form: HTMLFormElement,
+  rows: SocialRow[],
+  options: SocialAccountOption[]
+): void {
+  const selectOptions = toSocialAccountSelectOptions(options)
+  const selectElements = form.querySelectorAll('solid-ui-select[data-social-account-row-index]') as NodeListOf<SocialAccountSelectElement>
+
+  selectElements.forEach((selectElement) => {
+    const rowIndex = Number(selectElement.dataset.socialAccountRowIndex)
+    if (Number.isNaN(rowIndex)) return
+
+    const row = rows[rowIndex]
+    if (!row) return
+
+    selectElement.options = selectOptions
+    selectElement.value = getSocialAccountSelectValue(row, options)
+    selectElement.label = ''
+  })
 }
 
 function sanitizeSocialFieldValue(value: string): string {
@@ -144,22 +199,19 @@ function renderSocialAccountInputSelect(
   options: SocialAccountOption[],
   onChange: (event: Event) => void
 ) {
-  const selected = findSocialAccountOption(options, row?.name || '')
-  const selectedLabel = selected?.label || ''
+  const selectedLabel = getSocialAccountSelectValue(row, options)
 
   return html`
-    <select
+    <solid-ui-select
       class="profile-edit-dialog__social-account-select"
       name=${`social-account-type-${rowIndex}`}
-      data-row-index=${String(rowIndex)}
+      data-social-account-row-index=${String(rowIndex)}
       autocomplete="off"
+      .options=${toSocialAccountSelectOptions(options)}
+      .value=${selectedLabel}
+      .label=${''}
       @change=${onChange}
-    >
-      <option value="">Select</option>
-      ${options.map((option) => html`
-        <option value=${option.label} ?selected=${option.label === selectedLabel}>${option.label}</option>
-      `)}
-    </select>
+    ></solid-ui-select>
   `
 }
 
@@ -192,8 +244,7 @@ function renderSocialInputRow({
   }
 
   const handleAccountTypeInput = (event: Event) => {
-    const target = event.target as HTMLSelectElement
-    const selected = findSocialAccountOption(options, target.value)
+    const selected = findSocialAccountOption(options, readSocialAccountTypeChange(event))
     if (!rows[index]) return
 
     if (!selected) {
@@ -365,6 +416,8 @@ function renderSocialEditTemplate(
       ? html`<p class="profile-edit-dialog__login-message">${ownerLoginRequiredDialogMessageText}</p>`
       : null}
   `, form)
+
+  initializeSocialAccountSelects(form, formState.socialAccounts, socialOptions)
 
   if (rerenderOptions.focusSelector) {
     focusSocialField(form, rerenderOptions.focusSelector)
