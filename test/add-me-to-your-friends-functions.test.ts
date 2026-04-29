@@ -3,7 +3,7 @@ import { fireEvent, waitFor } from '@testing-library/dom'
 import { authn } from 'solid-logic'
 import { sym } from 'rdflib'
 import { context, subject } from './setup'
-import { addMeToYourFriendsDiv, checkIfThingExists, createAddMeToYourFriendsButton, saveNewThing } from '../src/addMeToYourFriends'
+import { addMeToYourFriendsDiv, checkIfThingExists, createAddMeToYourFriendsButton, saveNewThing } from '../src/specialButtons/addMeToYourFriends'
 import {
   addMeToYourFriendsButtonText,
   friendExistsAlreadyButtonText,
