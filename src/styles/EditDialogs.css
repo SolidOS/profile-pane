@@ -368,15 +368,19 @@
 
 .profile__edit-form--resume .profile-edit-dialog__field > input,
 .profile__edit-form--resume .profile-edit-dialog__field > select,
+.profile__edit-form--resume .profile-edit-dialog__field > solid-ui-select,
 .profile__edit-form--resume .profile-edit-dialog__field > textarea,
 .profile__edit-form--resume .profile-edit-dialog__field-type > input,
 .profile__edit-form--resume .profile-edit-dialog__field-type > select,
+.profile__edit-form--resume .profile-edit-dialog__field-type > solid-ui-select,
 .profile__edit-form--resume .profile-edit-dialog__field-type > textarea,
 .profile__edit-form--contact-info .profile-edit-dialog__field > input,
 .profile__edit-form--contact-info .profile-edit-dialog__field > select,
+.profile__edit-form--contact-info .profile-edit-dialog__field > solid-ui-select,
 .profile__edit-form--contact-info .profile-edit-dialog__field > textarea,
 .profile__edit-form--contact-info .profile-edit-dialog__field-type > input,
 .profile__edit-form--contact-info .profile-edit-dialog__field-type > select,
+.profile__edit-form--contact-info .profile-edit-dialog__field-type > solid-ui-select,
 .profile__edit-form--contact-info .profile-edit-dialog__field-type > textarea {
   align-self: stretch;
 }
@@ -404,9 +408,23 @@
   width: 100%;
 }
 
-.profile-edit-dialog__date-pair > select {
+.profile-edit-dialog__date-pair > select,
+.profile-edit-dialog__date-pair > solid-ui-select {
   flex: 1 1 0;
   min-width: 0;
+}
+
+.profile-edit-dialog__resume-date-select {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
+}
+
+.profile-edit-dialog__resume-date-select--disabled {
+  pointer-events: none;
+  opacity: var(--opacity-input-disabled, 0.75);
 }
 
 .profile-edit-dialog__field--stack {
@@ -786,17 +804,14 @@
   min-width: 0;
   max-width: 100%;
   box-sizing: border-box;
-  min-height: var(--min-touch-target, 44px);
-  height: var(--min-touch-target, 44px);
-  border-radius: var(--border-radius-base, 0.3125rem);
-  border: 1px solid var(--gray-400, #99A1AF);
-  background: var(--white, #FFF);
-  color: var(--gray-900, #101828);
-  font-size: var(--font-size-sm, 0.875rem);
-  font-weight: var(--font-weight-medium, 500);
-  padding: var(--spacing-2xs, 0.625rem);
+}
 
-
+.profile-edit-dialog__resume-organization-type-select {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 .profile-edit-dialog__bio-field-container textarea {
