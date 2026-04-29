@@ -1,6 +1,6 @@
-import { html } from "lit-html";
-import { QRCodeCard } from "./QRCodeCard";
-import { LiveStore, NamedNode } from "rdflib";
+import { html } from 'lit-html'
+import { QRCodeCard } from './QRCodeCard'
+import { LiveStore, NamedNode } from 'rdflib'
 import '../../styles/QRCodeSection.css'
 
 export function renderQRCode(subject: NamedNode, store: LiveStore) {
