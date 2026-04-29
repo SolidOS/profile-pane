@@ -1,5 +1,6 @@
 import { alertDialog, openInputDialog } from '../../ui/dialog'
 import { html, render } from 'lit-html'
+import 'solid-ui/components/select'
 import { RoleDetails, ResumeRow } from './types'
 import '../../styles/EditDialogs.css'
 import '../../styles/ContactInfoEditDialog.css'
@@ -28,8 +29,131 @@ type ResumeValidationResult = {
   message?: string
 }
 
+type ResumeOrganizationTypeOption = {
+  label: string
+  value: string
+}
+
+type ResumeDateSelectKind = 'start-month' | 'start-year' | 'end-month' | 'end-year'
+
+type ResumeOrganizationTypeSelectElement = HTMLElement & {
+  options?: ResumeOrganizationTypeOption[]
+  value?: string
+  label?: string
+}
+
+const RESUME_ORGANIZATION_TYPE_OPTIONS: ResumeOrganizationTypeOption[] = [
+  { label: 'Corporation', value: 'Corporation' },
+  { label: 'Educational Organization', value: 'EducationalOrganization' },
+  { label: 'Research Organization', value: 'ResearchOrganization' },
+  { label: 'Government Organization', value: 'GovernmentOrganization' },
+  { label: 'NGO', value: 'NGO' },
+  { label: 'Performing Group', value: 'PerformingGroup' },
+  { label: 'Project', value: 'Project' },
+  { label: 'Sports Organization', value: 'SportsOrganization' },
+  { label: 'Other', value: 'Other' }
+]
+
+const RESUME_MONTH_OPTIONS: ResumeOrganizationTypeOption[] = [
+  { value: '01', label: 'January' },
+  { value: '02', label: 'February' },
+  { value: '03', label: 'March' },
+  { value: '04', label: 'April' },
+  { value: '05', label: 'May' },
+  { value: '06', label: 'June' },
+  { value: '07', label: 'July' },
+  { value: '08', label: 'August' },
+  { value: '09', label: 'September' },
+  { value: '10', label: 'October' },
+  { value: '11', label: 'November' },
+  { value: '12', label: 'December' }
+]
+
 function sanitizeResumeFieldValue(value: string): string {
   return sanitizeTextValue(value)
+}
+
+function normalizeResumeOrganizationTypeValue(value: string): string {
+  return RESUME_ORGANIZATION_TYPE_OPTIONS.some((option) => option.value === value)
+    ? value
+    : RESUME_ORGANIZATION_TYPE_OPTIONS[0]?.value || ''
+}
+
+function readResumeOrganizationTypeChange(event: Event): string {
+  const customEvent = event as CustomEvent<{ value?: string }>
+  if (typeof customEvent.detail?.value === 'string') {
+    return customEvent.detail.value
+  }
+
+  const target = event.target as HTMLSelectElement | HTMLInputElement | null
+  return typeof target?.value === 'string' ? target.value : ''
+}
+
+function readResumeSelectChange(event: Event): string {
+  return readResumeOrganizationTypeChange(event)
+}
+
+function getResumeYearOptions(selectedYears: string[]): ResumeOrganizationTypeOption[] {
+  const currentYear = new Date().getFullYear()
+  const baseYearOptions = Array.from({ length: 120 }, (_, i) => String(currentYear - i))
+  const yearOptions = Array.from(new Set([
+    ...baseYearOptions,
+    ...selectedYears
+  ].filter(Boolean))).sort((a, b) => Number(b) - Number(a))
+
+  return yearOptions.map((year) => ({ label: year, value: year }))
+}
+
+function getResumeDateSelectOptions(
+  kind: ResumeDateSelectKind,
+  selectedYears: string[],
+  isCurrentRole: boolean
+): ResumeOrganizationTypeOption[] {
+  if (kind === 'start-month') {
+    return RESUME_MONTH_OPTIONS
+  }
+
+  if (kind === 'start-year') {
+    return getResumeYearOptions(selectedYears)
+  }
+
+  if (kind === 'end-month') {
+    return RESUME_MONTH_OPTIONS
+  }
+
+  return getResumeYearOptions(selectedYears)
+}
+
+function getResumeDateSelectLabel(kind: ResumeDateSelectKind, row: ResumeRow): string {
+  switch (kind) {
+    case 'start-month':
+    case 'end-month':
+      return row?.isCurrentRole && kind === 'end-month' ? 'Present' : 'Select Month'
+    case 'start-year':
+      return 'Select Year'
+    case 'end-year':
+      return row?.isCurrentRole ? '' : 'Select Year'
+    default:
+      return ''
+  }
+}
+
+function getResumeDateSelectValue(kind: ResumeDateSelectKind, row: ResumeRow): string {
+  const startDateParts = parseYearMonthFromDateText(toText(row?.startDate))
+  const endDateParts = parseYearMonthFromDateText(toText(row?.endDate))
+
+  switch (kind) {
+    case 'start-month':
+      return startDateParts.month
+    case 'start-year':
+      return startDateParts.year
+    case 'end-month':
+      return row?.isCurrentRole ? '' : endDateParts.month
+    case 'end-year':
+      return row?.isCurrentRole ? '' : endDateParts.year
+    default:
+      return ''
+  }
 }
 
 function parseYearMonthFromDateText(dateText: string): { year: string, month: string } {
@@ -73,7 +197,7 @@ function toFormState(resumeData: RoleDetails[]): ResumeFormState {
       endDate: role.endDate,
       isCurrentRole: role.isCurrentRole ?? !role.endDate,
       orgName: sanitizeResumeFieldValue(toText(role.orgName)),
-      orgType: sanitizeResumeFieldValue(toText(role.orgType)),
+      orgType: normalizeResumeOrganizationTypeValue(sanitizeResumeFieldValue(toText(role.orgType))),
       orgLocation: sanitizeResumeFieldValue(toText(role.orgLocation)),
       orgHomePage: sanitizeResumeFieldValue(toText(role.orgHomePage)),
       description: sanitizeResumeFieldValue(toText(role.description)),
@@ -92,7 +216,7 @@ function toFormState(resumeData: RoleDetails[]): ResumeFormState {
         endDate: undefined,
         isCurrentRole: false,
         orgName: '',
-        orgType: '',
+        orgType: RESUME_ORGANIZATION_TYPE_OPTIONS[0].value,
         orgLocation: '',
         orgHomePage: '',
         description: '',
@@ -139,6 +263,43 @@ type ResumeRowProps = {
   onChange: () => void
 }
 
+function initializeResumeOrganizationTypeSelects(form: HTMLFormElement, resumeData: ResumeRow[]): void {
+  const selectElements = form.querySelectorAll('solid-ui-select[data-resume-organization-type-index]') as NodeListOf<ResumeOrganizationTypeSelectElement>
+
+  selectElements.forEach((selectElement) => {
+    const rowIndex = Number(selectElement.dataset.resumeOrganizationTypeIndex)
+    if (Number.isNaN(rowIndex)) return
+
+    const resumeRow = resumeData[rowIndex]
+    if (!resumeRow) return
+
+    selectElement.options = RESUME_ORGANIZATION_TYPE_OPTIONS
+    selectElement.value = normalizeResumeOrganizationTypeValue(resumeRow.orgType || '')
+    selectElement.label = ''
+  })
+}
+
+function initializeResumeDateSelects(form: HTMLFormElement, resumeData: ResumeRow[]): void {
+  const selectElements = form.querySelectorAll('solid-ui-select[data-resume-date-kind]') as NodeListOf<ResumeOrganizationTypeSelectElement>
+
+  selectElements.forEach((selectElement) => {
+    const kind = selectElement.dataset.resumeDateKind as ResumeDateSelectKind | undefined
+    const rowIndex = Number(selectElement.dataset.resumeRowIndex)
+    if (!kind || Number.isNaN(rowIndex)) return
+
+    const resumeRow = resumeData[rowIndex]
+    if (!resumeRow) return
+
+    const startDateParts = parseYearMonthFromDateText(toText(resumeRow.startDate))
+    const endDateParts = parseYearMonthFromDateText(toText(resumeRow.endDate))
+    const selectedYears = [startDateParts.year, endDateParts.year]
+
+    selectElement.options = getResumeDateSelectOptions(kind, selectedYears, Boolean(resumeRow.isCurrentRole))
+    selectElement.value = getResumeDateSelectValue(kind, resumeRow)
+    selectElement.label = getResumeDateSelectLabel(kind, resumeRow)
+  })
+}
+
 function renderResumeInputRow({
   resumeData,
   index,
@@ -183,41 +344,7 @@ function renderResumeInputRow({
   const endYearParsedText = endDateParts.year
   const isCurrentRoleId = `resume-current-role-${index}`
   const currentYear = new Date().getFullYear()
-  const baseYearOptions = Array.from({ length: 120 }, (_, i) => String(currentYear - i))
-  const yearOptions = Array.from(new Set([
-    ...baseYearOptions,
-    startYearText,
-    endYearParsedText
-  ].filter(Boolean))).sort((a, b) => Number(b) - Number(a))
-
-  const monthOptions = [
-    { value: '01', label: 'January' },
-    { value: '02', label: 'February' },
-    { value: '03', label: 'March' },
-    { value: '04', label: 'April' },
-    { value: '05', label: 'May' },
-    { value: '06', label: 'June' },
-    { value: '07', label: 'July' },
-    { value: '08', label: 'August' },
-    { value: '09', label: 'September' },
-    { value: '10', label: 'October' },
-    { value: '11', label: 'November' },
-    { value: '12', label: 'December' }
-  ]
-
-  const renderMonthOptions = (selectedMonth: string, emptyLabel = 'Select Month') => html`
-    <option value="" ?selected=${!selectedMonth}>${emptyLabel}</option>
-    ${monthOptions.map((month) => html`
-      <option value=${month.value} ?selected=${month.value === selectedMonth}>${month.label}</option>
-    `)}
-  `
-
-  const renderYearOptions = (selectedYear: string, emptyLabel = 'Select Year') => html`
-    <option value="" ?selected=${!selectedYear}>${emptyLabel}</option>
-    ${yearOptions.map((year) => html`
-      <option value=${year} ?selected=${year === selectedYear}>${year}</option>
-    `)}
-  `
+  const selectedYears = [startYearText, endYearParsedText]
 
   const handleResumeInput = (field: ResumeEditableField) => (e: Event) => {
     const target = e.target as HTMLInputElement
@@ -241,8 +368,7 @@ function renderResumeInputRow({
   /* The following function was generated by AI Model: GPT-5.3-Codex  */
   /* Prompt: can you make this a month drop down for the start year */
   const handleStartMonthChange = (event: Event) => {
-    const target = event.target as HTMLSelectElement
-    const month = target.value
+    const month = readResumeSelectChange(event)
     const year = parseYearMonthFromDateText(toText(resumeData[index]?.startDate)).year || String(currentYear)
     const nextStartDate = buildDateLiteral(month, year)
     if (resumeData[index]) {
@@ -252,8 +378,7 @@ function renderResumeInputRow({
   }
 
   const handleStartYearChange = (event: Event) => {
-    const target = event.target as HTMLSelectElement
-    const year = target.value
+    const year = readResumeSelectChange(event)
     const month = parseYearMonthFromDateText(toText(resumeData[index]?.startDate)).month || '01'
     const nextStartDate = buildDateLiteral(month, year)
     if (resumeData[index]) {
@@ -263,8 +388,8 @@ function renderResumeInputRow({
   }
 
   const handleEndMonthChange = (event: Event) => {
-    const target = event.target as HTMLSelectElement
-    const month = target.value
+    if (resumeData[index]?.isCurrentRole) return
+    const month = readResumeSelectChange(event)
     const year = parseYearMonthFromDateText(toText(resumeData[index]?.endDate)).year || String(currentYear)
     const nextEndDate = buildDateLiteral(month, year)
     if (resumeData[index]) {
@@ -274,8 +399,8 @@ function renderResumeInputRow({
   }
 
   const handleEndYearChange = (event: Event) => {
-    const target = event.target as HTMLSelectElement
-    const year = target.value
+    if (resumeData[index]?.isCurrentRole) return
+    const year = readResumeSelectChange(event)
     const month = parseYearMonthFromDateText(toText(resumeData[index]?.endDate)).month || '01'
     const nextEndDate = buildDateLiteral(month, year)
     if (resumeData[index]) {
@@ -301,33 +426,12 @@ function renderResumeInputRow({
         applyRowFieldChange(resumeData[index], 'endDate', undefined, rowHasContent)
       }
 
-      const formRoot = target.form || target.closest('form')
-      const endMonthSelect = formRoot?.querySelector(`#${endMonthSelectId}`) as HTMLSelectElement | null
-      const endYearSelect = formRoot?.querySelector(`#${endYearSelectId}`) as HTMLSelectElement | null
-
-      if (endMonthSelect) {
-        endMonthSelect.disabled = target.checked
-        endMonthSelect.value = ''
-        const emptyOption = endMonthSelect.options[0]
-        if (emptyOption) {
-          emptyOption.text = target.checked ? 'Present' : 'Select Month'
-        }
-      }
-
-      if (endYearSelect) {
-        endYearSelect.disabled = target.checked
-        endYearSelect.value = ''
-        const emptyOption = endYearSelect.options[0]
-        if (emptyOption) {
-          emptyOption.text = target.checked ? '' : 'Select Year'
-        }
-      }
+      onChange()
     }
   }
 
   const handleOrganizationTypeInput = (e: Event) => {
-    const target = e.target as HTMLSelectElement
-    const nextType = target.value
+    const nextType = normalizeResumeOrganizationTypeValue(readResumeOrganizationTypeChange(e))
     if (resumeRow) {
       applyRowSelectChange(resumeRow, 'orgType', nextType)
       onChange()
@@ -385,17 +489,16 @@ function renderResumeInputRow({
       </label>
       <label aria-label=${`${label} Organization Type`} class="label profile-edit-dialog__field">
         Organization Type
-        <select name=${organizationTypeName} id=${organizationTypeSelectId} @change=${handleOrganizationTypeInput} .value=${resumeRow?.orgType || ''}>
-          <option value="Corporation">Corporation</option>
-          <option value="EducationalOrganization">Educational Organization</option>
-          <option value="ResearchOrganization">Research Organization</option>
-          <option value="GovernmentOrganization">Government Organization</option>
-          <option value="NGO">NGO</option>
-          <option value="PerformingGroup">Performing Group</option>
-          <option value="Project">Project</option>
-          <option value="SportsOrganization">Sports Organization</option>
-          <option value="Other">Other</option>
-        </select>
+        <solid-ui-select
+          class="profile-edit-dialog__resume-organization-type-select"
+          name=${organizationTypeName}
+          id=${organizationTypeSelectId}
+          data-resume-organization-type-index=${String(index)}
+          .options=${RESUME_ORGANIZATION_TYPE_OPTIONS}
+          .value=${normalizeResumeOrganizationTypeValue(resumeRow?.orgType || '')}
+          .label=${''}
+          @change=${handleOrganizationTypeInput}
+        ></solid-ui-select>
       </label>
     </div>  
     <div class="profile-edit-dialog__row">
@@ -436,35 +539,63 @@ function renderResumeInputRow({
       <label aria-label=${`Start Date ${displayIndex + 1}`} class="label profile-edit-dialog__field profile-edit-dialog__field--date-group">
         <span>Start Date</span>
         <div class="profile-edit-dialog__date-pair">
-          <select name=${startMonthInputName} id=${startMonthSelectId} aria-label=${startMonthLabel} @change=${handleStartMonthChange}>
-            ${renderMonthOptions(startMonthValue)}
-          </select>
-          <select name=${startYearInputName} id=${startYearSelectId} aria-label=${startYearLabel} @change=${handleStartYearChange}>
-            ${renderYearOptions(startYearText)}
-          </select>
+          <solid-ui-select
+            class="profile-edit-dialog__resume-date-select"
+            name=${startMonthInputName}
+            id=${startMonthSelectId}
+            aria-label=${startMonthLabel}
+            data-resume-date-kind="start-month"
+            data-resume-row-index=${String(index)}
+            .options=${getResumeDateSelectOptions('start-month', selectedYears, Boolean(resumeRow?.isCurrentRole))}
+            .value=${startMonthValue}
+            .label=${getResumeDateSelectLabel('start-month', resumeRow)}
+            @change=${handleStartMonthChange}
+          ></solid-ui-select>
+          <solid-ui-select
+            class="profile-edit-dialog__resume-date-select"
+            name=${startYearInputName}
+            id=${startYearSelectId}
+            aria-label=${startYearLabel}
+            data-resume-date-kind="start-year"
+            data-resume-row-index=${String(index)}
+            .options=${getResumeDateSelectOptions('start-year', selectedYears, Boolean(resumeRow?.isCurrentRole))}
+            .value=${startYearText}
+            .label=${getResumeDateSelectLabel('start-year', resumeRow)}
+            @change=${handleStartYearChange}
+          ></solid-ui-select>
         </div>
       </label>
       <label aria-label=${`End Date ${displayIndex + 1}`} class="label profile-edit-dialog__field profile-edit-dialog__field--date-group">
         <span>End Date</span>
         <div class="profile-edit-dialog__date-pair">
-          <select
+          <solid-ui-select
+            class=${`profile-edit-dialog__resume-date-select${resumeRow?.isCurrentRole ? ' profile-edit-dialog__resume-date-select--disabled' : ''}`}
             name=${endMonthInputName}
             id=${endMonthSelectId}
             aria-label=${endMonthLabel}
+            aria-disabled=${String(Boolean(resumeRow?.isCurrentRole))}
+            tabindex=${resumeRow?.isCurrentRole ? '-1' : '0'}
+            data-resume-date-kind="end-month"
+            data-resume-row-index=${String(index)}
+            .options=${getResumeDateSelectOptions('end-month', selectedYears, Boolean(resumeRow?.isCurrentRole))}
+            .value=${resumeRow?.isCurrentRole ? '' : endMonthValue}
+            .label=${getResumeDateSelectLabel('end-month', resumeRow)}
             @change=${handleEndMonthChange}
-            ?disabled=${Boolean(resumeRow?.isCurrentRole)}
-          >
-            ${renderMonthOptions(endMonthValue, resumeRow?.isCurrentRole ? 'Present' : 'Select Month')}
-          </select>
-          <select
+          ></solid-ui-select>
+          <solid-ui-select
+            class=${`profile-edit-dialog__resume-date-select${resumeRow?.isCurrentRole ? ' profile-edit-dialog__resume-date-select--disabled' : ''}`}
             name=${endYearInputName}
             id=${endYearSelectId}
             aria-label=${endYearLabel}
+            aria-disabled=${String(Boolean(resumeRow?.isCurrentRole))}
+            tabindex=${resumeRow?.isCurrentRole ? '-1' : '0'}
+            data-resume-date-kind="end-year"
+            data-resume-row-index=${String(index)}
+            .options=${getResumeDateSelectOptions('end-year', selectedYears, Boolean(resumeRow?.isCurrentRole))}
+            .value=${resumeRow?.isCurrentRole ? '' : endYearParsedText}
+            .label=${getResumeDateSelectLabel('end-year', resumeRow)}
             @change=${handleEndYearChange}
-            ?disabled=${Boolean(resumeRow?.isCurrentRole)}
-          >
-            ${renderYearOptions(endYearParsedText, resumeRow?.isCurrentRole ? '' : 'Select Year')}
-          </select>
+          ></solid-ui-select>
         </div>
       </label>
     </div>
@@ -539,6 +670,9 @@ function renderResumeEditTemplate(
       ? html`<p class="profile-edit-dialog__login-message">${ownerLoginRequiredDialogMessageText}</p>`
       : null}
   `, form)
+
+  initializeResumeOrganizationTypeSelects(form, formState.resumeData)
+  initializeResumeDateSelects(form, formState.resumeData)
 }
 
 type ResumeDialogRenderState = {
@@ -630,7 +764,7 @@ function createResumeEditForm(resumeData: RoleDetails[], viewerMode: ViewerMode)
       endDate: undefined,
       isCurrentRole: false,
       orgName: '',
-      orgType: '',
+      orgType: RESUME_ORGANIZATION_TYPE_OPTIONS[0].value,
       orgLocation: '',
       orgHomePage: '',
       description: '',
