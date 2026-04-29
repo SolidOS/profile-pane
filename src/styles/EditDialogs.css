@@ -583,31 +583,6 @@
   padding-right: 7.5rem;
 }
 
-.profile-edit-dialog__input--with-leading-icon {
-  width: 100%;
-  box-sizing: border-box;
-  padding-left: 2.1rem;
-}
-
-.profile-edit-dialog__search-icon {
-  position: absolute;
-  left: var(--spacing-2xs, 0.625rem);
-  top: 50%;
-  transform: translateY(-50%);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--gray-400, #99A1AF);
-  pointer-events: none;
-  z-index: 1;
-}
-
-.profile-edit-dialog__search-icon svg {
-  display: block;
-  width: 0.8125rem;
-  height: 0.8125rem;
-}
-
 .profile-edit-dialog__delete-button {
   min-height: var(--min-touch-target, 44px);
   min-width: var(--min-touch-target, 44px);
@@ -775,8 +750,14 @@
   padding: var(--spacing-2xs, 0.625rem);
 }
 
-.profile-edit-dialog__field input.profile-edit-dialog__input--with-leading-icon {
-  padding-left: 2.1rem;
+.profile-edit-dialog__field > solid-ui-combobox,
+.profile-edit-dialog__field-type > solid-ui-combobox {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
+  align-self: stretch;
 }
 
 .profile-edit-dialog__textarea {
