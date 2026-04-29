@@ -46,10 +46,6 @@
   outline: none;
 }
 
-.profile-edit-dialog__phone-type-row {
-  flex: 0 0 7.5rem;
-}
-
 .profile-edit-dialog__row--contact-point {
   max-width: 100%;
   width: 100%;

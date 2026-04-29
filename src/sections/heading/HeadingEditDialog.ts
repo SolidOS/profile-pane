@@ -1,5 +1,6 @@
 import { openInputDialog } from '../../ui/dialog'
 import { html, render, TemplateResult } from 'lit-html'
+import 'solid-ui/components/select'
 import { ProfileDetails, HeadingMutationPlan, ProfileBasicRow } from './types'
 import { Image } from './HeadingSection'
 import '../../styles/EditDialogs.css'
@@ -43,6 +44,30 @@ type HeadingFormState = {
   address: ContactAddressRow
 }
 
+type HeadingContactTypeOption = {
+  label: string
+  value: string
+}
+
+type HeadingContactTypeKind = 'phone' | 'email'
+
+type HeadingContactTypeSelectElement = HTMLElement & {
+  options?: HeadingContactTypeOption[]
+  value?: string
+  label?: string
+}
+
+const HEADING_PHONE_TYPE_OPTIONS: HeadingContactTypeOption[] = [
+  { label: 'Mobile', value: 'Mobile' },
+  { label: 'Home', value: 'Home' },
+  { label: 'Work', value: 'Work' }
+]
+
+const HEADING_EMAIL_TYPE_OPTIONS: HeadingContactTypeOption[] = [
+  { label: 'Personal', value: 'Personal' },
+  { label: 'Office', value: 'Office' }
+]
+
 type Row = ProfileBasicRow | ContactPointRow | ContactAddressRow
 
 function isContactPointRow(row: Row): row is ContactPointRow {
@@ -55,6 +80,45 @@ function isAddressRow(row: Row): row is ContactAddressRow {
 
 function isProfileBasicRow(row: Row): row is ProfileBasicRow {
   return 'name' in row
+}
+
+function normalizeHeadingContactTypeValue(value: string, options: HeadingContactTypeOption[]): string {
+  return options.some((option) => option.value === value) ? value : options[0]?.value || ''
+}
+
+function readHeadingContactTypeChange(event: Event): string {
+  const customEvent = event as CustomEvent<{ value?: string }>
+  if (typeof customEvent.detail?.value === 'string') {
+    return customEvent.detail.value
+  }
+
+  const target = event.target as HTMLSelectElement | HTMLInputElement | null
+  return typeof target?.value === 'string' ? target.value : ''
+}
+
+function getHeadingContactTypeOptions(kind: HeadingContactTypeKind): HeadingContactTypeOption[] {
+  return kind === 'phone' ? HEADING_PHONE_TYPE_OPTIONS : HEADING_EMAIL_TYPE_OPTIONS
+}
+
+function getHeadingContactTypeValue(
+  kind: HeadingContactTypeKind,
+  formState: HeadingFormState
+): string {
+  const row = kind === 'phone' ? formState.phone : formState.email
+  return normalizeHeadingContactTypeValue(row?.type || '', getHeadingContactTypeOptions(kind))
+}
+
+function initializeHeadingContactTypeSelects(form: HTMLFormElement, formState: HeadingFormState): void {
+  const selectElements = form.querySelectorAll('solid-ui-select[data-heading-contact-type-kind]') as NodeListOf<HeadingContactTypeSelectElement>
+
+  selectElements.forEach((selectElement) => {
+    const kind = selectElement.dataset.headingContactTypeKind as HeadingContactTypeKind | undefined
+    if (!kind) return
+
+    selectElement.options = getHeadingContactTypeOptions(kind)
+    selectElement.value = getHeadingContactTypeValue(kind, formState)
+    selectElement.label = ''
+  })
 }
 
 
@@ -229,7 +293,6 @@ function renderContactPhoneInput({
   /* const prefixInputName = 'phone-prefix' */
   const typeLabel = 'Phone Type'
   const inputName = 'phone-value'
-  const typeInputName = 'phone-type'
   const splitValue = splitPhoneValue(phone?.value || '')
   let selectedDialCode = splitValue.dialCode
 
@@ -252,8 +315,7 @@ function renderContactPhoneInput({
   } */
 
   const handleTypeInput = (e: Event) => {
-    const target = e.target as HTMLInputElement
-    const nextType = target.value
+    const nextType = readHeadingContactTypeChange(e)
     if (phone) {
       applyRowSelectChange(phone, 'type', nextType)
     }
@@ -280,11 +342,16 @@ function renderContactPhoneInput({
         </label>
       </div>
       <label aria-label=${typeLabel} class="label profile-edit-dialog__field-type profile-edit-dialog__field-type--contact-point">
-        <select class="input" name=${typeInputName} id="phone-type-select-${inputName}" @change=${handleTypeInput} .value=${phone?.type || ''}>
-          <option value="Mobile">Mobile</option>
-          <option value="Home">Home</option>
-          <option value="Work">Work</option>
-        </select>
+        <solid-ui-select
+          class="profile-edit-dialog__type-select"
+          id=${`phone-type-select-${inputName}`}
+          data-heading-contact-type-kind="phone"
+          aria-label=${typeLabel}
+          .label=${''}
+          .options=${HEADING_PHONE_TYPE_OPTIONS}
+          .value=${normalizeHeadingContactTypeValue(phone?.type || '', HEADING_PHONE_TYPE_OPTIONS)}
+          @change=${handleTypeInput}
+        ></solid-ui-select>
       </label>
     </div>
   `
@@ -296,7 +363,6 @@ function renderContactEmailInputRow({
   const label = 'Email Address'
   const typeLabel = 'Email Type'
   const inputName = 'email-value'
-  const typeInputName = 'email-type'
 
   const handleValueInput = (e: Event) => {
     const target = e.target as HTMLInputElement
@@ -307,8 +373,7 @@ function renderContactEmailInputRow({
   }
 
   const handleTypeInput = (e: Event) => {
-    const target = e.target as HTMLInputElement
-    const nextType = target.value
+    const nextType = readHeadingContactTypeChange(e)
     if (email) {
       applyRowSelectChange(email, 'type', nextType)
     }
@@ -333,10 +398,16 @@ function renderContactEmailInputRow({
         />
       </label>
       <label aria-label=${typeLabel} class="label profile-edit-dialog__field-type profile-edit-dialog__field-type--contact-point">
-        <select class="input" name=${typeInputName} id="email-type-select-${inputName}" @change=${handleTypeInput} .value=${email?.type || ''}>
-          <option value="Personal">Personal</option>
-          <option value="Office">Office</option>
-        </select>
+        <solid-ui-select
+          class="profile-edit-dialog__type-select"
+          id=${`email-type-select-${inputName}`}
+          data-heading-contact-type-kind="email"
+          aria-label=${typeLabel}
+          .label=${''}
+          .options=${HEADING_EMAIL_TYPE_OPTIONS}
+          .value=${normalizeHeadingContactTypeValue(email?.type || '', HEADING_EMAIL_TYPE_OPTIONS)}
+          @change=${handleTypeInput}
+        ></solid-ui-select>
       </label>
     </div>
   `
@@ -750,6 +821,8 @@ function renderHeadingEditTemplate(
       ? html`<p class="profile-edit-dialog__login-message">${ownerLoginRequiredDialogMessageText}</p>`
       : null}
   `, form)
+
+  initializeHeadingContactTypeSelects(form, formState)
 }
 
 function createHeadingEditForm(

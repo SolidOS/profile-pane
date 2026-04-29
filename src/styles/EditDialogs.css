@@ -289,18 +289,7 @@
   border: 0 !important;
   color: var(--gray-900, #101828) !important;
 }
-/*   display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 2rem;
-  padding: 0.25rem 0.625rem;
-  border: 1px solid var(--gray-300, #D5D7DA) !important;
-  -- background: var(--gray-200, #E5E7EB) !important; 
-  background: var(--gray-100, #FFF) !important;
-  color: var(--gray-700, #364153) !important;
-  box-shadow: none !important;
-  border-radius: 0.375rem;
-  font-weight: var(--font-weight-md, 500); */
+
 .profile-edit-dialog__camera-control-action {
   display: inline-flex;
   align-items: center;
@@ -497,12 +486,6 @@
   width: 6.4375rem;
   min-width: 6.4375rem;
   max-width: 6.4375rem;
-}
-
-.profile-edit-dialog__field-type--contact-point select {
-  width: auto;
-  max-width: none;
-  min-width: 6.4375rem;
 }
 
 .profile-edit-dialog__row--address-header {
@@ -778,29 +761,6 @@
   padding-left: 2.1rem;
 }
 
-/* Keep phone/email contact-point type selects compact. */
-.profile-edit-dialog__field-type--contact-point > select {
-  display: inline-block;
-  width: auto !important;
-  max-width: none !important;
-  min-width: 0 !important;
-}
-
-/* In heading edit, force both type selects to fill the same fixed wrapper width. */
-.profile-edit-dialog--heading .profile-edit-dialog__row--contact-point > .profile-edit-dialog__field-type.profile-edit-dialog__field-type--contact-point > select {
-  display: block;
-  width: 100% !important;
-  min-width: 0 !important;
-  max-width: 100% !important;
-}
-
-/* Keep phone/email type selects compact after the generic full-width rule above. */
-.profile-edit-dialog__field-type--contact-point select {
-  width: fit-content;
-  max-width: none;
-  min-width: 6.4375rem;
-}
-
 .profile-edit-dialog__textarea {
   color: var(--gray-900, #101828);
   font-size: var(--font-size-sm, 0.875rem);
@@ -875,6 +835,7 @@
 
   .profile-edit-dialog__field-type--contact-point {
     flex: 1 1 auto;
+    width: 100%;
     max-width: 100%;
   }
 
