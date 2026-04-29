@@ -25,7 +25,7 @@ type SkillFormState = {
 
 type SkillSuggestion = {
   label: string
-  uri: string
+  publicId: string
 }
 
 type SkillRerenderOptions = {
@@ -76,8 +76,8 @@ async function fetchEscoSkillSuggestions(name: string): Promise<SkillSuggestion[
     return results
       .map((result: any) => {
         const label = sanitizeSkillFieldValue(toSkillLabel(result))
-        const uri = typeof result?.uri === 'string' ? result.uri : ''
-        return { label, uri }
+        const publicId = normalizeSkillPublicId(typeof result?.uri === 'string' ? result.uri : '')
+        return { label, publicId }
       })
       .filter((suggestion: SkillSuggestion) => {
         if (!suggestion.label) return false
@@ -199,7 +199,7 @@ function renderSkillInputRow({
     if (rows[index]) {
       applyRowFieldChange(rows[index], field, nextValue, rowHasContent)
       const matchedSuggestion = matchSkillSuggestion(suggestions, nextValue)
-      rows[index].publicId = normalizeSkillPublicId(matchedSuggestion?.uri || '')
+      rows[index].publicId = matchedSuggestion?.publicId || ''
       onSkillSearch(index, nextValue)
       onChange()
     }
@@ -324,7 +324,7 @@ function renderSkillsEditTemplate(
       const row = formState.skills[rowIndex]
       if (row) {
         const matchedSuggestion = matchSkillSuggestion(suggestions, row.name)
-        row.publicId = matchedSuggestion ? normalizeSkillPublicId(matchedSuggestion.uri) : row.publicId
+        row.publicId = matchedSuggestion?.publicId || row.publicId
       }
 
       rerender()
