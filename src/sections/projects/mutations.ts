@@ -3,9 +3,6 @@ import { ns } from 'solid-ui'
 import { ProjectMutationPlan, ProjectRow } from './types'
 import { MutationOps } from '../shared/types'
 
-/* This code is AI generated from Model: GPT-5.3-Codex */
-/* Prompt: I need to store Project data only the url of the project how
-   should I store it please generate the code. Follow other sections */
 function toProjectUrlNode(project: ProjectRow): NamedNode | null {
 	const value = (project.url || '').trim()
 	if (!value) return null
