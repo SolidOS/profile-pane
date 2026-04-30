@@ -92,3 +92,4 @@ capture an image and update the profile photo in the heading section.
 
 * GPT-5.3-Codex Model: write me a function to determine PastRole, CurrentRole, or FutureRole based on resume role date data. The function should return a NamedNode with the correct solid namespace and role type local name. The function should use the roleType field if it is set to one of those three values, otherwise it should infer the role type based on the start and end dates and isCurrentRole field. 
 
+* GPT-5.4 Model: can you add types to rdfMutationHelpers.ts and consolidate mutation logic where appropriate. 
