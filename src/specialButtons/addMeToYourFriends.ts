@@ -15,6 +15,13 @@ import '../styles/AddMeToYourFriends.css'
 
 let buttonContainer = <HTMLDivElement>document.createElement('section')
 
+function setAddToFriendsButtonLabel(button: HTMLButtonElement, label: string): void {
+  const labelWrapper = button.ownerDocument.createElement('span')
+  labelWrapper.className = 'profile__btn-friends-label'
+  labelWrapper.textContent = label
+  button.replaceChildren(labelWrapper)
+}
+
 const addMeToYourFriendsDiv = (
   subject: NamedNode,
   context: DataBrowserContext,
@@ -46,7 +53,7 @@ const createAddMeToYourFriendsButton = (
   let label = addMeToYourFriendsButtonText
   const button = context.dom.createElement('button')
   button.type = 'button'
-  button.textContent = label
+  setAddToFriendsButtonLabel(button, label)
   button.addEventListener('click', setButtonHandler)
 
   function setButtonHandler(event: Event) {
@@ -75,15 +82,15 @@ const createAddMeToYourFriendsButton = (
       checkIfThingExists(store, me, subject, ns.foaf('knows')).then((friendExists) => {
         if (friendExists) {
           //logged in and friend exists or friend was just added
-          button.textContent = friendExistsAlreadyButtonText
+          setAddToFriendsButtonLabel(button, friendExistsAlreadyButtonText)
         } else {
           //logged in and friend does not exist yet
-          button.textContent = addMeToYourFriendsButtonText
+          setAddToFriendsButtonLabel(button, addMeToYourFriendsButtonText)
         }
       })
     } else {
       //not logged in — disable and indicate login is required
-      button.textContent = logInAddMeToYourFriendsButtonText
+      setAddToFriendsButtonLabel(button, logInAddMeToYourFriendsButtonText)
       button.disabled = true
     }
   }

@@ -69,6 +69,8 @@
 #profile-modal .modal #modal-header-action > button[aria-label="Close dialog"] {
   min-height: 2rem;
   min-width: 2rem;
+  width: 2rem;
+  height: 2rem;
   padding: 0;
   border: none;
   background: transparent;
@@ -76,10 +78,29 @@
   font-size: 1.5rem;
   line-height: 1;
   cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  appearance: none;
+  border-radius: 999px;
 }
 
 #profile-modal .modal #modal-header-action > button[aria-label="Close dialog"]:hover {
   color: var(--color-primary);
+  background: rgba(0, 0, 0, 0.04);
+}
+
+#profile-modal .modal #modal-header-action > button[aria-label="Close dialog"]:focus,
+#profile-modal .modal #modal-header-action > button[aria-label="Close dialog"]:focus-visible {
+  outline: var(--focus-indicator-width) solid var(--color-primary);
+  outline-offset: var(--outline-offset-sm);
+  box-shadow: 0 0 0 var(--focus-ring-width) var(--color-background), 0 0 0 calc(var(--focus-ring-width) + var(--focus-indicator-width)) var(--color-primary-alpha);
+}
+
+#profile-modal .modal #modal-header-action > button[aria-label="Close dialog"] svg {
+  width: 1rem;
+  height: 1rem;
+  display: block;
 }
 
 #profile-modal .modal #modal-header-action {

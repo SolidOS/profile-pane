@@ -6,7 +6,7 @@ import { renderHeadingSection } from '../../src/sections/heading/HeadingSection'
 import { context, subject } from '../setup'
 
 describe('Intro section', () => {
-  it('renders basic profile info and owner action', () => {
+  it('renders basic profile info and owner action', async () => {
     const container = document.createElement('div')
     document.body.appendChild(container)
 
@@ -34,7 +34,7 @@ describe('Intro section', () => {
       }
     }
 
-    render(renderHeadingSection(context, subject, profile as any, 'owner'), container)
+    render(await renderHeadingSection(context, subject, profile as any, 'owner'), container)
 
     expect(container.querySelector('.profile__section')).toBeTruthy()
     expect(container.textContent).toContain('Jane Doe')
@@ -73,7 +73,7 @@ describe('Intro section', () => {
       }
     }
 
-    render(renderHeadingSection(context, subject, profile as any, 'owner'), container)
+    render(await renderHeadingSection(context, subject, profile as any, 'owner'), container)
 
     const results = await axe.run(container)
     expect(results.violations.length).toBe(0)
@@ -109,7 +109,7 @@ describe('Intro section', () => {
       }
     }
 
-    render(renderHeadingSection(context, subject, profile as any, 'anonymous'), container)
+    render(await renderHeadingSection(context, subject, profile as any, 'anonymous'), container)
 
     expect(container.querySelector('button[aria-label="Add or edit heading information"]')).toBeNull()
 

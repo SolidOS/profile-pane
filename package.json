@@ -22,6 +22,9 @@
     "build": "npm run clean && npm run typecheck && npm run build-dist && npm run build-js",
     "build-js": "babel src --out-dir lib --extensions '.ts' && tsc --emitDeclarationOnly",
     "build-dist": "webpack --progress",
+    "dev": "sh -c 'npm run watch & npm run start'",
+    "watch": "sh -c 'npm run watch:solid-ui & npm run watch-js & npm run watch-dist & wait'",
+    "watch:solid-ui": "sh -c 'cd ../solid-ui && npm run watch'",
     "watch-js": "babel src --out-dir lib --extensions '.ts' --watch",
     "watch-dist": "webpack --watch",
     "lint": "eslint",
@@ -49,6 +52,7 @@
   },
   "license": "MIT",
   "dependencies": {
+    "@solid-data-modules/contacts-rdflib": "^0.7.1",
     "lit-html": "^3.3.2",
     "pane-registry": "^3.1.0",
     "qrcode": "^1.5.4",

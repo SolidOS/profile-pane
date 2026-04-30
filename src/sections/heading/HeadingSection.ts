@@ -9,8 +9,10 @@ import { toText } from '../../textUtils'
 import { toDisplayDateDMY } from './dateHelpers'
 import { birthdayIcon, editIcon, locationIcon, personInCircleIcon } from '../../icons-svg/profileIcons'
 import { emailIcon, phoneIcon } from '../../icons-svg/contactIcons'
+import { addMeToYourFriendsDiv } from '../../specialButtons/addMeToYourFriends'
+import { addMeToYourContactsDiv } from '../../specialButtons/addContact/addMeToYourContacts'
 
-export const renderHeadingSection = (
+export const renderHeadingSection = async (
   context: DataBrowserContext,
   subject: NamedNode,
   profileData: ProfileDetails,
@@ -19,6 +21,9 @@ export const renderHeadingSection = (
 ) => {
   const { name, pronouns, jobTitle, dateOfBirth, location, primaryPhone, primaryEmail, imageSrc } = profileData
   const isOwner = viewerMode === 'owner'
+  const isAuthenticatedViewer = viewerMode === 'authenticated'
+  const contactsButton = isAuthenticatedViewer ? await addMeToYourContactsDiv(subject, context) : nothing
+  const friendsButton = isAuthenticatedViewer ? addMeToYourFriendsDiv(subject, context, viewerMode) : nothing
   
   const phoneValue = toText(primaryPhone?.valueNode).replace(/^tel:/i, '')
   const emailValue = toText(primaryEmail?.valueNode).replace(/^mailto:/i, '')
@@ -39,26 +44,32 @@ export const renderHeadingSection = (
               ${jobTitle ? html`<div class="profile__role-org">${jobTitle}</div>` : nothing}
             </header>
           </div>
-          ${isOwner ? html`
+          ${isOwner || isAuthenticatedViewer ? html`
               <div class="profile__actions profile__heading-actions">
-                <button
-                  type="button"
-                  class="profile__action-button profile__heading-action-button profile-action-text flex-center"
-                  aria-label="Add or edit heading information"
-                  @click=${(event: Event) => {
-                    return createHeadingEditDialog(
-                      event,
-                      context.session.store,
-                      subject,
-                      profileData,
-                      viewerMode,
-                      onSaved
-                    )
-                  }}
-                >
-                  <span class="profile-section-collapsible__edit-label">${editIcon} Edit</span>
-                  <span class="profile-section-collapsible__edit-icon" aria-hidden="true">${editIcon}</span>
-                </button>
+                ${isAuthenticatedViewer ? html`
+                  ${contactsButton}
+                  ${friendsButton}
+                ` : nothing}
+                ${isOwner ? html`
+                  <button
+                    type="button"
+                    class="profile__action-button profile__heading-action-button profile-action-text flex-center"
+                    aria-label="Add or edit heading information"
+                    @click=${(event: Event) => {
+                      return createHeadingEditDialog(
+                        event,
+                        context.session.store,
+                        subject,
+                        profileData,
+                        viewerMode,
+                        onSaved
+                      )
+                    }}
+                  >
+                    <span class="profile-section-collapsible__edit-label">${editIcon} Edit</span>
+                    <span class="profile-section-collapsible__edit-icon" aria-hidden="true">${editIcon}</span>
+                  </button>
+                ` : nothing}
               </div>
             ` : nothing}
           <div class="profile__details">

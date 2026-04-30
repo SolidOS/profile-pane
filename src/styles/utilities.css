@@ -88,16 +88,26 @@ td.obj .profile-pane-root {
   display: block;
 }
 
-.profile__btn-friends {
+.profile__btn-friends,
+.profile__btn-contacts {
   width: auto;
   min-width: 0;
   max-width: none;
   padding: 0.375rem 0.75rem;
   gap: var(--spacing-xxs, 0.3125rem);
   border-radius: var(--border-radius-md, 0.5rem);
+}
+
+.profile__btn-friends {
   border: 1px solid var(--color-primary, #7C4DFF);
   background: transparent;
   color: var(--color-primary, #7C4DFF);
+}
+
+.profile__btn-contacts {
+  border: 1px solid var(--profile-contacts-button-border, var(--color-primary, #7C4DFF));
+  background: var(--profile-contacts-button-background, transparent);
+  color: var(--profile-contacts-button-color, var(--color-primary, #7C4DFF));
 }
 
 .profile-action-text {

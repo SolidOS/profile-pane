@@ -302,6 +302,12 @@ function updateSavingUI (dialog: HTMLDialogElement, submitLabel: string, isSavin
     render(html``, elements.savingOverlay)
   }
 }
+
+export function setSharedDialogSavingState (dom: Document, isSaving: boolean, submitLabel = 'Saving Changes'): void {
+  const dialog = ensureModalDialog(dom)
+  updateSavingUI(dialog, submitLabel, isSaving)
+}
+
 type OpenInputDialogCustom = {
   title: string,
   dom: Document,

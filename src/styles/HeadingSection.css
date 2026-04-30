@@ -73,6 +73,17 @@ transform: translateX(-4px);
   grid-area: actions;
   margin-left: auto;
   align-self: flex-start;
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-xs, 0.5rem);
+  flex-wrap: wrap;
+}
+
+.profile__heading-actions > .profile-friends-button__section,
+.profile__heading-actions > #add-to-contacts-button-container {
+  width: auto;
+  min-width: 0;
+  flex: 0 0 auto;
 }
 
 .profile__avatar {
@@ -202,6 +213,26 @@ transform: translateX(-4px);
   height: 100%;
 }
 
+@media (max-width: 900px) {
+  .profile__heading-actions {
+    justify-self: end;
+    justify-content: flex-end;
+    align-items: flex-end;
+    flex-direction: column;
+    width: auto;
+  }
+}
+
+@container profile-pane (max-width: 900px) {
+  .profile__heading-actions {
+    justify-self: end;
+    justify-content: flex-end;
+    align-items: flex-end;
+    flex-direction: column;
+    width: auto;
+  }
+}
+
 @media (max-width: 640px) {
   .profile__heading-top {
     grid-template-columns: auto minmax(0, 1fr) auto;
@@ -210,6 +241,12 @@ transform: translateX(-4px);
       "details details details";
     column-gap: var(--spacing-sm, 0.75rem);
     row-gap: var(--spacing-sm, 0.75rem);
+  }
+
+  .profile__heading-actions {
+    justify-self: end;
+    justify-content: flex-end;
+    width: auto;
   }
 
   .profile__name {
@@ -266,6 +303,12 @@ transform: translateX(-4px);
       "details details details";
     column-gap: var(--spacing-sm, 0.75rem);
     row-gap: var(--spacing-sm, 0.75rem);
+  }
+
+  .profile__heading-actions {
+    justify-self: end;
+    justify-content: flex-end;
+    width: auto;
   }
 
   .profile__name {

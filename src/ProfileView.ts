@@ -86,7 +86,7 @@ export async function ProfileView (
           >
           <h2 id="profile-main-heading" class="sr-only">Main Profile Content</h2>
 
-          ${renderHeadingSection(context, subject, profileDetails, viewerMode, onSaved)}
+          ${await renderHeadingSection(context, subject, profileDetails, viewerMode, onSaved)}
           ${renderBioSection(store, subject, bioDetails, viewerMode, onSaved)}
           ${renderCVSection(store, subject, rolesByType, viewerMode, onSaved)}
           ${renderProjectSection(store, subject, projects, viewerMode, onSaved)}
