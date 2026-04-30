@@ -26,26 +26,6 @@ function ensureSocialPrefix(store: LiveStore) {
 	registerStorePrefix(store, 'soc', SOCIAL_ONTOLOGY_NS)
 }
 
-function isSocialPatchDebugEnabled(): boolean {
-	const debugFlag = (globalThis as any)?.__PROFILE_PANE_SOCIAL_DEBUG__
-	return debugFlag === true || debugFlag === '1' || debugFlag === 'true'
-}
-
-function statementDebugValue(term: { toNT?: () => string; value?: string } | null | undefined): string {
-	if (!term) return ''
-	if (typeof term.toNT === 'function') return term.toNT()
-	if (typeof term.value === 'string') return term.value
-	return String(term)
-}
-
-function statementToDebugObject(statement: RdfStatement) {
-	return {
-		subject: statementDebugValue(statement?.subject),
-		predicate: statementDebugValue(statement?.predicate),
-		object: statementDebugValue(statement?.object),
-		graph: statementDebugValue(statement?.why)
-	}
-}
 function toObjectNode(value?: string): Node | null {
 	const normalized = (value || '').trim()
 	if (!normalized) return null
@@ -280,18 +260,6 @@ async function mutateSocialEntries(
 		...existingListNodes,
 		...existingAccountNodes.flatMap((node) => collectNodeStatements(store, node, doc))
 	])
-
-	if (isSocialPatchDebugEnabled()) {
-		console.log('[social-mutations] patch payload', {
-			subject: subject.value,
-			doc: doc.value,
-			nextRows,
-			deletionsCount: deletions.length,
-			insertionsCount: insertions.length,
-			deletions: deletions.map(statementToDebugObject),
-			insertions: uniqueStatements(insertions).map(statementToDebugObject)
-		})
-	}
 
 	await runUpdateTransport(store, doc, deletions, uniqueStatements(insertions), {
 		unsupportedMessage: 'Social updates are not supported by this store updater.',

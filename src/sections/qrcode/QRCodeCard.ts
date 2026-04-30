@@ -185,9 +185,6 @@ export const QRCodeCard = (
   vCardLines.push('END:VCARD')
   const vCard = vCardLines.join('\r\n')
 
-  // console.log(`@@ qrcodes colours highlightColor ${highlightColor}, backgroundColor ${backgroundColor}`)
-  
-   
   return html`
     <figure 
       class="qrcode-card flex-column-center"
