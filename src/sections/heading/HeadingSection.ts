@@ -40,7 +40,7 @@ export const renderHeadingSection = (
             </header>
           </div>
           ${isOwner ? html`
-              <div class="profile__actions profile__heading-actions" aria-label="Profile actions">
+              <div class="profile__actions profile__heading-actions">
                 <button
                   type="button"
                   class="profile__action-button profile__heading-action-button profile-action-text flex-center"
@@ -100,7 +100,7 @@ export const Image = (src, alt) =>
         />
       `
     : html`
-        <div class="profile__hero-alt flex-center" role="img" aria-label="${alt}" tabindex="0">
+        <div class="profile__hero-alt flex-center" role="img" aria-label="${alt}">
           <span class="profile__hero-icon">${personInCircleIcon}</span>
         </div>
       `

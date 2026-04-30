@@ -39,6 +39,8 @@ describe('Intro section', () => {
     expect(container.querySelector('.profile__section')).toBeTruthy()
     expect(container.textContent).toContain('Jane Doe')
     expect(container.querySelector('button[aria-label="Add or edit heading information"]')).toBeTruthy()
+    expect(container.querySelector('.profile__heading-actions')?.getAttribute('aria-label')).toBeNull()
+    expect(container.querySelector('.profile__hero-alt')?.getAttribute('tabindex')).toBeNull()
 
     container.remove()
   })
