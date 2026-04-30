@@ -41,6 +41,8 @@ This checklist captures the baseline rules we enforce in profile section markup 
 
 - Run the focused accessibility test after markup changes:
   - `npm test -- test/profile-view.accessibility.test.ts`
+- Run the short manual accessibility smoke test for accessibility-sensitive changes:
+  - see `docs/accessibility-smoke-test.md`
 - For interaction changes, manually test keyboard-only behavior:
   - tab order reaches all controls
   - visible focus remains clear
