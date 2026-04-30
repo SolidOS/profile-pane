@@ -92,7 +92,7 @@ function renderResumeSectionDefault(
 
   const hasResume = resumeDetails.length > 0
   const showSection = true
-  const cv = hasResume ? CVCard(resumeDetails) : html``
+  const cv = hasResume ? CVCard(resumeDetails, viewerMode) : html``
   const isOwner = viewerMode === 'owner'
 
   return showSection ? html`

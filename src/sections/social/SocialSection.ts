@@ -90,12 +90,13 @@ export const SocialCard = (
 }
 
 function renderSocialSectionContent(
-  socialData: SocialPresentation
+  socialData: SocialPresentation,
+  viewerMode: ViewerMode
 ) {
   const hasAccounts = socialData.accounts && socialData.accounts.length > 0
 
   return html`
-    ${hasAccounts ? SocialCard(socialData) : html`<p>No social accounts added yet.</p>`}
+    ${hasAccounts ? SocialCard(socialData, viewerMode) : html`<p>No social accounts added yet.</p>`}
   `
 }
 
@@ -154,7 +155,7 @@ function renderSocialSectionDefault(
             </div>
           </header>
           <div id="social-panel" class="profile-section-collapsible__content" aria-hidden="true" hidden>
-            ${renderSocialSectionContent(socialData)}
+            ${renderSocialSectionContent(socialData, viewerMode)}
           </div>
         </section>
       ` : html``
