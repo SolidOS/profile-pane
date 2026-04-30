@@ -9,7 +9,7 @@ import { renderContactInfoSection } from '../../src/sections/contactInfo/Contact
 import { renderEducationSection } from '../../src/sections/education/EducationSection'
 import { renderCVSection } from '../../src/sections/resume/ResumeSection'
 import { renderLanguageSection } from '../../src/sections/languages/LanguageSection'
-import { renderSocialAccounts } from '../../src/sections/social/SocialSection'
+import { renderSocialSection } from '../../src/sections/social/SocialSection'
 import { context, subject } from '../setup'
 
 describe('Section accessibility variants', () => {
@@ -26,7 +26,7 @@ describe('Section accessibility variants', () => {
     render(renderContactInfoSection(context.session.store, subject, { phones: [], emails: [], addresses: [] } as any, 'owner'), container)
     render(renderCVSection(context.session.store, subject, [], 'owner'), container)
     render(renderLanguageSection(context.session.store, subject, [], 'owner'), container)
-    render(renderSocialAccounts(context.session.store, subject, { accounts: [] }, 'owner'), container)
+    render(renderSocialSection(context.session.store as any, subject, { accounts: [] }, 'owner'), container)
 
     const results = await axe.run(container)
     expect(results.violations.length).toBe(0)
@@ -58,7 +58,7 @@ describe('Section accessibility variants', () => {
     render(renderEducationSection(context.session.store, subject, educationData as any, 'anonymous'), container)
     render(renderCVSection(context.session.store, subject, roles as any, 'anonymous'), container)
     render(renderLanguageSection(context.session.store, subject, languages as any, 'anonymous'), container)
-    render(renderSocialAccounts(context.session.store, subject, social as any, 'anonymous'), container)
+    render(renderSocialSection(context.session.store as any, subject, social as any, 'anonymous'), container)
 
     const results = await axe.run(container)
     expect(results.violations.length).toBe(0)

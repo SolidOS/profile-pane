@@ -2,7 +2,7 @@ import { describe, expect, it } from "@jest/globals"
 import axe from 'axe-core'
 import { render } from 'lit-html'
 import { sym } from 'rdflib'
-import { renderSocialAccounts } from '../../src/sections/social/SocialSection'
+import { renderSocialSection } from '../../src/sections/social/SocialSection'
 import { context, subject } from '../setup'
 
 describe('Social section', () => {
@@ -21,7 +21,7 @@ describe('Social section', () => {
       ]
     }
 
-    render(renderSocialAccounts(context.session.store, subject, socialPresentation as any, 'owner'), container)
+    render(renderSocialSection(context.session.store as any, subject, socialPresentation as any, 'owner'), container)
 
     expect(container.querySelector('#social-heading')).toBeTruthy()
     expect(container.querySelector('a[href="https://github.com/janedoe"]')).toBeTruthy()
@@ -50,7 +50,7 @@ describe('Social section', () => {
       ]
     }
 
-    render(renderSocialAccounts(context.session.store, subject, socialPresentation as any, 'owner'), container)
+    render(renderSocialSection(context.session.store as any, subject, socialPresentation as any, 'owner'), container)
 
     const results = await axe.run(container)
     expect(results.violations.length).toBe(0)
