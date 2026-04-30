@@ -28,6 +28,9 @@ npm test -- test/profile-view.accessibility.test.ts
 Accessibility markup baseline checklist:
 [docs/accessibility-baseline-checklist.md](docs/accessibility-baseline-checklist.md)
 
+Manual accessibility smoke test:
+[docs/accessibility-smoke-test.md](docs/accessibility-smoke-test.md)
+
 Accessibility workflow:
 
 - Run the focused accessibility test after markup or interaction changes.
