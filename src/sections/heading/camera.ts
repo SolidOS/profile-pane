@@ -139,12 +139,9 @@ export function cameraCaptureControl (
       if (!blob) {
         throw new Error('Camera snapshot failed: no image blob produced')
       }
-      const msg = `got blob type ${blob.type} size ${blob.size}`
-      console.debug(msg)
       destination = getImageDoc()
       imageBlob = blob // save for review
       reviewImage()
-      // alert(msg)
     }, contentType) // toBlob
   }
 
@@ -163,9 +160,6 @@ export function cameraCaptureControl (
     if (!blob || !destination) return
     const contentType = blob.type
     // if (!confirm('Save picture to ' + destination + ' ?')) return
-    console.debug(
-      'Putting ' + blob.size + ' bytes of ' + contentType + ' to ' + destination
-    )
     // @@ TODO Remove casting
     ;(store as any).fetcher
       .webOperation('PUT', destination.uri, {
@@ -174,7 +168,6 @@ export function cameraCaptureControl (
       })
       .then(
         _resp => {
-          console.debug('ok saved ' + destination)
           stopVideo()
           doneCallback(destination)
         },

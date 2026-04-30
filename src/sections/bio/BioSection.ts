@@ -41,11 +41,8 @@ function hasBioContent(bioData: BioDetails): boolean {
 
 
 export const BioCard = (
-  bioData: BioDetails,
-  viewerMode: ViewerMode
+  bioData: BioDetails
 ) => {
-  void viewerMode
-
   return html`
     <article class="bio-card" aria-label="Bio" data-testid="bio-card">
       <section class="bio-card__section">
@@ -62,7 +59,7 @@ function renderBioSectionContent(
   viewerMode: ViewerMode,
   onSaved?: () => Promise<void> | void
 ) {
-  const bio = BioCard(bioData, viewerMode)
+  const bio = BioCard(bioData)
   const bioDetails: BioDetails = bioData
   const isOwner = viewerMode === 'owner'
   

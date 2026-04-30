@@ -77,10 +77,8 @@ function renderEducation(educationData: EducationDetails[]) {
 }
 
 export const EducationCard = (
-  educationData: EducationDetails[],
-  viewerMode: ViewerMode
+  educationData: EducationDetails[]
 ) => {
-  void viewerMode
   const hasEducation = Array.isArray(educationData) && educationData.length > 0
   if (!hasEducation) return html``
 
@@ -104,7 +102,7 @@ export function renderEducationSection(
 ) {
   scheduleDescriptionOverflowCheck()
 
-  const educationCard = EducationCard(educationData, viewerMode)
+  const educationCard = EducationCard(educationData)
   const educationDetails: EducationDetails[] = educationData || []
   const hasEducation = educationDetails && educationDetails.length > 0
   const showSection = true

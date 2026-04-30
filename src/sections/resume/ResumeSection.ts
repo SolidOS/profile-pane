@@ -66,9 +66,8 @@ function renderRoles(roles: RoleDetails[]) {
 
 export const CVCard = (
   cvData: RoleDetails[],
-  viewerMode: ViewerMode
+  _viewerMode: ViewerMode
 ) => {
-  void viewerMode
   const hasRoles = Array.isArray(cvData) && cvData.length > 0
   if (!hasRoles) return html``
 
@@ -89,11 +88,11 @@ function renderResumeSectionDefault(
   resumeDetails: RoleDetails[], 
   viewerMode: ViewerMode, 
   onSaved?: () => Promise<void> | void) {
-    scheduleDescriptionOverflowCheck()
+  scheduleDescriptionOverflowCheck()
 
   const hasResume = resumeDetails.length > 0
   const showSection = true
-  const cv = hasResume ? CVCard(resumeDetails, viewerMode) : html``
+  const cv = hasResume ? CVCard(resumeDetails) : html``
   const isOwner = viewerMode === 'owner'
 
   return showSection ? html`
@@ -142,7 +141,8 @@ function renderOwnerEmptyResumeContent(
   subject: NamedNode,
   resumeDetails: RoleDetails[],
   viewerMode: ViewerMode,
-  onSaved?: () => Promise<void> | void) {
+  onSaved?: () => Promise<void> | void
+) {
 
   return html`
     <div class="profile__empty-state-content flex-column-center" role="group" aria-label="Empty resume section">
@@ -154,7 +154,6 @@ function renderOwnerEmptyResumeContent(
     <button
       type="button"
       class="profile__action-button--empty"
-      aria-label="Add resume details"
       @click=${(event: Event) => {
         return createResumeEditDialog(
           event,
@@ -180,7 +179,7 @@ function renderOwnerEmptyResumeSection(
   onSaved?: () => Promise<void> | void
 ) {
   return html`
-    <section 
+    <section
       aria-labelledby="resume-heading" 
       data-profile-section="resume"
       class="profile__section--empty border-lighter flex-column-center rounded-md gap-lg" 

@@ -26,10 +26,8 @@ function expandSocialAccounts(event: Event): void {
 
 export const SocialCard = (
   SocialData: SocialPresentation,
-  viewerMode: ViewerMode
+  _viewerMode: ViewerMode
 ): TemplateResult => {
-  void viewerMode
-
   const accounts = (SocialData.accounts || []).filter(isRenderableAccount)
   const hiddenAccountsCount = Math.max(0, accounts.length - MAX_VISIBLE_SOCIAL_ACCOUNTS_MOBILE)
 
@@ -40,8 +38,7 @@ export const SocialCard = (
         id="social-media"
         class="social-card"
         aria-label="Social media"
-        data-testid="social-media"
-        data-mobile-expanded="${hiddenAccountsCount > 0 ? 'false' : 'true'}"
+        SocialData: SocialPresentation
       >
         <nav aria-label="Social media profiles">
           <ul class="social-card__list list-reset" role="list">
@@ -93,13 +90,12 @@ export const SocialCard = (
 }
 
 function renderSocialSectionContent(
-  socialData: SocialPresentation,
-  viewerMode: ViewerMode
+  socialData: SocialPresentation
 ) {
   const hasAccounts = socialData.accounts && socialData.accounts.length > 0
 
   return html`
-    ${hasAccounts ? SocialCard(socialData, viewerMode) : html`<p>No social accounts added yet.</p>`}
+    ${hasAccounts ? SocialCard(socialData) : html`<p>No social accounts added yet.</p>`}
   `
 }
 
@@ -158,7 +154,7 @@ function renderSocialSectionDefault(
             </div>
           </header>
           <div id="social-panel" class="profile-section-collapsible__content" aria-hidden="true" hidden>
-            ${renderSocialSectionContent(socialData, viewerMode)}
+            ${renderSocialSectionContent(socialData)}
           </div>
         </section>
       ` : html``
