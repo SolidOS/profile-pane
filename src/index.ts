@@ -4,7 +4,7 @@ import { NamedNode, LiveStore } from 'rdflib'
 import { render } from 'lit-html'
 import { ProfileView } from './ProfileView'
 import { icons, ns } from 'solid-ui'
-import * as qrcode from 'qrcode'
+import { hydrateQRCodes } from './sections/qrcode/QRCodeCard'
 export {
   addMeToYourFriendsDiv,
   createAddMeToYourFriendsButton,
@@ -48,33 +48,7 @@ const Pane = {
 
     const renderWithData = async () => {
       render(await ProfileView(subject, context, renderWithData), target)
-      const QRCodeEles = Array.from(target.getElementsByClassName('qrcode-card'))
-      if (!QRCodeEles.length) return console.error('QRCode Ele missing')
-      for (const QRCodeElement of QRCodeEles as HTMLElement[]) {
-        const value = QRCodeElement.getAttribute('data-value')
-        if (!value) return console.error('QRCode data-value missing')
-
-        const options = {
-          type: 'svg',
-          color: {
-            dark: '#000000',
-            light: '#ffffff'
-          }
-        }
-
-        qrcode.toString(value, options, function (error, svg) {
-          if (error) {
-            console.error('QRcode error!', error)
-          } else {
-            const imageContainer = QRCodeElement.querySelector('div[aria-hidden="true"]') as HTMLElement | null
-            if (!imageContainer) {
-              console.error('QRCode image container missing')
-              return
-            }
-            imageContainer.innerHTML = svg
-          }
-        })
-      }
+      await hydrateQRCodes(target)
     }
 
     loadExtendedProfile(store, subject).then(async () => {
