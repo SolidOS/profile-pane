@@ -16,9 +16,9 @@ import { renderCVSection } from './sections/resume/ResumeSection'
 import { renderProjectSection } from './sections/projects/ProjectSection'
 import { renderHeadingSection } from './sections/heading/HeadingSection'
 import { renderBioSection } from './sections/bio/BioSection'
-import { renderSocialAccounts } from './sections/social/SocialSection'
+import { renderSocialSection } from './sections/social/SocialSection'
 import { SocialPresentation } from './sections/social/types'
-import { renderQRCode } from './sections/qrcode/QRCodeSection'
+import { renderQRCodeSection } from './sections/qrcode/QRCodeSection'
 
 function getViewerMode(subject: NamedNode): ViewerMode {
   let mode: ViewerMode = 'anonymous'
@@ -44,11 +44,11 @@ function renderSidebar(
     >
       <h2 id="sidebar-heading" class="sr-only">Sidebar</h2>
       <div aria-label="Sidebar Content" class="flex-column gap-md">
-        ${renderSocialAccounts(store, subject, accounts, viewerMode, onSaved)}
+        ${renderSocialSection(store, subject, accounts, viewerMode, onSaved)}
         ${renderSkillsSection(store, subject, skills, viewerMode, onSaved)}
         ${renderLanguageSection(store, subject, languages, viewerMode, onSaved)}
         ${renderContactInfoSection(store, subject, contactInfo, viewerMode, onSaved)}
-        ${renderQRCode(subject, store)}
+        ${renderQRCodeSection(subject, store)}
       </div>
     </aside>
   `

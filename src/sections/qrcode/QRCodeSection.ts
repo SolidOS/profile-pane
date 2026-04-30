@@ -3,7 +3,7 @@ import { QRCodeCard } from './QRCodeCard'
 import { LiveStore, NamedNode } from 'rdflib'
 import '../../styles/QRCodeSection.css'
 
-export function renderQRCode(subject: NamedNode, store: LiveStore) {
+export function renderQRCodeSection(subject: NamedNode, store: LiveStore) {
   return html`
       <section class="profile__section border-lighter profile__qr-code" aria-labelledby="qr-heading" tabindex="-1">
         <h2 id="qr-heading" class="sr-only">QR code</h2>

@@ -244,7 +244,7 @@ function renderOwnerEmptySocialSection(
   `
 }
 
-export function renderSocialAccounts(
+export function renderSocialSection(
   store: LiveStore,
   subject: NamedNode,
   socialData: SocialPresentation,
