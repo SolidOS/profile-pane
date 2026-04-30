@@ -28,6 +28,15 @@ npm test -- test/profile-view.accessibility.test.ts
 Accessibility markup baseline checklist:
 [docs/accessibility-baseline-checklist.md](docs/accessibility-baseline-checklist.md)
 
+Accessibility workflow:
+
+- Run the focused accessibility test after markup or interaction changes.
+- Manually verify keyboard-only use: tab order, reachable controls, visible focus, dialog open/close, and return of focus after dialogs close.
+- Manually verify screen-reader output with VoiceOver on macOS for headings, landmarks, button names, dialog announcements, and inline error/status messages.
+- Check zoom and reflow at 200% and 400% to confirm content remains readable and usable without horizontal scrolling for core flows.
+- If a change affects dynamic UI feedback, confirm success, saving, and error states are announced appropriately.
+- Browser-level accessibility audits such as Lighthouse or Playwright/Cypress + axe are not yet wired into repo scripts, so treat the manual checks above as required review work for accessibility-sensitive changes.
+
 Refactor test plan (temporary skips and revisit checklist):
 [docs/refactor-test-plan.md](docs/refactor-test-plan.md)
 
