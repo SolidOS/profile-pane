@@ -1,12 +1,17 @@
 import { blankNode, LiveStore, NamedNode, Node, st, literal, sym } from 'rdflib'
 import { ns } from 'solid-ui'
 import { SocialMutationPlan, SocialRow } from './types'
-import { MutationOps } from '../shared/types'
+import { MutationOps, RdfStatement, RdfUpdater } from '../shared/types'
 import { createIdNode } from '../shared/idNodeFactory'
 import {
+	applyStatementsToStore,
 	applyUpdaterPatch,
 	collectNodeStatements,
-	findExistingNode
+	findExistingNode,
+	registerStorePrefix,
+	sanitizePatchStatements,
+	statementKey,
+	uniqueStatements
 } from '../shared/rdfMutationHelpers'
 import { saveSocialUpdatesFailedPrefixText, updaterUnsupportedStoreErrorMessageText } from '../../texts'
 import { findSocialAccountOption, getSocialAccountOptions } from './helpers'
@@ -21,15 +26,7 @@ that happen for this data. */
 const SOCIAL_ONTOLOGY_NS = 'https://solidos.github.io/profile-pane/src/ontology/socialMedia.ttl#'
 
 function ensureSocialPrefix(store: LiveStore) {
-	const anyStore = store as any
-	if (typeof anyStore.setPrefixForURI === 'function') {
-		anyStore.setPrefixForURI('soc', SOCIAL_ONTOLOGY_NS)
-		return
-	}
-	if (!anyStore.namespaces) {
-		anyStore.namespaces = {}
-	}
-	anyStore.namespaces.soc = SOCIAL_ONTOLOGY_NS
+	registerStorePrefix(store, 'soc', SOCIAL_ONTOLOGY_NS)
 }
 
 function isSocialPatchDebugEnabled(): boolean {
@@ -37,14 +34,14 @@ function isSocialPatchDebugEnabled(): boolean {
 	return debugFlag === true || debugFlag === '1' || debugFlag === 'true'
 }
 
-function statementDebugValue(term: any): string {
+function statementDebugValue(term: { toNT?: () => string; value?: string } | null | undefined): string {
 	if (!term) return ''
 	if (typeof term.toNT === 'function') return term.toNT()
 	if (typeof term.value === 'string') return term.value
 	return String(term)
 }
 
-function statementToDebugObject(statement: any) {
+function statementToDebugObject(statement: RdfStatement) {
 	return {
 		subject: statementDebugValue(statement?.subject),
 		predicate: statementDebugValue(statement?.predicate),
@@ -109,9 +106,9 @@ function buildSocialStatements(
 	row: SocialRow,
 	accountOption?: { classUri: string, label: string, icon: string, userProfilePrefix?: string, homepage?: string }
 ) {
-	const inserts: any[] = []
+	const inserts: RdfStatement[] = []
 	if (accountOption?.classUri) {
-		inserts.push(st(node as any, ns.rdf('type'), sym(accountOption.classUri), doc))
+		inserts.push(st(node, ns.rdf('type'), sym(accountOption.classUri), doc))
 	}
 
 	const normalizedName = normalizeValue(row.name)
@@ -120,10 +117,10 @@ function buildSocialStatements(
 	if (isOther) {
 		const homepageNode = toObjectNode(row.homepage)
 		const iconNode = toObjectNode(row.icon)
-		if (homepageNode) inserts.push(st(node as any, ns.foaf('homepage'), homepageNode as any, doc))
-		if (iconNode) inserts.push(st(node as any, ns.foaf('icon'), iconNode as any, doc))
+		if (homepageNode) inserts.push(st(node, ns.foaf('homepage'), homepageNode, doc))
+		if (iconNode) inserts.push(st(node, ns.foaf('icon'), iconNode, doc))
 		if (normalizedName && normalizedName.toLowerCase() !== 'other') {
-			inserts.push(st(node as any, ns.rdfs('label'), literal(normalizedName), doc))
+			inserts.push(st(node, ns.rdfs('label'), literal(normalizedName), doc))
 		}
 		return inserts
 	}
@@ -131,36 +128,28 @@ function buildSocialStatements(
 	const accountPrefix = accountOption?.userProfilePrefix || accountOption?.homepage
 	const accountName = toAccountNameFromHomepage(normalizeValue(row.homepage), accountPrefix)
 	if (accountName) {
-		inserts.push(st(node as any, ns.foaf('accountName'), literal(accountName), doc))
+		inserts.push(st(node, ns.foaf('accountName'), literal(accountName), doc))
 	}
 
 	return inserts
-}
-
-function statementKey(statement: any): string {
-	return `${statement.subject?.toNT?.() || statement.subject?.value} ${statement.predicate?.toNT?.() || statement.predicate?.value} ${statement.object?.toNT?.() || statement.object?.value} ${statement.why?.toNT?.() || statement.why?.value}`
-}
-
-function uniqueStatements(statements: any[]): any[] {
-	return Array.from(new Map((statements || []).map((statement) => [statementKey(statement), statement])).values())
 }
 
 function buildRdfListStatements(doc: NamedNode, items: NamedNode[]) {
 	if (!items.length) {
 		return {
 			head: ns.rdf('nil') as Node,
-			statements: [] as any[]
+			statements: [] as RdfStatement[]
 		}
 	}
 
 	const listNodes = items.map(() => blankNode())
-	const statements: any[] = []
+	const statements: RdfStatement[] = []
 
 	items.forEach((item, index) => {
 		const current = listNodes[index]
 		const next = listNodes[index + 1] || ns.rdf('nil')
-		statements.push(st(current as any, ns.rdf('first'), item as any, doc))
-		statements.push(st(current as any, ns.rdf('rest'), next as any, doc))
+		statements.push(st(current, ns.rdf('first'), item, doc))
+		statements.push(st(current, ns.rdf('rest'), next, doc))
 	})
 
 	return {
@@ -174,29 +163,9 @@ function isPatchFailure(message: string): boolean {
 	return text.includes('fetch error for patch') || text.includes('failed to fetch') || text.includes(' on patch ') || text.includes('web error: 400') || text.includes('web error: 405') || text.includes('web error: 501')
 }
 
-function sanitizePatchStatements(store: LiveStore, deletions: any[], insertions: any[]) {
-	const safeDeletions = Array.from(new Map(
-		(deletions || [])
-			.filter((statement) => {
-				if (!statement || !statement.subject || !statement.predicate || !statement.object) return false
-				if (store.holds(statement.subject, statement.predicate, statement.object, statement.why)) return true
-				return store.statementsMatching(statement.subject, statement.predicate, statement.object, statement.why).length > 0
-			})
-			.map((statement) => [statementKey(statement), statement])
-	).values())
-
-	const safeInsertions = Array.from(new Map(
-		(insertions || [])
-			.filter((statement) => Boolean(statement && statement.subject && statement.predicate && statement.object))
-			.map((statement) => [statementKey(statement), statement])
-	).values())
-
-	return { safeDeletions, safeInsertions }
-}
-
-async function runPutFallback(store: LiveStore, doc: NamedNode, deletions: any[], insertions: any[]) {
-	const updater = store.updater as any
-	const fetcher = (store as any).fetcher
+async function runPutFallback(store: LiveStore, doc: NamedNode, deletions: RdfStatement[], insertions: RdfStatement[]) {
+	const updater = store.updater as RdfUpdater | undefined
+	const fetcher = store.fetcher as { webOperation?: (...args: unknown[]) => Promise<{ ok?: boolean; status?: number }> } | undefined
 
 	if (!updater || typeof updater.serialize !== 'function' || !fetcher || typeof fetcher.webOperation !== 'function') {
 		throw new Error('Social updates are not supported by this store updater.')
@@ -219,13 +188,10 @@ async function runPutFallback(store: LiveStore, doc: NamedNode, deletions: any[]
 		throw new Error(`Web error: ${status} on PUT of <${doc.value}>`)
 	}
 
-	store.remove(deletions)
-	insertions.forEach((statement) => {
-		store.add(statement.subject, statement.predicate, statement.object, statement.why)
-	})
+	applyStatementsToStore(store, deletions, insertions)
 }
 
-async function applySocialPatchWithFallback(store: LiveStore, doc: NamedNode, deletions: any[], insertions: any[]) {
+async function applySocialPatchWithFallback(store: LiveStore, doc: NamedNode, deletions: RdfStatement[], insertions: RdfStatement[]) {
 	if (!store.updater) {
 		throw new Error(updaterUnsupportedStoreErrorMessageText)
 	}
@@ -356,10 +322,10 @@ async function mutateSocialEntries(
 		return createIdNode(doc)
 	})
 
-	const insertions: any[] = []
+	const insertions: RdfStatement[] = []
 	if (rowEntryNodes.length > 0) {
 		const rdfList = buildRdfListStatements(doc, rowEntryNodes)
-		insertions.push(st(subject, ns.foaf('account'), rdfList.head as any, doc))
+		insertions.push(st(subject, ns.foaf('account'), rdfList.head, doc))
 		insertions.push(...rdfList.statements)
 	}
 

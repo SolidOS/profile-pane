@@ -1,7 +1,8 @@
 import { LiveStore, NamedNode, st, sym } from 'rdflib'
 import { ns } from 'solid-ui'
 import { ProjectMutationPlan, ProjectRow } from './types'
-import { MutationOps } from '../shared/types'
+import { MutationOps, RdfStatement, RdfUpdater } from '../shared/types'
+import { applyStatementsToStore, sanitizePatchStatements, statementKey } from '../shared/rdfMutationHelpers'
 
 function toProjectUrlNode(project: ProjectRow): NamedNode | null {
 	const value = (project.url || '').trim()
@@ -42,32 +43,9 @@ function isMissingGetRecordError(message: string): boolean {
 	return (message || '').toLowerCase().includes('no record of our http get request for document')
 }
 
-function statementKey(statement: any): string {
-	return `${statement.subject?.toNT?.() || statement.subject?.value} ${statement.predicate?.toNT?.() || statement.predicate?.value} ${statement.object?.toNT?.() || statement.object?.value} ${statement.why?.toNT?.() || statement.why?.value}`
-}
-
-function sanitizePatchStatements(store: LiveStore, deletions: any[], insertions: any[]) {
-	const safeDeletions = Array.from(new Map(
-		(deletions || [])
-			.filter((statement) => {
-				if (!statement || !statement.subject || !statement.predicate || !statement.object) return false
-				return store.holds(statement.subject, statement.predicate, statement.object, statement.why)
-			})
-			.map((statement) => [statementKey(statement), statement])
-	).values())
-
-	const safeInsertions = Array.from(new Map(
-		(insertions || [])
-			.filter((statement) => Boolean(statement && statement.subject && statement.predicate && statement.object))
-			.map((statement) => [statementKey(statement), statement])
-	).values())
-
-	return { safeDeletions, safeInsertions }
-}
-
-async function runPutFallback(store: LiveStore, doc: NamedNode, deletions: any[], insertions: any[]) {
-	const updater = store.updater as any
-	const fetcher = (store as any).fetcher
+async function runPutFallback(store: LiveStore, doc: NamedNode, deletions: RdfStatement[], insertions: RdfStatement[]) {
+	const updater = store.updater as RdfUpdater | undefined
+	const fetcher = store.fetcher as { webOperation?: (...args: unknown[]) => Promise<{ ok?: boolean; status?: number }> } | undefined
 
 	if (!updater || typeof updater.serialize !== 'function' || !fetcher || typeof fetcher.webOperation !== 'function') {
 		throw new Error('Project updates are not supported by this store updater.')
@@ -90,14 +68,11 @@ async function runPutFallback(store: LiveStore, doc: NamedNode, deletions: any[]
 		throw new Error(`Web error: ${status} on PUT of <${doc.value}>`)
 	}
 
-	store.remove(deletions)
-	insertions.forEach((statement) => {
-		store.add(statement.subject, statement.predicate, statement.object, statement.why)
-	})
+	applyStatementsToStore(store, deletions, insertions)
 }
 
-async function runUpdateWithDavFallback(store: LiveStore, doc: NamedNode, deletions: any[], insertions: any[]) {
-	const updater = store.updater as any
+async function runUpdateWithDavFallback(store: LiveStore, doc: NamedNode, deletions: RdfStatement[], insertions: RdfStatement[]) {
+	const updater = store.updater as RdfUpdater | undefined
 	if (!updater || typeof updater.update !== 'function') {
 		throw new Error('Project updates are not supported by this store updater.')
 	}
@@ -126,9 +101,9 @@ async function runUpdateWithDavFallback(store: LiveStore, doc: NamedNode, deleti
 			throw error
 		}
 
-		if (store.fetcher && typeof (store.fetcher as any).load === 'function') {
+		if (store.fetcher?.load) {
 			try {
-				await (store.fetcher as any).load(doc)
+				await store.fetcher.load(doc)
 			} catch {
 				// continue to fallback
 			}
@@ -158,7 +133,7 @@ async function mutateProjectEntries(store: LiveStore, subject: NamedNode, projec
 	const doc = subject.doc()
 	const existingLinks = store.each(subject, ns.solid('community'), null, doc)
 	const existingByUrl = new Map<string, NamedNode>()
-	existingLinks.forEach((linkNode: any) => {
+	existingLinks.forEach((linkNode) => {
 		if (!linkNode || linkNode.termType !== 'NamedNode') return
 		const key = normalizeProjectUrlKey(linkNode.value)
 		if (key && !existingByUrl.has(key)) {
@@ -166,8 +141,8 @@ async function mutateProjectEntries(store: LiveStore, subject: NamedNode, projec
 		}
 	})
 
-	const deletions: any[] = []
-	const insertions: any[] = []
+	const deletions: RdfStatement[] = []
+	const insertions: RdfStatement[] = []
 	const removeLink = (link: NamedNode) => {
 		deletions.push(st(subject, ns.solid('community'), link, doc))
 	}

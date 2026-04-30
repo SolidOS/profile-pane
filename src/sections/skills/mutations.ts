@@ -1,8 +1,8 @@
 import { LiveStore, NamedNode, st, literal, sym } from 'rdflib'
 import { ns } from 'solid-ui'
 import { SkillRow } from './types'
-import { MutationOps } from '../shared/types'
-import { applyUpdaterPatch, collectLinkedNodeStatements, collectNodeStatements, findExistingNode } from '../shared/rdfMutationHelpers'
+import { MutationOps, RdfStatement } from '../shared/types'
+import { applyUpdaterPatch, collectLinkedNodeStatements, collectNodeStatements, findExistingNode, registerStorePrefix } from '../shared/rdfMutationHelpers'
 import { createIdNode } from '../shared/idNodeFactory'
 import { mutationSaveSkillsFailedPrefixText } from '../../texts'
 
@@ -12,15 +12,7 @@ const ESCO_SKILL_BASE_URI = 'http://data.europa.eu/esco/skill/'
 const SKILL_PREFIX_BASE_URI = 'skill:'
 
 function ensureSkillPrefix(store: LiveStore) {
-  const anyStore = store as any
-  if (typeof anyStore.setPrefixForURI === 'function') {
-    anyStore.setPrefixForURI('skill', SKILL_PREFIX_BASE_URI)
-    return
-  }
-  if (!anyStore.namespaces) {
-    anyStore.namespaces = {}
-  }
-  anyStore.namespaces.skill = SKILL_PREFIX_BASE_URI
+  registerStorePrefix(store, 'skill', SKILL_PREFIX_BASE_URI)
 }
 
 function normalizeSkillPublicIdUri(publicId: string): string {
@@ -64,8 +56,8 @@ function buildSkillsStatements(subject: NamedNode, doc: NamedNode, node: NamedNo
 
   return [
     st(subject, ns.schema('skills'), node, doc),
-    st(node, ns.solid('publicId'), publicIdNode as any, doc),
-    st(publicIdNode as any, ns.schema('name'), literal(skill.name), doc)
+    st(node, ns.solid('publicId'), publicIdNode, doc),
+    st(publicIdNode, ns.schema('name'), literal(skill.name), doc)
   ]
 }
 
@@ -74,8 +66,8 @@ async function mutateSkillsEntries(store: LiveStore, subject: NamedNode, skillOp
   const doc = subject.doc()
   const existingSkillNodes = store.each(subject, ns.schema('skills'))
 
-  const deletions: any[] = []
-  const insertions: any[] = []
+  const deletions: RdfStatement[] = []
+  const insertions: RdfStatement[] = []
 
   const collectLinkedPublicIdStatements = (skillNode: NamedNode) => {
     const linkedPublicIdStatements = collectLinkedNodeStatements(store, skillNode, ns.solid('publicId'), doc)
