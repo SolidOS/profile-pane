@@ -49,10 +49,21 @@ type HeadingContactTypeOption = {
   value: string
 }
 
+type HeadingPronounsOption = {
+  label: string
+  value: string
+}
+
 type HeadingContactTypeKind = 'phone' | 'email'
 
 type HeadingContactTypeSelectElement = HTMLElement & {
   options?: HeadingContactTypeOption[]
+  value?: string
+  label?: string
+}
+
+type HeadingPronounsSelectElement = HTMLElement & {
+  options?: HeadingPronounsOption[]
   value?: string
   label?: string
 }
@@ -66,6 +77,12 @@ const HEADING_PHONE_TYPE_OPTIONS: HeadingContactTypeOption[] = [
 const HEADING_EMAIL_TYPE_OPTIONS: HeadingContactTypeOption[] = [
   { label: 'Personal', value: 'Personal' },
   { label: 'Office', value: 'Office' }
+]
+
+const HEADING_PRONOUN_OPTIONS: HeadingPronounsOption[] = [
+  { label: 'He/Him', value: 'He/Him' },
+  { label: 'She/Her', value: 'She/Her' },
+  { label: 'They/Them', value: 'They/Them' }
 ]
 
 type Row = ProfileBasicRow | ContactPointRow | ContactAddressRow
@@ -119,6 +136,15 @@ function initializeHeadingContactTypeSelects(form: HTMLFormElement, formState: H
     selectElement.value = getHeadingContactTypeValue(kind, formState)
     selectElement.label = ''
   })
+}
+
+function initializeHeadingPronounsSelect(form: HTMLFormElement, formState: HeadingFormState): void {
+  const selectElement = form.querySelector('solid-ui-select[data-heading-basic-field="pronouns"]') as HeadingPronounsSelectElement | null
+  if (!selectElement) return
+
+  selectElement.options = HEADING_PRONOUN_OPTIONS
+  selectElement.value = normalizePronounsValue(formState.basicInfo?.pronouns || '')
+  selectElement.label = ''
 }
 
 
@@ -565,11 +591,10 @@ function renderHeadingInfoInput(
       applyRowFieldChange(basicInfo, 'dateOfBirth', toStorageDateISO(nextValue), rowHasContent)
     }
   }
-   const handlePronounsInput = (e: Event) => {
-    const target = e.target as HTMLSelectElement
-    const nextType = target.value
+  const handlePronounsInput = (e: Event) => {
+    const nextValue = normalizePronounsValue(readHeadingContactTypeChange(e))
     if (basicInfo) {
-      applyRowSelectChange(basicInfo, 'pronouns', nextType)
+      applyRowSelectChange(basicInfo, 'pronouns', nextValue)
     }
   }
 
@@ -735,11 +760,17 @@ function renderHeadingInfoInput(
       <div class="profile-edit-dialog__row profile-edit-dialog__row--equal">
         <label aria-label=${pronounsLabel} class="label profile-edit-dialog__field-type profile-edit-dialog__field--stack">
           ${pronounsLabel}
-          <select class="input" name="pronouns" @change=${handlePronounsInput} .value=${basicInfo?.pronouns || ''}>
-            <option value="He/Him">He/Him</option>
-            <option value="She/Her">She/Her</option>
-            <option value="They/Them">They/Them</option>
-          </select>
+          <solid-ui-select
+            class="profile-edit-dialog__type-select"
+            id="heading-pronouns-select"
+            name="pronouns"
+            data-heading-basic-field="pronouns"
+            aria-label=${pronounsLabel}
+            .label=${''}
+            .options=${HEADING_PRONOUN_OPTIONS}
+            .value=${normalizePronounsValue(basicInfo?.pronouns || '')}
+            @change=${handlePronounsInput}
+          ></solid-ui-select>
         </label>
         <label aria-label=${dateOfBirthLabel} class="label profile-edit-dialog__field">
           ${dateOfBirthLabel}
@@ -823,6 +854,7 @@ function renderHeadingEditTemplate(
   `, form)
 
   initializeHeadingContactTypeSelects(form, formState)
+  initializeHeadingPronounsSelect(form, formState)
 }
 
 function createHeadingEditForm(
