@@ -69,6 +69,8 @@ const RESUME_MONTH_OPTIONS: ResumeOrganizationTypeOption[] = [
   { value: '12', label: 'December' }
 ]
 
+const RESUME_PRESENT_MONTH_VALUE = '__present__'
+
 function sanitizeResumeFieldValue(value: string): string {
   return sanitizeTextValue(value)
 }
@@ -118,7 +120,15 @@ function getResumeDateSelectOptions(
   }
 
   if (kind === 'end-month') {
+    if (isCurrentRole) {
+      return [{ value: RESUME_PRESENT_MONTH_VALUE, label: 'Present' }]
+    }
+
     return RESUME_MONTH_OPTIONS
+  }
+
+  if (kind === 'end-year' && isCurrentRole) {
+    return [{ value: '', label: '' }]
   }
 
   return getResumeYearOptions(selectedYears)
@@ -148,7 +158,7 @@ function getResumeDateSelectValue(kind: ResumeDateSelectKind, row: ResumeRow): s
     case 'start-year':
       return startDateParts.year
     case 'end-month':
-      return row?.isCurrentRole ? '' : endDateParts.month
+      return row?.isCurrentRole ? RESUME_PRESENT_MONTH_VALUE : endDateParts.month
     case 'end-year':
       return row?.isCurrentRole ? '' : endDateParts.year
     default:
@@ -578,7 +588,7 @@ function renderResumeInputRow({
             data-resume-date-kind="end-month"
             data-resume-row-index=${String(index)}
             .options=${getResumeDateSelectOptions('end-month', selectedYears, Boolean(resumeRow?.isCurrentRole))}
-            .value=${resumeRow?.isCurrentRole ? '' : endMonthValue}
+            .value=${resumeRow?.isCurrentRole ? RESUME_PRESENT_MONTH_VALUE : endMonthValue}
             .label=${getResumeDateSelectLabel('end-month', resumeRow)}
             @change=${handleEndMonthChange}
           ></solid-ui-select>
