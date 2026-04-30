@@ -41,6 +41,18 @@ This checklist captures the baseline rules we enforce in profile section markup 
 
 - Run the focused accessibility test after markup changes:
   - `npm test -- test/profile-view.accessibility.test.ts`
+- For interaction changes, manually test keyboard-only behavior:
+  - tab order reaches all controls
+  - visible focus remains clear
+  - dialogs can be opened, operated, and closed from the keyboard
+  - focus returns to a sensible element after closing a dialog
+- Manually test with VoiceOver on macOS for:
+  - landmark and heading navigation
+  - button and link names
+  - dialog title and description announcement
+  - inline error, alert, and saving/status message announcement
+- Check reflow at 200% and 400% zoom for the main profile flows.
+- Until browser-level accessibility audits are automated in this repo, do not treat the axe test as sufficient by itself for accessibility-sensitive changes.
 - If violations appear, fix semantic/ARIA issues before adding test exceptions.
 - Keep fixes in source markup, not in test-only workarounds.
 

@@ -104,3 +104,5 @@ capture an image and update the profile photo in the heading section.
 * GPT-5.4 Model: can you add types to rdfMutationHelpers.ts and consolidate mutation logic where appropriate. 
 
 * GPT-5.4 Model: can you refactor texts so it's cleaner and easier to update 
+
+* GPT-5.4 Model: add keyboard interaction coverage for the shared dialog so we verify initial focus placement and focus restoration when the dialog is cancelled
