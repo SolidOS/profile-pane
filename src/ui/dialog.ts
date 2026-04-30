@@ -270,6 +270,17 @@ function updateSavingUI (dialog: HTMLDialogElement, submitLabel: string, isSavin
   const saveButton = dialog.querySelector('#modal-buttons .btn-primary') as HTMLButtonElement | null
   const cancelButton = dialog.querySelector('#modal-buttons button[data-cancel]') as HTMLButtonElement | null
 
+  dialog.classList.toggle('modal--saving', isSaving)
+  dialog.setAttribute('aria-busy', String(isSaving))
+  elements.description.toggleAttribute('inert', isSaving)
+
+  if (isSaving) {
+    const activeElement = dialog.ownerDocument.activeElement as HTMLElement | null
+    if (activeElement && dialog.contains(activeElement)) {
+      activeElement.blur()
+    }
+  }
+
   if (saveButton) {
     saveButton.disabled = isSaving
     saveButton.setAttribute('aria-busy', String(isSaving))

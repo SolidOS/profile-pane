@@ -193,25 +193,6 @@ type ContactAddressInputRowProps = {
   displayIndex: number
   onDelete: () => void
 }
-/* not needed for now
-function renderCountryPrefixSelect(
-  name: string,
-  value: string,
-  label: string,
-  onChange: (event: Event) => void
-) {
-  return html`
-    <label class="label profile-edit-dialog__phone-prefix-field" aria-label=${label}>
-      <select class="phonePrefixSelect" name=${name} .value=${value} @change=${onChange}>
-        ${COUNTRY_PREFIX_OPTIONS.map((option) => html`
-          <option value=${option.dialCode}>
-            ${countryCodeToFlag(option.iso2)} ${option.dialCode}
-          </option>
-        `)}
-      </select>
-    </label>
-  `
-} */
 
 function renderContactPhoneInputRow({
   phones,
@@ -221,9 +202,7 @@ function renderContactPhoneInputRow({
 }: ContactPhoneInputRowProps) {
   const phoneRow = phones[index]
   const label = `Phone Number ${displayIndex + 1}`
-  // const countryCodeLabel = `Country Calling Code ${displayIndex + 1}`
   const typeLabel = `Phone Type ${displayIndex + 1}`
-  // const prefixInputName = `phone-prefix-${index}`
   const inputName = `phone-value-${index}`
   const splitValue = splitPhoneValue(phoneRow?.value || '')
   let selectedDialCode = splitValue.dialCode
@@ -235,16 +214,6 @@ function renderContactPhoneInputRow({
       applyRowFieldChange(phones[index], 'value', combinePhoneValue(selectedDialCode, nextValue), rowHasContent)
     }
   }
-/* Not needed for now
-  const handleCountryCodeInput = (e: Event) => {
-    const target = e.target as HTMLSelectElement
-    selectedDialCode = target.value
-
-    if (phones[index]) {
-      const localNumber = splitPhoneValue(phones[index].value).localNumber
-      applyRowFieldChange(phones[index], 'value', combinePhoneValue(selectedDialCode, localNumber), rowHasContent)
-    }
-  } */
 
   const handleTypeInput = (e: Event) => {
     const nextType = readContactTypeChange(e)

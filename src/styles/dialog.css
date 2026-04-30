@@ -134,11 +134,16 @@
   display: grid;
   place-items: center;
   background: rgba(255, 255, 255, 0.78);
-  z-index: 2;
+  z-index: 10;
 }
 
 #profile-modal #modal-saving-overlay[hidden] {
   display: none;
+}
+
+#profile-modal.modal--saving #modal-desc {
+  opacity: 0.45;
+  pointer-events: none;
 }
 
 #profile-modal .modal__saving-indicator {

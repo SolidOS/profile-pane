@@ -184,6 +184,7 @@
 }
 
 .profile-edit-dialog__image-camera-capture-frame {
+  position: relative;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -207,6 +208,84 @@
 
 .profile-edit-dialog__image-camera-capture-frame[hidden] {
   display: none;
+}
+
+.profile-edit-dialog__photo-capture {
+  display: block;
+  width: 100%;
+  --photo-capture-gap: var(--spacing-2xs, 0.625rem);
+  --photo-capture-frame-max-width: 260px;
+  --photo-capture-surface: transparent;
+  --photo-capture-text: var(--gray-900, #101828);
+  --photo-capture-muted-text: var(--gray-600, #4A5565);
+  --photo-capture-border: var(--gray-300, #D1D5DC);
+  --photo-capture-hover: var(--gray-100, #F3F4F6);
+  --photo-capture-shadow: none;
+  --photo-capture-trigger-background: var(--white, #FFF);
+  --photo-capture-trigger-text: var(--gray-900, #101828);
+}
+
+.profile-edit-dialog__photo-capture::part(panel) {
+  width: auto;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.profile-edit-dialog__photo-capture::part(header) {
+  justify-content: flex-end;
+}
+
+.profile-edit-dialog__photo-capture::part(heading),
+.profile-edit-dialog__photo-capture::part(status-message),
+.profile-edit-dialog__photo-capture::part(cancel-button) {
+  display: none;
+}
+
+.profile-edit-dialog__photo-capture::part(close-button) {
+  width: auto;
+  height: auto;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--gray-600, #4A5565);
+  font-size: 1.25rem;
+}
+
+.profile-edit-dialog__photo-capture::part(close-button):hover,
+.profile-edit-dialog__photo-capture::part(close-button):focus-visible {
+  background: transparent;
+  color: var(--gray-900, #101828);
+}
+
+.profile-edit-dialog__photo-capture::part(actions) {
+  justify-content: center;
+  gap: var(--spacing-2xs, 0.625rem);
+}
+
+.profile-edit-dialog__photo-capture::part(capture-button),
+.profile-edit-dialog__photo-capture::part(retake-button),
+.profile-edit-dialog__photo-capture::part(confirm-button) {
+  min-height: auto;
+  padding: 6.6px 11.075px 7px 12.8px;
+  border-radius: var(--border-radius-base, 0.3125rem);
+  border: 0.8px solid var(--gray-300, #D1D5DC);
+  background: var(--white, #FFF);
+  color: var(--gray-900, #101828);
+  font-size: var(--font-size-xxs, 0.75rem);
+  font-weight: var(--font-weight-xbold, 700);
+  line-height: var(--line-height-base, 1.5);
+}
+
+.profile-edit-dialog__photo-capture::part(capture-button):hover,
+.profile-edit-dialog__photo-capture::part(capture-button):focus-visible,
+.profile-edit-dialog__photo-capture::part(retake-button):hover,
+.profile-edit-dialog__photo-capture::part(retake-button):focus-visible,
+.profile-edit-dialog__photo-capture::part(confirm-button):hover,
+.profile-edit-dialog__photo-capture::part(confirm-button):focus-visible {
+  background: var(--gray-100, #F3F4F6);
+  border-color: var(--gray-400, #99A1AF);
 }
 
 .profile-edit-dialog__image-camera-capture-frame table {
@@ -367,15 +446,12 @@
 }
 
 .profile__edit-form--resume .profile-edit-dialog__field > input,
-.profile__edit-form--resume .profile-edit-dialog__field > select,
 .profile__edit-form--resume .profile-edit-dialog__field > solid-ui-select,
 .profile__edit-form--resume .profile-edit-dialog__field > textarea,
 .profile__edit-form--resume .profile-edit-dialog__field-type > input,
-.profile__edit-form--resume .profile-edit-dialog__field-type > select,
 .profile__edit-form--resume .profile-edit-dialog__field-type > solid-ui-select,
 .profile__edit-form--resume .profile-edit-dialog__field-type > textarea,
 .profile__edit-form--contact-info .profile-edit-dialog__field > input,
-.profile__edit-form--contact-info .profile-edit-dialog__field > select,
 .profile__edit-form--contact-info .profile-edit-dialog__field > solid-ui-select,
 .profile__edit-form--contact-info .profile-edit-dialog__field > textarea,
 .profile__edit-form--contact-info .profile-edit-dialog__field-type > input,
@@ -408,7 +484,6 @@
   width: 100%;
 }
 
-.profile-edit-dialog__date-pair > select,
 .profile-edit-dialog__date-pair > solid-ui-select {
   flex: 1 1 0;
   min-width: 0;

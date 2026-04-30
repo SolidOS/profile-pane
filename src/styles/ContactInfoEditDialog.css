@@ -24,28 +24,6 @@
   line-height: normal;
 }
 
-.profile-edit-dialog__phone-prefix-field {
-  flex: 0 0 6.1rem;
-  margin: 0;
-}
-
-.phonePrefixSelect,
-.profile-edit-dialog__phone-local-input {
-  border: 0 !important;
-  background: transparent;
-  min-height: calc(var(--min-touch-target, 44px) - 2px);
-  height: calc(var(--min-touch-target, 44px) - 2px);
-}
-
-.phonePrefixSelect {
-  padding: 0 0.2rem 0 0;
-}
-
-.phonePrefixSelect:focus,
-.profile-edit-dialog__phone-local-input:focus {
-  outline: none;
-}
-
 .profile-edit-dialog__row--contact-point {
   max-width: 100%;
   width: 100%;
@@ -141,9 +119,5 @@
     flex: 0 0 auto;
     margin-left: 0;
     justify-content: flex-end;
-  }
-
-  .profile-edit-dialog__phone-prefix-field {
-    flex: 0 0 5.75rem;
   }
 }
