@@ -6,7 +6,7 @@ import { presentLanguages } from './selectors'
 import { expandRdfList } from '../shared/rdfList'
 import { createIdNode } from '../shared/idNodeFactory'
 import { mutationSaveLanguagesFailedPrefixText } from '../../texts'
-import { applyStatementsToStore, registerStorePrefix, sanitizePatchStatements, statementKey } from '../shared/rdfMutationHelpers'
+import { registerStorePrefix, runUpdateTransport } from '../shared/rdfMutationHelpers'
 
 export type LanguageMutationPlan = MutationOps<LanguageRow>
 // Language entries are serialized as an ordered rdf:List of id nodes, where
@@ -119,107 +119,6 @@ function collectListChainNodes(store: LiveStore, listHead: NamedNode, doc: Named
   return nodes
 }
 
-function isPatchFailure(message: string): boolean {
-  const text = (message || '').toLowerCase()
-  // Different pods surface PATCH incompatibility with different status codes/messages.
-  return text.includes('fetch error for patch') || text.includes('failed to fetch') || text.includes(' on patch ') || text.includes('web error: 501') || text.includes('web error: 405') || text.includes('web error: 400')
-}
-
-function isMissingGetRecordError(message: string): boolean {
-  return (message || '').toLowerCase().includes('no record of our http get request for document')
-}
-
-async function runPutFallback(store: LiveStore, doc: NamedNode, deletions: RdfStatement[], insertions: RdfStatement[]) {
-  const updater = store.updater as RdfUpdater | undefined
-  const fetcher = store.fetcher as { webOperation?: (...args: unknown[]) => Promise<{ ok?: boolean; status?: number }> } | undefined
-
-  if (!updater || typeof updater.serialize !== 'function' || !fetcher || typeof fetcher.webOperation !== 'function') {
-    throw new Error('Language updates are not supported by this store updater.')
-  }
-
-  const currentStatements = store.statementsMatching(undefined, undefined, undefined, doc).slice()
-  const deletionKeys = new Set((deletions || []).map((statement) => statementKey(statement)))
-  // Rebuild full document state for PUT when patch-oriented flows cannot be used.
-  const nextStatements = currentStatements.filter((statement) => !deletionKeys.has(statementKey(statement))).concat(insertions || [])
-
-  const contentType = 'text/turtle'
-  const body = updater.serialize(doc.value, nextStatements, contentType)
-  const response = await fetcher.webOperation('PUT', doc.value, {
-    noMeta: true,
-    contentType,
-    body
-  })
-
-  if (!response || response.ok !== true) {
-    const status = response?.status || 'unknown'
-    throw new Error(`Web error: ${status} on PUT of <${doc.value}>`)
-  }
-
-  // PUT bypasses UpdateManager's local-store patching, so apply the same changes locally.
-  applyStatementsToStore(store, deletions, insertions)
-}
-
-async function runUpdateWithDavFallback(store: LiveStore, doc: NamedNode, deletions: RdfStatement[], insertions: RdfStatement[]) {
-  const updater = store.updater as RdfUpdater | undefined
-  if (!updater || typeof updater.update !== 'function') {
-    throw new Error('Language updates are not supported by this store updater.')
-  }
-
-  const { safeDeletions, safeInsertions } = sanitizePatchStatements(store, deletions, insertions)
-  if (safeDeletions.length === 0 && safeInsertions.length === 0) {
-    return
-  }
-
-  const tryUpdate = () => new Promise<void>((resolve, reject) => {
-    updater.update(safeDeletions, safeInsertions, (_uri: string, ok: boolean, message?: string) => {
-      if (ok === true) {
-        resolve()
-        return
-      }
-      reject(new Error(message || 'Failed to save languages'))
-    })
-  })
-
-  try {
-    // Preferred path: let rdflib pick the server-supported update protocol.
-    await tryUpdate()
-    return
-  } catch (error) {
-    const message = error instanceof Error ? error.message : String(error)
-    if (!isPatchFailure(message) || typeof updater.updateDav !== 'function') {
-      throw error
-    }
-
-    if (store.fetcher?.load) {
-      try {
-        await store.fetcher.load(doc)
-      } catch {
-        // Continue; updateDav may still fail and we handle that below.
-      }
-    }
-
-    try {
-      // First fallback for PATCH failures: DAV-style whole-document update.
-      await new Promise<void>((resolve, reject) => {
-        updater.updateDav(doc, safeDeletions, safeInsertions, (_uri: string, ok: boolean, body?: string) => {
-          if (ok === true) {
-            resolve()
-            return
-          }
-          reject(new Error(body || message || 'Failed to save languages'))
-        })
-      })
-    } catch (davError) {
-      const davMessage = davError instanceof Error ? davError.message : String(davError)
-      if (!isMissingGetRecordError(davMessage)) {
-        throw davError
-      }
-      // Some stores cannot run updateDav without prior fetch metadata; use direct PUT.
-      await runPutFallback(store, doc, safeDeletions, safeInsertions)
-    }
-  }
-}
-
 function mergeLanguageOps(existingRows: LanguageRow[], languageOps: MutationOps<LanguageRow>): LanguageRow[] {
   const byEntryNode = new Map<string, LanguageRow>()
   existingRows.forEach((row) => {
@@ -322,7 +221,12 @@ async function mutateLanguageEntries(
   })
   const insertions: RdfStatement[] = buildLanguageStatements(subject, doc, nextRows)
 
-  await runUpdateWithDavFallback(store, doc, deletions, insertions)
+  await runUpdateTransport(store, doc, deletions, insertions, {
+    unsupportedMessage: 'Language updates are not supported by this store updater.',
+    failureMessage: 'Failed to save languages',
+    useDavFallback: true,
+    usePutFallback: true
+  })
 }
 
 export async function processLanguageMutations(

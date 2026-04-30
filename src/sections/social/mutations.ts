@@ -1,19 +1,16 @@
 import { blankNode, LiveStore, NamedNode, Node, st, literal, sym } from 'rdflib'
 import { ns } from 'solid-ui'
 import { SocialMutationPlan, SocialRow } from './types'
-import { MutationOps, RdfStatement, RdfUpdater } from '../shared/types'
+import { MutationOps, RdfStatement } from '../shared/types'
 import { createIdNode } from '../shared/idNodeFactory'
 import {
-	applyStatementsToStore,
-	applyUpdaterPatch,
 	collectNodeStatements,
 	findExistingNode,
 	registerStorePrefix,
-	sanitizePatchStatements,
-	statementKey,
+	runUpdateTransport,
 	uniqueStatements
 } from '../shared/rdfMutationHelpers'
-import { saveSocialUpdatesFailedPrefixText, updaterUnsupportedStoreErrorMessageText } from '../../texts'
+import { saveSocialUpdatesFailedPrefixText } from '../../texts'
 import { findSocialAccountOption, getSocialAccountOptions } from './helpers'
 import { presentSocial } from './selectors'
 import { expandRdfList } from '../shared/rdfList'
@@ -158,61 +155,6 @@ function buildRdfListStatements(doc: NamedNode, items: NamedNode[]) {
 	}
 }
 
-function isPatchFailure(message: string): boolean {
-	const text = (message || '').toLowerCase()
-	return text.includes('fetch error for patch') || text.includes('failed to fetch') || text.includes(' on patch ') || text.includes('web error: 400') || text.includes('web error: 405') || text.includes('web error: 501')
-}
-
-async function runPutFallback(store: LiveStore, doc: NamedNode, deletions: RdfStatement[], insertions: RdfStatement[]) {
-	const updater = store.updater as RdfUpdater | undefined
-	const fetcher = store.fetcher as { webOperation?: (...args: unknown[]) => Promise<{ ok?: boolean; status?: number }> } | undefined
-
-	if (!updater || typeof updater.serialize !== 'function' || !fetcher || typeof fetcher.webOperation !== 'function') {
-		throw new Error('Social updates are not supported by this store updater.')
-	}
-
-	const currentStatements = store.statementsMatching(undefined, undefined, undefined, doc).slice()
-	const deletionKeys = new Set((deletions || []).map((statement) => statementKey(statement)))
-	const nextStatements = currentStatements.filter((statement) => !deletionKeys.has(statementKey(statement))).concat(insertions || [])
-
-	const contentType = 'text/turtle'
-	const body = updater.serialize(doc.value, nextStatements, contentType)
-	const response = await fetcher.webOperation('PUT', doc.value, {
-		noMeta: true,
-		contentType,
-		body
-	})
-
-	if (!response || response.ok !== true) {
-		const status = response?.status || 'unknown'
-		throw new Error(`Web error: ${status} on PUT of <${doc.value}>`)
-	}
-
-	applyStatementsToStore(store, deletions, insertions)
-}
-
-async function applySocialPatchWithFallback(store: LiveStore, doc: NamedNode, deletions: RdfStatement[], insertions: RdfStatement[]) {
-	if (!store.updater) {
-		throw new Error(updaterUnsupportedStoreErrorMessageText)
-	}
-
-	const { safeDeletions, safeInsertions } = sanitizePatchStatements(store, deletions, insertions)
-
-	if (safeDeletions.length === 0 && safeInsertions.length === 0) {
-		return
-	}
-
-	try {
-		await applyUpdaterPatch(store, safeDeletions, safeInsertions)
-		return
-	} catch (error) {
-		const message = error instanceof Error ? error.message : String(error)
-		if (!isPatchFailure(message)) throw error
-	}
-
-	await runPutFallback(store, doc, safeDeletions, safeInsertions)
-}
-
 function collectListChainNodes(store: LiveStore, listHead: Node, doc: NamedNode): Node[] {
 	if (!store.any(listHead as any, ns.rdf('first'), null, doc)) return []
 
@@ -351,7 +293,12 @@ async function mutateSocialEntries(
 		})
 	}
 
-	await applySocialPatchWithFallback(store, doc, deletions, uniqueStatements(insertions))
+	await runUpdateTransport(store, doc, deletions, uniqueStatements(insertions), {
+		unsupportedMessage: 'Social updates are not supported by this store updater.',
+		failureMessage: 'Failed to save updates',
+		useDavFallback: false,
+		usePutFallback: true
+	})
 }
 
 export async function processSocialMutations(
