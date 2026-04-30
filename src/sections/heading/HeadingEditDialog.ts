@@ -899,7 +899,7 @@ function validateHeadingDataBeforeSave(formState: HeadingFormState): string | nu
 
 
 export async function createHeadingEditDialog(
-  event: Event,
+  _event: Event,
   store: LiveStore,
   subject: NamedNode,
   profileData: ProfileDetails,

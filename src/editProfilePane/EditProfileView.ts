@@ -30,7 +30,7 @@ const editProfileView: PaneDefinition = {
 
   label: () => null, // don't use this in the normal solid-panes dispatching
 
-  render: function (subject, context) {
+  render: function (_subject, context) {
     //console.log('@@@ render edit profile pane:  subject, context', subject, context)
     const dom = context.dom
     const store = context.session.store as Store

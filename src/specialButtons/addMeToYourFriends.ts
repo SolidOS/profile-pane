@@ -18,7 +18,7 @@ let buttonContainer = <HTMLDivElement>document.createElement('section')
 const addMeToYourFriendsDiv = (
   subject: NamedNode,
   context: DataBrowserContext,
-  viewerMode: ViewerMode
+  _viewerMode: ViewerMode
 ): TemplateResult => {
 
   buttonContainer = context.dom.createElement('section') as HTMLDivElement
