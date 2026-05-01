@@ -1,6 +1,10 @@
 /* ---ONLY FOR LOCAL DEV--- */
 /* ---final version is in mashlib--- */
 
+/* BEGIN dev theme bridge: import dark-token overrides used by the theme selector */
+@import url('./dev-global-dark.css');
+/* END dev theme bridge */
+
 /* Global CSS: base styles, variables, and resets */
 /* Accessible color palette */
 
@@ -309,6 +313,55 @@
   --color-success-alpha: rgba(0, 200, 83, 0.1);
 }
 
+/* BEGIN dev environment toolbar: styles for theme/layout/input preview controls */
+#loginBanner {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 1rem;
+  align-items: center;
+}
+
+.dev-toolbar {
+  display: inline-flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: end;
+}
+
+.dev-toolbar__control {
+  display: inline-flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-size: 0.875rem;
+  color: inherit;
+}
+
+.dev-toolbar__label {
+  font-weight: 600;
+}
+
+.dev-toolbar__select {
+  min-height: 2.25rem;
+  min-width: 7rem;
+  padding: 0.4rem 0.75rem;
+  border: 1px solid var(--color-border, #d1d5db);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.92);
+  color: var(--color-text, #1a1a1a);
+}
+
+html[data-theme='dark'] .dev-toolbar__select {
+  background: rgba(17, 24, 39, 0.92);
+  color: #f9fafb;
+  border-color: rgba(255, 255, 255, 0.24);
+}
+
+html[data-theme='dark'] h1,
+html[data-theme='dark'] #webId {
+  color: #f9fafb;
+}
+/* END dev environment toolbar */
+
 
 /* Improve text rendering */
 html, body {
@@ -476,7 +529,7 @@ nav ul {
 [role="link"]:focus,
 button:focus,
 a:focus {
-  outline: 2px solid var(--color-primary);
+  /* outline: 2px solid var(--color-primary); */
   outline-offset: 2px;
   box-shadow: 0 0 0 1px var(--color-background);
 } 
