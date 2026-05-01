@@ -132,6 +132,45 @@ td.obj .profile-pane-root {
   }
 }
 
+/* App-driven mobile layout for the pane, independent of viewport width. */
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid {
+  font-size: clamp(0.9rem, 1.1vw + 0.65rem, 1rem);
+  grid-template-columns: 1fr;
+  gap: var(--spacing-xxs, 0.3125rem);
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  margin: 0 auto;
+  padding-inline: var(--spacing-xxs, 0.3125rem);
+  overflow-x: clip;
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__action-button,
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__actions button {
+  min-height: calc(var(--min-touch-target, 44px) + 0.5rem) !important;
+  font-size: clamp(0.9rem, 2.1vw, 1rem) !important;
+  padding: 0.75rem 0.9rem !important;
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile__section-header h2,
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile__section-header h3,
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile__section-header h4 {
+  font-size: var(--font-size-lg, 1.125rem) !important;
+  line-height: 1.2 !important;
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .friends-pane__header-name {
+  font-size: 1.5rem !important;
+  line-height: 1.15 !important;
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .friends-pane__header-pronouns,
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .friends-pane__friends-pronouns {
+  font-size: 0.6875rem !important;
+  line-height: 1.1 !important;
+}
+
+/* Viewport fallback for one-column mobile and narrow-tablet layout. */
 @media (max-width: 768px) {
   .profile-grid {
     font-size: clamp(0.9rem, 1.1vw + 0.65rem, 1rem);
@@ -153,6 +192,7 @@ td.obj .profile-pane-root {
   }
 }
 
+/* Container fallback when the pane is narrow inside a wider page. */
 @container profile-pane (max-width: 768px) {
   .profile-grid {
     font-size: clamp(0.9rem, 1.1vw + 0.65rem, 1rem);
@@ -174,14 +214,8 @@ td.obj .profile-pane-root {
   }
 }
 
+/* Narrow-phone typography refinements once the layout is already stacked. */
 @media (max-width: 576px) {
-  .profile-grid .profile__section-header h2,
-  .profile-grid .profile__section-header h3,
-  .profile-grid .profile__section-header h4,
-  .profile-grid .friends-pane__header-name {
-    font-family: inherit !important;
-  }
-
   .profile__section-header h2,
   .profile__section-header h3,
   .profile__section-header h4 {
@@ -196,20 +230,13 @@ td.obj .profile-pane-root {
 
   .profile-grid .friends-pane__header-pronouns,
   .profile-grid .friends-pane__friends-pronouns {
-    font-family: inherit !important;
     font-size: 0.6875rem !important;
     line-height: 1.1 !important;
   }
 }
 
+/* Narrow-pane typography fallback for embedded mobile layouts. */
 @container profile-pane (max-width: 576px) {
-  .profile-grid .profile__section-header h2,
-  .profile-grid .profile__section-header h3,
-  .profile-grid .profile__section-header h4,
-  .profile-grid .friends-pane__header-name {
-    font-family: inherit !important;
-  }
-
   .profile__section-header h2,
   .profile__section-header h3,
   .profile__section-header h4 {
@@ -224,7 +251,6 @@ td.obj .profile-pane-root {
 
   .profile-grid .friends-pane__header-pronouns,
   .profile-grid .friends-pane__friends-pronouns {
-    font-family: inherit !important;
     font-size: 0.6875rem !important;
     line-height: 1.1 !important;
   }

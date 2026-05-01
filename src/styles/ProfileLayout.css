@@ -27,7 +27,7 @@
 .profile-grid .profile__section {
   padding: var(--spacing-lg);
   border-radius: var(--border-radius-base);
-  background: var(--white, #FFF);
+  background: var(--color-card-bg, #FFF);
   box-sizing: border-box;
   width: 100%;
   max-width: 100%;
@@ -53,7 +53,7 @@
   white-space: nowrap;
   box-sizing: border-box;
   border: var(--border-width-sm, 1px) solid var(--color-border-darker, #4A5565);
-  color: var(--slate-700, #314158);
+  color: var(--color-text-primary, #314158);
   font-size: var(--font-size-sm, 0.875rem);
   font-weight: var(--font-weight-medium, 500);
   line-height: var(--line-height-tight, 1.4);
@@ -62,15 +62,24 @@
 .profile-grid .profile__action-button--empty:hover {
   background: var(--color-primary, #7C4DFF);
   border-color: var(--color-primary, #7C4DFF);
-  color: white;
+  color: var(--white, #fff);
 }
 
 .profile-grid .profile__empty-state-message {
-  color: #62748E;
+  color: var(--color-text-secondary, #62748E);
   text-align: center;
   font-size: var(--font-size-xs, 0.813rem);
   font-weight: var(--font-weight-normal, 400);
   line-height: var(--line-height-tight, 1.4);
+}
+
+.profile-pane-host[data-layout='mobile'] .profile-grid {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.profile-pane-host[data-theme='dark'] .profile-grid .profile__section,
+.profile-pane-host[data-theme='dark'] .profile-grid .profile__section--empty {
+  border: var(--border-width-thin, 1px) solid var(--color-border, #444);
 }
 
 .profile-grid .profile__empty-state-content {
@@ -92,13 +101,41 @@
   }
 }
 
-@media (max-width: 576px) {
-  .profile-grid .profile__empty-state-content > h2,
-  .profile-grid .resume-card__section h3,
-  .profile-grid .profile__name {
-    font-family: inherit !important;
-  }
+/* App-driven mobile layout for the pane, independent of viewport width. */
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__empty-state-content > h2,
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .resume-card__section h3 {
+  font-size: var(--font-size-lg, 1.125rem) !important;
+  line-height: 1.2 !important;
+}
 
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__name {
+  font-size: 1.5rem !important;
+  line-height: 1.15 !important;
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__pronouns {
+  font-size: 0.6875rem !important;
+  line-height: 1.1 !important;
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile__section--empty .profile-section-collapsible__actions > button.inline-flex-row {
+  order: 1;
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile__section--empty .profile-section-collapsible__actions > .profile-section-collapsible__edit-button {
+  order: 2;
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile__section--empty .profile-section-collapsible__edit-label {
+  display: none !important;
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile__section--empty .profile-section-collapsible__edit-icon {
+  display: inline !important;
+}
+
+/* Narrow-phone typography refinements once the layout is already stacked. */
+@media (max-width: 576px) {
   .profile-grid .profile__empty-state-content > h2,
   .profile-grid .resume-card__section h3 {
     font-size: var(--font-size-lg, 1.125rem) !important;
@@ -111,7 +148,6 @@
   }
 
   .profile-grid .profile__pronouns {
-    font-family: inherit !important;
     font-size: 0.6875rem !important;
     line-height: 1.1 !important;
   }
@@ -133,13 +169,8 @@
   }
 }
 
+/* Narrow-pane typography fallback for embedded mobile layouts. */
 @container profile-pane (max-width: 576px) {
-  .profile-grid .profile__empty-state-content > h2,
-  .profile-grid .resume-card__section h3,
-  .profile-grid .profile__name {
-    font-family: inherit !important;
-  }
-
   .profile-grid .profile__empty-state-content > h2,
   .profile-grid .resume-card__section h3 {
     font-size: var(--font-size-lg, 1.125rem) !important;
@@ -152,7 +183,6 @@
   }
 
   .profile-grid .profile__pronouns {
-    font-family: inherit !important;
     font-size: 0.6875rem !important;
     line-height: 1.1 !important;
   }

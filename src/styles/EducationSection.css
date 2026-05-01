@@ -94,7 +94,12 @@
   padding-left: 0;
 }
 
-@media (max-width: 640px) {
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .education-card__header {
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+@media (max-width: 576px) {
   .education-card__header {
     flex-direction: column;
     align-items: flex-start;

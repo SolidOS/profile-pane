@@ -61,6 +61,8 @@ export async function ProfileView (
 ): Promise <TemplateResult> {
   const store = context.session.store as LiveStore
   const viewerMode = getViewerMode(subject)
+  const layout = context.environment?.layout ?? 'desktop'
+  const theme = context.environment?.theme ?? 'light'
 
   const viewModel = await presentProfileViewModel(subject, store)
   const profileDetails = viewModel.profileDetails
@@ -73,7 +75,11 @@ export async function ProfileView (
   const contactInfo = viewModel.contactInfo
   
   return html` 
-    <div class="profile-pane-root">
+    <div
+      class="profile-pane-root"
+      data-layout=${layout}
+      data-theme=${theme}
+    >
       <main
         id="main-content"
         class="profile-grid"

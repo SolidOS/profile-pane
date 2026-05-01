@@ -232,8 +232,68 @@ transform: translateX(-4px);
     width: auto;
   }
 }
+/* layout = mobile */
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile__heading-top {
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  grid-template-areas:
+    "avatar info actions"
+    "details details details";
+  column-gap: var(--spacing-sm, 0.75rem);
+  row-gap: var(--spacing-sm, 0.75rem);
+}
 
-@media (max-width: 640px) {
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile__heading-actions {
+  justify-self: end;
+  justify-content: flex-end;
+  width: auto;
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile__name {
+  font-size: 1.5rem;
+  line-height: 1.15;
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile__identity {
+  gap: 0.125rem;
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile__pronouns {
+  font-size: var(--font-size-xs, 0.75rem);
+  line-height: 1.1;
+  white-space: nowrap;
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile__hero,
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile__hero-alt {
+  width: 112px;
+  height: 112px;
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile__hero-alt {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile__hero-icon {
+  display: block;
+  margin: 0 auto;
+  width: 48px;
+  height: 48px;
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile__details {
+  gap: var(--spacing-xs, 0.5rem);
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile__meta-row,
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile__contact-row {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: 0.25rem;
+}
+
+@media (max-width: 576px) {
   .profile__heading-top {
     grid-template-columns: auto minmax(0, 1fr) auto;
     grid-template-areas:
@@ -295,7 +355,7 @@ transform: translateX(-4px);
   }
 }
 
-@container profile-pane (max-width: 640px) {
+@container profile-pane (max-width: 576px) {
   .profile__heading-top {
     grid-template-columns: auto minmax(0, 1fr) auto;
     grid-template-areas:

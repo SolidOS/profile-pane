@@ -53,7 +53,95 @@
 .profile-section-collapsible__content > :last-child {
   margin-bottom: 0;
 }
+/* App-driven mobile layout when the host/root explicitly sets data-layout. */
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-section-collapsible--inline-mobile-actions > .profile-section-collapsible__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
 
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-section-collapsible--inline-mobile-actions > .profile-section-collapsible__header h2 {
+  margin: 0;
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-section-collapsible--inline-mobile-actions .profile-section-collapsible__actions {
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.25rem;
+  margin-top: 0;
+  flex: 0 0 auto;
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-section-collapsible--inline-mobile-actions .profile-section-collapsible__edit-button {
+  display: inline-flex !important;
+  order: 1;
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-section-collapsible--inline-mobile-actions .profile-section-collapsible__edit-button:active,
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-section-collapsible--inline-mobile-actions .profile-section-collapsible__edit-button:focus,
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-section-collapsible--inline-mobile-actions .profile-section-collapsible__edit-button:focus-visible {
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+  background: transparent !important;
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-section-collapsible--inline-mobile-actions .profile-section-collapsible__actions > button.inline-flex-row {
+  order: 2;
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-section-collapsible[data-expanded="false"] .profile-section-collapsible__content {
+  display: none;
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-section-collapsible__actions.flex-column {
+  align-items: flex-end;
+  gap: 0.25rem;
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-section-collapsible[data-expanded="true"] .profile-section-collapsible__chevron {
+  transform: rotate(180deg);
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-section-collapsible__edit-label {
+  display: none !important;
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-section-collapsible__edit-icon {
+  display: inline;
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-section-collapsible .profile-section-collapsible__edit-button {
+  display: none !important;
+  order: 2;
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-section-collapsible[data-expanded="true"] .profile-section-collapsible__edit-button {
+  display: inline-flex !important;
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-section-collapsible__actions > button.inline-flex-row {
+  display: inline-flex !important;
+  align-items: center;
+  justify-content: center;
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-section-collapsible__edit-icon--add svg path {
+  fill: #1E2939 !important;
+  stroke: #1E2939 !important;
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-section-collapsible__edit-icon--projects svg path {
+  stroke-width: 1.714px !important;
+  stroke: var(--gray-800, #1E2939) !important;
+  fill: none !important;
+}
+
+/* Viewport fallback when no explicit layout attribute is available. */
 @media (min-width: 769px) {
   .profile-section-collapsible > .profile-section-collapsible__content {
     display: block;
@@ -169,6 +257,7 @@
   }
 }
 
+/* Container-driven mobile adjustments when the pane is narrow inside a larger viewport. */
 @container profile-pane (max-width: 576px) {
   .profile-section-collapsible--inline-mobile-actions > .profile-section-collapsible__header {
     display: flex;
