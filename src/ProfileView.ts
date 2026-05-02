@@ -40,7 +40,7 @@ function renderSidebar(
   return html`
     <aside 
       aria-labelledby="sidebar-heading" 
-      class="profile__sidebar p-sm" 
+      class="profile__sidebar flex-column p-sm" 
     >
       <h2 id="sidebar-heading" class="sr-only">Sidebar</h2>
       <div class="flex-column gap-md">
@@ -63,6 +63,7 @@ export async function ProfileView (
   const viewerMode = getViewerMode(subject)
   const layout = context.environment?.layout ?? 'desktop'
   const theme = context.environment?.theme ?? 'light'
+  const inputMode = context.environment?.inputMode ?? 'pointer'
 
   const viewModel = await presentProfileViewModel(subject, store)
   const profileDetails = viewModel.profileDetails
@@ -79,6 +80,7 @@ export async function ProfileView (
       class="profile-pane-root"
       data-layout=${layout}
       data-theme=${theme}
+      data-input-mode=${inputMode}
     >
       <main
         id="main-content"

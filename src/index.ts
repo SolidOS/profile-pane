@@ -24,6 +24,20 @@ async function loadExtendedProfile(store: LiveStore, subject: NamedNode) {
   }
 }
 
+function applyEnvironmentAttributes(
+  element: HTMLElement,
+  context: DataBrowserContext
+): void {
+  const layout = context.environment?.layout ?? 'desktop'
+  const theme = context.environment?.theme ?? 'light'
+  const inputMode = context.environment?.inputMode ?? 'pointer'
+
+  element.classList.add('profile-pane-host')
+  element.dataset.layout = layout
+  element.dataset.theme = theme
+  element.dataset.inputMode = inputMode
+}
+
 const Pane = {
   global: false,
   icon: icons.iconBase + 'noun_15059.svg',
@@ -45,8 +59,10 @@ const Pane = {
   render: (subject: NamedNode, context: DataBrowserContext): HTMLElement => {
     const target = context.dom.createElement('div')
     const store = context.session.store
+    applyEnvironmentAttributes(target, context)
 
     const renderWithData = async () => {
+      applyEnvironmentAttributes(target, context)
       render(await ProfileView(subject, context, renderWithData), target)
       await hydrateQRCodes(target)
     }
