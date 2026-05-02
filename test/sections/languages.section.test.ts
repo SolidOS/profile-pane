@@ -52,7 +52,7 @@ describe('Languages section', () => {
     render(renderLanguageSection(context.session.store, subject, languages as any, 'owner'), container)
 
     const section = container.querySelector('.profile-section-collapsible') as HTMLElement | null
-    const toggleButton = container.querySelector('button[aria-controls="languages-panel"]') as HTMLButtonElement | null
+    const toggleButton = container.querySelector('solid-ui-button[aria-controls="languages-panel"], button[aria-controls="languages-panel"]') as HTMLElement | null
     const panel = container.querySelector('#languages-panel') as HTMLElement | null
     const addMoreLabel = container.querySelector('.profile-section-collapsible__edit-label')
 

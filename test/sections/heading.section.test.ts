@@ -38,7 +38,7 @@ describe('Intro section', () => {
 
     expect(container.querySelector('.profile__section')).toBeTruthy()
     expect(container.textContent).toContain('Jane Doe')
-    expect(container.querySelector('button[aria-label="Add or edit heading information"]')).toBeTruthy()
+    expect(container.querySelector('solid-ui-button[aria-label="Add or edit heading information"], button[aria-label="Add or edit heading information"]')).toBeTruthy()
     expect(container.querySelector('.profile__heading-actions')?.getAttribute('aria-label')).toBeNull()
     expect(container.querySelector('.profile__hero-alt')?.getAttribute('tabindex')).toBeNull()
 
@@ -111,7 +111,7 @@ describe('Intro section', () => {
 
     render(await renderHeadingSection(context, subject, profile as any, 'anonymous'), container)
 
-    expect(container.querySelector('button[aria-label="Add or edit heading information"]')).toBeNull()
+    expect(container.querySelector('solid-ui-button[aria-label="Add or edit heading information"], button[aria-label="Add or edit heading information"]')).toBeNull()
 
     const results = await axe.run(container)
     expect(results.violations.length).toBe(0)

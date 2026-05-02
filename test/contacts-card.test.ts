@@ -102,7 +102,7 @@ describe('ContactCreationDialog', () => {
 
     expect(dialog.querySelector('.contacts-dialog__description')?.textContent).toContain('Choose an address book and group')
     expect(dialog.querySelector('#contacts-submit-contact-button')?.textContent).toContain('Add Contact')
-    expect(Array.from(dialog.querySelectorAll('button')).some((button) => button.textContent?.trim() === 'Cancel')).toBe(true)
+    expect(Array.from(dialog.querySelectorAll('button, solid-ui-button')).some((button) => button.textContent?.trim() === 'Cancel')).toBe(true)
   })
 
   it('sanitizes invalid characters and toggles validation message visibility', () => {

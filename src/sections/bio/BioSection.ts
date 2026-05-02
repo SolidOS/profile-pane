@@ -22,6 +22,7 @@ function renderBio(bioData: BioDetails) {
         <div class="bio-card__description-wrap">
           <p class="bio-card__description-text" id=${bioDescriptionId}>${bioData.description}</p>
           <solid-ui-button
+            role="button"
             type="button"
             variant="secondary"
             size="sm"
@@ -72,6 +73,7 @@ function renderBioSectionContent(
       <h2 id="bio-heading" tabindex="-1">${bioHeadingText}</h2>
       ${isOwner ? html`
         <solid-ui-button
+          role="button"
           type="button"
           variant="secondary"
           size="sm"
@@ -136,6 +138,7 @@ function renderOwnerEmptyBioContent(
       </p>
     </div>
     <solid-ui-button
+      role="button"
       type="button"
       variant="secondary"
       size="sm"
