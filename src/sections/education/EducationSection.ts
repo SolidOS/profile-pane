@@ -1,4 +1,5 @@
 import { html } from 'lit-html'
+import 'solid-ui/components/actions/button'
 import { EducationDetails } from './types'
 import { ViewerMode } from '../../types'
 import '../../styles/EducationSection.css'
@@ -55,8 +56,11 @@ function renderEducationEntry(educationEntry: EducationDetails, index: number) {
       ${educationEntry.description ? html`
         <div class="education-card__description-wrap">
           <p class="education-card__description-text" id=${educationDescriptionId}>${educationEntry.description}</p>
-          <button
+          <solid-ui-button
             type="button"
+            variant="secondary"
+            size="sm"
+            label="...more"
             class="education-card__description-toggle"
             aria-controls=${educationDescriptionId}
             aria-expanded="false"
@@ -64,7 +68,7 @@ function renderEducationEntry(educationEntry: EducationDetails, index: number) {
             @click=${toggleDescription}
           >
             ...more
-          </button>
+          </solid-ui-button>
         </div>
       ` : ''}
     </li>
@@ -111,35 +115,40 @@ export function renderEducationSection(
   return showSection ? html`
     <section 
       aria-labelledby="education-heading" 
-      class="profile-section-collapsible section-bg" 
+      class="profile__section border-lighter profile-section-collapsible profile-section-collapsible--inline-mobile-actions"
       role="region"
       tabindex="-1"
       data-expanded="false"
     >
       <header class="profile__section-header profile-section-collapsible__header">
         <h2 id="education-heading" tabindex="-1">${educationHeadingText}</h2>
-        <div class="profile-section-collapsible__actions flex-column">
+        <div class="profile-section-collapsible__actions flex-column align-end">
           ${isOwner ? html`
-            <button
+            <solid-ui-button
               type="button"
+              variant="secondary"
+              size="sm"
               class="profile__action-button profile-action-text flex-center profile-section-collapsible__edit-button"
               aria-label="Edit education details"
               @click=${(event: Event) => createEducationEditDialog(event, store, subject, educationDetails, viewerMode, onSaved)}
             >
               <span class="profile-section-collapsible__edit-label">${editIcon} Edit</span>
               <span class="profile-section-collapsible__edit-icon" aria-hidden="true">${editIcon}</span>
-            </button>
+            </solid-ui-button>
           ` : html``}
-          <button
+          <solid-ui-button
             type="button"
-            class="inline-flex-row"
+            variant="icon"
+            size="sm"
+            label="Toggle education section"
+            class="inline-flex-row justify-center"
             aria-label="Toggle education section"
             aria-controls="education-panel"
             aria-expanded="false"
             @click=${toggleCollapsibleSection}
           >
-            <span class="profile-section-collapsible__chevron" aria-hidden="true">⌄</span>
-          </button>
+            <span slot="icon" class="profile-section-collapsible__chevron" aria-hidden="true">⌄</span>
+          </solid-ui-button>
         </div>
       </header>
       <div id="education-panel" class="profile-section-collapsible__content" aria-hidden="true" hidden>

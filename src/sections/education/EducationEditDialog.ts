@@ -1,6 +1,7 @@
 import { alertDialog, openInputDialog } from '../../ui/dialog'
 import { html, render } from 'lit-html'
-import 'solid-ui/components/select'
+import 'solid-ui/components/actions/button'
+import 'solid-ui/components/forms/select'
 import { EducationRow, EducationDetails } from './types'
 import '../../styles/EditDialogs.css'
 import '../../styles/ContactInfoEditDialog.css'
@@ -332,16 +333,19 @@ function renderEducationInputRow({
   return html`
     <div class="profile-edit-dialog__row" role="group" aria-labelledby=${educationHeadingId}>
       <h4 id=${educationHeadingId} class="profile-edit-dialog__entry-heading">${label}</h4>
-      <div class="profile-edit-dialog__actions profile-edit-dialog__actions--edge">
-        <button
+      <div class="profile-edit-dialog__actions profile-edit-dialog__actions--edge flex-row align-center justify-end">
+        <solid-ui-button
           type="button"
+          variant="icon"
+          size="md"
+          label=${deleteEntryButtonTitleText}
           class="profile-edit-dialog__delete-button"
           aria-label=${`Delete education ${displayIndex + 1}`}
           title=${deleteEntryButtonTitleText}
           @click=${handleDelete}
         >
-          <span class="profile-edit-dialog__delete-icon" aria-hidden="true">${trashIcon}</span>
-        </button>
+          <span slot="icon" class="profile-edit-dialog__delete-icon inline-flex-row justify-center" aria-hidden="true">${trashIcon}</span>
+        </solid-ui-button>
       </div>
     </div>
     <label aria-label=${`${label} School/College`} class="label profile-edit-dialog__field">
@@ -488,8 +492,10 @@ function renderEducationSection(educationData: EducationRow[], onAddRow: () => v
           <span class="profile-edit-dialog__section-title-icon" aria-hidden="true">&#9993;</span>
           Education
         </h3>
-        <button
+        <solid-ui-button
           type="button"
+          variant="secondary"
+          size="sm"
           class="profile__action-button profile-action-text flex-center"
           data-dialog-add-more="true"
           aria-label="Add another education entry"
@@ -501,7 +507,7 @@ function renderEducationSection(educationData: EducationRow[], onAddRow: () => v
               <span>Add More</span>
             </span>
           </span>
-        </button>
+        </solid-ui-button>
       </header>
       <fieldset>
         <legend class="sr-only">Education entries</legend>

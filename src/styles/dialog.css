@@ -42,9 +42,6 @@
 }
 
 #profile-modal .modal .modal-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
   gap: var(--spacing-lg);
   margin: calc(-1 * var(--spacing-lg)) calc(-1 * var(--spacing-lg)) var(--spacing-sm) calc(-1 * var(--spacing-lg));
   padding: var(--spacing-lg);
@@ -67,10 +64,10 @@
 }
 
 #profile-modal .modal #modal-header-action > button[aria-label="Close dialog"] {
-  min-height: 2rem;
-  min-width: 2rem;
-  width: 2rem;
-  height: 2rem;
+  min-height: var(--icon-base, 2rem);
+  min-width: var(--icon-base, 2rem);
+  width: var(--icon-base, 2rem);
+  height: var(--icon-base, 2rem);
   padding: 0;
   border: none;
   background: transparent;
@@ -98,14 +95,9 @@
 }
 
 #profile-modal .modal #modal-header-action > button[aria-label="Close dialog"] svg {
-  width: 1rem;
-  height: 1rem;
+  width: var(--icon-xxs, 1rem);
+  height: var(--icon-xxs, 1rem);
   display: block;
-}
-
-#profile-modal .modal #modal-header-action {
-  display: flex;
-  align-items: center;
 }
 
 #profile-modal .modal .modal__header-action-button {
@@ -114,20 +106,34 @@
   border: none;
   background: none;
   color: var(--color-primary);
-  font-weight: 500;
+  font-weight: var(--font-weight-md, 500);
+}
+
+#profile-modal .modal solid-ui-button.modal__header-action-button {
+  --button-height-sm: 0;
+  --button-padding-sm: var(--spacing-xxs);
+  --button-background: transparent;
+  --button-border-width: 0;
+  --button-border: transparent;
+  --button-font-weight: var(--font-weight-md, 500);
+  --button-text: var(--color-primary);
+  --button-hover-background: transparent;
+  --button-hover-border: transparent;
+  --button-hover-text: var(--color-primary);
 }
 
 #profile-modal .modal .modal__header-action-button:hover {
   text-decoration: underline;
 }
 
+#profile-modal .modal solid-ui-button.modal__header-action-button:hover::part(button) {
+  text-decoration: underline;
+}
+
 /* button container: center buttons horizontally (uses id in markup) */
 #profile-modal #modal-buttons {
-  display: flex;
-  padding: 20px 0 20px 30px;
-  justify-content: flex-end;
-  align-items: center;
-  gap: 15px;
+  padding: var(--spacing-md, 1.25rem) 0 var(--spacing-md, 1.25rem) 1.875rem;
+  gap: var(--spacing-sm, 0.938rem);
   align-self: stretch;
   border-top: var(--border-width-sm, 0.1rem) solid var(--slate-200, #E2E8F0);
   background: var(--gray-50, #F9FAFB);
@@ -137,8 +143,19 @@
   display: none !important;
 }
 
-#profile-modal #modal-buttons button {
+#profile-modal #modal-buttons > :is(button, solid-ui-button) {
   width: 10.8rem;
+}
+
+#profile-modal #modal-buttons solid-ui-button[data-dialog-primary='true'] {
+  --button-font-size-md: var(--font-size-lg, 1.125rem);
+}
+
+#profile-modal #modal-buttons solid-ui-button[data-cancel='true'] {
+  --button-font-weight: var(--font-weight-normal, normal);
+  --button-text: var(--gray-800, #1E2939);
+  --button-hover-text: var(--gray-800, #1E2939);
+  --button-font-size-md: var(--font-size-sm, 0.875rem);
 }
 
 #profile-modal .modal__error-section {
@@ -168,61 +185,27 @@
 }
 
 #profile-modal .modal__saving-indicator {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
   gap: 0;
 }
 
 
-/* buttons themselves use the shared btn-primary rules */
-#profile-modal .modal button {
-  min-height: var(--min-touch-target);
-  padding: var(--spacing-sm) var(--spacing-md);
-  border: 1px solid var(--color-primary);
-  border-radius: var(--border-radius-base);
-  font-weight: 600;
-  cursor: pointer;
-  transition: all var(--animation-duration) ease;
-}
-
-#profile-modal .modal button.btn-primary {
-  background: var(--color-primary);
-  color: var(--white, #FFF);
-  font-size: var(--font-size-lg, 1.125rem); /* 18px */
-  font-weight: var(--font-weight-bold, 600);
-}
-
-#profile-modal .modal button.btn-primary:hover {
-  background: color-mix(in srgb, var(--color-primary) 90%, black);
-  box-shadow: 0 2px 4px rgba(124, 77, 255, 0.2);
-}
-
-#profile-modal .modal button.btn-primary:active {
-  box-shadow: 0 1px 2px rgba(124, 77, 255, 0.2);
-}
-
-#profile-modal .modal button:disabled {
-  opacity: var(--opacity-disabled, 0.6);
-  cursor: not-allowed;
-  transform: none;
-}
-
 /* Keep text-style actions in section headers while preserving footer button styling. */
-#profile-modal .modal .profile__section-header .profile__action-button {
+#profile-modal .modal .profile__section-header .profile__action-button,
+#profile-modal .modal .profile__section-header solid-ui-button.profile__action-button::part(button) {
   min-height: auto;
   padding: var(--spacing-xxs);
   border: none;
   background: none;
   color: var(--color-primary);
-  font-weight: 500;
+  font-weight: var(--font-weight-md, 500);
 }
 
-#profile-modal .modal .profile__section-header .profile__action-button:hover {
+#profile-modal .modal .profile__section-header .profile__action-button:hover,
+#profile-modal .modal .profile__section-header solid-ui-button.profile__action-button:hover::part(button) {
   text-decoration: underline;
 }
 
-@media (max-width: 640px) {
+@media (max-width: 576px) {
   #profile-modal {
     padding-top: max(var(--spacing-sm), env(safe-area-inset-top));
     padding-right: var(--spacing-sm);
@@ -260,12 +243,10 @@
     width: 100%;
   }
 
-  #profile-modal #modal-buttons button {
+  #profile-modal #modal-buttons > :is(button, solid-ui-button) {
     flex: 0 0 auto;
     width: 10.8rem;
     min-width: 8.5rem;
-    padding: var(--spacing-sm) var(--spacing-md);
-    font-size: var(--font-size-md, 1rem);
   }
 
 }

@@ -1,4 +1,5 @@
 import { html } from 'lit-html'
+import 'solid-ui/components/actions/button'
 import { ViewerMode } from '../../types'
 import { createContactInfoEditDialog } from './ContactInfoEditDialog'
 import { LiveStore, NamedNode } from 'rdflib'
@@ -143,11 +144,13 @@ function renderContactInfoSectionDefault(
     >
       <header class="profile__section-header profile-section-collapsible__header">
         <h2 id="contact-details-heading" tabindex="-1">${contactInfoHeadingText}</h2>
-        <div class="profile-section-collapsible__actions flex-column">
+        <div class="profile-section-collapsible__actions flex-column align-end">
           ${isOwner ? html`
-            <button 
-              type="button" 
-              class="profile__action-button profile-action-text flex-center profile-section-collapsible__edit-button" 
+            <solid-ui-button
+              type="button"
+              variant="secondary"
+              size="sm"
+              class="profile__action-button profile-action-text flex-center profile-section-collapsible__edit-button"
               aria-label="Edit contact information"
               @click=${(event: Event) => {
                 return createContactInfoEditDialog(
@@ -158,21 +161,25 @@ function renderContactInfoSectionDefault(
                   viewerMode,
                   onSaved
                 )
-              }}>
+              }}
+            >
               <span class="profile-section-collapsible__edit-label">${editIcon} Edit</span>
               <span class="profile-section-collapsible__edit-icon" aria-hidden="true">${editIcon}</span>
-            </button>
+            </solid-ui-button>
           ` : html``}
-          <button
+          <solid-ui-button
             type="button"
-            class="inline-flex-row"
+            variant="icon"
+            size="sm"
+            label="Toggle contact information section"
+            class="inline-flex-row justify-center"
             aria-label="Toggle contact information section"
             aria-controls="contact-details-panel"
             aria-expanded="false"
             @click=${toggleCollapsibleSection}
           >
-            <span class="profile-section-collapsible__chevron" aria-hidden="true">⌄</span>
-          </button>
+            <span slot="icon" class="profile-section-collapsible__chevron" aria-hidden="true">⌄</span>
+          </solid-ui-button>
         </div>
       </header>
       <div id="contact-details-panel" class="profile-section-collapsible__content" aria-hidden="true" hidden>
@@ -240,9 +247,11 @@ function renderOwnerEmptyContactInfoSection(
     >
       <header class="profile__section-header profile-section-collapsible__header">
         <h2 id="contact-details-heading" tabindex="-1">${contactInfoEmptyHeadingText}</h2>
-        <div class="profile-section-collapsible__actions flex-column">
-          <button
+        <div class="profile-section-collapsible__actions flex-column align-end">
+          <solid-ui-button
             type="button"
+            variant="secondary"
+            size="sm"
             class="profile__action-button profile-action-text flex-center profile-section-collapsible__edit-button"
             aria-label="Add contact information"
             @click=${(event: Event) => {
@@ -258,17 +267,20 @@ function renderOwnerEmptyContactInfoSection(
           >
             <span class="profile-section-collapsible__edit-label">${addIcon} Add Contact</span>
             <span class="profile-section-collapsible__edit-icon profile-section-collapsible__edit-icon--add" aria-hidden="true">${plusIcon}</span>
-          </button>
-          <button
+          </solid-ui-button>
+          <solid-ui-button
             type="button"
-            class="inline-flex-row"
+            variant="icon"
+            size="sm"
+            label="Toggle contact information section"
+            class="inline-flex-row justify-center"
             aria-label="Toggle contact information section"
             aria-controls="contact-details-panel"
             aria-expanded="false"
             @click=${toggleCollapsibleSection}
           >
-            <span class="profile-section-collapsible__chevron" aria-hidden="true">⌄</span>
-          </button>
+            <span slot="icon" class="profile-section-collapsible__chevron" aria-hidden="true">⌄</span>
+          </solid-ui-button>
         </div>
       </header>
       <div id="contact-details-panel" class="profile-section-collapsible__content" aria-hidden="true" hidden>

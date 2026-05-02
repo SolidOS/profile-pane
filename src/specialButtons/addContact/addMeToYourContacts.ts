@@ -1,4 +1,6 @@
 import { html, render, TemplateResult } from 'lit-html'
+import 'solid-ui/components/actions/button'
+import type { Button as SolidUIButtonElement } from 'solid-ui/components/actions/button'
 import { DataBrowserContext } from 'pane-registry'
 import { authn } from 'solid-logic'
 import { LiveStore, NamedNode } from 'rdflib'
@@ -18,13 +20,15 @@ import { addErrorToErrorDisplay } from './contactsErrors'
 import { handleContactExistsByName } from './ContactCreationDialog'
 import { plusIcon } from '../../icons-svg/profileIcons'
 
-function renderAddToContactsButtonLabel(button: HTMLButtonElement, label: string, showIcon = false): void {
+type RefreshableSolidUIButton = SolidUIButtonElement & { refresh?: () => void }
+
+function renderAddToContactsButtonLabel(button: SolidUIButtonElement, label: string, showIcon = false): void {
   const buttonDocument = button.ownerDocument
   const content: Node[] = []
 
   if (showIcon) {
     const iconWrapper = buttonDocument.createElement('span')
-    iconWrapper.className = 'profile__btn-contacts-icon'
+    iconWrapper.className = 'profile__btn-contacts-icon inline-flex-row justify-center'
     iconWrapper.setAttribute('aria-hidden', 'true')
     render(plusIcon, iconWrapper)
     content.push(iconWrapper)
@@ -66,7 +70,7 @@ const addMeToYourContactsDiv = async (
 const createAddMeToYourContactsButton = async (
   subject: NamedNode,
   context: DataBrowserContext
-): Promise<HTMLButtonElement> => {
+): Promise<RefreshableSolidUIButton> => {
   const me = authn.currentUser()
   
   let addressBooksData = null
@@ -92,8 +96,10 @@ const createAddMeToYourContactsButton = async (
       })
   }
   const label = checkIfAnyUserLoggedIn(me) ? addMeToYourContactsButtonText : logInAddMeToYourContactsButtonText
-  const button = context.dom.createElement('button') as HTMLButtonElement & { refresh?: () => void }
-  button.type = 'button'
+  const button = context.dom.createElement('solid-ui-button') as RefreshableSolidUIButton
+  button.setAttribute('type', 'button')
+  button.setAttribute('variant', 'secondary')
+  button.setAttribute('size', 'sm')
   button.addEventListener('click', setButtonHandler)
   button.setAttribute('id', 'add-to-contacts-button')
   renderAddToContactsButtonLabel(button, label, checkIfAnyUserLoggedIn(me))

@@ -1,6 +1,7 @@
 import { alertDialog, openInputDialog } from '../../ui/dialog'
 import { html, render } from 'lit-html'
-import 'solid-ui/components/select'
+import 'solid-ui/components/actions/button'
+import 'solid-ui/components/forms/select'
 import { RoleDetails, ResumeRow } from './types'
 import '../../styles/EditDialogs.css'
 import '../../styles/ContactInfoEditDialog.css'
@@ -451,16 +452,19 @@ function renderResumeInputRow({
   return html`
     <div class="profile-edit-dialog__row profile-edit-dialog__row--resume-entry-header" role="group" aria-labelledby=${experienceHeadingId}>
       <h3 id=${experienceHeadingId} class="profile-edit-dialog__entry-heading">${label}</h3>
-      <div class="profile-edit-dialog__actions profile-edit-dialog__actions--edge">
-        <button
+      <div class="profile-edit-dialog__actions profile-edit-dialog__actions--edge flex-row align-center justify-end">
+        <solid-ui-button
           type="button"
+          variant="icon"
+          size="md"
+          label=${deleteEntryButtonTitleText}
           class="profile-edit-dialog__delete-button"
           aria-label=${`Delete resume ${displayIndex + 1}`}
           title=${deleteEntryButtonTitleText}
           @click=${handleDelete}
         >
-          <span class="profile-edit-dialog__delete-icon" aria-hidden="true">${trashIcon}</span>
-        </button>
+          <span slot="icon" class="profile-edit-dialog__delete-icon inline-flex-row justify-center" aria-hidden="true">${trashIcon}</span>
+        </solid-ui-button>
       </div>
     </div>
     <label aria-label=${`${label} Title`} class="label profile-edit-dialog__field">
@@ -610,7 +614,7 @@ function renderResumeInputRow({
       </label>
     </div>
     <div class="profile-edit-dialog__row profile-edit-dialog__row--inline-end">
-      <label class="label profile-edit-dialog__checkbox-label" for=${isCurrentRoleId}>
+      <label class="label profile-edit-dialog__checkbox-label inline-flex-row gap-xs" for=${isCurrentRoleId}>
         <input
           class="profile-edit-dialog__checkbox-input"
           type="checkbox"
@@ -650,7 +654,7 @@ function renderResumeSection(resumeData: ResumeRow[], onAddRow: () => void) {
     .filter(({ resume }) => resume.status !== 'deleted')
 
   return html`
-    <section class="profile-edit-dialog__section profile-edit-dialog__section--resume" aria-label="Resume">
+    <section class="profile-edit-dialog__section profile-edit-dialog__section--resume flex-column gap-xs" aria-label="Resume">
       <fieldset>
         <legend class="sr-only">Resume entries</legend>
         ${visibleResumeRows.map(({ index }, displayIndex) => renderResumeInputRow({

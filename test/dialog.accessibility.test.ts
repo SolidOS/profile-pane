@@ -1,6 +1,6 @@
 import { describe, expect, it } from '@jest/globals'
 import axe from 'axe-core'
-import { openInputDialog } from '../src/ui/dialog'
+import { getSharedDialogCancelButton, getSharedDialogSaveButton, openInputDialog } from '../src/ui/dialog'
 
 describe('Dialog accessibility', () => {
   it('has no accessibility violations for the shared input dialog', async () => {
@@ -25,7 +25,7 @@ describe('Dialog accessibility', () => {
     const results = await axe.run(document.body)
     expect(results.violations.length).toBe(0)
 
-    const cancelButton = document.querySelector('#modal-buttons button[data-cancel]') as HTMLButtonElement | null
+    const cancelButton = getSharedDialogCancelButton(document)
     cancelButton?.click()
 
     await expect(resultPromise).resolves.toBeNull()
@@ -47,7 +47,7 @@ describe('Dialog accessibility', () => {
       }
     })
 
-    const saveButton = document.querySelector('#modal-buttons .btn-primary') as HTMLButtonElement | null
+    const saveButton = getSharedDialogSaveButton(document)
     expect(saveButton?.textContent).toBe('Save Changes')
 
     saveButton?.click()
@@ -55,7 +55,7 @@ describe('Dialog accessibility', () => {
 
     expect(saveButton?.textContent).toBe('Save Changes')
 
-    const cancelButton = document.querySelector('#modal-buttons button[data-cancel]') as HTMLButtonElement | null
+    const cancelButton = getSharedDialogCancelButton(document)
     cancelButton?.click()
 
     await expect(resultPromise).resolves.toBeNull()
@@ -84,7 +84,7 @@ describe('Dialog accessibility', () => {
     const dialog = document.querySelector('#profile-modal') as HTMLDialogElement | null
     const description = document.querySelector('#modal-desc') as HTMLDivElement | null
     const overlay = document.querySelector('#modal-saving-overlay') as HTMLDivElement | null
-    const saveButton = document.querySelector('#modal-buttons .btn-primary') as HTMLButtonElement | null
+    const saveButton = getSharedDialogSaveButton(document)
 
     saveButton?.click()
     await new Promise(resolve => setTimeout(resolve, 0))

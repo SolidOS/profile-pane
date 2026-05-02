@@ -1,4 +1,5 @@
 import { html, nothing, TemplateResult } from 'lit-html'
+import 'solid-ui/components/actions/button'
 import '../../styles/HeadingSection.css'
 import { ProfileDetails } from './types'
 import { DataBrowserContext } from 'pane-registry'
@@ -35,8 +36,8 @@ export const renderHeadingSection = async (
           <div class="profile__avatar">
             ${Image(imageSrc, name)}
           </div>
-          <div class="profile__info">
-            <header class="profile__header-bar mb-md">
+          <div class="profile__info flex-column">
+            <header class="profile__header-bar flex-column mb-md">
               <div class="profile__identity" role="group" aria-label="Name and pronouns">
                 <h1 id="profile-name" class="profile__name">${name}</h1>
                 <span class="profile__pronouns">${pronouns ? `(${pronouns})` : ''}</span>
@@ -51,8 +52,10 @@ export const renderHeadingSection = async (
                   ${friendsButton}
                 ` : nothing}
                 ${isOwner ? html`
-                  <button
+                  <solid-ui-button
                     type="button"
+                    variant="secondary"
+                    size="sm"
                     class="profile__action-button profile__heading-action-button profile-action-text flex-center"
                     aria-label="Add or edit heading information"
                     @click=${(event: Event) => {
@@ -68,7 +71,7 @@ export const renderHeadingSection = async (
                   >
                     <span class="profile-section-collapsible__edit-label">${editIcon} Edit</span>
                     <span class="profile-section-collapsible__edit-icon" aria-hidden="true">${editIcon}</span>
-                  </button>
+                  </solid-ui-button>
                 ` : nothing}
               </div>
             ` : nothing}
@@ -89,7 +92,7 @@ export const renderHeadingSection = async (
 
 const Line = (value, prefix: TemplateResult | symbol | string = nothing, label: string = '') =>
   value ? html`
-    <div class="profile__item ${label ? '' : 'profile__item--valueOnly'}">
+    <div class="profile__item flex-row align-center ${label ? '' : 'profile__item--valueOnly'}">
       ${label ? html`<span class="profile__label">${label}</span>` : nothing}
       <span class="profile__value">
         ${prefix !== '' && prefix !== nothing ? html`<span class="profile__prefix-icon" aria-hidden="true">${prefix}</span>` : nothing}
@@ -112,6 +115,6 @@ export const Image = (src, alt) =>
       `
     : html`
         <div class="profile__hero-alt flex-center" role="img" aria-label="${alt}">
-          <span class="profile__hero-icon">${personInCircleIcon}</span>
+          <span class="profile__hero-icon inline-flex-row justify-center">${personInCircleIcon}</span>
         </div>
       `

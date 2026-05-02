@@ -4,10 +4,6 @@
   width: 100%;
 }
 
-.education-card__section {
-  margin-bottom: 1.25em;
-}
-
 .education-card__item {
   margin: var(--spacing-xs) 0;
   font-size: var(--font-size-base);
@@ -88,7 +84,34 @@
   padding-left: 0.25em;
 }
 
+solid-ui-button.education-card__description-toggle {
+  --button-height-sm: 0;
+  --button-padding-sm: 0 0 0 0.25em;
+  --button-font-size-sm: var(--font-size-sm);
+  --button-line-height: var(--line-height-tight);
+  --button-background: none;
+  --button-border-width: 0;
+  --button-border: transparent;
+  --button-text: var(--color-primary);
+  --button-hover-background: none;
+  --button-hover-border: transparent;
+  --button-hover-text: var(--color-primary);
+}
+
+solid-ui-button.education-card__description-toggle::part(button) {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  background-color: var(--color-card-bg);
+}
+
 .education-card__description-text--expanded + .education-card__description-toggle {
+  position: static;
+  display: inline;
+  padding-left: 0;
+}
+
+.education-card__description-text--expanded + solid-ui-button.education-card__description-toggle::part(button) {
   position: static;
   display: inline;
   padding-left: 0;

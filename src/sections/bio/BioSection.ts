@@ -1,4 +1,5 @@
 import { html } from 'lit-html'
+import 'solid-ui/components/actions/button'
 import { BioDetails } from './types'
 import { ViewerMode } from '../../types'
 import '../../styles/BioSection.css'
@@ -20,8 +21,11 @@ function renderBio(bioData: BioDetails) {
       ${bioData.description ? html`
         <div class="bio-card__description-wrap">
           <p class="bio-card__description-text" id=${bioDescriptionId}>${bioData.description}</p>
-          <button
+          <solid-ui-button
             type="button"
+            variant="secondary"
+            size="sm"
+            label="...more"
             class="bio-card__description-toggle"
             aria-controls=${bioDescriptionId}
             aria-expanded="false"
@@ -29,7 +33,7 @@ function renderBio(bioData: BioDetails) {
             @click=${toggleDescription}
           >
             ...more
-          </button>
+          </solid-ui-button>
         </div>
       ` : ''}
   `
@@ -67,8 +71,10 @@ function renderBioSectionContent(
     <header class="profile__section-header profile-section-collapsible__header">
       <h2 id="bio-heading" tabindex="-1">${bioHeadingText}</h2>
       ${isOwner ? html`
-        <button
+        <solid-ui-button
           type="button"
+          variant="secondary"
+          size="sm"
           class="profile__action-button profile-action-text flex-center"
           aria-label="Edit bio details"
           @click=${(event: Event) => {
@@ -84,7 +90,7 @@ function renderBioSectionContent(
         >
           <span class="profile-section-collapsible__edit-label profile__action-icon">${editIcon} Edit</span>
           <span class="profile-section-collapsible__edit-icon profile__action-icon" aria-hidden="true">${editIcon}</span>
-        </button>
+        </solid-ui-button>
       ` : html``}
     </header>
     <div class="profile-section-collapsible__content">
@@ -129,8 +135,10 @@ function renderOwnerEmptyBioContent(
         You haven't added any professional experience yet. Adding work history can boost your Bio.
       </p>
     </div>
-    <button
+    <solid-ui-button
       type="button"
+      variant="secondary"
+      size="sm"
       class="profile__action-button--empty"
       aria-label="Add bio details"
       @click=${(event: Event) => {
@@ -145,7 +153,7 @@ function renderOwnerEmptyBioContent(
       }}
     >
       <span class="profile__action-icon" aria-hidden="true">${plusDarkIcon} Add Bio</span>
-    </button>
+    </solid-ui-button>
 
   `
 }

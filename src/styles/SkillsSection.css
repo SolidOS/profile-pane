@@ -7,12 +7,12 @@
   list-style: none;
   margin: 0;
   padding: 0;
-  gap: 0.5rem;
+  gap: var(--spacing-base, 0.5rem);
 }
 
 .skills__item {
   display: inline;
-  padding: 0.5rem var(--spacing-2xs, 0.625rem);
+  padding: var(--spacing-base, 0.5rem) var(--spacing-2xs, 0.625rem);
   border-radius: var(--border-radius-base, 0.3125rem);
   background: var(--gray-100, #F3F4F6);
 }
@@ -27,8 +27,6 @@
 }
 
 .skills__item-tail {
-  display: inline-flex;
-  align-items: center;
   white-space: nowrap;
 }
 
@@ -36,21 +34,21 @@
   content: '\00a0';
 }
 
-.skills__remove-button {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
+solid-ui-button.skills__remove-button {
   width: var(--icon-xxs, 1rem);
   height: var(--icon-xxs, 1rem);
-  min-width: var(--icon-xxs, 1rem);
-  min-height: var(--icon-xxs, 1rem);
-  border: none;
-  background: none;
-  cursor: pointer;
-  padding: 0;
-  margin: 0;
   line-height: 0;
   vertical-align: text-top;
+  --button-height-sm: var(--icon-xxs, 1rem);
+  --button-padding-sm: 0;
+  --button-icon-size-sm: var(--icon-xxs, 1rem);
+  --button-background: transparent;
+  --button-border-width: 0;
+  --button-border: transparent;
+  --button-text: currentColor;
+  --button-hover-background: transparent;
+  --button-hover-border: transparent;
+  --button-hover-text: currentColor;
 }
 
 .skills__remove-button svg {

@@ -1,4 +1,5 @@
 import { html } from 'lit-html'
+import 'solid-ui/components/actions/button'
 import { strToUpperCase } from '../../textUtils'
 import { LiveStore, NamedNode } from 'rdflib'
 import { ViewerMode } from '../../types'
@@ -46,15 +47,18 @@ function renderSkillItem(
       <span class="skills__item-label">${strToUpperCase(detail.name)}</span>
       ${viewerMode === 'owner'
         ? html`
-            <span class="skills__item-tail">
-              <button
+            <span class="skills__item-tail inline-flex-row">
+              <solid-ui-button
                 type="button"
+                variant="icon"
+                size="sm"
+                label=${`Remove ${detail.name} skill`}
                 class="skills__remove-button"
                 aria-label="Remove ${detail.name} skill"
                 @click=${handleRemove}
               >
-                ${deleteIcon}
-              </button>
+                <span slot="icon" aria-hidden="true">${deleteIcon}</span>
+              </solid-ui-button>
             </span>
           `
         : ''}
@@ -76,10 +80,12 @@ function renderSkillsSectionDefault(store: LiveStore, subject: NamedNode, skills
     >
       <header class="profile__section-header profile-section-collapsible__header">
         <h2 id="skills-heading">${skillsHeadingText}</h2>
-        <div class="profile-section-collapsible__actions flex-column">
+        <div class="profile-section-collapsible__actions flex-column align-end">
           ${isOwner ? html`
-            <button
+            <solid-ui-button
               type="button"
+              variant="secondary"
+              size="sm"
               class="profile__action-button profile-action-text flex-center profile-section-collapsible__edit-button"
               aria-label="Add or edit skills"
               @click=${(event: Event) => createSkillsEditDialog(event, store, subject, skills, viewerMode, onSaved)}
@@ -91,18 +97,21 @@ function renderSkillsSectionDefault(store: LiveStore, subject: NamedNode, skills
                 </span>
               </span>
               <span class="profile-section-collapsible__edit-icon" aria-hidden="true">${editIcon}</span>
-            </button>
+            </solid-ui-button>
           ` : html``}
-          <button
+          <solid-ui-button
             type="button"
-            class="inline-flex-row"
+            variant="icon"
+            size="sm"
+            label="Toggle skills section"
+            class="inline-flex-row justify-center"
             aria-label="Toggle skills section"
             aria-controls="skills-panel"
             aria-expanded="false"
             @click=${toggleCollapsibleSection}
           >
-            <span class="profile-section-collapsible__chevron" aria-hidden="true">⌄</span>
-          </button>
+            <span slot="icon" class="profile-section-collapsible__chevron" aria-hidden="true">⌄</span>
+          </solid-ui-button>
         </div>
       </header>
       <div
@@ -160,9 +169,11 @@ function renderOwnerEmptySkillsSection(
     >
       <header class="profile__section-header profile-section-collapsible__header">
         <h2 id="skills-heading" tabindex="-1">${skillsHeadingText}</h2>
-        <div class="profile-section-collapsible__actions flex-column">
-          <button
+        <div class="profile-section-collapsible__actions flex-column align-end">
+          <solid-ui-button
             type="button"
+            variant="secondary"
+            size="sm"
             class="profile__action-button profile-action-text flex-center profile-section-collapsible__edit-button"
             aria-label="Add skills"
             @click=${(event: Event) => {
@@ -183,17 +194,20 @@ function renderOwnerEmptySkillsSection(
               </span>
             </span>
             <span class="profile-section-collapsible__edit-icon" aria-hidden="true">${editIcon}</span>
-          </button>
-          <button
+          </solid-ui-button>
+          <solid-ui-button
             type="button"
-            class="inline-flex-row"
+            variant="icon"
+            size="sm"
+            label="Toggle skills section"
+            class="inline-flex-row justify-center"
             aria-label="Toggle skills section"
             aria-controls="skills-panel"
             aria-expanded="false"
             @click=${toggleCollapsibleSection}
           >
-            <span class="profile-section-collapsible__chevron" aria-hidden="true">⌄</span>
-          </button>
+            <span slot="icon" class="profile-section-collapsible__chevron" aria-hidden="true">⌄</span>
+          </solid-ui-button>
         </div>
       </header>
       <div id="skills-panel" class="profile-section-collapsible__content" aria-hidden="true" hidden>

@@ -1,7 +1,7 @@
 /* Resume section styles. */
 
 .resume-card__section {
-  margin-bottom: 1.25em;
+  margin-bottom: var(--spacing-md, 1.25rem);
 }
 
 .resume-card__section > ul {
@@ -14,8 +14,6 @@
   margin: 0 0 var(--spacing-xs) 0;
   font-size: var(--font-size-base);
   line-height: var(--line-height-base);
-  display: flex;
-  flex-direction: column;
   gap: 0;
 }
 
@@ -43,7 +41,7 @@
 }
 
 .resume-card__organization {
-  font-weight: 600;
+  font-weight: var(--font-weight-bold, 600);
   color: var(--color-primary);
   margin: 0;
 }
@@ -63,7 +61,7 @@
   -webkit-line-clamp: 2;
   line-clamp: 2;
   line-height: var(--line-height-base);
-  padding-right: 4.5em;
+  padding-right: 4.5rem;
   overflow: hidden;
 }
 
@@ -101,6 +99,30 @@
   z-index: 0;
 }
 
+solid-ui-button.resume-card__description-toggle {
+  margin: 0;
+  padding: 0;
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  background-color: var(--color-card-bg);
+  white-space: nowrap;
+  min-height: 0;
+  min-width: 0;
+  z-index: 0;
+  --button-height-sm: 0;
+  --button-padding-sm: 0;
+  --button-font-size-sm: var(--font-size-sm);
+  --button-line-height: var(--line-height-base, 1.5);
+  --button-background: none;
+  --button-border-width: 0;
+  --button-border: transparent;
+  --button-text: var(--color-primary);
+  --button-hover-background: none;
+  --button-hover-border: transparent;
+  --button-hover-text: var(--color-primary);
+}
+
 .resume-card__description-wrap .resume-card__description-text:not(.resume-card__description-text--expanded) + .resume-card__description-toggle {
   top: calc(100% - 1.5em + 0.28em - 11px);
   bottom: auto;
@@ -108,6 +130,24 @@
 }
 
 .resume-card__description-text--expanded + .resume-card__description-toggle {
+  position: static;
+  display: inline;
+  padding-left: 0;
+  top: auto;
+  bottom: auto;
+  transform: none;
+}
+
+.resume-card__description-text--expanded + solid-ui-button.resume-card__description-toggle {
+  position: static;
+  display: inline;
+  padding-left: 0;
+  top: auto;
+  bottom: auto;
+  transform: none;
+}
+
+.resume-card__description-text--expanded + solid-ui-button.resume-card__description-toggle::part(button) {
   position: static;
   display: inline;
   padding-left: 0;
@@ -127,7 +167,7 @@
 .resume-card__section h3 {
   color: var(--color-text);
   font-size: var(--font-size-lg);
-  font-weight: 600;
+  font-weight: var(--font-weight-bold, 600);
   line-height: var(--line-height-tight);
   margin-bottom: var(--spacing-xs);
   border-bottom: 1px solid var(--color-border-pale);

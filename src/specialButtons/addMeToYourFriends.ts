@@ -1,4 +1,6 @@
 import { html, TemplateResult } from 'lit-html'
+import 'solid-ui/components/actions/button'
+import type { Button as SolidUIButtonElement } from 'solid-ui/components/actions/button'
 import { DataBrowserContext } from 'pane-registry'
 import { authn } from 'solid-logic'
 import { LiveStore, NamedNode, st } from 'rdflib'
@@ -15,7 +17,7 @@ import '../styles/AddMeToYourFriends.css'
 
 let buttonContainer = <HTMLDivElement>document.createElement('section')
 
-function setAddToFriendsButtonLabel(button: HTMLButtonElement, label: string): void {
+function setAddToFriendsButtonLabel(button: SolidUIButtonElement, label: string): void {
   const labelWrapper = button.ownerDocument.createElement('span')
   labelWrapper.className = 'profile__btn-friends-label'
   labelWrapper.textContent = label
@@ -49,10 +51,12 @@ const addMeToYourFriendsDiv = (
 const createAddMeToYourFriendsButton = (
   subject: NamedNode,
   context: DataBrowserContext
-): HTMLButtonElement => {
+): SolidUIButtonElement => {
   let label = addMeToYourFriendsButtonText
-  const button = context.dom.createElement('button')
-  button.type = 'button'
+  const button = context.dom.createElement('solid-ui-button') as SolidUIButtonElement
+  button.setAttribute('type', 'button')
+  button.setAttribute('variant', 'secondary')
+  button.setAttribute('size', 'sm')
   setAddToFriendsButtonLabel(button, label)
   button.addEventListener('click', setButtonHandler)
 

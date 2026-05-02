@@ -20,7 +20,7 @@ function setAddToContactsButtonContent(button: HTMLElement | null, label: string
 
   if (showIcon) {
     const iconWrapper = ownerDocument.createElement('span')
-    iconWrapper.className = 'profile__btn-contacts-icon'
+    iconWrapper.className = 'profile__btn-contacts-icon inline-flex-row justify-center'
     iconWrapper.setAttribute('aria-hidden', 'true')
     renderIconIntoElement(iconWrapper)
     content.push(iconWrapper)

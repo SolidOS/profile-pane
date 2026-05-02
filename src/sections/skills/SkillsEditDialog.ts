@@ -1,6 +1,7 @@
-import { openInputDialog } from '../../ui/dialog'
+import { getSharedDialogSaveButton, openInputDialog } from '../../ui/dialog'
 import { html, render } from 'lit-html'
-import 'solid-ui/components/combobox'
+import 'solid-ui/components/actions/button'
+import 'solid-ui/components/forms/combobox'
 import { SkillDetails, SkillRow } from './types'
 import '../../styles/EditDialogs.css'
 import '../../styles/ContactInfoEditDialog.css'
@@ -230,7 +231,7 @@ function hasInvalidSkillSelection(rows: SkillRow[]): boolean {
 }
 
 function updateSkillsSubmitEnabled(rows: SkillRow[]): void {
-  const submitButton = document.querySelector('#profile-modal #modal-buttons button.btn-primary') as HTMLButtonElement | null
+  const submitButton = getSharedDialogSaveButton(document)
   if (!submitButton) return
   submitButton.disabled = hasInvalidSkillSelection(rows)
 }
@@ -302,16 +303,19 @@ function renderSkillInputRow({
         ></solid-ui-combobox>
         <small class="profile-edit-dialog__input-help-text">Type to search ESCO and select one suggestion.</small>
       </label>
-      <div class="profile-edit-dialog__actions profile-edit-dialog__actions--edge">
-        <button
+      <div class="profile-edit-dialog__actions profile-edit-dialog__actions--edge flex-row align-center justify-end">
+        <solid-ui-button
           type="button"
+          variant="icon"
+          size="md"
+          label=${deleteEntryButtonTitleText}
           class="profile-edit-dialog__delete-button"
           aria-label=${`Delete skill ${displayIndex + 1}`}
           title=${deleteEntryButtonTitleText}
           @click=${handleDelete}
         >
-          <span class="profile-edit-dialog__delete-icon" aria-hidden="true">${trashIcon}</span>
-        </button>
+          <span slot="icon" class="profile-edit-dialog__delete-icon inline-flex-row justify-center" aria-hidden="true">${trashIcon}</span>
+        </solid-ui-button>
       </div>
     </div>
   `
@@ -326,7 +330,7 @@ function renderSkillsSection(
     .filter(({ row }) => row.status !== 'deleted')
 
   return html`
-    <section class="profile-edit-dialog__section" aria-label="Skills">
+    <section class="profile-edit-dialog__section flex-column gap-xs" aria-label="Skills">
       <fieldset>
         <legend class="sr-only">Skill entries</legend>
         ${visibleRows.map(({ index }, displayIndex) => renderSkillInputRow({

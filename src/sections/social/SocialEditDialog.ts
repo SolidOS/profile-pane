@@ -1,6 +1,7 @@
 import { openInputDialog } from '../../ui/dialog'
 import { html, render } from 'lit-html'
-import 'solid-ui/components/select'
+import 'solid-ui/components/actions/button'
+import 'solid-ui/components/forms/select'
 import type { Account, SocialRow } from './types'
 import '../../styles/ContactInfoEditDialog.css'
 import '../../styles/EditDialogs.css'
@@ -271,17 +272,20 @@ function renderSocialInputRow({
       @dragover=${(event: DragEvent) => onDragOver(event)}
       @drop=${() => onDrop(index)}
     >
-      <button
+      <solid-ui-button
         type="button"
         class="profile-edit-dialog__drag-handle"
+        variant="icon"
+        size="md"
+        label=${`Reorder social account ${displayIndex + 1}`}
         aria-label=${`Reorder social account ${displayIndex + 1}`}
         title="Drag to reorder"
         draggable="true"
         @dragstart=${() => onDragStart(index)}
         @dragend=${() => onDragEnd()}
       >
-        ${bentoIcon}
-      </button>
+        <span slot="icon" aria-hidden="true">${bentoIcon}</span>
+      </solid-ui-button>
       <img 
         class="profile-edit-dialog__social-icon" 
         src="${row?.icon || DEFAULT_ICON_URI}" 
@@ -310,16 +314,19 @@ function renderSocialInputRow({
         />
           <small class="profile-edit-dialog__input-help-text">Paste your full profile URL (for example: https://example.com/username)</small>
       </label>
-      <div class="profile-edit-dialog__actions profile-edit-dialog__actions--edge">
-        <button
+      <div class="profile-edit-dialog__actions profile-edit-dialog__actions--edge flex-row align-center justify-end">
+        <solid-ui-button
           type="button"
+          variant="icon"
+          size="md"
+          label=${deleteEntryButtonTitleText}
           class="profile-edit-dialog__delete-button"
           aria-label=${`Delete social account ${displayIndex + 1}`}
           title=${deleteEntryButtonTitleText}
           @click=${handleDelete}
         >
-          <span class="profile-edit-dialog__delete-icon" aria-hidden="true">${trashIcon}</span>
-        </button>
+          <span slot="icon" class="profile-edit-dialog__delete-icon inline-flex-row justify-center" aria-hidden="true">${trashIcon}</span>
+        </solid-ui-button>
       </div>
     </div>
   `
@@ -367,7 +374,7 @@ function renderSocialSection(rows: SocialRow[], options: SocialAccountOption[], 
     .filter(({ row }) => row.status !== 'deleted')
 
   return html`
-    <section class="profile-edit-dialog__section" aria-label="Social Accounts">
+    <section class="profile-edit-dialog__section flex-column gap-xs" aria-label="Social Accounts">
       <fieldset>
         <legend class="sr-only">Social account entries</legend>
         ${visibleRows.map(({ index }, displayIndex) =>

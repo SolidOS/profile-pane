@@ -1,4 +1,5 @@
 import '../styles/dialog.css'
+import 'solid-ui/components/actions/button'
 import { html, render } from 'lit-html'
 import { closeIcon } from '../icons-svg/profileIcons'
 import { createSpinner } from './spinner'
@@ -38,6 +39,58 @@ type DialogElements = {
   savingOverlay: HTMLDivElement
 }
 
+type DialogActionControl = HTMLElement & {
+  disabled?: boolean,
+  label?: string,
+  click: () => void,
+  shadowRoot?: ShadowRoot | null
+}
+
+function isSolidUiButton(control: Element | null): control is DialogActionControl {
+  return control?.tagName === 'SOLID-UI-BUTTON'
+}
+
+function focusDialogAction(control: Element | null): void {
+  if (!control) return
+
+  if (isSolidUiButton(control)) {
+    const innerButton = control.shadowRoot?.querySelector('button') as HTMLButtonElement | null
+    innerButton?.focus()
+    return
+  }
+
+  if (control instanceof HTMLElement) {
+    control.focus()
+  }
+}
+
+function setDialogActionDisabled(control: DialogActionControl | null, disabled: boolean): void {
+  if (!control) return
+  control.disabled = disabled
+  control.toggleAttribute('disabled', disabled)
+}
+
+function setDialogActionLabel(control: DialogActionControl | null, label: string): void {
+  if (!control) return
+
+  if (isSolidUiButton(control)) {
+    control.label = label
+    control.setAttribute('label', label)
+    control.textContent = label
+    return
+  }
+
+  ;(control as HTMLElement).textContent = label
+}
+
+export function getSharedDialogSaveButton(root: ParentNode): DialogActionControl | null {
+  return root.querySelector('#modal-buttons [data-dialog-primary="true"]') as DialogActionControl | null
+}
+
+export function getSharedDialogCancelButton(root: ParentNode): DialogActionControl | null {
+  return root.querySelector('#modal-buttons [data-cancel="true"]') as DialogActionControl | null
+}
+
 function ensureModalDialog (dom: Document): HTMLDialogElement {
   // if we previously created a dialog but it was removed from the document
   // (tests clear body), rebuild it. Checking presence ensures our reference
@@ -53,13 +106,13 @@ function ensureModalDialog (dom: Document): HTMLDialogElement {
 
   modalDialog.innerHTML = `
     <div class="modal">
-      <div class="modal-header">
+      <div class="modal-header flex-row align-center justify-between">
         <h2 id="modal-title"></h2>
-        <div id="modal-header-action"></div>
+        <div id="modal-header-action" class="flex-row align-center"></div>
       </div>
       <div id="modal-desc"></div>
       <section id="modal-error" class="modal__error-section" aria-live="assertive" role="alert" hidden></section>
-      <div id="modal-buttons"></div>
+      <div id="modal-buttons" class="flex-row align-center justify-end"></div>
       <div id="modal-saving-overlay" hidden></div>
     </div>
   `
@@ -136,8 +189,8 @@ function focusInitialDialogTarget (description: HTMLDivElement, buttons: HTMLDiv
     return
   }
 
-  const firstButton = buttons.querySelector('button') as HTMLButtonElement | null
-  if (firstButton) firstButton.focus()
+  const firstButton = buttons.querySelector('solid-ui-button, button') as HTMLElement | null
+  focusDialogAction(firstButton)
 }
 
 function collectFormValues (form: HTMLFormElement): InputDialogValues {
@@ -186,7 +239,7 @@ function openModal ({
     }
 
     const requestCancel = () => {
-      const cancelBtn = dialog.querySelector('button[data-cancel]') as HTMLButtonElement | null
+      const cancelBtn = getSharedDialogCancelButton(dialog)
       if (cancelBtn) {
         cancelBtn.click()
         return
@@ -203,17 +256,26 @@ function openModal ({
     elements.headerAction.innerHTML = ''
     const resolvedHeaderAction = headerAction || { type: 'close' as const }
     if (resolvedHeaderAction.type === 'close') {
-      const closeButton = dom.createElement('button')
+      const closeButton = dom.createElement('solid-ui-button') as DialogActionControl
       closeButton.setAttribute('type', 'button')
+      closeButton.setAttribute('variant', 'icon')
+      closeButton.setAttribute('size', 'sm')
+      closeButton.setAttribute('label', 'Close dialog')
       closeButton.setAttribute('aria-label', 'Close dialog')
-      render(closeIcon, closeButton)
+      const iconSlot = dom.createElement('span')
+      iconSlot.setAttribute('slot', 'icon')
+      render(closeIcon, iconSlot)
+      closeButton.appendChild(iconSlot)
       closeButton.onclick = () => requestCancel()
       elements.headerAction.appendChild(closeButton)
     } else if (resolvedHeaderAction.type === 'button') {
-      const actionButton = dom.createElement('button')
+      const actionButton = dom.createElement('solid-ui-button') as DialogActionControl
       actionButton.setAttribute('type', 'button')
+      actionButton.setAttribute('variant', 'secondary')
+      actionButton.setAttribute('size', 'sm')
       actionButton.className = resolvedHeaderAction.className || 'modal__header-action-button profile__action-button profile-action-text flex-center'
       actionButton.textContent = resolvedHeaderAction.label
+      actionButton.setAttribute('label', resolvedHeaderAction.label)
       actionButton.setAttribute('aria-label', resolvedHeaderAction.ariaLabel || resolvedHeaderAction.label)
       actionButton.onclick = async () => {
         if (resolvedHeaderAction.onClick) {
@@ -224,12 +286,16 @@ function openModal ({
     }
 
     buttons.forEach((btn) => {
-      const b = dom.createElement('button')
+      const b = dom.createElement('solid-ui-button') as DialogActionControl
       b.setAttribute('type', 'button')
+      b.setAttribute('label', btn.label)
+      b.setAttribute('size', 'md')
+      b.setAttribute('variant', btn.primary ? 'primary' : 'secondary')
       b.textContent = btn.label
-      if (btn.primary) b.classList.add('btn-primary')
+      if (btn.primary) {
+        b.setAttribute('data-dialog-primary', 'true')
+      }
       if (btn.cancel) {
-        b.classList.add('btn-light')
         b.setAttribute('data-cancel', 'true')
       }
       b.addEventListener('click', async () => {
@@ -267,8 +333,8 @@ export function alertDialog (message: string, title = 'Information', dom: Docume
 
 function updateSavingUI (dialog: HTMLDialogElement, submitLabel: string, isSaving: boolean) {
   const elements = getDialogElements(dialog)
-  const saveButton = dialog.querySelector('#modal-buttons .btn-primary') as HTMLButtonElement | null
-  const cancelButton = dialog.querySelector('#modal-buttons button[data-cancel]') as HTMLButtonElement | null
+  const saveButton = getSharedDialogSaveButton(dialog)
+  const cancelButton = getSharedDialogCancelButton(dialog)
 
   dialog.classList.toggle('modal--saving', isSaving)
   dialog.setAttribute('aria-busy', String(isSaving))
@@ -282,19 +348,19 @@ function updateSavingUI (dialog: HTMLDialogElement, submitLabel: string, isSavin
   }
 
   if (saveButton) {
-    saveButton.disabled = isSaving
+    setDialogActionDisabled(saveButton, isSaving)
     saveButton.setAttribute('aria-busy', String(isSaving))
-    saveButton.textContent = submitLabel
+    setDialogActionLabel(saveButton, submitLabel)
   }
 
   if (cancelButton) {
-    cancelButton.disabled = isSaving
+    setDialogActionDisabled(cancelButton, isSaving)
   }
 
   elements.savingOverlay.hidden = !isSaving
   if (isSaving) {
     render(html`
-      <div class="modal__saving-indicator" aria-live="polite" aria-label="Saving changes">
+      <div class="modal__saving-indicator inline-flex-row justify-center" aria-live="polite" aria-label="Saving changes">
         ${createSpinner()}
       </div>
     `, elements.savingOverlay)
@@ -339,7 +405,7 @@ export function openInputDialog (options: OpenInputDialogCustom): Promise<InputD
 
   const handleSubmit = (event: SubmitEvent) => {
     event.preventDefault()
-    const saveButton = dialog.querySelector('#modal-buttons .btn-primary') as HTMLButtonElement | null
+    const saveButton = getSharedDialogSaveButton(dialog)
     saveButton?.click()
   }
 

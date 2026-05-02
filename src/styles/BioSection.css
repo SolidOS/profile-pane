@@ -69,6 +69,30 @@
 	z-index: 0;
 }
 
+solid-ui-button.bio-card__description-toggle {
+	margin: 0;
+	padding: 0;
+	position: absolute;
+	left: 50%;
+	bottom: 0;
+	background-color: var(--color-card-bg);
+	white-space: nowrap;
+	min-height: 0;
+	min-width: 0;
+	z-index: 0;
+	--button-height-sm: 0;
+	--button-padding-sm: 0;
+	--button-font-size-sm: var(--font-size-sm);
+	--button-line-height: var(--line-height-base, 1.5);
+	--button-background: none;
+	--button-border-width: 0;
+	--button-border: transparent;
+	--button-text: var(--color-primary);
+	--button-hover-background: none;
+	--button-hover-border: transparent;
+	--button-hover-text: var(--color-primary);
+}
+
 .bio-card__description-wrap .bio-card__description-text:not(.bio-card__description-text--expanded) + .bio-card__description-toggle {
 	top: calc(100% - 1.5em + 0.28em - 12px);
 	bottom: auto;
@@ -76,6 +100,24 @@
 }
 
 .bio-card__description-text--expanded + .bio-card__description-toggle {
+	position: static;
+	display: inline;
+	padding-left: 0;
+	top: auto;
+	bottom: auto;
+	transform: none;
+}
+
+.bio-card__description-text--expanded + solid-ui-button.bio-card__description-toggle {
+	position: static;
+	display: inline;
+	padding-left: 0;
+	top: auto;
+	bottom: auto;
+	transform: none;
+}
+
+.bio-card__description-text--expanded + solid-ui-button.bio-card__description-toggle::part(button) {
 	position: static;
 	display: inline;
 	padding-left: 0;

@@ -1,3 +1,4 @@
+import type { Button as SolidUIButtonElement } from 'solid-ui/components/actions/button'
 import { DataBrowserContext } from  'pane-registry'
 import { complain } from  '../../buttonsHelper'
 
@@ -51,8 +52,11 @@ const createErrorDisplaySection = (
   errorDisplaySection.setAttribute('id', 'error-display-section')
   errorDisplaySection.classList.add('contacts-dialog__error')
 
-  const closeButton = context.dom.createElement('button')
+  const closeButton = context.dom.createElement('solid-ui-button') as SolidUIButtonElement
   closeButton.setAttribute('type', 'button')
+  closeButton.setAttribute('variant', 'icon')
+  closeButton.setAttribute('size', 'sm')
+  closeButton.setAttribute('label', 'Close error')
   closeButton.classList.add('contacts-dialog__error-close')
   closeButton.textContent = 'x'
   closeButton.addEventListener('click', setButtonOnClickHandler)

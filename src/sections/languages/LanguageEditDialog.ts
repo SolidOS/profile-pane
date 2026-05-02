@@ -1,6 +1,7 @@
-import { openInputDialog } from '../../ui/dialog'
+import { getSharedDialogSaveButton, openInputDialog } from '../../ui/dialog'
 import { html, render } from 'lit-html'
-import 'solid-ui/components/combobox'
+import 'solid-ui/components/actions/button'
+import 'solid-ui/components/forms/combobox'
 import { LanguageDetails, LanguageRow } from './types'
 import '../../styles/EditDialogs.css'
 import '../../styles/ContactInfoEditDialog.css'
@@ -267,7 +268,7 @@ function hasInvalidLanguageSelection(rows: LanguageRow[]): boolean {
 }
 
 function updateLanguagesSubmitEnabled(rows: LanguageRow[]): void {
-  const submitButton = document.querySelector('#profile-modal #modal-buttons button.btn-primary') as HTMLButtonElement | null
+  const submitButton = getSharedDialogSaveButton(document)
   if (!submitButton) return
   submitButton.disabled = hasInvalidLanguageSelection(rows)
 }
@@ -355,17 +356,20 @@ function renderLanguageInputRow({
       @dragover=${(event: DragEvent) => onDragOver(event)}
       @drop=${() => onDrop(index)}
     >
-      <button
+      <solid-ui-button
         type="button"
         class="profile-edit-dialog__drag-handle"
+        variant="icon"
+        size="md"
+        label=${`Reorder language ${displayIndex + 1}`}
         aria-label=${`Reorder language ${displayIndex + 1}`}
         title="Drag to reorder"
         draggable="true"
         @dragstart=${() => onDragStart(index)}
         @dragend=${() => onDragEnd()}
       >
-        ${bentoIcon}
-      </button>
+        <span slot="icon" aria-hidden="true">${bentoIcon}</span>
+      </solid-ui-button>
       <label aria-label=${`${label} Language`} class="label profile-edit-dialog__field">
         <solid-ui-combobox
           aria-label=${`${label} Language`}
@@ -383,16 +387,19 @@ function renderLanguageInputRow({
           <option value="Fluent">Fluent</option>
         </select>
       </label>
-      <div class="profile-edit-dialog__actions profile-edit-dialog__actions--edge">
-        <button
+      <div class="profile-edit-dialog__actions profile-edit-dialog__actions--edge flex-row align-center justify-end">
+        <solid-ui-button
           type="button"
+          variant="icon"
+          size="md"
+          label=${deleteEntryButtonTitleText}
           class="profile-edit-dialog__delete-button"
           aria-label=${`Delete language ${displayIndex + 1}`}
           title=${deleteEntryButtonTitleText}
           @click=${handleDelete}
         >
-          <span class="profile-edit-dialog__delete-icon" aria-hidden="true">${trashIcon}</span>
-        </button>
+          <span slot="icon" class="profile-edit-dialog__delete-icon inline-flex-row justify-center" aria-hidden="true">${trashIcon}</span>
+        </solid-ui-button>
       </div>
     </div>
   `
@@ -443,7 +450,7 @@ function renderLanguageSection(
     .filter(({ row }) => row.status !== 'deleted')
 
   return html`
-    <section class="profile-edit-dialog__section" aria-label="Languages">
+    <section class="profile-edit-dialog__section flex-column gap-xs" aria-label="Languages">
       <fieldset>
         <legend class="sr-only">Language entries</legend>
         ${visibleRows.map(({ index }, displayIndex) => renderLanguageInputRow({

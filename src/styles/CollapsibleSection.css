@@ -21,7 +21,7 @@
   display: none;
 }
 
-.profile-section-collapsible__actions > button.inline-flex-row {
+.profile-section-collapsible__actions > solid-ui-button.inline-flex-row {
   display: none !important;
   min-height: auto;
   min-width: auto;
@@ -30,6 +30,18 @@
   background: none;
   color: var(--color-text, #1A1A1A);
   cursor: pointer;
+}
+
+.profile-section-collapsible__actions > solid-ui-button.inline-flex-row {
+  --button-height-sm: 0;
+  --button-padding-sm: var(--spacing-xxs, 0.3125rem);
+  --button-background: transparent;
+  --button-border-width: 0;
+  --button-border: transparent;
+  --button-text: var(--color-text, #1A1A1A);
+  --button-hover-background: var(--color-surface-subtle, rgba(15, 23, 43, 0.04));
+  --button-hover-border: transparent;
+  --button-hover-text: var(--color-text, #1A1A1A);
 }
 
 .profile-section-collapsible__chevron {
@@ -54,15 +66,7 @@
   margin-bottom: 0;
 }
 /* App-driven mobile layout when the host/root explicitly sets data-layout. */
-:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-section-collapsible--inline-mobile-actions > .profile-section-collapsible__header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.5rem;
-}
-
 :is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-section-collapsible--inline-mobile-actions > .profile-section-collapsible__header h2 {
-  margin: 0;
   flex: 1 1 auto;
   min-width: 0;
 }
@@ -90,7 +94,7 @@
   background: transparent !important;
 }
 
-:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-section-collapsible--inline-mobile-actions .profile-section-collapsible__actions > button.inline-flex-row {
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-section-collapsible--inline-mobile-actions .profile-section-collapsible__actions > solid-ui-button.inline-flex-row {
   order: 2;
 }
 
@@ -99,7 +103,6 @@
 }
 
 :is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-section-collapsible__actions.flex-column {
-  align-items: flex-end;
   gap: 0.25rem;
 }
 
@@ -124,10 +127,8 @@
   display: inline-flex !important;
 }
 
-:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-section-collapsible__actions > button.inline-flex-row {
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-section-collapsible__actions > solid-ui-button.inline-flex-row {
   display: inline-flex !important;
-  align-items: center;
-  justify-content: center;
 }
 
 :is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-section-collapsible__edit-icon--add svg path {
@@ -169,15 +170,7 @@
 }
 
 @media (max-width: 576px) {
-  .profile-section-collapsible--inline-mobile-actions > .profile-section-collapsible__header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 0.5rem;
-  }
-
   .profile-section-collapsible--inline-mobile-actions > .profile-section-collapsible__header h2 {
-    margin: 0;
     flex: 1 1 auto;
     min-width: 0;
   }
@@ -205,7 +198,7 @@
     background: transparent !important;
   }
 
-  .profile-section-collapsible--inline-mobile-actions .profile-section-collapsible__actions > button.inline-flex-row {
+  .profile-section-collapsible--inline-mobile-actions .profile-section-collapsible__actions > solid-ui-button.inline-flex-row {
     order: 2;
   }
 
@@ -214,7 +207,6 @@
   }
 
   .profile-section-collapsible__actions.flex-column {
-    align-items: flex-end;
     gap: 0.25rem;
   }
 
@@ -239,10 +231,8 @@
     display: inline-flex !important;
   }
 
-  .profile-section-collapsible__actions > button.inline-flex-row {
+  .profile-section-collapsible__actions > solid-ui-button.inline-flex-row {
     display: inline-flex !important;
-    align-items: center;
-    justify-content: center;
   }
 
   .profile-section-collapsible__edit-icon--add svg path {
@@ -259,15 +249,7 @@
 
 /* Container-driven mobile adjustments when the pane is narrow inside a larger viewport. */
 @container profile-pane (max-width: 576px) {
-  .profile-section-collapsible--inline-mobile-actions > .profile-section-collapsible__header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 0.5rem;
-  }
-
   .profile-section-collapsible--inline-mobile-actions > .profile-section-collapsible__header h2 {
-    margin: 0;
     flex: 1 1 auto;
     min-width: 0;
   }
@@ -294,7 +276,7 @@
     background: transparent !important;
   }
 
-  .profile-section-collapsible--inline-mobile-actions .profile-section-collapsible__actions > button.inline-flex-row {
+  .profile-section-collapsible--inline-mobile-actions .profile-section-collapsible__actions > solid-ui-button.inline-flex-row {
     order: 2;
   }
 
@@ -303,7 +285,6 @@
   }
 
   .profile-section-collapsible__actions.flex-column {
-    align-items: flex-end;
     gap: 0.25rem;
   }
 
@@ -328,10 +309,8 @@
     display: inline-flex !important;
   }
 
-  .profile-section-collapsible__actions > button.inline-flex-row {
+  .profile-section-collapsible__actions > solid-ui-button.inline-flex-row {
     display: inline-flex !important;
-    align-items: center;
-    justify-content: center;
   }
 
   .profile-section-collapsible__edit-icon--add svg path {

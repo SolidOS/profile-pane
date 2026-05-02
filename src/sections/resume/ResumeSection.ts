@@ -1,4 +1,5 @@
 import { html } from 'lit-html'
+import 'solid-ui/components/actions/button'
 import { RoleDetails } from './types'
 import { ViewerMode } from '../../types'
 import '../../styles/ResumeSection.css'
@@ -26,7 +27,7 @@ function renderRole(role: RoleDetails, index: number) {
     : `${rolePeriodId} ${roleOrgId}`
 
   return html`
-    <li class="resume-card__item" role="listitem" aria-labelledby=${roleTitleId} aria-describedby=${ariaDescribedBy}>
+    <li class="resume-card__item flex-column" role="listitem" aria-labelledby=${roleTitleId} aria-describedby=${ariaDescribedBy}>
     <div class="resume-card__item-header">
       <h4 id=${roleTitleId}>${role.title}</h4>
       <p id=${rolePeriodId} class="resume-card__item-period">
@@ -43,8 +44,11 @@ function renderRole(role: RoleDetails, index: number) {
       ${role.description ? html`
         <div class="resume-card__description-wrap">
           <p class="resume-card__description-text" id=${roleDescriptionId}>${role.description}</p>
-          <button
+          <solid-ui-button
             type="button"
+            variant="secondary"
+            size="sm"
+            label="...more"
             class="resume-card__description-toggle"
             aria-controls=${roleDescriptionId}
             aria-expanded="false"
@@ -52,7 +56,7 @@ function renderRole(role: RoleDetails, index: number) {
             @click=${toggleDescription}
           >
             ...more
-          </button>
+          </solid-ui-button>
         </div>
       ` : ''}
     </li>
@@ -105,28 +109,33 @@ function renderResumeSectionDefault(
     >
       <header class="profile__section-header profile-section-collapsible__header">
         <h2 id="cv-heading" tabindex="-1">${resumeHeadingText}</h2>
-        <div class="profile-section-collapsible__actions flex-column">
+        <div class="profile-section-collapsible__actions flex-column align-end">
           ${isOwner ? html`
-            <button
+            <solid-ui-button
               type="button"
+              variant="secondary"
+              size="sm"
               class="profile__action-button profile-action-text flex-center profile-section-collapsible__edit-button"
               aria-label="Edit resume details"
               @click=${(event: Event) => createResumeEditDialog(event, store, subject, resumeDetails, viewerMode, onSaved)}
             >
               <span class="profile-section-collapsible__edit-label">${editIcon} Edit</span>
               <span class="profile-section-collapsible__edit-icon" aria-hidden="true">${editIcon}</span>
-            </button>
+            </solid-ui-button>
           ` : html``}
-          <button
+          <solid-ui-button
             type="button"
-            class="inline-flex-row"
+            variant="icon"
+            size="sm"
+            label="Toggle resume section"
+            class="inline-flex-row justify-center"
             aria-label="Toggle resume section"
             aria-controls="cv-panel"
             aria-expanded="false"
             @click=${toggleCollapsibleSection}
           >
-            <span class="profile-section-collapsible__chevron" aria-hidden="true">⌄</span>
-          </button>
+            <span slot="icon" class="profile-section-collapsible__chevron" aria-hidden="true">⌄</span>
+          </solid-ui-button>
         </div>
       </header>
       <div id="cv-panel" class="profile-section-collapsible__content" aria-hidden="true">
@@ -151,8 +160,10 @@ function renderOwnerEmptyResumeContent(
         You haven't included any professional experience yet. Consider adding your work history to enhance your resume.
       </p>
     </div>
-    <button
+    <solid-ui-button
       type="button"
+      variant="secondary"
+      size="sm"
       class="profile__action-button--empty"
       @click=${(event: Event) => {
         return createResumeEditDialog(
@@ -166,7 +177,7 @@ function renderOwnerEmptyResumeContent(
       }}
     >
       <span class="profile__action-icon" aria-hidden="true">${plusDarkIcon} Add Resume</span>
-    </button>
+    </solid-ui-button>
 
   `
 }

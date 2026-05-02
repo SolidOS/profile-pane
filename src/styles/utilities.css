@@ -64,6 +64,13 @@ td.obj .profile-pane-root {
   box-sizing: border-box;
 }
 
+solid-ui-button.profile__action-button {
+  width: 100%;
+  min-width: 11.25rem;
+  max-width: 20rem;
+  box-sizing: border-box;
+}
+
 .profile__add-more-content {
   display: inline;
 }
@@ -93,21 +100,35 @@ td.obj .profile-pane-root {
   width: auto;
   min-width: 0;
   max-width: none;
-  padding: 0.375rem 0.75rem;
   gap: var(--spacing-xxs, 0.3125rem);
-  border-radius: var(--border-radius-md, 0.5rem);
 }
 
-.profile__btn-friends {
-  border: 1px solid var(--color-primary, #7C4DFF);
-  background: transparent;
-  color: var(--color-primary, #7C4DFF);
+solid-ui-button.profile__btn-friends,
+solid-ui-button.profile__btn-contacts {
+  width: auto;
+  min-width: 0;
+  max-width: none;
+  --button-padding-sm: 0.375rem var(--spacing-xs, 0.75rem);
+  --button-border-radius: var(--border-radius-md, 0.5rem);
+  --button-padding-x-sm: var(--spacing-xs, 0.75rem);
 }
 
-.profile__btn-contacts {
-  border: 1px solid var(--profile-contacts-button-border, var(--color-primary, #7C4DFF));
-  background: var(--profile-contacts-button-background, transparent);
-  color: var(--profile-contacts-button-color, var(--color-primary, #7C4DFF));
+solid-ui-button.profile__btn-friends {
+  --button-background: transparent;
+  --button-text: var(--color-primary, #7C4DFF);
+  --button-border: var(--color-primary, #7C4DFF);
+  --button-hover-background: rgba(124, 77, 255, 0.08);
+  --button-hover-border: var(--color-primary, #7C4DFF);
+  --button-hover-text: var(--color-primary, #7C4DFF);
+}
+
+solid-ui-button.profile__btn-contacts {
+  --button-background: var(--profile-contacts-button-background, transparent);
+  --button-text: var(--profile-contacts-button-color, var(--color-primary, #7C4DFF));
+  --button-border: var(--profile-contacts-button-border, var(--color-primary, #7C4DFF));
+  --button-hover-background: rgba(124, 77, 255, 0.08);
+  --button-hover-border: var(--profile-contacts-button-border, var(--color-primary, #7C4DFF));
+  --button-hover-text: var(--profile-contacts-button-color, var(--color-primary, #7C4DFF));
 }
 
 .profile-action-text {
@@ -122,7 +143,29 @@ td.obj .profile-pane-root {
   font-size: var(--font-size-sm, 0.875rem);
 }
 
+solid-ui-button.profile-action-text {
+  width: auto;
+  min-width: 0;
+  max-width: none;
+  --button-height-sm: 0;
+  --button-padding-sm: var(--spacing-xxs, 0.3125rem);
+  --button-font-size-sm: var(--font-size-sm, 0.875rem);
+  --button-font-weight: var(--font-weight-regular, 400);
+  --button-background: transparent;
+  --button-border-width: 0;
+  --button-border: transparent;
+  --button-text: var(--color-primary, #7C4DFF);
+  --button-hover-background: transparent;
+  --button-hover-border: transparent;
+  --button-hover-text: var(--color-primary, #7C4DFF);
+}
+
 .profile-action-text:hover {
+  text-decoration: underline;
+}
+
+solid-ui-button.profile-action-text:hover::part(button),
+solid-ui-button.profile-action-text:focus-visible::part(button) {
   text-decoration: underline;
 }
 
@@ -149,7 +192,7 @@ td.obj .profile-pane-root {
 :is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__actions button {
   min-height: calc(var(--min-touch-target, 44px) + 0.5rem) !important;
   font-size: clamp(0.9rem, 2.1vw, 1rem) !important;
-  padding: 0.75rem 0.9rem !important;
+  padding: var(--spacing-xs, 0.75rem) 0.9rem !important;
 }
 
 :is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile__section-header h2,
@@ -188,7 +231,7 @@ td.obj .profile-pane-root {
   .profile-grid .profile__actions button {
     min-height: calc(var(--min-touch-target, 44px) + 0.5rem) !important;
     font-size: clamp(0.9rem, 2.1vw, 1rem) !important;
-    padding: 0.75rem 0.9rem !important;
+    padding: var(--spacing-xs, 0.75rem) 0.9rem !important;
   }
 }
 
@@ -210,7 +253,7 @@ td.obj .profile-pane-root {
   .profile-grid .profile__actions button {
     min-height: calc(var(--min-touch-target, 44px) + 0.5rem) !important;
     font-size: clamp(0.9rem, 2.1vw, 1rem) !important;
-    padding: 0.75rem 0.9rem !important;
+    padding: var(--spacing-xs, 0.75rem) 0.9rem !important;
   }
 }
 

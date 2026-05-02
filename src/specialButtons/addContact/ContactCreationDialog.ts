@@ -1,4 +1,6 @@
 import { DataBrowserContext } from 'pane-registry'
+import 'solid-ui/components/actions/button'
+import type { Button as SolidUIButtonElement } from 'solid-ui/components/actions/button'
 import { addAddressBookToAddressBooksData, addGroupToAddressBookData, refreshButton } from './helpers'
 import { checkIfContactExistsByName, checkIfContactExistsByWebID } from './selectors'
 import { addANewAddressBookUriToAddressBooks, addWebIDToExistingContact, createContactInAddressBook, handleAddressBookCreation } from './mutations'
@@ -11,10 +13,36 @@ import { createErrorDisplaySection, addErrorToErrorDisplay, checkAndAddErrorToDi
 import { literal, NamedNode, st, sym } from 'rdflib'
 import { closeIcon } from '../../icons-svg/profileIcons'
 import { ns } from 'solid-ui'
-import { setSharedDialogSavingState } from '../../ui/dialog'
+import { getSharedDialogCancelButton, setSharedDialogSavingState } from '../../ui/dialog'
 
 const CONTACTS_POPUP_OVERLAY_ID = 'contacts-popup-overlay'
 const CONTACTS_OVERLAY_ACTIVE_CLASS = 'contacts-dialog--overlay-active'
+type ContactsButtonElement = SolidUIButtonElement
+
+function createContactsButtonElement(
+  context: DataBrowserContext,
+  options: {
+    id?: string
+    type?: 'button' | 'submit' | 'reset'
+    label?: string
+    ariaLabel?: string
+    variant?: 'primary' | 'secondary' | 'icon'
+    size?: 'sm' | 'md' | 'lg'
+    classes?: string[]
+  }
+): SolidUIButtonElement {
+  const button = context.dom.createElement('solid-ui-button') as SolidUIButtonElement
+  button.setAttribute('type', options.type || 'button')
+  button.setAttribute('variant', options.variant || 'secondary')
+  button.setAttribute('size', options.size || 'sm')
+
+  if (options.id) button.setAttribute('id', options.id)
+  if (options.ariaLabel) button.setAttribute('aria-label', options.ariaLabel)
+  if (options.classes?.length) button.classList.add(...options.classes)
+  if (options.label) button.textContent = options.label
+
+  return button
+}
 
 export const createAddressBookContactCreationDialog = (context: DataBrowserContext,
   contactsModule: ContactsModuleRdfLib,
@@ -22,7 +50,7 @@ export const createAddressBookContactCreationDialog = (context: DataBrowserConte
   addressBooksData: AddressBooksData
 ): HTMLFormElement => {
   const addressBookContactCreationDialog = context.dom.createElement('form')
-  addressBookContactCreationDialog.classList.add('contacts-dialog__frame', 'contacts-dialog__content')
+  addressBookContactCreationDialog.classList.add('contacts-dialog__frame', 'contacts-dialog__content', 'flex-column')
   addressBookContactCreationDialog.setAttribute('id', 'contacts-addressbook-picker-dialog')
 
   const dialogDescription = context.dom.createElement('p')
@@ -31,7 +59,7 @@ export const createAddressBookContactCreationDialog = (context: DataBrowserConte
 
   const addressBookContactCreationDiv = context.dom.createElement('section')
   addressBookContactCreationDiv.setAttribute('aria-label', 'Contact creation options')
-  addressBookContactCreationDiv.classList.add('contacts-dialog__body', 'contacts-dialog__creation')
+  addressBookContactCreationDiv.classList.add('contacts-dialog__body', 'contacts-dialog__creation', 'flex-column')
 
   const cancelButton = createDialogCancelButton(context, addressBookContactCreationDialog)
   const addressBookContactSubmitButton = createNewContactCreationButton(context, contactsModule, addressBooksData, contactData)
@@ -71,14 +99,14 @@ function createPopupHeader(
   context: DataBrowserContext,
   title: string,
   titleId: string,
-  closeButton: HTMLButtonElement
+  closeButton: ContactsButtonElement
 ): HTMLDivElement {
   const header = context.dom.createElement('div')
   header.classList.add('contacts-dialog__header', 'contacts-dialog__header--popup')
 
   const heading = context.dom.createElement('h3')
   heading.setAttribute('id', titleId)
-  heading.classList.add('contacts-dialog__title', 'contacts-dialog__title--popup')
+  heading.classList.add('contacts-dialog__title')
   heading.textContent = title
 
   header.appendChild(heading)
@@ -91,7 +119,7 @@ const createAddressBookDetailsSection = (
 ): HTMLElement => {
   const addressBookDetailsSection = context.dom.createElement('section')
   addressBookDetailsSection.setAttribute('id', 'addressbook-details-section')
-  addressBookDetailsSection.classList.add('contacts-dialog__details')
+  addressBookDetailsSection.classList.add('contacts-dialog__details', 'flex-row')
 
   return addressBookDetailsSection
 }
@@ -101,7 +129,7 @@ const createAddressBookCreationButton = (
   contactsModule: ContactsModuleRdfLib,
   addressBooksData: AddressBooksData,
   contactData: ContactData
-): HTMLButtonElement => {
+): ContactsButtonElement => {
   const setButtonOnClickHandler = async (event) => {
     event.preventDefault()
     resetSelectedAddressBookState(context)
@@ -109,11 +137,14 @@ const createAddressBookCreationButton = (
     renderInlinePanel(context, newAddressBookForm)
   }
 
-  const addressBookCreationButton = context.dom.createElement('button')
-  addressBookCreationButton.setAttribute('id', 'contacts-create-addressbook-button')
-  addressBookCreationButton.setAttribute('type', 'button')
-  addressBookCreationButton.textContent = 'Create Address Book'
-  addressBookCreationButton.classList.add('contacts-dialog__action-button', 'contacts-dialog__action-button--primary')
+  const addressBookCreationButton = createContactsButtonElement(context, {
+    id: 'contacts-create-addressbook-button',
+    type: 'button',
+    label: 'Create Address Book',
+    variant: 'primary',
+    size: 'sm',
+    classes: ['contacts-dialog__action-button', 'contacts-dialog__action-button--primary']
+  })
   addressBookCreationButton.addEventListener('click', setButtonOnClickHandler)
   return addressBookCreationButton
 }
@@ -127,9 +158,9 @@ const createAddressBookUriEntryDialog = (
   const addressBookUriEntryDialog = context.dom.createElement('section')
   addressBookUriEntryDialog.setAttribute('aria-labelledby', 'contacts-addressbook-uri-entry-title')
   addressBookUriEntryDialog.setAttribute('id', 'contacts-addressbook-uri-entry')
-  addressBookUriEntryDialog.classList.add('contacts-dialog__popup', 'contacts-dialog__uri-entry')
+  addressBookUriEntryDialog.classList.add('contacts-dialog__popup', 'contacts-dialog__uri-entry', 'flex-column')
 
-  const closeButton = createCloseButton(context, addressBookUriEntryDialog, 'contacts-dialog__close--uri-entry')
+  const closeButton = createCloseButton(context, addressBookUriEntryDialog)
   addressBookUriEntryDialog.appendChild(createPopupHeader(context, 'Enter address book URI', 'contacts-addressbook-uri-entry-title', closeButton))
   addressBookUriEntryDialog.appendChild(createAddressBookUriEntryForm(context, contactsModule, addressBooksData, contactData))
   return addressBookUriEntryDialog
@@ -139,7 +170,7 @@ const createAddressBookUriEntryButton = (
   contactsModule: ContactsModuleRdfLib,
   addressBooksData: AddressBooksData,
   contactData: ContactData
-): HTMLButtonElement => {
+): ContactsButtonElement => {
   const setButtonOnClickHandler = async (event) => { 
     event.preventDefault()
     resetSelectedAddressBookState(context)
@@ -147,11 +178,14 @@ const createAddressBookUriEntryButton = (
     renderInlinePanel(context, addressBookUriEntryDialog)
   }
 
-  const addressBookCreationButton = context.dom.createElement('button')
-  addressBookCreationButton.setAttribute('id', 'contacts-addressbook-uri-entry-button')
-  addressBookCreationButton.setAttribute('type', 'button')
-  addressBookCreationButton.textContent = 'Enter Address Book URI'
-  addressBookCreationButton.classList.add('contacts-dialog__action-button', 'contacts-dialog__action-button--primary')
+  const addressBookCreationButton = createContactsButtonElement(context, {
+    id: 'contacts-addressbook-uri-entry-button',
+    type: 'button',
+    label: 'Enter Address Book URI',
+    variant: 'primary',
+    size: 'sm',
+    classes: ['contacts-dialog__action-button', 'contacts-dialog__action-button--primary']
+  })
   addressBookCreationButton.addEventListener('click', setButtonOnClickHandler)
   return addressBookCreationButton
 }
@@ -162,7 +196,7 @@ const createAddressBookUriEntryForm = (
   addressBooksData: AddressBooksData,
   contactData: ContactData
 ): HTMLFormElement => {
-  let submitButton: HTMLButtonElement | null = null
+  let submitButton: ContactsButtonElement | null = null
 
   const setButtonOnSubmitHandler = async (event) => {
     event.preventDefault()
@@ -204,10 +238,10 @@ const createAddressBookUriEntryForm = (
   }
   const addressBookUriEntryForm = context.dom.createElement('form')
   addressBookUriEntryForm.setAttribute('id', 'contacts-address-uri-entry-form')
-  addressBookUriEntryForm.classList.add('contacts-dialog__uri-entry-form')
+  addressBookUriEntryForm.classList.add('contacts-dialog__uri-entry-form', 'flex-column')
   addressBookUriEntryForm.method = 'post'
   addressBookUriEntryForm.addEventListener('submit', setButtonOnSubmitHandler)
-  const popupBody = createPopupSection(context, 'contacts-dialog__popup-body')
+  const popupBody = createPopupSection(context, 'contacts-dialog__popup-body', 'flex-column-center', 'text-center')
   const popupFooter = createPopupSection(context, 'contacts-dialog__popup-footer')
 
   const addressBookUriEntryLabel = context.dom.createElement('label')
@@ -237,7 +271,7 @@ const createAddressBookUriEntryForm = (
 
 const createAddressBookUriEntryAddButton = (
   context: DataBrowserContext
-): HTMLButtonElement => {
+): ContactsButtonElement => {
 
   const setButtonOnClickHandler = async (event) => {
     event.preventDefault()
@@ -246,11 +280,14 @@ const createAddressBookUriEntryAddButton = (
     if (addressBookUriEntryForm) addressBookUriEntryForm.requestSubmit()
   }
 
-  const entryButton = context.dom.createElement('button')
-  entryButton.setAttribute('aria-label', 'Submit new address book URI')
-  entryButton.setAttribute('id', 'contacts-addressbook-entry-button')
-  entryButton.classList.add('contacts-dialog__action-button', 'contacts-dialog__action-button--primary', 'contacts-dialog__uri-submit')
-  entryButton.setAttribute('type', 'submit')
+  const entryButton = createContactsButtonElement(context, {
+    id: 'contacts-addressbook-entry-button',
+    type: 'submit',
+    ariaLabel: 'Submit new address book URI',
+    variant: 'primary',
+    size: 'sm',
+    classes: ['contacts-dialog__action-button', 'contacts-dialog__action-button--primary', 'contacts-dialog__uri-submit', 'inline-flex-row', 'justify-center']
+  })
   entryButton.addEventListener('click', setButtonOnClickHandler)
   entryButton.textContent = 'Add'
   return entryButton
@@ -292,7 +329,7 @@ const createAddressBookGroupCreationButton = (
   contactsModule: ContactsModuleRdfLib,
   addressBooksData: AddressBooksData,
   contactData: ContactData
-): HTMLButtonElement => {
+): ContactsButtonElement => {
   const setButtonOnClickHandler = async (event) => { 
     event.preventDefault()
     const groupNameForm = context.dom.getElementById('new-group-form')
@@ -301,11 +338,14 @@ const createAddressBookGroupCreationButton = (
       renderInlinePanel(context, newGroupForm)
     }
   }
-  const groupCreationButton = context.dom.createElement('button')
-  groupCreationButton.setAttribute('id', 'contacts-create-group-button')
-  groupCreationButton.setAttribute('type', 'button')
-  groupCreationButton.textContent = 'Create Group'
-  groupCreationButton.classList.add('contacts-dialog__action-button', 'contacts-dialog__action-button--primary')
+  const groupCreationButton = createContactsButtonElement(context, {
+    id: 'contacts-create-group-button',
+    type: 'button',
+    label: 'Create Group',
+    variant: 'primary',
+    size: 'sm',
+    classes: ['contacts-dialog__action-button', 'contacts-dialog__action-button--primary']
+  })
   groupCreationButton.addEventListener('click', setButtonOnClickHandler)
   return groupCreationButton
 }
@@ -319,7 +359,7 @@ const createGroupListSection = (
 ): HTMLElement => {
 
   const groupListSection = context.dom.createElement('section')
-  groupListSection.setAttribute('class', 'contacts-dialog__group-list')
+  groupListSection.setAttribute('class', 'contacts-dialog__group-list flex-column')
   groupListSection.setAttribute('aria-label', 'Select a group to add your contact to.')
   groupListSection.setAttribute('aria-describedby', 'group-list')
   groupListSection.setAttribute('id', 'group-list')
@@ -341,8 +381,8 @@ const createNewContactCreationButton = (
   contactsModule: ContactsModuleRdfLib,
   addressBooksData: AddressBooksData,
   contactData: ContactData
-): HTMLButtonElement => {
-  let button: HTMLButtonElement
+): ContactsButtonElement => {
+  let button: ContactsButtonElement
 
   const setButtonOnClickHandler = async (event) => {
     event.preventDefault()
@@ -390,10 +430,13 @@ const createNewContactCreationButton = (
     })
   }
 
-  button = context.dom.createElement('button')
-  button.setAttribute('id', 'contacts-submit-contact-button')
-  button.setAttribute('type', 'submit')
-  button.classList.add('contacts-dialog__action-button', 'contacts-dialog__action-button--primary', 'contacts-dialog__submit-contact')
+  button = createContactsButtonElement(context, {
+    id: 'contacts-submit-contact-button',
+    type: 'submit',
+    variant: 'primary',
+    size: 'sm',
+    classes: ['contacts-dialog__action-button', 'contacts-dialog__action-button--primary', 'contacts-dialog__submit-contact']
+  })
   button.disabled = true
   button.setAttribute('aria-disabled', 'true')
   button.addEventListener('click', setButtonOnClickHandler)
@@ -408,11 +451,11 @@ const createAddressBookButton = (
   addressBook: AddressBookDetails,
   addressBookUri: string,
   contactData: ContactData
-): HTMLButtonElement => {
+): ContactsButtonElement => {
   
   const setButtonOnClickHandler =  (event) => {
     event.preventDefault()
-    const selectedAddressBookButton = event.target as HTMLButtonElement
+    const selectedAddressBookButton = event.currentTarget as ContactsButtonElement
     const previouslySelected = selectedAddressBookButton.classList.contains('contacts-dialog__list-button--selected') 
     const addressBookDetailsSection = context.dom.getElementById('addressbook-details-section')
     
@@ -452,12 +495,15 @@ const createAddressBookButton = (
     syncAddContactActionState(context)
   }
 
-  const button = context.dom.createElement('button')
+  const button = createContactsButtonElement(context, {
+    id: addressBookUri,
+    type: 'button',
+    ariaLabel: 'Select address book ' + addressBook.name,
+    variant: 'secondary',
+    size: 'sm',
+    classes: ['contacts-dialog__list-button']
+  })
   button.setAttribute('value', addressBook.name)
-  button.setAttribute('id', addressBookUri)
-  button.setAttribute('type', 'button')
-  button.setAttribute('aria-label', 'Select address book ' + addressBook.name)
-  button.classList.add('contacts-dialog__list-button')
   button.addEventListener('click', setButtonOnClickHandler)
   button.textContent = addressBook.name
   return button
@@ -469,7 +515,7 @@ const createNewAddressBookForm = (
   contactsModule: ContactsModuleRdfLib,
   contactData: ContactData
 ): HTMLFormElement => {
-  let submitButton: HTMLButtonElement | null = null
+  let submitButton: ContactsButtonElement | null = null
 
   const newAddressBookEventListener = async (event) => {
     event.preventDefault()
@@ -549,7 +595,7 @@ const createNewAddressBookForm = (
   newAddressBookForm.setAttribute('aria-labelledby', 'new-addressbook-form-title')
   newAddressBookForm.method = 'post'
   newAddressBookForm.setAttribute('id', 'new-addressbook-form')
-  newAddressBookForm.classList.add('contacts-dialog__popup', 'contacts-dialog__address-form')
+  newAddressBookForm.classList.add('contacts-dialog__popup', 'contacts-dialog__address-form', 'flex-column')
   
   const addressBookNameLabel = context.dom.createElement('label')
   addressBookNameLabel.setAttribute('for', 'addressBookNameInput')
@@ -563,7 +609,7 @@ const createNewAddressBookForm = (
   addressBookNameInputBox.name = 'addressBookName'
   addressBookNameInputBox.id = 'addressBookNameInput' 
   addressBookNameInputBox.placeholder = 'New address book name' 
-  addressBookNameInputBox.classList.add('input', 'contacts-dialog__address-input')
+  addressBookNameInputBox.classList.add('input')
   addressBookNameInputBox.required = true
 
   const addressBookContainerLabel = context.dom.createElement('label')
@@ -578,7 +624,7 @@ const createNewAddressBookForm = (
   addressBookContainerInputBox.name = 'addressBookContainer'
   addressBookContainerInputBox.id = 'addressBookContainerInput' 
   addressBookContainerInputBox.placeholder = 'Address book container' 
-  addressBookContainerInputBox.classList.add('input', 'contacts-dialog__address-input')
+  addressBookContainerInputBox.classList.add('input')
   addressBookContainerInputBox.required = true
 
   const groupNameLabel = context.dom.createElement('label')
@@ -593,7 +639,7 @@ const createNewAddressBookForm = (
   groupNameInputBox.name = 'groupName'  
   groupNameInputBox.id = 'groupNameInput'  
   groupNameInputBox.placeholder = 'New group name'  
-  groupNameInputBox.classList.add('input', 'contacts-dialog__group-input')
+  groupNameInputBox.classList.add('input')
   groupNameInputBox.required = true
 
   const validationMessage = createValidationMessage(context)
@@ -602,14 +648,17 @@ const createNewAddressBookForm = (
   attachSanitizingValidation(addressBookContainerInputBox, validationMessage)
   attachSanitizingValidation(groupNameInputBox, validationMessage)
 
-  submitButton = context.dom.createElement('button')
-  submitButton.setAttribute('type', 'submit')
-  submitButton.classList.add('contacts-dialog__action-button', 'contacts-dialog__action-button--primary', 'contacts-dialog__address-submit')
+  submitButton = createContactsButtonElement(context, {
+    type: 'submit',
+    variant: 'primary',
+    size: 'sm',
+    classes: ['contacts-dialog__action-button', 'contacts-dialog__action-button--primary', 'contacts-dialog__address-submit']
+  })
   submitButton.addEventListener('click', submitFormEventListener)
-  submitButton.innerHTML = 'Create Address Book' 
+  submitButton.textContent = 'Create Address Book'
   
-  const closeButton = createCloseButton(context, newAddressBookForm, 'contacts-dialog__close--address-create')
-  const popupBody = createPopupSection(context, 'contacts-dialog__popup-body')
+  const closeButton = createCloseButton(context, newAddressBookForm)
+  const popupBody = createPopupSection(context, 'contacts-dialog__popup-body', 'flex-column')
   const popupFooter = createPopupSection(context, 'contacts-dialog__popup-footer')
 
   newAddressBookForm.appendChild(createPopupHeader(context, 'Create a new address book', 'new-addressbook-form-title', closeButton))
@@ -645,9 +694,8 @@ function removeDialogElement(
 
 const createCloseButton = (
   context: DataBrowserContext,
-  element: HTMLElement,
-  specialClass: string
-): HTMLButtonElement => {
+  element: HTMLElement
+): SolidUIButtonElement => {
 
   const buttonID = `${element.id}-close-button`
   const setButtonOnClickHandler = (event) => {
@@ -655,27 +703,36 @@ const createCloseButton = (
     removeDialogElement(context, element)
   }
 
-  const closeButton = context.dom.createElement('button')
-  closeButton.setAttribute('id', buttonID)
-  closeButton.setAttribute('type', 'button')
-  closeButton.setAttribute('aria-label', 'Close dialog')
-  closeButton.classList.add('contacts-dialog__close', specialClass)
+  const closeButton = createContactsButtonElement(context, {
+    id: buttonID,
+    type: 'button',
+    ariaLabel: 'Close dialog',
+    variant: 'icon',
+    size: 'sm',
+    classes: ['contacts-dialog__close']
+  })
   closeButton.addEventListener('click', setButtonOnClickHandler)
-  render(closeIcon, closeButton)
+  const iconSlot = context.dom.createElement('span')
+  iconSlot.setAttribute('slot', 'icon')
+  render(closeIcon, iconSlot)
+  closeButton.appendChild(iconSlot)
   return closeButton
 }   
 
 function createDialogCancelButton(
   context: DataBrowserContext,
   _element: HTMLElement
-): HTMLButtonElement {
-  const cancelButton = context.dom.createElement('button')
-  cancelButton.setAttribute('type', 'button')
-  cancelButton.classList.add('contacts-dialog__cancel', 'contacts-dialog__cancel--footer')
-  cancelButton.textContent = dialogCancelLabelText
+): SolidUIButtonElement {
+  const cancelButton = createContactsButtonElement(context, {
+    type: 'button',
+    label: dialogCancelLabelText,
+    variant: 'secondary',
+    size: 'sm',
+    classes: ['contacts-dialog__cancel', 'contacts-dialog__cancel--footer']
+  })
   cancelButton.addEventListener('click', (event) => {
     event.preventDefault()
-    const sharedCancelButton = context.dom.querySelector('#profile-modal #modal-buttons button[data-cancel]') as HTMLButtonElement | null
+    const sharedCancelButton = getSharedDialogCancelButton(context.dom)
     if (sharedCancelButton) {
       sharedCancelButton.click()
     }
@@ -685,10 +742,11 @@ function createDialogCancelButton(
 
 function createPopupSection(
   context: DataBrowserContext,
-  className: string
+  className: string,
+  ...extraClasses: string[]
 ): HTMLDivElement {
   const section = context.dom.createElement('div')
-  section.classList.add(className)
+  section.classList.add(className, ...extraClasses)
   return section
 }
 
@@ -786,7 +844,7 @@ function syncAddContactActionState(context: DataBrowserContext): void {
 }
 
 function setAddContactActionDisabled(context: DataBrowserContext, disabled: boolean): void {
-  const actionButton = context.dom.getElementById('contacts-submit-contact-button') as HTMLButtonElement | null
+  const actionButton = context.dom.getElementById('contacts-submit-contact-button') as ContactsButtonElement | null
   if (!actionButton) return
   actionButton.disabled = disabled
   actionButton.setAttribute('aria-disabled', String(disabled))
@@ -798,7 +856,7 @@ const createGroupNameForm = (
   addressBooksData: AddressBooksData, 
   contactData: ContactData
 ): HTMLFormElement => {
-  let submitButton: HTMLButtonElement | null = null
+  let submitButton: ContactsButtonElement | null = null
 
   const addGroupEventListener = async (event) => {
     event.preventDefault()
@@ -854,7 +912,7 @@ const createGroupNameForm = (
   newGroupForm.setAttribute('aria-labelledby', 'new-group-form-title')
   newGroupForm.addEventListener('submit', addGroupEventListener) 
   newGroupForm.setAttribute('id', 'new-group-form')
-  newGroupForm.classList.add('contacts-dialog__popup', 'contacts-dialog__group-form')
+  newGroupForm.classList.add('contacts-dialog__popup', 'contacts-dialog__group-form', 'flex-column')
   
   const groupNameLabel = context.dom.createElement('label')
   groupNameLabel.setAttribute('for', 'groupNameInput')
@@ -868,15 +926,15 @@ const createGroupNameForm = (
   groupNameInputBox.name = 'groupName' 
   groupNameInputBox.id = 'groupNameInput' 
   groupNameInputBox.placeholder = 'New group name' 
-  groupNameInputBox.classList.add('input', 'contacts-dialog__group-input')
+  groupNameInputBox.classList.add('input')
 
   const validationMessage = createValidationMessage(context)
 
   attachSanitizingValidation(groupNameInputBox, validationMessage)
  
   submitButton = createAddGroupButton(context, newGroupForm)
-  const closeButton = createCloseButton(context, newGroupForm, 'contacts-dialog__close--group-create')
-  const popupBody = createPopupSection(context, 'contacts-dialog__popup-body')
+  const closeButton = createCloseButton(context, newGroupForm)
+  const popupBody = createPopupSection(context, 'contacts-dialog__popup-body', 'flex-column')
   const popupFooter = createPopupSection(context, 'contacts-dialog__popup-footer')
 
   newGroupForm.appendChild(createPopupHeader(context, 'Create a new group', 'new-group-form-title', closeButton))
@@ -893,17 +951,20 @@ const createGroupNameForm = (
 const createAddGroupButton = (
   context: DataBrowserContext,
   form: HTMLFormElement
-): HTMLButtonElement => {
+): ContactsButtonElement => {
   const setButtonOnClickHandler = async (event) => {
     event.preventDefault()
     form.requestSubmit()
   }
 
-  const button = context.dom.createElement('button')
-  button.setAttribute('id', 'contacts-create-group-button')
-  button.setAttribute('type', 'button')
-  button.textContent = 'Create Group'
-  button.classList.add('contacts-dialog__action-button', 'contacts-dialog__action-button--primary')
+  const button = createContactsButtonElement(context, {
+    id: 'contacts-create-group-button',
+    type: 'button',
+    label: 'Create Group',
+    variant: 'primary',
+    size: 'sm',
+    classes: ['contacts-dialog__action-button', 'contacts-dialog__action-button--primary']
+  })
   button.addEventListener('click', setButtonOnClickHandler)
   return button
 }     
@@ -943,24 +1004,27 @@ export const handleContactExistsByName = (
   contactExistsDialog.setAttribute('aria-modal', 'true')
   contactExistsDialog.setAttribute('aria-labelledby', 'contacts-contact-exists-title')
   contactExistsDialog.setAttribute('aria-describedby', 'contacts-contact-exists-message')
-  contactExistsDialog.classList.add('contacts-dialog__popup', 'contacts-dialog__contact-exists')
+  contactExistsDialog.classList.add('contacts-dialog__popup', 'contacts-dialog__contact-exists', 'flex-column')
 
-  const popupBody = createPopupSection(context, 'contacts-dialog__popup-body')
+  const popupBody = createPopupSection(context, 'contacts-dialog__popup-body', 'flex-column')
   const popupFooter = createPopupSection(context, 'contacts-dialog__popup-footer')
 
   const heading = context.dom.createElement('h3')
   heading.setAttribute('id', 'contacts-contact-exists-title')
-  heading.classList.add('contacts-dialog__title', 'contacts-dialog__title--popup')
+  heading.classList.add('contacts-dialog__title')
   heading.textContent = 'Contact already exists'
 
   const message = context.dom.createElement('p')
   message.setAttribute('id', 'contacts-contact-exists-message')
   message.textContent = `${contactData.name} already exists. Do you want to add their WebID?`
   
-  const confirmButton = context.dom.createElement('button')
-  confirmButton.setAttribute('type', 'button')
-  confirmButton.classList.add('contacts-dialog__action-button', 'contacts-dialog__action-button--primary', 'contacts-dialog__confirm')
-  confirmButton.innerHTML = 'Yes'
+  const confirmButton = createContactsButtonElement(context, {
+    type: 'button',
+    label: 'Yes',
+    variant: 'primary',
+    size: 'sm',
+    classes: ['contacts-dialog__action-button', 'contacts-dialog__confirm', 'inline-flex-row', 'justify-center']
+  })
   confirmButton.addEventListener('click', async (event) => {
     event.preventDefault()
     await runWithButtonLoading(context, confirmButton, 'Adding...', async () => {
@@ -971,10 +1035,13 @@ export const handleContactExistsByName = (
     })
   })
 
-  const cancelButton = context.dom.createElement('button')
-  cancelButton.setAttribute('type', 'button')
-  cancelButton.classList.add('contacts-dialog__cancel')
-  cancelButton.innerHTML = 'No'
+  const cancelButton = createContactsButtonElement(context, {
+    type: 'button',
+    label: 'No',
+    variant: 'secondary',
+    size: 'sm',
+    classes: ['contacts-dialog__cancel', 'inline-flex-row', 'justify-center']
+  })
   cancelButton.addEventListener('click', (event) => {
     event.preventDefault()
     if (!fromRegisteredAddressBook) {
@@ -1029,11 +1096,11 @@ const finalizeContactEntry = (
 const createGroupButton = (
   context: DataBrowserContext,
   group: GroupData
-): HTMLButtonElement => {
+): ContactsButtonElement => {
   const setButtonOnClickHandler = async (event) => {
     event.preventDefault()
     
-    const selectedGroupButton = event.target as HTMLButtonElement
+    const selectedGroupButton = event.currentTarget as ContactsButtonElement
     const previouslySelected = selectedGroupButton.classList.contains('contacts-dialog__list-button--selected') 
     
     if (previouslySelected) {
@@ -1048,12 +1115,15 @@ const createGroupButton = (
     syncAddContactActionState(context)
   } 
 
-  const button = context.dom.createElement('button')
+  const button = createContactsButtonElement(context, {
+    id: group.uri,
+    type: 'button',
+    ariaLabel: 'Select group ' + group.name,
+    variant: 'secondary',
+    size: 'sm',
+    classes: ['contacts-dialog__list-button']
+  })
   button.setAttribute('value', group.name)
-  button.setAttribute('id', group.uri)
-  button.setAttribute('type', 'button')
-  button.setAttribute('aria-labelledby', group.name)
-  button.classList.add('contacts-dialog__list-button')
   button.addEventListener('click', setButtonOnClickHandler)
   button.textContent = group.name
 
@@ -1169,7 +1239,7 @@ function focusFirstInputInPopup(container: HTMLElement): void {
   }, 0)
 }
 
-function setButtonLoadingState(button: HTMLButtonElement | null, isLoading: boolean, loadingLabel?: string): void {
+function setButtonLoadingState(button: ContactsButtonElement | null, isLoading: boolean, loadingLabel?: string): void {
   if (!button) return
 
   const originalLabel = button.dataset.originalLabel || button.textContent || ''
@@ -1187,7 +1257,7 @@ function setButtonLoadingState(button: HTMLButtonElement | null, isLoading: bool
   button.textContent = button.dataset.originalLabel || originalLabel
 }
 
-async function runWithButtonLoading<T>(context: DataBrowserContext, button: HTMLButtonElement | null, loadingLabel: string, action: () => Promise<T>): Promise<T> {
+async function runWithButtonLoading<T>(context: DataBrowserContext, button: ContactsButtonElement | null, loadingLabel: string, action: () => Promise<T>): Promise<T> {
   const sharedModal = context.dom.getElementById('profile-modal') as HTMLDialogElement | null
   const useDialogOverlay = Boolean(sharedModal?.hasAttribute('open'))
 

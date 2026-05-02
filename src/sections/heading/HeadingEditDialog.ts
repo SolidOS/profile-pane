@@ -1,7 +1,8 @@
 import { openInputDialog } from '../../ui/dialog'
 import { html, render, TemplateResult } from 'lit-html'
-import 'solid-ui/components/select'
-import 'solid-ui/components/photo-capture'
+import 'solid-ui/components/actions/button'
+import 'solid-ui/components/forms/select'
+import 'solid-ui/components/media/photo-capture'
 import { ProfileDetails, HeadingMutationPlan, ProfileBasicRow } from './types'
 import { Image } from './HeadingSection'
 import '../../styles/EditDialogs.css'
@@ -686,15 +687,18 @@ function renderHeadingInfoInput(
       <header class="mb-md" aria-label="Profile Image">
         <div class="profile-edit-dialog__image-frame">
           ${Image(basicInfo.imageSrc, basicInfo.name)}
-          <button
+          <solid-ui-button
             type="button"
             class="profile-edit-dialog__image-camera-button flex-center"
+            variant="icon"
+            size="md"
+            label="Take a photo"
             aria-label="Take a photo"
             title="Take a photo"
             @click=${handleCameraClick}
           >
-            ${cameraIcon}
-          </button>
+            <span slot="icon" aria-hidden="true">${cameraIcon}</span>
+          </solid-ui-button>
         </div>
       </header>
 
@@ -702,30 +706,36 @@ function renderHeadingInfoInput(
         <p class="profile-edit-dialog__image-preview-label"><strong>${imageSrcLabel}</strong></p>
         <p class="profile-edit-dialog__image-preview-description">${recommendedImageToLoad}</p>
 
-        <div class="profile-edit-dialog__image-preview-actions">
-          <button
+        <div class="profile-edit-dialog__image-preview-actions flex-row align-center gap-xs">
+          <solid-ui-button
             type="button"
-            class="profile-edit-dialog__image-button profile-edit-dialog__image-upload-button flex-center"
+            variant="secondary"
+            size="md"
+            label="Upload New"
+            class="profile-edit-dialog__image-button profile-edit-dialog__image-upload-button"
             aria-label="Upload new profile photo"
             title="Upload New"
             @click=${handleUpload}
           >
             Upload New
-          </button>
-          <button
+          </solid-ui-button>
+          <solid-ui-button
             type="button"
-            class="profile-edit-dialog__image-button profile-edit-dialog__image-remove-button flex-center"
+            variant="secondary"
+            size="md"
+            label="Remove"
+            class="profile-edit-dialog__image-button profile-edit-dialog__image-remove-button"
             aria-label="Delete profile photo"
             title="Remove"
             @click=${handleDelete}
           >
             Remove
-          </button>
+          </solid-ui-button>
         </div>
       </div>
     </div>
-    <div class="profile-edit-dialog__image-camera-capture-row">
-      <div class="profile-edit-dialog__image-camera-capture-frame" hidden></div>
+    <div class="profile-edit-dialog__image-camera-capture-row flex-row justify-center">
+      <div class="profile-edit-dialog__image-camera-capture-frame flex-column-center" hidden></div>
     </div>
     <div class="profile-edit flex-column gap-lg">
       <div class="profile-edit-dialog__row profile-edit-dialog__row--equal">
