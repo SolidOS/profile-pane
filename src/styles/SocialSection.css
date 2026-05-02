@@ -87,7 +87,7 @@ solid-ui-button.social-card__more-button {
     color: var(--color-primary, #7C4DFF);
     font: inherit;
     font-weight: var(--font-weight-bold, 600);
-    cursor: pointer;
+    cursor: var(--profile-interactive-cursor, pointer);
   }
 
   .social-card[data-mobile-expanded="true"] .social-card__more-button {

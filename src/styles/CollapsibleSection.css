@@ -29,7 +29,7 @@
   border: none;
   background: none;
   color: var(--color-text, #1A1A1A);
-  cursor: pointer;
+  cursor: var(--profile-interactive-cursor, pointer);
 }
 
 .profile-section-collapsible__actions > solid-ui-button.inline-flex-row {

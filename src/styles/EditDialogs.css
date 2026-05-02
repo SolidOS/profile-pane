@@ -466,7 +466,7 @@ solid-ui-button.profile-edit-dialog__image-camera-button {
 
 .profile-edit-dialog__checkbox-label {
   margin-left: auto;
-  cursor: pointer;
+  cursor: var(--profile-interactive-cursor, pointer);
 }
 
 .profile-edit-dialog__checkbox-input {
@@ -475,7 +475,7 @@ solid-ui-button.profile-edit-dialog__image-camera-button {
   margin: 0;
   flex: 0 0 auto;
   accent-color: var(--color-primary, #7C4DFF);
-  cursor: pointer;
+  cursor: var(--profile-interactive-cursor, pointer);
 }
 
 .profile-edit-dialog__checkbox-input:focus-visible {

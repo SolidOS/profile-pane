@@ -74,7 +74,7 @@
   color: var(--color-text);
   font-size: 1.5rem;
   line-height: 1;
-  cursor: pointer;
+  cursor: var(--profile-interactive-cursor, pointer);
   display: inline-flex;
   align-items: center;
   justify-content: center;

@@ -19,7 +19,7 @@
   font-size: var(--font-size-sm, 0.875rem);
   font-weight: var(--font-weight-md, 500);
   background: var(--white, #FFF);
-  cursor: pointer;
+  cursor: var(--profile-interactive-cursor, pointer);
 }
 
 solid-ui-button.project-card__follow-button {
@@ -215,7 +215,7 @@ solid-ui-button.project-card__more-button {
   color: var(--color-primary, #7C4DFF);
   font-size: var(--font-size-sm, 0.875rem);
   font-weight: var(--font-weight-bold, 600);
-  cursor: pointer;
+  cursor: var(--profile-interactive-cursor, pointer);
 }
 
 :is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .project-card__more-button[data-mobile-expanded="true"] .project-card__more-icon {
@@ -258,7 +258,7 @@ solid-ui-button.project-card__more-button {
     color: var(--color-primary, #7C4DFF);
     font-size: var(--font-size-sm, 0.875rem);
     font-weight: var(--font-weight-bold, 600);
-    cursor: pointer;
+    cursor: var(--profile-interactive-cursor, pointer);
   }
 
   .project-card__more-button[data-mobile-expanded="true"] .project-card__more-icon {

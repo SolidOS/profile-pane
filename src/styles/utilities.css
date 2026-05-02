@@ -5,6 +5,7 @@
    development environments */
 :root {
   --profile-image-size: 3rem;
+  --profile-interactive-cursor: pointer;
 }
 
 .profile-pane-host {
@@ -33,6 +34,14 @@
   min-width: 0;
   container-name: profile-pane;
   container-type: inline-size;
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-input-mode='touch'] {
+  --profile-interactive-cursor: auto;
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-input-mode='pointer'] {
+  --profile-interactive-cursor: pointer;
 }
 
 td.obj .profile-pane-root {
@@ -139,7 +148,7 @@ solid-ui-button.profile__btn-contacts {
   border: none;
   background: none;
   color: var(--color-primary, #7C4DFF);
-  cursor: pointer;
+  cursor: var(--profile-interactive-cursor, pointer);
   font-size: var(--font-size-sm, 0.875rem);
 }
 
