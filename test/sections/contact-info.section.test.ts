@@ -1,8 +1,8 @@
 import { describe, expect, it } from "@jest/globals"
-import axe from 'axe-core'
 import { render } from 'lit-html'
 import { sym } from 'rdflib'
 import { renderContactInfoSection } from '../../src/sections/contactInfo/ContactInfoSection'
+import { runAxe } from '../helpers/runAxe'
 import { context, subject } from '../setup'
 
 describe('Contact info section', () => {
@@ -82,7 +82,7 @@ describe('Contact info section', () => {
       container
     )
 
-    const results = await axe.run(container)
+    const results = await runAxe(container)
     expect(results.violations.length).toBe(0)
 
     container.remove()

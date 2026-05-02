@@ -1,6 +1,6 @@
 import { describe, expect, it } from '@jest/globals'
-import axe from 'axe-core'
 import { getSharedDialogCancelButton, getSharedDialogSaveButton, openInputDialog } from '../src/ui/dialog'
+import { runAxe } from './helpers/runAxe'
 
 describe('Dialog accessibility', () => {
   it('has no accessibility violations for the shared input dialog', async () => {
@@ -22,7 +22,7 @@ describe('Dialog accessibility', () => {
     const dialog = document.querySelector('#profile-modal') as HTMLDialogElement | null
     expect(dialog).not.toBeNull()
 
-    const results = await axe.run(document.body)
+    const results = await runAxe(document.body)
     expect(results.violations.length).toBe(0)
 
     const cancelButton = getSharedDialogCancelButton(document)

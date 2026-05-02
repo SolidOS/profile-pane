@@ -49,7 +49,6 @@ export const SocialCard = (
         ${hiddenAccountsCount > 0
           ? html`
               <solid-ui-button
-                role="button"
                 type="button"
                 variant="secondary"
                 size="sm"
@@ -138,7 +137,6 @@ function renderSocialSectionDefault(
             <div class="profile-section-collapsible__actions flex-column align-end">
               ${isOwner ? html`
                 <solid-ui-button
-                  role="button"
                   type="button"
                   variant="secondary"
                   size="sm"
@@ -151,7 +149,6 @@ function renderSocialSectionDefault(
                 </solid-ui-button>
               ` : html``}
               <solid-ui-button
-                role="button"
                 type="button"
                 variant="icon"
                 size="sm"
@@ -212,7 +209,6 @@ function renderOwnerEmptySocialSection(
         <h2 id="social-heading" tabindex="-1">${socialAccountsHeadingText}</h2>
         <div class="profile-section-collapsible__actions flex-column align-end">
           <solid-ui-button
-            role="button"
             type="button"
             variant="secondary"
             size="sm"
@@ -238,7 +234,6 @@ function renderOwnerEmptySocialSection(
             <span class="profile-section-collapsible__edit-icon" aria-hidden="true">${editIcon}</span>
           </solid-ui-button>
           <solid-ui-button
-            role="button"
             type="button"
             variant="icon"
             size="sm"

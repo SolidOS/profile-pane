@@ -45,7 +45,6 @@ function renderRole(role: RoleDetails, index: number) {
         <div class="resume-card__description-wrap">
           <p class="resume-card__description-text" id=${roleDescriptionId}>${role.description}</p>
           <solid-ui-button
-            role="button"
             type="button"
             variant="secondary"
             size="sm"
@@ -113,7 +112,6 @@ function renderResumeSectionDefault(
         <div class="profile-section-collapsible__actions flex-column align-end">
           ${isOwner ? html`
             <solid-ui-button
-              role="button"
               type="button"
               variant="secondary"
               size="sm"
@@ -126,7 +124,6 @@ function renderResumeSectionDefault(
             </solid-ui-button>
           ` : html``}
           <solid-ui-button
-            role="button"
             type="button"
             variant="icon"
             size="sm"
@@ -164,7 +161,6 @@ function renderOwnerEmptyResumeContent(
       </p>
     </div>
     <solid-ui-button
-      role="button"
       type="button"
       variant="secondary"
       size="sm"

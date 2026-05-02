@@ -1,8 +1,8 @@
 import { describe, expect, it } from '@jest/globals'
 import { render } from 'lit-html'
 import { CVCard } from '../src/sections/resume/ResumeSection'
-import axe from 'axe-core'
 import { literal, sym } from 'rdflib'
+import { runAxe } from './helpers/runAxe'
 
 describe('CVCard accessibility', () => {
   it('has no accessibility violations', async () => {
@@ -33,7 +33,7 @@ describe('CVCard accessibility', () => {
     document.body.appendChild(container)
     render(CVCard(cvData as any, 'anonymous'), container)
 
-    const results = await axe.run(container)
+    const results = await runAxe(container)
     expect(results.violations.length).toBe(0)
   })
 })

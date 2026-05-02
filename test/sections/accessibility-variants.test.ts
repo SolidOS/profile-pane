@@ -1,5 +1,4 @@
 import { describe, expect, it } from '@jest/globals'
-import axe from 'axe-core'
 import { render } from 'lit-html'
 import { literal, sym } from 'rdflib'
 import { renderBioSection } from '../../src/sections/bio/BioSection'
@@ -10,6 +9,7 @@ import { renderEducationSection } from '../../src/sections/education/EducationSe
 import { renderCVSection } from '../../src/sections/resume/ResumeSection'
 import { renderLanguageSection } from '../../src/sections/languages/LanguageSection'
 import { renderSocialSection } from '../../src/sections/social/SocialSection'
+import { runAxe } from '../helpers/runAxe'
 import { context, subject } from '../setup'
 
 describe('Section accessibility variants', () => {
@@ -28,7 +28,7 @@ describe('Section accessibility variants', () => {
     render(renderLanguageSection(context.session.store, subject, [], 'owner'), container)
     render(renderSocialSection(context.session.store as any, subject, { accounts: [] }, 'owner'), container)
 
-    const results = await axe.run(container)
+    const results = await runAxe(container)
     expect(results.violations.length).toBe(0)
 
     container.remove()
@@ -60,7 +60,7 @@ describe('Section accessibility variants', () => {
     render(renderLanguageSection(context.session.store, subject, languages as any, 'anonymous'), container)
     render(renderSocialSection(context.session.store as any, subject, social as any, 'anonymous'), container)
 
-    const results = await axe.run(container)
+    const results = await runAxe(container)
     expect(results.violations.length).toBe(0)
 
     container.remove()

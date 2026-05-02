@@ -1,7 +1,7 @@
 import { render } from 'lit-html'
 import { QRCodeCard } from '../src/sections/qrcode/QRCodeCard'
 import { NamedNode, graph, parse, sym } from 'rdflib'
-import axe from 'axe-core'
+import { runAxe } from './helpers/runAxe'
 
 describe('QRCodeCard accessibility', () => {
   it('has no accessibility violations', async () => {
@@ -10,7 +10,7 @@ describe('QRCodeCard accessibility', () => {
     document.body.appendChild(container)
     render(QRCodeCard(subject), container)
 
-    const results = await axe.run(container)
+    const results = await runAxe(container)
     expect(results.violations.length).toBe(0)
   })
 

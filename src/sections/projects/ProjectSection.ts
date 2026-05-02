@@ -117,7 +117,6 @@ function renderProject(
       ${viewerMode === 'owner' ? html`
         <div class="project-card__footer">
           <solid-ui-button
-            role="button"
             type="button"
             variant="secondary"
             size="sm"
@@ -151,7 +150,6 @@ function renderOwnerEmptyProjectsContent(
       </p>
     </div>
     <solid-ui-button
-      role="button"
       type="button"
       variant="secondary"
       size="sm"
@@ -230,7 +228,6 @@ function renderProjectSectionDefault(
           <div class="profile-section-collapsible__actions flex-column align-end">
             ${isOwner ? html`
               <solid-ui-button
-                role="button"
                 type="button"
                 variant="secondary"
                 size="sm"
@@ -250,7 +247,6 @@ function renderProjectSectionDefault(
               </solid-ui-button>
             ` : html``}
             <solid-ui-button
-              role="button"
               type="button"
               variant="icon"
               size="sm"
@@ -280,7 +276,6 @@ function renderProjectSectionDefault(
                 ${hiddenProjectsCount > 0
                   ? html`
                       <solid-ui-button
-                        role="button"
                         type="button"
                         variant="secondary"
                         size="sm"

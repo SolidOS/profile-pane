@@ -1,8 +1,8 @@
 import { describe, expect, it } from "@jest/globals"
-import axe from 'axe-core'
 import { render } from 'lit-html'
 import { sym } from 'rdflib'
 import { renderHeadingSection } from '../../src/sections/heading/HeadingSection'
+import { runAxe } from '../helpers/runAxe'
 import { context, subject } from '../setup'
 
 describe('Intro section', () => {
@@ -75,7 +75,7 @@ describe('Intro section', () => {
 
     render(await renderHeadingSection(context, subject, profile as any, 'owner'), container)
 
-    const results = await axe.run(container)
+    const results = await runAxe(container)
     expect(results.violations.length).toBe(0)
 
     container.remove()
@@ -113,7 +113,7 @@ describe('Intro section', () => {
 
     expect(container.querySelector('solid-ui-button[aria-label="Add or edit heading information"], button[aria-label="Add or edit heading information"]')).toBeNull()
 
-    const results = await axe.run(container)
+    const results = await runAxe(container)
     expect(results.violations.length).toBe(0)
 
     container.remove()

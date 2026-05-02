@@ -49,7 +49,6 @@ function renderSkillItem(
         ? html`
             <span class="skills__item-tail inline-flex-row">
               <solid-ui-button
-                role="button"
                 type="button"
                 variant="icon"
                 size="sm"
@@ -84,7 +83,6 @@ function renderSkillsSectionDefault(store: LiveStore, subject: NamedNode, skills
         <div class="profile-section-collapsible__actions flex-column align-end">
           ${isOwner ? html`
             <solid-ui-button
-              role="button"
               type="button"
               variant="secondary"
               size="sm"
@@ -102,7 +100,6 @@ function renderSkillsSectionDefault(store: LiveStore, subject: NamedNode, skills
             </solid-ui-button>
           ` : html``}
           <solid-ui-button
-            role="button"
             type="button"
             variant="icon"
             size="sm"
@@ -174,7 +171,6 @@ function renderOwnerEmptySkillsSection(
         <h2 id="skills-heading" tabindex="-1">${skillsHeadingText}</h2>
         <div class="profile-section-collapsible__actions flex-column align-end">
           <solid-ui-button
-            role="button"
             type="button"
             variant="secondary"
             size="sm"
@@ -200,7 +196,6 @@ function renderOwnerEmptySkillsSection(
             <span class="profile-section-collapsible__edit-icon" aria-hidden="true">${editIcon}</span>
           </solid-ui-button>
           <solid-ui-button
-            role="button"
             type="button"
             variant="icon"
             size="sm"

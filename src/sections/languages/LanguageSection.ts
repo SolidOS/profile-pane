@@ -40,7 +40,6 @@ function renderLanguagesSectionDefault(store: LiveStore, subject: NamedNode, lan
         <div class="profile-section-collapsible__actions flex-column align-end">
           ${isOwner ? html`
             <solid-ui-button
-              role="button"
               type="button"
               variant="secondary"
               size="sm"
@@ -58,7 +57,6 @@ function renderLanguagesSectionDefault(store: LiveStore, subject: NamedNode, lan
             </solid-ui-button>
           ` : html``}
           <solid-ui-button
-            role="button"
             type="button"
             variant="icon"
             size="sm"
@@ -127,7 +125,6 @@ function renderOwnerEmptyLanguagesSection(
         <h2 id="languages-heading" tabindex="-1">${languagesHeadingText}</h2>
         <div class="profile-section-collapsible__actions flex-column align-end">
           <solid-ui-button
-            role="button"
             type="button"
             variant="secondary"
             size="sm"
@@ -153,7 +150,6 @@ function renderOwnerEmptyLanguagesSection(
             <span class="profile-section-collapsible__edit-icon profile-section-collapsible__edit-icon--add" aria-hidden="true">${plusIcon}</span>
           </solid-ui-button>
           <solid-ui-button
-            role="button"
             type="button"
             variant="icon"
             size="sm"

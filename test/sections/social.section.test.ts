@@ -1,8 +1,8 @@
 import { describe, expect, it } from "@jest/globals"
-import axe from 'axe-core'
 import { render } from 'lit-html'
 import { sym } from 'rdflib'
 import { renderSocialSection } from '../../src/sections/social/SocialSection'
+import { runAxe } from '../helpers/runAxe'
 import { context, subject } from '../setup'
 
 describe('Social section', () => {
@@ -52,7 +52,7 @@ describe('Social section', () => {
 
     render(renderSocialSection(context.session.store as any, subject, socialPresentation as any, 'owner'), container)
 
-    const results = await axe.run(container)
+    const results = await runAxe(container)
     expect(results.violations.length).toBe(0)
 
     container.remove()

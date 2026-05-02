@@ -1,9 +1,9 @@
 import { beforeEach, describe, expect, it, jest } from '@jest/globals'
-import axe from 'axe-core'
 import { render } from 'lit-html'
 import { authn } from 'solid-logic'
 import { sym } from 'rdflib'
 import { addMeToYourFriendsDiv } from '../src/specialButtons/addMeToYourFriends'
+import { runAxe } from './helpers/runAxe'
 import { context, subject } from './setup'
 
 describe('Add me to your friends accessibility', () => {
@@ -28,7 +28,7 @@ describe('Add me to your friends accessibility', () => {
     document.body.appendChild(container)
     render(addMeToYourFriendsDiv(subject, context, 'anonymous'), container)
 
-    const results = await axe.run(container)
+    const results = await runAxe(container)
     expect(results.violations.length).toBe(0)
 
     container.remove()
@@ -41,7 +41,7 @@ describe('Add me to your friends accessibility', () => {
     document.body.appendChild(container)
     render(addMeToYourFriendsDiv(subject, context, 'authenticated'), container)
 
-    const results = await axe.run(container)
+    const results = await runAxe(container)
     expect(results.violations.length).toBe(0)
 
     container.remove()

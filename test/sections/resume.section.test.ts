@@ -1,8 +1,8 @@
 import { describe, expect, it } from "@jest/globals"
-import axe from 'axe-core'
 import { render } from 'lit-html'
 import { literal, sym } from 'rdflib'
 import { renderCVSection } from '../../src/sections/resume/ResumeSection'
+import { runAxe } from '../helpers/runAxe'
 import { context, subject } from '../setup'
 
 describe('Resume section', () => {
@@ -48,7 +48,7 @@ describe('Resume section', () => {
 
     render(renderCVSection(context.session.store, subject, roles as any, 'owner'), container)
 
-    const results = await axe.run(container)
+    const results = await runAxe(container)
     expect(results.violations.length).toBe(0)
 
     container.remove()

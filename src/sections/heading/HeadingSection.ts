@@ -53,7 +53,6 @@ export const renderHeadingSection = async (
                 ` : nothing}
                 ${isOwner ? html`
                   <solid-ui-button
-                    role="button"
                     type="button"
                     variant="secondary"
                     size="sm"

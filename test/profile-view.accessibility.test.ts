@@ -1,6 +1,6 @@
 import { ProfileView } from '../src/ProfileView'
 import { render } from 'lit-html'
-import axe from 'axe-core'
+import { runAxe } from './helpers/runAxe'
 
 describe('ProfileView accessibility', () => {
   it('has no accessibility violations', async () => {
@@ -11,7 +11,7 @@ describe('ProfileView accessibility', () => {
     // Render ProfileView (returns a Promise<TemplateResult>)
     const result = await ProfileView(subject, context)
     render(result, container)
-    const results = await axe.run(container)
+    const results = await runAxe(container)
     if (results.violations.length > 0) {
       // Print details for debugging
       console.log('Axe violations:', JSON.stringify(results.violations, null, 2))

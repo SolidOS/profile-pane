@@ -57,7 +57,6 @@ function renderEducationEntry(educationEntry: EducationDetails, index: number) {
         <div class="education-card__description-wrap">
           <p class="education-card__description-text" id=${educationDescriptionId}>${educationEntry.description}</p>
           <solid-ui-button
-            role="button"
             type="button"
             variant="secondary"
             size="sm"
@@ -126,7 +125,6 @@ export function renderEducationSection(
         <div class="profile-section-collapsible__actions flex-column align-end">
           ${isOwner ? html`
             <solid-ui-button
-              role="button"
               type="button"
               variant="secondary"
               size="sm"
@@ -139,7 +137,6 @@ export function renderEducationSection(
             </solid-ui-button>
           ` : html``}
           <solid-ui-button
-            role="button"
             type="button"
             variant="icon"
             size="sm"

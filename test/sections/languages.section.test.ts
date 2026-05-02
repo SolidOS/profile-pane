@@ -1,8 +1,8 @@
 import { describe, expect, it } from "@jest/globals"
-import axe from 'axe-core'
 import { render } from 'lit-html'
 import { sym } from 'rdflib'
 import { renderLanguageSection } from '../../src/sections/languages/LanguageSection'
+import { runAxe } from '../helpers/runAxe'
 import { context, subject } from '../setup'
 
 describe('Languages section', () => {
@@ -35,7 +35,7 @@ describe('Languages section', () => {
 
     render(renderLanguageSection(context.session.store, subject, languages as any, 'owner'), container)
 
-    const results = await axe.run(container)
+    const results = await runAxe(container)
     expect(results.violations.length).toBe(0)
 
     container.remove()

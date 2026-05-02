@@ -1,7 +1,7 @@
 import { render } from 'lit-html'
 import { SocialCard } from '../src/sections/social/SocialSection'
-import axe from 'axe-core'
 import { sym } from 'rdflib'
+import { runAxe } from './helpers/runAxe'
 
 describe('SocialCard accessibility', () => {
   it('has no accessibility violations', async () => {
@@ -25,7 +25,7 @@ describe('SocialCard accessibility', () => {
     document.body.appendChild(container)
     render(SocialCard(SocialData, 'anonymous'), container)
 
-    const results = await axe.run(container)
+    const results = await runAxe(container)
     expect(results.violations.length).toBe(0)
   })
 
