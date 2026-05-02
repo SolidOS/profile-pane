@@ -49,7 +49,7 @@ function renderBioSection(bioRow: BioRow, onChange: () => void): TemplateResult 
   }
 
   return html`
-    <section class="profile-edit-dialog__section" aria-label="Bio editor">
+    <section class="profile-edit-dialog__section flex-column gap-xs" aria-label="Bio editor">
 
       <label aria-label="Bio description" class="label profile-edit-dialog__bio-field-container">
         <span class="profile-edit-dialog__field-description">

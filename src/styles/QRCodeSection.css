@@ -1,10 +1,7 @@
 /* QR code section styles. */
 
 .profile__qr-code {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 20px;
+  gap: var(--spacing-md, 1.25rem);
   align-self: stretch;
 }
 
@@ -18,14 +15,14 @@
 }
 
 .qrcode-card {
-  width: 136px;
+  width: 8.5rem;
   margin: 0 auto;
   height: auto;
   flex-shrink: 0;
 }
 
 .qrcode-card__frame {
-  padding: 1rem 1rem 1.25rem 1.063rem;
+  padding: 1rem 1rem var(--spacing-md, 1.25rem) 1.063rem;
   border-radius: var(--border-radius-base, 0.3125rem);
   border: var(--border-width-thin, 0.1rem) solid var(--gray-200, #E5E7EB);
   background: var(--gray-100, #F3F4F6);
