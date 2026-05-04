@@ -548,7 +548,7 @@ solid-ui-button.profile-edit-dialog__delete-button {
   --button-border-radius: var(--border-radius-base, 0.3125rem);
   --button-text: currentColor;
   --button-box-shadow: none;
-  --button-hover-background: var(--color-surface-subtle, rgba(15, 23, 43, 0.04));
+  --button-hover-background: var(--lavender-300, #e6dcff);
   --button-hover-border: transparent;
   --button-hover-text: var(--color-primary, #7C4DFF);
   --button-hover-box-shadow: none;
@@ -643,7 +643,7 @@ solid-ui-button.profile-edit-dialog__drag-handle {
   --button-border-radius: var(--border-radius-base, 0.3125rem);
   --button-icon-size-md: 0.813rem;
   --button-box-shadow: none;
-  --button-hover-background: var(--color-surface-subtle, rgba(15, 23, 43, 0.04));
+  --button-hover-background: var(--lavender-300, #e6dcff);
   --button-hover-border: transparent;
   --button-hover-text: var(--color-primary, #7C4DFF);
   --button-hover-box-shadow: none;
