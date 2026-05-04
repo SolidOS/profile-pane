@@ -1,0 +1,394 @@
+/* Collapsible section styles for the main profile pane. */
+
+.profile-section-collapsible {
+  display: block;
+}
+
+.profile-section-collapsible__header {
+  margin-bottom: 0;
+}
+
+.profile-section-collapsible__actions {
+  gap: var(--spacing-xs, 0.75rem);
+  margin-top: -0.25rem;
+}
+
+.profile-section-collapsible__edit-button {
+  min-width: 0;
+}
+
+.profile-section-collapsible__edit-icon {
+  display: none;
+}
+
+.profile-section-collapsible__edit-icon,
+.profile-section-collapsible__edit-icon svg {
+  line-height: 0;
+}
+
+.profile-section-collapsible__actions > solid-ui-button.inline-flex-row {
+  display: none !important;
+  min-height: auto;
+  min-width: auto;
+  padding: var(--spacing-xxs, 0.3125rem);
+  border: none;
+  background: none;
+  color: var(--color-text, #1A1A1A);
+  cursor: var(--profile-interactive-cursor, pointer);
+}
+
+.profile-section-collapsible__actions > solid-ui-button.inline-flex-row {
+  --button-height-sm: 0;
+  --button-padding-sm: var(--spacing-xxs, 0.3125rem);
+  --button-background: transparent;
+  --button-border-width: 0;
+  --button-border: transparent;
+  --button-text: var(--color-text, #1A1A1A);
+  --button-hover-background: var(--lavender-300, #e6dcff);
+  --button-hover-border: transparent;
+  --button-hover-text: var(--color-text, #1A1A1A);
+}
+
+.profile-section-collapsible__chevron {
+  display: inline-block;
+  flex: 0 0 auto;
+  transition: transform var(--animation-duration, 0.2s) ease;
+}
+
+.profile-section-collapsible__content {
+  margin-top: var(--spacing-2xs, 0.625rem);
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+.profile-section-collapsible__content > :first-child {
+  margin-top: 0;
+}
+
+.profile-section-collapsible__content > :last-child {
+  margin-bottom: 0;
+}
+/* App-driven mobile layout when the host/root explicitly sets data-layout. */
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-section-collapsible--inline-mobile-actions > .profile-section-collapsible__header h2 {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-section-collapsible--inline-mobile-actions .profile-section-collapsible__actions {
+  display: inline-flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.25rem;
+  margin-top: 0;
+  flex: 0 0 auto;
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-section-collapsible--inline-mobile-actions .profile-section-collapsible__edit-button {
+  display: inline-flex !important;
+  order: 1;
+  --button-background: transparent;
+  --button-border-width: 0;
+  --button-border: transparent;
+  --button-text: var(--color-text, #1A1A1A);
+  --button-hover-background: var(--lavender-300, #e6dcff);
+  --button-hover-border: transparent;
+  --button-hover-text: var(--color-text, #1A1A1A);
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-section-collapsible__edit-button {
+  --button-background: transparent;
+  --button-border-width: 0;
+  --button-border: transparent;
+  --button-text: var(--color-text, #1A1A1A);
+  --button-hover-background: var(--lavender-300, #e6dcff);
+  --button-hover-border: transparent;
+  --button-hover-text: var(--color-text, #1A1A1A);
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-section-collapsible--inline-mobile-actions .profile-section-collapsible__edit-button:active,
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-section-collapsible--inline-mobile-actions .profile-section-collapsible__edit-button:focus,
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-section-collapsible--inline-mobile-actions .profile-section-collapsible__edit-button:focus-visible {
+  border: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+  background: transparent !important;
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-section-collapsible--inline-mobile-actions .profile-section-collapsible__actions > solid-ui-button.inline-flex-row {
+  order: 2;
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-section-collapsible[data-expanded="false"] .profile-section-collapsible__content {
+  display: none;
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-section-collapsible__actions.flex-column {
+  gap: 0.25rem;
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-section-collapsible[data-expanded="true"] .profile-section-collapsible__chevron {
+  transform: rotate(180deg);
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-section-collapsible__edit-label {
+  display: none !important;
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-section-collapsible__edit-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 0.875rem;
+  height: 0.875rem;
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-section-collapsible .profile-section-collapsible__edit-button {
+  display: none !important;
+  order: 2;
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-section-collapsible[data-expanded="true"] .profile-section-collapsible__edit-button {
+  display: inline-flex !important;
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-section-collapsible__actions > solid-ui-button.inline-flex-row {
+  display: inline-flex !important;
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-section-collapsible__edit-icon--add svg path {
+  fill: #1E2939 !important;
+  stroke: #1E2939 !important;
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-section-collapsible__edit-icon--projects svg path {
+  stroke-width: 1.714px !important;
+  stroke: var(--gray-800, #1E2939) !important;
+  fill: none !important;
+}
+
+/* Viewport fallback when no explicit layout attribute is available. */
+@media (min-width: 769px) {
+  .profile-section-collapsible > .profile-section-collapsible__content {
+    display: block;
+  }
+
+  .profile-section-collapsible__edit-label svg,
+  .profile__action-icon svg {
+    width: 0.875rem;
+    height: 0.875rem;
+  }
+
+  .profile-section-collapsible__edit-label svg path,
+  .profile__action-icon svg path {
+    fill: var(--color-primary, #7C4DFF);
+  }
+
+  .profile-section-collapsible__edit-label {
+    display: inline;
+    transform: translateY(-0.125rem);
+  }
+
+  .profile-section-collapsible__edit-icon {
+    display: none;
+  }
+}
+
+@media (max-width: 576px) {
+  .profile-section-collapsible--inline-mobile-actions > .profile-section-collapsible__header h2 {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  .profile-section-collapsible--inline-mobile-actions .profile-section-collapsible__actions {
+    display: inline-flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.25rem;
+    margin-top: 0;
+    flex: 0 0 auto;
+  }
+
+  .profile-section-collapsible--inline-mobile-actions .profile-section-collapsible__edit-button {
+    display: inline-flex !important;
+    order: 1;
+    --button-background: transparent;
+    --button-border-width: 0;
+    --button-border: transparent;
+    --button-text: var(--color-text, #1A1A1A);
+    --button-hover-background: var(--lavender-300, #e6dcff);
+    --button-hover-border: transparent;
+    --button-hover-text: var(--color-text, #1A1A1A);
+  }
+
+  .profile-section-collapsible__edit-button {
+    --button-background: transparent;
+    --button-border-width: 0;
+    --button-border: transparent;
+    --button-text: var(--color-text, #1A1A1A);
+    --button-hover-background: var(--lavender-300, #e6dcff);
+    --button-hover-border: transparent;
+    --button-hover-text: var(--color-text, #1A1A1A);
+  }
+
+  .profile-section-collapsible--inline-mobile-actions .profile-section-collapsible__edit-button:active,
+  .profile-section-collapsible--inline-mobile-actions .profile-section-collapsible__edit-button:focus,
+  .profile-section-collapsible--inline-mobile-actions .profile-section-collapsible__edit-button:focus-visible {
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+    background: transparent !important;
+  }
+
+  .profile-section-collapsible--inline-mobile-actions .profile-section-collapsible__actions > solid-ui-button.inline-flex-row {
+    order: 2;
+  }
+
+  .profile-section-collapsible[data-expanded="false"] .profile-section-collapsible__content {
+    display: none;
+  }
+
+  .profile-section-collapsible__actions.flex-column {
+    gap: 0.25rem;
+  }
+
+  .profile-section-collapsible[data-expanded="true"] .profile-section-collapsible__chevron {
+    transform: rotate(180deg);
+  }
+
+  .profile-section-collapsible__edit-label {
+    display: none !important;
+  }
+
+  .profile-section-collapsible__edit-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 0.875rem;
+    height: 0.875rem;
+  }
+
+  .profile-section-collapsible .profile-section-collapsible__edit-button {
+    display: none !important;
+    order: 2;
+  }
+
+  .profile-section-collapsible[data-expanded="true"] .profile-section-collapsible__edit-button {
+    display: inline-flex !important;
+  }
+
+  .profile-section-collapsible__actions > solid-ui-button.inline-flex-row {
+    display: inline-flex !important;
+  }
+
+  .profile-section-collapsible__edit-icon--add svg path {
+    fill: #1E2939 !important;
+    stroke: #1E2939 !important;
+  }
+
+  .profile-section-collapsible__edit-icon--projects svg path {
+    stroke-width: 1.714px !important;
+    stroke: var(--gray-800, #1E2939) !important;
+    fill: none !important;
+  }
+}
+
+/* Container-driven mobile adjustments when the pane is narrow inside a larger viewport. */
+@container profile-pane (max-width: 576px) {
+  .profile-section-collapsible--inline-mobile-actions > .profile-section-collapsible__header h2 {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  .profile-section-collapsible--inline-mobile-actions .profile-section-collapsible__actions {
+    display: inline-flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.25rem;
+    margin-top: 0;
+    flex: 0 0 auto;
+  }
+
+  .profile-section-collapsible--inline-mobile-actions .profile-section-collapsible__edit-button {
+    order: 1;
+    --button-background: transparent;
+    --button-border-width: 0;
+    --button-border: transparent;
+    --button-text: var(--color-text, #1A1A1A);
+    --button-hover-background: var(--lavender-300, #e6dcff);
+    --button-hover-border: transparent;
+    --button-hover-text: var(--color-text, #1A1A1A);
+  }
+
+  .profile-section-collapsible__edit-button {
+    --button-background: transparent;
+    --button-border-width: 0;
+    --button-border: transparent;
+    --button-text: var(--color-text, #1A1A1A);
+    --button-hover-background: var(--lavender-300, #e6dcff);
+    --button-hover-border: transparent;
+    --button-hover-text: var(--color-text, #1A1A1A);
+  }
+
+  .profile-section-collapsible--inline-mobile-actions .profile-section-collapsible__edit-button:active,
+  .profile-section-collapsible--inline-mobile-actions .profile-section-collapsible__edit-button:focus,
+  .profile-section-collapsible--inline-mobile-actions .profile-section-collapsible__edit-button:focus-visible {
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+    background: transparent !important;
+  }
+
+  .profile-section-collapsible--inline-mobile-actions .profile-section-collapsible__actions > solid-ui-button.inline-flex-row {
+    order: 2;
+  }
+
+  .profile-section-collapsible[data-expanded="false"] .profile-section-collapsible__content {
+    display: none;
+  }
+
+  .profile-section-collapsible__actions.flex-column {
+    gap: 0.25rem;
+  }
+
+  .profile-section-collapsible[data-expanded="true"] .profile-section-collapsible__chevron {
+    transform: rotate(180deg);
+  }
+
+  .profile-section-collapsible__edit-label {
+    display: none !important;
+  }
+
+  .profile-section-collapsible__edit-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 0.875rem;
+    height: 0.875rem;
+  }
+
+  .profile-section-collapsible .profile-section-collapsible__edit-button {
+    display: none !important;
+    order: 2;
+  }
+
+  .profile-section-collapsible[data-expanded="true"] .profile-section-collapsible__edit-button {
+    display: inline-flex !important;
+  }
+
+  .profile-section-collapsible__actions > solid-ui-button.inline-flex-row {
+    display: inline-flex !important;
+  }
+
+  .profile-section-collapsible__edit-icon--add svg path {
+    fill: #1E2939 !important;
+    stroke: #1E2939 !important;
+  }
+
+  .profile-section-collapsible__edit-icon--projects svg path {
+    stroke-width: 1.714px !important;
+    stroke: var(--gray-800, #1E2939) !important;
+    fill: none !important;
+  }
+}

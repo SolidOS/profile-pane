@@ -1,5 +1,7 @@
 import { alertDialog, openInputDialog } from '../../ui/dialog'
 import { html, render } from 'lit-html'
+import 'solid-ui/components/actions/button'
+import 'solid-ui/components/forms/select'
 import { EducationRow, EducationDetails } from './types'
 import '../../styles/EditDialogs.css'
 import '../../styles/ContactInfoEditDialog.css'
@@ -28,8 +30,87 @@ type EducationValidationResult = {
   message?: string
 }
 
+type EducationSelectOption = {
+  label: string
+  value: string
+}
+
+type EducationDateSelectKind = 'start-month' | 'start-year' | 'end-month' | 'end-year'
+
+type EducationSelectElement = HTMLElement & {
+  options?: EducationSelectOption[]
+  value?: string
+  label?: string
+}
+
+const EDUCATION_MONTH_OPTIONS: EducationSelectOption[] = [
+  { value: '01', label: 'January' },
+  { value: '02', label: 'February' },
+  { value: '03', label: 'March' },
+  { value: '04', label: 'April' },
+  { value: '05', label: 'May' },
+  { value: '06', label: 'June' },
+  { value: '07', label: 'July' },
+  { value: '08', label: 'August' },
+  { value: '09', label: 'September' },
+  { value: '10', label: 'October' },
+  { value: '11', label: 'November' },
+  { value: '12', label: 'December' }
+]
+
 function sanitizeEducationFieldValue(value: string): string {
   return sanitizeTextValue(value)
+}
+
+function readEducationSelectChange(event: Event): string {
+  const customEvent = event as CustomEvent<{ value?: string }>
+  if (typeof customEvent.detail?.value === 'string') {
+    return customEvent.detail.value
+  }
+
+  const target = event.target as HTMLSelectElement | HTMLInputElement | null
+  return typeof target?.value === 'string' ? target.value : ''
+}
+
+function getEducationYearOptions(selectedYears: string[]): EducationSelectOption[] {
+  const currentYear = new Date().getFullYear()
+  const baseYearOptions = Array.from({ length: 120 }, (_, i) => String(currentYear - i))
+  const yearOptions = Array.from(new Set([
+    ...baseYearOptions,
+    ...selectedYears
+  ].filter(Boolean))).sort((a, b) => Number(b) - Number(a))
+
+  return yearOptions.map((year) => ({ label: year, value: year }))
+}
+
+function getEducationDateSelectOptions(kind: EducationDateSelectKind, selectedYears: string[]): EducationSelectOption[] {
+  if (kind === 'start-month' || kind === 'end-month') {
+    return EDUCATION_MONTH_OPTIONS
+  }
+
+  return getEducationYearOptions(selectedYears)
+}
+
+function getEducationDateSelectValue(kind: EducationDateSelectKind, row: EducationRow): string {
+  const startDateParts = parseYearMonthFromDateText(toText(row?.startDate))
+  const endDateParts = parseYearMonthFromDateText(toText(row?.endDate))
+
+  switch (kind) {
+    case 'start-month':
+      return startDateParts.month
+    case 'start-year':
+      return startDateParts.year
+    case 'end-month':
+      return endDateParts.month
+    case 'end-year':
+      return endDateParts.year
+    default:
+      return ''
+  }
+}
+
+function getEducationDateSelectLabel(kind: EducationDateSelectKind): string {
+  return kind === 'start-month' || kind === 'end-month' ? 'Select Month' : 'Select Year'
 }
 
 function parseYearMonthFromDateText(dateText: string): { year: string, month: string } {
@@ -118,6 +199,27 @@ type EducationRowProps = {
   onChange: () => void
 }
 
+function initializeEducationDateSelects(form: HTMLFormElement, educationData: EducationRow[]): void {
+  const selectElements = form.querySelectorAll('solid-ui-select[data-education-date-kind]') as NodeListOf<EducationSelectElement>
+
+  selectElements.forEach((selectElement) => {
+    const kind = selectElement.dataset.educationDateKind as EducationDateSelectKind | undefined
+    const rowIndex = Number(selectElement.dataset.educationRowIndex)
+    if (!kind || Number.isNaN(rowIndex)) return
+
+    const educationRow = educationData[rowIndex]
+    if (!educationRow) return
+
+    const startDateParts = parseYearMonthFromDateText(toText(educationRow.startDate))
+    const endDateParts = parseYearMonthFromDateText(toText(educationRow.endDate))
+    const selectedYears = [startDateParts.year, endDateParts.year]
+
+    selectElement.options = getEducationDateSelectOptions(kind, selectedYears)
+    selectElement.value = getEducationDateSelectValue(kind, educationRow)
+    selectElement.label = getEducationDateSelectLabel(kind)
+  })
+}
+
 function renderEducationInputRow({
   educationData,
   index,
@@ -158,41 +260,7 @@ function renderEducationInputRow({
   const endYearParsedText = endDateParts.year
 
   const currentYear = new Date().getFullYear()
-  const baseYearOptions = Array.from({ length: 120 }, (_, i) => String(currentYear - i))
-  const yearOptions = Array.from(new Set([
-    ...baseYearOptions,
-    startYearText,
-    endYearParsedText
-  ].filter(Boolean))).sort((a, b) => Number(b) - Number(a))
-
-  const monthOptions = [
-    { value: '01', label: 'January' },
-    { value: '02', label: 'February' },
-    { value: '03', label: 'March' },
-    { value: '04', label: 'April' },
-    { value: '05', label: 'May' },
-    { value: '06', label: 'June' },
-    { value: '07', label: 'July' },
-    { value: '08', label: 'August' },
-    { value: '09', label: 'September' },
-    { value: '10', label: 'October' },
-    { value: '11', label: 'November' },
-    { value: '12', label: 'December' }
-  ]
-
-  const renderMonthOptions = (selectedMonth: string) => html`
-    <option value="" ?selected=${!selectedMonth}>Select month</option>
-    ${monthOptions.map((month) => html`
-      <option value=${month.value} ?selected=${month.value === selectedMonth}>${month.label}</option>
-    `)}
-  `
-
-  const renderYearOptions = (selectedYear: string) => html`
-    <option value="" ?selected=${!selectedYear}>Select year</option>
-    ${yearOptions.map((year) => html`
-      <option value=${year} ?selected=${year === selectedYear}>${year}</option>
-    `)}
-  `
+  const selectedYears = [startYearText, endYearParsedText]
   
   const handleEducationInput = (field: EducationEditableField) => (e: Event) => {
     const target = e.target as HTMLInputElement
@@ -214,8 +282,7 @@ function renderEducationInputRow({
   }
 
   const handleStartMonthChange = (event: Event) => {
-    const target = event.target as HTMLSelectElement
-    const month = target.value
+    const month = readEducationSelectChange(event)
     const year = parseYearMonthFromDateText(toText(educationData[index]?.startDate)).year || String(currentYear)
     const nextStartDate = buildDateLiteral(month, year)
     if (educationData[index]) {
@@ -225,8 +292,7 @@ function renderEducationInputRow({
   }
 
   const handleStartYearChange = (event: Event) => {
-    const target = event.target as HTMLSelectElement
-    const year = target.value
+    const year = readEducationSelectChange(event)
     const month = parseYearMonthFromDateText(toText(educationData[index]?.startDate)).month || '01'
     const nextStartDate = buildDateLiteral(month, year)
     if (educationData[index]) {
@@ -236,8 +302,7 @@ function renderEducationInputRow({
   }
 
   const handleEndMonthChange = (event: Event) => {
-    const target = event.target as HTMLSelectElement
-    const month = target.value
+    const month = readEducationSelectChange(event)
     const year = parseYearMonthFromDateText(toText(educationData[index]?.endDate)).year || String(currentYear)
     const nextEndDate = buildDateLiteral(month, year)
     if (educationData[index]) {
@@ -247,8 +312,7 @@ function renderEducationInputRow({
   }
 
   const handleEndYearChange = (event: Event) => {
-    const target = event.target as HTMLSelectElement
-    const year = target.value
+    const year = readEducationSelectChange(event)
     const month = parseYearMonthFromDateText(toText(educationData[index]?.endDate)).month || '01'
     const nextEndDate = buildDateLiteral(month, year)
     if (educationData[index]) {
@@ -269,16 +333,18 @@ function renderEducationInputRow({
   return html`
     <div class="profile-edit-dialog__row" role="group" aria-labelledby=${educationHeadingId}>
       <h4 id=${educationHeadingId} class="profile-edit-dialog__entry-heading">${label}</h4>
-      <div class="profile-edit-dialog__actions profile-edit-dialog__actions--edge">
-        <button
+      <div class="profile-edit-dialog__actions profile-edit-dialog__actions--edge flex-row align-center justify-end">
+        <solid-ui-button
           type="button"
+          variant="icon"
+          size="md"
           class="profile-edit-dialog__delete-button"
           aria-label=${`Delete education ${displayIndex + 1}`}
           title=${deleteEntryButtonTitleText}
           @click=${handleDelete}
         >
-          <span class="profile-edit-dialog__delete-icon" aria-hidden="true">${trashIcon}</span>
-        </button>
+          <span slot="icon" class="profile-edit-dialog__delete-icon" aria-hidden="true">${trashIcon}</span>
+        </solid-ui-button>
       </div>
     </div>
     <label aria-label=${`${label} School/College`} class="label profile-edit-dialog__field">
@@ -319,27 +385,59 @@ function renderEducationInputRow({
     <div class="profile-edit-dialog__row">
       <label aria-label=${startMonthLabel} class="label profile-edit-dialog__field-type">
         Start Month
-        <select name=${startMonthInputName} id=${startMonthSelectId} @change=${handleStartMonthChange}>
-          ${renderMonthOptions(startMonthValue)}
-        </select>
+        <solid-ui-select
+          class="profile-edit-dialog__education-date-select"
+          name=${startMonthInputName}
+          id=${startMonthSelectId}
+          data-education-date-kind="start-month"
+          data-education-row-index=${String(index)}
+          .options=${getEducationDateSelectOptions('start-month', selectedYears)}
+          .value=${startMonthValue}
+          .label=${getEducationDateSelectLabel('start-month')}
+          @change=${handleStartMonthChange}
+        ></solid-ui-select>
       </label>
       <label aria-label=${startYearLabel} class="label profile-edit-dialog__field-type">
         Start Year
-        <select name=${startYearInputName} id=${startYearSelectId} @change=${handleStartYearChange}>
-          ${renderYearOptions(startYearText)}
-        </select>
+        <solid-ui-select
+          class="profile-edit-dialog__education-date-select"
+          name=${startYearInputName}
+          id=${startYearSelectId}
+          data-education-date-kind="start-year"
+          data-education-row-index=${String(index)}
+          .options=${getEducationDateSelectOptions('start-year', selectedYears)}
+          .value=${startYearText}
+          .label=${getEducationDateSelectLabel('start-year')}
+          @change=${handleStartYearChange}
+        ></solid-ui-select>
       </label>
       <label aria-label=${endMonthLabel} class="label profile-edit-dialog__field-type">
         End Month
-        <select name=${endMonthInputName} id=${endMonthSelectId} @change=${handleEndMonthChange}>
-          ${renderMonthOptions(endMonthValue)}
-        </select>
+        <solid-ui-select
+          class="profile-edit-dialog__education-date-select"
+          name=${endMonthInputName}
+          id=${endMonthSelectId}
+          data-education-date-kind="end-month"
+          data-education-row-index=${String(index)}
+          .options=${getEducationDateSelectOptions('end-month', selectedYears)}
+          .value=${endMonthValue}
+          .label=${getEducationDateSelectLabel('end-month')}
+          @change=${handleEndMonthChange}
+        ></solid-ui-select>
       </label>
       <label aria-label=${endYearLabel} class="label profile-edit-dialog__field-type">
         End Year
-        <select name=${endYearInputName} id=${endYearSelectId} @change=${handleEndYearChange}>
-          ${renderYearOptions(endYearParsedText)}
-        </select>
+        <solid-ui-select
+          class="profile-edit-dialog__education-date-select"
+          name=${endYearInputName}
+          id=${endYearSelectId}
+          data-education-date-kind="end-year"
+          data-education-row-index=${String(index)}
+          .options=${getEducationDateSelectOptions('end-year', selectedYears)}
+          .value=${endYearParsedText}
+          .label=${getEducationDateSelectLabel('end-year')}
+          @change=${handleEndYearChange}
+        ></solid-ui-select>
       </label>
     </div>
     <label aria-label=${`${label} Description`} class="label profile-edit-dialog__field profile-edit-dialog__field--full profile-edit-dialog__field--stack">
@@ -387,24 +485,26 @@ function renderEducationSection(educationData: EducationRow[], onAddRow: () => v
   return html`
     <section 
       aria-labelledby="education-heading" 
-      class="educationEditSection section-bg">
+      class="profile-edit-dialog__section--education section-bg">
       <header class="profile__section-header">
         <h3 id="education-heading" class="profile-edit-dialog__section-heading">
-          <span class="sectionTitleIcon" aria-hidden="true">&#9993;</span>
+          <span class="profile-edit-dialog__section-title-icon" aria-hidden="true">&#9993;</span>
           Education
         </h3>
-        <button
+        <solid-ui-button
           type="button"
+          variant="secondary"
+          size="sm"
           class="profile__action-button profile-action-text flex-center"
           data-dialog-add-more="true"
           aria-label="Add another education entry"
           @click=${createNewRow}
         >
-          <span class="profile__add-more-content inline-flex-row">
-            <span class="profile__add-more-icon inline-flex-row" aria-hidden="true">${addIcon}</span>
-            Add More
+          <span class="profile__add-more-content">
+            <span class="profile__add-more-icon" aria-hidden="true">${addIcon}</span>
+            <span>Add More</span>
           </span>
-        </button>
+        </solid-ui-button>
       </header>
       <fieldset>
         <legend class="sr-only">Education entries</legend>
@@ -435,6 +535,8 @@ function renderEducationEditTemplate(
       ? html`<p class="profile-edit-dialog__login-message">${ownerLoginRequiredDialogMessageText}</p>`
       : null}
   `, form)
+
+  initializeEducationDateSelects(form, formState.educationData)
 }
 
 function createEducationEditForm(educationData: EducationDetails[], viewerMode: ViewerMode) {

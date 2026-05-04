@@ -28,8 +28,6 @@ transform: translateX(-4px);
 
 .profile__info {
   grid-area: info;
-  display: flex;
-  flex-direction: column;
   flex: 1 1 auto;
   min-width: 0;
   align-items: flex-start;
@@ -54,8 +52,6 @@ transform: translateX(-4px);
 }
 
 .profile__header-bar {
-  display: flex;
-  flex-direction: column;
   align-items: flex-start;
   gap: 0.125rem;
   width: 100%;
@@ -63,10 +59,27 @@ transform: translateX(-4px);
   padding: 0;
 }
 
+.profile__actions {
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-base, 1rem);
+  margin-bottom: var(--spacing-xs);
+}
+
 .profile__heading-actions {
   grid-area: actions;
   margin-left: auto;
   align-self: flex-start;
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-xs, 0.5rem);
+  flex-wrap: wrap;
+}
+
+.profile__heading-actions > .profile-friends-button__section,
+.profile__heading-actions > #add-to-contacts-button-container {
+  width: auto;
+  min-width: 0;
+  flex: 0 0 auto;
 }
 
 .profile__avatar {
@@ -123,8 +136,6 @@ transform: translateX(-4px);
 
 .profile__meta-row .profile__item,
 .profile__contact-row .profile__item {
-  display: flex;
-  align-items: center;
   gap: var(--spacing-2xs, 0.625rem);
   min-width: 0;
 }
@@ -156,13 +167,13 @@ transform: translateX(-4px);
 
 .profile__detail-icon {
   display: block;
-  width: 1rem;
-  height: 1rem;
+  width: var(--icon-xxs, 1rem);
+  height: var(--icon-xxs, 1rem);
 }
 
 .profile__hero {
-  width: 140px;
-  height: 140px;
+  width: 8.75rem;
+  height: 8.75rem;
   border-radius: var(--border-radius-full, 0.625rem); /* 10px */;
   border: var(--border-width-sm, 0.1rem) solid var(--color-primary, #7C4DFF);
   background: lightgray 50% / cover no-repeat;
@@ -172,11 +183,11 @@ transform: translateX(-4px);
 }
 
 .profile__hero-alt {
-  width: 140px;
-  height: 140px;
-  padding: 0 36.4px; 
+  width: 8.75rem;
+  height: 8.75rem;
+  padding: 0 2.275rem;
   border-radius: var(--border-radius-full, 0.625rem); /* 10px */;
-  border: 1.6px dashed #CBD5E1;
+  border: 0.1rem dashed #CBD5E1;
   background: #F8FAFC;
   box-sizing: border-box;
 }
@@ -184,9 +195,6 @@ transform: translateX(-4px);
 /* added because the icon wasn't centering on mobile
    due to styles in mashlib */
 .profile__hero-alt .profile__hero-icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
   line-height: 0;
 }
 
@@ -196,7 +204,94 @@ transform: translateX(-4px);
   height: 100%;
 }
 
-@media (max-width: 640px) {
+@media (max-width: 900px) {
+  .profile__heading-actions {
+    justify-self: end;
+    justify-content: flex-end;
+    align-items: flex-end;
+    flex-direction: column;
+    width: auto;
+  }
+}
+
+@container profile-pane (max-width: 900px) {
+  .profile__heading-actions {
+    justify-self: end;
+    justify-content: flex-end;
+    align-items: flex-end;
+    flex-direction: column;
+    width: auto;
+  }
+}
+/* layout = mobile */
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile__heading-top {
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  grid-template-areas:
+    "avatar info actions"
+    "details details details";
+  column-gap: var(--spacing-sm, 0.75rem);
+  row-gap: var(--spacing-sm, 0.75rem);
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile__heading-actions {
+  justify-self: end;
+  justify-content: flex-end;
+  width: auto;
+  gap: var(--spacing-2xs, 0.3125rem);
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile__name {
+  font-size: var(--profile-mobile-header-name-size, var(--font-size-xl, 1.375rem));
+  line-height: 1.15;
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile__identity {
+  gap: 0.125rem;
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile__pronouns {
+  font-size: var(--profile-mobile-header-pronouns-size, 0.6875rem);
+  line-height: 1.1;
+  white-space: nowrap;
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile__role-org {
+  font-size: var(--profile-mobile-header-job-title-size, var(--font-size-md, 1rem));
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile__hero,
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile__hero-alt {
+  width: var(--profile-mobile-header-image-size, 4.375rem);
+  height: var(--profile-mobile-header-image-size, 4.375rem);
+  aspect-ratio: 1 / 1;
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile__hero-alt {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile__hero-icon {
+  display: block;
+  margin: 0 auto;
+  width: 3rem;
+  height: 3rem;
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile__details {
+  font-size: var(--profile-mobile-header-detail-size, var(--font-size-xxs, 0.75rem));
+  gap: var(--spacing-xs, 0.5rem);
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile__meta-row,
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile__contact-row {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: 0.25rem;
+}
+
+@media (max-width: 576px) {
   .profile__heading-top {
     grid-template-columns: auto minmax(0, 1fr) auto;
     grid-template-areas:
@@ -206,8 +301,15 @@ transform: translateX(-4px);
     row-gap: var(--spacing-sm, 0.75rem);
   }
 
+  .profile__heading-actions {
+    justify-self: end;
+    justify-content: flex-end;
+    width: auto;
+    gap: var(--spacing-2xs, 0.3125rem);
+  }
+
   .profile__name {
-    font-size: 1.5rem;
+    font-size: var(--profile-mobile-header-name-size, var(--font-size-xl, 1.375rem));
     line-height: 1.15;
   }
 
@@ -216,15 +318,20 @@ transform: translateX(-4px);
   }
 
   .profile__pronouns {
-    font-size: var(--font-size-xs, 0.75rem);
+    font-size: var(--profile-mobile-header-pronouns-size, 0.6875rem);
     line-height: 1.1;
     white-space: nowrap;
   }
 
+  .profile__role-org {
+    font-size: var(--profile-mobile-header-job-title-size, var(--font-size-md, 1rem));
+  }
+
   .profile__hero,
   .profile__hero-alt {
-    width: 112px;
-    height: 112px;
+    width: var(--profile-mobile-header-image-size, 4.375rem);
+    height: var(--profile-mobile-header-image-size, 4.375rem);
+    aspect-ratio: 1 / 1;
   }
 
   .profile__hero-alt {
@@ -237,11 +344,12 @@ transform: translateX(-4px);
   .profile__hero-icon {
     display: block;
     margin: 0 auto;
-    width: 48px;
-    height: 48px;
+    width: 3rem;
+    height: 3rem;
   }
 
   .profile__details {
+    font-size: var(--profile-mobile-header-detail-size, var(--font-size-xxs, 0.75rem));
     gap: var(--spacing-xs, 0.5rem);
   }
 
@@ -252,7 +360,7 @@ transform: translateX(-4px);
   }
 }
 
-@container profile-pane (max-width: 640px) {
+@container profile-pane (max-width: 576px) {
   .profile__heading-top {
     grid-template-columns: auto minmax(0, 1fr) auto;
     grid-template-areas:
@@ -262,8 +370,14 @@ transform: translateX(-4px);
     row-gap: var(--spacing-sm, 0.75rem);
   }
 
+  .profile__heading-actions {
+    justify-self: end;
+    justify-content: flex-end;
+    width: auto;
+  }
+
   .profile__name {
-    font-size: 1.5rem;
+    font-size: var(--profile-mobile-header-name-size, var(--font-size-xl, 1.375rem));
     line-height: 1.15;
   }
 
@@ -272,15 +386,20 @@ transform: translateX(-4px);
   }
 
   .profile__pronouns {
-    font-size: var(--font-size-xs, 0.75rem);
+    font-size: var(--profile-mobile-header-pronouns-size, 0.6875rem);
     line-height: 1.1;
     white-space: nowrap;
   }
 
+  .profile__role-org {
+    font-size: var(--profile-mobile-header-job-title-size, var(--font-size-md, 1rem));
+  }
+
   .profile__hero,
   .profile__hero-alt {
-    width: 112px;
-    height: 112px;
+    width: var(--profile-mobile-header-image-size, 4.375rem);
+    height: var(--profile-mobile-header-image-size, 4.375rem);
+    aspect-ratio: 1 / 1;
   }
 
   .profile__hero-alt {
@@ -293,11 +412,12 @@ transform: translateX(-4px);
   .profile__hero-icon {
     display: block;
     margin: 0 auto;
-    width: 48px;
-    height: 48px;
+    width: 3rem;
+    height: 3rem;
   }
 
   .profile__details {
+    font-size: var(--profile-mobile-header-detail-size, var(--font-size-xxs, 0.75rem));
     gap: var(--spacing-xs, 0.5rem);
   }
 

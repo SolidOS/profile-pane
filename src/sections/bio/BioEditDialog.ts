@@ -10,6 +10,7 @@ import { hasNonEmptyText, sanitizeTextValue, toText } from '../../textUtils'
 import {
   dialogCancelLabelText,
   dialogSubmitLabelText,
+  editBioDialogTitleText,
   ownerLoginRequiredDialogMessageText,
   saveBioUpdatesFailedPrefixText
 } from '../../texts'
@@ -48,7 +49,7 @@ function renderBioSection(bioRow: BioRow, onChange: () => void): TemplateResult 
   }
 
   return html`
-    <section class="profile-edit-dialog__section" aria-label="Bio editor">
+    <section class="profile-edit-dialog__section flex-column gap-xs" aria-label="Bio editor">
 
       <label aria-label="Bio description" class="label profile-edit-dialog__bio-field-container">
         <span class="profile-edit-dialog__field-description">
@@ -107,7 +108,7 @@ export async function createBioEditDialog(
   const { form, formState } = createBioEditForm(bioData, viewerMode)
 
   const result = await openInputDialog({
-    title: 'Edit Bio',
+    title: editBioDialogTitleText,
     dom,
     form,
     headerAction: { type: 'none' },

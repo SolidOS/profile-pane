@@ -1,7 +1,7 @@
 import { render } from 'lit-html'
 import { SocialCard } from '../src/sections/social/SocialSection'
-import axe from 'axe-core'
 import { sym } from 'rdflib'
+import { runAxe } from './helpers/runAxe'
 
 describe('SocialCard accessibility', () => {
   it('has no accessibility violations', async () => {
@@ -25,7 +25,7 @@ describe('SocialCard accessibility', () => {
     document.body.appendChild(container)
     render(SocialCard(SocialData, 'anonymous'), container)
 
-    const results = await axe.run(container)
+    const results = await runAxe(container)
     expect(results.violations.length).toBe(0)
   })
 
@@ -43,12 +43,12 @@ describe('SocialCard accessibility', () => {
     document.body.appendChild(container)
     render(SocialCard(SocialData, 'anonymous'), container)
 
-    const moreButton = container.querySelector('.socialCard__more-button') as HTMLButtonElement | null
+    const moreButton = container.querySelector('.social-card__more-button') as HTMLButtonElement | null
     expect(moreButton?.textContent).toContain('1 more')
 
     moreButton?.click()
 
-    const socialCard = container.querySelector('.socialCard') as HTMLElement | null
+    const socialCard = container.querySelector('.social-card') as HTMLElement | null
     expect(socialCard?.getAttribute('data-mobile-expanded')).toBe('true')
 
     container.remove()

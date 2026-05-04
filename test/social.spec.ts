@@ -1,7 +1,7 @@
 import pane from '../src/index'
 import { parse } from 'rdflib'
 import { store } from 'solid-logic'
-import { findByTestId } from '@testing-library/dom'
+import { waitFor } from '@testing-library/dom'
 import { context, doc, subject } from './setup'
 
 
@@ -79,12 +79,15 @@ describe('profile-pane', () => {
       parse(exampleProfile, store, doc.uri)
       const result = pane.render(subject, context)
       console.log('Pane rendered <<< ', result.innerHTML , '>>>')
-      // Wait for async rendering to complete
-      element = await findByTestId(result, 'social-media', {}, { timeout: 5000 })
+      element = await waitFor(() => {
+        const socialMedia = result.querySelector('#social-media') as HTMLElement | null
+        expect(socialMedia).not.toBeNull()
+        return socialMedia
+      }, { timeout: 5000 })
     })
 
     it('renders link to Facebook', () => {
-      expect(element).toContainHTML('Facebook')
+      expect(element.querySelector('a[aria-label*="Facebook"]')).toBeTruthy()
     })
 
     /*

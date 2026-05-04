@@ -1,4 +1,4 @@
-import { LiveStore, NamedNode, Node, st, sym } from 'rdflib'
+import { LiveStore, NamedNode, Node, literal, st, sym } from 'rdflib'
 import { ns } from 'solid-ui'
 import { ContactAddressRow, ContactMutationPlan, ContactPointRow } from './types'
 import { MutationOps } from '../shared/types'
@@ -40,11 +40,11 @@ function buildAddressStatements(subject: NamedNode, doc: NamedNode, node: Node, 
   const inserts = [st(subject, ns.vcard('hasAddress'), node as any, doc)]
 
   if (address.type) inserts.push(st(node as any, ns.rdf('type'), ns.vcard(address.type), doc))
-  if (address.streetAddress) inserts.push(st(node as any, ns.vcard('street-address'), address.streetAddress as any, doc))
-  if (address.locality) inserts.push(st(node as any, ns.vcard('locality'), address.locality as any, doc))
-  if (address.region) inserts.push(st(node as any, ns.vcard('region'), address.region as any, doc))
-  if (address.postalCode) inserts.push(st(node as any, ns.vcard('postal-code'), address.postalCode as any, doc))
-  if (address.countryName) inserts.push(st(node as any, ns.vcard('country-name'), address.countryName as any, doc))
+  if (address.streetAddress) inserts.push(st(node as any, ns.vcard('street-address'), literal(address.streetAddress), doc))
+  if (address.locality) inserts.push(st(node as any, ns.vcard('locality'), literal(address.locality), doc))
+  if (address.region) inserts.push(st(node as any, ns.vcard('region'), literal(address.region), doc))
+  if (address.postalCode) inserts.push(st(node as any, ns.vcard('postal-code'), literal(address.postalCode), doc))
+  if (address.countryName) inserts.push(st(node as any, ns.vcard('country-name'), literal(address.countryName), doc))
 
   return inserts
 }

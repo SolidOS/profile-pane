@@ -1,4 +1,4 @@
-import { describe, expect, it } from "@jest/globals"
+import { describe, expect, it, jest } from "@jest/globals"
 import { blankNode, graph, literal, st, sym } from 'rdflib'
 import { ns } from 'solid-ui'
 import { presentProjects } from '../../src/sections/projects/selectors'
@@ -103,5 +103,103 @@ describe('Projects selectors and mutations', () => {
     expect(links).toHaveLength(1)
     expect(links[0].object.value).toBe('https://example.org/project-a')
     expect(store.statementsMatching(subject, ns.schema('memberOf'), null, doc)).toHaveLength(0)
+  })
+
+  it('dedupes created project URLs after normalization', async () => {
+    const store = graph() as any
+    const subject = sym('https://example.com/profile/card#me')
+    const doc = subject.doc()
+
+    store.updater = {
+      update: (deletions: any[], insertions: any[], callback: Function) => {
+        deletions.forEach((statement) => store.remove(st(statement.subject, statement.predicate, statement.object, statement.why)))
+        insertions.forEach((statement) => store.add(statement.subject, statement.predicate, statement.object, statement.why))
+        callback('', true)
+      }
+    }
+
+    await processProjectsMutations(store, subject, {
+      create: [
+        { url: ' https://example.org/project-a#first ', entryNode: '', status: 'new' },
+        { url: 'https://example.org/project-a#second', entryNode: '', status: 'new' },
+        { url: 'not a url', entryNode: '', status: 'new' }
+      ],
+      update: [],
+      remove: []
+    } as any)
+
+    const links = store.statementsMatching(subject, ns.solid('community'), null, doc)
+    expect(links).toHaveLength(1)
+    expect(links[0].object.value).toBe('https://example.org/project-a#first')
+  })
+
+  it('falls back to updateDav after a patch failure', async () => {
+    const store = graph() as any
+    const subject = sym('https://example.com/profile/card#me')
+    const doc = subject.doc()
+    const existing = sym('https://example.org/project-a')
+
+    store.add(subject, ns.solid('community'), existing, doc)
+
+    const updateDav = jest.fn((passedDoc: any, deletions: any[], insertions: any[], callback: Function) => {
+      deletions.forEach((statement) => store.remove(st(statement.subject, statement.predicate, statement.object, statement.why)))
+      insertions.forEach((statement) => store.add(statement.subject, statement.predicate, statement.object, statement.why))
+      callback(passedDoc.value, true)
+    })
+
+    store.fetcher = {
+      load: jest.fn(async () => undefined)
+    }
+
+    store.updater = {
+      update: (_deletions: any[], _insertions: any[], callback: Function) => callback('', false, 'Web error: 405 on patch'),
+      updateDav
+    }
+
+    await processProjectsMutations(store, subject, {
+      create: [],
+      update: [{ url: 'https://example.org/project-b', entryNode: existing.value, status: 'modified' }],
+      remove: []
+    } as any)
+
+    expect(updateDav).toHaveBeenCalledTimes(1)
+    const links = store.statementsMatching(subject, ns.solid('community'), null, doc)
+    expect(links).toHaveLength(1)
+    expect(links[0].object.value).toBe('https://example.org/project-b')
+  })
+
+  it('falls back to updateDav after a fetch error for patch', async () => {
+    const store = graph() as any
+    const subject = sym('https://example.com/profile/card#me')
+    const doc = subject.doc()
+    const existing = sym('https://example.org/project-a')
+
+    store.add(subject, ns.solid('community'), existing, doc)
+
+    const updateDav = jest.fn((passedDoc: any, deletions: any[], insertions: any[], callback: Function) => {
+      deletions.forEach((statement) => store.remove(st(statement.subject, statement.predicate, statement.object, statement.why)))
+      insertions.forEach((statement) => store.add(statement.subject, statement.predicate, statement.object, statement.why))
+      callback(passedDoc.value, true)
+    })
+
+    store.fetcher = {
+      load: jest.fn(async () => undefined)
+    }
+
+    store.updater = {
+      update: (_deletions: any[], _insertions: any[], callback: Function) => callback('', false, 'Fetch error for PATCH of <https://example.com/profile/card>:TypeError: Failed to fetch'),
+      updateDav
+    }
+
+    await processProjectsMutations(store, subject, {
+      create: [],
+      update: [{ url: 'https://example.org/project-b', entryNode: existing.value, status: 'modified' }],
+      remove: []
+    } as any)
+
+    expect(updateDav).toHaveBeenCalledTimes(1)
+    const links = store.statementsMatching(subject, ns.solid('community'), null, doc)
+    expect(links).toHaveLength(1)
+    expect(links[0].object.value).toBe('https://example.org/project-b')
   })
 })

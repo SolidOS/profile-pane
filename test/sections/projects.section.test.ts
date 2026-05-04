@@ -2,6 +2,7 @@ import { describe, expect, it } from "@jest/globals"
 import { render } from 'lit-html'
 import { sym } from 'rdflib'
 import { renderProjectSection } from '../../src/sections/projects/ProjectSection'
+import { runAxe } from '../helpers/runAxe'
 import { context, subject } from '../setup'
 
 describe('Projects section', () => {
@@ -24,6 +25,29 @@ describe('Projects section', () => {
 
     expect(container.querySelector('#projects-heading')).toBeTruthy()
     expect(container.textContent).toContain('Profile Pane')
+
+    container.remove()
+  })
+
+  it('has no accessibility violations', async () => {
+    const container = document.createElement('div')
+    document.body.appendChild(container)
+
+    const projects = [
+      {
+        entryNode: sym('https://example.com/profile#project1'),
+        url: 'https://example.com/project',
+        title: 'Profile Pane',
+        orgName: 'Open Source',
+        category: 'project',
+        description: 'A project to display profile data.'
+      }
+    ]
+
+    render(renderProjectSection(context.session.store, subject, projects as any, 'owner'), container)
+
+    const results = await runAxe(container)
+    expect(results.violations.length).toBe(0)
 
     container.remove()
   })

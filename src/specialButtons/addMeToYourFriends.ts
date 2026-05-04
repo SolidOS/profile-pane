@@ -1,4 +1,6 @@
 import { html, TemplateResult } from 'lit-html'
+import 'solid-ui/components/actions/button'
+import type { Button as SolidUIButtonElement } from 'solid-ui/components/actions/button'
 import { DataBrowserContext } from 'pane-registry'
 import { authn } from 'solid-logic'
 import { LiveStore, NamedNode, st } from 'rdflib'
@@ -6,23 +8,30 @@ import { ns } from 'solid-ui'
 import {
   clearPreviousMessage, complain,
   mention
-} from './buttonsHelper'
+} from '../buttonsHelper'
 import {
   addMeToYourFriendsButtonText, friendExistsAlreadyButtonText, friendExistsMessage, friendWasAddedSuccesMessage, logInAddMeToYourFriendsButtonText, userNotLoggedInErrorMessage
-} from './texts'
-import { ViewerMode } from './types'
-import './styles/ProfileCard.css'
+} from '../texts'
+import { ViewerMode } from '../types'
+import '../styles/AddMeToYourFriends.css'
 
 let buttonContainer = <HTMLDivElement>document.createElement('section')
+
+function setAddToFriendsButtonLabel(button: SolidUIButtonElement, label: string): void {
+  const labelWrapper = button.ownerDocument.createElement('span')
+  labelWrapper.className = 'profile__btn-friends-label'
+  labelWrapper.textContent = label
+  button.replaceChildren(labelWrapper)
+}
 
 const addMeToYourFriendsDiv = (
   subject: NamedNode,
   context: DataBrowserContext,
-  viewerMode: ViewerMode
+  _viewerMode: ViewerMode
 ): TemplateResult => {
 
   buttonContainer = context.dom.createElement('section') as HTMLDivElement
-  buttonContainer.setAttribute('class', 'buttonSubSection text-truncate text-center section-centered')
+  buttonContainer.setAttribute('class', 'profile-friends-button__section text-truncate text-center section-centered')
   buttonContainer.setAttribute('aria-labelledby', 'add-me-to-your-friends-button-section')
   buttonContainer.setAttribute('data-testid', 'button')
 
@@ -42,11 +51,13 @@ const addMeToYourFriendsDiv = (
 const createAddMeToYourFriendsButton = (
   subject: NamedNode,
   context: DataBrowserContext
-): HTMLButtonElement => {
+): SolidUIButtonElement => {
   let label = addMeToYourFriendsButtonText
-  const button = context.dom.createElement('button')
-  button.type = 'button'
-  button.textContent = label
+  const button = context.dom.createElement('solid-ui-button') as SolidUIButtonElement
+  button.setAttribute('type', 'button')
+  button.setAttribute('variant', 'secondary')
+  button.setAttribute('size', 'sm')
+  setAddToFriendsButtonLabel(button, label)
   button.addEventListener('click', setButtonHandler)
 
   function setButtonHandler(event: Event) {
@@ -75,15 +86,15 @@ const createAddMeToYourFriendsButton = (
       checkIfThingExists(store, me, subject, ns.foaf('knows')).then((friendExists) => {
         if (friendExists) {
           //logged in and friend exists or friend was just added
-          button.textContent = friendExistsAlreadyButtonText
+          setAddToFriendsButtonLabel(button, friendExistsAlreadyButtonText)
         } else {
           //logged in and friend does not exist yet
-          button.textContent = addMeToYourFriendsButtonText
+          setAddToFriendsButtonLabel(button, addMeToYourFriendsButtonText)
         }
       })
     } else {
       //not logged in — disable and indicate login is required
-      button.textContent = logInAddMeToYourFriendsButtonText
+      setAddToFriendsButtonLabel(button, logInAddMeToYourFriendsButtonText)
       button.disabled = true
     }
   }

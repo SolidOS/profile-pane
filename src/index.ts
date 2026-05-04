@@ -1,22 +1,16 @@
 import { DataBrowserContext } from 'pane-registry'
-import './styles/CVCard.css'
-import './styles/ChatWithMe.css'
-import './styles/ProfileCard.css'
-import './styles/ProfileView.css'
-import './styles/QRCodeCard.css'
-import './styles/SocialCard.css'
 import './styles/utilities.css'
 import { NamedNode, LiveStore } from 'rdflib'
 import { render } from 'lit-html'
 import { ProfileView } from './ProfileView'
 import { icons, ns } from 'solid-ui'
-import * as qrcode from 'qrcode'
+import { hydrateQRCodes } from './sections/qrcode/QRCodeCard'
 export {
   addMeToYourFriendsDiv,
   createAddMeToYourFriendsButton,
   saveNewThing,
   checkIfThingExists
-} from './addMeToYourFriends'
+} from './specialButtons/addMeToYourFriends'
 
 async function loadExtendedProfile(store: LiveStore, subject: NamedNode) {
   const otherProfiles = store.each(
@@ -30,6 +24,19 @@ async function loadExtendedProfile(store: LiveStore, subject: NamedNode) {
   }
 }
 
+function applyEnvironmentAttributes(
+  element: HTMLElement,
+  context: DataBrowserContext
+): void {
+  const layout = context.environment?.layout ?? 'desktop'
+  const theme = context.environment?.theme ?? 'light'
+  const inputMode = context.environment?.inputMode ?? 'pointer'
+
+  element.classList.add('profile-pane-host')
+  element.dataset.layout = layout
+  element.dataset.theme = theme
+  element.dataset.inputMode = inputMode
+}
 
 const Pane = {
   global: false,
@@ -52,39 +59,12 @@ const Pane = {
   render: (subject: NamedNode, context: DataBrowserContext): HTMLElement => {
     const target = context.dom.createElement('div')
     const store = context.session.store
+    applyEnvironmentAttributes(target, context)
 
     const renderWithData = async () => {
+      applyEnvironmentAttributes(target, context)
       render(await ProfileView(subject, context, renderWithData), target)
-      const QRCodeEles = Array.from(target.getElementsByClassName('qrcode-card'))
-      if (!QRCodeEles.length) return console.error('QRCode Ele missing')
-      for (const QRCodeElement of QRCodeEles as HTMLElement[]) {
-        const value = QRCodeElement.getAttribute('data-value')
-        if (!value) return console.error('QRCode data-value missing')
-
-        const options = {
-          type: 'svg',
-          color: {
-            dark: '#000000',
-            light: '#ffffff'
-          }
-        }
-
-        qrcode.toString(value, options, function (error, svg) {
-          if (error) {
-            console.error('QRcode error!', error)
-          } else {
-            const imageContainer = QRCodeElement.querySelector('div[role="img"]') as HTMLElement | null
-            if (!imageContainer) {
-              console.error('QRCode image container missing')
-              return
-            }
-            imageContainer.innerHTML = svg
-            imageContainer.style.width = '100%'
-            imageContainer.style.height = '100%'
-            imageContainer.style.margin = '0'
-          }
-        })
-      }
+      await hydrateQRCodes(target)
     }
 
     loadExtendedProfile(store, subject).then(async () => {

@@ -1,5 +1,6 @@
-import { openInputDialog } from '../../ui/dialog'
+import { getSharedDialogSaveButton, openInputDialog } from '../../ui/dialog'
 import { html, render } from 'lit-html'
+import 'solid-ui/components/actions/button'
 import { ProjectDetails, ProjectRow } from './types'
 import '../../styles/EditDialogs.css'
 import '../../styles/ContactInfoEditDialog.css'
@@ -93,7 +94,7 @@ function renderProjectInputRow(row: ProjectRow, onChange: () => void) {
       if (!isValidProjectUrl(url)) return
 
       const dom = (event.currentTarget as HTMLElement | null)?.ownerDocument || document
-      const saveButton = dom.querySelector('#profile-modal #modal-buttons .btn-primary') as HTMLButtonElement | null
+      const saveButton = getSharedDialogSaveButton(dom)
       saveButton?.click()
     } catch {
       // Clipboard access may fail due to browser permissions; keep dialog usable.
@@ -119,16 +120,19 @@ function renderProjectInputRow(row: ProjectRow, onChange: () => void) {
             inputmode="text"
             @input=${handleUrlInput}
           />
-          <button
+          <solid-ui-button
             type="button"
-            class="profile-edit-dialog__paste-button rounded-sm gap-xxs"
+            variant="secondary"
+            size="md"
+            label="Paste"
+            class="profile-edit-dialog__paste-button"
             aria-label="Paste project or community URL from clipboard"
             title=${pasteEntryButtonTitleText}
             @click=${handlePaste}
           >
-            <span class="profile-edit-dialog__paste-icon" aria-hidden="true">${pasteIcon}</span>
+            <span slot="icon" class="profile-edit-dialog__paste-icon" aria-hidden="true">${pasteIcon}</span>
             Paste
-          </button>
+          </solid-ui-button>
         </div>
       </label>
     </div>
@@ -174,6 +178,7 @@ export async function createProjectsEditDialog(
     dom,
     form,
     headerAction: { type: 'close' },
+    hideFooterButtons: true,
     validate: () => {
       if (viewerMode !== 'owner') {
         return ownerLoginRequiredDialogMessageText
@@ -195,20 +200,8 @@ export async function createProjectsEditDialog(
     }
   })
 
-  const modalButtons = dom.querySelector('#profile-modal #modal-buttons') as HTMLElement | null
-  const previousButtonsDisplay = modalButtons?.style.display
-  if (modalButtons) {
-    modalButtons.style.display = 'none'
-  }
-
   let result: Record<string, string> | null = null
-  try {
-    result = await dialogPromise
-  } finally {
-    if (modalButtons) {
-      modalButtons.style.display = previousButtonsDisplay || ''
-    }
-  }
+  result = await dialogPromise
 
   if (!result) return
 

@@ -1,7 +1,8 @@
 import { html } from 'lit-html'
+import 'solid-ui/components/actions/button'
 import { RoleDetails } from './types'
 import { ViewerMode } from '../../types'
-import '../../styles/CVCard.css'
+import '../../styles/ResumeSection.css'
 import { resumeHeadingText } from '../../texts'
 import { LiveStore, NamedNode } from 'rdflib'
 import { createResumeEditDialog } from './ResumeEditDialog'
@@ -26,10 +27,10 @@ function renderRole(role: RoleDetails, index: number) {
     : `${rolePeriodId} ${roleOrgId}`
 
   return html`
-    <li class="cvRole" role="listitem" aria-labelledby=${roleTitleId} aria-describedby=${ariaDescribedBy}>
-    <div class="cvRoleHeader">
+    <li class="resume-card__item flex-column" role="listitem" aria-labelledby=${roleTitleId} aria-describedby=${ariaDescribedBy}>
+    <div class="resume-card__item-header">
       <h4 id=${roleTitleId}>${role.title}</h4>
-      <p id=${rolePeriodId} class="cvRolePeriod">
+      <p id=${rolePeriodId} class="resume-card__item-period">
         <time datetime=${toMonthDateTime(role.startDate)}>${formatMonthYear(role.startDate)}</time>
         <span aria-hidden="true"> to </span>
         ${role.endDate
@@ -37,22 +38,25 @@ function renderRole(role: RoleDetails, index: number) {
           : html`<span>Present</span>`}
       </p>
     </div>
-      <p class="cvOrg" id=${roleOrgId}>
+      <p class="resume-card__organization" id=${roleOrgId}>
         <strong>${role.orgName}</strong>${role.orgLocation ? html` | ${role.orgLocation}` : ''}
       </p>
       ${role.description ? html`
-        <div class="cvDescriptionWrap">
-          <p class="cvDescriptionText" id=${roleDescriptionId}>${role.description}</p>
-          <button
+        <div class="resume-card__description-wrap">
+          <p class="resume-card__description-text" id=${roleDescriptionId}>${role.description}</p>
+          <solid-ui-button
             type="button"
-            class="cvDescriptionToggle"
+            variant="secondary"
+            size="sm"
+            label="...more"
+            class="resume-card__description-toggle"
             aria-controls=${roleDescriptionId}
             aria-expanded="false"
             hidden
             @click=${toggleDescription}
           >
             ...more
-          </button>
+          </solid-ui-button>
         </div>
       ` : ''}
     </li>
@@ -66,15 +70,14 @@ function renderRoles(roles: RoleDetails[]) {
 
 export const CVCard = (
   cvData: RoleDetails[],
-  viewerMode: ViewerMode
+  _viewerMode: ViewerMode
 ) => {
-  void viewerMode
   const hasRoles = Array.isArray(cvData) && cvData.length > 0
   if (!hasRoles) return html``
 
   return html`
-    <article class="cvCard" aria-label="Resume" data-testid="curriculum-vitae">
-      <section class="cvSection">
+    <article class="resume-card" aria-label="Resume" data-testid="curriculum-vitae">
+      <section class="resume-card__section">
         <ul role="list" aria-label="Work experience in chronological order">
           ${renderRoles(cvData)}
         </ul>
@@ -89,7 +92,7 @@ function renderResumeSectionDefault(
   resumeDetails: RoleDetails[], 
   viewerMode: ViewerMode, 
   onSaved?: () => Promise<void> | void) {
-    scheduleDescriptionOverflowCheck()
+  scheduleDescriptionOverflowCheck()
 
   const hasResume = resumeDetails.length > 0
   const showSection = true
@@ -106,28 +109,32 @@ function renderResumeSectionDefault(
     >
       <header class="profile__section-header profile-section-collapsible__header">
         <h2 id="cv-heading" tabindex="-1">${resumeHeadingText}</h2>
-        <div class="profile-section-collapsible__actions flex-column">
+        <div class="profile-section-collapsible__actions flex-column align-end">
           ${isOwner ? html`
-            <button
+            <solid-ui-button
               type="button"
+              variant="secondary"
+              size="sm"
               class="profile__action-button profile-action-text flex-center profile-section-collapsible__edit-button"
               aria-label="Edit resume details"
               @click=${(event: Event) => createResumeEditDialog(event, store, subject, resumeDetails, viewerMode, onSaved)}
             >
               <span class="profile-section-collapsible__edit-label">${editIcon} Edit</span>
               <span class="profile-section-collapsible__edit-icon" aria-hidden="true">${editIcon}</span>
-            </button>
+            </solid-ui-button>
           ` : html``}
-          <button
+          <solid-ui-button
             type="button"
-            class="inline-flex-row"
+            variant="icon"
+            size="sm"
+            class="inline-flex-row justify-center"
             aria-label="Toggle resume section"
             aria-controls="cv-panel"
             aria-expanded="false"
             @click=${toggleCollapsibleSection}
           >
-            <span class="profile-section-collapsible__chevron" aria-hidden="true">⌄</span>
-          </button>
+            <span slot="icon" class="profile-section-collapsible__chevron" aria-hidden="true">⌄</span>
+          </solid-ui-button>
         </div>
       </header>
       <div id="cv-panel" class="profile-section-collapsible__content" aria-hidden="true">
@@ -142,7 +149,8 @@ function renderOwnerEmptyResumeContent(
   subject: NamedNode,
   resumeDetails: RoleDetails[],
   viewerMode: ViewerMode,
-  onSaved?: () => Promise<void> | void) {
+  onSaved?: () => Promise<void> | void
+) {
 
   return html`
     <div class="profile__empty-state-content flex-column-center" role="group" aria-label="Empty resume section">
@@ -151,10 +159,11 @@ function renderOwnerEmptyResumeContent(
         You haven't included any professional experience yet. Consider adding your work history to enhance your resume.
       </p>
     </div>
-    <button
+    <solid-ui-button
       type="button"
+      variant="secondary"
+      size="sm"
       class="profile__action-button--empty"
-      aria-label="Add resume details"
       @click=${(event: Event) => {
         return createResumeEditDialog(
           event,
@@ -167,7 +176,7 @@ function renderOwnerEmptyResumeContent(
       }}
     >
       <span class="profile__action-icon" aria-hidden="true">${plusDarkIcon} Add Resume</span>
-    </button>
+    </solid-ui-button>
 
   `
 }
@@ -180,7 +189,7 @@ function renderOwnerEmptyResumeSection(
   onSaved?: () => Promise<void> | void
 ) {
   return html`
-    <section 
+    <section
       aria-labelledby="resume-heading" 
       data-profile-section="resume"
       class="profile__section--empty border-lighter flex-column-center rounded-md gap-lg" 

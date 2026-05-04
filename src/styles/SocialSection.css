@@ -1,0 +1,96 @@
+/* Social section styles. */
+
+.social-card,
+.social-card__list {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+.social-card__list {
+  gap: var(--spacing-xxs);
+}
+
+.social-card__link {
+  color: var(--color-primary);
+  text-decoration: none;
+  gap: var(--spacing-xs);
+  padding: var(--spacing-xs);
+  border-radius: var(--border-radius-base);
+  transition: background-color var(--animation-duration) ease;
+  position: relative;
+  flex: 1;
+  min-width: 0;
+}
+
+.social-card__link:hover,
+.social-card__link:focus {
+  text-decoration: underline;
+  background-color: rgba(124, 77, 255, 0.1);
+}
+
+.social-card__link[href^="http"]:after {
+  content: " (external link)";
+  position: absolute;
+  left: -10000px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+.social-card__icon {
+  width: var(--icon-base);
+  height: var(--icon-base);
+  border-radius: var(--border-radius-base);
+  background: var(--color-card-bg);
+  flex-shrink: 0;
+}
+
+.social-card__more-button {
+  display: none;
+}
+
+solid-ui-button.social-card__more-button {
+  --button-height-sm: 0;
+  --button-padding-x-sm: 0;
+  --button-background: transparent;
+  --button-border: transparent;
+  --button-text: var(--color-primary, #7C4DFF);
+  --button-hover-background: transparent;
+  --button-hover-border: transparent;
+  --button-hover-text: var(--color-primary, #7C4DFF);
+}
+
+@media (max-width: 1000px) {
+  .social-card .social-card__list {
+    display: grid;
+    grid-template-columns: repeat(5, max-content);
+    justify-content: flex-start;
+  }
+
+  .social-card[data-mobile-expanded="true"] .social-card__list {
+    grid-template-columns: repeat(3, max-content);
+  }
+
+  .social-card[data-mobile-expanded="false"] .social-card__item:nth-child(n + 11) {
+    display: none;
+  }
+
+  .social-card__more-button,
+  solid-ui-button.social-card__more-button::part(button) {
+    display: inline-flex;
+    margin-top: var(--spacing-xs);
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: var(--color-primary, #7C4DFF);
+    font: inherit;
+    font-weight: var(--font-weight-bold, 600);
+    cursor: var(--profile-interactive-cursor, pointer);
+  }
+
+  .social-card[data-mobile-expanded="true"] .social-card__more-button {
+    display: none;
+  }
+}

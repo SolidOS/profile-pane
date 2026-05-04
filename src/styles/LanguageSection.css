@@ -1,0 +1,24 @@
+.languages__list {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  align-items: flex-start;
+  gap: var(--spacing-sm, 0.938rem);
+  align-self: stretch;
+}
+
+.languages__item-label {
+  color: var(--gray-900, #101828);
+  font-size: var(--font-size-md, 1rem);
+  font-weight: var(--font-weight-md, 500);
+}
+
+.languages__empty-icon {
+  width: var(--icon-xs, 1.5rem);
+  height: var(--icon-xs, 1.5rem);
+  flex-shrink: 0;
+}

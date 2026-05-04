@@ -1,0 +1,295 @@
+/* Profile layout styles. */
+
+.profile-grid .profile__main {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  margin-bottom: 0;
+  overflow-wrap: anywhere;
+  align-items: flex-start;
+}
+
+.profile-grid .profile__sidebar {
+  align-items: stretch;
+  text-align: left;
+  border-radius: var(--border-radius-base);
+  background: var(--color-background, #F8F9FB);
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  overflow-x: clip;
+}
+
+.profile-grid .profile__section {
+  padding: var(--spacing-lg);
+  border-radius: var(--border-radius-base);
+  background: var(--color-card-bg, #FFF);
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  overflow-x: clip;
+}
+
+.profile-grid .profile__section--empty {
+  padding: var(--spacing-1xl, 2.5rem) var(--spacing-lg, 1.5625rem);
+  background: var(--color-card-bg, #fff);
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  overflow-x: clip;
+}
+
+.profile-grid .profile__action-button--empty {
+  background: var(--color-card-bg, #fff);
+  width: fit-content;
+  min-width: fit-content;
+  max-width: fit-content;
+  white-space: nowrap;
+  box-sizing: border-box;
+  border: var(--border-width-sm, 1px) solid var(--color-border-darker, #4A5565);
+  color: var(--color-text-primary, #314158);
+  font-size: var(--font-size-sm, 0.875rem);
+  font-weight: var(--font-weight-medium, 500);
+  line-height: var(--line-height-tight, 1.4);
+}
+
+.profile-grid solid-ui-button.profile__action-button--empty {
+  width: fit-content;
+  min-width: fit-content;
+  max-width: fit-content;
+  --button-font-size-sm: var(--font-size-sm, 0.875rem);
+  --button-font-weight: var(--font-weight-medium, 500);
+  --button-line-height: var(--line-height-tight, 1.4);
+  --button-background: var(--color-card-bg, #fff);
+  --button-text: var(--color-text-primary, #314158);
+  --button-border: var(--color-border-darker, #4A5565);
+  --button-hover-background: var(--color-primary, #7C4DFF);
+  --button-hover-text: var(--white, #fff);
+  --button-hover-border: var(--color-primary, #7C4DFF);
+}
+
+.profile-grid .profile__action-button--empty:hover {
+  background: var(--color-primary, #7C4DFF);
+  border-color: var(--color-primary, #7C4DFF);
+  color: var(--white, #fff);
+}
+
+.profile-grid .profile__empty-state-message {
+  color: var(--color-text-secondary, #62748E);
+  text-align: center;
+  font-size: var(--font-size-xs, 0.813rem);
+  font-weight: var(--font-weight-normal, 400);
+  line-height: var(--line-height-tight, 1.4);
+}
+
+.profile-pane-host[data-layout='mobile'] .profile-grid {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--spacing-sm, 0.938rem);
+}
+
+.profile-pane-host[data-theme='dark'] .profile-grid .profile__section,
+.profile-pane-host[data-theme='dark'] .profile-grid .profile__section--empty {
+  border: var(--border-width-thin, 1px) solid var(--color-border, #444);
+}
+
+.profile-grid .profile__empty-state-content {
+  gap: var(--spacing-2xs, 0.625rem);
+}
+
+.profile-grid .profile__empty-state-content > h2,
+.profile-grid .profile__empty-state-content > p {
+  margin: 0;
+}
+
+@container profile-pane (max-width: 1000px) {
+  #main-content.profile-grid {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    margin-inline: auto !important;
+    padding-inline: var(--spacing-sm, 0.75rem) !important;
+  }
+}
+
+/* App-driven mobile layout for the pane, independent of viewport width. */
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__empty-state-content > h2,
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .resume-card__section h3 {
+  font-size: var(--profile-mobile-section-heading-size, var(--font-size-lg, 1.125rem)) !important;
+  line-height: 1.2 !important;
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__section,
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__section--empty {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--spacing-2xs, 0.625rem);
+  padding: var(--spacing-sm, 0.938rem);
+  border-radius: var(--border-radius-base, 0.3125rem);
+  border: var(--border-width-thin, 0.1rem) solid var(--gray-100, #F3F4F6);
+  background: var(--white, #FFF);
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__name {
+  font-size: var(--profile-mobile-header-name-size, var(--font-size-xl, 1.375rem)) !important;
+  line-height: 1.15 !important;
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__role-org {
+  font-size: var(--profile-mobile-header-job-title-size, var(--font-size-md, 1rem)) !important;
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__details {
+  font-size: var(--profile-mobile-header-detail-size, var(--font-size-xxs, 0.75rem)) !important;
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__pronouns {
+  font-size: var(--profile-mobile-header-pronouns-size, 0.6875rem) !important;
+  line-height: 1.1 !important;
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile__section--empty .profile-section-collapsible__actions > button.inline-flex-row {
+  order: 1;
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile__section--empty .profile-section-collapsible__actions > .profile-section-collapsible__edit-button {
+  order: 2;
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile__section--empty .profile-section-collapsible__edit-label {
+  display: none !important;
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile__section--empty .profile-section-collapsible__edit-icon {
+  display: inline !important;
+}
+
+/* Narrow-phone typography refinements once the layout is already stacked. */
+@media (max-width: 576px) {
+  .profile-grid {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-sm, 0.938rem);
+  }
+
+  .profile-grid .profile__section,
+  .profile-grid .profile__section--empty {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-2xs, 0.625rem);
+    padding: var(--spacing-sm, 0.938rem);
+    border-radius: var(--border-radius-base, 0.3125rem);
+    border: var(--border-width-thin, 0.1rem) solid var(--gray-100, #F3F4F6);
+    background: var(--white, #FFF);
+  }
+
+  .profile-grid .profile__empty-state-content > h2,
+  .profile-grid .resume-card__section h3 {
+    font-size: var(--profile-mobile-section-heading-size, var(--font-size-lg, 1.125rem)) !important;
+    line-height: 1.2 !important;
+  }
+
+  .profile-grid .profile__name {
+    font-size: var(--profile-mobile-header-name-size, var(--font-size-xl, 1.375rem)) !important;
+    line-height: 1.15 !important;
+  }
+
+  .profile-grid .profile__role-org {
+    font-size: var(--profile-mobile-header-job-title-size, var(--font-size-md, 1rem)) !important;
+  }
+
+  .profile-grid .profile__details {
+    font-size: var(--profile-mobile-header-detail-size, var(--font-size-xxs, 0.75rem)) !important;
+  }
+
+  .profile-grid .profile__pronouns {
+    font-size: var(--profile-mobile-header-pronouns-size, 0.6875rem) !important;
+    line-height: 1.1 !important;
+  }
+
+  .profile__section--empty .profile-section-collapsible__actions > button.inline-flex-row {
+    order: 1;
+  }
+
+  .profile__section--empty .profile-section-collapsible__actions > .profile-section-collapsible__edit-button {
+    order: 2;
+  }
+
+  .profile__section--empty .profile-section-collapsible__edit-label {
+    display: none !important;
+  }
+
+  .profile__section--empty .profile-section-collapsible__edit-icon {
+    display: inline !important;
+  }
+}
+
+/* Narrow-pane typography fallback for embedded mobile layouts. */
+@container profile-pane (max-width: 576px) {
+  .profile-grid {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-sm, 0.938rem);
+  }
+
+  .profile-grid .profile__section,
+  .profile-grid .profile__section--empty {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-2xs, 0.625rem);
+    padding: var(--spacing-sm, 0.938rem);
+    border-radius: var(--border-radius-base, 0.3125rem);
+    border: var(--border-width-thin, 0.1rem) solid var(--gray-100, #F3F4F6);
+    background: var(--white, #FFF);
+  }
+
+  .profile-grid .profile__empty-state-content > h2,
+  .profile-grid .resume-card__section h3 {
+    font-size: var(--profile-mobile-section-heading-size, var(--font-size-lg, 1.125rem)) !important;
+    line-height: 1.2 !important;
+  }
+
+  .profile-grid .profile__name {
+    font-size: var(--profile-mobile-header-name-size, var(--font-size-xl, 1.375rem)) !important;
+    line-height: 1.15 !important;
+  }
+
+  .profile-grid .profile__role-org {
+    font-size: var(--profile-mobile-header-job-title-size, var(--font-size-md, 1rem)) !important;
+  }
+
+  .profile-grid .profile__details {
+    font-size: var(--profile-mobile-header-detail-size, var(--font-size-xxs, 0.75rem)) !important;
+  }
+
+  .profile-grid .profile__pronouns {
+    font-size: var(--profile-mobile-header-pronouns-size, 0.6875rem) !important;
+    line-height: 1.1 !important;
+  }
+
+  .profile__section--empty .profile-section-collapsible__actions > button.inline-flex-row {
+    order: 1;
+  }
+
+  .profile__section--empty .profile-section-collapsible__actions > .profile-section-collapsible__edit-button {
+    order: 2;
+  }
+
+  .profile__section--empty .profile-section-collapsible__edit-label {
+    display: none !important;
+  }
+
+  .profile__section--empty .profile-section-collapsible__edit-icon {
+    display: inline !important;
+  }
+}

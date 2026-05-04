@@ -79,7 +79,7 @@ async function deleteAttachment(dom: Document, attachmentTable: HTMLTableElement
             if (stillThere) {
                 try {
                 store.removeStatements(statementsToDelete)
-                } catch (e) {
+                } catch (_error) {
                 // Ignore if already gone
                 }
             }
@@ -95,7 +95,7 @@ async function deleteAttachment(dom: Document, attachmentTable: HTMLTableElement
         if (typeof store.removeStatements === 'function') {
             try {
                 store.removeStatements(statementsToDelete)
-            } catch (e) {
+            } catch (_error) {
                 /* ignore */
             }
         }

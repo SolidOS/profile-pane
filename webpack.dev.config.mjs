@@ -91,7 +91,7 @@ export default [
           directory: './node_modules',
           publicPath: '/node_modules'
         }
-      ],
+      ]
     },
     devtool: "source-map",
   },

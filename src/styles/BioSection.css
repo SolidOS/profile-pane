@@ -1,10 +1,18 @@
-.bioDescriptionWrap {
+.bio-card,
+.bio-card__section {
+	width: 100%;
+	max-width: 100%;
+	min-width: 0;
+	box-sizing: border-box;
+}
+
+.bio-card__description-wrap {
 	margin: 0;
 	position: relative;
 	isolation: isolate;
 }
 
-.bioDescriptionText {
+.bio-card__description-text {
 	margin: 0;
 	width: 100%;
 	max-width: none;
@@ -17,7 +25,7 @@
 	overflow: hidden;
 }
 
-.bioDescriptionText:not(.isExpanded)::after {
+.bio-card__description-text:not(.bio-card__description-text--expanded)::after {
 	content: '';
 	position: absolute;
 	right: 0;
@@ -28,20 +36,20 @@
 	pointer-events: none;
 }
 
-.bioDescriptionText.isExpanded {
+.bio-card__description-text--expanded {
 	display: block;
 	-webkit-line-clamp: unset;
 	line-clamp: unset;
 	overflow: visible;
 }
 
-.bioDescriptionToggle {
+.bio-card__description-toggle {
 	margin: 0;
 	padding: 0;
 	border: 0;
 	background: none;
 	color: var(--color-primary);
-	cursor: pointer;
+	cursor: var(--profile-interactive-cursor, pointer);
 	font: inherit;
 	font-size: var(--font-size-sm);
 	line-height: var(--line-height-base, 1.5);
@@ -61,17 +69,149 @@
 	z-index: 0;
 }
 
-.bioDescriptionWrap .bioDescriptionText:not(.isExpanded) + .bioDescriptionToggle {
+solid-ui-button.bio-card__description-toggle {
+	margin: 0;
+	padding: 0;
+	position: absolute;
+	left: 50%;
+	bottom: 0;
+	background-color: var(--color-card-bg);
+	white-space: nowrap;
+	min-height: 0;
+	min-width: 0;
+	z-index: 0;
+	--button-height-sm: 0;
+	--button-padding-sm: 0;
+	--button-font-size-sm: var(--font-size-sm);
+	--button-line-height: var(--line-height-base, 1.5);
+	--button-background: none;
+	--button-border-width: 0;
+	--button-border: transparent;
+	--button-text: var(--color-primary);
+	--button-hover-background: none;
+	--button-hover-border: transparent;
+	--button-hover-text: var(--color-primary);
+}
+
+.bio-card__description-wrap .bio-card__description-text:not(.bio-card__description-text--expanded) + .bio-card__description-toggle {
 	top: calc(100% - 1.5em + 0.28em - 12px);
 	bottom: auto;
 	transform: translateY(7px);
 }
 
-.bioDescriptionText.isExpanded + .bioDescriptionToggle {
+.bio-card__description-text--expanded + .bio-card__description-toggle {
 	position: static;
 	display: inline;
 	padding-left: 0;
 	top: auto;
 	bottom: auto;
 	transform: none;
+}
+
+.bio-card__description-text--expanded + solid-ui-button.bio-card__description-toggle {
+	position: static;
+	display: inline;
+	padding-left: 0;
+	top: auto;
+	bottom: auto;
+	transform: none;
+}
+
+.bio-card__description-text--expanded + solid-ui-button.bio-card__description-toggle::part(button) {
+	position: static;
+	display: inline;
+	padding-left: 0;
+	top: auto;
+	bottom: auto;
+	transform: none;
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .bio-card__description-text {
+	font-size: var(--font-size-sm, 0.875rem);
+	line-height: var(--line-height-base, 1.5);
+}
+
+@media (max-width: 576px) {
+	.bio-card__description-text {
+		font-size: var(--font-size-sm, 0.875rem);
+		line-height: var(--line-height-base, 1.5);
+	}
+}
+
+@container profile-pane (max-width: 576px) {
+	.bio-card__description-text {
+		font-size: var(--font-size-sm, 0.875rem);
+		line-height: var(--line-height-base, 1.5);
+		-webkit-line-clamp: 2;
+		line-clamp: 2;
+	}
+
+	.bio-card__description-text:not(.bio-card__description-text--expanded)::after {
+		top: calc(100% - 1.5em);
+		width: 4.75rem;
+		height: 1.5em;
+	}
+
+	.bio-card__description-wrap .bio-card__description-text:not(.bio-card__description-text--expanded) + .bio-card__description-toggle {
+		left: auto;
+		right: 0;
+		top: calc(100% - 1.5em);
+		bottom: auto;
+		transform: none;
+	}
+
+	solid-ui-button.bio-card__description-toggle {
+		left: auto;
+		right: 0;
+	}
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .bio-card__description-text {
+	-webkit-line-clamp: 2;
+	line-clamp: 2;
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .bio-card__description-text:not(.bio-card__description-text--expanded)::after {
+	top: calc(100% - 1.5em);
+	width: 4.75rem;
+	height: 1.5em;
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .bio-card__description-wrap .bio-card__description-text:not(.bio-card__description-text--expanded) + .bio-card__description-toggle {
+	left: auto;
+	right: 0;
+	top: calc(100% - 1.5em);
+	bottom: auto;
+	transform: none;
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] solid-ui-button.bio-card__description-toggle {
+	left: auto;
+	right: 0;
+}
+
+@media (max-width: 576px) {
+	.bio-card__description-text {
+		-webkit-line-clamp: 2;
+		line-clamp: 2;
+	}
+
+	.bio-card__description-text:not(.bio-card__description-text--expanded)::after {
+		top: calc(100% - 1.5em);
+		width: 4.75rem;
+		height: 1.5em;
+	}
+
+	.bio-card__description-wrap .bio-card__description-text:not(.bio-card__description-text--expanded) + .bio-card__description-toggle {
+		left: auto;
+		right: 0;
+		top: calc(100% - 1.5em);
+		bottom: auto;
+		transform: none;
+	}
+
+	solid-ui-button.bio-card__description-toggle {
+		left: auto;
+		right: 0;
+	}
 }

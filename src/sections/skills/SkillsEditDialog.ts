@@ -1,5 +1,7 @@
-import { openInputDialog } from '../../ui/dialog'
+import { getSharedDialogSaveButton, openInputDialog } from '../../ui/dialog'
 import { html, render } from 'lit-html'
+import 'solid-ui/components/actions/button'
+import 'solid-ui/components/forms/combobox'
 import { SkillDetails, SkillRow } from './types'
 import '../../styles/EditDialogs.css'
 import '../../styles/ContactInfoEditDialog.css'
@@ -9,7 +11,7 @@ import { applyRowFieldChange, deleteRow, summarizeRowOps } from '../shared/rowSt
 import { hasNonEmptyText, sanitizeTextValue, toText } from '../../textUtils'
 import { MutationOps } from '../shared/types'
 import { processSkillsMutations } from './mutations'
-import { searchIcon, trashIcon } from '../../icons-svg/profileIcons'
+import { trashIcon } from '../../icons-svg/profileIcons'
 import {
   deleteEntryButtonTitleText,
   dialogCancelLabelText,
@@ -25,14 +27,29 @@ type SkillFormState = {
 
 type SkillSuggestion = {
   label: string
-  uri: string
+  publicId: string
+}
+
+type SkillComboboxOption = {
+  label: string
+  value: string
+  publicId?: string
+}
+
+type SkillComboboxElement = HTMLElement & {
+  suggestionProvider?: (query: string) => Promise<SkillComboboxOption[]>
+  options?: SkillComboboxOption[]
+  value?: string
+  inputValue?: string
+  label?: string
+  placeholder?: string
 }
 
 type SkillRerenderOptions = {
   focusSelector?: string
 }
 
-const ESCO_SKILL_SEARCH_URI = 'https://ec.europa.eu/esco/api/search?language=$(language)&limit=$(limit)&type=skill&text=$(name)'
+const ESCO_SKILL_SEARCH_URI = 'https://ec.europa.eu/esco/api/search?language=$(language)&limit=$(limit)&type=skill&text=$(name)&selectedVersion=v1.2.0'
 const ESCO_SEARCH_LANGUAGE = 'en'
 const ESCO_SEARCH_LIMIT = 8
 const ESCO_SKILL_BASE_URI = 'http://data.europa.eu/esco/skill/'
@@ -76,8 +93,8 @@ async function fetchEscoSkillSuggestions(name: string): Promise<SkillSuggestion[
     return results
       .map((result: any) => {
         const label = sanitizeSkillFieldValue(toSkillLabel(result))
-        const uri = typeof result?.uri === 'string' ? result.uri : ''
-        return { label, uri }
+        const publicId = normalizeSkillPublicId(typeof result?.uri === 'string' ? result.uri : '')
+        return { label, publicId }
       })
       .filter((suggestion: SkillSuggestion) => {
         if (!suggestion.label) return false
@@ -119,10 +136,72 @@ function toFormState(details: SkillDetails[]): SkillFormState {
   }
 }
 
-function matchSkillSuggestion(suggestions: SkillSuggestion[], value: string): SkillSuggestion | null {
-  const normalized = sanitizeSkillFieldValue(value).toLowerCase()
-  if (!normalized) return null
-  return suggestions.find((suggestion) => suggestion.label.toLowerCase() === normalized) || null
+function toSkillComboboxOption(suggestion: SkillSuggestion): SkillComboboxOption {
+  return {
+    label: suggestion.label,
+    value: suggestion.publicId,
+    publicId: suggestion.publicId
+  }
+}
+
+function readSkillComboboxInputValue(event: Event): string {
+  const customEvent = event as CustomEvent<{ value?: string }>
+  if (typeof customEvent.detail?.value === 'string') {
+    return customEvent.detail.value
+  }
+
+  const target = event.target as HTMLInputElement | null
+  return typeof target?.value === 'string' ? target.value : ''
+}
+
+function readSkillComboboxChange(event: Event): SkillComboboxOption | null {
+  const customEvent = event as CustomEvent<{
+    value?: string
+    label?: string
+    option?: SkillComboboxOption
+  }>
+
+  if (customEvent.detail?.option) {
+    return customEvent.detail.option
+  }
+
+  if (typeof customEvent.detail?.value === 'string') {
+    return {
+      label: typeof customEvent.detail?.label === 'string' ? customEvent.detail.label : '',
+      value: customEvent.detail.value,
+      publicId: customEvent.detail.value
+    }
+  }
+
+  return null
+}
+
+function createSkillSuggestionProvider(): (query: string) => Promise<SkillComboboxOption[]> {
+  return async (query: string) => {
+    const suggestions = await fetchEscoSkillSuggestions(query)
+    return suggestions.map(toSkillComboboxOption)
+  }
+}
+
+function initializeSkillComboboxes(form: HTMLFormElement, rows: SkillRow[]): void {
+  const comboboxElements = form.querySelectorAll('solid-ui-combobox[data-skill-row-index]') as NodeListOf<SkillComboboxElement>
+
+  comboboxElements.forEach((comboboxElement) => {
+    const rowIndex = Number(comboboxElement.dataset.skillRowIndex)
+    if (Number.isNaN(rowIndex)) return
+
+    const row = rows[rowIndex]
+    const options = row?.publicId && row?.name
+      ? [{ label: row.name, value: row.publicId, publicId: row.publicId }]
+      : []
+
+    comboboxElement.suggestionProvider = createSkillSuggestionProvider()
+    comboboxElement.options = options
+    comboboxElement.value = row?.publicId || ''
+    comboboxElement.inputValue = row?.name || ''
+    comboboxElement.label = ''
+    comboboxElement.placeholder = 'Skill'
+  })
 }
 
 function validateSkillsBeforeSave(rows: SkillRow[]): string | null {
@@ -152,7 +231,7 @@ function hasInvalidSkillSelection(rows: SkillRow[]): boolean {
 }
 
 function updateSkillsSubmitEnabled(rows: SkillRow[]): void {
-  const submitButton = document.querySelector('#profile-modal #modal-buttons button.btn-primary') as HTMLButtonElement | null
+  const submitButton = getSharedDialogSaveButton(document)
   if (!submitButton) return
   submitButton.disabled = hasInvalidSkillSelection(rows)
 }
@@ -162,9 +241,13 @@ function focusSkillField(form: HTMLFormElement, selector: string): void {
   if (!nextField || typeof nextField.focus !== 'function') return
 
   nextField.scrollIntoView({ block: 'start', behavior: 'auto' })
-  nextField.focus()
-  if (nextField instanceof HTMLInputElement || nextField instanceof HTMLTextAreaElement) {
-    nextField.select()
+  const comboboxInput = nextField.tagName === 'SOLID-UI-COMBOBOX'
+    ? nextField.shadowRoot?.querySelector('input') as HTMLInputElement | null
+    : null
+  const focusTarget = comboboxInput || nextField
+  focusTarget.focus()
+  if (focusTarget instanceof HTMLInputElement || focusTarget instanceof HTMLTextAreaElement) {
+    focusTarget.select()
   }
 }
 
@@ -173,36 +256,34 @@ type SkillsInputRowProps = {
   index: number
   displayIndex: number
   onDelete: () => void
-  onChange: () => void
-  onSkillSearch: (rowIndex: number, term: string) => void
-  suggestions: SkillSuggestion[]
 }
 
 function renderSkillInputRow({
   rows,
   index,
   displayIndex,
-  onDelete,
-  onChange,
-  onSkillSearch,
-  suggestions
+  onDelete
 }: SkillsInputRowProps) {
   const row = rows[index]
   const label = `Skill ${displayIndex + 1}`
-  const skillName = `skill-${index}`
-  const datalistId = `skill-suggestions-${index}`
   const hasSelectionIssue = Boolean(row && row.status !== 'deleted' && hasNonEmptyText(row.name) && !hasNonEmptyText(row.publicId))
 
-  const handleSkillInput = (field: SkillEditableField) => (e: Event) => {
-    const target = e.target as HTMLInputElement
-    const nextValue = sanitizeSkillFieldValue(target.value)
+  const handleSkillInput = (_field: SkillEditableField) => (e: Event) => {
+    const nextValue = sanitizeSkillFieldValue(readSkillComboboxInputValue(e))
     if (rows[index]) {
-      applyRowFieldChange(rows[index], field, nextValue, rowHasContent)
-      const matchedSuggestion = matchSkillSuggestion(suggestions, nextValue)
-      rows[index].publicId = normalizeSkillPublicId(matchedSuggestion?.uri || '')
-      onSkillSearch(index, nextValue)
-      onChange()
+      applyRowFieldChange(rows[index], 'name', nextValue, rowHasContent)
+      rows[index].publicId = ''
+      updateSkillsSubmitEnabled(rows)
     }
+  }
+
+  const handleSkillChange = (e: Event) => {
+    const selectedOption = readSkillComboboxChange(e)
+    if (!rows[index] || !selectedOption) return
+
+    applyRowFieldChange(rows[index], 'name', sanitizeSkillFieldValue(selectedOption.label), rowHasContent)
+    rows[index].publicId = selectedOption.publicId || selectedOption.value || ''
+    updateSkillsSubmitEnabled(rows)
   }
 
   const handleDelete = (event: Event) => {
@@ -213,40 +294,27 @@ function renderSkillInputRow({
   return html`
     <div class="profile-edit-dialog__row profile-edit-dialog__row--full profile-edit-dialog__row--skill">
       <label aria-label=${`${label} Name`} class="label profile-edit-dialog__field profile-edit-dialog__field--full">
-        <div class="profile-edit-dialog__input-wrap">
-          <span class="profile-edit-dialog__search-icon" aria-hidden="true">${searchIcon}</span>
-          <input
-            class="input profile-edit-dialog__input--with-leading-icon"
-            type="text"
-            name=${skillName}
-            .value=${row?.name || ''}
-            required
-            data-contact-field="name"
-            data-entry-node=${row?.entryNode || ''}
-            data-row-status=${row?.status || 'n/a'}
-            placeholder="Skill"
-            autocomplete="off"
-            list=${datalistId}
-            inputmode="text"
-            aria-invalid=${hasSelectionIssue ? 'true' : 'false'}
-            @input=${handleSkillInput('name')}
-          />
-        </div>
-        <datalist id=${datalistId}>
-          ${suggestions.map((suggestion) => html`<option value=${suggestion.label}></option>`)}
-        </datalist>
+        <solid-ui-combobox
+          aria-label=${`${label} Name`}
+          data-skill-row-index=${String(index)}
+          aria-invalid=${hasSelectionIssue ? 'true' : 'false'}
+          @input=${handleSkillInput('name')}
+          @change=${handleSkillChange}
+        ></solid-ui-combobox>
         <small class="profile-edit-dialog__input-help-text">Type to search ESCO and select one suggestion.</small>
       </label>
-      <div class="profile-edit-dialog__actions profile-edit-dialog__actions--edge">
-        <button
+      <div class="profile-edit-dialog__actions profile-edit-dialog__actions--edge flex-row align-center justify-end">
+        <solid-ui-button
           type="button"
+          variant="icon"
+          size="md"
           class="profile-edit-dialog__delete-button"
           aria-label=${`Delete skill ${displayIndex + 1}`}
           title=${deleteEntryButtonTitleText}
           @click=${handleDelete}
         >
-          <span class="profile-edit-dialog__delete-icon" aria-hidden="true">${trashIcon}</span>
-        </button>
+          <span slot="icon" class="profile-edit-dialog__delete-icon" aria-hidden="true">${trashIcon}</span>
+        </solid-ui-button>
       </div>
     </div>
   `
@@ -254,28 +322,22 @@ function renderSkillInputRow({
 
 function renderSkillsSection(
   rows: SkillRow[],
-  onAddRow: (options?: SkillRerenderOptions) => void,
-  suggestionByIndex: Record<number, SkillSuggestion[]>,
-  handleSearch: (rowIndex: number, term: string) => void
+  onAddRow: (options?: SkillRerenderOptions) => void
 ) {
   const visibleRows = rows
     .map((row, index) => ({ row, index }))
     .filter(({ row }) => row.status !== 'deleted')
 
   return html`
-    <section class="profile-edit-dialog__section" aria-label="Skills">
+    <section class="profile-edit-dialog__section flex-column gap-xs" aria-label="Skills">
       <fieldset>
         <legend class="sr-only">Skill entries</legend>
         ${visibleRows.map(({ index }, displayIndex) => renderSkillInputRow({
           rows,
           index,
           displayIndex,
-          onChange: onAddRow,
-          onSkillSearch: handleSearch,
-          suggestions: suggestionByIndex[index] || [],
           onDelete: () => {
             deleteRow(rows, index)
-            delete suggestionByIndex[index]
             onAddRow()
           }
         }))}
@@ -290,55 +352,16 @@ function renderSkillsEditTemplate(
   viewerMode: ViewerMode,
   options: SkillRerenderOptions = {}
 ) {
-  const formStateWithSearch = formState as SkillFormState & {
-    suggestionByIndex?: Record<number, SkillSuggestion[]>
-    searchSeqByIndex?: Record<number, number>
-    searchTimerByIndex?: Record<number, ReturnType<typeof setTimeout>>
-  }
-
-  const suggestionByIndex = formStateWithSearch.suggestionByIndex || (formStateWithSearch.suggestionByIndex = {})
-  const searchSeqByIndex = formStateWithSearch.searchSeqByIndex || (formStateWithSearch.searchSeqByIndex = {})
-  const searchTimerByIndex = formStateWithSearch.searchTimerByIndex || (formStateWithSearch.searchTimerByIndex = {})
-
   const rerender = (nextOptions: SkillRerenderOptions = {}) => renderSkillsEditTemplate(form, formState, viewerMode, nextOptions)
-  const handleSearch = (rowIndex: number, term: string) => {
-    if (searchTimerByIndex[rowIndex]) {
-      clearTimeout(searchTimerByIndex[rowIndex])
-    }
-
-    const normalized = sanitizeSkillFieldValue(term)
-    if (normalized.length < 2) {
-      suggestionByIndex[rowIndex] = []
-      rerender()
-      return
-    }
-
-    const seq = (searchSeqByIndex[rowIndex] || 0) + 1
-    searchSeqByIndex[rowIndex] = seq
-
-    searchTimerByIndex[rowIndex] = setTimeout(async () => {
-      const suggestions = await fetchEscoSkillSuggestions(normalized)
-      if (searchSeqByIndex[rowIndex] !== seq) return
-      suggestionByIndex[rowIndex] = suggestions
-
-      const row = formState.skills[rowIndex]
-      if (row) {
-        const matchedSuggestion = matchSkillSuggestion(suggestions, row.name)
-        row.publicId = matchedSuggestion ? normalizeSkillPublicId(matchedSuggestion.uri) : row.publicId
-      }
-
-      rerender()
-    }, 220)
-  }
-
 
   render(html`
-    ${renderSkillsSection(formState.skills, rerender, suggestionByIndex, handleSearch)}
+    ${renderSkillsSection(formState.skills, rerender)}
     ${viewerMode !== 'owner'
       ? html`<p class="profile-edit-dialog__login-message">${ownerLoginRequiredDialogMessageText}</p>`
       : null}
   `, form)
 
+  initializeSkillComboboxes(form, formState.skills)
   updateSkillsSubmitEnabled(formState.skills)
 
   if (options.focusSelector) {
@@ -360,15 +383,7 @@ function createSkillsEditForm(details: SkillDetails[], viewerMode: ViewerMode) {
       entryNode: '',
       status: 'new'
     })
-    const formStateWithSearch = formState as SkillFormState & {
-      suggestionByIndex?: Record<number, SkillSuggestion[]>
-      searchSeqByIndex?: Record<number, number>
-      searchTimerByIndex?: Record<number, ReturnType<typeof setTimeout>>
-    }
-    formStateWithSearch.suggestionByIndex = {}
-    formStateWithSearch.searchSeqByIndex = {}
-    formStateWithSearch.searchTimerByIndex = {}
-    renderSkillsEditTemplate(form, formState, viewerMode, { focusSelector: '[name="skill-0"]' })
+    renderSkillsEditTemplate(form, formState, viewerMode, { focusSelector: '[data-skill-row-index="0"]' })
   }
 
   return { form, formState, addRow }

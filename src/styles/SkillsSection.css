@@ -1,0 +1,58 @@
+.skills__list {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  align-items: flex-start;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  gap: var(--spacing-base, 0.5rem);
+}
+
+.skills__item {
+  display: inline;
+  padding: var(--spacing-base, 0.5rem) var(--spacing-2xs, 0.625rem);
+  border-radius: var(--border-radius-base, 0.3125rem);
+  background: var(--gray-100, #F3F4F6);
+}
+
+.skills__item-label {
+  display: inline;
+  color: var(--slate-900, #0F172B);
+  font-size: var(--font-size-sm, 0.875rem);
+  font-weight: var(--font-weight-md, 500);
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+}
+
+.skills__item-tail {
+  white-space: nowrap;
+}
+
+.skills__item-tail::before {
+  content: '\00a0';
+}
+
+solid-ui-button.skills__remove-button {
+  width: var(--icon-xxs, 1rem);
+  height: var(--icon-xxs, 1rem);
+  line-height: 0;
+  vertical-align: text-top;
+  --button-height-sm: var(--icon-xxs, 1rem);
+  --button-padding-sm: 0;
+  --button-icon-size-sm: var(--icon-xxs, 1rem);
+  --button-background: transparent;
+  --button-border-width: 0;
+  --button-border: transparent;
+  --button-text: currentColor;
+  --button-hover-background: transparent;
+  --button-hover-border: transparent;
+  --button-hover-text: currentColor;
+}
+
+.skills__remove-button svg {
+  display: block;
+  width: var(--icon-xxs, 1rem);
+  height: var(--icon-xxs, 1rem);
+}

@@ -1,0 +1,23 @@
+.profile-friends-button__section {
+  width: 100%;
+  min-width: 0;
+  display: grid;
+}
+
+.profile-friends-button__section button {
+  width: 100%;
+  min-width: 0;
+}
+
+.profile__btn-friends-label {
+  color: var(--color-primary, #7C4DFF);
+  font-size: var(--font-size-sm, 0.875rem);
+  font-weight: var(--font-weight-md, 500);
+  line-height: 1;
+  letter-spacing: -0.01em;
+}
+
+.profile-friends-button__container input[type="text"] {
+  width: 100%;
+  box-sizing: border-box;
+}

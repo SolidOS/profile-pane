@@ -79,19 +79,6 @@ export const plusIcon = html`
     </defs>
   </svg>
 `
-export const searchIcon = html`
-  <svg xmlns="http://www.w3.org/2000/svg" 
-    width="13" 
-    height="13" 
-    viewBox="0 0 13 13" 
-    fill="none"
-    aria-hidden="true"
-    focusable="false"
-  >
-    <circle cx="5.5" cy="5.5" r="4.5" stroke="#99A1AF" stroke-width="1.2" fill="none"/>
-    <path d="M9.1 9.1L12 12" stroke="#99A1AF" stroke-width="1.2" stroke-linecap="round"/>
-  </svg>
-`
 export const trashIcon = html`
   <svg xmlns="http://www.w3.org/2000/svg" 
     width="20" 
@@ -256,9 +243,9 @@ export const closeIcon = html`
 
 export const editIcon = html`
   <svg xmlns="http://www.w3.org/2000/svg" 
-    width="20" 
-    height="20" 
-    viewBox="0 0 20 20" 
+    width="14" 
+    height="14" 
+    viewBox="3 3 14 14" 
     fill="none"
     aria-hidden="true" 
     focusable="false"

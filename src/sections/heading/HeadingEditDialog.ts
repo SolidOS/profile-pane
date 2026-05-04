@@ -1,9 +1,12 @@
 import { openInputDialog } from '../../ui/dialog'
 import { html, render, TemplateResult } from 'lit-html'
+import 'solid-ui/components/actions/button'
+import 'solid-ui/components/forms/select'
+import 'solid-ui/components/media/photo-capture'
 import { ProfileDetails, HeadingMutationPlan, ProfileBasicRow } from './types'
 import { Image } from './HeadingSection'
 import '../../styles/EditDialogs.css'
-import { LiveStore, NamedNode, sym } from 'rdflib'
+import { LiveStore, NamedNode } from 'rdflib'
 import { processHeadingMutations } from './mutations'
 import { ViewerMode } from '../../types'
 import {
@@ -30,11 +33,29 @@ import { ContactAddressRow, ContactPointRow } from '../contactInfo/types'
 import { sanitizeAddressFieldValue, sanitizeBasicInputFieldValue, sanitizeEmailValue, sanitizePhoneLocalValue } from '../shared/sanitizeUtils'
 import { toStorageDateISO } from './dateHelpers'
 import { deletePhotoFile, uploadPhotoFile } from './imageHelpers'
-import { cameraCaptureControl } from './camera'
 /* Note: new design - has address type in More Edit Contacts for now we will leave
          out Address Type, but a ticket will be created to add type later
          so I will keep the code and just comment it out for now. 
          new design - has country code, will comment out code for now and create a ticket to add later. */
+
+type HeadingPhotoCaptureElement = HTMLElement & {
+  heading: string
+  captureLabel: string
+  confirmLabel: string
+  retakeLabel: string
+  cancelLabel: string
+  presentation: 'inline' | 'dialog'
+  showTrigger: boolean
+  showCancelButton: boolean
+  autoCloseOnCapture: boolean
+  fileNamePrefix: string
+  facingMode: string
+  open: boolean
+}
+
+type HeadingPhotoCapturedDetail = {
+  file: File
+}
 
 type HeadingFormState = {
   basicInfo: ProfileBasicRow
@@ -42,6 +63,47 @@ type HeadingFormState = {
   phone: ContactPointRow
   address: ContactAddressRow
 }
+
+type HeadingContactTypeOption = {
+  label: string
+  value: string
+}
+
+type HeadingPronounsOption = {
+  label: string
+  value: string
+}
+
+type HeadingContactTypeKind = 'phone' | 'email'
+
+type HeadingContactTypeSelectElement = HTMLElement & {
+  options?: HeadingContactTypeOption[]
+  value?: string
+  label?: string
+}
+
+type HeadingPronounsSelectElement = HTMLElement & {
+  options?: HeadingPronounsOption[]
+  value?: string
+  label?: string
+}
+
+const HEADING_PHONE_TYPE_OPTIONS: HeadingContactTypeOption[] = [
+  { label: 'Mobile', value: 'Mobile' },
+  { label: 'Home', value: 'Home' },
+  { label: 'Work', value: 'Work' }
+]
+
+const HEADING_EMAIL_TYPE_OPTIONS: HeadingContactTypeOption[] = [
+  { label: 'Personal', value: 'Personal' },
+  { label: 'Office', value: 'Office' }
+]
+
+const HEADING_PRONOUN_OPTIONS: HeadingPronounsOption[] = [
+  { label: 'He/Him', value: 'He/Him' },
+  { label: 'She/Her', value: 'She/Her' },
+  { label: 'They/Them', value: 'They/Them' }
+]
 
 type Row = ProfileBasicRow | ContactPointRow | ContactAddressRow
 
@@ -55,6 +117,54 @@ function isAddressRow(row: Row): row is ContactAddressRow {
 
 function isProfileBasicRow(row: Row): row is ProfileBasicRow {
   return 'name' in row
+}
+
+function normalizeHeadingContactTypeValue(value: string, options: HeadingContactTypeOption[]): string {
+  return options.some((option) => option.value === value) ? value : options[0]?.value || ''
+}
+
+function readHeadingContactTypeChange(event: Event): string {
+  const customEvent = event as CustomEvent<{ value?: string }>
+  if (typeof customEvent.detail?.value === 'string') {
+    return customEvent.detail.value
+  }
+
+  const target = event.target as HTMLSelectElement | HTMLInputElement | null
+  return typeof target?.value === 'string' ? target.value : ''
+}
+
+function getHeadingContactTypeOptions(kind: HeadingContactTypeKind): HeadingContactTypeOption[] {
+  return kind === 'phone' ? HEADING_PHONE_TYPE_OPTIONS : HEADING_EMAIL_TYPE_OPTIONS
+}
+
+function getHeadingContactTypeValue(
+  kind: HeadingContactTypeKind,
+  formState: HeadingFormState
+): string {
+  const row = kind === 'phone' ? formState.phone : formState.email
+  return normalizeHeadingContactTypeValue(row?.type || '', getHeadingContactTypeOptions(kind))
+}
+
+function initializeHeadingContactTypeSelects(form: HTMLFormElement, formState: HeadingFormState): void {
+  const selectElements = form.querySelectorAll('solid-ui-select[data-heading-contact-type-kind]') as NodeListOf<HeadingContactTypeSelectElement>
+
+  selectElements.forEach((selectElement) => {
+    const kind = selectElement.dataset.headingContactTypeKind as HeadingContactTypeKind | undefined
+    if (!kind) return
+
+    selectElement.options = getHeadingContactTypeOptions(kind)
+    selectElement.value = getHeadingContactTypeValue(kind, formState)
+    selectElement.label = ''
+  })
+}
+
+function initializeHeadingPronounsSelect(form: HTMLFormElement, formState: HeadingFormState): void {
+  const selectElement = form.querySelector('solid-ui-select[data-heading-basic-field="pronouns"]') as HeadingPronounsSelectElement | null
+  if (!selectElement) return
+
+  selectElement.options = HEADING_PRONOUN_OPTIONS
+  selectElement.value = normalizePronounsValue(formState.basicInfo?.pronouns || '')
+  selectElement.label = ''
 }
 
 
@@ -202,34 +312,12 @@ function mapPhoneOpsForSave(ops: { create: ContactPointRow[], update: ContactPoi
   }
 }
 
-/* Will use later function renderCountryPrefixSelect(
-  name: string,
-  value: string,
-  label: string,
-  onChange: (event: Event) => void
-) {
-  return html`
-    <label class="label profile-edit-dialog__phone-prefix-field" aria-label=${label}>
-      <select class="phonePrefixSelect" name=${name} .value=${value} @change=${onChange}>
-        ${COUNTRY_PREFIX_OPTIONS.map((option) => html`
-          <option value=${option.dialCode}>
-            ${countryCodeToFlag(option.iso2)} ${option.dialCode}
-          </option>
-        `)}
-      </select>
-    </label>
-  `
-} */
-
 function renderContactPhoneInput({
   phone
 }: ContactPhoneInputRowProps) {
   const label = 'Phone Number'
-  /* const countryCodeLabel = 'Country Calling Code' */
-  /* const prefixInputName = 'phone-prefix' */
   const typeLabel = 'Phone Type'
   const inputName = 'phone-value'
-  const typeInputName = 'phone-type'
   const splitValue = splitPhoneValue(phone?.value || '')
   let selectedDialCode = splitValue.dialCode
 
@@ -240,20 +328,9 @@ function renderContactPhoneInput({
       applyRowFieldChange(phone, 'value', combinePhoneValue(selectedDialCode, nextValue), rowHasContent)
     }
   }
- /* Leaving here for when we add country code back in
-  const handleCountryCodeInput = (e: Event) => {
-    const target = e.target as HTMLSelectElement
-    selectedDialCode = target.value
-
-    if (phone) {
-      const localNumber = splitPhoneValue(phone.value).localNumber
-      applyRowFieldChange(phone, 'value', combinePhoneValue(selectedDialCode, localNumber), rowHasContent)
-    }
-  } */
 
   const handleTypeInput = (e: Event) => {
-    const target = e.target as HTMLInputElement
-    const nextType = target.value
+    const nextType = readHeadingContactTypeChange(e)
     if (phone) {
       applyRowSelectChange(phone, 'type', nextType)
     }
@@ -280,11 +357,16 @@ function renderContactPhoneInput({
         </label>
       </div>
       <label aria-label=${typeLabel} class="label profile-edit-dialog__field-type profile-edit-dialog__field-type--contact-point">
-        <select class="input" name=${typeInputName} id="phone-type-select-${inputName}" @change=${handleTypeInput} .value=${phone?.type || ''}>
-          <option value="Mobile">Mobile</option>
-          <option value="Home">Home</option>
-          <option value="Work">Work</option>
-        </select>
+        <solid-ui-select
+          class="profile-edit-dialog__type-select"
+          id=${`phone-type-select-${inputName}`}
+          data-heading-contact-type-kind="phone"
+          aria-label=${typeLabel}
+          .label=${''}
+          .options=${HEADING_PHONE_TYPE_OPTIONS}
+          .value=${normalizeHeadingContactTypeValue(phone?.type || '', HEADING_PHONE_TYPE_OPTIONS)}
+          @change=${handleTypeInput}
+        ></solid-ui-select>
       </label>
     </div>
   `
@@ -296,7 +378,6 @@ function renderContactEmailInputRow({
   const label = 'Email Address'
   const typeLabel = 'Email Type'
   const inputName = 'email-value'
-  const typeInputName = 'email-type'
 
   const handleValueInput = (e: Event) => {
     const target = e.target as HTMLInputElement
@@ -307,8 +388,7 @@ function renderContactEmailInputRow({
   }
 
   const handleTypeInput = (e: Event) => {
-    const target = e.target as HTMLInputElement
-    const nextType = target.value
+    const nextType = readHeadingContactTypeChange(e)
     if (email) {
       applyRowSelectChange(email, 'type', nextType)
     }
@@ -333,10 +413,16 @@ function renderContactEmailInputRow({
         />
       </label>
       <label aria-label=${typeLabel} class="label profile-edit-dialog__field-type profile-edit-dialog__field-type--contact-point">
-        <select class="input" name=${typeInputName} id="email-type-select-${inputName}" @change=${handleTypeInput} .value=${email?.type || ''}>
-          <option value="Personal">Personal</option>
-          <option value="Office">Office</option>
-        </select>
+        <solid-ui-select
+          class="profile-edit-dialog__type-select"
+          id=${`email-type-select-${inputName}`}
+          data-heading-contact-type-kind="email"
+          aria-label=${typeLabel}
+          .label=${''}
+          .options=${HEADING_EMAIL_TYPE_OPTIONS}
+          .value=${normalizeHeadingContactTypeValue(email?.type || '', HEADING_EMAIL_TYPE_OPTIONS)}
+          @change=${handleTypeInput}
+        ></solid-ui-select>
       </label>
     </div>
   `
@@ -494,11 +580,10 @@ function renderHeadingInfoInput(
       applyRowFieldChange(basicInfo, 'dateOfBirth', toStorageDateISO(nextValue), rowHasContent)
     }
   }
-   const handlePronounsInput = (e: Event) => {
-    const target = e.target as HTMLSelectElement
-    const nextType = target.value
+  const handlePronounsInput = (e: Event) => {
+    const nextValue = normalizePronounsValue(readHeadingContactTypeChange(e))
     if (basicInfo) {
-      applyRowSelectChange(basicInfo, 'pronouns', nextType)
+      applyRowSelectChange(basicInfo, 'pronouns', nextValue)
     }
   }
 
@@ -508,9 +593,15 @@ function renderHeadingInfoInput(
     const fileInput = dom.createElement('input')
     fileInput.type = 'file'
     fileInput.accept = 'image/*'
+    fileInput.hidden = true
+
+    const cleanupFileInput = () => {
+      fileInput.remove()
+    }
 
     fileInput.addEventListener('change', async () => {
       const file = fileInput.files?.[0]
+      cleanupFileInput()
       if (!file || !basicInfo) return
 
       try {
@@ -520,18 +611,15 @@ function renderHeadingInfoInput(
       } catch (error) {
         console.error('Profile image upload failed', error)
       }
-    })
+    }, { once: true })
 
+    dom.body.appendChild(fileInput)
     fileInput.click()
   }
 
-  /* The handleCameraClick function was generated by AI Model: GPT-5.3-Codex */
-  /* Prompt: Write a function handleCameraClick that uses the cameraCaptureControl to
-      capture an image and update the profile photo in the heading section. */
   const handleCameraClick = async (e: Event) => {
     e.preventDefault()
     const button = e.currentTarget as HTMLElement | null
-    const dom = button?.ownerDocument || document
     const headingPhotoRow = button?.closest('.profile-edit-dialog__row--heading-photo') as HTMLElement | null
     const hostRow = headingPhotoRow?.nextElementSibling as HTMLElement | null
     const frame = hostRow?.querySelector('.profile-edit-dialog__image-camera-capture-frame') as HTMLDivElement | null
@@ -541,34 +629,49 @@ function renderHeadingInfoInput(
     frame.dataset.active = 'true'
     frame.replaceChildren()
 
-    const getImageDoc = () => {
-      const docUri = subject.doc().uri
-      const lastSlash = docUri.lastIndexOf('/')
-      const directoryUri = lastSlash >= 0 ? docUri.slice(0, lastSlash + 1) : docUri
-      const randomSuffix =
-        typeof crypto !== 'undefined' && typeof crypto.randomUUID === 'function'
-          ? crypto.randomUUID()
-          : `${Date.now()}_${Math.floor(Math.random() * 1e9)}`
-      return sym(`${directoryUri}camera_${randomSuffix}.png`)
-    }
-
-    const onCameraDone = async (imageDoc: NamedNode | null) => {
+    const closeCameraFrame = () => {
       frame.replaceChildren()
       frame.hidden = true
       frame.dataset.active = 'false'
-      if (imageDoc?.uri && basicInfo) {
-        applyRowFieldChange(basicInfo, 'imageSrc', imageDoc.uri, rowHasContent)
-        rerender()
-      }
     }
 
     try {
-      const control = cameraCaptureControl(dom, store as any, getImageDoc, onCameraDone)
-      frame.appendChild(control)
+      const photoCapture = document.createElement('solid-ui-photo-capture') as HeadingPhotoCaptureElement
+      photoCapture.classList.add('profile-edit-dialog__photo-capture')
+      photoCapture.heading = ''
+      photoCapture.captureLabel = 'Take Photo'
+      photoCapture.confirmLabel = 'Use Photo'
+      photoCapture.retakeLabel = 'Retake'
+      photoCapture.cancelLabel = 'Close camera'
+      photoCapture.presentation = 'inline'
+      photoCapture.showTrigger = false
+      photoCapture.showCancelButton = true
+      photoCapture.autoCloseOnCapture = false
+      photoCapture.fileNamePrefix = 'camera'
+      photoCapture.facingMode = 'environment'
+      photoCapture.open = true
+
+      photoCapture.addEventListener('cancel', () => {
+        closeCameraFrame()
+      })
+
+      photoCapture.addEventListener('photo-captured', async (event: Event) => {
+        const detail = (event as CustomEvent<HeadingPhotoCapturedDetail>).detail
+        if (!detail?.file || !basicInfo) return
+
+        try {
+          const uploadedUri = await uploadPhotoFile(store, subject, detail.file)
+          closeCameraFrame()
+          applyRowFieldChange(basicInfo, 'imageSrc', uploadedUri, rowHasContent)
+          rerender()
+        } catch (error) {
+          console.error('Profile camera upload failed', error)
+        }
+      })
+
+      frame.appendChild(photoCapture)
     } catch (error) {
-      frame.hidden = true
-      frame.dataset.active = 'false'
-      frame.replaceChildren()
+      closeCameraFrame()
       console.error('Camera control failed to initialize', error)
     }
   }
@@ -584,15 +687,17 @@ function renderHeadingInfoInput(
       <header class="mb-md" aria-label="Profile Image">
         <div class="profile-edit-dialog__image-frame">
           ${Image(basicInfo.imageSrc, basicInfo.name)}
-          <button
+          <solid-ui-button
             type="button"
             class="profile-edit-dialog__image-camera-button flex-center"
+            variant="icon"
+            size="md"
             aria-label="Take a photo"
             title="Take a photo"
             @click=${handleCameraClick}
           >
-            ${cameraIcon}
-          </button>
+            <span slot="icon" aria-hidden="true">${cameraIcon}</span>
+          </solid-ui-button>
         </div>
       </header>
 
@@ -600,30 +705,36 @@ function renderHeadingInfoInput(
         <p class="profile-edit-dialog__image-preview-label"><strong>${imageSrcLabel}</strong></p>
         <p class="profile-edit-dialog__image-preview-description">${recommendedImageToLoad}</p>
 
-        <div class="profile-edit-dialog__image-preview-actions">
-          <button
+        <div class="profile-edit-dialog__image-preview-actions flex-row align-center gap-xs">
+          <solid-ui-button
             type="button"
-            class="profile-edit-dialog__image-button profile-edit-dialog__image-upload-button flex-center"
+            variant="secondary"
+            size="md"
+            label="Upload New"
+            class="profile-edit-dialog__image-button profile-edit-dialog__image-upload-button"
             aria-label="Upload new profile photo"
             title="Upload New"
             @click=${handleUpload}
           >
             Upload New
-          </button>
-          <button
+          </solid-ui-button>
+          <solid-ui-button
             type="button"
-            class="profile-edit-dialog__image-button profile-edit-dialog__image-remove-button flex-center"
+            variant="secondary"
+            size="md"
+            label="Remove"
+            class="profile-edit-dialog__image-button profile-edit-dialog__image-remove-button"
             aria-label="Delete profile photo"
             title="Remove"
             @click=${handleDelete}
           >
             Remove
-          </button>
+          </solid-ui-button>
         </div>
       </div>
     </div>
-    <div class="profile-edit-dialog__image-camera-capture-row">
-      <div class="profile-edit-dialog__image-camera-capture-frame" hidden></div>
+    <div class="profile-edit-dialog__image-camera-capture-row flex-row justify-center">
+      <div class="profile-edit-dialog__image-camera-capture-frame flex-column-center" hidden></div>
     </div>
     <div class="profile-edit flex-column gap-lg">
       <div class="profile-edit-dialog__row profile-edit-dialog__row--equal">
@@ -664,11 +775,17 @@ function renderHeadingInfoInput(
       <div class="profile-edit-dialog__row profile-edit-dialog__row--equal">
         <label aria-label=${pronounsLabel} class="label profile-edit-dialog__field-type profile-edit-dialog__field--stack">
           ${pronounsLabel}
-          <select class="input" name="pronouns" @change=${handlePronounsInput} .value=${basicInfo?.pronouns || ''}>
-            <option value="He/Him">He/Him</option>
-            <option value="She/Her">She/Her</option>
-            <option value="They/Them">They/Them</option>
-          </select>
+          <solid-ui-select
+            class="profile-edit-dialog__type-select"
+            id="heading-pronouns-select"
+            name="pronouns"
+            data-heading-basic-field="pronouns"
+            aria-label=${pronounsLabel}
+            .label=${''}
+            .options=${HEADING_PRONOUN_OPTIONS}
+            .value=${normalizePronounsValue(basicInfo?.pronouns || '')}
+            @change=${handlePronounsInput}
+          ></solid-ui-select>
         </label>
         <label aria-label=${dateOfBirthLabel} class="label profile-edit-dialog__field">
           ${dateOfBirthLabel}
@@ -750,6 +867,9 @@ function renderHeadingEditTemplate(
       ? html`<p class="profile-edit-dialog__login-message">${ownerLoginRequiredDialogMessageText}</p>`
       : null}
   `, form)
+
+  initializeHeadingContactTypeSelects(form, formState)
+  initializeHeadingPronounsSelect(form, formState)
 }
 
 function createHeadingEditForm(
@@ -788,7 +908,7 @@ function validateHeadingDataBeforeSave(formState: HeadingFormState): string | nu
 
 
 export async function createHeadingEditDialog(
-  event: Event,
+  _event: Event,
   store: LiveStore,
   subject: NamedNode,
   profileData: ProfileDetails,

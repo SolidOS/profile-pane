@@ -1,4 +1,5 @@
 import { html } from 'lit-html'
+import 'solid-ui/components/actions/button'
 import { BioDetails } from './types'
 import { ViewerMode } from '../../types'
 import '../../styles/BioSection.css'
@@ -18,18 +19,21 @@ function renderBio(bioData: BioDetails) {
 
   return html`
       ${bioData.description ? html`
-        <div class="bioDescriptionWrap">
-          <p class="bioDescriptionText" id=${bioDescriptionId}>${bioData.description}</p>
-          <button
+        <div class="bio-card__description-wrap">
+          <p class="bio-card__description-text" id=${bioDescriptionId}>${bioData.description}</p>
+          <solid-ui-button
             type="button"
-            class="bioDescriptionToggle"
+            variant="secondary"
+            size="sm"
+            label="...more"
+            class="bio-card__description-toggle"
             aria-controls=${bioDescriptionId}
             aria-expanded="false"
             hidden
             @click=${toggleDescription}
           >
             ...more
-          </button>
+          </solid-ui-button>
         </div>
       ` : ''}
   `
@@ -41,14 +45,11 @@ function hasBioContent(bioData: BioDetails): boolean {
 
 
 export const BioCard = (
-  bioData: BioDetails,
-  viewerMode: ViewerMode
+  bioData: BioDetails
 ) => {
-  void viewerMode
-
   return html`
-    <article class="bioCard" aria-label="Bio" data-testid="bio-card">
-      <section class="bioSection">
+    <article class="bio-card" aria-label="Bio" data-testid="bio-card">
+      <section class="bio-card__section">
         ${renderBio(bioData)}
       </section>
     </article>
@@ -62,7 +63,7 @@ function renderBioSectionContent(
   viewerMode: ViewerMode,
   onSaved?: () => Promise<void> | void
 ) {
-  const bio = BioCard(bioData, viewerMode)
+  const bio = BioCard(bioData)
   const bioDetails: BioDetails = bioData
   const isOwner = viewerMode === 'owner'
   
@@ -70,9 +71,11 @@ function renderBioSectionContent(
     <header class="profile__section-header profile-section-collapsible__header">
       <h2 id="bio-heading" tabindex="-1">${bioHeadingText}</h2>
       ${isOwner ? html`
-        <button
+        <solid-ui-button
           type="button"
-          class="profile__action-button profile-action-text flex-center"
+          variant="secondary"
+          size="sm"
+          class="profile__action-button profile-action-text flex-center profile-section-collapsible__edit-button"
           aria-label="Edit bio details"
           @click=${(event: Event) => {
             return createBioEditDialog(
@@ -87,7 +90,7 @@ function renderBioSectionContent(
         >
           <span class="profile-section-collapsible__edit-label profile__action-icon">${editIcon} Edit</span>
           <span class="profile-section-collapsible__edit-icon profile__action-icon" aria-hidden="true">${editIcon}</span>
-        </button>
+        </solid-ui-button>
       ` : html``}
     </header>
     <div class="profile-section-collapsible__content">
@@ -132,8 +135,10 @@ function renderOwnerEmptyBioContent(
         You haven't added any professional experience yet. Adding work history can boost your Bio.
       </p>
     </div>
-    <button
+    <solid-ui-button
       type="button"
+      variant="secondary"
+      size="sm"
       class="profile__action-button--empty"
       aria-label="Add bio details"
       @click=${(event: Event) => {
@@ -148,7 +153,7 @@ function renderOwnerEmptyBioContent(
       }}
     >
       <span class="profile__action-icon" aria-hidden="true">${plusDarkIcon} Add Bio</span>
-    </button>
+    </solid-ui-button>
 
   `
 }

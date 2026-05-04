@@ -1,10 +1,12 @@
 import { html } from 'lit-html'
+import 'solid-ui/components/actions/button'
 import { LiveStore, NamedNode } from 'rdflib'
 import { ns } from 'solid-ui'
 import { ViewerMode } from '../../types'
+import '../../styles/LanguageSection.css'
 import { createLanguageEditDialog } from './LanguageEditDialog'
 import { LanguageDetails } from './types'
-import { addIcon, commentIcon, editIcon, plusIcon } from '../../icons-svg/profileIcons'
+import { addIcon, commentIcon, editIcon } from '../../icons-svg/profileIcons'
 import { languagesHeadingText } from '../../texts'
 import { toggleCollapsibleSection } from '../shared/collapsibleSection'
 
@@ -35,37 +37,41 @@ function renderLanguagesSectionDefault(store: LiveStore, subject: NamedNode, lan
     >
       <header class="profile__section-header profile-section-collapsible__header">
         <h2 id="languages-heading">${languagesHeadingText}</h2>
-        <div class="profile-section-collapsible__actions flex-column">
+        <div class="profile-section-collapsible__actions flex-column align-end">
           ${isOwner ? html`
-            <button
+            <solid-ui-button
               type="button"
+              variant="secondary"
+              size="sm"
               class="profile__action-button profile-action-text flex-center profile-section-collapsible__edit-button"
               aria-label="Add or edit languages"
               @click=${(event: Event) => createLanguageEditDialog(event, store, subject, languages, viewerMode, onSaved)}
             >
-              <span class="profile-section-collapsible__edit-label profile__add-more-content inline-flex-row">
-                <span class="profile__add-more-icon inline-flex-row" aria-hidden="true">${addIcon}</span>
-                Add More
+              <span class="profile-section-collapsible__edit-label profile__add-more-content">
+                <span class="profile__add-more-icon" aria-hidden="true">${addIcon}</span>
+                <span>Add More</span>
               </span>
               <span class="profile-section-collapsible__edit-icon" aria-hidden="true">${editIcon}</span>
-            </button>
+            </solid-ui-button>
           ` : html``}
-          <button
+          <solid-ui-button
             type="button"
-            class="inline-flex-row"
+            variant="icon"
+            size="sm"
+            class="inline-flex-row justify-center"
             aria-label="Toggle languages section"
             aria-controls="languages-panel"
             aria-expanded="false"
             @click=${toggleCollapsibleSection}
           >
-            <span class="profile-section-collapsible__chevron" aria-hidden="true">⌄</span>
-          </button>
+            <span slot="icon" class="profile-section-collapsible__chevron" aria-hidden="true">⌄</span>
+          </solid-ui-button>
         </div>
       </header>
       <div id="languages-panel" class="profile-section-collapsible__content" aria-hidden="true">
         ${hasLanguages
           ? html`
-              <ul class="languages__list" role="list" aria-label="Known languages">
+              <ul class="languages__list flex-column" role="list" aria-label="Known languages">
                 ${renderLanguages(languages, true)}
               </ul>
             `
@@ -114,9 +120,11 @@ function renderOwnerEmptyLanguagesSection(
     >
       <header class="profile__section-header profile-section-collapsible__header">
         <h2 id="languages-heading" tabindex="-1">${languagesHeadingText}</h2>
-        <div class="profile-section-collapsible__actions flex-column">
-          <button
+        <div class="profile-section-collapsible__actions flex-column align-end">
+          <solid-ui-button
             type="button"
+            variant="secondary"
+            size="sm"
             class="profile__action-button profile-action-text flex-center profile-section-collapsible__edit-button"
             aria-label="Add languages"
             @click=${(event: Event) => {
@@ -130,22 +138,24 @@ function renderOwnerEmptyLanguagesSection(
               )
             }}
           >
-            <span class="profile-section-collapsible__edit-label profile__add-more-content inline-flex-row">
-              <span class="profile__add-more-icon inline-flex-row" aria-hidden="true">${addIcon}</span>
-              Add Languages
+            <span class="profile-section-collapsible__edit-label profile__add-more-content">
+              <span class="profile__add-more-icon" aria-hidden="true">${addIcon}</span>
+              <span>Add Languages</span>
             </span>
-            <span class="profile-section-collapsible__edit-icon profile-section-collapsible__edit-icon--add" aria-hidden="true">${plusIcon}</span>
-          </button>
-          <button
+            <span class="profile-section-collapsible__edit-icon" aria-hidden="true">${editIcon}</span>
+          </solid-ui-button>
+          <solid-ui-button
             type="button"
-            class="inline-flex-row"
+            variant="icon"
+            size="sm"
+            class="inline-flex-row justify-center"
             aria-label="Toggle languages section"
             aria-controls="languages-panel"
             aria-expanded="false"
             @click=${toggleCollapsibleSection}
           >
-            <span class="profile-section-collapsible__chevron" aria-hidden="true">⌄</span>
-          </button>
+            <span slot="icon" class="profile-section-collapsible__chevron" aria-hidden="true">⌄</span>
+          </solid-ui-button>
         </div>
       </header>
       <div id="languages-panel" class="profile-section-collapsible__content" aria-hidden="true">
