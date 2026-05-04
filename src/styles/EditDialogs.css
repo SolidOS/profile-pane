@@ -751,6 +751,17 @@ solid-ui-button.profile-edit-dialog__drag-handle {
   flex: 1 1 auto;
 }
 
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-edit-dialog__section-heading {
+  font-size: var(--font-size-lg, 1.125rem);
+  line-height: var(--line-height-tight, 1.4);
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] #profile-modal .modal .profile__section-header .profile__action-button,
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] #profile-modal .modal .profile__section-header solid-ui-button.profile__action-button::part(button) {
+  font-size: var(--font-size-sm, 0.875rem);
+  line-height: var(--line-height-base, 1.5);
+}
+
 :is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-edit-dialog__field-type--contact-point {
   flex: 1 1 auto;
   width: 100%;
@@ -926,6 +937,17 @@ solid-ui-button.profile-edit-dialog__drag-handle {
     max-width: 100%;
     flex-direction: column;
     align-items: stretch;
+  }
+
+  .profile-edit-dialog__section-heading {
+    font-size: var(--font-size-lg, 1.125rem);
+    line-height: var(--line-height-tight, 1.4);
+  }
+
+  #profile-modal .modal .profile__section-header .profile__action-button,
+  #profile-modal .modal .profile__section-header solid-ui-button.profile__action-button::part(button) {
+    font-size: var(--font-size-sm, 0.875rem);
+    line-height: var(--line-height-base, 1.5);
   }
 
   .profile-edit-dialog__row--equal > .profile-edit-dialog__field,

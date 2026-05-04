@@ -154,7 +154,9 @@
 #profile-modal #modal-buttons solid-ui-button[data-cancel='true'] {
   --button-font-weight: var(--font-weight-normal, normal);
   --button-text: var(--gray-800, #1E2939);
-  --button-hover-text: var(--gray-800, #1E2939);
+  --button-hover-background: var(--blue-900, #083575);
+  --button-hover-border: var(--blue-900, #083575);
+  --button-hover-text: var(--white, #FFF);
   --button-font-size-md: var(--font-size-sm, 0.875rem);
 }
 

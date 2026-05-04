@@ -207,7 +207,7 @@ solid-ui-button.profile-action-text:focus-visible::part(button) {
 :is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile__section-header h2,
 :is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile__section-header h3,
 :is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile__section-header h4 {
-  font-size: var(--font-size-lg, 1.125rem) !important;
+  font-size: var(--profile-mobile-section-heading-size, var(--font-size-lg, 1.125rem)) !important;
   line-height: 1.2 !important;
 }
 
@@ -271,7 +271,7 @@ solid-ui-button.profile-action-text:focus-visible::part(button) {
   .profile__section-header h2,
   .profile__section-header h3,
   .profile__section-header h4 {
-    font-size: var(--font-size-lg, 1.125rem) !important;
+    font-size: var(--profile-mobile-section-heading-size, var(--font-size-lg, 1.125rem)) !important;
     line-height: 1.2 !important;
   }
 
@@ -292,7 +292,7 @@ solid-ui-button.profile-action-text:focus-visible::part(button) {
   .profile__section-header h2,
   .profile__section-header h3,
   .profile__section-header h4 {
-    font-size: var(--font-size-lg, 1.125rem) !important;
+    font-size: var(--profile-mobile-section-heading-size, var(--font-size-lg, 1.125rem)) !important;
     line-height: 1.2 !important;
   }
 

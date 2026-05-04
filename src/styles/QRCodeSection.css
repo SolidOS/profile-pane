@@ -39,3 +39,19 @@
   height: 100%;
   display: block;
 }
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__section.profile__qr-code {
+  align-items: center !important;
+}
+
+@media (max-width: 576px) {
+  .profile-grid .profile__section.profile__qr-code {
+    align-items: center !important;
+  }
+}
+
+@container profile-pane (max-width: 576px) {
+  .profile-grid .profile__section.profile__qr-code {
+    align-items: center !important;
+  }
+}

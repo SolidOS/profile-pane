@@ -39,7 +39,7 @@
   --button-border-width: 0;
   --button-border: transparent;
   --button-text: var(--color-text, #1A1A1A);
-  --button-hover-background: var(--color-surface-subtle, rgba(15, 23, 43, 0.04));
+  --button-hover-background: var(--lavender-300, #e6dcff);
   --button-hover-border: transparent;
   --button-hover-text: var(--color-text, #1A1A1A);
 }
