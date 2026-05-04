@@ -14,6 +14,7 @@
   font-size: var(--font-size-sm, 0.875rem);
   font-weight: var(--font-weight-md, 500);
   line-height: 1;
+  letter-spacing: -0.01em;
 }
 
 .profile-friends-button__container input[type="text"] {

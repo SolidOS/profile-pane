@@ -75,7 +75,7 @@ function renderBioSectionContent(
           type="button"
           variant="secondary"
           size="sm"
-          class="profile__action-button profile-action-text flex-center"
+          class="profile__action-button profile-action-text flex-center profile-section-collapsible__edit-button"
           aria-label="Edit bio details"
           @click=${(event: Event) => {
             return createBioEditDialog(

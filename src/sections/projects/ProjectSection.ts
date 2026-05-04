@@ -6,7 +6,7 @@ import { ProjectDetails, ProjectRow } from './types'
 import { projectsHeadingText } from '../../texts'
 import { createProjectsEditDialog } from './ProjectEditDialog'
 import { processProjectsMutations } from './mutations'
-import { addIcon, checkMarkIcon, plusDarkIcon, twoDownArrowsIcon } from '../../icons-svg/profileIcons'
+import { addIcon, checkMarkIcon, editIcon, plusDarkIcon, twoDownArrowsIcon } from '../../icons-svg/profileIcons'
 import { MutationOps } from '../shared/types'
 import '../../styles/ProjectSection.css'
 import { toggleCollapsibleSection } from '../shared/collapsibleSection'
@@ -238,19 +238,16 @@ function renderProjectSectionDefault(
                 }}
               >
                 <span class="profile-section-collapsible__edit-label profile__add-more-content">
-                  <span class="profile__add-more-inline">
-                    <span class="profile__add-more-icon" aria-hidden="true">${addIcon}</span>
-                    <span>Add More</span>
-                  </span>
+                  <span class="profile__add-more-icon" aria-hidden="true">${addIcon}</span>
+                  <span>Add More</span>
                 </span>
-                <span class="profile-section-collapsible__edit-icon profile-section-collapsible__edit-icon--add profile-section-collapsible__edit-icon--projects" aria-hidden="true">${plusDarkIcon}</span>
+                <span class="profile-section-collapsible__edit-icon" aria-hidden="true">${editIcon}</span>
               </solid-ui-button>
             ` : html``}
             <solid-ui-button
               type="button"
               variant="icon"
               size="sm"
-              label="Toggle projects section"
               class="inline-flex-row justify-center"
               aria-label="Toggle projects section"
               aria-controls="projects-panel"

@@ -260,7 +260,6 @@ function openModal ({
       closeButton.setAttribute('type', 'button')
       closeButton.setAttribute('variant', 'icon')
       closeButton.setAttribute('size', 'sm')
-      closeButton.setAttribute('label', 'Close dialog')
       closeButton.setAttribute('aria-label', 'Close dialog')
       const iconSlot = dom.createElement('span')
       iconSlot.setAttribute('slot', 'icon')

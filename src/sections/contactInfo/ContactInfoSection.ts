@@ -9,7 +9,7 @@ import { contactInfoEmptyHeadingText, contactInfoHeadingText } from '../../texts
 import { toggleCollapsibleSection } from '../shared/collapsibleSection'
 import { ContactInfo } from './types'
 import { normalizeEmailTypeForEdit, normalizePhoneTypeForEdit } from '../shared/contactTypeUtils'
-import { addIcon, editIcon, envelopeIcon, locationIcon, plusIcon } from '../../icons-svg/profileIcons'
+import { addIcon, editIcon, envelopeIcon, locationIcon } from '../../icons-svg/profileIcons'
 import { emailIcon, phoneIcon } from '../../icons-svg/contactIcons'
 
 function toText(value: unknown): string {
@@ -171,7 +171,6 @@ function renderContactInfoSectionDefault(
             type="button"
             variant="icon"
             size="sm"
-            label="Toggle contact information section"
             class="inline-flex-row justify-center"
             aria-label="Toggle contact information section"
             aria-controls="contact-details-panel"
@@ -266,13 +265,12 @@ function renderOwnerEmptyContactInfoSection(
             }}
           >
             <span class="profile-section-collapsible__edit-label">${addIcon} Add Contact</span>
-            <span class="profile-section-collapsible__edit-icon profile-section-collapsible__edit-icon--add" aria-hidden="true">${plusIcon}</span>
+            <span class="profile-section-collapsible__edit-icon" aria-hidden="true">${editIcon}</span>
           </solid-ui-button>
           <solid-ui-button
             type="button"
             variant="icon"
             size="sm"
-            label="Toggle contact information section"
             class="inline-flex-row justify-center"
             aria-label="Toggle contact information section"
             aria-controls="contact-details-panel"

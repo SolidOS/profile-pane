@@ -52,9 +52,8 @@ function renderSkillItem(
                 type="button"
                 variant="icon"
                 size="sm"
-                label=${`Remove ${detail.name} skill`}
                 class="skills__remove-button"
-                aria-label="Remove ${detail.name} skill"
+                aria-label=${`Remove ${detail.name} skill`}
                 @click=${handleRemove}
               >
                 <span slot="icon" aria-hidden="true">${deleteIcon}</span>
@@ -91,10 +90,8 @@ function renderSkillsSectionDefault(store: LiveStore, subject: NamedNode, skills
               @click=${(event: Event) => createSkillsEditDialog(event, store, subject, skills, viewerMode, onSaved)}
             >
               <span class="profile-section-collapsible__edit-label profile__add-more-content">
-                <span class="profile__add-more-inline">
-                  <span class="profile__add-more-icon" aria-hidden="true">${addIcon}</span>
-                  <span>Add More</span>
-                </span>
+                <span class="profile__add-more-icon" aria-hidden="true">${addIcon}</span>
+                <span>Add More</span>
               </span>
               <span class="profile-section-collapsible__edit-icon" aria-hidden="true">${editIcon}</span>
             </solid-ui-button>
@@ -103,7 +100,6 @@ function renderSkillsSectionDefault(store: LiveStore, subject: NamedNode, skills
             type="button"
             variant="icon"
             size="sm"
-            label="Toggle skills section"
             class="inline-flex-row justify-center"
             aria-label="Toggle skills section"
             aria-controls="skills-panel"
@@ -131,7 +127,6 @@ function renderSkillsSectionDefault(store: LiveStore, subject: NamedNode, skills
     </section>
   `
 }
-
 function renderOwnerEmptySkillsContent(
   _store: LiveStore,
   _subject: NamedNode,
@@ -188,10 +183,8 @@ function renderOwnerEmptySkillsSection(
             }}
           >
             <span class="profile-section-collapsible__edit-label profile__add-more-content">
-              <span class="profile__add-more-inline">
-                <span class="profile__add-more-icon" aria-hidden="true">${addIcon}</span>
-                <span>Add Skills</span>
-              </span>
+              <span class="profile__add-more-icon" aria-hidden="true">${addIcon}</span>
+              <span>Add Skills</span>
             </span>
             <span class="profile-section-collapsible__edit-icon" aria-hidden="true">${editIcon}</span>
           </solid-ui-button>
@@ -199,7 +192,6 @@ function renderOwnerEmptySkillsSection(
             type="button"
             variant="icon"
             size="sm"
-            label="Toggle skills section"
             class="inline-flex-row justify-center"
             aria-label="Toggle skills section"
             aria-controls="skills-panel"

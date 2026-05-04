@@ -84,11 +84,6 @@ solid-ui-button.profile__action-button {
   display: inline;
 }
 
-.profile__add-more-inline {
-  display: inline;
-  white-space: normal;
-}
-
 .profile__add-more-icon {
   display: inline-block;
   width: var(--icon-xxxs, 0.75rem);

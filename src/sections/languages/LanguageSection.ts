@@ -6,7 +6,7 @@ import { ViewerMode } from '../../types'
 import '../../styles/LanguageSection.css'
 import { createLanguageEditDialog } from './LanguageEditDialog'
 import { LanguageDetails } from './types'
-import { addIcon, commentIcon, editIcon, plusIcon } from '../../icons-svg/profileIcons'
+import { addIcon, commentIcon, editIcon } from '../../icons-svg/profileIcons'
 import { languagesHeadingText } from '../../texts'
 import { toggleCollapsibleSection } from '../shared/collapsibleSection'
 
@@ -48,10 +48,8 @@ function renderLanguagesSectionDefault(store: LiveStore, subject: NamedNode, lan
               @click=${(event: Event) => createLanguageEditDialog(event, store, subject, languages, viewerMode, onSaved)}
             >
               <span class="profile-section-collapsible__edit-label profile__add-more-content">
-                <span class="profile__add-more-inline">
-                  <span class="profile__add-more-icon" aria-hidden="true">${addIcon}</span>
-                  <span>Add More</span>
-                </span>
+                <span class="profile__add-more-icon" aria-hidden="true">${addIcon}</span>
+                <span>Add More</span>
               </span>
               <span class="profile-section-collapsible__edit-icon" aria-hidden="true">${editIcon}</span>
             </solid-ui-button>
@@ -60,7 +58,6 @@ function renderLanguagesSectionDefault(store: LiveStore, subject: NamedNode, lan
             type="button"
             variant="icon"
             size="sm"
-            label="Toggle languages section"
             class="inline-flex-row justify-center"
             aria-label="Toggle languages section"
             aria-controls="languages-panel"
@@ -142,18 +139,15 @@ function renderOwnerEmptyLanguagesSection(
             }}
           >
             <span class="profile-section-collapsible__edit-label profile__add-more-content">
-              <span class="profile__add-more-inline">
-                <span class="profile__add-more-icon" aria-hidden="true">${addIcon}</span>
-                <span>Add Languages</span>
-              </span>
+              <span class="profile__add-more-icon" aria-hidden="true">${addIcon}</span>
+              <span>Add Languages</span>
             </span>
-            <span class="profile-section-collapsible__edit-icon profile-section-collapsible__edit-icon--add" aria-hidden="true">${plusIcon}</span>
+            <span class="profile-section-collapsible__edit-icon" aria-hidden="true">${editIcon}</span>
           </solid-ui-button>
           <solid-ui-button
             type="button"
             variant="icon"
             size="sm"
-            label="Toggle languages section"
             class="inline-flex-row justify-center"
             aria-label="Toggle languages section"
             aria-controls="languages-panel"

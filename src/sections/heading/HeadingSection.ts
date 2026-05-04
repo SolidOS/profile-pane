@@ -56,7 +56,7 @@ export const renderHeadingSection = async (
                     type="button"
                     variant="secondary"
                     size="sm"
-                    class="profile__action-button profile__heading-action-button profile-action-text flex-center"
+                    class="profile__action-button profile__heading-action-button profile-action-text flex-center profile-section-collapsible__edit-button"
                     aria-label="Add or edit heading information"
                     @click=${(event: Event) => {
                       return createHeadingEditDialog(

@@ -127,7 +127,6 @@ function renderResumeSectionDefault(
             type="button"
             variant="icon"
             size="sm"
-            label="Toggle resume section"
             class="inline-flex-row justify-center"
             aria-label="Toggle resume section"
             aria-controls="cv-panel"

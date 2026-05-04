@@ -308,13 +308,12 @@ function renderSkillInputRow({
           type="button"
           variant="icon"
           size="md"
-          label=${deleteEntryButtonTitleText}
           class="profile-edit-dialog__delete-button"
           aria-label=${`Delete skill ${displayIndex + 1}`}
           title=${deleteEntryButtonTitleText}
           @click=${handleDelete}
         >
-          <span slot="icon" class="profile-edit-dialog__delete-icon inline-flex-row justify-center" aria-hidden="true">${trashIcon}</span>
+          <span slot="icon" class="profile-edit-dialog__delete-icon" aria-hidden="true">${trashIcon}</span>
         </solid-ui-button>
       </div>
     </div>

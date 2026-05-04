@@ -361,7 +361,6 @@ function renderLanguageInputRow({
         class="profile-edit-dialog__drag-handle"
         variant="icon"
         size="md"
-        label=${`Reorder language ${displayIndex + 1}`}
         aria-label=${`Reorder language ${displayIndex + 1}`}
         title="Drag to reorder"
         draggable="true"
@@ -392,13 +391,12 @@ function renderLanguageInputRow({
           type="button"
           variant="icon"
           size="md"
-          label=${deleteEntryButtonTitleText}
           class="profile-edit-dialog__delete-button"
           aria-label=${`Delete language ${displayIndex + 1}`}
           title=${deleteEntryButtonTitleText}
           @click=${handleDelete}
         >
-          <span slot="icon" class="profile-edit-dialog__delete-icon inline-flex-row justify-center" aria-hidden="true">${trashIcon}</span>
+          <span slot="icon" class="profile-edit-dialog__delete-icon" aria-hidden="true">${trashIcon}</span>
         </solid-ui-button>
       </div>
     </div>

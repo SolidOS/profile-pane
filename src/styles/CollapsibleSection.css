@@ -21,6 +21,11 @@
   display: none;
 }
 
+.profile-section-collapsible__edit-icon,
+.profile-section-collapsible__edit-icon svg {
+  line-height: 0;
+}
+
 .profile-section-collapsible__actions > solid-ui-button.inline-flex-row {
   display: none !important;
   min-height: auto;
@@ -83,6 +88,23 @@
 :is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-section-collapsible--inline-mobile-actions .profile-section-collapsible__edit-button {
   display: inline-flex !important;
   order: 1;
+  --button-background: transparent;
+  --button-border-width: 0;
+  --button-border: transparent;
+  --button-text: var(--color-text, #1A1A1A);
+  --button-hover-background: var(--lavender-300, #e6dcff);
+  --button-hover-border: transparent;
+  --button-hover-text: var(--color-text, #1A1A1A);
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-section-collapsible__edit-button {
+  --button-background: transparent;
+  --button-border-width: 0;
+  --button-border: transparent;
+  --button-text: var(--color-text, #1A1A1A);
+  --button-hover-background: var(--lavender-300, #e6dcff);
+  --button-hover-border: transparent;
+  --button-hover-text: var(--color-text, #1A1A1A);
 }
 
 :is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-section-collapsible--inline-mobile-actions .profile-section-collapsible__edit-button:active,
@@ -115,7 +137,11 @@
 }
 
 :is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-section-collapsible__edit-icon {
-  display: inline;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 0.875rem;
+  height: 0.875rem;
 }
 
 :is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-section-collapsible .profile-section-collapsible__edit-button {
@@ -187,6 +213,23 @@
   .profile-section-collapsible--inline-mobile-actions .profile-section-collapsible__edit-button {
     display: inline-flex !important;
     order: 1;
+    --button-background: transparent;
+    --button-border-width: 0;
+    --button-border: transparent;
+    --button-text: var(--color-text, #1A1A1A);
+    --button-hover-background: var(--lavender-300, #e6dcff);
+    --button-hover-border: transparent;
+    --button-hover-text: var(--color-text, #1A1A1A);
+  }
+
+  .profile-section-collapsible__edit-button {
+    --button-background: transparent;
+    --button-border-width: 0;
+    --button-border: transparent;
+    --button-text: var(--color-text, #1A1A1A);
+    --button-hover-background: var(--lavender-300, #e6dcff);
+    --button-hover-border: transparent;
+    --button-hover-text: var(--color-text, #1A1A1A);
   }
 
   .profile-section-collapsible--inline-mobile-actions .profile-section-collapsible__edit-button:active,
@@ -219,7 +262,11 @@
   }
 
   .profile-section-collapsible__edit-icon {
-    display: inline;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 0.875rem;
+    height: 0.875rem;
   }
 
   .profile-section-collapsible .profile-section-collapsible__edit-button {
@@ -265,6 +312,23 @@
 
   .profile-section-collapsible--inline-mobile-actions .profile-section-collapsible__edit-button {
     order: 1;
+    --button-background: transparent;
+    --button-border-width: 0;
+    --button-border: transparent;
+    --button-text: var(--color-text, #1A1A1A);
+    --button-hover-background: var(--lavender-300, #e6dcff);
+    --button-hover-border: transparent;
+    --button-hover-text: var(--color-text, #1A1A1A);
+  }
+
+  .profile-section-collapsible__edit-button {
+    --button-background: transparent;
+    --button-border-width: 0;
+    --button-border: transparent;
+    --button-text: var(--color-text, #1A1A1A);
+    --button-hover-background: var(--lavender-300, #e6dcff);
+    --button-hover-border: transparent;
+    --button-hover-text: var(--color-text, #1A1A1A);
   }
 
   .profile-section-collapsible--inline-mobile-actions .profile-section-collapsible__edit-button:active,
@@ -297,7 +361,11 @@
   }
 
   .profile-section-collapsible__edit-icon {
-    display: inline;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 0.875rem;
+    height: 0.875rem;
   }
 
   .profile-section-collapsible .profile-section-collapsible__edit-button {

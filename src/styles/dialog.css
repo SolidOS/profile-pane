@@ -80,6 +80,26 @@
   justify-content: center;
   appearance: none;
   border-radius: 999px;
+  box-shadow: none;
+}
+
+#profile-modal .modal #modal-header-action > solid-ui-button[aria-label="Close dialog"] {
+  --button-height-sm: var(--icon-base, 2rem);
+  --button-width-sm: var(--icon-base, 2rem);
+  --button-padding-sm: 0;
+  --button-background: transparent;
+  --button-border-width: 0;
+  --button-border: transparent;
+  --button-text: var(--color-text);
+  --button-border-radius: 999px;
+  --button-box-shadow: none;
+  --button-hover-background: rgba(0, 0, 0, 0.04);
+  --button-hover-border: transparent;
+  --button-hover-text: var(--color-primary);
+  --button-hover-box-shadow: none;
+  --button-active-box-shadow: none;
+  --button-active-transform: none;
+  --button-icon-size-sm: var(--icon-xxs, 1rem);
 }
 
 #profile-modal .modal #modal-header-action > button[aria-label="Close dialog"]:hover {
@@ -87,8 +107,19 @@
   background: rgba(0, 0, 0, 0.04);
 }
 
-#profile-modal .modal #modal-header-action > button[aria-label="Close dialog"]:focus,
+#profile-modal .modal #modal-header-action > solid-ui-button[aria-label="Close dialog"]:hover {
+  --button-hover-background: rgba(0, 0, 0, 0.04);
+  --button-hover-border: transparent;
+  --button-hover-text: var(--color-primary);
+}
+
 #profile-modal .modal #modal-header-action > button[aria-label="Close dialog"]:focus-visible {
+  outline: var(--focus-indicator-width) solid var(--color-primary);
+  outline-offset: var(--outline-offset-sm);
+  box-shadow: 0 0 0 var(--focus-ring-width) var(--color-background), 0 0 0 calc(var(--focus-ring-width) + var(--focus-indicator-width)) var(--color-primary-alpha);
+}
+
+#profile-modal .modal #modal-header-action > solid-ui-button[aria-label="Close dialog"]:focus-visible::part(button) {
   outline: var(--focus-indicator-width) solid var(--color-primary);
   outline-offset: var(--outline-offset-sm);
   box-shadow: 0 0 0 var(--focus-ring-width) var(--color-background), 0 0 0 calc(var(--focus-ring-width) + var(--focus-indicator-width)) var(--color-primary-alpha);

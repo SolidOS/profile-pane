@@ -237,6 +237,7 @@ transform: translateX(-4px);
   justify-self: end;
   justify-content: flex-end;
   width: auto;
+  gap: var(--spacing-2xs, 0.3125rem);
 }
 
 :is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile__name {
@@ -304,6 +305,7 @@ transform: translateX(-4px);
     justify-self: end;
     justify-content: flex-end;
     width: auto;
+    gap: var(--spacing-2xs, 0.3125rem);
   }
 
   .profile__name {

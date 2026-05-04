@@ -692,7 +692,6 @@ function renderHeadingInfoInput(
             class="profile-edit-dialog__image-camera-button flex-center"
             variant="icon"
             size="md"
-            label="Take a photo"
             aria-label="Take a photo"
             title="Take a photo"
             @click=${handleCameraClick}

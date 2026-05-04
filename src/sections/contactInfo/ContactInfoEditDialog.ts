@@ -266,13 +266,12 @@ function renderContactPhoneInputRow({
           type="button"
           variant="icon"
           size="md"
-          label=${deleteEntryButtonTitleText}
           class="profile-edit-dialog__delete-button"
           aria-label=${`Delete phone number ${displayIndex + 1}`}
           title=${deleteEntryButtonTitleText}
           @click=${handleDelete}
         >
-          <span slot="icon" class="profile-edit-dialog__delete-icon inline-flex-row justify-center" aria-hidden="true">${trashIcon}</span>
+          <span slot="icon" class="profile-edit-dialog__delete-icon" aria-hidden="true">${trashIcon}</span>
         </solid-ui-button>
       </div>
     </div>
@@ -308,10 +307,8 @@ function renderContactInfoPhoneSection(phones: ContactPointRow[], onAddRow: (opt
           @click=${createNewRow}
         >
           <span class="profile__add-more-content">
-            <span class="profile__add-more-inline">
-              <span class="profile__add-more-icon" aria-hidden="true">${addIcon}</span>
-              <span>Add More</span>
-            </span>
+            <span class="profile__add-more-icon" aria-hidden="true">${addIcon}</span>
+            <span>Add More</span>
           </span>
         </solid-ui-button>
       </header>
@@ -398,13 +395,12 @@ function renderContactEmailInputRow({
           type="button"
           variant="icon"
           size="md"
-          label=${deleteEntryButtonTitleText}
           class="profile-edit-dialog__delete-button"
           aria-label=${`Delete email address ${displayIndex + 1}`}
           title=${deleteEntryButtonTitleText}
           @click=${handleDelete}
         >
-          <span slot="icon" class="profile-edit-dialog__delete-icon inline-flex-row justify-center" aria-hidden="true">${trashIcon}</span>
+          <span slot="icon" class="profile-edit-dialog__delete-icon" aria-hidden="true">${trashIcon}</span>
         </solid-ui-button>
       </div>
     </div>
@@ -440,10 +436,8 @@ function renderContactInfoEmailSection(emails: ContactPointRow[], onAddRow: (opt
           @click=${createNewRow}
         >
           <span class="profile__add-more-content">
-            <span class="profile__add-more-inline">
-              <span class="profile__add-more-icon" aria-hidden="true">${addIcon}</span>
-              <span>Add More</span>
-            </span>
+            <span class="profile__add-more-icon" aria-hidden="true">${addIcon}</span>
+            <span>Add More</span>
           </span>
         </solid-ui-button>
       </header>
@@ -516,13 +510,12 @@ function renderContactAddressInputRow({
           type="button"
           variant="icon"
           size="md"
-          label=${deleteEntryButtonTitleText}
           class="profile-edit-dialog__delete-button"
           aria-label=${`Delete address ${displayIndex + 1}`}
           title=${deleteEntryButtonTitleText}
           @click=${handleDelete}
         >
-          <span slot="icon" class="profile-edit-dialog__delete-icon inline-flex-row justify-center" aria-hidden="true">${trashIcon}</span>
+          <span slot="icon" class="profile-edit-dialog__delete-icon" aria-hidden="true">${trashIcon}</span>
         </solid-ui-button>
       </div>
     </div>
@@ -655,10 +648,8 @@ function renderContactInfoAddressSection(addresses: ContactAddressRow[], onAddRo
           @click=${createNewRow}
         >
           <span class="profile__add-more-content">
-            <span class="profile__add-more-inline">
-              <span class="profile__add-more-icon" aria-hidden="true">${addIcon}</span>
-              <span>Add More</span>
-            </span>
+            <span class="profile__add-more-icon" aria-hidden="true">${addIcon}</span>
+            <span>Add More</span>
           </span>
         </solid-ui-button>
       </header>
