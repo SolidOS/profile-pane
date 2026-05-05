@@ -142,7 +142,7 @@ const createAddressBookCreationButton = (
     type: 'button',
     label: 'Create Address Book',
     variant: 'primary',
-    size: 'sm',
+    size: 'md',
     classes: ['contacts-dialog__action-button', 'contacts-dialog__action-button--primary']
   })
   addressBookCreationButton.addEventListener('click', setButtonOnClickHandler)
@@ -183,7 +183,7 @@ const createAddressBookUriEntryButton = (
     type: 'button',
     label: 'Enter Address Book URI',
     variant: 'primary',
-    size: 'sm',
+    size: 'md',
     classes: ['contacts-dialog__action-button', 'contacts-dialog__action-button--primary']
   })
   addressBookCreationButton.addEventListener('click', setButtonOnClickHandler)
@@ -285,7 +285,7 @@ const createAddressBookUriEntryAddButton = (
     type: 'submit',
     ariaLabel: 'Submit new address book URI',
     variant: 'primary',
-    size: 'sm',
+    size: 'md',
     classes: ['contacts-dialog__action-button', 'contacts-dialog__action-button--primary', 'contacts-dialog__uri-submit', 'inline-flex-row', 'justify-center']
   })
   entryButton.addEventListener('click', setButtonOnClickHandler)
@@ -343,7 +343,7 @@ const createAddressBookGroupCreationButton = (
     type: 'button',
     label: 'Create Group',
     variant: 'primary',
-    size: 'sm',
+    size: 'md',
     classes: ['contacts-dialog__action-button', 'contacts-dialog__action-button--primary']
   })
   groupCreationButton.addEventListener('click', setButtonOnClickHandler)
@@ -434,7 +434,7 @@ const createNewContactCreationButton = (
     id: 'contacts-submit-contact-button',
     type: 'submit',
     variant: 'primary',
-    size: 'sm',
+    size: 'md',
     classes: ['contacts-dialog__action-button', 'contacts-dialog__action-button--primary', 'contacts-dialog__submit-contact']
   })
   button.disabled = true
@@ -651,7 +651,7 @@ const createNewAddressBookForm = (
   submitButton = createContactsButtonElement(context, {
     type: 'submit',
     variant: 'primary',
-    size: 'sm',
+    size: 'md',
     classes: ['contacts-dialog__action-button', 'contacts-dialog__action-button--primary', 'contacts-dialog__address-submit']
   })
   submitButton.addEventListener('click', submitFormEventListener)
@@ -727,7 +727,7 @@ function createDialogCancelButton(
     type: 'button',
     label: dialogCancelLabelText,
     variant: 'secondary',
-    size: 'sm',
+    size: 'md',
     classes: ['contacts-dialog__cancel', 'contacts-dialog__cancel--footer']
   })
   cancelButton.addEventListener('click', (event) => {
@@ -962,7 +962,7 @@ const createAddGroupButton = (
     type: 'button',
     label: 'Create Group',
     variant: 'primary',
-    size: 'sm',
+    size: 'md',
     classes: ['contacts-dialog__action-button', 'contacts-dialog__action-button--primary']
   })
   button.addEventListener('click', setButtonOnClickHandler)
@@ -1022,7 +1022,7 @@ export const handleContactExistsByName = (
     type: 'button',
     label: 'Yes',
     variant: 'primary',
-    size: 'sm',
+    size: 'md',
     classes: ['contacts-dialog__action-button', 'contacts-dialog__confirm', 'inline-flex-row', 'justify-center']
   })
   confirmButton.addEventListener('click', async (event) => {
@@ -1039,7 +1039,7 @@ export const handleContactExistsByName = (
     type: 'button',
     label: 'No',
     variant: 'secondary',
-    size: 'sm',
+    size: 'md',
     classes: ['contacts-dialog__cancel', 'inline-flex-row', 'justify-center']
   })
   cancelButton.addEventListener('click', (event) => {

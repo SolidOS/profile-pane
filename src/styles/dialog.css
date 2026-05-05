@@ -191,6 +191,14 @@
   --button-font-size-md: var(--font-size-sm, 0.875rem);
 }
 
+#profile-modal #modal-buttons solid-ui-button[data-cancel='true']:hover::part(button),
+#profile-modal #modal-buttons solid-ui-button[data-cancel='true']:focus-visible::part(button),
+#profile-modal #modal-buttons solid-ui-button[data-cancel='true']:focus-within::part(button) {
+  background: var(--blue-900, #083575);
+  border-color: var(--blue-900, #083575);
+  color: var(--white, #FFF);
+}
+
 #profile-modal .modal__error-section {
   margin-top: var(--spacing-sm);
 }
