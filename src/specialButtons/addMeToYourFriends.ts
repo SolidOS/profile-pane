@@ -19,8 +19,22 @@ let buttonContainer = <HTMLDivElement>document.createElement('section')
 
 function setAddToFriendsButtonLabel(button: SolidUIButtonElement, label: string): void {
   const labelWrapper = button.ownerDocument.createElement('span')
-  labelWrapper.className = 'profile__btn-friends-label'
+  labelWrapper.className = 'profile__btn-friends-label profile__btn-friends-label--full'
   labelWrapper.textContent = label
+
+  if (label === friendExistsAlreadyButtonText) {
+    const shortLabelWrapper = button.ownerDocument.createElement('span')
+    shortLabelWrapper.className = 'profile__btn-friends-label profile__btn-friends-label--short'
+    shortLabelWrapper.textContent = 'Friends'
+    shortLabelWrapper.setAttribute('aria-hidden', 'true')
+    button.setAttribute('data-friends-short-label', 'true')
+    button.setAttribute('aria-label', label)
+    button.replaceChildren(labelWrapper, shortLabelWrapper)
+    return
+  }
+
+  button.removeAttribute('data-friends-short-label')
+  button.removeAttribute('aria-label')
   button.replaceChildren(labelWrapper)
 }
 

@@ -126,12 +126,13 @@ transform: translateX(-4px);
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   justify-content: flex-start;
-  column-gap: 0.25rem; /* 4px */
+  column-gap: clamp(0.75rem, 2vw, 1.5rem);
   row-gap: var(--spacing-xs, 0.5rem);
   align-items: start;
   margin: 0;
   padding: 0;
-  width: 100%;
+  width: min(100%, 34rem);
+  max-width: 100%;
 }
 
 .profile__meta-row .profile__item,
@@ -204,40 +205,236 @@ transform: translateX(-4px);
   height: 100%;
 }
 
-@media (max-width: 900px) {
+@media (max-width: 1200px) {
+  .profile__heading-top {
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    grid-template-areas:
+      "avatar info actions"
+      "details details details";
+    column-gap: var(--spacing-sm, 0.75rem);
+  }
+
+  .profile__hero,
+  .profile__hero-alt {
+    width: 6.5rem;
+    height: 6.5rem;
+  }
+
+  .profile__hero-alt {
+    padding: 0 1.6875rem;
+  }
+
   .profile__heading-actions {
     justify-self: end;
+    margin-bottom: 0;
+    max-inline-size: 10.5rem;
     justify-content: flex-end;
-    align-items: flex-end;
-    flex-direction: column;
+    align-items: flex-start;
+    align-content: flex-end;
+    gap: 0.25rem;
+  }
+
+  .profile__heading-actions > .profile-friends-button__section,
+  .profile__heading-actions > #add-to-contacts-button-container {
     width: auto;
+    flex: 0 1 auto;
+  }
+
+  .profile__heading-actions > .profile-friends-button__section > solid-ui-button.profile__btn-friends,
+  .profile__heading-actions > #add-to-contacts-button-container > solid-ui-button.profile__btn-contacts {
+    width: auto;
+    max-width: 100%;
+    --button-padding-sm: 0.3125rem 0.5625rem;
+    --button-padding-x-sm: 0.5625rem;
+    --button-font-size-sm: var(--font-size-xs, 0.8125rem);
+  }
+
+  .profile__heading-actions .profile__btn-friends-label,
+  .profile__heading-actions #add-to-contacts-button-container .profile__btn-contacts-label {
+    font-size: var(--font-size-xs, 0.8125rem);
+  }
+
+  .profile__heading-actions #add-to-contacts-button-container .profile__btn-contacts-icon,
+  .profile__heading-actions #add-to-contacts-button-container .profile__btn-contacts-icon svg {
+    width: 0.6875rem;
+    height: 0.6875rem;
+  }
+
+  .profile__heading-actions #add-to-contacts-button-container .profile__btn-contacts-icon {
+    margin-right: 0.25rem;
+  }
+
+}
+
+@container profile-pane (max-width: 1200px) {
+  .profile__heading-top {
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    grid-template-areas:
+      "avatar info actions"
+      "details details details";
+    column-gap: var(--spacing-sm, 0.75rem);
+  }
+
+  .profile__hero,
+  .profile__hero-alt {
+    width: 6.5rem;
+    height: 6.5rem;
+  }
+
+  .profile__hero-alt {
+    padding: 0 1.6875rem;
+  }
+
+  .profile__heading-actions {
+    justify-self: end;
+    margin-bottom: 0;
+    max-inline-size: 10.5rem;
+    justify-content: flex-end;
+    align-items: flex-start;
+    align-content: flex-end;
+    gap: 0.25rem;
+  }
+
+  .profile__heading-actions > .profile-friends-button__section,
+  .profile__heading-actions > #add-to-contacts-button-container {
+    width: auto;
+    flex: 0 1 auto;
+  }
+
+  .profile__heading-actions > .profile-friends-button__section > solid-ui-button.profile__btn-friends,
+  .profile__heading-actions > #add-to-contacts-button-container > solid-ui-button.profile__btn-contacts {
+    width: auto;
+    max-width: 100%;
+    --button-padding-sm: 0.3125rem 0.5625rem;
+    --button-padding-x-sm: 0.5625rem;
+    --button-font-size-sm: var(--font-size-xs, 0.8125rem);
+  }
+
+  .profile__heading-actions .profile__btn-friends-label,
+  .profile__heading-actions #add-to-contacts-button-container .profile__btn-contacts-label {
+    font-size: var(--font-size-xs, 0.8125rem);
+  }
+
+  .profile__heading-actions #add-to-contacts-button-container .profile__btn-contacts-icon,
+  .profile__heading-actions #add-to-contacts-button-container .profile__btn-contacts-icon svg {
+    width: 0.6875rem;
+    height: 0.6875rem;
+  }
+
+  .profile__heading-actions #add-to-contacts-button-container .profile__btn-contacts-icon {
+    margin-right: 0.25rem;
+  }
+
+}
+
+@media (max-width: 784px) {
+  .profile__heading-top {
+    grid-template-columns: auto minmax(0, 1fr);
+    grid-template-areas:
+      "avatar info"
+      "details details"
+      "actions actions";
+    column-gap: 0.5rem;
+    row-gap: var(--spacing-sm, 0.75rem);
+  }
+
+  .profile__heading-actions {
+    position: static;
+    justify-self: start;
+    margin-left: 0;
+    margin-bottom: 0;
+    max-inline-size: none;
+    justify-content: flex-start;
+    align-items: flex-start;
+    align-content: flex-start;
+    gap: 0.25rem;
   }
 }
 
-@container profile-pane (max-width: 900px) {
+@container profile-pane (max-width: 784px) {
+  .profile__heading-top {
+    grid-template-columns: auto minmax(0, 1fr);
+    grid-template-areas:
+      "avatar info"
+      "details details"
+      "actions actions";
+    column-gap: 0.5rem;
+    row-gap: var(--spacing-sm, 0.75rem);
+  }
+
   .profile__heading-actions {
-    justify-self: end;
-    justify-content: flex-end;
-    align-items: flex-end;
-    flex-direction: column;
-    width: auto;
+    position: static;
+    justify-self: start;
+    margin-left: 0;
+    margin-bottom: 0;
+    max-inline-size: none;
+    justify-content: flex-start;
+    align-items: flex-start;
+    align-content: flex-start;
+    gap: 0.25rem;
   }
 }
 /* layout = mobile */
 :is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile__heading-top {
-  grid-template-columns: auto minmax(0, 1fr) auto;
+  grid-template-columns: auto minmax(0, 1fr);
   grid-template-areas:
-    "avatar info actions"
-    "details details details";
-  column-gap: var(--spacing-sm, 0.75rem);
+    "avatar info"
+    "details details"
+    "actions actions";
+  column-gap: 0.5rem;
   row-gap: var(--spacing-sm, 0.75rem);
 }
 
 :is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile__heading-actions {
-  justify-self: end;
-  justify-content: flex-end;
+  position: static;
+  justify-self: start;
+  margin-left: 0;
+  margin-bottom: 0;
+  max-inline-size: none;
+  justify-content: flex-start;
+  align-items: flex-start;
+  align-content: flex-start;
+  gap: 0.25rem;
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile__heading-actions > .profile-friends-button__section,
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile__heading-actions > #add-to-contacts-button-container {
   width: auto;
-  gap: var(--spacing-2xs, 0.3125rem);
+  flex: 0 1 auto;
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile__heading-actions > .profile-friends-button__section > solid-ui-button.profile__btn-friends,
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile__heading-actions > #add-to-contacts-button-container > solid-ui-button.profile__btn-contacts {
+  width: 9.25rem;
+  min-width: 9.25rem;
+  max-width: 9.25rem;
+  inline-size: 9.25rem;
+  --button-padding-sm: 0.25rem 0.5rem;
+  --button-padding-x-sm: 0.5rem;
+  --button-font-size-sm: var(--font-size-xxs, 0.75rem);
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile__heading-actions .profile__btn-friends-label,
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile__heading-actions #add-to-contacts-button-container .profile__btn-contacts-label {
+  font-size: var(--font-size-xxs, 0.75rem);
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile__heading-actions #add-to-contacts-button-container .profile__btn-contacts-icon,
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile__heading-actions #add-to-contacts-button-container .profile__btn-contacts-icon svg {
+  width: 0.625rem;
+  height: 0.625rem;
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile__heading-actions #add-to-contacts-button-container .profile__btn-contacts-icon {
+  margin-right: 0.1875rem;
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile__heading-actions solid-ui-button.profile__btn-friends[data-friends-short-label='true'] .profile__btn-friends-label--full {
+  display: none;
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile__heading-actions solid-ui-button.profile__btn-friends[data-friends-short-label='true'] .profile__btn-friends-label--short {
+  display: inline;
 }
 
 :is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile__name {
@@ -293,19 +490,65 @@ transform: translateX(-4px);
 
 @media (max-width: 576px) {
   .profile__heading-top {
-    grid-template-columns: auto minmax(0, 1fr) auto;
+    grid-template-columns: auto minmax(0, 1fr);
     grid-template-areas:
-      "avatar info actions"
-      "details details details";
-    column-gap: var(--spacing-sm, 0.75rem);
+      "avatar info"
+      "details details"
+      "actions actions";
+    column-gap: 0.5rem;
     row-gap: var(--spacing-sm, 0.75rem);
   }
 
   .profile__heading-actions {
-    justify-self: end;
-    justify-content: flex-end;
+    position: static;
+    justify-self: start;
+    margin-left: 0;
+    margin-bottom: 0;
+    max-inline-size: none;
+    justify-content: flex-start;
+    align-items: flex-start;
+    align-content: flex-start;
+    gap: 0.25rem;
+  }
+
+  .profile__heading-actions > .profile-friends-button__section,
+  .profile__heading-actions > #add-to-contacts-button-container {
     width: auto;
-    gap: var(--spacing-2xs, 0.3125rem);
+    flex: 0 1 auto;
+  }
+
+  .profile__heading-actions > .profile-friends-button__section > solid-ui-button.profile__btn-friends,
+  .profile__heading-actions > #add-to-contacts-button-container > solid-ui-button.profile__btn-contacts {
+    width: 9.25rem;
+    min-width: 9.25rem;
+    max-width: 9.25rem;
+    inline-size: 9.25rem;
+    --button-padding-sm: 0.25rem 0.5rem;
+    --button-padding-x-sm: 0.5rem;
+    --button-font-size-sm: var(--font-size-xxs, 0.75rem);
+  }
+
+  .profile__heading-actions .profile__btn-friends-label,
+  .profile__heading-actions #add-to-contacts-button-container .profile__btn-contacts-label {
+    font-size: var(--font-size-xxs, 0.75rem);
+  }
+
+  .profile__heading-actions #add-to-contacts-button-container .profile__btn-contacts-icon,
+  .profile__heading-actions #add-to-contacts-button-container .profile__btn-contacts-icon svg {
+    width: 0.625rem;
+    height: 0.625rem;
+  }
+
+  .profile__heading-actions #add-to-contacts-button-container .profile__btn-contacts-icon {
+    margin-right: 0.1875rem;
+  }
+
+  .profile__heading-actions solid-ui-button.profile__btn-friends[data-friends-short-label='true'] .profile__btn-friends-label--full {
+    display: none;
+  }
+
+  .profile__heading-actions solid-ui-button.profile__btn-friends[data-friends-short-label='true'] .profile__btn-friends-label--short {
+    display: inline;
   }
 
   .profile__name {
@@ -362,18 +605,65 @@ transform: translateX(-4px);
 
 @container profile-pane (max-width: 576px) {
   .profile__heading-top {
-    grid-template-columns: auto minmax(0, 1fr) auto;
+    grid-template-columns: auto minmax(0, 1fr);
     grid-template-areas:
-      "avatar info actions"
-      "details details details";
-    column-gap: var(--spacing-sm, 0.75rem);
+      "avatar info"
+      "details details"
+      "actions actions";
+    column-gap: 0.5rem;
     row-gap: var(--spacing-sm, 0.75rem);
   }
 
   .profile__heading-actions {
-    justify-self: end;
-    justify-content: flex-end;
+    position: static;
+    justify-self: start;
+    margin-left: 0;
+    margin-bottom: 0;
+    max-inline-size: none;
+    justify-content: flex-start;
+    align-items: flex-start;
+    align-content: flex-start;
+    gap: 0.25rem;
+  }
+
+  .profile__heading-actions > .profile-friends-button__section,
+  .profile__heading-actions > #add-to-contacts-button-container {
     width: auto;
+    flex: 0 1 auto;
+  }
+
+  .profile__heading-actions > .profile-friends-button__section > solid-ui-button.profile__btn-friends,
+  .profile__heading-actions > #add-to-contacts-button-container > solid-ui-button.profile__btn-contacts {
+    width: 9.25rem;
+    min-width: 9.25rem;
+    max-width: 9.25rem;
+    inline-size: 9.25rem;
+    --button-padding-sm: 0.25rem 0.5rem;
+    --button-padding-x-sm: 0.5rem;
+    --button-font-size-sm: var(--font-size-xxs, 0.75rem);
+  }
+
+  .profile__heading-actions .profile__btn-friends-label,
+  .profile__heading-actions #add-to-contacts-button-container .profile__btn-contacts-label {
+    font-size: var(--font-size-xxs, 0.75rem);
+  }
+
+  .profile__heading-actions #add-to-contacts-button-container .profile__btn-contacts-icon,
+  .profile__heading-actions #add-to-contacts-button-container .profile__btn-contacts-icon svg {
+    width: 0.625rem;
+    height: 0.625rem;
+  }
+
+  .profile__heading-actions #add-to-contacts-button-container .profile__btn-contacts-icon {
+    margin-right: 0.1875rem;
+  }
+
+  .profile__heading-actions solid-ui-button.profile__btn-friends[data-friends-short-label='true'] .profile__btn-friends-label--full {
+    display: none;
+  }
+
+  .profile__heading-actions solid-ui-button.profile__btn-friends[data-friends-short-label='true'] .profile__btn-friends-label--short {
+    display: inline;
   }
 
   .profile__name {

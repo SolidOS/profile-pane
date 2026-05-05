@@ -17,6 +17,10 @@
   letter-spacing: -0.01em;
 }
 
+.profile__btn-friends-label--short {
+  display: none;
+}
+
 .profile-friends-button__container input[type="text"] {
   width: 100%;
   box-sizing: border-box;
