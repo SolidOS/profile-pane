@@ -117,7 +117,7 @@ solid-ui-button.education-card__description-toggle::part(button) {
   padding-left: 0;
 }
 
-:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .education-card__header {
+:is(.profile-pane-host, .profile-pane-root)[mashlib-layout='mobile'] .education-card__header {
   flex-direction: column;
   align-items: flex-start;
 }

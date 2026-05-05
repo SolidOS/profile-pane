@@ -70,13 +70,13 @@
 .profile-section-collapsible__content > :last-child {
   margin-bottom: 0;
 }
-/* App-driven mobile layout when the host/root explicitly sets data-layout. */
-:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-section-collapsible--inline-mobile-actions > .profile-section-collapsible__header h2 {
+/* App-driven mobile layout when the host/root explicitly sets mashlib-layout. */
+:is(.profile-pane-host, .profile-pane-root)[mashlib-layout='mobile'] .profile-section-collapsible--inline-mobile-actions > .profile-section-collapsible__header h2 {
   flex: 1 1 auto;
   min-width: 0;
 }
 
-:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-section-collapsible--inline-mobile-actions .profile-section-collapsible__actions {
+:is(.profile-pane-host, .profile-pane-root)[mashlib-layout='mobile'] .profile-section-collapsible--inline-mobile-actions .profile-section-collapsible__actions {
   display: inline-flex;
   flex-direction: row;
   align-items: center;
@@ -85,7 +85,7 @@
   flex: 0 0 auto;
 }
 
-:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-section-collapsible--inline-mobile-actions .profile-section-collapsible__edit-button {
+:is(.profile-pane-host, .profile-pane-root)[mashlib-layout='mobile'] .profile-section-collapsible--inline-mobile-actions .profile-section-collapsible__edit-button {
   display: inline-flex !important;
   order: 1;
   --button-background: transparent;
@@ -97,7 +97,7 @@
   --button-hover-text: var(--color-text, #1A1A1A);
 }
 
-:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-section-collapsible__edit-button {
+:is(.profile-pane-host, .profile-pane-root)[mashlib-layout='mobile'] .profile-section-collapsible__edit-button {
   --button-background: transparent;
   --button-border-width: 0;
   --button-border: transparent;
@@ -107,36 +107,36 @@
   --button-hover-text: var(--color-text, #1A1A1A);
 }
 
-:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-section-collapsible--inline-mobile-actions .profile-section-collapsible__edit-button:active,
-:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-section-collapsible--inline-mobile-actions .profile-section-collapsible__edit-button:focus,
-:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-section-collapsible--inline-mobile-actions .profile-section-collapsible__edit-button:focus-visible {
+:is(.profile-pane-host, .profile-pane-root)[mashlib-layout='mobile'] .profile-section-collapsible--inline-mobile-actions .profile-section-collapsible__edit-button:active,
+:is(.profile-pane-host, .profile-pane-root)[mashlib-layout='mobile'] .profile-section-collapsible--inline-mobile-actions .profile-section-collapsible__edit-button:focus,
+:is(.profile-pane-host, .profile-pane-root)[mashlib-layout='mobile'] .profile-section-collapsible--inline-mobile-actions .profile-section-collapsible__edit-button:focus-visible {
   border: none !important;
   outline: none !important;
   box-shadow: none !important;
   background: transparent !important;
 }
 
-:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-section-collapsible--inline-mobile-actions .profile-section-collapsible__actions > solid-ui-button.inline-flex-row {
+:is(.profile-pane-host, .profile-pane-root)[mashlib-layout='mobile'] .profile-section-collapsible--inline-mobile-actions .profile-section-collapsible__actions > solid-ui-button.inline-flex-row {
   order: 2;
 }
 
-:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-section-collapsible[data-expanded="false"] .profile-section-collapsible__content {
+:is(.profile-pane-host, .profile-pane-root)[mashlib-layout='mobile'] .profile-section-collapsible[data-expanded="false"] .profile-section-collapsible__content {
   display: none;
 }
 
-:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-section-collapsible__actions.flex-column {
+:is(.profile-pane-host, .profile-pane-root)[mashlib-layout='mobile'] .profile-section-collapsible__actions.flex-column {
   gap: 0.25rem;
 }
 
-:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-section-collapsible[data-expanded="true"] .profile-section-collapsible__chevron {
+:is(.profile-pane-host, .profile-pane-root)[mashlib-layout='mobile'] .profile-section-collapsible[data-expanded="true"] .profile-section-collapsible__chevron {
   transform: rotate(180deg);
 }
 
-:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-section-collapsible__edit-label {
+:is(.profile-pane-host, .profile-pane-root)[mashlib-layout='mobile'] .profile-section-collapsible__edit-label {
   display: none !important;
 }
 
-:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-section-collapsible__edit-icon {
+:is(.profile-pane-host, .profile-pane-root)[mashlib-layout='mobile'] .profile-section-collapsible__edit-icon {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -144,25 +144,25 @@
   height: 0.875rem;
 }
 
-:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-section-collapsible .profile-section-collapsible__edit-button {
+:is(.profile-pane-host, .profile-pane-root)[mashlib-layout='mobile'] .profile-section-collapsible .profile-section-collapsible__edit-button {
   display: none !important;
   order: 2;
 }
 
-:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-section-collapsible[data-expanded="true"] .profile-section-collapsible__edit-button {
+:is(.profile-pane-host, .profile-pane-root)[mashlib-layout='mobile'] .profile-section-collapsible[data-expanded="true"] .profile-section-collapsible__edit-button {
   display: inline-flex !important;
 }
 
-:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-section-collapsible__actions > solid-ui-button.inline-flex-row {
+:is(.profile-pane-host, .profile-pane-root)[mashlib-layout='mobile'] .profile-section-collapsible__actions > solid-ui-button.inline-flex-row {
   display: inline-flex !important;
 }
 
-:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-section-collapsible__edit-icon--add svg path {
+:is(.profile-pane-host, .profile-pane-root)[mashlib-layout='mobile'] .profile-section-collapsible__edit-icon--add svg path {
   fill: #1E2939 !important;
   stroke: #1E2939 !important;
 }
 
-:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-section-collapsible__edit-icon--projects svg path {
+:is(.profile-pane-host, .profile-pane-root)[mashlib-layout='mobile'] .profile-section-collapsible__edit-icon--projects svg path {
   stroke-width: 1.714px !important;
   stroke: var(--gray-800, #1E2939) !important;
   fill: none !important;

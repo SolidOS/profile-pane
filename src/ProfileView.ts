@@ -78,7 +78,7 @@ export async function ProfileView (
   return html` 
     <div
       class="profile-pane-root"
-      data-layout=${layout}
+      mashlib-layout=${layout}
       data-theme=${theme}
       data-input-mode=${inputMode}
     >
