@@ -370,29 +370,21 @@ solid-ui-button.contacts-dialog__close {
   margin: 0;
   flex-shrink: 0;
   --button-height-sm: var(--icon-base, 2rem);
-  --button-height-md: var(--icon-base, 2rem);
   --button-width-sm: var(--icon-base, 2rem);
-  --button-width-md: var(--icon-base, 2rem);
   --button-padding-sm: 0;
-  --button-padding-md: 0;
   --button-icon-size-sm: var(--icon-xxs, 1rem);
-  --button-icon-size-md: var(--icon-xxs, 1rem);
   --button-background: transparent;
   --button-border: transparent;
   --button-border-width: 0;
   --button-border-radius: 999px;
-  --button-text: var(--color-text, #1E2939);
-  --button-line-height: 1;
+  --button-text: var(--color-text);
+  --button-box-shadow: none;
   --button-hover-background: rgba(0, 0, 0, 0.04);
   --button-hover-border: transparent;
-  --button-hover-text: var(--color-primary, #7C4DFF);
-  --button-box-shadow: none;
+  --button-hover-text: var(--color-primary);
   --button-hover-box-shadow: none;
   --button-active-box-shadow: none;
   --button-active-transform: none;
-  --button-focus-outline: var(--focus-indicator-width) solid var(--color-primary);
-  --button-focus-outline-offset: var(--outline-offset-sm);
-  --button-focus-box-shadow: 0 0 0 var(--focus-ring-width) var(--color-background, #FFF), 0 0 0 calc(var(--focus-ring-width) + var(--focus-indicator-width)) var(--color-primary-alpha, rgba(124, 77, 255, 0.2));
 }
 
 solid-ui-button.contacts-dialog__close::part(button) {
@@ -419,6 +411,18 @@ solid-ui-button.contacts-dialog__close svg {
   width: var(--icon-xxs, 1rem);
   height: var(--icon-xxs, 1rem);
   display: block;
+}
+
+solid-ui-button.contacts-dialog__close:hover {
+  --button-hover-background: rgba(0, 0, 0, 0.04);
+  --button-hover-border: transparent;
+  --button-hover-text: var(--color-primary);
+}
+
+solid-ui-button.contacts-dialog__close:focus-visible::part(button) {
+  outline: var(--focus-indicator-width) solid var(--color-primary);
+  outline-offset: var(--outline-offset-sm);
+  box-shadow: 0 0 0 var(--focus-ring-width) var(--color-background), 0 0 0 calc(var(--focus-ring-width) + var(--focus-indicator-width)) var(--color-primary-alpha);
 }
 
 solid-ui-button.contacts-dialog__close:focus-within {
@@ -683,16 +687,17 @@ solid-ui-button.contacts-dialog__cancel--footer {
 }
 
 :is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .contacts-dialog__address-form {
-  width: calc(100% - var(--spacing-2xs, 0.625rem));
-  max-width: calc(100% - var(--spacing-2xs, 0.625rem));
+  width: min(100%, 20.75rem) !important;
+  max-width: min(100%, 20.75rem) !important;
   margin-inline: auto;
   padding: var(--spacing-xs, 0.75rem) !important;
 }
 
 :is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .contacts-dialog__inline-panel-region {
   min-width: 0;
-  width: 100%;
-  max-width: 100%;
+  width: min(100%, 20rem) !important;
+  max-width: min(100%, 20rem) !important;
+  margin-inline: auto;
 }
 
 :is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .contacts-dialog__address-form .contacts-dialog__header {
@@ -726,8 +731,18 @@ solid-ui-button.contacts-dialog__cancel--footer {
 :is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .contacts-dialog__address-book-list,
 :is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .contacts-dialog__group-list {
   min-width: 0;
-  max-width: 100% !important;
-  width: 100%;
+  width: min(100%, 20rem) !important;
+  max-width: min(100%, 20rem) !important;
+  margin-inline: auto;
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .contacts-dialog__inline-panel.contacts-dialog__popup,
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .contacts-dialog__group-form,
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .contacts-dialog__uri-entry {
+  width: min(100%, 20.75rem) !important;
+  max-width: min(100%, 20.75rem) !important;
+  margin-inline: auto !important;
+  align-self: center;
 }
 
 @media (max-width: 576px) {
@@ -742,16 +757,17 @@ solid-ui-button.contacts-dialog__cancel--footer {
   }
 
   .contacts-dialog__address-form {
-    width: calc(100% - var(--spacing-2xs, 0.625rem));
-    max-width: calc(100% - var(--spacing-2xs, 0.625rem));
+    width: min(100%, 20.75rem) !important;
+    max-width: min(100%, 20.75rem) !important;
     margin-inline: auto;
     padding: var(--spacing-xs, 0.75rem) !important;
   }
 
   .contacts-dialog__inline-panel-region {
     min-width: 0;
-    width: 100%;
-    max-width: 100%;
+    width: min(100%, 20rem) !important;
+    max-width: min(100%, 20rem) !important;
+    margin-inline: auto;
   }
 
   .contacts-dialog__address-form .contacts-dialog__header {
@@ -785,19 +801,51 @@ solid-ui-button.contacts-dialog__cancel--footer {
   .contacts-dialog__address-book-list,
   .contacts-dialog__group-list {
     min-width: 0;
-    max-width: 100% !important;
-    width: 100%;
+    width: min(100%, 20rem) !important;
+    max-width: min(100%, 20rem) !important;
+    margin-inline: auto;
+  }
+
+  .contacts-dialog__inline-panel.contacts-dialog__popup,
+  .contacts-dialog__group-form,
+  .contacts-dialog__uri-entry {
+    width: min(100%, 20.75rem) !important;
+    max-width: min(100%, 20.75rem) !important;
+    margin-inline: auto !important;
+    align-self: center;
   }
 }
 
 @media (max-width: 900px) {
   .contacts-dialog__details {
     flex-direction: column !important; /* Stacks items vertically on small screens */
-    align-items: center !important;
+    align-items: stretch !important;
     width: 100% !important;
-    max-height: none;
-    overflow-y: visible;
+    max-height: min(70vh, 36rem);
+    overflow-y: auto;
     overflow-x: hidden;
+  }
+
+  .contacts-dialog__inline-panel-region,
+  .contacts-dialog__inline-panel-region--active,
+  .contacts-dialog__address-book-list,
+  .contacts-dialog__group-list {
+    width: min(100%, 20rem) !important;
+    max-width: min(100%, 20rem) !important;
+    min-width: 0;
+    margin-inline: auto;
+    align-self: center;
+  }
+
+  .contacts-dialog__inline-panel.contacts-dialog__popup,
+  .contacts-dialog__address-form,
+  .contacts-dialog__group-form,
+  .contacts-dialog__uri-entry {
+    width: min(100%, 20.75rem) !important;
+    max-width: min(100%, 20.75rem) !important;
+    min-width: 0;
+    margin-inline: auto !important;
+    align-self: center;
   }
 
   .contacts-dialog__creation .contacts-dialog__submit-contact {

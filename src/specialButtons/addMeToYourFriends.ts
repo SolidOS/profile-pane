@@ -25,8 +25,8 @@ function setAddToFriendsButtonLabel(button: SolidUIButtonElement, label: string)
   if (label === friendExistsAlreadyButtonText) {
     const shortLabelWrapper = button.ownerDocument.createElement('span')
     shortLabelWrapper.className = 'profile__btn-friends-label profile__btn-friends-label--short'
-    shortLabelWrapper.textContent = 'Friends'
     shortLabelWrapper.setAttribute('aria-hidden', 'true')
+    shortLabelWrapper.setAttribute('data-short-label-text', 'Friends')
     button.setAttribute('data-friends-short-label', 'true')
     button.setAttribute('aria-label', label)
     button.replaceChildren(labelWrapper, shortLabelWrapper)

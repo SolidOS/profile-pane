@@ -21,6 +21,10 @@
   display: none;
 }
 
+.profile__btn-friends-label--short::before {
+  content: attr(data-short-label-text);
+}
+
 .profile-friends-button__container input[type="text"] {
   width: 100%;
   box-sizing: border-box;
