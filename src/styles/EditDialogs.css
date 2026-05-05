@@ -736,44 +736,44 @@ solid-ui-button.profile-edit-dialog__drag-handle {
   text-align: right;
 }
 /* layout = mobile */
-:is(.profile-pane-host, .profile-pane-root)[mashlib-layout='mobile'] .profile-edit-dialog__row {
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-edit-dialog__row {
   max-width: 100%;
   flex-direction: column;
   align-items: stretch;
 }
 
-:is(.profile-pane-host, .profile-pane-root)[mashlib-layout='mobile'] .profile-edit-dialog__row--equal > .profile-edit-dialog__field,
-:is(.profile-pane-host, .profile-pane-root)[mashlib-layout='mobile'] .profile-edit-dialog__row--equal > .profile-edit-dialog__field-type {
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-edit-dialog__row--equal > .profile-edit-dialog__field,
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-edit-dialog__row--equal > .profile-edit-dialog__field-type {
   flex: 1 1 auto;
 }
 
-:is(.profile-pane-host, .profile-pane-root)[mashlib-layout='mobile'] .profile-edit-dialog__field-type {
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-edit-dialog__field-type {
   flex: 1 1 auto;
 }
 
-:is(.profile-pane-host, .profile-pane-root)[mashlib-layout='mobile'] .profile-edit-dialog__section-heading {
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-edit-dialog__section-heading {
   font-size: var(--font-size-lg, 1.125rem);
   line-height: var(--line-height-tight, 1.4);
 }
 
-:is(.profile-pane-host, .profile-pane-root)[mashlib-layout='mobile'] #profile-modal .modal .profile__section-header .profile__action-button,
-:is(.profile-pane-host, .profile-pane-root)[mashlib-layout='mobile'] #profile-modal .modal .profile__section-header solid-ui-button.profile__action-button::part(button) {
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] #profile-modal .modal .profile__section-header .profile__action-button,
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] #profile-modal .modal .profile__section-header solid-ui-button.profile__action-button::part(button) {
   font-size: var(--font-size-sm, 0.875rem);
   line-height: var(--line-height-base, 1.5);
 }
 
-:is(.profile-pane-host, .profile-pane-root)[mashlib-layout='mobile'] .profile-edit-dialog__field-type--contact-point {
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-edit-dialog__field-type--contact-point {
   flex: 1 1 auto;
   width: 100%;
   max-width: 100%;
 }
 
-:is(.profile-pane-host, .profile-pane-root)[mashlib-layout='mobile'] .profile-edit-dialog__row--address-header {
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-edit-dialog__row--address-header {
   flex-direction: row;
   align-items: flex-end;
 }
 
-:is(.profile-pane-host, .profile-pane-root)[mashlib-layout='mobile'] .profile-edit-dialog__row--social {
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-edit-dialog__row--social {
   margin-left: 0;
   gap: var(--spacing-2xs, 0.625rem);
   flex-direction: row;
@@ -781,40 +781,40 @@ solid-ui-button.profile-edit-dialog__drag-handle {
   flex-wrap: nowrap;
 }
 
-:is(.profile-pane-host, .profile-pane-root)[mashlib-layout='mobile'] .profile-edit-dialog__row--social .profile-edit-dialog__social-icon {
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-edit-dialog__row--social .profile-edit-dialog__social-icon {
   width: var(--icon-xs, 1.5rem);
   height: var(--icon-xs, 1.5rem);
 }
 
-:is(.profile-pane-host, .profile-pane-root)[mashlib-layout='mobile'] .profile-edit-dialog__field--social-type {
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-edit-dialog__field--social-type {
   flex: 0 0 5.5rem;
   width: 5.5rem;
   max-width: 5.5rem;
 }
 
-:is(.profile-pane-host, .profile-pane-root)[mashlib-layout='mobile'] .profile-edit-dialog__field--social-url {
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-edit-dialog__field--social-url {
   flex: 1 1 auto;
   min-width: 0;
 }
 
-:is(.profile-pane-host, .profile-pane-root)[mashlib-layout='mobile'] .profile-edit-dialog__field--resume-location {
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-edit-dialog__field--resume-location {
   flex: 1 1 100%;
   width: 100%;
   max-width: 100%;
 }
 
-:is(.profile-pane-host, .profile-pane-root)[mashlib-layout='mobile'] .profile-edit-dialog__row--language {
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-edit-dialog__row--language {
   flex-direction: row;
   align-items: center;
   flex-wrap: nowrap;
 }
 
-:is(.profile-pane-host, .profile-pane-root)[mashlib-layout='mobile'] .profile-edit-dialog__row--language > .profile-edit-dialog__field {
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-edit-dialog__row--language > .profile-edit-dialog__field {
   flex: 1 1 0;
   min-width: 0;
 }
 
-:is(.profile-pane-host, .profile-pane-root)[mashlib-layout='mobile'] .profile-edit-dialog__row--resume-entry-header {
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-edit-dialog__row--resume-entry-header {
   flex-direction: row;
   align-items: center;
   flex-wrap: nowrap;
@@ -822,28 +822,28 @@ solid-ui-button.profile-edit-dialog__drag-handle {
   max-width: 100%;
 }
 
-:is(.profile-pane-host, .profile-pane-root)[mashlib-layout='mobile'] .profile-edit-dialog__row--resume-entry-header > .profile-edit-dialog__actions--edge {
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-edit-dialog__row--resume-entry-header > .profile-edit-dialog__actions--edge {
   margin-left: auto;
 }
 
-:is(.profile-pane-host, .profile-pane-root)[mashlib-layout='mobile'] .profile-edit-dialog__row--skill {
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-edit-dialog__row--skill {
   flex-direction: row;
   align-items: center;
   flex-wrap: nowrap;
   gap: var(--spacing-2xs, 0.625rem);
 }
 
-:is(.profile-pane-host, .profile-pane-root)[mashlib-layout='mobile'] .profile-edit-dialog__row--skill > .profile-edit-dialog__field {
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-edit-dialog__row--skill > .profile-edit-dialog__field {
   flex: 1 1 0;
   min-width: 0;
 }
 
-:is(.profile-pane-host, .profile-pane-root)[mashlib-layout='mobile'] .profile-edit-dialog__row--skill > .profile-edit-dialog__actions {
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-edit-dialog__row--skill > .profile-edit-dialog__actions {
   flex: 0 0 auto;
   margin-left: 0;
 }
 
-:is(.profile-pane-host, .profile-pane-root)[mashlib-layout='mobile'] .profile-edit-dialog--heading .profile-edit-dialog__row--heading-photo {
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-edit-dialog--heading .profile-edit-dialog__row--heading-photo {
   flex-direction: row;
   align-items: center;
   flex-wrap: nowrap;
@@ -852,25 +852,25 @@ solid-ui-button.profile-edit-dialog__drag-handle {
   max-width: 100%;
 }
 
-:is(.profile-pane-host, .profile-pane-root)[mashlib-layout='mobile'] .profile-edit-dialog--heading .profile-edit-dialog__row--heading-photo > header {
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-edit-dialog--heading .profile-edit-dialog__row--heading-photo > header {
   margin-bottom: 0;
   flex: 0 0 auto;
 }
 
-:is(.profile-pane-host, .profile-pane-root)[mashlib-layout='mobile'] .profile-edit-dialog--heading .profile-edit-dialog__row--heading-photo .profile__hero,
-:is(.profile-pane-host, .profile-pane-root)[mashlib-layout='mobile'] .profile-edit-dialog--heading .profile-edit-dialog__row--heading-photo .profile__hero-alt {
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-edit-dialog--heading .profile-edit-dialog__row--heading-photo .profile__hero,
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-edit-dialog--heading .profile-edit-dialog__row--heading-photo .profile__hero-alt {
   width: 5.5rem;
   height: 5.5rem;
 }
 
-:is(.profile-pane-host, .profile-pane-root)[mashlib-layout='mobile'] .profile-edit-dialog--heading .profile-edit-dialog__row--heading-photo .profile__hero-alt {
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-edit-dialog--heading .profile-edit-dialog__row--heading-photo .profile__hero-alt {
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 0;
 }
 
-:is(.profile-pane-host, .profile-pane-root)[mashlib-layout='mobile'] .profile-edit-dialog--heading .profile-edit-dialog__row--heading-photo .profile-edit-dialog__image-camera-button {
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-edit-dialog--heading .profile-edit-dialog__row--heading-photo .profile-edit-dialog__image-camera-button {
   display: inline-flex;
   right: var(--spacing-xxs, 0.3125rem);
   bottom: var(--spacing-xxs, 0.3125rem);
@@ -879,56 +879,56 @@ solid-ui-button.profile-edit-dialog__drag-handle {
   min-height: 1.875rem;
 }
 
-:is(.profile-pane-host, .profile-pane-root)[mashlib-layout='mobile'] #profile-modal .modal button.profile-edit-dialog__image-camera-button {
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] #profile-modal .modal button.profile-edit-dialog__image-camera-button {
   display: inline-flex !important;
 }
 
-:is(.profile-pane-host, .profile-pane-root)[mashlib-layout='mobile'] .profile-edit-dialog--heading .profile-edit-dialog__row--heading-photo .profile-edit-dialog__image-preview {
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-edit-dialog--heading .profile-edit-dialog__row--heading-photo .profile-edit-dialog__image-preview {
   flex: 1 1 auto;
   min-width: 0;
   gap: var(--spacing-xxs, 0.3125rem);
   width: 100%;
 }
 
-:is(.profile-pane-host, .profile-pane-root)[mashlib-layout='mobile'] .profile-edit-dialog--heading .profile-edit-dialog__row--heading-photo .profile-edit-dialog__image-preview-label {
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-edit-dialog--heading .profile-edit-dialog__row--heading-photo .profile-edit-dialog__image-preview-label {
   font-size: var(--font-size-sm, 0.875rem);
   line-height: var(--line-height-tight, 1.25);
 }
 
-:is(.profile-pane-host, .profile-pane-root)[mashlib-layout='mobile'] .profile-edit-dialog--heading .profile-edit-dialog__row--heading-photo .profile-edit-dialog__image-preview-description {
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-edit-dialog--heading .profile-edit-dialog__row--heading-photo .profile-edit-dialog__image-preview-description {
   font-size: 0.625rem;
   line-height: var(--line-height-base, 1.4);
 }
 
-:is(.profile-pane-host, .profile-pane-root)[mashlib-layout='mobile'] .profile-edit-dialog--heading .profile-edit-dialog__row--heading-photo .profile-edit-dialog__image-preview-actions {
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-edit-dialog--heading .profile-edit-dialog__row--heading-photo .profile-edit-dialog__image-preview-actions {
   flex-wrap: nowrap;
   gap: var(--spacing-xs, 0.5rem);
   width: 100%;
 }
 
-:is(.profile-pane-host, .profile-pane-root)[mashlib-layout='mobile'] .profile-edit-dialog--heading .profile-edit-dialog__row--heading-photo .profile-edit-dialog__image-button {
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-edit-dialog--heading .profile-edit-dialog__row--heading-photo .profile-edit-dialog__image-button {
   flex: 1 1 0;
   width: 100%;
   padding: 0 var(--spacing-xs, 0.75rem);
 }
 
-:is(.profile-pane-host, .profile-pane-root)[mashlib-layout='mobile'] .profile-edit-dialog__row--inline-end {
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-edit-dialog__row--inline-end {
   justify-content: flex-start;
 }
 
-:is(.profile-pane-host, .profile-pane-root)[mashlib-layout='mobile'] .profile-edit-dialog__actions {
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-edit-dialog__actions {
   justify-content: flex-start;
 }
 
-:is(.profile-pane-host, .profile-pane-root)[mashlib-layout='mobile'] .profile-edit-dialog__row--address-header .profile-edit-dialog__actions {
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-edit-dialog__row--address-header .profile-edit-dialog__actions {
   justify-content: flex-end;
 }
 
-:is(.profile-pane-host, .profile-pane-root)[mashlib-layout='mobile'] .profile-edit-dialog__textarea {
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-edit-dialog__textarea {
   min-height: 15rem !important;
 }
 
-:is(.profile-pane-host, .profile-pane-root)[mashlib-layout='mobile'] .profile-edit-dialog__input-help-text {
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-edit-dialog__input-help-text {
   display: none;
 }
 

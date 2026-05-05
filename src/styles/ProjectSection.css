@@ -189,22 +189,22 @@ solid-ui-button.project-card__more-button {
   --button-hover-text: var(--color-primary, #7C4DFF);
 }
 /* layout = mobile */
-:is(.profile-pane-host, .profile-pane-root)[mashlib-layout='mobile'] .project-card__rail {
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .project-card__rail {
   flex-wrap: wrap;
   overflow-x: visible;
   scroll-snap-type: none;
 }
 
-:is(.profile-pane-host, .profile-pane-root)[mashlib-layout='mobile'] .project-card {
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .project-card {
   flex: 1 1 100%;
   max-width: 100%;
 }
 
-:is(.profile-pane-host, .profile-pane-root)[mashlib-layout='mobile'] .profile-section-collapsible[data-mobile-expanded="false"] .project-card:nth-child(n + 3) {
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-section-collapsible[data-mobile-expanded="false"] .project-card:nth-child(n + 3) {
   display: none;
 }
 
-:is(.profile-pane-host, .profile-pane-root)[mashlib-layout='mobile'] button.project-card__more-button {
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] button.project-card__more-button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -220,13 +220,13 @@ solid-ui-button.project-card__more-button {
   cursor: var(--profile-interactive-cursor, pointer);
 }
 
-:is(.profile-pane-host, .profile-pane-root)[mashlib-layout='mobile'] solid-ui-button.project-card__more-button {
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] solid-ui-button.project-card__more-button {
   display: inline-flex;
   width: 100%;
   margin-top: var(--spacing-xs, 0.75rem);
 }
 
-:is(.profile-pane-host, .profile-pane-root)[mashlib-layout='mobile'] solid-ui-button.project-card__more-button::part(button) {
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] solid-ui-button.project-card__more-button::part(button) {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -241,12 +241,12 @@ solid-ui-button.project-card__more-button {
   cursor: var(--profile-interactive-cursor, pointer);
 }
 
-:is(.profile-pane-host, .profile-pane-root)[mashlib-layout='mobile'] button.project-card__more-button[data-mobile-expanded="true"] .project-card__more-icon,
-:is(.profile-pane-host, .profile-pane-root)[mashlib-layout='mobile'] solid-ui-button.project-card__more-button[data-mobile-expanded="true"] .project-card__more-icon {
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] button.project-card__more-button[data-mobile-expanded="true"] .project-card__more-icon,
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] solid-ui-button.project-card__more-button[data-mobile-expanded="true"] .project-card__more-icon {
   transform: rotate(180deg);
 }
 
-:is(.profile-pane-host, .profile-pane-root)[mashlib-layout='mobile'] .project-card__more-icon {
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .project-card__more-icon {
   display: inline-flex;
   align-items: center;
   justify-content: center;

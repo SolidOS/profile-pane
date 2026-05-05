@@ -174,7 +174,7 @@ solid-ui-button.resume-card__description-toggle {
   padding-bottom: var(--spacing-xs);
 }
 
-:is(.profile-pane-host, .profile-pane-root)[mashlib-layout='mobile'].resume-card__item-header {
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'].resume-card__item-header {
   flex-direction: column;
   align-items: flex-start;
 }

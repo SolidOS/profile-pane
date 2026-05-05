@@ -40,7 +40,7 @@
   display: block;
 }
 
-:is(.profile-pane-host, .profile-pane-root)[mashlib-layout='mobile'] .profile-grid .profile__section.profile__qr-code {
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__section.profile__qr-code {
   align-items: center !important;
 }
 

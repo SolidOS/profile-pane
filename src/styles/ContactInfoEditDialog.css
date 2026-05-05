@@ -95,36 +95,36 @@
 }
 
 /* layout = mobile */
-:is(.profile-pane-host, .profile-pane-root)[mashlib-layout='mobile'] .profile-edit-dialog__row--contact-point {
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-edit-dialog__row--contact-point {
   flex-direction: row;
   align-items: center;
   flex-wrap: nowrap;
   gap: var(--spacing-2xs, 0.625rem);
 }
 
-:is(.profile-pane-host, .profile-pane-root)[mashlib-layout='mobile'] .profile-edit-dialog__row--contact-point > .profile-edit-dialog__field {
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-edit-dialog__row--contact-point > .profile-edit-dialog__field {
   flex: 1 1 0;
   min-width: 0;
 }
 
-:is(.profile-pane-host, .profile-pane-root)[mashlib-layout='mobile'] .profile-edit-dialog__row--contact-point > .profile-edit-dialog__field-type.profile-edit-dialog__phone-type-row,
-:is(.profile-pane-host, .profile-pane-root)[mashlib-layout='mobile'] .profile-edit-dialog__row--contact-point > .profile-edit-dialog__field-type.emailTypeRow {
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-edit-dialog__row--contact-point > .profile-edit-dialog__field-type.profile-edit-dialog__phone-type-row,
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-edit-dialog__row--contact-point > .profile-edit-dialog__field-type.emailTypeRow {
   flex: 0 0 5.5rem;
   width: 5.5rem;
   min-width: 5.5rem;
   max-width: 5.5rem;
 }
 
-:is(.profile-pane-host, .profile-pane-root)[mashlib-layout='mobile'] .profile-edit-dialog__row--contact-point > .profile-edit-dialog__actions {
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-edit-dialog__row--contact-point > .profile-edit-dialog__actions {
   flex: 0 0 auto;
   margin-left: 0;
   justify-content: flex-end;
 }
 
-:is(.profile-pane-host, .profile-pane-root)[mashlib-layout='mobile'] .profile__edit-form--contact-info .profile-edit-dialog__field-type.profile-edit-dialog__phone-type-row > select,
-:is(.profile-pane-host, .profile-pane-root)[mashlib-layout='mobile'] .profile__edit-form--contact-info .profile-edit-dialog__field-type.profile-edit-dialog__phone-type-row > solid-ui-select,
-:is(.profile-pane-host, .profile-pane-root)[mashlib-layout='mobile'] .profile__edit-form--contact-info .profile-edit-dialog__field-type.emailTypeRow > select,
-:is(.profile-pane-host, .profile-pane-root)[mashlib-layout='mobile'] .profile__edit-form--contact-info .profile-edit-dialog__field-type.emailTypeRow > solid-ui-select {
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile__edit-form--contact-info .profile-edit-dialog__field-type.profile-edit-dialog__phone-type-row > select,
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile__edit-form--contact-info .profile-edit-dialog__field-type.profile-edit-dialog__phone-type-row > solid-ui-select,
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile__edit-form--contact-info .profile-edit-dialog__field-type.emailTypeRow > select,
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile__edit-form--contact-info .profile-edit-dialog__field-type.emailTypeRow > solid-ui-select {
   font-size: var(--font-size-xxs, 0.75rem);
   line-height: var(--line-height-base, 1.5);
 }
