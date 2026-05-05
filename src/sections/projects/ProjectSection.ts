@@ -126,8 +126,8 @@ function renderProject(
             @click=${handleUnfollow}
           >
             <span>${checkMarkIcon} Following</span>
-        </div>
           </solid-ui-button>
+        </div>
       ` : html``}
     </li>
   `

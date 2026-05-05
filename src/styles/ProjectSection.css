@@ -10,7 +10,7 @@
   scroll-snap-type: x proximity;
 }
 
-.project-card__follow-button {
+button.project-card__follow-button {
   width: auto;
   border-radius: var(--border-radius-md, 0.5rem);
   border: var(--border-width-sm, 0.1rem) solid var(--color-primary, #7C4DFF);
@@ -24,6 +24,9 @@
 
 solid-ui-button.project-card__follow-button {
   width: auto;
+  min-width: 0;
+  max-width: none;
+  --button-border-width: var(--border-width-sm, 0.1rem);
   --button-font-size-sm: var(--font-size-sm, 0.875rem);
   --button-font-weight: var(--font-weight-md, 500);
   --button-padding-sm: var(--spacing-base, 0.5rem) var(--spacing-2xs, 0.625rem);
@@ -36,7 +39,7 @@ solid-ui-button.project-card__follow-button {
   --button-hover-border: var(--color-primary, #7C4DFF);
 }
 
-.project-card__follow-button:hover {
+button.project-card__follow-button:hover {
   background: var(--lavender-400, #cbb9ff);
 }
 
@@ -171,7 +174,7 @@ solid-ui-button.project-card__follow-button {
   padding: 0.75rem;
 }
 
-.project-card__more-button {
+button.project-card__more-button {
   display: none;
 }
 
@@ -201,8 +204,7 @@ solid-ui-button.project-card__more-button {
   display: none;
 }
 
-:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .project-card__more-button,
-:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] solid-ui-button.project-card__more-button::part(button) {
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] button.project-card__more-button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -218,7 +220,29 @@ solid-ui-button.project-card__more-button {
   cursor: var(--profile-interactive-cursor, pointer);
 }
 
-:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .project-card__more-button[data-mobile-expanded="true"] .project-card__more-icon {
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] solid-ui-button.project-card__more-button {
+  display: inline-flex;
+  width: 100%;
+  margin-top: var(--spacing-xs, 0.75rem);
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] solid-ui-button.project-card__more-button::part(button) {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.375rem;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--color-primary, #7C4DFF);
+  font-size: var(--font-size-sm, 0.875rem);
+  font-weight: var(--font-weight-bold, 600);
+  cursor: var(--profile-interactive-cursor, pointer);
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] button.project-card__more-button[data-mobile-expanded="true"] .project-card__more-icon,
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] solid-ui-button.project-card__more-button[data-mobile-expanded="true"] .project-card__more-icon {
   transform: rotate(180deg);
 }
 
@@ -245,7 +269,7 @@ solid-ui-button.project-card__more-button {
     display: none;
   }
 
-  .project-card__more-button {
+  button.project-card__more-button {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -261,7 +285,29 @@ solid-ui-button.project-card__more-button {
     cursor: var(--profile-interactive-cursor, pointer);
   }
 
-  .project-card__more-button[data-mobile-expanded="true"] .project-card__more-icon {
+  solid-ui-button.project-card__more-button {
+    display: inline-flex;
+    width: 100%;
+    margin-top: var(--spacing-xs, 0.75rem);
+  }
+
+  solid-ui-button.project-card__more-button::part(button) {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.375rem;
+    width: 100%;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: var(--color-primary, #7C4DFF);
+    font-size: var(--font-size-sm, 0.875rem);
+    font-weight: var(--font-weight-bold, 600);
+    cursor: var(--profile-interactive-cursor, pointer);
+  }
+
+  button.project-card__more-button[data-mobile-expanded="true"] .project-card__more-icon,
+  solid-ui-button.project-card__more-button[data-mobile-expanded="true"] .project-card__more-icon {
     transform: rotate(180deg);
   }
 

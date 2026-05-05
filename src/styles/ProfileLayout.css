@@ -43,7 +43,7 @@
   overflow-x: clip;
 }
 
-.profile-grid .profile__action-button--empty {
+.profile-grid button.profile__action-button--empty {
   background: var(--color-card-bg, #fff);
   width: fit-content;
   min-width: fit-content;
@@ -72,7 +72,7 @@
   --button-hover-border: var(--color-primary, #7C4DFF);
 }
 
-.profile-grid .profile__action-button--empty:hover {
+.profile-grid button.profile__action-button--empty:hover {
   background: var(--color-primary, #7C4DFF);
   border-color: var(--color-primary, #7C4DFF);
   color: var(--white, #fff);
