@@ -90,7 +90,7 @@ export async function ProfileView (
         <h1 id="profile-content-heading" class="sr-only">Profile for ${profileDetails.name}</h1>
 
         <section
-          class="profile__main flex-column gap-md p-sm"
+          class="profile__main flex-column gap-md"
           >
           <h2 id="profile-main-heading" class="sr-only">Main Profile Content</h2>
 
