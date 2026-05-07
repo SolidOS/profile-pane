@@ -13,7 +13,7 @@ import {
   toggleDescription
 } from '../shared/sectionCardHelpers'
 import { toggleCollapsibleSection } from '../shared/collapsibleSection'
-import { editIcon, plusDarkIcon } from '../../icons-svg/profileIcons'
+import { addIcon, editIcon, plusDarkIcon } from '../../icons-svg/profileIcons'
 
 function renderRole(role: RoleDetails, index: number) {
   if (!role) return html``
@@ -192,11 +192,54 @@ function renderOwnerEmptyResumeSection(
     <section
       aria-labelledby="resume-heading" 
       data-profile-section="resume"
-      class="profile__section--empty border-lighter flex-column-center rounded-md gap-lg" 
+      class="profile__section--empty border-lighter flex-column-center rounded-md gap-lg profile-section-collapsible profile-section-collapsible--inline-mobile-actions profile-section-collapsible--empty-mobile-no-edit" 
       role="region"
       tabindex="-1"
+      data-expanded="false"
     >
-      ${renderOwnerEmptyResumeContent(store, subject, resumeDetails, viewerMode, onSaved)}
+      <header class="profile__section-header profile-section-collapsible__header">
+        <h2 id="resume-heading" tabindex="-1">${resumeHeadingText}</h2>
+        <div class="profile-section-collapsible__actions flex-column align-end">
+          <solid-ui-button
+            type="button"
+            variant="secondary"
+            size="sm"
+            class="profile__action-button profile-action-text flex-center profile-section-collapsible__edit-button"
+            aria-label="Add resume details"
+            @click=${(event: Event) => {
+              return createResumeEditDialog(
+                event,
+                store,
+                subject,
+                resumeDetails,
+                viewerMode,
+                onSaved
+              )
+            }}
+          >
+            <span class="profile-section-collapsible__edit-label profile__add-more-content">
+              <span class="profile__add-more-icon" aria-hidden="true">${addIcon}</span>
+              <span>Add Resume</span>
+            </span>
+            <span class="profile-section-collapsible__edit-icon" aria-hidden="true">${editIcon}</span>
+          </solid-ui-button>
+          <solid-ui-button
+            type="button"
+            variant="icon"
+            size="sm"
+            class="inline-flex-row justify-center"
+            aria-label="Toggle resume section"
+            aria-controls="cv-panel"
+            aria-expanded="false"
+            @click=${toggleCollapsibleSection}
+          >
+            <span slot="icon" class="profile-section-collapsible__chevron" aria-hidden="true">⌄</span>
+          </solid-ui-button>
+        </div>
+      </header>
+      <div id="cv-panel" class="profile-section-collapsible__content" aria-hidden="true" hidden>
+        ${renderOwnerEmptyResumeContent(store, subject, resumeDetails, viewerMode, onSaved)}
+      </div>
     </section>
   `
 }
