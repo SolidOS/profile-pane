@@ -18,10 +18,6 @@ import '../styles/AddMeToYourFriends.css'
 let buttonContainer = <HTMLDivElement>document.createElement('section')
 
 function setAddToFriendsButtonLabel(button: SolidUIButtonElement, label: string): void {
-  const iconPlaceholder = button.ownerDocument.createElement('span')
-  iconPlaceholder.className = 'profile__btn-friends-icon-placeholder'
-  iconPlaceholder.setAttribute('aria-hidden', 'true')
-
   const labelWrapper = button.ownerDocument.createElement('span')
   labelWrapper.className = 'profile__btn-friends-label profile__btn-friends-label--full'
   labelWrapper.textContent = label
@@ -33,13 +29,13 @@ function setAddToFriendsButtonLabel(button: SolidUIButtonElement, label: string)
     shortLabelWrapper.setAttribute('data-short-label-text', 'Friends')
     button.setAttribute('data-friends-short-label', 'true')
     button.setAttribute('aria-label', label)
-    button.replaceChildren(iconPlaceholder, labelWrapper, shortLabelWrapper)
+    button.replaceChildren(labelWrapper, shortLabelWrapper)
     return
   }
 
   button.removeAttribute('data-friends-short-label')
   button.removeAttribute('aria-label')
-  button.replaceChildren(iconPlaceholder, labelWrapper)
+  button.replaceChildren(labelWrapper)
 }
 
 const addMeToYourFriendsDiv = (
