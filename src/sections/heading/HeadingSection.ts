@@ -46,34 +46,36 @@ export const renderHeadingSection = async (
             </header>
           </div>
           ${isOwner || isAuthenticatedViewer ? html`
-              <div class="profile__actions profile__heading-actions">
                 ${isAuthenticatedViewer ? html`
-                  ${contactsButton}
-                  ${friendsButton}
+                  <div class="profile__actions profile__heading-actions">
+                    ${contactsButton}
+                    ${friendsButton}
+                  </div>
                 ` : nothing}
                 ${isOwner ? html`
-                  <solid-ui-button
-                    type="button"
-                    variant="secondary"
-                    size="sm"
-                    class="profile__action-button profile__heading-action-button profile-action-text flex-center profile-section-collapsible__edit-button"
-                    aria-label="Add or edit heading information"
-                    @click=${(event: Event) => {
-                      return createHeadingEditDialog(
-                        event,
-                        context.session.store,
-                        subject,
-                        profileData,
-                        viewerMode,
-                        onSaved
-                      )
-                    }}
-                  >
+                  <div class="profile__actions profile__heading-edit-action">
+                    <solid-ui-button
+                      type="button"
+                      variant="secondary"
+                      size="sm"
+                      class="profile__action-button profile__heading-action-button profile-action-text flex-center profile-section-collapsible__edit-button"
+                      aria-label="Add or edit heading information"
+                      @click=${(event: Event) => {
+                        return createHeadingEditDialog(
+                          event,
+                          context.session.store,
+                          subject,
+                          profileData,
+                          viewerMode,
+                          onSaved
+                        )
+                      }}
+                    >
                     <span class="profile-section-collapsible__edit-label">${editIcon} Edit</span>
                     <span class="profile-section-collapsible__edit-icon" aria-hidden="true">${editIcon}</span>
                   </solid-ui-button>
+                </div>
                 ` : nothing}
-              </div>
             ` : nothing}
           <div class="profile__details">
             <div class="profile__meta-row" role="group" aria-label="Additional profile information">

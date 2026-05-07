@@ -4,10 +4,10 @@
 
 .profile__heading-top {
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto;
+  grid-template-columns: auto minmax(0, 1fr) auto auto;
   grid-template-areas:
-    "avatar info actions"
-    "avatar details details";
+    "avatar info actions edit"
+    "avatar details details details";
   column-gap: var(--spacing-md, 1.25rem);
   row-gap: var(--spacing-sm, 0.75rem);
   align-items: start;
@@ -69,10 +69,21 @@ transform: translateX(-4px);
   grid-area: actions;
   margin-left: auto;
   align-self: flex-start;
+  justify-self: end;
   display: flex;
   align-items: flex-start;
   gap: var(--spacing-xs, 0.5rem);
   flex-wrap: wrap;
+}
+
+.profile__heading-edit-action {
+  grid-area: edit;
+  margin-left: auto;
+  margin-bottom: 0;
+  align-self: flex-start;
+  justify-self: end;
+  display: flex;
+  align-items: flex-start;
 }
 
 .profile__heading-actions > .profile-friends-button__section,
@@ -207,10 +218,10 @@ transform: translateX(-4px);
 
 @media (max-width: 1200px) {
   .profile__heading-top {
-    grid-template-columns: auto minmax(0, 1fr) auto;
+    grid-template-columns: auto minmax(0, 1fr) auto auto;
     grid-template-areas:
-      "avatar info actions"
-      "details details details";
+      "avatar info actions edit"
+      "details details details details";
     column-gap: var(--spacing-sm, 0.75rem);
   }
 
@@ -232,6 +243,11 @@ transform: translateX(-4px);
     align-items: flex-start;
     align-content: flex-end;
     gap: 0.25rem;
+  }
+
+  .profile__heading-edit-action {
+    justify-self: end;
+    margin-bottom: 0;
   }
 
   .profile__heading-actions > .profile-friends-button__section,
@@ -268,10 +284,10 @@ transform: translateX(-4px);
 
 @container profile-pane (max-width: 1200px) {
   .profile__heading-top {
-    grid-template-columns: auto minmax(0, 1fr) auto;
+    grid-template-columns: auto minmax(0, 1fr) auto auto;
     grid-template-areas:
-      "avatar info actions"
-      "details details details";
+      "avatar info actions edit"
+      "details details details details";
     column-gap: var(--spacing-sm, 0.75rem);
   }
 
@@ -293,6 +309,11 @@ transform: translateX(-4px);
     align-items: flex-start;
     align-content: flex-end;
     gap: 0.25rem;
+  }
+
+  .profile__heading-edit-action {
+    justify-self: end;
+    margin-bottom: 0;
   }
 
   .profile__heading-actions > .profile-friends-button__section,
@@ -329,11 +350,11 @@ transform: translateX(-4px);
 
 @media (max-width: 784px) {
   .profile__heading-top {
-    grid-template-columns: auto minmax(0, 1fr);
+    grid-template-columns: auto minmax(0, 1fr) auto;
     grid-template-areas:
-      "avatar info"
-      "details details"
-      "actions actions";
+      "avatar info edit"
+      "details details details"
+      "actions actions actions";
     column-gap: 0.5rem;
     row-gap: var(--spacing-sm, 0.75rem);
   }
@@ -348,16 +369,23 @@ transform: translateX(-4px);
     align-items: flex-start;
     align-content: flex-start;
     gap: 0.25rem;
+  }
+
+  .profile__heading-edit-action {
+    position: static;
+    justify-self: end;
+    align-self: flex-start;
+    margin-left: auto;
   }
 }
 
 @container profile-pane (max-width: 784px) {
   .profile__heading-top {
-    grid-template-columns: auto minmax(0, 1fr);
+    grid-template-columns: auto minmax(0, 1fr) auto;
     grid-template-areas:
-      "avatar info"
-      "details details"
-      "actions actions";
+      "avatar info edit"
+      "details details details"
+      "actions actions actions";
     column-gap: 0.5rem;
     row-gap: var(--spacing-sm, 0.75rem);
   }
@@ -373,14 +401,21 @@ transform: translateX(-4px);
     align-content: flex-start;
     gap: 0.25rem;
   }
+
+  .profile__heading-edit-action {
+    position: static;
+    justify-self: end;
+    align-self: flex-start;
+    margin-left: auto;
+  }
 }
 /* layout = mobile */
 :is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile__heading-top {
-  grid-template-columns: auto minmax(0, 1fr);
+  grid-template-columns: auto minmax(0, 1fr) auto;
   grid-template-areas:
-    "avatar info"
-    "details details"
-    "actions actions";
+    "avatar info edit"
+    "details details details"
+    "actions actions actions";
   column-gap: 0.5rem;
   row-gap: var(--spacing-sm, 0.75rem);
 }
@@ -395,6 +430,13 @@ transform: translateX(-4px);
   align-items: flex-start;
   align-content: flex-start;
   gap: 0.25rem;
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile__heading-edit-action {
+  position: static;
+  justify-self: end;
+  align-self: flex-start;
+  margin-left: auto;
 }
 
 :is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile__heading-actions > .profile-friends-button__section,
