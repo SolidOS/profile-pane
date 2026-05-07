@@ -2,6 +2,64 @@ type DateLike = string | { value?: string } | null | undefined
 
 let descriptionResizeBound = false
 
+function positionBioDescriptionToggle(container: HTMLElement, textEl: HTMLElement, button: HTMLElement, isExpanded: boolean): void {
+  if (isExpanded) {
+    container.removeAttribute('style')
+    return
+  }
+
+  const textNode = textEl.firstChild
+  if (!textNode || textNode.nodeType !== Node.TEXT_NODE || !textNode.textContent) {
+    container.removeAttribute('style')
+    return
+  }
+
+  const range = document.createRange()
+  const content = textNode.textContent
+  const computed = window.getComputedStyle(textEl)
+  const lineClampValue = Number.parseInt(
+    computed.getPropertyValue('-webkit-line-clamp') || computed.getPropertyValue('line-clamp') || '0',
+    10
+  )
+  const maxLines = Number.isFinite(lineClampValue) && lineClampValue > 0 ? lineClampValue : 3
+
+  let low = 1
+  let high = content.length
+  let bestEnd = 0
+  let bestRight = 0
+  const containerRect = container.getBoundingClientRect()
+  const gap = 2
+
+  while (low <= high) {
+    const mid = Math.floor((low + high) / 2)
+    range.setStart(textNode, 0)
+    range.setEnd(textNode, mid)
+    const rects = Array.from(range.getClientRects()).filter((rect) => rect.width > 0 || rect.height > 0)
+
+    if (!rects.length) {
+      low = mid + 1
+      continue
+    }
+
+    if (rects.length <= maxLines) {
+      bestEnd = mid
+      bestRight = rects[rects.length - 1].right - containerRect.left
+      low = mid + 1
+    } else {
+      high = mid - 1
+    }
+  }
+
+  if (!bestEnd) {
+    container.removeAttribute('style')
+    return
+  }
+
+  const maxLeft = Math.max(0, Math.min(container.clientWidth * 0.5, container.clientWidth - button.offsetWidth))
+  const desiredLeft = Math.max(0, Math.min(maxLeft, bestRight + gap))
+  container.style.setProperty('--bio-description-toggle-left', `${desiredLeft}px`)
+}
+
 function toDateValue(date?: DateLike): string {
   if (!date) return ''
   if (typeof date === 'string') return date
@@ -36,6 +94,7 @@ export function updateDescriptionOverflow(root: ParentNode = document) {
   selectorGroups.forEach(({ wrap, text, toggle, expanded }) => {
     const wraps = root.querySelectorAll(wrap)
     wraps.forEach((container) => {
+      if (!(container instanceof HTMLElement)) return
       const textEl = container.querySelector(text) as HTMLElement | null
       const button = container.querySelector(toggle) as HTMLButtonElement | null
       if (!textEl || !button) return
@@ -43,6 +102,9 @@ export function updateDescriptionOverflow(root: ParentNode = document) {
       const isExpanded = textEl.classList.contains(expanded)
       if (isExpanded) {
         button.hidden = false
+        if (textEl.matches('.bio-card__description-text')) {
+          positionBioDescriptionToggle(container, textEl, button as unknown as HTMLElement, true)
+        }
         return
       }
 
@@ -51,6 +113,14 @@ export function updateDescriptionOverflow(root: ParentNode = document) {
       if (!isOverflowing) {
         button.setAttribute('aria-expanded', 'false')
         button.textContent = '...more'
+        if (textEl.matches('.bio-card__description-text')) {
+          positionBioDescriptionToggle(container, textEl, button as unknown as HTMLElement, false)
+        }
+        return
+      }
+
+      if (textEl.matches('.bio-card__description-text')) {
+        positionBioDescriptionToggle(container, textEl, button as unknown as HTMLElement, false)
       }
     })
   })
