@@ -17,6 +17,15 @@
   letter-spacing: -0.01em;
 }
 
+.profile__btn-friends-icon-placeholder {
+  display: inline-block;
+  width: var(--icon-xxxs, 0.75rem);
+  height: var(--icon-xxxs, 0.75rem);
+  margin-right: var(--spacing-xxs, 0.3125rem);
+  flex-shrink: 0;
+  visibility: hidden;
+}
+
 .profile__btn-friends-label--short {
   display: none;
 }

@@ -361,14 +361,16 @@ transform: translateX(-4px);
 
   .profile__heading-actions {
     position: static;
-    justify-self: start;
-    margin-left: 0;
+    justify-self: center;
+    margin-left: auto;
+    margin-right: auto;
     margin-bottom: 0;
     max-inline-size: none;
-    justify-content: flex-start;
-    align-items: flex-start;
-    align-content: flex-start;
+    justify-content: center;
+    align-items: center;
+    align-content: center;
     gap: 0.25rem;
+    flex-wrap: nowrap;
   }
 
   .profile__heading-edit-action {
@@ -376,6 +378,8 @@ transform: translateX(-4px);
     justify-self: end;
     align-self: flex-start;
     margin-left: auto;
+    margin-right: 0;
+    justify-content: flex-end;
   }
 }
 
@@ -392,14 +396,16 @@ transform: translateX(-4px);
 
   .profile__heading-actions {
     position: static;
-    justify-self: start;
-    margin-left: 0;
+    justify-self: center;
+    margin-left: auto;
+    margin-right: auto;
     margin-bottom: 0;
     max-inline-size: none;
-    justify-content: flex-start;
-    align-items: flex-start;
-    align-content: flex-start;
+    justify-content: center;
+    align-items: center;
+    align-content: center;
     gap: 0.25rem;
+    flex-wrap: nowrap;
   }
 
   .profile__heading-edit-action {
@@ -407,6 +413,8 @@ transform: translateX(-4px);
     justify-self: end;
     align-self: flex-start;
     margin-left: auto;
+    margin-right: 0;
+    justify-content: flex-end;
   }
 }
 /* layout = mobile */
@@ -422,14 +430,16 @@ transform: translateX(-4px);
 
 :is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile__heading-actions {
   position: static;
-  justify-self: start;
-  margin-left: 0;
+  justify-self: center;
+  margin-left: auto;
+  margin-right: auto;
   margin-bottom: 0;
   max-inline-size: none;
-  justify-content: flex-start;
-  align-items: flex-start;
-  align-content: flex-start;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
   gap: 0.25rem;
+  flex-wrap: nowrap;
 }
 
 :is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile__heading-edit-action {
@@ -437,6 +447,8 @@ transform: translateX(-4px);
   justify-self: end;
   align-self: flex-start;
   margin-left: auto;
+  margin-right: 0;
+  justify-content: flex-end;
 }
 
 :is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile__heading-actions > .profile-friends-button__section,
@@ -447,18 +459,22 @@ transform: translateX(-4px);
 
 :is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile__heading-actions > .profile-friends-button__section > solid-ui-button.profile__btn-friends,
 :is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile__heading-actions > #add-to-contacts-button-container > solid-ui-button.profile__btn-contacts {
-  width: 9.25rem;
-  min-width: 9.25rem;
-  max-width: 9.25rem;
-  inline-size: 9.25rem;
-  --button-padding-sm: 0.25rem 0.5rem;
-  --button-padding-x-sm: 0.5rem;
+  width: auto;
+  min-width: 0;
+  max-width: 100%;
+  inline-size: auto;
+  min-height: var(--button-height-sm, 1.75rem);
+  --button-padding-sm: 0.25rem 0.3125rem;
+  --button-padding-x-sm: 0.3125rem;
   --button-font-size-sm: var(--font-size-xxs, 0.75rem);
+  --button-hover-background: var(--lavender-300, #e6dcff);
+  --button-hover-border: transparent;
 }
 
 :is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile__heading-actions .profile__btn-friends-label,
 :is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile__heading-actions #add-to-contacts-button-container .profile__btn-contacts-label {
   font-size: var(--font-size-xxs, 0.75rem);
+  white-space: nowrap;
 }
 
 :is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile__heading-actions #add-to-contacts-button-container .profile__btn-contacts-icon,
@@ -467,7 +483,17 @@ transform: translateX(-4px);
   height: 0.625rem;
 }
 
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile__heading-actions .profile__btn-friends-icon,
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile__heading-actions .profile__btn-friends-icon svg {
+  width: 0.625rem;
+  height: 0.625rem;
+}
+
 :is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile__heading-actions #add-to-contacts-button-container .profile__btn-contacts-icon {
+  margin-right: 0.1875rem;
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile__heading-actions .profile__btn-friends-icon {
   margin-right: 0.1875rem;
 }
 
@@ -532,25 +558,36 @@ transform: translateX(-4px);
 
 @media (max-width: 576px) {
   .profile__heading-top {
-    grid-template-columns: auto minmax(0, 1fr);
+    grid-template-columns: auto minmax(0, 1fr) auto;
     grid-template-areas:
-      "avatar info"
-      "details details"
-      "actions actions";
+      "avatar info edit"
+      "details details details"
+      "actions actions actions";
     column-gap: 0.5rem;
     row-gap: var(--spacing-sm, 0.75rem);
   }
 
   .profile__heading-actions {
     position: static;
-    justify-self: start;
-    margin-left: 0;
+    justify-self: center;
+    margin-left: auto;
+    margin-right: auto;
     margin-bottom: 0;
     max-inline-size: none;
-    justify-content: flex-start;
-    align-items: flex-start;
-    align-content: flex-start;
+    justify-content: center;
+    align-items: center;
+    align-content: center;
     gap: 0.25rem;
+    flex-wrap: nowrap;
+  }
+
+  .profile__heading-edit-action {
+    position: static;
+    justify-self: end;
+    align-self: flex-start;
+    margin-left: auto;
+    margin-right: 0;
+    justify-content: flex-end;
   }
 
   .profile__heading-actions > .profile-friends-button__section,
@@ -561,18 +598,22 @@ transform: translateX(-4px);
 
   .profile__heading-actions > .profile-friends-button__section > solid-ui-button.profile__btn-friends,
   .profile__heading-actions > #add-to-contacts-button-container > solid-ui-button.profile__btn-contacts {
-    width: 9.25rem;
-    min-width: 9.25rem;
-    max-width: 9.25rem;
-    inline-size: 9.25rem;
-    --button-padding-sm: 0.25rem 0.5rem;
-    --button-padding-x-sm: 0.5rem;
+    width: auto;
+    min-width: 0;
+    max-width: 100%;
+    inline-size: auto;
+    min-height: var(--button-height-sm, 1.75rem);
+    --button-padding-sm: 0.25rem 0.3125rem;
+    --button-padding-x-sm: 0.3125rem;
     --button-font-size-sm: var(--font-size-xxs, 0.75rem);
+    --button-hover-background: var(--lavender-300, #e6dcff);
+    --button-hover-border: transparent;
   }
 
   .profile__heading-actions .profile__btn-friends-label,
   .profile__heading-actions #add-to-contacts-button-container .profile__btn-contacts-label {
     font-size: var(--font-size-xxs, 0.75rem);
+    white-space: nowrap;
   }
 
   .profile__heading-actions #add-to-contacts-button-container .profile__btn-contacts-icon,
@@ -581,7 +622,17 @@ transform: translateX(-4px);
     height: 0.625rem;
   }
 
+  .profile__heading-actions .profile__btn-friends-icon,
+  .profile__heading-actions .profile__btn-friends-icon svg {
+    width: 0.625rem;
+    height: 0.625rem;
+  }
+
   .profile__heading-actions #add-to-contacts-button-container .profile__btn-contacts-icon {
+    margin-right: 0.1875rem;
+  }
+
+  .profile__heading-actions .profile__btn-friends-icon {
     margin-right: 0.1875rem;
   }
 
@@ -647,25 +698,36 @@ transform: translateX(-4px);
 
 @container profile-pane (max-width: 576px) {
   .profile__heading-top {
-    grid-template-columns: auto minmax(0, 1fr);
+    grid-template-columns: auto minmax(0, 1fr) auto;
     grid-template-areas:
-      "avatar info"
-      "details details"
-      "actions actions";
+      "avatar info edit"
+      "details details details"
+      "actions actions actions";
     column-gap: 0.5rem;
     row-gap: var(--spacing-sm, 0.75rem);
   }
 
   .profile__heading-actions {
     position: static;
-    justify-self: start;
-    margin-left: 0;
+    justify-self: center;
+    margin-left: auto;
+    margin-right: auto;
     margin-bottom: 0;
     max-inline-size: none;
-    justify-content: flex-start;
-    align-items: flex-start;
-    align-content: flex-start;
+    justify-content: center;
+    align-items: center;
+    align-content: center;
     gap: 0.25rem;
+    flex-wrap: nowrap;
+  }
+
+  .profile__heading-edit-action {
+    position: static;
+    justify-self: end;
+    align-self: flex-start;
+    margin-left: auto;
+    margin-right: 0;
+    justify-content: flex-end;
   }
 
   .profile__heading-actions > .profile-friends-button__section,
@@ -676,18 +738,19 @@ transform: translateX(-4px);
 
   .profile__heading-actions > .profile-friends-button__section > solid-ui-button.profile__btn-friends,
   .profile__heading-actions > #add-to-contacts-button-container > solid-ui-button.profile__btn-contacts {
-    width: 9.25rem;
-    min-width: 9.25rem;
-    max-width: 9.25rem;
-    inline-size: 9.25rem;
-    --button-padding-sm: 0.25rem 0.5rem;
-    --button-padding-x-sm: 0.5rem;
+    width: auto;
+    min-width: 0;
+    max-width: 100%;
+    inline-size: auto;
+    --button-padding-sm: 0.25rem 0.3125rem;
+    --button-padding-x-sm: 0.3125rem;
     --button-font-size-sm: var(--font-size-xxs, 0.75rem);
   }
 
   .profile__heading-actions .profile__btn-friends-label,
   .profile__heading-actions #add-to-contacts-button-container .profile__btn-contacts-label {
     font-size: var(--font-size-xxs, 0.75rem);
+    white-space: nowrap;
   }
 
   .profile__heading-actions #add-to-contacts-button-container .profile__btn-contacts-icon,
