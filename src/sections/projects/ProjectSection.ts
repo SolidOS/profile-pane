@@ -70,6 +70,7 @@ function renderProject(
 
   const handleUnfollow = async (event: Event) => {
     event.preventDefault()
+    event.stopPropagation()
     if (viewerMode !== 'owner') return
 
     const removePlan: MutationOps<ProjectRow> = {
@@ -183,11 +184,54 @@ function renderOwnerEmptyProjectSection(
     <section 
       aria-labelledby="projects-heading" 
       data-profile-section="projects"
-      class="profile__section--empty border-lighter flex-column-center rounded-md gap-lg" 
+      class="profile__section--empty border-lighter flex-column-center rounded-md gap-lg profile-section-collapsible profile-section-collapsible--inline-mobile-actions profile-section-collapsible--empty-mobile-no-edit" 
       role="region"
       tabindex="-1"
+      data-expanded="false"
     >
-      ${renderOwnerEmptyProjectsContent(store, subject, projectData, viewerMode, onSaved)}
+      <header class="profile__section-header profile-section-collapsible__header">
+        <h2 id="projects-heading" tabindex="-1">${projectsHeadingText}</h2>
+        <div class="profile-section-collapsible__actions flex-column align-end">
+          <solid-ui-button
+            type="button"
+            variant="secondary"
+            size="sm"
+            class="profile__action-button profile-action-text flex-center profile-section-collapsible__edit-button"
+            aria-label="Add project details"
+            @click=${(event: Event) => {
+              return createProjectsEditDialog(
+                event,
+                store,
+                subject,
+                projectData,
+                viewerMode,
+                onSaved
+              )
+            }}
+          >
+            <span class="profile-section-collapsible__edit-label profile__add-more-content">
+              <span class="profile__add-more-icon" aria-hidden="true">${addIcon}</span>
+              <span>Add Project</span>
+            </span>
+            <span class="profile-section-collapsible__edit-icon" aria-hidden="true">${editIcon}</span>
+          </solid-ui-button>
+          <solid-ui-button
+            type="button"
+            variant="icon"
+            size="sm"
+            class="inline-flex-row justify-center"
+            aria-label="Toggle projects section"
+            aria-controls="projects-panel"
+            aria-expanded="false"
+            @click=${toggleCollapsibleSection}
+          >
+            <span slot="icon" class="profile-section-collapsible__chevron" aria-hidden="true">⌄</span>
+          </solid-ui-button>
+        </div>
+      </header>
+      <div id="projects-panel" class="profile-section-collapsible__content" aria-hidden="true" hidden>
+        ${renderOwnerEmptyProjectsContent(store, subject, projectData, viewerMode, onSaved)}
+      </div>
     </section>
   `
 }
