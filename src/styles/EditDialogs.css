@@ -879,10 +879,6 @@ solid-ui-button.profile-edit-dialog__drag-handle {
   min-height: 1.875rem;
 }
 
-:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] #profile-modal .modal button.profile-edit-dialog__image-camera-button {
-  display: inline-flex !important;
-}
-
 :is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-edit-dialog--heading .profile-edit-dialog__row--heading-photo .profile-edit-dialog__image-preview {
   flex: 1 1 auto;
   min-width: 0;
@@ -1074,10 +1070,6 @@ solid-ui-button.profile-edit-dialog__drag-handle {
     width: 1.875rem;
     min-width: 1.875rem;
     min-height: 1.875rem;
-  }
-
-  #profile-modal .modal button.profile-edit-dialog__image-camera-button {
-    display: inline-flex !important;
   }
 
   .profile-edit-dialog--heading .profile-edit-dialog__row--heading-photo .profile-edit-dialog__image-preview {

@@ -192,8 +192,7 @@ solid-ui-button.profile-action-text:focus-visible::part(button) {
   overflow-x: clip;
 }
 
-:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__action-button,
-:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__actions button {
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__action-button {
   min-height: calc(var(--min-touch-target, 44px) + 0.5rem) !important;
   font-size: clamp(0.9rem, 2.1vw, 1rem) !important;
   padding: var(--spacing-xs, 0.75rem) 0.9rem !important;
@@ -231,8 +230,7 @@ solid-ui-button.profile-action-text:focus-visible::part(button) {
     overflow-x: clip;
   }
 
-  .profile-grid .profile__action-button,
-  .profile-grid .profile__actions button {
+  .profile-grid .profile__action-button {
     min-height: calc(var(--min-touch-target, 44px) + 0.5rem) !important;
     font-size: clamp(0.9rem, 2.1vw, 1rem) !important;
     padding: var(--spacing-xs, 0.75rem) 0.9rem !important;
@@ -253,8 +251,7 @@ solid-ui-button.profile-action-text:focus-visible::part(button) {
     overflow-x: clip;
   }
 
-  .profile-grid .profile__action-button,
-  .profile-grid .profile__actions button {
+  .profile-grid .profile__action-button {
     min-height: calc(var(--min-touch-target, 44px) + 0.5rem) !important;
     font-size: clamp(0.9rem, 2.1vw, 1rem) !important;
     padding: var(--spacing-xs, 0.75rem) 0.9rem !important;

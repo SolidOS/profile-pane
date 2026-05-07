@@ -81,8 +81,7 @@
   align-self: center;
 }
 
-.profile-edit-dialog__row--address-header.profile-edit-dialog__row--full .profile-edit-dialog__delete-button,
-#profile-modal .modal .profile-edit-dialog__row--address-header.profile-edit-dialog__row--full button.profile-edit-dialog__delete-button {
+.profile-edit-dialog__row--address-header.profile-edit-dialog__row--full .profile-edit-dialog__delete-button {
   min-height: 1.75rem;
   min-width: 1.75rem;
 }

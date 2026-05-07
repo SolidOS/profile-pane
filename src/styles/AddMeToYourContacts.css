@@ -13,9 +13,9 @@
   --button-border: var(--gray-600, #4A5565);
   --button-background: transparent;
   --button-text: var(--slate-700, #314158);
-  --button-hover-border: var(--gray-600, #4A5565);
-  --button-hover-background: rgba(49, 65, 88, 0.06);
-  --button-hover-text: var(--slate-700, #314158);
+  --button-hover-border: var(--color-primary, #7C4DFF);
+  --button-hover-background: var(--color-primary, #7C4DFF);
+  --button-hover-text: var(--white, #FFF);
 }
 
 #add-to-contacts-button-container .profile__btn-contacts-label {
@@ -40,6 +40,16 @@
 
 #add-to-contacts-button-container .profile__btn-contacts-icon path {
   fill: var(--slate-700, #314158);
+}
+
+#add-to-contacts-button-container solid-ui-button.profile__btn-contacts:hover .profile__btn-contacts-label,
+#add-to-contacts-button-container solid-ui-button.profile__btn-contacts:focus-visible .profile__btn-contacts-label {
+  color: var(--white, #FFF);
+}
+
+#add-to-contacts-button-container solid-ui-button.profile__btn-contacts:hover .profile__btn-contacts-icon path,
+#add-to-contacts-button-container solid-ui-button.profile__btn-contacts:focus-visible .profile__btn-contacts-icon path {
+  fill: var(--white, #FFF);
 }
 
 .contacts-dialog__content {

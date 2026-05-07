@@ -63,26 +63,6 @@
   margin: 0;
 }
 
-#profile-modal .modal #modal-header-action > button[aria-label="Close dialog"] {
-  min-height: var(--icon-base, 2rem);
-  min-width: var(--icon-base, 2rem);
-  width: var(--icon-base, 2rem);
-  height: var(--icon-base, 2rem);
-  padding: 0;
-  border: none;
-  background: transparent;
-  color: var(--color-text);
-  font-size: 1.5rem;
-  line-height: 1;
-  cursor: var(--profile-interactive-cursor, pointer);
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  appearance: none;
-  border-radius: 999px;
-  box-shadow: none;
-}
-
 #profile-modal .modal #modal-header-action > solid-ui-button[aria-label="Close dialog"] {
   --button-height-sm: var(--icon-base, 2rem);
   --button-width-sm: var(--icon-base, 2rem);
@@ -102,42 +82,16 @@
   --button-icon-size-sm: var(--icon-xxs, 1rem);
 }
 
-#profile-modal .modal #modal-header-action > button[aria-label="Close dialog"]:hover {
-  color: var(--color-primary);
-  background: rgba(0, 0, 0, 0.04);
-}
-
 #profile-modal .modal #modal-header-action > solid-ui-button[aria-label="Close dialog"]:hover {
   --button-hover-background: rgba(0, 0, 0, 0.04);
   --button-hover-border: transparent;
   --button-hover-text: var(--color-primary);
 }
 
-#profile-modal .modal #modal-header-action > button[aria-label="Close dialog"]:focus-visible {
-  outline: var(--focus-indicator-width) solid var(--color-primary);
-  outline-offset: var(--outline-offset-sm);
-  box-shadow: 0 0 0 var(--focus-ring-width) var(--color-background), 0 0 0 calc(var(--focus-ring-width) + var(--focus-indicator-width)) var(--color-primary-alpha);
-}
-
 #profile-modal .modal #modal-header-action > solid-ui-button[aria-label="Close dialog"]:focus-visible::part(button) {
   outline: var(--focus-indicator-width) solid var(--color-primary);
   outline-offset: var(--outline-offset-sm);
   box-shadow: 0 0 0 var(--focus-ring-width) var(--color-background), 0 0 0 calc(var(--focus-ring-width) + var(--focus-indicator-width)) var(--color-primary-alpha);
-}
-
-#profile-modal .modal #modal-header-action > button[aria-label="Close dialog"] svg {
-  width: var(--icon-xxs, 1rem);
-  height: var(--icon-xxs, 1rem);
-  display: block;
-}
-
-#profile-modal .modal .modal__header-action-button {
-  min-height: auto;
-  padding: var(--spacing-xxs);
-  border: none;
-  background: none;
-  color: var(--color-primary);
-  font-weight: var(--font-weight-md, 500);
 }
 
 #profile-modal .modal solid-ui-button.modal__header-action-button {
@@ -151,10 +105,6 @@
   --button-hover-background: transparent;
   --button-hover-border: transparent;
   --button-hover-text: var(--color-primary);
-}
-
-#profile-modal .modal .modal__header-action-button:hover {
-  text-decoration: underline;
 }
 
 #profile-modal .modal solid-ui-button.modal__header-action-button:hover::part(button) {
@@ -174,7 +124,7 @@
   display: none !important;
 }
 
-#profile-modal #modal-buttons > :is(button, solid-ui-button) {
+#profile-modal #modal-buttons > solid-ui-button {
   width: 10.8rem;
 }
 
@@ -249,28 +199,33 @@
 @media (max-width: 576px) {
   #profile-modal {
     padding-top: max(var(--spacing-sm), env(safe-area-inset-top));
-    padding-right: var(--spacing-sm);
+    padding-right: 0;
     padding-bottom: max(var(--spacing-sm), env(safe-area-inset-bottom));
-    padding-left: var(--spacing-sm);
+    padding-left: 0;
     place-items: center;
   }
 
   #profile-modal .modal {
-    width: min(420px, calc(100% - 2 * var(--spacing-sm)));
-    max-width: 420px;
+    width: min(420px, calc(100dvw - 2 * var(--spacing-sm)));
+    max-width: calc(100dvw - 2 * var(--spacing-sm));
+    min-width: 0;
     max-height: calc(100dvh - 2 * var(--spacing-sm));
     padding: var(--spacing-md);
     border-radius: calc(var(--border-radius-base) * 0.75);
     overscroll-behavior: contain;
     justify-self: center;
     align-self: center;
-    margin: 0;
+    margin: 0 auto;
   }
 
   #profile-modal .modal .modal-header {
     gap: var(--spacing-md);
     margin: calc(-1 * var(--spacing-md)) calc(-1 * var(--spacing-md)) var(--spacing-sm) calc(-1 * var(--spacing-md));
     padding: var(--spacing-md);
+  }
+
+  #profile-modal .modal #modal-desc {
+    padding-inline: 0;
   }
 
   #profile-modal #modal-buttons {
@@ -284,10 +239,10 @@
     width: 100%;
   }
 
-  #profile-modal #modal-buttons > :is(button, solid-ui-button) {
+  #profile-modal #modal-buttons > solid-ui-button {
     flex: 0 0 auto;
-    width: 10.8rem;
-    min-width: 8.5rem;
+    width: 10.4875rem;
+    min-width: 8.1875rem;
   }
 
 }

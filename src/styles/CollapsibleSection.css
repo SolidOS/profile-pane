@@ -149,6 +149,16 @@
   order: 2;
 }
 
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-section-collapsible--empty-mobile-no-edit .profile-section-collapsible__edit-button,
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-section-collapsible--empty-mobile-no-edit[data-expanded="true"] .profile-section-collapsible__edit-button {
+  display: none !important;
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-section-collapsible--empty-mobile-no-edit .profile-section-collapsible__edit-icon,
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-section-collapsible--empty-mobile-no-edit[data-expanded="true"] .profile-section-collapsible__edit-icon {
+  display: none !important;
+}
+
 :is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-section-collapsible[data-expanded="true"] .profile-section-collapsible__edit-button {
   display: inline-flex !important;
 }
@@ -274,6 +284,16 @@
     order: 2;
   }
 
+  .profile-section-collapsible--empty-mobile-no-edit .profile-section-collapsible__edit-button,
+  .profile-section-collapsible--empty-mobile-no-edit[data-expanded="true"] .profile-section-collapsible__edit-button {
+    display: none !important;
+  }
+
+  .profile-section-collapsible--empty-mobile-no-edit .profile-section-collapsible__edit-icon,
+  .profile-section-collapsible--empty-mobile-no-edit[data-expanded="true"] .profile-section-collapsible__edit-icon {
+    display: none !important;
+  }
+
   .profile-section-collapsible[data-expanded="true"] .profile-section-collapsible__edit-button {
     display: inline-flex !important;
   }
@@ -371,6 +391,16 @@
   .profile-section-collapsible .profile-section-collapsible__edit-button {
     display: none !important;
     order: 2;
+  }
+
+  .profile-section-collapsible--empty-mobile-no-edit .profile-section-collapsible__edit-button,
+  .profile-section-collapsible--empty-mobile-no-edit[data-expanded="true"] .profile-section-collapsible__edit-button {
+    display: none !important;
+  }
+
+  .profile-section-collapsible--empty-mobile-no-edit .profile-section-collapsible__edit-icon,
+  .profile-section-collapsible--empty-mobile-no-edit[data-expanded="true"] .profile-section-collapsible__edit-icon {
+    display: none !important;
   }
 
   .profile-section-collapsible[data-expanded="true"] .profile-section-collapsible__edit-button {

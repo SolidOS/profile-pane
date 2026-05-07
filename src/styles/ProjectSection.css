@@ -10,18 +10,6 @@
   scroll-snap-type: x proximity;
 }
 
-button.project-card__follow-button {
-  width: auto;
-  border-radius: var(--border-radius-md, 0.5rem);
-  border: var(--border-width-sm, 0.1rem) solid var(--color-primary, #7C4DFF);
-  padding: var(--spacing-base, 0.5rem) var(--spacing-2xs, 0.625rem);
-  color: var(--color-primary, #7C4DFF);
-  font-size: var(--font-size-sm, 0.875rem);
-  font-weight: var(--font-weight-md, 500);
-  background: var(--white, #FFF);
-  cursor: var(--profile-interactive-cursor, pointer);
-}
-
 solid-ui-button.project-card__follow-button {
   width: auto;
   min-width: 0;
@@ -34,13 +22,9 @@ solid-ui-button.project-card__follow-button {
   --button-background: var(--white, #FFF);
   --button-text: var(--color-primary, #7C4DFF);
   --button-border: var(--color-primary, #7C4DFF);
-  --button-hover-background: var(--lavender-400, #cbb9ff);
-  --button-hover-text: var(--color-primary, #7C4DFF);
+  --button-hover-background: var(--color-primary, #7C4DFF);
+  --button-hover-text: var(--white, #FFF);
   --button-hover-border: var(--color-primary, #7C4DFF);
-}
-
-button.project-card__follow-button:hover {
-  background: var(--lavender-400, #cbb9ff);
 }
 
 .project-card__rail::-webkit-scrollbar {
@@ -174,10 +158,6 @@ button.project-card__follow-button:hover {
   padding: 0.75rem;
 }
 
-button.project-card__more-button {
-  display: none;
-}
-
 solid-ui-button.project-card__more-button {
   --button-height-sm: 0;
   --button-padding-x-sm: 0;
@@ -204,22 +184,6 @@ solid-ui-button.project-card__more-button {
   display: none;
 }
 
-:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] button.project-card__more-button {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.375rem;
-  width: 100%;
-  margin-top: var(--spacing-xs, 0.75rem);
-  padding: 0;
-  border: 0;
-  background: transparent;
-  color: var(--color-primary, #7C4DFF);
-  font-size: var(--font-size-sm, 0.875rem);
-  font-weight: var(--font-weight-bold, 600);
-  cursor: var(--profile-interactive-cursor, pointer);
-}
-
 :is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] solid-ui-button.project-card__more-button {
   display: inline-flex;
   width: 100%;
@@ -241,7 +205,6 @@ solid-ui-button.project-card__more-button {
   cursor: var(--profile-interactive-cursor, pointer);
 }
 
-:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] button.project-card__more-button[data-mobile-expanded="true"] .project-card__more-icon,
 :is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] solid-ui-button.project-card__more-button[data-mobile-expanded="true"] .project-card__more-icon {
   transform: rotate(180deg);
 }
@@ -269,22 +232,6 @@ solid-ui-button.project-card__more-button {
     display: none;
   }
 
-  button.project-card__more-button {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.375rem;
-    width: 100%;
-    margin-top: var(--spacing-xs, 0.75rem);
-    padding: 0;
-    border: 0;
-    background: transparent;
-    color: var(--color-primary, #7C4DFF);
-    font-size: var(--font-size-sm, 0.875rem);
-    font-weight: var(--font-weight-bold, 600);
-    cursor: var(--profile-interactive-cursor, pointer);
-  }
-
   solid-ui-button.project-card__more-button {
     display: inline-flex;
     width: 100%;
@@ -306,7 +253,6 @@ solid-ui-button.project-card__more-button {
     cursor: var(--profile-interactive-cursor, pointer);
   }
 
-  button.project-card__more-button[data-mobile-expanded="true"] .project-card__more-icon,
   solid-ui-button.project-card__more-button[data-mobile-expanded="true"] .project-card__more-icon {
     transform: rotate(180deg);
   }

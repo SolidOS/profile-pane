@@ -430,12 +430,12 @@ transform: translateX(-4px);
 
 :is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile__heading-actions {
   position: static;
-  justify-self: center;
-  margin-left: auto;
+  justify-self: start;
+  margin-left: 0;
   margin-right: auto;
   margin-bottom: 0;
   max-inline-size: none;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
   align-content: center;
   gap: 0.25rem;
@@ -467,8 +467,9 @@ transform: translateX(-4px);
   --button-padding-sm: 0.25rem 0.3125rem;
   --button-padding-x-sm: 0.3125rem;
   --button-font-size-sm: var(--font-size-xxs, 0.75rem);
-  --button-hover-background: var(--lavender-300, #e6dcff);
-  --button-hover-border: transparent;
+  --button-hover-background: var(--color-primary, #7C4DFF);
+  --button-hover-border: var(--color-primary, #7C4DFF);
+  --button-hover-text: var(--white, #FFF);
 }
 
 :is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile__heading-actions .profile__btn-friends-label,
@@ -483,17 +484,7 @@ transform: translateX(-4px);
   height: 0.625rem;
 }
 
-:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile__heading-actions .profile__btn-friends-icon,
-:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile__heading-actions .profile__btn-friends-icon svg {
-  width: 0.625rem;
-  height: 0.625rem;
-}
-
 :is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile__heading-actions #add-to-contacts-button-container .profile__btn-contacts-icon {
-  margin-right: 0.1875rem;
-}
-
-:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile__heading-actions .profile__btn-friends-icon {
   margin-right: 0.1875rem;
 }
 
@@ -569,12 +560,12 @@ transform: translateX(-4px);
 
   .profile__heading-actions {
     position: static;
-    justify-self: center;
-    margin-left: auto;
+    justify-self: start;
+    margin-left: 0;
     margin-right: auto;
     margin-bottom: 0;
     max-inline-size: none;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
     align-content: center;
     gap: 0.25rem;
@@ -622,17 +613,7 @@ transform: translateX(-4px);
     height: 0.625rem;
   }
 
-  .profile__heading-actions .profile__btn-friends-icon,
-  .profile__heading-actions .profile__btn-friends-icon svg {
-    width: 0.625rem;
-    height: 0.625rem;
-  }
-
   .profile__heading-actions #add-to-contacts-button-container .profile__btn-contacts-icon {
-    margin-right: 0.1875rem;
-  }
-
-  .profile__heading-actions .profile__btn-friends-icon {
     margin-right: 0.1875rem;
   }
 
@@ -745,6 +726,9 @@ transform: translateX(-4px);
     --button-padding-sm: 0.25rem 0.3125rem;
     --button-padding-x-sm: 0.3125rem;
     --button-font-size-sm: var(--font-size-xxs, 0.75rem);
+    --button-hover-background: var(--color-primary, #7C4DFF);
+    --button-hover-border: var(--color-primary, #7C4DFF);
+    --button-hover-text: var(--white, #FFF);
   }
 
   .profile__heading-actions .profile__btn-friends-label,
