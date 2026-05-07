@@ -16,7 +16,11 @@ describe('Projects selectors and mutations', () => {
     const store = graph() as any
     const subject = sym('https://example.com/profile/card#me')
 
-    const plan = { create: [], update: [], remove: [] }
+    const plan = {
+      create: [{ url: 'https://example.org/project-a', entryNode: '', status: 'new' }],
+      update: [],
+      remove: []
+    }
     await expect(processProjectsMutations(store, subject, plan as any)).rejects.toThrow('Failed to save projects:')
   })
 
@@ -64,6 +68,42 @@ describe('Projects selectors and mutations', () => {
     const projects = await presentProjects(subject, store)
     expect(projects.length).toBeGreaterThan(0)
     expect(projects.some((project) => project.url === 'https://example.org/project-list-item#me')).toBe(true)
+  })
+
+  it('removes a project when solid:community is stored as an RDF list', async () => {
+    const store = graph() as any
+    const subject = sym('https://example.com/profile/card#me')
+    const doc = subject.doc()
+    const listHead = blankNode()
+    const listTail = blankNode()
+    const keepProject = sym('https://example.org/keep-project#me')
+    const removeProject = sym('https://example.org/remove-project#me')
+
+    store.add(subject, ns.solid('community'), listHead, doc)
+    store.add(listHead, ns.rdf('first'), keepProject, doc)
+    store.add(listHead, ns.rdf('rest'), listTail, doc)
+    store.add(listTail, ns.rdf('first'), removeProject, doc)
+    store.add(listTail, ns.rdf('rest'), ns.rdf('nil'), doc)
+
+    store.updater = {
+      update: (deletions: any[], insertions: any[], callback: Function) => {
+        deletions.forEach((statement) => store.remove(st(statement.subject, statement.predicate, statement.object, statement.why)))
+        insertions.forEach((statement) => store.add(statement.subject, statement.predicate, statement.object, statement.why))
+        callback('', true)
+      }
+    }
+
+    await processProjectsMutations(store, subject, {
+      create: [],
+      update: [],
+      remove: [{ url: removeProject.value, entryNode: removeProject.value, status: 'deleted' }]
+    } as any)
+
+    const links = store.statementsMatching(subject, ns.solid('community'), null, doc)
+    expect(links).toHaveLength(1)
+    expect(links[0].object.value).toBe(keepProject.value)
+    expect(store.statementsMatching(listHead, null, null, doc)).toHaveLength(0)
+    expect(store.statementsMatching(listTail, null, null, doc)).toHaveLength(0)
   })
 
   it('selector resolves literal URL values in community entries', async () => {
@@ -201,5 +241,41 @@ describe('Projects selectors and mutations', () => {
     const links = store.statementsMatching(subject, ns.solid('community'), null, doc)
     expect(links).toHaveLength(1)
     expect(links[0].object.value).toBe('https://example.org/project-b')
+  })
+
+  it('removes an existing project link even when it is stored outside the profile document', async () => {
+    const store = graph() as any
+    const subject = sym('https://example.com/profile/card#me')
+    const profileDoc = subject.doc()
+    const externalDoc = sym('https://storage.example.com/settings.ttl')
+    const existing = sym('https://example.org/project-a')
+
+    store.add(subject, ns.solid('community'), existing, externalDoc)
+
+    const updateDav = jest.fn((passedDoc: any, deletions: any[], insertions: any[], callback: Function) => {
+      deletions.forEach((statement) => store.remove(st(statement.subject, statement.predicate, statement.object, statement.why)))
+      insertions.forEach((statement) => store.add(statement.subject, statement.predicate, statement.object, statement.why))
+      callback(passedDoc.value, true)
+    })
+
+    store.fetcher = {
+      load: jest.fn(async () => undefined)
+    }
+
+    store.updater = {
+      update: (_deletions: any[], _insertions: any[], callback: Function) => callback('', false, 'Web error: 405 on patch'),
+      updateDav
+    }
+
+    await processProjectsMutations(store, subject, {
+      create: [],
+      update: [],
+      remove: [{ url: existing.value, entryNode: existing.value, status: 'deleted' }]
+    } as any)
+
+    expect(updateDav).toHaveBeenCalledTimes(1)
+    expect(updateDav.mock.calls[0][0].value).toBe(externalDoc.value)
+    expect(store.statementsMatching(subject, ns.solid('community'), null, externalDoc)).toHaveLength(0)
+    expect(store.statementsMatching(subject, ns.solid('community'), null, profileDoc)).toHaveLength(0)
   })
 })

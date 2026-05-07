@@ -94,4 +94,21 @@ describe('Projects section', () => {
 
     container.remove()
   })
+
+  it('renders the empty owner projects section as collapsible', () => {
+    const container = document.createElement('div')
+    document.body.appendChild(container)
+
+    render(renderProjectSection(context.session.store, subject, [], 'owner'), container)
+
+    const section = container.querySelector('[data-profile-section="projects"]') as HTMLElement | null
+    const panel = container.querySelector('#projects-panel') as HTMLElement | null
+
+    expect(section?.classList.contains('profile-section-collapsible')).toBe(true)
+    expect(panel).toBeTruthy()
+    expect(panel?.hasAttribute('hidden')).toBe(true)
+    expect(panel?.getAttribute('aria-hidden')).toBe('true')
+
+    container.remove()
+  })
 })
