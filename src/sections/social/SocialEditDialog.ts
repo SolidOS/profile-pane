@@ -1,4 +1,4 @@
-import { CLOSE_DIALOG_ON_VALIDATION, openInputDialog } from '../../ui/dialog'
+import { openInputDialog } from '../../ui/dialog'
 import { html, render } from 'lit-html'
 import 'solid-ui/components/actions/button'
 import 'solid-ui/components/forms/select'
@@ -134,17 +134,6 @@ function sanitizeUrlFieldValue(value: string): string {
   return sanitizeTextValue(value).replace(/\s+/g, '')
 }
 
-function isValidProfileUrl(value: string): boolean {
-  const normalized = (value || '').trim()
-  if (!normalized) return false
-  try {
-    const parsed = new URL(normalized)
-    return parsed.protocol === 'http:' || parsed.protocol === 'https:'
-  } catch {
-    return false
-  }
-}
-
 function rowHasContent(row: SocialRow): boolean {
   // A social account is considered meaningful only when a personal profile URL is set.
   return hasNonEmptyText(row.homepage)
@@ -184,11 +173,6 @@ function hasOrderChanged(rows: SocialRow[], initialExistingOrder: string[]): boo
 }
 
 function validateSocialBeforeSave(rows: SocialRow[], initialExistingOrder: string[]): string | null {
-  const ops = summarizeRowOps(rows, rowHasContent)
-  const hasChanges = ops.create.length > 0 || ops.update.length > 0 || ops.remove.length > 0
-  const orderChanged = hasOrderChanged(rows, initialExistingOrder)
-  if (!hasChanges && !orderChanged) return CLOSE_DIALOG_ON_VALIDATION
-
   for (let i = 0; i < rows.length; i++) {
     const row = rows[i]
     if (!row || row.status === 'deleted') continue
@@ -202,10 +186,6 @@ function validateSocialBeforeSave(rows: SocialRow[], initialExistingOrder: strin
 
     if (!hasNonEmptyText(row.homepage)) {
       return `Social account ${i + 1}: please enter your personal profile link.`
-    }
-
-    if (!isValidProfileUrl(row.homepage || '')) {
-      return `Social account ${i + 1}: profile link must be a valid http(s) URL.`
     }
   }
 
@@ -317,19 +297,19 @@ function renderSocialInputRow({
       <label aria-label=${homepageLabel} class="label profile-edit-dialog__field profile-edit-dialog__field--social-url">
         <input
           class="input"
-          type="url"
+          type="text"
           name=${`social-homepage-${index}`}
           .value=${row?.homepage || ''}
           data-contact-field="homepage"
           data-entry-node=${row?.entryNode || ''}
           data-row-status=${row?.status || 'n/a'}
-          placeholder="Profile URL"
-          autocomplete="url"
-          inputmode="url"
+          placeholder="Profile link or handle"
+          autocomplete="off"
+          inputmode="text"
           required
           @input=${handleTextInput('homepage')}
         />
-          <small class="profile-edit-dialog__input-help-text">Paste your full profile URL (for example: https://example.com/username)</small>
+          <small class="profile-edit-dialog__input-help-text">Enter your profile link, handle, or username.</small>
       </label>
       <div class="profile-edit-dialog__actions profile-edit-dialog__actions--edge flex-row align-center justify-end">
         <solid-ui-button
@@ -479,6 +459,11 @@ export async function createSocialEditDialog(
     dom,
     form,
     onOpen: () => focusSocialField(form, '[name="social-account-type-0"]'),
+    shouldCloseWithoutSave: () => {
+      const ops = summarizeRowOps(formState.socialAccounts, rowHasContent)
+      const orderChanged = hasOrderChanged(formState.socialAccounts, formState.initialExistingOrder)
+      return ops.create.length === 0 && ops.update.length === 0 && ops.remove.length === 0 && !orderChanged
+    },
     headerAction: {
       type: 'button',
       label: '+ Add More',

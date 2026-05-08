@@ -1,4 +1,4 @@
-import { CLOSE_DIALOG_ON_VALIDATION, getSharedDialogSaveButton, openInputDialog } from '../../ui/dialog'
+import { getSharedDialogSaveButton, openInputDialog } from '../../ui/dialog'
 import { html, render } from 'lit-html'
 import 'solid-ui/components/actions/button'
 import 'solid-ui/components/forms/combobox'
@@ -242,11 +242,6 @@ function hasOrderChanged(rows: LanguageRow[], initialExistingOrder: string[]): b
 }
 
 function validateLanguagesBeforeSave(rows: LanguageRow[], initialExistingOrder: string[]): string | null {
-  const ops = summarizeRowOps(rows, rowHasContent)
-  const hasChanges = ops.create.length > 0 || ops.update.length > 0 || ops.remove.length > 0
-  const orderChanged = hasOrderChanged(rows, initialExistingOrder)
-  if (!hasChanges && !orderChanged) return CLOSE_DIALOG_ON_VALIDATION
-
   for (let i = 0; i < rows.length; i++) {
     const row = rows[i]
     if (!row || row.status === 'deleted') continue
@@ -546,6 +541,11 @@ export async function createLanguageEditDialog(
     dom,
     form,
     onOpen: () => focusLanguageField(form, '[data-language-row-index="0"]'),
+    shouldCloseWithoutSave: () => {
+      const ops = summarizeRowOps(formState.languages, rowHasContent)
+      const orderChanged = hasOrderChanged(formState.languages, formState.initialExistingOrder)
+      return ops.create.length === 0 && ops.update.length === 0 && ops.remove.length === 0 && !orderChanged
+    },
     headerAction: {
       type: 'button',
       label: '+ Add More',

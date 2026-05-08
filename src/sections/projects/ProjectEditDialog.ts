@@ -1,4 +1,4 @@
-import { CLOSE_DIALOG_ON_VALIDATION, getSharedDialogSaveButton, openInputDialog } from '../../ui/dialog'
+import { getSharedDialogSaveButton, openInputDialog } from '../../ui/dialog'
 import { html, render } from 'lit-html'
 import 'solid-ui/components/actions/button'
 import { ProjectDetails, ProjectRow } from './types'
@@ -63,9 +63,6 @@ function toFormState(_details: ProjectDetails[]): ProjectFormState {
 }
 
 function validateProjectBeforeSave(row: ProjectRow): string | null {
-  if (!hasNonEmptyText(row.url) && !hasNonEmptyText(row.entryNode)) {
-    return CLOSE_DIALOG_ON_VALIDATION
-  }
   if (!hasNonEmptyText(row.url)) {
     return 'WebID is required.'
   }
@@ -177,6 +174,7 @@ export async function createProjectsEditDialog(
     dom,
     form,
     headerAction: { type: 'close' },
+    shouldCloseWithoutSave: () => !hasNonEmptyText(formState.project.url) && !hasNonEmptyText(formState.project.entryNode),
     validate: () => {
       if (viewerMode !== 'owner') {
         return ownerLoginRequiredDialogMessageText
