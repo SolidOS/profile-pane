@@ -172,7 +172,7 @@ function hasOrderChanged(rows: SocialRow[], initialExistingOrder: string[]): boo
   return false
 }
 
-function validateSocialBeforeSave(rows: SocialRow[], initialExistingOrder: string[]): string | null {
+function validateSocialBeforeSave(rows: SocialRow[]): string | null {
   for (let i = 0; i < rows.length; i++) {
     const row = rows[i]
     if (!row || row.status === 'deleted') continue

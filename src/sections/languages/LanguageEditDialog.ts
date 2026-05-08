@@ -241,7 +241,7 @@ function hasOrderChanged(rows: LanguageRow[], initialExistingOrder: string[]): b
   return false
 }
 
-function validateLanguagesBeforeSave(rows: LanguageRow[], initialExistingOrder: string[]): string | null {
+function validateLanguagesBeforeSave(rows: LanguageRow[]): string | null {
   for (let i = 0; i < rows.length; i++) {
     const row = rows[i]
     if (!row || row.status === 'deleted') continue

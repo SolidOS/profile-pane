@@ -891,7 +891,7 @@ function createHeadingEditForm(
   return { form, formState }
 }
 
-function validateHeadingDataBeforeSave(formState: HeadingFormState): string | null {
+function validateHeadingDataBeforeSave(): string | null {
   return null
 }
 

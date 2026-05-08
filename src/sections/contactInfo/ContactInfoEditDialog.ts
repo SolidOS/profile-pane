@@ -716,7 +716,7 @@ function createContactInfoEditForm(contactInfo: ContactInfo, viewerMode: ViewerM
   return { form, formState }
 }
 
-function validateContactInfoBeforeSave(formState: ContactInfoFormState): string | null {
+function validateContactInfoBeforeSave(): string | null {
   return null
 }
 
