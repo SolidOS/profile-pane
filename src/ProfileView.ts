@@ -17,7 +17,6 @@ import { renderProjectSection } from './sections/projects/ProjectSection'
 import { renderHeadingSection } from './sections/heading/HeadingSection'
 import { renderBioSection } from './sections/bio/BioSection'
 import { renderSocialSection } from './sections/social/SocialSection'
-import { SocialPresentation } from './sections/social/types'
 import { renderQRCodeSection } from './sections/qrcode/QRCodeSection'
 
 function getViewerMode(subject: NamedNode): ViewerMode {
@@ -30,7 +29,6 @@ function getViewerMode(subject: NamedNode): ViewerMode {
 function renderSidebar(
   store: LiveStore,
   subject: NamedNode,
-  accounts: SocialPresentation,
   skills: SkillDetails[],
   languages: LanguageDetails[],
   contactInfo: ContactInfo,
@@ -44,7 +42,6 @@ function renderSidebar(
     >
       <h2 id="sidebar-heading" class="sr-only">Sidebar</h2>
       <div class="flex-column gap-md">
-        ${renderSocialSection(store, subject, accounts, viewerMode, onSaved)}
         ${renderSkillsSection(store, subject, skills, viewerMode, onSaved)}
         ${renderLanguageSection(store, subject, languages, viewerMode, onSaved)}
         ${renderContactInfoSection(store, subject, contactInfo, viewerMode, onSaved)}
@@ -74,6 +71,46 @@ export async function ProfileView (
   const bioDetails = viewModel.bioDetails
   const accounts = viewModel.social
   const contactInfo = viewModel.contactInfo
+
+  const headingSection = await renderHeadingSection(context, subject, profileDetails, viewerMode, onSaved)
+  const bioSection = renderBioSection(store, subject, bioDetails, viewerMode, onSaved)
+  const skillsSection = renderSkillsSection(store, subject, skills, viewerMode, onSaved)
+  const languageSection = renderLanguageSection(store, subject, languages, viewerMode, onSaved)
+  const cvSection = renderCVSection(store, subject, rolesByType, viewerMode, onSaved)
+  const projectSection = renderProjectSection(store, subject, projects, viewerMode, onSaved)
+  const socialSection = renderSocialSection(store, subject, accounts, viewerMode, onSaved)
+  const contactInfoSection = renderContactInfoSection(store, subject, contactInfo, viewerMode, onSaved)
+  const qrCodeSection = renderQRCodeSection(subject, store)
+
+  if (layout === 'mobile') {
+    return html`
+      <div
+        class="profile-pane-root"
+        data-layout=${layout}
+        data-theme=${theme}
+        data-input-mode=${inputMode}
+      >
+        <main
+          id="main-content"
+          class="profile-grid"
+          tabindex="-1"
+        >
+          <h1 id="profile-content-heading" class="sr-only">Profile for ${profileDetails.name}</h1>
+          <h2 id="profile-main-heading" class="sr-only">Main Profile Content</h2>
+
+          ${headingSection}
+          ${bioSection}
+          ${skillsSection}
+          ${languageSection}
+          ${cvSection}
+          ${projectSection}
+          ${socialSection}
+          ${contactInfoSection}
+          ${qrCodeSection}
+        </main>
+      </div>
+    `
+  }
   
   return html` 
     <div
@@ -89,18 +126,23 @@ export async function ProfileView (
       > 
         <h1 id="profile-content-heading" class="sr-only">Profile for ${profileDetails.name}</h1>
 
-        <section
-          class="profile__main flex-column gap-md"
-          >
+        <div class="profile__intro-main">
+          ${headingSection}
+        </div>
+
+        <div class="profile__intro-sidebar profile__sidebar flex-column p-sm">
+          ${socialSection}
+        </div>
+
+        <section class="profile__main flex-column gap-md">
           <h2 id="profile-main-heading" class="sr-only">Main Profile Content</h2>
 
-          ${await renderHeadingSection(context, subject, profileDetails, viewerMode, onSaved)}
-          ${renderBioSection(store, subject, bioDetails, viewerMode, onSaved)}
-          ${renderCVSection(store, subject, rolesByType, viewerMode, onSaved)}
-          ${renderProjectSection(store, subject, projects, viewerMode, onSaved)}
+          ${bioSection}
+          ${cvSection}
+          ${projectSection}
           
         </section>
-        ${renderSidebar(store, subject, accounts, skills, languages, contactInfo, viewerMode, onSaved)}
+        ${renderSidebar(store, subject, skills, languages, contactInfo, viewerMode, onSaved)}
       </main>
     </div>
   `

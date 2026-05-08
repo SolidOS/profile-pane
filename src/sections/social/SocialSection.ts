@@ -127,6 +127,7 @@ function renderSocialSectionDefault(
   return showSection ? html`
         <section 
           aria-labelledby="social-heading" 
+          data-profile-section="social"
           class="profile__section border-lighter profile-section-collapsible profile-section-collapsible--inline-mobile-actions" 
           role="region"
           tabindex="-1"

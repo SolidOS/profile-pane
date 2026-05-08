@@ -72,6 +72,7 @@ function renderSkillsSectionDefault(store: LiveStore, subject: NamedNode, skills
   return html`
     <section
       class="profile__section border-lighter profile-section-collapsible profile-section-collapsible--inline-mobile-actions"
+      data-profile-section="skills"
       aria-labelledby="skills-heading"
       role="region"
       tabindex="-1"

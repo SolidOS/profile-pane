@@ -137,6 +137,7 @@ function renderContactInfoSectionDefault(
   return html`
     <section
       aria-labelledby="contact-details-heading"
+      data-profile-section="contact-info"
       class="profile__section border-lighter profile-section-collapsible profile-section-collapsible--inline-mobile-actions"
       role="region"
       tabindex="-1"

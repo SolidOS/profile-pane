@@ -31,7 +31,7 @@ export const renderHeadingSection = async (
   const dateOfBirthDisplay = toDisplayDateDMY(toText(dateOfBirth), 'DD-MM-YYYY')
  
   return html`
-      <section class="profile__section border-lighter" aria-labelledby="profile-name">
+      <section class="profile__section border-lighter" data-profile-section="heading" aria-labelledby="profile-name">
         <div class="profile__heading-top">
           <div class="profile__avatar">
             ${Image(imageSrc, name)}

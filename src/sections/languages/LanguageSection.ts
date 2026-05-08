@@ -30,6 +30,7 @@ function renderLanguagesSectionDefault(store: LiveStore, subject: NamedNode, lan
   return html`
     <section
       class="profile__section border-lighter profile-section-collapsible profile-section-collapsible--inline-mobile-actions"
+      data-profile-section="languages"
       aria-labelledby="languages-heading"
       role="region"
       tabindex="-1"

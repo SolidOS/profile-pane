@@ -1,6 +1,12 @@
 /* Profile layout styles. */
 
+.profile-grid {
+  column-gap: var(--spacing-xxs, 0.3125rem);
+  row-gap: var(--spacing-md, 1.25rem);
+}
+
 .profile-grid .profile__main {
+  grid-column: 1;
   width: 100%;
   max-width: 100%;
   min-width: 0;
@@ -10,7 +16,34 @@
   align-items: flex-start;
 }
 
+.profile-grid .profile__intro-main,
+.profile-grid .profile__intro-sidebar {
+  width: 100%;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-self: stretch;
+}
+
+.profile-grid .profile__intro-main {
+  grid-column: 1;
+}
+
+.profile-grid .profile__intro-sidebar {
+  grid-column: 2;
+  padding-block: 0;
+}
+
+.profile-grid .profile__intro-main > .profile__section,
+.profile-grid .profile__intro-main > .profile__section--empty,
+.profile-grid .profile__intro-sidebar > .profile__section,
+.profile-grid .profile__intro-sidebar > .profile__section--empty {
+  flex: 1 1 auto;
+  height: 100%;
+}
+
 .profile-grid .profile__sidebar {
+  grid-column: 2;
   align-items: stretch;
   text-align: left;
   border-radius: var(--border-radius-base);
@@ -20,6 +53,10 @@
   min-width: 0;
   box-sizing: border-box;
   overflow-x: clip;
+}
+
+.profile-grid > .profile__sidebar:not(.profile__intro-sidebar) {
+  padding-top: 0;
 }
 
 .profile-grid .profile__section {
@@ -108,6 +145,23 @@
   margin: 0 0 var(--spacing-md, 1.25rem);
 }
 
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__intro-main,
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__intro-sidebar,
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__main,
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__sidebar {
+  display: contents;
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid [data-profile-section='heading'] { order: 1; }
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid [data-profile-section='bio'] { order: 2; }
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid [data-profile-section='skills'] { order: 3; }
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid [data-profile-section='languages'] { order: 4; }
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid [data-profile-section='resume'] { order: 5; }
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid [data-profile-section='projects'] { order: 6; }
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid [data-profile-section='social'] { order: 7; }
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid [data-profile-section='contact-info'] { order: 8; }
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid [data-profile-section='qr-code'] { order: 9; }
+
 @container profile-pane (max-width: 1000px) {
   #main-content.profile-grid {
     width: 100%;
@@ -115,6 +169,44 @@
     box-sizing: border-box;
     margin-inline: auto !important;
   }
+}
+
+@media (max-width: 768px) {
+  .profile-grid .profile__intro-main,
+  .profile-grid .profile__intro-sidebar,
+  .profile-grid .profile__main,
+  .profile-grid .profile__sidebar {
+    display: contents;
+  }
+
+  .profile-grid [data-profile-section='heading'] { order: 1; }
+  .profile-grid [data-profile-section='bio'] { order: 2; }
+  .profile-grid [data-profile-section='skills'] { order: 3; }
+  .profile-grid [data-profile-section='languages'] { order: 4; }
+  .profile-grid [data-profile-section='resume'] { order: 5; }
+  .profile-grid [data-profile-section='projects'] { order: 6; }
+  .profile-grid [data-profile-section='social'] { order: 7; }
+  .profile-grid [data-profile-section='contact-info'] { order: 8; }
+  .profile-grid [data-profile-section='qr-code'] { order: 9; }
+}
+
+@container profile-pane (max-width: 768px) {
+  .profile-grid .profile__intro-main,
+  .profile-grid .profile__intro-sidebar,
+  .profile-grid .profile__main,
+  .profile-grid .profile__sidebar {
+    display: contents;
+  }
+
+  .profile-grid [data-profile-section='heading'] { order: 1; }
+  .profile-grid [data-profile-section='bio'] { order: 2; }
+  .profile-grid [data-profile-section='skills'] { order: 3; }
+  .profile-grid [data-profile-section='languages'] { order: 4; }
+  .profile-grid [data-profile-section='resume'] { order: 5; }
+  .profile-grid [data-profile-section='projects'] { order: 6; }
+  .profile-grid [data-profile-section='social'] { order: 7; }
+  .profile-grid [data-profile-section='contact-info'] { order: 8; }
+  .profile-grid [data-profile-section='qr-code'] { order: 9; }
 }
 
 /* App-driven mobile layout for the pane, independent of viewport width. */
@@ -274,6 +366,23 @@
   .profile__section--empty .profile-section-collapsible__edit-icon {
     display: inline !important;
   }
+
+  .profile-grid .profile__intro-main,
+  .profile-grid .profile__intro-sidebar,
+  .profile-grid .profile__main,
+  .profile-grid .profile__sidebar {
+    display: contents;
+  }
+
+  .profile-grid [data-profile-section='heading'] { order: 1; }
+  .profile-grid [data-profile-section='bio'] { order: 2; }
+  .profile-grid [data-profile-section='skills'] { order: 3; }
+  .profile-grid [data-profile-section='languages'] { order: 4; }
+  .profile-grid [data-profile-section='resume'] { order: 5; }
+  .profile-grid [data-profile-section='projects'] { order: 6; }
+  .profile-grid [data-profile-section='social'] { order: 7; }
+  .profile-grid [data-profile-section='contact-info'] { order: 8; }
+  .profile-grid [data-profile-section='qr-code'] { order: 9; }
 }
 
 /* Narrow-pane typography fallback for embedded mobile layouts. */
@@ -358,4 +467,21 @@
   .profile__section--empty .profile-section-collapsible__edit-icon {
     display: inline !important;
   }
+
+  .profile-grid .profile__intro-main,
+  .profile-grid .profile__intro-sidebar,
+  .profile-grid .profile__main,
+  .profile-grid .profile__sidebar {
+    display: contents;
+  }
+
+  .profile-grid [data-profile-section='heading'] { order: 1; }
+  .profile-grid [data-profile-section='bio'] { order: 2; }
+  .profile-grid [data-profile-section='skills'] { order: 3; }
+  .profile-grid [data-profile-section='languages'] { order: 4; }
+  .profile-grid [data-profile-section='resume'] { order: 5; }
+  .profile-grid [data-profile-section='projects'] { order: 6; }
+  .profile-grid [data-profile-section='social'] { order: 7; }
+  .profile-grid [data-profile-section='contact-info'] { order: 8; }
+  .profile-grid [data-profile-section='qr-code'] { order: 9; }
 }
