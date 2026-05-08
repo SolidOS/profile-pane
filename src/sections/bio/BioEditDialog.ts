@@ -88,7 +88,7 @@ function renderBioEditTemplate(form: HTMLFormElement, formState: BioFormState, v
 
 function createBioEditForm(bioData: BioDetails, viewerMode: ViewerMode) {
   const form = document.createElement('form')
-  form.classList.add('profile__edit-form')
+  form.classList.add('profile__edit-form', 'profile__edit-form--bio')
 
   const formState = toFormState(bioData)
   renderBioEditTemplate(form, formState, viewerMode)

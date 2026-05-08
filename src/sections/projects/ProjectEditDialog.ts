@@ -104,7 +104,6 @@ function renderProjectInputRow(row: ProjectRow, onChange: () => void) {
   return html`
     <div class="profile-edit-dialog__row profile-edit-dialog__row--project">
       <label aria-label="Project or community WebID" class="label profile-edit-dialog__field profile-edit-dialog__field--full">
-      <p>Type or paste a project or community WebID.</p>  
       <div class="profile-edit-dialog__input-wrap">
           <input
             class="input profile-edit-dialog__input--with-action"
@@ -178,7 +177,6 @@ export async function createProjectsEditDialog(
     dom,
     form,
     headerAction: { type: 'close' },
-    hideFooterButtons: true,
     validate: () => {
       if (viewerMode !== 'owner') {
         return ownerLoginRequiredDialogMessageText

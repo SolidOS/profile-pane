@@ -613,8 +613,8 @@ solid-ui-button.contacts-dialog__confirm {
 solid-ui-button.contacts-dialog__cancel {
   --button-padding-sm: var(--spacing-sm) var(--spacing-md);
   --button-padding-md: var(--spacing-sm) var(--spacing-md);
-  --button-font-size-sm: var(--font-size-sm, 0.875rem);
-  --button-font-size-md: var(--font-size-sm, 0.875rem);
+  --button-font-size-sm: var(--font-size-md, 1rem);
+  --button-font-size-md: var(--font-size-md, 1rem);
   --button-font-weight: var(--font-weight-normal, normal);
   --button-background: transparent;
   --button-text: var(--gray-800, #1E2939);

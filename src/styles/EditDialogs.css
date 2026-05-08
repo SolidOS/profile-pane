@@ -43,7 +43,7 @@
 }
 
 .profile-edit-dialog__row--language {
-  margin-left: calc(-1 * var(--spacing-xs, 0.75rem));
+  margin-left: 0;
 }
 
 .profile-edit-dialog__row--language > .profile-edit-dialog__field {
@@ -407,8 +407,8 @@ solid-ui-button.profile-edit-dialog__image-camera-button {
 }
 
 .profile-edit-dialog--heading .profile-edit-dialog__row--heading-photo {
-  padding-bottom: calc(var(--spacing-sm, 0.938rem) / 2);
-  margin-bottom: calc(var(--spacing-sm, 0.938rem) / 2);
+  padding-bottom: var(--spacing-md, 1.25rem);
+  margin-bottom: var(--spacing-md, 1.25rem);
   border-bottom: 1px solid var(--slate-200, #E2E8F0);
 }
 
@@ -1117,6 +1117,18 @@ solid-ui-button.profile-edit-dialog__drag-handle {
 
   .profile-edit-dialog__textarea {
     min-height: 15rem !important;
+  }
+
+  .profile-edit-dialog__input--with-action {
+    padding-right: 6.5rem;
+  }
+
+  .profile-edit-dialog__paste-button {
+    right: var(--spacing-xxs, 0.3125rem);
+    --button-padding-md: var(--spacing-xxs, 0.3125rem) var(--spacing-xxs, 0.3125rem);
+    --button-font-size-md: var(--font-size-2xs, 0.6875rem);
+    --button-icon-size-md: var(--font-size-xxs, 0.75rem);
+    --button-icon-size-lg: var(--font-size-xxs, 0.75rem);
   }
 
   .profile-edit-dialog__input-help-text {
