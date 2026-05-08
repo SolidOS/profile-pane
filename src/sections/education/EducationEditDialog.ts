@@ -1,4 +1,4 @@
-import { alertDialog, openInputDialog } from '../../ui/dialog'
+import { alertDialog, CLOSE_DIALOG_ON_VALIDATION, openInputDialog } from '../../ui/dialog'
 import { html, render } from 'lit-html'
 import 'solid-ui/components/actions/button'
 import 'solid-ui/components/forms/select'
@@ -586,7 +586,7 @@ export async function createEducationEditDialog(
       const plan: MutationOps<EducationRow> = summarizeRowOps(formState.educationData, rowHasContent)
       const hasChanges = plan.create.length > 0 || plan.update.length > 0 || plan.remove.length > 0
       if (!hasChanges) {
-        return 'No education changes detected.'
+        return CLOSE_DIALOG_ON_VALIDATION
       }
 
       const validation = validateEducationBeforeSave(formState.educationData)

@@ -1,4 +1,4 @@
-import { getSharedDialogSaveButton, openInputDialog } from '../../ui/dialog'
+import { CLOSE_DIALOG_ON_VALIDATION, getSharedDialogSaveButton, openInputDialog } from '../../ui/dialog'
 import { html, render } from 'lit-html'
 import 'solid-ui/components/actions/button'
 import 'solid-ui/components/forms/combobox'
@@ -207,7 +207,7 @@ function initializeSkillComboboxes(form: HTMLFormElement, rows: SkillRow[]): voi
 function validateSkillsBeforeSave(rows: SkillRow[]): string | null {
   const ops = summarizeRowOps(rows, rowHasContent)
   const hasChanges = ops.create.length > 0 || ops.update.length > 0 || ops.remove.length > 0
-  if (!hasChanges) return 'No skill changes detected.'
+  if (!hasChanges) return CLOSE_DIALOG_ON_VALIDATION
 
   for (let i = 0; i < rows.length; i++) {
     const row = rows[i]

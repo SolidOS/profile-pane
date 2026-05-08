@@ -4,6 +4,8 @@ import { html, render } from 'lit-html'
 import { closeIcon } from '../icons-svg/profileIcons'
 import { createSpinner } from './spinner'
 
+export const CLOSE_DIALOG_ON_VALIDATION = '__close-dialog-on-validation__'
+
 /* Copied from issue-pane, minor typescript adjustments */
 /* Changed modal from div to dialog element */
 let modalDialog: HTMLDialogElement | null = null
@@ -425,6 +427,9 @@ export function openInputDialog (options: OpenInputDialogCustom): Promise<InputD
 
           if (options.validate) {
             const validationMessage = await options.validate()
+            if (validationMessage === CLOSE_DIALOG_ON_VALIDATION) {
+              return true
+            }
             if (validationMessage) {
               setModalError(elements, validationMessage)
               return false

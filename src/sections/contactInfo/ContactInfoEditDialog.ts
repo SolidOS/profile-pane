@@ -1,4 +1,4 @@
-import { openInputDialog } from '../../ui/dialog'
+import { CLOSE_DIALOG_ON_VALIDATION, openInputDialog } from '../../ui/dialog'
 import { html, render } from 'lit-html'
 import 'solid-ui/components/actions/button'
 import 'solid-ui/components/forms/select'
@@ -725,7 +725,7 @@ function validateContactInfoBeforeSave(formState: ContactInfoFormState): string 
     emailOps.create.length > 0 || emailOps.update.length > 0 || emailOps.remove.length > 0 ||
     addressOps.create.length > 0 || addressOps.update.length > 0 || addressOps.remove.length > 0
 
-  if (!hasChanges) return 'No contact info changes detected.'
+  if (!hasChanges) return CLOSE_DIALOG_ON_VALIDATION
   return null
 }
 

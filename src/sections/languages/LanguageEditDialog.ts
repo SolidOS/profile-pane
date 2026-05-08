@@ -1,4 +1,4 @@
-import { getSharedDialogSaveButton, openInputDialog } from '../../ui/dialog'
+import { CLOSE_DIALOG_ON_VALIDATION, getSharedDialogSaveButton, openInputDialog } from '../../ui/dialog'
 import { html, render } from 'lit-html'
 import 'solid-ui/components/actions/button'
 import 'solid-ui/components/forms/combobox'
@@ -245,7 +245,7 @@ function validateLanguagesBeforeSave(rows: LanguageRow[], initialExistingOrder: 
   const ops = summarizeRowOps(rows, rowHasContent)
   const hasChanges = ops.create.length > 0 || ops.update.length > 0 || ops.remove.length > 0
   const orderChanged = hasOrderChanged(rows, initialExistingOrder)
-  if (!hasChanges && !orderChanged) return 'No language changes detected.'
+  if (!hasChanges && !orderChanged) return CLOSE_DIALOG_ON_VALIDATION
 
   for (let i = 0; i < rows.length; i++) {
     const row = rows[i]

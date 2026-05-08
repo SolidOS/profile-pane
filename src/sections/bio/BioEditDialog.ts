@@ -1,4 +1,4 @@
-import { openInputDialog } from '../../ui/dialog'
+import { CLOSE_DIALOG_ON_VALIDATION, openInputDialog } from '../../ui/dialog'
 import { html, render, TemplateResult } from 'lit-html'
 import type { BioDetails, BioRow } from './types'
 import '../../styles/EditDialogs.css'
@@ -121,7 +121,7 @@ export async function createBioEditDialog(
 
       const bioOps = summarizeRowOps([formState.bio], rowHasContent)
       const hasChanges = bioOps.create.length > 0 || bioOps.update.length > 0 || bioOps.remove.length > 0
-      if (!hasChanges) return 'No bio changes detected.'
+      if (!hasChanges) return CLOSE_DIALOG_ON_VALIDATION
       return null
     },
     onSave: async () => {
