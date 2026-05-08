@@ -126,7 +126,8 @@ function renderProject(
             aria-label="Unfollow project"
             @click=${handleUnfollow}
           >
-            <span>${checkMarkIcon} Following</span>
+            <span class="project-card__follow-label project-card__follow-label--default">${checkMarkIcon} Following</span>
+            <span class="project-card__follow-label project-card__follow-label--hover">${checkMarkIcon} Unfollow</span>
           </solid-ui-button>
         </div>
       ` : html``}

@@ -27,6 +27,28 @@ solid-ui-button.project-card__follow-button {
   --button-hover-border: var(--color-primary, #7C4DFF);
 }
 
+.project-card__follow-label {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-xxs, 0.3125rem);
+}
+
+.project-card__follow-label--hover {
+  display: none;
+}
+
+solid-ui-button.project-card__follow-button:hover .project-card__follow-label--default,
+solid-ui-button.project-card__follow-button:focus-visible .project-card__follow-label--default,
+solid-ui-button.project-card__follow-button:focus-within .project-card__follow-label--default {
+  display: none;
+}
+
+solid-ui-button.project-card__follow-button:hover .project-card__follow-label--hover,
+solid-ui-button.project-card__follow-button:focus-visible .project-card__follow-label--hover,
+solid-ui-button.project-card__follow-button:focus-within .project-card__follow-label--hover {
+  display: inline-flex;
+}
+
 .project-card__rail::-webkit-scrollbar {
   height: 0.5rem;
 }
