@@ -1,6 +1,27 @@
 import { describe, expect, it } from '@jest/globals'
+import { graph, sym } from 'rdflib'
+import { createLanguageEditDialog } from '../src/sections/languages/LanguageEditDialog'
+import { createSkillsEditDialog } from '../src/sections/skills/SkillsEditDialog'
+import { createSocialEditDialog } from '../src/sections/social/SocialEditDialog'
 import { getSharedDialogCancelButton, getSharedDialogSaveButton, openInputDialog } from '../src/ui/dialog'
 import { runAxe } from './helpers/runAxe'
+
+async function waitForFrame(): Promise<void> {
+  await new Promise<void>((resolve) => {
+    if (typeof window.requestAnimationFrame === 'function') {
+      window.requestAnimationFrame(() => resolve())
+      return
+    }
+
+    setTimeout(resolve, 0)
+  })
+}
+
+async function waitForDialogFocus(): Promise<void> {
+  await waitForFrame()
+  await waitForFrame()
+  await waitForFrame()
+}
 
 describe('Dialog accessibility', () => {
   it('has no accessibility violations for the shared input dialog', async () => {
@@ -134,5 +155,67 @@ describe('Dialog accessibility', () => {
 
     await expect(resultPromise).resolves.toBeNull()
     expect(document.activeElement).toBe(trigger)
+  })
+
+  it('opens social, skills, and language dialogs with focus on the first field while keeping popups closed', async () => {
+    const store = graph() as any
+    const subject = sym('https://example.com/profile/card#me')
+    const trigger = document.createElement('button')
+    trigger.textContent = 'Open dialog'
+    document.body.appendChild(trigger)
+
+    const socialPromise = createSocialEditDialog(
+      { currentTarget: trigger } as unknown as Event,
+      store,
+      subject,
+      [],
+      'owner'
+    )
+
+    await waitForDialogFocus()
+
+    const socialSelect = document.querySelector('solid-ui-select[data-social-account-row-index="0"]') as HTMLElement | null
+    expect(socialSelect).not.toBeNull()
+    expect(socialSelect?.shadowRoot?.activeElement?.tagName).toBe('BUTTON')
+    expect(socialSelect?.hasAttribute('popup-open')).toBe(false)
+
+    getSharedDialogCancelButton(document)?.click()
+    await expect(socialPromise).resolves.toBeUndefined()
+
+    const skillsPromise = createSkillsEditDialog(
+      { currentTarget: trigger } as unknown as Event,
+      store,
+      subject,
+      [],
+      'owner'
+    )
+
+    await waitForDialogFocus()
+
+    const skillsCombobox = document.querySelector('solid-ui-combobox[data-skill-row-index="0"]') as (HTMLElement & { _popupOpen?: boolean }) | null
+    expect(skillsCombobox).not.toBeNull()
+    expect(skillsCombobox?.shadowRoot?.activeElement?.tagName).toBe('INPUT')
+    expect(skillsCombobox?._popupOpen).toBe(false)
+
+    getSharedDialogCancelButton(document)?.click()
+    await expect(skillsPromise).resolves.toBeUndefined()
+
+    const languagePromise = createLanguageEditDialog(
+      { currentTarget: trigger } as unknown as Event,
+      store,
+      subject,
+      [],
+      'owner'
+    )
+
+    await waitForDialogFocus()
+
+    const languageCombobox = document.querySelector('solid-ui-combobox[data-language-row-index="0"]') as (HTMLElement & { _popupOpen?: boolean }) | null
+    expect(languageCombobox).not.toBeNull()
+    expect(languageCombobox?.shadowRoot?.activeElement?.tagName).toBe('INPUT')
+    expect(languageCombobox?._popupOpen).toBe(false)
+
+    getSharedDialogCancelButton(document)?.click()
+    await expect(languagePromise).resolves.toBeUndefined()
   })
 })

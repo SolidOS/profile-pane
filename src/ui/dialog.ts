@@ -167,9 +167,23 @@ function closeDialogElement (dialog: HTMLDialogElement): void {
   dialog.removeAttribute('open')
 }
 
+function getInitialFocusTarget(element: HTMLElement): HTMLElement {
+  if (element.tagName === 'SOLID-UI-COMBOBOX') {
+    const input = element.shadowRoot?.querySelector('input') as HTMLInputElement | null
+    if (input) return input
+  }
+
+  if (element.tagName === 'SOLID-UI-SELECT') {
+    const button = element.shadowRoot?.querySelector('button') as HTMLButtonElement | null
+    if (button) return button
+  }
+
+  return element
+}
+
 function findInitialContentFocusTarget(container: ParentNode): HTMLElement | null {
   const focusable = Array.from(
-    container.querySelectorAll('input, select, textarea, [contenteditable="true"], [tabindex]:not([tabindex="-1"])')
+    container.querySelectorAll('input, select, textarea, solid-ui-select, solid-ui-combobox, [contenteditable="true"], [tabindex]:not([tabindex="-1"])')
   ) as HTMLElement[]
 
   for (const el of focusable) {
@@ -184,9 +198,10 @@ function findInitialContentFocusTarget(container: ParentNode): HTMLElement | nul
 function focusInitialDialogTarget (description: HTMLDivElement, buttons: HTMLDivElement): void {
   const initialInput = findInitialContentFocusTarget(description)
   if (initialInput) {
-    initialInput.focus()
-    if (initialInput instanceof HTMLInputElement || initialInput instanceof HTMLTextAreaElement) {
-      initialInput.select()
+    const focusTarget = getInitialFocusTarget(initialInput)
+    focusTarget.focus()
+    if (focusTarget instanceof HTMLInputElement || focusTarget instanceof HTMLTextAreaElement) {
+      focusTarget.select()
     }
     return
   }
@@ -383,6 +398,7 @@ type OpenInputDialogCustom = {
   cancelLabel?: string,
   headerAction?: DialogHeaderAction,
   hideFooterButtons?: boolean,
+  onOpen?: () => void,
   validate?: () => Promise<string | null> | string | null,
   onSave?: () => Promise<void> | void,
   formatSaveError?: (error: unknown) => string
@@ -455,6 +471,14 @@ export function openInputDialog (options: OpenInputDialogCustom): Promise<InputD
     ],
     dom: options.dom
   })
+
+  const scheduleOpenCallback = options.dom.defaultView?.requestAnimationFrame
+    ? (callback: () => void) => options.dom.defaultView?.requestAnimationFrame(() => callback())
+    : (callback: () => void) => setTimeout(callback, 0)
+
+  if (options.onOpen) {
+    scheduleOpenCallback(options.onOpen)
+  }
 
   elements.buttons.hidden = Boolean(options.hideFooterButtons)
 

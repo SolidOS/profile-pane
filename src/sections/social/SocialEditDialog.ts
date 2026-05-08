@@ -108,6 +108,24 @@ function initializeSocialAccountSelects(
   })
 }
 
+function focusSocialField(form: HTMLFormElement, selector: string): void {
+  const nextField = form.querySelector(selector) as HTMLElement | null
+  if (!nextField) return
+
+  if (typeof nextField.scrollIntoView === 'function') {
+    nextField.scrollIntoView({ block: 'start', behavior: 'auto' })
+  }
+  if (nextField.tagName === 'SOLID-UI-SELECT') {
+    const triggerButton = nextField.shadowRoot?.querySelector('button') as HTMLButtonElement | null
+    triggerButton?.focus()
+    return
+  }
+
+  if (typeof nextField.focus === 'function') {
+    nextField.focus()
+  }
+}
+
 function sanitizeSocialFieldValue(value: string): string {
   return sanitizeTextValue(value)
 }
@@ -398,14 +416,6 @@ function renderSocialSection(rows: SocialRow[], options: SocialAccountOption[], 
   `
 }
 
-function focusSocialField(form: HTMLFormElement, selector: string): void {
-  const nextField = form.querySelector(selector) as HTMLElement | null
-  if (!nextField || typeof nextField.focus !== 'function') return
-
-  nextField.scrollIntoView({ block: 'start', behavior: 'auto' })
-  nextField.focus()
-}
-
 function renderSocialEditTemplate(
   form: HTMLFormElement,
   formState: SocialFormState,
@@ -468,6 +478,7 @@ export async function createSocialEditDialog(
     title: editSocialDialogTitleText,
     dom,
     form,
+    onOpen: () => focusSocialField(form, '[name="social-account-type-0"]'),
     headerAction: {
       type: 'button',
       label: '+ Add More',

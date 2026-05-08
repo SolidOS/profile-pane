@@ -277,14 +277,26 @@ function focusLanguageField(form: HTMLFormElement, selector: string): void {
   const nextField = form.querySelector(selector) as HTMLElement | null
   if (!nextField || typeof nextField.focus !== 'function') return
 
-  nextField.scrollIntoView({ block: 'start', behavior: 'auto' })
-  const comboboxInput = nextField.tagName === 'SOLID-UI-COMBOBOX'
-    ? nextField.shadowRoot?.querySelector('input') as HTMLInputElement | null
+  if (typeof nextField.scrollIntoView === 'function') {
+    nextField.scrollIntoView({ block: 'start', behavior: 'auto' })
+  }
+  const comboboxHost = nextField.tagName === 'SOLID-UI-COMBOBOX'
+    ? (nextField as HTMLElement & { _closePopup?: () => void })
+    : null
+  const comboboxInput = comboboxHost
+    ? comboboxHost.shadowRoot?.querySelector('input') as HTMLInputElement | null
     : null
   const focusTarget = comboboxInput || nextField
   focusTarget.focus()
-  if (focusTarget instanceof HTMLInputElement || focusTarget instanceof HTMLTextAreaElement) {
-    focusTarget.select()
+  if (focusTarget instanceof HTMLInputElement) {
+    const caretPosition = focusTarget.value.length
+    focusTarget.setSelectionRange(caretPosition, caretPosition)
+  }
+
+  if (comboboxHost?._closePopup) {
+    requestAnimationFrame(() => {
+      comboboxHost._closePopup?.()
+    })
   }
 }
 
@@ -533,6 +545,7 @@ export async function createLanguageEditDialog(
     title: editLanguagesDialogTitleText,
     dom,
     form,
+    onOpen: () => focusLanguageField(form, '[data-language-row-index="0"]'),
     headerAction: {
       type: 'button',
       label: '+ Add More',
