@@ -377,7 +377,6 @@ solid-ui-button.profile-edit-dialog__image-camera-button {
 
 .profile-edit-dialog__field--stack {
   display: grid;
-  gap: var(--spacing-xxs);
 }
 
 .profile-edit-dialog__field--stack > small {
