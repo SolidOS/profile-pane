@@ -6,6 +6,7 @@ import type { DataBrowserContext } from 'pane-registry'
 import { store } from 'solid-logic'
 import { presentProfileViewModel } from '../src/ProfileViewModelPresenter'
 import { ProfileView } from '../src/ProfileView'
+import { scanQrToConnectText } from '../src/texts'
 
 const subject = sym('https://janedoe.example/profile/card#me')
 const profileDoc = subject.doc()
@@ -172,7 +173,7 @@ describe('Profile view composition', () => {
     expect(container.textContent).toContain('TypeScript')
     expect(container.textContent).toContain('English')
     expect(container.textContent).toContain('jane@example.com')
-    expect(container.textContent).toContain('Link to Profile')
+    expect(container.textContent).toContain(scanQrToConnectText)
     expect(container.querySelector('[data-testid="qrcode-card"]')).not.toBeNull()
 
     container.remove()
