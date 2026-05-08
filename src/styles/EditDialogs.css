@@ -707,6 +707,7 @@ solid-ui-button.profile-edit-dialog__drag-handle {
   min-width: 0;
   max-width: 100%;
   box-sizing: border-box;
+  contain: inline-size;
 }
 
 .profile-edit-dialog__resume-organization-type-select {

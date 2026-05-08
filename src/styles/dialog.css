@@ -70,6 +70,10 @@
   gap: var(--spacing-2xs, 0.625rem);
 }
 
+#profile-modal .modal:has(.profile-edit-dialog__social-account-select[popup-open]) #modal-desc {
+  padding-bottom: calc(var(--spacing-lg, 1.5625rem) + 1.875rem);
+}
+
 #profile-modal .modal #modal-title {
   margin: 0;
 }
