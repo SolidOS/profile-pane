@@ -7,6 +7,17 @@ import { createIdNode } from '../shared/idNodeFactory'
 import { saveHeadingUpdatesFailedPrefixText } from '../../texts'
 import { ContactAddressRow, ContactPointRow } from '../contactInfo/types'
 
+function splitPronouns(value?: string): { subjectPronoun?: string, objectPronoun?: string } {
+  const normalized = (value || '').trim()
+  if (!normalized) return {}
+
+  const [subjectPronounRaw, objectPronounRaw] = normalized.split('/').map((part) => part.trim())
+  const subjectPronoun = subjectPronounRaw || undefined
+  const objectPronoun = objectPronounRaw || undefined
+
+  return { subjectPronoun, objectPronoun }
+}
+
 function buildPhoneStatements(subject: NamedNode, doc: NamedNode, node: Node, phone: ContactPointRow) {
   const normalizedValue = phone.value.startsWith('tel:') ? phone.value : `tel:${phone.value}`
   const valueNode = sym(normalizedValue)
@@ -190,11 +201,44 @@ async function mutateBasicProfileEntry(store: LiveStore, subject: NamedNode, bas
     replacePredicateStatements(store, subject, ns.vcard('hasPhoto'), doc, deletions, insertions, nextObject)
   }
 
+  const replacePronounFields = (value?: string) => {
+    const { subjectPronoun, objectPronoun } = splitPronouns(value)
+
+    replacePredicateStatements(
+      store,
+      subject,
+      ns.solid('preferredSubjectPronoun'),
+      doc,
+      deletions,
+      insertions,
+      subjectPronoun ? literal(subjectPronoun) : null
+    )
+    replacePredicateStatements(
+      store,
+      subject,
+      ns.solid('preferredObjectPronoun'),
+      doc,
+      deletions,
+      insertions,
+      objectPronoun ? literal(objectPronoun) : null
+    )
+    replacePredicateStatements(
+      store,
+      subject,
+      ns.solid('preferredRelativePronoun'),
+      doc,
+      deletions,
+      insertions,
+      null
+    )
+  }
+
   const applyBasics = (basic: ProfileBasicRow, clearAll = false) => {
     const data = clearAll
       ? {
           name: '',
           nickname: '',
+          pronouns: '',
           dateOfBirth: '',
           jobTitle: '',
           orgName: '',
@@ -209,6 +253,7 @@ async function mutateBasicProfileEntry(store: LiveStore, subject: NamedNode, bas
     replaceLiteralField(ns.vcard('bday'), data.dateOfBirth)
     replaceLiteralField(ns.vcard('role'), data.jobTitle)
     replaceLiteralField(ns.vcard('organization-name'), data.orgName)
+    replacePronounFields(data.pronouns)
     replacePhotoField(data.imageSrc)
   }
 

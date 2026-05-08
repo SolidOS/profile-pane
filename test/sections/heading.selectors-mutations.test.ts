@@ -116,6 +116,7 @@ describe('Intro selectors and mutations', () => {
           entryNode: subject.value,
           name: '  Jane Doe  ',
           nickname: '  janey  ',
+          pronouns: '  She/Her  ',
           dateOfBirth: '2000-01-01',
           jobTitle: '  Engineer  ',
           orgName: '  Inrupt  ',
@@ -133,6 +134,8 @@ describe('Intro selectors and mutations', () => {
     expect(store.any(subject, ns.vcard('fn'), null, doc)?.value).toBe('Jane Doe')
     expect(store.any(subject, ns.foaf('nick'), null, doc)?.value).toBe('janey')
     expect(store.any(subject, ns.vcard('nickname'), null, doc)?.value).toBe('janey')
+  expect(store.any(subject, ns.solid('preferredSubjectPronoun'), null, doc)?.value).toBe('She')
+  expect(store.any(subject, ns.solid('preferredObjectPronoun'), null, doc)?.value).toBe('Her')
     expect(store.any(subject, ns.vcard('role'), null, doc)?.value).toBe('Engineer')
     expect(store.any(subject, ns.vcard('organization-name'), null, doc)?.value).toBe('Inrupt')
     expect(store.any(subject, ns.vcard('hasPhoto'), null, doc)?.termType).toBe('NamedNode')
@@ -145,6 +148,7 @@ describe('Intro selectors and mutations', () => {
           entryNode: subject.value,
           name: '',
           nickname: '',
+          pronouns: '',
           dateOfBirth: '',
           jobTitle: '',
           orgName: '',
@@ -159,6 +163,8 @@ describe('Intro selectors and mutations', () => {
 
     expect(store.any(subject, ns.vcard('fn'), null, doc)).toBeNull()
     expect(store.any(subject, ns.foaf('nick'), null, doc)).toBeNull()
+    expect(store.any(subject, ns.solid('preferredSubjectPronoun'), null, doc)).toBeNull()
+    expect(store.any(subject, ns.solid('preferredObjectPronoun'), null, doc)).toBeNull()
     expect(store.any(subject, ns.vcard('hasPhoto'), null, doc)).toBeNull()
   })
 })
