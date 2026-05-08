@@ -1,1 +1,1 @@
-export const scanQrToConnectText = 'Link to Profile'
+export const scanQrToConnectText = 'Add to Contacts'
