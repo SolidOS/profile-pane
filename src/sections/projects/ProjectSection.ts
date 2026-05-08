@@ -127,7 +127,7 @@ function renderProject(
             @click=${handleUnfollow}
           >
             <span class="project-card__follow-label project-card__follow-label--default">${checkMarkIcon} Following</span>
-            <span class="project-card__follow-label project-card__follow-label--hover">${checkMarkIcon} Unfollow</span>
+            <span class="project-card__follow-label project-card__follow-label--hover">Unfollow</span>
           </solid-ui-button>
         </div>
       ` : html``}
