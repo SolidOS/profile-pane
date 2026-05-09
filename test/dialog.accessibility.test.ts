@@ -2,6 +2,7 @@ import { describe, expect, it } from '@jest/globals'
 import { graph, sym } from 'rdflib'
 import { ns } from 'solid-ui'
 import { createLanguageEditDialog } from '../src/sections/languages/LanguageEditDialog'
+import { createResumeEditDialog } from '../src/sections/resume/ResumeEditDialog'
 import { createSkillsEditDialog } from '../src/sections/skills/SkillsEditDialog'
 import { createSocialEditDialog } from '../src/sections/social/SocialEditDialog'
 import { getSharedDialogCancelButton, getSharedDialogSaveButton, openInputDialog } from '../src/ui/dialog'
@@ -270,5 +271,82 @@ describe('Dialog accessibility', () => {
 
     const skillName = store.any(publicIdLink as any, ns.schema('name'), null, doc)
     expect(skillName?.value).toBe('Facilitation')
+  })
+
+  it('treats typed custom resume organizations as changes and saves them from the dialog', async () => {
+    const store = graph() as any
+    const subject = sym('https://example.com/profile/card#me')
+    const doc = subject.doc()
+    const trigger = document.createElement('button')
+    trigger.textContent = 'Open dialog'
+    document.body.appendChild(trigger)
+
+    store.fetcher = {
+      load: async () => undefined
+    }
+    store.updater = {
+      update: (deletions: any[], insertions: any[], callback: Function) => {
+        deletions.forEach((statement) => store.remove(statement.subject, statement.predicate, statement.object, statement.why))
+        insertions.forEach((statement) => store.add(statement.subject, statement.predicate, statement.object, statement.why))
+        callback('', true)
+      }
+    }
+
+    const resumePromise = createResumeEditDialog(
+      { currentTarget: trigger } as unknown as Event,
+      store,
+      subject,
+      [],
+      'owner',
+      async () => undefined
+    )
+
+    await waitForDialogFocus()
+
+    const titleInput = document.querySelector('[name="resume-title-0"]') as HTMLInputElement | null
+    const organizationCombobox = document.querySelector('solid-ui-combobox[data-resume-organization-index="0"]') as HTMLElement | null
+    const organizationInput = organizationCombobox?.shadowRoot?.querySelector('input') as HTMLInputElement | null
+    const currentRoleCheckbox = document.querySelector('#resume-current-role-0') as HTMLInputElement | null
+    expect(titleInput).not.toBeNull()
+    expect(organizationInput).not.toBeNull()
+    expect(currentRoleCheckbox).not.toBeNull()
+
+    titleInput!.value = 'Engineer'
+    titleInput!.dispatchEvent(new Event('change', { bubbles: true }))
+
+    currentRoleCheckbox!.checked = true
+    currentRoleCheckbox!.dispatchEvent(new Event('change', { bubbles: true }))
+
+    organizationInput!.value = 'N'
+    organizationInput!.dispatchEvent(new Event('input', { bubbles: true, composed: true }))
+
+    await waitForDialogFocus()
+
+    const refreshedOrganizationCombobox = document.querySelector('solid-ui-combobox[data-resume-organization-index="0"]') as HTMLElement | null
+    const refreshedOrganizationInput = refreshedOrganizationCombobox?.shadowRoot?.querySelector('input') as HTMLInputElement | null
+    expect(refreshedOrganizationInput?.value).toBe('N')
+
+    refreshedOrganizationInput!.value = 'NASA'
+    refreshedOrganizationInput!.dispatchEvent(new Event('input', { bubbles: true, composed: true }))
+
+    await waitForDialogFocus()
+
+      const persistedOrganizationInput = document
+        .querySelector('solid-ui-combobox[data-resume-organization-index="0"]')
+        ?.shadowRoot?.querySelector('input') as HTMLInputElement | null
+      expect(persistedOrganizationInput?.value).toBe('NASA')
+
+    getSharedDialogSaveButton(document)?.click()
+    await expect(resumePromise).resolves.toBeUndefined()
+
+    const membershipLinks = store.statementsMatching(null, ns.org('member'), subject, doc)
+    expect(membershipLinks.length).toBeGreaterThan(0)
+
+    const membershipNode = membershipLinks[0].subject
+    const organizationNode = store.any(membershipNode as any, ns.org('organization'), null, doc)
+    expect(organizationNode).toBeTruthy()
+
+    const organizationName = store.any(organizationNode as any, ns.schema('name'), null, doc)
+    expect(organizationName?.value).toBe('NASA')
   })
 })

@@ -168,6 +168,27 @@ describe('Resume selectors and mutations', () => {
     expect(roles[0].roleType).toBe('PastRole')
   })
 
+  it('selector includes linked organization solid publicId', () => {
+    const store = graph() as any
+    const subject = sym('https://example.com/profile/card#me')
+    const doc = subject.doc()
+
+    const membership = sym('https://example.com/profile/card#id123')
+    const organization = sym('https://example.com/profile/card#id456')
+    const publicId = sym('https://example.com/catalog/org/nasa')
+
+    store.add(membership, ns.org('member'), subject, doc)
+    store.add(membership, ns.rdf('type'), ns.solid('PastRole'), doc)
+    store.add(membership, ns.vcard('role'), literal('Engineer'), doc)
+    store.add(membership, ns.org('organization'), organization, doc)
+    store.add(organization, ns.schema('name'), literal('NASA'), doc)
+    store.add(organization, ns.solid('publicId'), publicId, doc)
+
+    const roles = presentCV(subject, store)
+    expect(roles).toHaveLength(1)
+    expect(roles[0].orgPublicId).toBe(publicId.value)
+  })
+
   it('does not write role classes as organization rdf:type', async () => {
     const store = graph() as any
     const subject = sym('https://example.com/profile/card#me')
@@ -212,6 +233,53 @@ describe('Resume selectors and mutations', () => {
     expect(organizationTypeValues).toContain(ns.vcard('Organization').value)
     expect(organizationTypeValues).not.toContain(ns.schema('PastRole').value)
     expect(organizationTypeValues).not.toContain(ns.solid('PastRole').value)
+  })
+
+  it('writes organization solid publicId when provided', async () => {
+    const store = graph() as any
+    const subject = sym('https://example.com/profile/card#me')
+    const insertionsCaptured: any[] = []
+
+    store.updater = {
+      update: (_deletions: any[], insertions: any[], callback: Function) => {
+        insertionsCaptured.push(...insertions)
+        callback('', true)
+      }
+    }
+
+    const plan = {
+      create: [{
+        title: 'Engineer',
+        startDate: undefined,
+        endDate: undefined,
+        isCurrentRole: true,
+        orgName: 'NASA',
+        orgPublicId: 'https://example.com/catalog/org/nasa',
+        orgType: 'GovernmentOrganization',
+        orgLocation: '',
+        orgHomePage: 'ww:;',
+        description: '',
+        entryNode: '',
+        status: 'new'
+      }],
+      update: [],
+      remove: []
+    }
+
+    await processResumeMutations(store, subject, plan as any)
+
+    const organizationLink = insertionsCaptured.find(
+      (statement) => statement.predicate.value === ns.org('organization').value
+    )
+    expect(organizationLink).toBeTruthy()
+
+    const publicIdStatement = insertionsCaptured.find(
+      (statement) =>
+        statement.subject.value === organizationLink.object.value &&
+        statement.predicate.value === ns.solid('publicId').value
+    )
+
+    expect(publicIdStatement?.object.value).toBe('https://example.com/catalog/org/nasa')
   })
 
   it('uses explicit roleType when persisting membership type', async () => {

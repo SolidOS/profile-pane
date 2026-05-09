@@ -1,6 +1,7 @@
 import { alertDialog, openInputDialog } from '../../ui/dialog'
 import { html, render } from 'lit-html'
 import 'solid-ui/components/actions/button'
+import 'solid-ui/components/forms/combobox'
 import 'solid-ui/components/forms/select'
 import { RoleDetails, ResumeRow } from './types'
 import '../../styles/EditDialogs.css'
@@ -33,6 +34,30 @@ type ResumeValidationResult = {
 type ResumeOrganizationTypeOption = {
   label: string
   value: string
+}
+
+type ResumeOrganizationSuggestion = {
+  label: string
+  publicId: string
+}
+
+type ResumeOrganizationComboboxOption = {
+  label: string
+  value: string
+  publicId?: string
+}
+
+type ResumeOrganizationComboboxElement = HTMLElement & {
+  suggestionProvider?: (query: string) => Promise<ResumeOrganizationComboboxOption[]>
+  options?: ResumeOrganizationComboboxOption[]
+  value?: string
+  inputValue?: string
+  label?: string
+  placeholder?: string
+}
+
+type ResumeFocusableElement = HTMLElement & {
+  _closePopup?: () => void
 }
 
 type ResumeDateSelectKind = 'start-month' | 'start-year' | 'end-month' | 'end-year'
@@ -70,10 +95,98 @@ const RESUME_MONTH_OPTIONS: ResumeOrganizationTypeOption[] = [
   { value: '12', label: 'December' }
 ]
 
+const ESCO_ORGANIZATION_SEARCH_URI = 'https://ec.europa.eu/esco/api/search?language=$(language)&type=occupation&text=$(name)&selectedVersion=v1.2.0'
+const ESCO_ORGANIZATION_SEARCH_LANGUAGE = 'en'
+
 const RESUME_PRESENT_MONTH_VALUE = '__present__'
 
 function sanitizeResumeFieldValue(value: string): string {
   return sanitizeTextValue(value)
+}
+
+function normalizeResumeOrganizationPublicId(value: string): string {
+  return sanitizeResumeFieldValue(value)
+}
+
+function buildEscoOrganizationSearchUrl(name: string): string {
+  return ESCO_ORGANIZATION_SEARCH_URI
+    .replace('$(language)', encodeURIComponent(ESCO_ORGANIZATION_SEARCH_LANGUAGE))
+    .replace('$(name)', encodeURIComponent(name))
+}
+
+function toResumeOrganizationLabel(result: any): string {
+  return result?.title || result?.searchHit || result?.preferredLabel?.en || result?.uri || ''
+}
+
+async function fetchEscoOrganizationSuggestions(name: string): Promise<ResumeOrganizationSuggestion[]> {
+  const query = sanitizeResumeFieldValue(name)
+  if (query.length < 2 || typeof fetch !== 'function') return []
+
+  try {
+    const response = await fetch(buildEscoOrganizationSearchUrl(query), {
+      headers: { Accept: 'application/json' }
+    })
+    if (!response.ok) return []
+
+    const payload = await response.json() as any
+    const results = Array.isArray(payload?._embedded?.results) ? payload._embedded.results : []
+    const seen = new Set<string>()
+
+    return results
+      .map((result: any) => {
+        const label = sanitizeResumeFieldValue(toResumeOrganizationLabel(result))
+        const publicId = normalizeResumeOrganizationPublicId(typeof result?.uri === 'string' ? result.uri : '')
+        return { label, publicId }
+      })
+      .filter((suggestion: ResumeOrganizationSuggestion) => {
+        if (!suggestion.label || !suggestion.publicId) return false
+        const key = `${suggestion.label.toLowerCase()}|${suggestion.publicId}`
+        if (seen.has(key)) return false
+        seen.add(key)
+        return true
+      })
+  } catch {
+    return []
+  }
+}
+
+function toResumeOrganizationComboboxOption(suggestion: ResumeOrganizationSuggestion): ResumeOrganizationComboboxOption {
+  return {
+    label: suggestion.label,
+    value: suggestion.publicId,
+    publicId: suggestion.publicId
+  }
+}
+
+function readResumeOrganizationComboboxInputValue(event: Event): string {
+  const customEvent = event as CustomEvent<{ value?: string }>
+  if (typeof customEvent.detail?.value === 'string') {
+    return customEvent.detail.value
+  }
+
+  const target = event.target as HTMLInputElement | null
+  return typeof target?.value === 'string' ? target.value : ''
+}
+
+function readResumeOrganizationComboboxChange(event: Event): ResumeOrganizationComboboxOption | null {
+  const customEvent = event as CustomEvent<{
+    value?: string,
+    label?: string,
+    option?: ResumeOrganizationComboboxOption
+  }>
+
+  if (customEvent.detail?.option) {
+    return customEvent.detail.option
+  }
+
+  return null
+}
+
+function createResumeOrganizationSuggestionProvider(): (query: string) => Promise<ResumeOrganizationComboboxOption[]> {
+  return async (query: string) => {
+    const suggestions = await fetchEscoOrganizationSuggestions(query)
+    return suggestions.map(toResumeOrganizationComboboxOption)
+  }
 }
 
 function normalizeResumeOrganizationTypeValue(value: string): string {
@@ -208,6 +321,7 @@ function toFormState(resumeData: RoleDetails[]): ResumeFormState {
       endDate: role.endDate,
       isCurrentRole: role.isCurrentRole ?? !role.endDate,
       orgName: sanitizeResumeFieldValue(toText(role.orgName)),
+      orgPublicId: normalizeResumeOrganizationPublicId(sanitizeResumeFieldValue(toText(role.orgPublicId))),
       orgType: normalizeResumeOrganizationTypeValue(sanitizeResumeFieldValue(toText(role.orgType))),
       orgLocation: sanitizeResumeFieldValue(toText(role.orgLocation)),
       orgHomePage: sanitizeResumeFieldValue(toText(role.orgHomePage)),
@@ -227,6 +341,7 @@ function toFormState(resumeData: RoleDetails[]): ResumeFormState {
         endDate: undefined,
         isCurrentRole: false,
         orgName: '',
+        orgPublicId: '',
         orgType: RESUME_ORGANIZATION_TYPE_OPTIONS[0].value,
         orgLocation: '',
         orgHomePage: '',
@@ -287,6 +402,45 @@ function initializeResumeOrganizationTypeSelects(form: HTMLFormElement, resumeDa
     selectElement.options = RESUME_ORGANIZATION_TYPE_OPTIONS
     selectElement.value = normalizeResumeOrganizationTypeValue(resumeRow.orgType || '')
     selectElement.label = ''
+  })
+}
+
+function initializeResumeOrganizationComboboxes(form: HTMLFormElement, resumeData: ResumeRow[]): void {
+  const comboboxElements = form.querySelectorAll('solid-ui-combobox[data-resume-organization-index]') as NodeListOf<ResumeOrganizationComboboxElement>
+
+  comboboxElements.forEach((comboboxElement) => {
+    const rowIndex = Number(comboboxElement.dataset.resumeOrganizationIndex)
+    if (Number.isNaN(rowIndex)) return
+
+    const resumeRow = resumeData[rowIndex]
+    if (!resumeRow) return
+
+    const options = resumeRow.orgPublicId && resumeRow.orgName
+      ? [{ label: resumeRow.orgName, value: resumeRow.orgPublicId, publicId: resumeRow.orgPublicId }]
+      : []
+
+    comboboxElement.suggestionProvider = createResumeOrganizationSuggestionProvider()
+    comboboxElement.options = options
+    comboboxElement.value = resumeRow.orgPublicId || ''
+    comboboxElement.inputValue = resumeRow.orgName || ''
+    comboboxElement.label = ''
+    comboboxElement.placeholder = 'Company or Organization'
+  })
+}
+
+function syncResumeOrganizationRowsFromComboboxes(form: HTMLFormElement, resumeData: ResumeRow[]): void {
+  const comboboxElements = form.querySelectorAll('solid-ui-combobox[data-resume-organization-index]') as NodeListOf<ResumeOrganizationComboboxElement>
+
+  comboboxElements.forEach((comboboxElement) => {
+    const rowIndex = Number(comboboxElement.dataset.resumeOrganizationIndex)
+    if (Number.isNaN(rowIndex) || !resumeData[rowIndex]) return
+
+    const comboboxInput = comboboxElement.shadowRoot?.querySelector('input') as HTMLInputElement | null
+    const nextName = sanitizeResumeFieldValue(comboboxInput?.value || comboboxElement.inputValue || '')
+    const nextPublicId = normalizeResumeOrganizationPublicId(comboboxElement.value || '')
+
+    applyRowFieldChange(resumeData[rowIndex], 'orgName', nextName, rowHasContent)
+    resumeData[rowIndex].orgPublicId = nextPublicId
   })
 }
 
@@ -449,6 +603,22 @@ function renderResumeInputRow({
     }
   }
 
+  const handleOrganizationNameInput = (e: Event) => {
+    const nextValue = sanitizeResumeFieldValue(readResumeOrganizationComboboxInputValue(e))
+    if (resumeRow) {
+      applyRowFieldChange(resumeRow, 'orgName', nextValue, rowHasContent)
+      resumeRow.orgPublicId = ''
+    }
+  }
+
+  const handleOrganizationNameChange = (e: Event) => {
+    const selectedOption = readResumeOrganizationComboboxChange(e)
+    if (!resumeRow || !selectedOption?.publicId) return
+
+    applyRowFieldChange(resumeRow, 'orgName', sanitizeResumeFieldValue(selectedOption.label), rowHasContent)
+    resumeRow.orgPublicId = selectedOption.publicId
+  }
+
   return html`
     <div class="profile-edit-dialog__row profile-edit-dialog__row--resume-entry-header" role="group" aria-labelledby=${experienceHeadingId}>
       <h3 id=${experienceHeadingId} class="profile-edit-dialog__entry-heading">${label}</h3>
@@ -485,20 +655,13 @@ function renderResumeInputRow({
     <div class="profile-edit-dialog__row">
       <label aria-label=${`${label} Organization Name`} class="label profile-edit-dialog__field">
         Company or Organization 
-        <input
-          class="input"
-          type="text"
+        <solid-ui-combobox
           name=${organizationName}
-          .value=${resumeRow?.orgName || ''}
+          data-resume-organization-index=${String(index)}
           required
-          data-contact-field="organizationName"
-          data-entry-node=${resumeRow?.entryNode || ''}
-          data-row-status=${resumeRow?.status || 'n/a'}
-          placeholder="Company or Organization"
-          autocomplete="organization"
-          inputmode="text"
-          @change=${handleResumeInput('orgName')}
-        />
+          @input=${handleOrganizationNameInput}
+          @change=${handleOrganizationNameChange}
+        ></solid-ui-combobox>
       </label>
       <label aria-label=${`${label} Organization Type`} class="label profile-edit-dialog__field">
         Organization Type
@@ -685,6 +848,7 @@ function renderResumeEditTemplate(
   `, form)
 
   initializeResumeOrganizationTypeSelects(form, formState.resumeData)
+  initializeResumeOrganizationComboboxes(form, formState.resumeData)
   initializeResumeDateSelects(form, formState.resumeData)
 }
 
@@ -735,19 +899,45 @@ function restoreResumeDialogRenderState(form: HTMLFormElement, state: ResumeDial
     nextActive = form.querySelector(`[name="${escapedName}"]`) as HTMLElement | null
   }
 
-  if (nextActive && typeof nextActive.focus === 'function') {
-    nextActive.focus({ preventScroll: true })
+  focusResumeFieldElement(nextActive)
+}
+
+function getResumeFocusableTarget(element: HTMLElement | null): HTMLElement | null {
+  if (!element) return null
+
+  if (element.tagName === 'SOLID-UI-COMBOBOX') {
+    const comboboxInput = element.shadowRoot?.querySelector('input') as HTMLInputElement | null
+    if (comboboxInput) return comboboxInput
+  }
+
+  return element
+}
+
+function focusResumeFieldElement(element: HTMLElement | null): void {
+  const focusTarget = getResumeFocusableTarget(element)
+  if (!focusTarget || typeof focusTarget.focus !== 'function') return
+
+  focusTarget.focus({ preventScroll: true })
+  if (focusTarget instanceof HTMLInputElement || focusTarget instanceof HTMLTextAreaElement) {
+    const caretPosition = focusTarget.value.length
+    focusTarget.setSelectionRange(caretPosition, caretPosition)
+  }
+
+  if (element?.tagName === 'SOLID-UI-COMBOBOX') {
+    const comboboxHost = element as ResumeFocusableElement
+    if (comboboxHost._closePopup) {
+      requestAnimationFrame(() => {
+        comboboxHost._closePopup?.()
+      })
+    }
   }
 }
 
 function focusResumeField(form: HTMLFormElement, selector: string): void {
   const nextField = form.querySelector(selector) as HTMLElement | null
-  if (!nextField || typeof nextField.focus !== 'function') return
+  if (!nextField) return
 
-  nextField.focus({ preventScroll: true })
-  if (nextField instanceof HTMLInputElement || nextField instanceof HTMLTextAreaElement) {
-    nextField.select()
-  }
+  focusResumeFieldElement(nextField)
 }
 
 function createResumeEditForm(resumeData: RoleDetails[], viewerMode: ViewerMode) {
@@ -777,6 +967,7 @@ function createResumeEditForm(resumeData: RoleDetails[], viewerMode: ViewerMode)
       endDate: undefined,
       isCurrentRole: false,
       orgName: '',
+      orgPublicId: '',
       orgType: RESUME_ORGANIZATION_TYPE_OPTIONS[0].value,
       orgLocation: '',
       orgHomePage: '',
@@ -807,6 +998,7 @@ export async function createResumeEditDialog(
     dom,
     form,
     shouldCloseWithoutSave: () => {
+      syncResumeOrganizationRowsFromComboboxes(form, formState.resumeData)
       const plan: MutationOps<ResumeRow> = summarizeRowOps(formState.resumeData, rowHasContent)
       return plan.create.length === 0 && plan.update.length === 0 && plan.remove.length === 0
     },
@@ -819,6 +1011,7 @@ export async function createResumeEditDialog(
     submitLabel: dialogSubmitLabelText,
     cancelLabel: dialogCancelLabelText,
     validate: async () => {
+      syncResumeOrganizationRowsFromComboboxes(form, formState.resumeData)
       if (viewerMode !== 'owner') {
         return ownerLoginRequiredDialogMessageText
       }
@@ -831,6 +1024,7 @@ export async function createResumeEditDialog(
       return null
     },
     onSave: async () => {
+      syncResumeOrganizationRowsFromComboboxes(form, formState.resumeData)
       const plan: MutationOps<ResumeRow> = summarizeRowOps(formState.resumeData, rowHasContent)
       await processResumeMutations(store, subject, plan)
       rerender()

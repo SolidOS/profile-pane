@@ -101,6 +101,9 @@ function buildOrganizationStatements(doc: NamedNode, membershipNode: Node, resum
   if (resumeData.orgHomePage) {
     inserts.push(st(organizationNode, ns.schema('uri'), literal(resumeData.orgHomePage), doc))
   }
+  if ((resumeData.orgPublicId || '').trim()) {
+    inserts.push(st(organizationNode, ns.solid('publicId'), sym((resumeData.orgPublicId || '').trim()), doc))
+  }
 
   return inserts
 }
