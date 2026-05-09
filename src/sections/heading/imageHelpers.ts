@@ -1,5 +1,6 @@
 import { LiveStore, NamedNode, sym } from 'rdflib'
 import { ns } from 'solid-ui'
+import { error as debugError } from '../../utils/debug'
 /* Code copied from contact-pane/src/mugshotGallery and modified to fit the needs of the new design */
 const mimeMap: Record<string, string> = {
   'image/png': 'png',
@@ -82,7 +83,7 @@ export async function deletePhotoFile(store: LiveStore, subject: NamedNode, phot
     try {
       await store.fetcher.webOperation('DELETE', photoUri)
     } catch (error) {
-      console.error(`Error deleting picture: ${error}`)
+      debugError(`Error deleting picture: ${error}`)
     }
     
   }

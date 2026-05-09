@@ -2,6 +2,7 @@
 import { NamedNode, sym } from 'rdflib'
 import { store } from 'solid-logic'
 import { ns, utils, widgets, icons } from 'solid-ui'
+import { error as debugError, warn as debugWarn } from '../utils/debug'
 
 const DEFAULT_ICON_URI = icons.iconBase + 'noun_10636_grey.svg' // grey disc
 
@@ -65,7 +66,7 @@ async function deleteAttachment(dom: Document, attachmentTable: HTMLTableElement
     const statementsToDelete = store.statementsMatching(me, predicate, target, null)
 
     if (!statementsToDelete.length) {
-        console.warn('No matching statement found to delete for', target.value)
+        debugWarn('No matching statement found to delete for', target.value)
         refresh(dom, attachmentTable, me, editableProfile, predicate)
         return
     }
@@ -89,7 +90,7 @@ async function deleteAttachment(dom: Document, attachmentTable: HTMLTableElement
         if (store.fetcher) await store.fetcher.load(me.doc())
         refresh(dom, attachmentTable, me, editableProfile, predicate)
     } catch (error) {
-        console.error('Error deleting:', error)
+        debugError('Error deleting:', error)
 
         // If update failed, try to keep UI in sync anyway
         if (typeof store.removeStatements === 'function') {

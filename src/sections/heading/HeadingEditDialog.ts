@@ -28,6 +28,7 @@ import {
   ownerLoginRequiredDialogMessageText,
   saveHeadingUpdatesFailedPrefixText
 } from '../../texts'
+import { error as debugError, warn as debugWarn } from '../../utils/debug'
 import { cameraIcon } from '../../icons-svg/profileIcons'
 import { ContactAddressRow, ContactPointRow } from '../contactInfo/types'
 import { sanitizeAddressFieldValue, sanitizeBasicInputFieldValue, sanitizeEmailValue, sanitizePhoneLocalValue } from '../shared/sanitizeUtils'
@@ -609,7 +610,7 @@ function renderHeadingInfoInput(
         applyRowFieldChange(basicInfo, 'imageSrc', uploadedUri, rowHasContent)
         rerender()
       } catch (error) {
-        console.error('Profile image upload failed', error)
+        debugError('Profile image upload failed', error)
       }
     }, { once: true })
 
@@ -665,14 +666,14 @@ function renderHeadingInfoInput(
           applyRowFieldChange(basicInfo, 'imageSrc', uploadedUri, rowHasContent)
           rerender()
         } catch (error) {
-          console.error('Profile camera upload failed', error)
+          debugError('Profile camera upload failed', error)
         }
       })
 
       frame.appendChild(photoCapture)
     } catch (error) {
       closeCameraFrame()
-      console.error('Camera control failed to initialize', error)
+      debugError('Camera control failed to initialize', error)
     }
   }
 
@@ -950,7 +951,7 @@ export async function createHeadingEditDialog(
         try {
           await deletePhotoFile(store, subject, originalPhotoUri)
         } catch (error) {
-          console.warn('Profile image file delete failed', error)
+          debugWarn('Profile image file delete failed', error)
         }
       }
     },

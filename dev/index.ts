@@ -1,4 +1,12 @@
 import { sym } from 'rdflib'
+import {
+  configureDebugForBrowser,
+  DEBUG_LEVEL_OPTIONS,
+  getDebugLevel,
+  log,
+  setBrowserDebugLevel,
+  warn,
+} from '../src/utils/debug'
 //import { default as pane } from '../src/editProfilePane/EditProfileView' //uncomment for profile editor
 import { default as pane } from '../src'
 // @ts-ignore side-effect CSS import for dev webpack bundle
@@ -14,6 +22,8 @@ import {
 } from './context'
 import { authn, authSession } from 'solid-logic'
 import * as UI from 'solid-ui'
+
+configureDebugForBrowser({ defaultLevel: 'trace' })
 
 const loginBanner = document.getElementById('loginBanner')
 const webId = document.getElementById('webId')
@@ -34,7 +44,7 @@ const urlParams = new URLSearchParams(window.location.search)
 const webIdParam = urlParams.get('webid')
 const resolvedWebId = webIdParam || webIdToShow
 
-console.info('[profile-pane/dev] target webid', { webIdToShow: resolvedWebId })
+log('[profile-pane/dev] target webid', { webIdToShow: resolvedWebId })
 
 function createSelectControl<T extends string>(
   id: string,
@@ -154,6 +164,19 @@ function mountDevToolbar() {
         updateEnvironment({ inputMode })
         rerenderWithEnvironment()
       }
+    ),
+    createSelectControl(
+      'dev-debug-select',
+      'Debug',
+      DEBUG_LEVEL_OPTIONS.map((level) => ({
+        label: level,
+        value: level,
+      })),
+      getDebugLevel(),
+      (level) => {
+        setBrowserDebugLevel(level)
+        log('[profile-pane/dev] debug level changed', { level })
+      }
     )
   )
 
@@ -183,7 +206,7 @@ async function finishLogin() {
   try {
     await fetcher.load(resolvedWebId)
   } catch (error) {
-    console.warn('Initial profile load failed, rendering anyway:', error)
+    warn('Initial profile load failed, rendering anyway:', error)
   } finally {
     syncEnvironmentToWindow()
     renderApp()
