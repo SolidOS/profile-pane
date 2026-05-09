@@ -57,6 +57,7 @@ const ESCO_SKILL_BASE_URI = 'http://data.europa.eu/esco/skill/'
 function normalizeSkillPublicId(value: string): string {
   const normalized = sanitizeSkillFieldValue(value)
   if (!normalized) return ''
+  if (normalized.startsWith('_:')) return normalized
   if (normalized.startsWith('skill:')) return normalized
   if (normalized.startsWith(ESCO_SKILL_BASE_URI)) {
     const suffix = normalized.slice(ESCO_SKILL_BASE_URI.length)
@@ -165,14 +166,6 @@ function readSkillComboboxChange(event: Event): SkillComboboxOption | null {
     return customEvent.detail.option
   }
 
-  if (typeof customEvent.detail?.value === 'string') {
-    return {
-      label: typeof customEvent.detail?.label === 'string' ? customEvent.detail.label : '',
-      value: customEvent.detail.value,
-      publicId: customEvent.detail.value
-    }
-  }
-
   return null
 }
 
@@ -204,26 +197,28 @@ function initializeSkillComboboxes(form: HTMLFormElement, rows: SkillRow[]): voi
   })
 }
 
-function validateSkillsBeforeSave(rows: SkillRow[]): string | null {
-  for (let i = 0; i < rows.length; i++) {
-    const row = rows[i]
-    if (!row || row.status === 'deleted') continue
-    if (!hasNonEmptyText(row.name)) continue
+function syncSkillRowsFromComboboxes(form: HTMLFormElement, rows: SkillRow[]): void {
+  const comboboxElements = form.querySelectorAll('solid-ui-combobox[data-skill-row-index]') as NodeListOf<SkillComboboxElement>
 
-    if (row.status !== 'existing' && !hasNonEmptyText(row.publicId)) {
-      return `Skill ${i + 1}: please select a skill from the ESCO suggestions.`
-    }
-  }
+  comboboxElements.forEach((comboboxElement) => {
+    const rowIndex = Number(comboboxElement.dataset.skillRowIndex)
+    if (Number.isNaN(rowIndex) || !rows[rowIndex]) return
 
+    const comboboxInput = comboboxElement.shadowRoot?.querySelector('input') as HTMLInputElement | null
+    const nextName = sanitizeSkillFieldValue(comboboxInput?.value || comboboxElement.inputValue || '')
+    const nextPublicId = normalizeSkillPublicId(comboboxElement.value || '')
+
+    applyRowFieldChange(rows[rowIndex], 'name', nextName, rowHasContent)
+    rows[rowIndex].publicId = nextPublicId
+  })
+}
+
+function validateSkillsBeforeSave(_rows: SkillRow[]): string | null {
   return null
 }
 
-function hasInvalidSkillSelection(rows: SkillRow[]): boolean {
-  return rows.some((row) => {
-    if (!row || row.status === 'deleted') return false
-    if (!hasNonEmptyText(row.name)) return false
-    return !hasNonEmptyText(row.publicId)
-  })
+function hasInvalidSkillSelection(_rows: SkillRow[]): boolean {
+  return false
 }
 
 function updateSkillsSubmitEnabled(rows: SkillRow[]): void {
@@ -272,9 +267,7 @@ function renderSkillInputRow({
   displayIndex,
   onDelete
 }: SkillsInputRowProps) {
-  const row = rows[index]
   const label = `Skill ${displayIndex + 1}`
-  const hasSelectionIssue = Boolean(row && row.status !== 'deleted' && hasNonEmptyText(row.name) && !hasNonEmptyText(row.publicId))
 
   const handleSkillInput = (_field: SkillEditableField) => (e: Event) => {
     const nextValue = sanitizeSkillFieldValue(readSkillComboboxInputValue(e))
@@ -287,10 +280,10 @@ function renderSkillInputRow({
 
   const handleSkillChange = (e: Event) => {
     const selectedOption = readSkillComboboxChange(e)
-    if (!rows[index] || !selectedOption) return
+    if (!rows[index] || !selectedOption?.publicId) return
 
     applyRowFieldChange(rows[index], 'name', sanitizeSkillFieldValue(selectedOption.label), rowHasContent)
-    rows[index].publicId = selectedOption.publicId || selectedOption.value || ''
+    rows[index].publicId = selectedOption.publicId
     updateSkillsSubmitEnabled(rows)
   }
 
@@ -305,11 +298,10 @@ function renderSkillInputRow({
         <solid-ui-combobox
           aria-label=${`${label} Name`}
           data-skill-row-index=${String(index)}
-          aria-invalid=${hasSelectionIssue ? 'true' : 'false'}
           @input=${handleSkillInput('name')}
           @change=${handleSkillChange}
         ></solid-ui-combobox>
-        <small class="profile-edit-dialog__input-help-text">Type to search ESCO and select one suggestion.</small>
+        <small class="profile-edit-dialog__input-help-text">Type to search ESCO, or enter your own skill.</small>
       </label>
       <div class="profile-edit-dialog__actions profile-edit-dialog__actions--edge flex-row align-center justify-end">
         <solid-ui-button
@@ -415,6 +407,7 @@ export async function createSkillsEditDialog(
     form,
     onOpen: () => focusSkillField(form, '[data-skill-row-index="0"]'),
     shouldCloseWithoutSave: () => {
+      syncSkillRowsFromComboboxes(form, formState.skills)
       const ops = summarizeRowOps(formState.skills, rowHasContent)
       return ops.create.length === 0 && ops.update.length === 0 && ops.remove.length === 0
     },
@@ -427,12 +420,14 @@ export async function createSkillsEditDialog(
     submitLabel: dialogSubmitLabelText,
     cancelLabel: dialogCancelLabelText,
     validate: () => {
+      syncSkillRowsFromComboboxes(form, formState.skills)
       if (viewerMode !== 'owner') {
         return ownerLoginRequiredDialogMessageText
       }
       return validateSkillsBeforeSave(formState.skills)
     },
     onSave: async () => {
+      syncSkillRowsFromComboboxes(form, formState.skills)
       const skillOps = summarizeRowOps(formState.skills, rowHasContent)
       const plan: MutationOps<SkillRow> = {
         create: skillOps.create,

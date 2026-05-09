@@ -1,5 +1,6 @@
 import { describe, expect, it } from '@jest/globals'
 import { graph, sym } from 'rdflib'
+import { ns } from 'solid-ui'
 import { createLanguageEditDialog } from '../src/sections/languages/LanguageEditDialog'
 import { createSkillsEditDialog } from '../src/sections/skills/SkillsEditDialog'
 import { createSocialEditDialog } from '../src/sections/social/SocialEditDialog'
@@ -217,5 +218,57 @@ describe('Dialog accessibility', () => {
 
     getSharedDialogCancelButton(document)?.click()
     await expect(languagePromise).resolves.toBeUndefined()
+  })
+
+  it('treats typed custom skills as changes and saves them from the dialog', async () => {
+    const store = graph() as any
+    const subject = sym('https://example.com/profile/card#me')
+    const doc = subject.doc()
+    const trigger = document.createElement('button')
+    trigger.textContent = 'Open dialog'
+    document.body.appendChild(trigger)
+
+    store.fetcher = {
+      load: async () => undefined
+    }
+    store.updater = {
+      update: (deletions: any[], insertions: any[], callback: Function) => {
+        deletions.forEach((statement) => store.remove(statement.subject, statement.predicate, statement.object, statement.why))
+        insertions.forEach((statement) => store.add(statement.subject, statement.predicate, statement.object, statement.why))
+        callback('', true)
+      }
+    }
+
+    const skillsPromise = createSkillsEditDialog(
+      { currentTarget: trigger } as unknown as Event,
+      store,
+      subject,
+      [],
+      'owner'
+    )
+
+    await waitForDialogFocus()
+
+    const skillsCombobox = document.querySelector('solid-ui-combobox[data-skill-row-index="0"]') as HTMLElement | null
+    const skillsInput = skillsCombobox?.shadowRoot?.querySelector('input') as HTMLInputElement | null
+    expect(skillsInput).not.toBeNull()
+
+    skillsInput!.value = 'Facilitation'
+    skillsInput!.dispatchEvent(new Event('input', { bubbles: true, composed: true }))
+
+    await waitForDialogFocus()
+
+    getSharedDialogSaveButton(document)?.click()
+    await expect(skillsPromise).resolves.toBeUndefined()
+
+    const skillLinks = store.statementsMatching(subject, ns.schema('skills'), null, doc)
+    expect(skillLinks).toHaveLength(1)
+
+    const entryNode = skillLinks[0].object
+    const publicIdLink = store.any(entryNode, ns.solid('publicId'), null, doc)
+    expect(publicIdLink?.termType).toBe('BlankNode')
+
+    const skillName = store.any(publicIdLink as any, ns.schema('name'), null, doc)
+    expect(skillName?.value).toBe('Facilitation')
   })
 })
