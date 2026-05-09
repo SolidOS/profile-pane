@@ -55,8 +55,11 @@
   -webkit-line-clamp: 2;
   line-clamp: 2;
   line-height: var(--line-height-base);
-  padding-right: 4.5em;
   overflow: hidden;
+}
+
+.education-card__description-text--overflowing {
+  padding-right: 4.5em;
 }
 
 .education-card__description-text--expanded {

@@ -1,63 +1,63 @@
 type DateLike = string | { value?: string } | null | undefined
 
 let descriptionResizeBound = false
+const DESCRIPTION_MAX_LINES = 2
 
-function positionBioDescriptionToggle(container: HTMLElement, textEl: HTMLElement, button: HTMLElement, isExpanded: boolean): void {
-  if (isExpanded) {
-    container.removeAttribute('style')
-    return
+function getLineHeightPx(computed: CSSStyleDeclaration): number {
+  const parsedLineHeight = Number.parseFloat(computed.lineHeight)
+  if (Number.isFinite(parsedLineHeight)) {
+    return parsedLineHeight
   }
 
-  const textNode = textEl.firstChild
-  if (!textNode || textNode.nodeType !== Node.TEXT_NODE || !textNode.textContent) {
-    container.removeAttribute('style')
-    return
+  const parsedFontSize = Number.parseFloat(computed.fontSize)
+  if (Number.isFinite(parsedFontSize)) {
+    return parsedFontSize * 1.5
   }
 
-  const range = document.createRange()
-  const content = textNode.textContent
+  return 24
+}
+
+function getExpandedTextHeight(textEl: HTMLElement): number {
+  const previousDisplay = textEl.style.display
+  const previousOverflow = textEl.style.overflow
+  const previousPaddingRight = textEl.style.paddingRight
+  const previousLineClamp = textEl.style.getPropertyValue('-webkit-line-clamp')
+  const previousBoxOrient = textEl.style.getPropertyValue('-webkit-box-orient')
+
+  textEl.style.display = 'block'
+  textEl.style.overflow = 'visible'
+  textEl.style.paddingRight = '0'
+  textEl.style.setProperty('-webkit-line-clamp', 'unset')
+  textEl.style.setProperty('-webkit-box-orient', 'initial')
+
+  const naturalHeight = textEl.getBoundingClientRect().height
+
+  textEl.style.display = previousDisplay
+  textEl.style.overflow = previousOverflow
+  textEl.style.paddingRight = previousPaddingRight
+
+  if (previousLineClamp) {
+    textEl.style.setProperty('-webkit-line-clamp', previousLineClamp)
+  } else {
+    textEl.style.removeProperty('-webkit-line-clamp')
+  }
+
+  if (previousBoxOrient) {
+    textEl.style.setProperty('-webkit-box-orient', previousBoxOrient)
+  } else {
+    textEl.style.removeProperty('-webkit-box-orient')
+  }
+
+  return naturalHeight
+}
+
+function isTextOverflowingClamp(textEl: HTMLElement, maxLines: number): boolean {
   const computed = window.getComputedStyle(textEl)
-  const lineClampValue = Number.parseInt(
-    computed.getPropertyValue('-webkit-line-clamp') || computed.getPropertyValue('line-clamp') || '0',
-    10
-  )
-  const maxLines = Number.isFinite(lineClampValue) && lineClampValue > 0 ? lineClampValue : 3
+  const lineHeight = getLineHeightPx(computed)
+  const maxCollapsedHeight = lineHeight * maxLines
+  const naturalHeight = getExpandedTextHeight(textEl)
 
-  let low = 1
-  let high = content.length
-  let bestEnd = 0
-  let bestRight = 0
-  const containerRect = container.getBoundingClientRect()
-  const gap = 2
-
-  while (low <= high) {
-    const mid = Math.floor((low + high) / 2)
-    range.setStart(textNode, 0)
-    range.setEnd(textNode, mid)
-    const rects = Array.from(range.getClientRects()).filter((rect) => rect.width > 0 || rect.height > 0)
-
-    if (!rects.length) {
-      low = mid + 1
-      continue
-    }
-
-    if (rects.length <= maxLines) {
-      bestEnd = mid
-      bestRight = rects[rects.length - 1].right - containerRect.left
-      low = mid + 1
-    } else {
-      high = mid - 1
-    }
-  }
-
-  if (!bestEnd) {
-    container.removeAttribute('style')
-    return
-  }
-
-  const maxLeft = Math.max(0, Math.min(container.clientWidth * 0.5, container.clientWidth - button.offsetWidth))
-  const desiredLeft = Math.max(0, Math.min(maxLeft, bestRight + gap))
-  container.style.setProperty('--bio-description-toggle-left', `${desiredLeft}px`)
+  return naturalHeight > maxCollapsedHeight + 1
 }
 
 function toDateValue(date?: DateLike): string {
@@ -75,52 +75,53 @@ export function updateDescriptionOverflow(root: ParentNode = document) {
       wrap: '.resume-card__description-wrap',
       text: '.resume-card__description-text',
       toggle: '.resume-card__description-toggle',
-      expanded: 'resume-card__description-text--expanded'
+      expanded: 'resume-card__description-text--expanded',
+      overflowing: 'resume-card__description-text--overflowing'
     },
     {
       wrap: '.education-card__description-wrap',
       text: '.education-card__description-text',
       toggle: '.education-card__description-toggle',
-      expanded: 'education-card__description-text--expanded'
+      expanded: 'education-card__description-text--expanded',
+      overflowing: 'education-card__description-text--overflowing'
     },
     {
       wrap: '.bio-card__description-wrap',
       text: '.bio-card__description-text',
       toggle: '.bio-card__description-toggle',
-      expanded: 'bio-card__description-text--expanded'
+      expanded: 'bio-card__description-text--expanded',
+      overflowing: 'bio-card__description-text--overflowing'
     }
   ]
 
-  selectorGroups.forEach(({ wrap, text, toggle, expanded }) => {
+  selectorGroups.forEach(({ wrap, text, toggle, expanded, overflowing }) => {
     const wraps = root.querySelectorAll(wrap)
     wraps.forEach((container) => {
       if (!(container instanceof HTMLElement)) return
       const textEl = container.querySelector(text) as HTMLElement | null
-      const button = container.querySelector(toggle) as HTMLButtonElement | null
+      const button = container.querySelector(toggle) as HTMLElement | null
       if (!textEl || !button) return
+
+      textEl.classList.remove(overflowing)
+
+      if (textEl.clientHeight === 0 || textEl.clientWidth === 0) {
+        button.hidden = true
+        return
+      }
 
       const isExpanded = textEl.classList.contains(expanded)
       if (isExpanded) {
         button.hidden = false
-        if (textEl.matches('.bio-card__description-text')) {
-          positionBioDescriptionToggle(container, textEl, button as unknown as HTMLElement, true)
-        }
         return
       }
 
-      const isOverflowing = textEl.scrollHeight > textEl.clientHeight + 1
+      const isOverflowing = isTextOverflowingClamp(textEl, DESCRIPTION_MAX_LINES)
+      textEl.classList.toggle(overflowing, isOverflowing)
       button.hidden = !isOverflowing
       if (!isOverflowing) {
         button.setAttribute('aria-expanded', 'false')
         button.textContent = '...more'
-        if (textEl.matches('.bio-card__description-text')) {
-          positionBioDescriptionToggle(container, textEl, button as unknown as HTMLElement, false)
-        }
         return
-      }
-
-      if (textEl.matches('.bio-card__description-text')) {
-        positionBioDescriptionToggle(container, textEl, button as unknown as HTMLElement, false)
       }
     })
   })
@@ -128,7 +129,9 @@ export function updateDescriptionOverflow(root: ParentNode = document) {
 
 export function scheduleDescriptionOverflowCheck() {
   if (typeof window === 'undefined') return
-  window.requestAnimationFrame(() => updateDescriptionOverflow(window.document))
+  window.requestAnimationFrame(() => {
+    window.requestAnimationFrame(() => updateDescriptionOverflow(window.document))
+  })
 
   if (!descriptionResizeBound) {
     window.addEventListener('resize', () => scheduleDescriptionOverflowCheck())
