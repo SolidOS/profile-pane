@@ -13,11 +13,17 @@ import { createErrorDisplaySection, addErrorToErrorDisplay, checkAndAddErrorToDi
 import { literal, NamedNode, st, sym } from 'rdflib'
 import { closeIcon } from '../../icons-svg/profileIcons'
 import { ns } from 'solid-ui'
-import { getSharedDialogCancelButton, setSharedDialogSavingState } from '../../ui/dialog'
+import { getSharedDialogCancelButton, openInputDialog, setSharedDialogSavingState } from '../../ui/dialog'
 
 const CONTACTS_POPUP_OVERLAY_ID = 'contacts-popup-overlay'
 const CONTACTS_OVERLAY_ACTIVE_CLASS = 'contacts-dialog--overlay-active'
 type ContactsButtonElement = SolidUIButtonElement
+
+function setContactsListButtonSelected(button: Element, isSelected: boolean): void {
+  const listButton = button as ContactsButtonElement
+  listButton.classList.toggle('contacts-dialog__list-button--selected', isSelected)
+  listButton.selected = isSelected
+}
 
 function createContactsButtonElement(
   context: DataBrowserContext,
@@ -28,6 +34,7 @@ function createContactsButtonElement(
     ariaLabel?: string
     variant?: 'primary' | 'secondary' | 'icon'
     size?: 'sm' | 'md' | 'lg'
+    contentAlign?: 'start' | 'center' | 'end'
     classes?: string[]
   }
 ): SolidUIButtonElement {
@@ -38,6 +45,7 @@ function createContactsButtonElement(
 
   if (options.id) button.setAttribute('id', options.id)
   if (options.ariaLabel) button.setAttribute('aria-label', options.ariaLabel)
+  if (options.contentAlign) button.setAttribute('content-align', options.contentAlign)
   if (options.classes?.length) button.classList.add(...options.classes)
   if (options.label) button.textContent = options.label
 
@@ -307,7 +315,7 @@ const createAddressBookListSection = (
   addressBookListSection.setAttribute('id', 'addressbook-list')
   const heading = context.dom.createElement('h3')
   heading.classList.add('contacts-dialog__column-title')
-  heading.textContent = 'Address books'
+  heading.textContent = 'Address Books'
   addressBookListSection.appendChild(heading)
   addressBooksData.public.forEach((addressBook, addressBookUri) => {
     addressBookListSection.appendChild(createAddressBookButton(context, contactsModule, addressBooksData, addressBook, addressBookUri, contactData))
@@ -467,16 +475,16 @@ const createAddressBookButton = (
     // remove presious address book selection bc you can only have one
     const selectedAddressBookElements = context.dom.querySelectorAll('#addressbook-list .contacts-dialog__list-button--selected')
     selectedAddressBookElements.forEach((addressBookButton) => {
-      addressBookButton.classList.remove('contacts-dialog__list-button--selected')
+      setContactsListButtonSelected(addressBookButton, false)
     })
     
     if (previouslySelected) {
-      selectedAddressBookButton.classList.remove('contacts-dialog__list-button--selected') 
+      setContactsListButtonSelected(selectedAddressBookButton, false)
       clearInlinePanel(context)
    } else {
       clearInlinePanel(context)
 
-      selectedAddressBookButton.classList.add('contacts-dialog__list-button--selected') 
+      setContactsListButtonSelected(selectedAddressBookButton, true)
       // selected address book code
       const selectedAddressBookUri = selectedAddressBookButton.id
       // can check for the class on private
@@ -501,6 +509,7 @@ const createAddressBookButton = (
     ariaLabel: 'Select address book ' + addressBook.name,
     variant: 'secondary',
     size: 'sm',
+    contentAlign: 'start',
     classes: ['contacts-dialog__list-button']
   })
   button.setAttribute('value', addressBook.name)
@@ -655,7 +664,7 @@ const createNewAddressBookForm = (
     classes: ['contacts-dialog__action-button', 'contacts-dialog__action-button--primary', 'contacts-dialog__address-submit']
   })
   submitButton.addEventListener('click', submitFormEventListener)
-  submitButton.textContent = 'Create Address Book'
+  submitButton.textContent = 'Add'
   
   const closeButton = createCloseButton(context, newAddressBookForm)
   const popupBody = createPopupSection(context, 'contacts-dialog__popup-body', 'flex-column')
@@ -788,14 +797,14 @@ function refreshAddressBookDialogContents(
   if (selectedAddressBookUri) {
     const selectedAddressBookButton = context.dom.getElementById(selectedAddressBookUri)
     if (selectedAddressBookButton) {
-      selectedAddressBookButton.classList.add('contacts-dialog__list-button--selected')
+      setContactsListButtonSelected(selectedAddressBookButton, true)
     }
   }
 
   if (selectedGroupUri) {
     const selectedGroupButton = context.dom.getElementById(selectedGroupUri)
     if (selectedGroupButton) {
-      selectedGroupButton.classList.add('contacts-dialog__list-button--selected')
+      setContactsListButtonSelected(selectedGroupButton, true)
     }
   }
 
@@ -805,7 +814,7 @@ function refreshAddressBookDialogContents(
 function resetSelectedAddressBookState(context: DataBrowserContext): void {
   const selectedAddressBookElements = context.dom.querySelectorAll('#addressbook-list .contacts-dialog__list-button--selected')
   selectedAddressBookElements.forEach((addressBookButton) => {
-    addressBookButton.classList.remove('contacts-dialog__list-button--selected')
+    setContactsListButtonSelected(addressBookButton, false)
   })
 
   const groupListSection = context.dom.getElementById('group-list')
@@ -997,7 +1006,12 @@ export const handleContactExistsByName = (
   fromRegisteredAddressBook: boolean
 ): boolean => {
   const selectorDialog = context.dom.getElementById('contacts-addressbook-picker-dialog')
-  const buttonContainer = getButtonContainer(context)
+  const useSharedDialog = fromRegisteredAddressBook || !selectorDialog
+
+  if (useSharedDialog) {
+    void openSharedContactExistsDialog(context, addressBooksData, contactData, contactExistsByNameUri)
+    return true
+  }
   
   const contactExistsDialog = context.dom.createElement('section')
   contactExistsDialog.setAttribute('role', 'alertdialog')
@@ -1064,13 +1078,49 @@ export const handleContactExistsByName = (
   contactExistsDialog.appendChild(popupBody)
   contactExistsDialog.appendChild(popupFooter)
   showPopupOverlay(context)
-  if (fromRegisteredAddressBook) {
-    if (buttonContainer) buttonContainer.appendChild(contactExistsDialog)
-  } else {
-    if (selectorDialog) selectorDialog.appendChild(contactExistsDialog)
-  }
+  if (selectorDialog) selectorDialog.appendChild(contactExistsDialog)
   setTimeout(() => confirmButton.focus(), 0)
   return true
+}
+
+async function openSharedContactExistsDialog(
+  context: DataBrowserContext,
+  addressBooksData: AddressBooksData,
+  contactData: ContactData,
+  contactExistsByNameUri: string
+): Promise<void> {
+  const form = context.dom.createElement('form')
+  form.classList.add('contacts-dialog__shared-confirm-form')
+
+  const message = context.dom.createElement('p')
+  message.classList.add('contacts-dialog__shared-confirm-message')
+  const name = context.dom.createElement('span')
+  name.classList.add('contacts-dialog__shared-confirm-name')
+  name.textContent = contactData.name
+  message.appendChild(name)
+  message.appendChild(context.dom.createTextNode(' already exists. Do you want to add their WebID?'))
+  form.appendChild(message)
+
+  const result = await openInputDialog({
+    title: 'Contact already exists',
+    dom: context.dom,
+    form,
+    cancelLabel: 'No',
+    submitLabel: 'Yes',
+    onSave: async () => {
+      await addWebIDToExistingContact(context, contactData, contactExistsByNameUri)
+      finalizeContactEntry(context, addressBooksData, contactData, addressBooksData.contactWebIDs.get(contactData.webID))
+      refreshButton(context, addressBooksData, contactData)
+    }
+  })
+
+  if (result) return
+
+  complain(getButtonContainer(context), context, 'Contact was not added')
+  setTimeout(() => {
+    clearPreviousMessage(getButtonContainer(context))
+  }, 2000)
+  refreshButton(context, addressBooksData, contactData)
 }
 
 const finalizeContactEntry = (
@@ -1104,10 +1154,10 @@ const createGroupButton = (
     const previouslySelected = selectedGroupButton.classList.contains('contacts-dialog__list-button--selected') 
     
     if (previouslySelected) {
-      selectedGroupButton.classList.remove('contacts-dialog__list-button--selected')
+      setContactsListButtonSelected(selectedGroupButton, false)
       checkAndAddErrorToDisplay(context, groupIsRequired)
     } else {
-      selectedGroupButton.classList.add('contacts-dialog__list-button--selected') 
+      setContactsListButtonSelected(selectedGroupButton, true)
       checkAndRemoveErrorDisplay(context)
     }
 
@@ -1121,6 +1171,7 @@ const createGroupButton = (
     ariaLabel: 'Select group ' + group.name,
     variant: 'secondary',
     size: 'sm',
+    contentAlign: 'start',
     classes: ['contacts-dialog__list-button']
   })
   button.setAttribute('value', group.name)

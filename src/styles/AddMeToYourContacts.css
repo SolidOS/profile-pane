@@ -140,19 +140,14 @@ solid-ui-button.contacts-dialog__action-button {
 }
 
 solid-ui-button.contacts-dialog__action-button--primary {
-  flex-shrink: 0;
-  width: 10.8rem;
-  min-width: 10.8rem;
-  max-width: 10.8rem;
-  inline-size: 10.8rem;
   --button-height-sm: 0;
   --button-height-md: 0;
   --button-background: var(--color-primary, #7C4DFF) !important;
   --button-text: var(--white, #FFF) !important;
   --button-border-width: 0.8px;
   --button-border: var(--color-primary, #7C4DFF) !important;
-  --button-font-size-sm: var(--font-size-sm, 0.875rem);
-  --button-font-size-md: var(--font-size-sm, 0.875rem);
+  --button-font-size-sm: var(--font-size-md, 1rem);
+  --button-font-size-md: var(--font-size-md, 1rem);
   --button-font-weight: var(--font-weight-bold, 600);
   --button-line-height: 1;
   --button-padding-sm: 0.85rem 1rem;
@@ -182,10 +177,6 @@ solid-ui-button.contacts-dialog__action-button--primary[aria-disabled="true"] {
   --button-text: var(--white, #FFF) !important;
 }
 
-solid-ui-button.contacts-dialog__action-button:focus-within {
-  z-index: 1;
-}
-
 .contacts-dialog__details {
   width: 100%;
   min-width: 0;
@@ -203,10 +194,6 @@ solid-ui-button.contacts-dialog__action-button:focus-within {
 
 .contacts-dialog__inline-panel-region {
   display: none;
-  flex: 0 1 calc(26rem - 5px);
-  width: auto;
-  min-width: calc(24rem - 5px);
-  max-width: min(100%, calc(32rem - 5px));
 }
 
 .contacts-dialog__inline-panel-region--active {
@@ -253,20 +240,45 @@ solid-ui-button.contacts-dialog__action-button:focus-within {
   align-items: stretch;
 }
 
+.contacts-dialog__address-form {
+  align-items: stretch;
+}
+
 .contacts-dialog__popup-body {
-  gap: var(--spacing-xs, 0.75rem);
+  gap: var(--spacing-base, 0.5rem);
   min-width: 0;
+}
+
+.contacts-dialog__popup .contacts-dialog__header {
+  padding-bottom: var(--spacing-base, 0.5rem);
+  margin-bottom: var(--spacing-base, 0.5rem);
+  border-bottom: var(--border-width-sm, 0.1rem) solid var(--slate-200, #E2E8F0);
+}
+
+.contacts-dialog__address-form .input,
+.contacts-dialog__group-form .input,
+.contacts-dialog__uri-entry .input {
+  margin-bottom: 0;
 }
 
 .contacts-dialog__popup-footer {
   display: flex;
   justify-content: flex-end;
   align-items: center;
+  width: 100%;
+  min-width: 0;
+  align-self: stretch;
+  box-sizing: border-box;
   gap: var(--spacing-md);
   margin-top: 1rem;
   padding-top: 1rem;
   border-top: var(--border-width-sm, 0.1rem) solid var(--slate-200, #E2E8F0);
   background: var(--gray-50, #F9FAFB);
+}
+
+.contacts-dialog__address-form .contacts-dialog__popup-footer,
+.contacts-dialog__uri-entry-form .contacts-dialog__popup-footer {
+  justify-content: flex-end;
 }
 
 .contacts-dialog__uri-input {
@@ -280,12 +292,15 @@ solid-ui-button.contacts-dialog__action-button:focus-within {
 }
 
 .contacts-dialog__uri-submit {
-  width: auto;
-  min-width: 10rem;
-  max-width: none;
+  width: fit-content !important;
+  min-width: fit-content !important;
+  max-width: fit-content !important;
+  inline-size: fit-content !important;
+  flex: 0 0 auto;
   align-self: auto !important;
-  margin-left: 0;
+  margin: 0 0 0 auto !important;
   line-height: 1;
+  white-space: nowrap;
 }
 
 .contacts-dialog__group-form {
@@ -314,29 +329,29 @@ solid-ui-button.contacts-dialog__action-button:focus-within {
   width: auto;
   max-width: 14rem !important;
   min-width: 12.5rem;
-  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.08);
   box-sizing: border-box;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.08);
   gap: 1px;
 }
 
 .contacts-dialog__column-title {
   margin: 0 0 0.35rem;
   padding-bottom: 0.35rem;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  border-bottom: var(--border-width-sm, 0.1rem) solid var(--slate-200, #E2E8F0);
   font-size: var(--font-size-lg, 1.125rem);
 }
 
 .contacts-dialog__error {
+  position: relative;
   width: 100%;
   align-self: stretch;
   padding: 0.75rem;
-  position: relative;
   background: #fff1f2;
+  z-index: 3;
   display: none;
   color: #7f1d1d;
   border-radius: var(--border-radius-base);
   box-shadow: rgba(0, 0, 0, 0.08) 0px 1px 4px;
-  z-index: 3;
 }
 
 .contacts-dialog__error--visible {
@@ -368,24 +383,12 @@ solid-ui-button.contacts-dialog__error-close {
 }
 
 solid-ui-button.contacts-dialog__close {
-  position: static;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  align-self: flex-start;
-  width: var(--icon-base, 2rem) !important;
-  height: var(--icon-base, 2rem) !important;
-  min-width: var(--icon-base, 2rem) !important;
-  min-height: var(--icon-base, 2rem) !important;
-  margin: 0;
-  flex-shrink: 0;
   --button-height-sm: var(--icon-base, 2rem);
   --button-width-sm: var(--icon-base, 2rem);
   --button-padding-sm: 0;
-  --button-icon-size-sm: var(--icon-xxs, 1rem);
   --button-background: transparent;
-  --button-border: transparent;
   --button-border-width: 0;
+  --button-border: transparent;
   --button-border-radius: 999px;
   --button-text: var(--color-text);
   --button-box-shadow: none;
@@ -395,48 +398,13 @@ solid-ui-button.contacts-dialog__close {
   --button-hover-box-shadow: none;
   --button-active-box-shadow: none;
   --button-active-transform: none;
-}
-
-solid-ui-button.contacts-dialog__close::part(button) {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: var(--icon-base, 2rem);
-  height: var(--icon-base, 2rem);
-  min-width: var(--icon-base, 2rem);
-  min-height: var(--icon-base, 2rem);
-  padding: 0;
-  border-radius: 999px;
-}
-
-solid-ui-button.contacts-dialog__close > [slot='icon'] {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: var(--icon-xxs, 1rem);
-  height: var(--icon-xxs, 1rem);
-}
-
-solid-ui-button.contacts-dialog__close svg {
-  width: var(--icon-xxs, 1rem);
-  height: var(--icon-xxs, 1rem);
-  display: block;
-}
-
-solid-ui-button.contacts-dialog__close:hover {
-  --button-hover-background: rgba(0, 0, 0, 0.04);
-  --button-hover-border: transparent;
-  --button-hover-text: var(--color-primary);
+  --button-icon-size-sm: var(--icon-xxs, 1rem);
 }
 
 solid-ui-button.contacts-dialog__close:focus-visible::part(button) {
   outline: var(--focus-indicator-width) solid var(--color-primary);
   outline-offset: var(--outline-offset-sm);
   box-shadow: 0 0 0 var(--focus-ring-width) var(--color-background), 0 0 0 calc(var(--focus-ring-width) + var(--focus-indicator-width)) var(--color-primary-alpha);
-}
-
-solid-ui-button.contacts-dialog__close:focus-within {
-  z-index: 1;
 }
 
 .contacts-dialog__address-form {
@@ -468,18 +436,21 @@ solid-ui-button.contacts-dialog__close:focus-within {
 solid-ui-button.contacts-dialog__list-button {
   flex-shrink: 0;
   -webkit-tap-highlight-color: transparent;
+  width: 100%;
   --button-height-sm: 0;
   --button-padding-sm: 0.85rem 1rem;
   --button-font-size-sm: var(--font-size-sm, 0.875rem);
   --button-font-weight: var(--font-weight-md, 500);
-  --button-justify-content: flex-start;
   --button-border-width: 0;
   --button-border-radius: var(--border-radius-md, 0.5rem);
   --button-background: var(--white, #FFF);
   --button-text: var(--gray-700, #364153);
   --button-border: transparent;
+  --button-selected-background: var(--lavender-300, #e6dcff) !important;
+  --button-selected-text: var(--slate-700, #314158);
+  --button-selected-border: transparent;
   --button-box-shadow: none !important;
-  --button-hover-background: var(--lavender-400, #cbb9ff) !important;
+  --button-hover-background: var(--lavender-200, #E4DBFE) !important;
   --button-hover-text: var(--slate-700, #314158);
   --button-hover-border: transparent;
   --button-hover-box-shadow: none !important;
@@ -489,12 +460,24 @@ solid-ui-button.contacts-dialog__list-button {
   --button-focus-box-shadow: none !important;
 }
 
-solid-ui-button.contacts-dialog__list-button--selected {
-  --button-background: var(--lavender-400, #cbb9ff) !important;
+solid-ui-button.contacts-dialog__list-button--selected,
+solid-ui-button.contacts-dialog__list-button[selected] {
+  --button-background: var(--lavender-300, #e6dcff) !important;
   --button-text: var(--slate-700, #314158);
   --button-border: transparent;
-  --button-hover-background: var(--lavender-400, #cbb9ff) !important;
+  --button-hover-background: var(--lavender-300, #e6dcff) !important;
   --button-hover-text: var(--slate-700, #314158);
+}
+
+solid-ui-button.contacts-dialog__list-button--selected::part(button),
+solid-ui-button.contacts-dialog__list-button[selected]::part(button),
+solid-ui-button.contacts-dialog__list-button--selected:hover::part(button),
+solid-ui-button.contacts-dialog__list-button[selected]:hover::part(button),
+solid-ui-button.contacts-dialog__list-button--selected:focus-within::part(button),
+solid-ui-button.contacts-dialog__list-button[selected]:focus-within::part(button) {
+  background: var(--lavender-300, #e6dcff) !important;
+  border-color: transparent !important;
+  color: var(--slate-700, #314158) !important;
 }
 
 .contacts-dialog__contact-exists {
@@ -546,7 +529,7 @@ solid-ui-button.contacts-dialog__list-button--selected {
   padding: 1rem;
   border-radius: var(--border-radius-base);
   box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
-  z-index: 50;
+  z-index: 10;
   position: absolute;
   top: 50%;
   left: 50%;
@@ -557,6 +540,20 @@ solid-ui-button.contacts-dialog__list-button--selected {
   overflow: auto;
   overflow-x: hidden;
   box-sizing: border-box;
+}
+
+.contacts-dialog__shared-confirm-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.contacts-dialog__shared-confirm-message {
+  margin: 0;
+  color: var(--gray-800, #1E2939);
+}
+
+.contacts-dialog__shared-confirm-name {
+  font-weight: var(--font-weight-bold, 600);
 }
 
 .contacts-dialog__popup .contacts-dialog__header {
@@ -577,10 +574,6 @@ solid-ui-button.contacts-dialog__list-button--selected {
   padding: var(--spacing-2xs, 0.625rem);
   box-sizing: border-box;
   margin-bottom: var(--spacing-base, 0.5rem);
-}
-
-.contacts-dialog__popup .contacts-dialog__action-button {
-  margin-top: 0;
 }
 
 .contacts-dialog__popup-footer > solid-ui-button.contacts-dialog__confirm,
@@ -641,8 +634,11 @@ solid-ui-button.contacts-dialog__cancel:focus-within::part(button) {
 }
 
 solid-ui-button.contacts-dialog__cancel--footer {
+  width: 10.8rem;
   min-width: 10.8rem;
-  align-self: flex-end;
+  max-width: 10.8rem;
+  inline-size: 10.8rem;
+  align-self: auto;
 }
 
 .contacts-dialog__submit-contact {
@@ -657,11 +653,20 @@ solid-ui-button.contacts-dialog__cancel--footer {
 }
 
 .contacts-dialog__address-submit {
-  width: 10.8rem;
-  min-width: 10.8rem;
-  max-width: 10.8rem;
-  inline-size: 10.8rem;
-  align-self: auto;
+  width: fit-content !important;
+  min-width: fit-content !important;
+  max-width: fit-content !important;
+  inline-size: fit-content !important;
+  flex: 0 0 auto;
+  align-self: auto !important;
+  margin: 0 0 0 auto !important;
+  white-space: nowrap;
+}
+
+.contacts-dialog__uri-submit::part(button),
+.contacts-dialog__address-submit::part(button) {
+  width: auto;
+  min-width: 0;
 }
 
 .contacts-dialog__validation {
@@ -756,6 +761,24 @@ solid-ui-button.contacts-dialog__cancel--footer {
 }
 
 @media (max-width: 576px) {
+  .contacts-dialog__footer {
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-end;
+    gap: var(--spacing-sm, 0.9375rem);
+    padding: var(--spacing-sm, 0.9375rem);
+    width: 100%;
+  }
+
+  .contacts-dialog__footer > solid-ui-button {
+    flex: 1 0 0;
+    width: auto;
+    min-width: 0;
+    max-width: none;
+    inline-size: auto;
+    --button-font-size-md: var(--font-size-md, 1rem);
+  }
+
   .contacts-dialog__uri-entry {
     padding-top: var(--spacing-2xl, 3rem) !important;
   }
@@ -798,6 +821,29 @@ solid-ui-button.contacts-dialog__cancel--footer {
   .contacts-dialog__address-form .contacts-dialog__popup-footer {
     margin-top: var(--spacing-base, 0.5rem);
     padding-top: var(--spacing-base, 0.5rem);
+  }
+
+  .contacts-dialog__uri-entry .contacts-dialog__popup-footer,
+  .contacts-dialog__address-form .contacts-dialog__popup-footer,
+  .contacts-dialog__group-form .contacts-dialog__popup-footer {
+    justify-content: center;
+  }
+
+  .contacts-dialog__uri-submit,
+  .contacts-dialog__address-submit,
+  #contacts-create-group-button {
+    width: fit-content !important;
+    min-width: fit-content !important;
+    max-width: fit-content !important;
+    inline-size: fit-content !important;
+    flex: 0 0 auto;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    align-self: center !important;
+    display: inline-flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    text-align: center;
   }
 
   .contacts-dialog__details {

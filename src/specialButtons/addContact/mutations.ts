@@ -32,6 +32,7 @@ async function addContactToAddressBook(
     title: 'Add contact to address book',
     dom: context.dom,
     form,
+    headerAction: { type: 'none' },
     hideFooterButtons: true
   })
 
