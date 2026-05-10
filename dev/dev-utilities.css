@@ -439,7 +439,7 @@
   background: var(--color-primary);
   color: var(--color-background);
   font-weight: var(--font-weight-bold);
-  cursor: pointer;
+  cursor: var(--profile-interactive-cursor, pointer);
   transition: all var(--animation-duration) ease;
   text-decoration: none;
   display: inline-flex;
@@ -478,7 +478,7 @@
   background: var(--color-secondary);
   color: var(--color-background);
   font-weight: var(--font-weight-bold);
-  cursor: pointer;
+  cursor: var(--profile-interactive-cursor, pointer);
   transition: all var(--animation-duration) ease;
   text-decoration: none;
   display: inline-flex;
@@ -503,7 +503,7 @@
   background: var(--white, #FFF);
   border-radius: var(--border-radius-base); /* 5px */
   font-weight: var(--font-weight-bold);
-  cursor: pointer;
+  cursor: var(--profile-interactive-cursor, pointer);
   transition: all var(--animation-duration) ease;
   text-decoration: none;
   display: inline-flex;
@@ -543,7 +543,7 @@
   background: transparent;
   color: var(--color-primary);
   font-weight: var(--font-weight-bold);
-  cursor: pointer;
+  cursor: var(--profile-interactive-cursor, pointer);
   transition: all var(--animation-duration) ease;
   text-decoration: none;
   display: inline-flex;
@@ -565,7 +565,7 @@
 .btn-transparent {
   background-color: transparent;
   border: none;
-  cursor: pointer;
+  cursor: var(--profile-interactive-cursor, pointer);
 }
 
 .btn-transparent:hover {
@@ -596,7 +596,7 @@
 }
 
 .label {
-  color: var(--gray-600, #4A5565);
+  color: var(--color-text-secondary, #4A5565);
   font-size: var(--font-size-sm, 0.875rem);
   font-weight: var(--font-weight-regular, 400);
 }
