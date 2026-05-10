@@ -4,7 +4,7 @@ export type CountryDialOption = {
   name: string
 }
 
-export const DEFAULT_DIAL_CODE = '+1'
+export const DEFAULT_DIAL_CODE = ''
 
 export const COUNTRY_DIAL_OPTIONS: CountryDialOption[] = [
   { iso2: 'EG', dialCode: '+20', name: 'Egypt' },
@@ -348,5 +348,5 @@ export function combinePhoneValue(dialCode: string, localNumber: string): string
   const trimmed = localNumber.trim()
   if (!trimmed) return ''
   if (trimmed.startsWith('+')) return trimmed
-  return `${dialCode}${trimmed}`
+  return dialCode ? `${dialCode}${trimmed}` : trimmed
 }

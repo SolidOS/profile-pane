@@ -12,6 +12,8 @@ import {
   applyUpdaterPatch,
   collectLinkedNodeStatements,
   findExistingNode,
+  ensureStandardMutationPrefixes,
+  runUpdateTransport,
   replacePredicateStatements
 } from '../../src/sections/shared/rdfMutationHelpers'
 import { createIdNode } from '../../src/sections/shared/idNodeFactory'
@@ -21,6 +23,7 @@ import {
   sanitizeEmailValue,
   sanitizePhoneLocalValue
 } from '../../src/sections/shared/sanitizeUtils'
+import { combinePhoneValue, splitPhoneValue } from '../../src/sections/shared/phoneCountries'
 import {
   normalizeEmailTypeForContactInfoEdit,
   normalizeEmailTypeForEdit,
@@ -144,6 +147,56 @@ describe('shared helper utilities', () => {
       ).rejects.toThrow(fallbackSaveUpdatesErrorMessageText)
     })
 
+    it('registers standard RDF prefixes before updater-backed mutations run', async () => {
+      const store = graph() as any
+      const subject = sym('https://example.com/profile#me')
+      const doc = subject.doc()
+      const updaterStore: Record<string, unknown> = {}
+      const update = jest.fn((_deletions: any[], _insertions: any[], callback: Function) => callback('', true))
+      store.updater = { update, store: updaterStore }
+
+      await applyUpdaterPatch(store, [], [st(subject, ns.org('location'), literal('San Diego'), doc)])
+
+      expect(store.namespaces?.org).toBe('http://www.w3.org/ns/org#')
+      expect(store.namespaces?.schema).toBe('http://schema.org/')
+      expect(store.updater.namespaces?.vcard).toBe('http://www.w3.org/2006/vcard/ns#')
+      expect((store.updater.store as any).namespaces?.solid).toBe('http://www.w3.org/ns/solid/terms#')
+      expect((store.updater.store as any).namespaces?.foaf).toBe('http://xmlns.com/foaf/0.1/')
+      expect(update).toHaveBeenCalledTimes(1)
+    })
+
+    it('keeps standard prefixes available for PUT fallback serialization', async () => {
+      const store = graph() as any
+      const subject = sym('https://example.com/profile#me')
+      const doc = subject.doc()
+      const serialize = jest.fn(() => '@prefix org: <http://www.w3.org/ns/org#>.')
+      const webOperation = jest.fn(async () => ({ ok: true, status: 200 }))
+
+      store.updater = {
+        update: (_deletions: any[], _insertions: any[], callback: Function) => callback('', false, 'Fetch error for patch'),
+        serialize,
+        store: {}
+      }
+      store.fetcher = { webOperation }
+
+      await runUpdateTransport(
+        store,
+        doc,
+        [],
+        [st(subject, ns.org('location'), literal('San Diego'), doc)],
+        {
+          unsupportedMessage: updaterUnsupportedStoreErrorMessageText,
+          failureMessage: fallbackSaveUpdatesErrorMessageText,
+          usePutFallback: true
+        }
+      )
+
+      expect(store.updater.namespaces?.org).toBe('http://www.w3.org/ns/org#')
+      expect((store.updater.store as any).namespaces?.org).toBe('http://www.w3.org/ns/org#')
+      expect(serialize).toHaveBeenCalledTimes(1)
+      expect(webOperation).toHaveBeenCalledTimes(1)
+    })
+
     it('replaces predicate statements and finds linked statements by normalized node ids', () => {
       const store = graph() as any
       const subject = sym('https://example.com/profile#me')
@@ -188,6 +241,13 @@ describe('shared helper utilities', () => {
       expect(sanitizePhoneLocalValue(' +1 (555) ABC-123.45 ')).toBe('1 (555) -123.45')
       expect(sanitizeAddressFieldValue('  10 Downing St  ')).toBe('10 Downing St')
       expect(sanitizeBasicInputFieldValue('  Hello world  ')).toBe('Hello world')
+    })
+
+    it('does not inject a default country code into phone values', () => {
+      expect(splitPhoneValue('555 123 4567')).toEqual({ dialCode: '', localNumber: '555 123 4567' })
+      expect(combinePhoneValue('', '555 123 4567')).toBe('555 123 4567')
+      expect(combinePhoneValue('', '+44 20 7946 0958')).toBe('+44 20 7946 0958')
+      expect(splitPhoneValue('+44 20 7946 0958')).toEqual({ dialCode: '+44', localNumber: ' 20 7946 0958' })
     })
 
     it('normalizes phone and email types for both edit surfaces', () => {

@@ -14,6 +14,7 @@ import { literal, NamedNode, st, sym } from 'rdflib'
 import { closeIcon } from '../../icons-svg/profileIcons'
 import { ns } from 'solid-ui'
 import { closeSharedDialog, getSharedDialogCancelButton, openInputDialog, setSharedDialogSavingState } from '../../ui/dialog'
+import { ensureStandardMutationPrefixes } from '../../sections/shared/rdfMutationHelpers'
 
 const CONTACTS_POPUP_OVERLAY_ID = 'contacts-popup-overlay'
 const CONTACTS_OVERLAY_ACTIVE_CLASS = 'contacts-dialog--overlay-active'
@@ -1398,6 +1399,7 @@ async function updateAcrossDocuments(
   insertions: Array<ReturnType<typeof st>> = []
 ): Promise<void> {
   const store = context.session.store
+  ensureStandardMutationPrefixes(store)
   const docs = deletions.concat(insertions).map((statement) => statement.why)
   const uniqueDocKeys = new Set<string>()
   const uniqueDocs = docs.filter((doc) => {

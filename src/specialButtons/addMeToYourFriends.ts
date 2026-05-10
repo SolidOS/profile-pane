@@ -13,6 +13,7 @@ import {
   addMeToYourFriendsButtonText, friendExistsAlreadyButtonText, friendExistsMessage, friendWasAddedSuccesMessage, logInAddMeToYourFriendsButtonText, userNotLoggedInErrorMessage
 } from '../texts'
 import { ViewerMode } from '../types'
+import { ensureStandardMutationPrefixes } from '../sections/shared/rdfMutationHelpers'
 import '../styles/AddMeToYourFriends.css'
 
 let buttonContainer = <HTMLDivElement>document.createElement('section')
@@ -131,6 +132,7 @@ async function saveNewThing(
       const updater = store.updater
       const toBeInserted = [st(me, predicate, subject, me.doc())]
       try {
+        ensureStandardMutationPrefixes(store)
         await updater.update([], toBeInserted)
       } catch (error) {
         let errorMessage = error

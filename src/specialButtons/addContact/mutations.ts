@@ -18,6 +18,7 @@ import {
 import { AddressBookDetails, AddressBooksData, ContactData, SelectedAddressBookUris } from './contactsTypes'
 import { getAddressBooksData } from './selectors'
 import { error as debugError } from '../../utils/debug'
+import { ensureStandardMutationPrefixes } from '../../sections/shared/rdfMutationHelpers'
 
 async function addContactToAddressBook(
   context: DataBrowserContext,
@@ -159,6 +160,7 @@ async function addContactDetails(
       insertions.push(st(node, ns.vcard('value'), phoneInfo.phoneNumber, detailDoc))
     })
 
+    ensureStandardMutationPrefixes(store)
     await store.updater.update([], insertions)
   } catch (error) {
     addErrorToErrorDisplay(context, error)
@@ -255,6 +257,8 @@ async function updateAcrossDocuments(
   deletions: Array<ReturnType<typeof st>>,
   insertions: Array<ReturnType<typeof st>> = []
 ): Promise<void> {
+  ensureStandardMutationPrefixes(store)
+
   const docs = deletions.concat(insertions).map((statement) => statement.why)
   const uniqueDocKeys = new Set<string>()
   const uniqueDocs = docs.filter((doc) => {
@@ -335,6 +339,7 @@ async function updateAddressBookName(
       st(addressBookNode, ns.vcard('fn'), literal(trimmedName), addressBookDoc)
     ]
 
+    ensureStandardMutationPrefixes(store)
     await store.updater.update(deletions, insertions)
   } catch (error) {
     throw error instanceof Error ? error : new Error(String(error))
