@@ -26,7 +26,7 @@ const checkAndAddErrorToDisplay = (
   message: string
 ) => {
   
-  const selectedGroupElements = context.dom.querySelectorAll('#group-list .contacts-dialog__list-button--selected')
+  const selectedGroupElements = context.dom.querySelectorAll('#group-list .contacts-dialog__list-button[selected]')
 
   const groupNameField = context.dom.querySelector('#groupNameInput')
   // @ts-ignore

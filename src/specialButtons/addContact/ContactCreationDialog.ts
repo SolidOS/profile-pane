@@ -21,8 +21,12 @@ type ContactsButtonElement = SolidUIButtonElement
 
 function setContactsListButtonSelected(button: Element, isSelected: boolean): void {
   const listButton = button as ContactsButtonElement
-  listButton.classList.toggle('contacts-dialog__list-button--selected', isSelected)
   listButton.selected = isSelected
+  listButton.setAttribute('aria-pressed', isSelected ? 'true' : 'false')
+}
+
+function isContactsListButtonSelected(button: Element | null): boolean {
+  return button instanceof HTMLElement && button.hasAttribute('selected')
 }
 
 function createContactsButtonElement(
@@ -45,6 +49,7 @@ function createContactsButtonElement(
 
   if (options.id) button.setAttribute('id', options.id)
   if (options.ariaLabel) button.setAttribute('aria-label', options.ariaLabel)
+  button.setAttribute('aria-pressed', 'false')
   if (options.contentAlign) button.setAttribute('content-align', options.contentAlign)
   if (options.classes?.length) button.classList.add(...options.classes)
   if (options.label) button.textContent = options.label
@@ -410,12 +415,12 @@ const createNewContactCreationButton = (
       let selectedAddressBookUri = null 
       const selectedGroupUris = []
 
-      const selectedAddressBookElements = context.dom.querySelectorAll('#addressbook-list .contacts-dialog__list-button--selected')
+      const selectedAddressBookElements = context.dom.querySelectorAll('#addressbook-list .contacts-dialog__list-button[selected]')
       selectedAddressBookElements.forEach((addressBookButton) => {
         selectedAddressBookUri = addressBookButton.getAttribute('id')
       })
 
-      const selectedGroupElements = context.dom.querySelectorAll('#group-list .contacts-dialog__list-button--selected')
+      const selectedGroupElements = context.dom.querySelectorAll('#group-list .contacts-dialog__list-button[selected]')
       selectedGroupElements.forEach((groupButtons) => {
         selectedGroupUris.push(groupButtons.getAttribute('id'))
       })
@@ -464,7 +469,7 @@ const createAddressBookButton = (
   const setButtonOnClickHandler =  (event) => {
     event.preventDefault()
     const selectedAddressBookButton = event.currentTarget as ContactsButtonElement
-    const previouslySelected = selectedAddressBookButton.classList.contains('contacts-dialog__list-button--selected') 
+    const previouslySelected = isContactsListButtonSelected(selectedAddressBookButton)
     const addressBookDetailsSection = context.dom.getElementById('addressbook-details-section')
     
     let addressBook = null
@@ -473,7 +478,7 @@ const createAddressBookButton = (
     if (groupDivToRemove) groupDivToRemove.remove()
     
     // remove presious address book selection bc you can only have one
-    const selectedAddressBookElements = context.dom.querySelectorAll('#addressbook-list .contacts-dialog__list-button--selected')
+    const selectedAddressBookElements = context.dom.querySelectorAll('#addressbook-list .contacts-dialog__list-button[selected]')
     selectedAddressBookElements.forEach((addressBookButton) => {
       setContactsListButtonSelected(addressBookButton, false)
     })
@@ -812,7 +817,7 @@ function refreshAddressBookDialogContents(
 }
 
 function resetSelectedAddressBookState(context: DataBrowserContext): void {
-  const selectedAddressBookElements = context.dom.querySelectorAll('#addressbook-list .contacts-dialog__list-button--selected')
+  const selectedAddressBookElements = context.dom.querySelectorAll('#addressbook-list .contacts-dialog__list-button[selected]')
   selectedAddressBookElements.forEach((addressBookButton) => {
     setContactsListButtonSelected(addressBookButton, false)
   })
@@ -844,8 +849,8 @@ function renderInlinePanel(context: DataBrowserContext, element: HTMLElement): v
 }
 
 function syncAddContactActionState(context: DataBrowserContext): void {
-  const selectedAddressBook = context.dom.querySelector('#addressbook-list .contacts-dialog__list-button--selected')
-  const selectedGroup = context.dom.querySelector('#group-list .contacts-dialog__list-button--selected')
+  const selectedAddressBook = context.dom.querySelector('#addressbook-list .contacts-dialog__list-button[selected]')
+  const selectedGroup = context.dom.querySelector('#group-list .contacts-dialog__list-button[selected]')
   const inlinePanelRegion = context.dom.getElementById('contacts-inline-panel-region')
   const hasActiveInlinePanel = inlinePanelRegion?.classList.contains('contacts-dialog__inline-panel-region--active') ?? false
 
@@ -872,7 +877,7 @@ const createGroupNameForm = (
     await runWithButtonLoading(context, submitButton, 'Creating...', async () => {
       let selectedAddressBookUri = null 
 
-      const selectedAddressBookElements = context.dom.querySelectorAll('#addressbook-list .contacts-dialog__list-button--selected')
+      const selectedAddressBookElements = context.dom.querySelectorAll('#addressbook-list .contacts-dialog__list-button[selected]')
       selectedAddressBookElements.forEach((addressBookButton) => {
         selectedAddressBookUri = addressBookButton.getAttribute('id')
       })
@@ -1151,7 +1156,7 @@ const createGroupButton = (
     event.preventDefault()
     
     const selectedGroupButton = event.currentTarget as ContactsButtonElement
-    const previouslySelected = selectedGroupButton.classList.contains('contacts-dialog__list-button--selected') 
+    const previouslySelected = isContactsListButtonSelected(selectedGroupButton)
     
     if (previouslySelected) {
       setContactsListButtonSelected(selectedGroupButton, false)
