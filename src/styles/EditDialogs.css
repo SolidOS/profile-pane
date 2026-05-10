@@ -17,7 +17,7 @@
 }
 
 .profile-edit-dialog__field-description {
-  color: var(--gray-600, #4A5565);
+  color: var(--color-text-secondary, #4A5565);
   font-size: var(--font-size-sm, 0.875rem); /* 14px */
   font-weight: var(--font-weight-normal, normal);
   line-height: var(--line-height-base, 1.5); /* 21px */
@@ -207,7 +207,7 @@ solid-ui-button.profile-edit-dialog__image-camera-button {
   --photo-capture-frame-max-width: 260px;
   --photo-capture-surface: transparent;
   --photo-capture-text: var(--gray-900, #101828);
-  --photo-capture-muted-text: var(--gray-600, #4A5565);
+  --photo-capture-muted-text: var(--color-text-secondary, #4A5565);
   --photo-capture-border: var(--gray-300, #D1D5DC);
   --photo-capture-hover: var(--gray-100, #F3F4F6);
   --photo-capture-shadow: none;

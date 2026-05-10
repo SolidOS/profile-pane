@@ -157,19 +157,21 @@
 
 #profile-modal #modal-buttons solid-ui-button[data-cancel='true'] {
   --button-font-weight: var(--font-weight-normal, normal);
-  --button-text: var(--gray-800, #1E2939);
-  --button-hover-background: var(--blue-900, #083575);
-  --button-hover-border: var(--blue-900, #083575);
-  --button-hover-text: var(--white, #FFF);
+  --button-text: var(--dialog-cancel-button-text, var(--gray-800, #1E2939));
+  --button-border: var(--dialog-cancel-button-border, var(--gray-300, #D1D5DC));
+  --button-background: var(--dialog-cancel-button-background, transparent);
+  --button-hover-background: var(--dialog-cancel-button-hover-background, var(--blue-900, #083575));
+  --button-hover-border: var(--dialog-cancel-button-hover-border, var(--blue-900, #083575));
+  --button-hover-text: var(--dialog-cancel-button-hover-text, var(--white, #FFF));
   --button-font-size-md: var(--font-size-md, 1rem);
 }
 
 #profile-modal #modal-buttons solid-ui-button[data-cancel='true']:hover::part(button),
 #profile-modal #modal-buttons solid-ui-button[data-cancel='true']:focus-visible::part(button),
 #profile-modal #modal-buttons solid-ui-button[data-cancel='true']:focus-within::part(button) {
-  background: var(--blue-900, #083575);
-  border-color: var(--blue-900, #083575);
-  color: var(--white, #FFF);
+  background: var(--dialog-cancel-button-hover-background, var(--blue-900, #083575));
+  border-color: var(--dialog-cancel-button-hover-border, var(--blue-900, #083575));
+  color: var(--dialog-cancel-button-hover-text, var(--white, #FFF));
 }
 
 #profile-modal .modal__error-section {
