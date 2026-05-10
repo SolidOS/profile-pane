@@ -2,6 +2,15 @@ import type { Button as SolidUIButtonElement } from 'solid-ui/components/actions
 import { DataBrowserContext } from  'pane-registry'
 import { complain } from  '../../buttonsHelper'
 
+function toErrorMessage(error: unknown): string {
+  return error instanceof Error ? error.message : String(error)
+}
+
+function formatContactsDialogError(prefix: string, error: unknown): string {
+  const message = toErrorMessage(error)
+  return message.startsWith(prefix) ? message : `${prefix}\n${message}`
+}
+
 const addErrorToErrorDisplay = (
   context: DataBrowserContext,
   message: string
@@ -10,10 +19,14 @@ const addErrorToErrorDisplay = (
   if (errorDisplaySection) {
     const errorMessage = context.dom.getElementById('error-display-message')
     errorDisplaySection.classList.add('contacts-dialog__error--visible')
+    errorDisplaySection.setAttribute('aria-hidden', 'false')
     if (errorMessage) {
       errorMessage.textContent = message
     } else {
       errorDisplaySection.textContent = message
+    }
+    if (errorDisplaySection instanceof HTMLElement) {
+      errorDisplaySection.focus()
     }
   } else {
     const buttonContainer = context.dom.getElementById('add-to-contacts-button-container')
@@ -42,20 +55,26 @@ const createErrorDisplaySection = (
   const setButtonOnClickHandler = (event) => {
     event.preventDefault()
     errorDisplaySection.classList.remove('contacts-dialog__error--visible')
+    errorDisplaySection.setAttribute('aria-hidden', 'true')
     const errorMessage = context.dom.getElementById('error-display-message')
     if (errorMessage) errorMessage.textContent = ''
   }
 
   const errorDisplaySection = context.dom.createElement('section')
   errorDisplaySection.setAttribute('role', 'alert')
+  errorDisplaySection.setAttribute('aria-live', 'assertive')
+  errorDisplaySection.setAttribute('aria-atomic', 'true')
+  errorDisplaySection.setAttribute('aria-hidden', 'true')
   errorDisplaySection.setAttribute('aria-label', 'Section to display error messages related to contact creation')
   errorDisplaySection.setAttribute('id', 'error-display-section')
+  errorDisplaySection.setAttribute('tabindex', '-1')
   errorDisplaySection.classList.add('contacts-dialog__error')
 
   const closeButton = context.dom.createElement('solid-ui-button') as SolidUIButtonElement
   closeButton.setAttribute('type', 'button')
   closeButton.setAttribute('variant', 'icon')
   closeButton.setAttribute('size', 'sm')
+  closeButton.setAttribute('aria-label', 'Close error')
   closeButton.setAttribute('label', 'Close error')
   closeButton.classList.add('contacts-dialog__error-close')
   closeButton.textContent = 'x'
@@ -75,6 +94,7 @@ const checkAndRemoveErrorDisplay = (
   const errorDisplaySection = context.dom.getElementById('error-display-section')
   if (errorDisplaySection && errorDisplaySection.classList.contains('contacts-dialog__error--visible')) {
     errorDisplaySection.classList.remove('contacts-dialog__error--visible')
+    errorDisplaySection.setAttribute('aria-hidden', 'true')
     const errorMessage = context.dom.getElementById('error-display-message')
     if (errorMessage) errorMessage.textContent = ''
   }
@@ -84,5 +104,6 @@ export {
   createErrorDisplaySection, 
   checkAndRemoveErrorDisplay,
   addErrorToErrorDisplay,
-  checkAndAddErrorToDisplay
+  checkAndAddErrorToDisplay,
+  formatContactsDialogError
  }

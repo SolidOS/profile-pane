@@ -7,7 +7,9 @@ import {
 	projectUrlFromCommunityNode,
 	expandCommunityNodes
 } from '../shared/projectCommunityNodes'
+import { projectsMutationSaveFailedDebugText } from '../../texts'
 import { runUpdateTransport } from '../shared/rdfMutationHelpers'
+import { error as debugError } from '../../utils/debug'
 
 function toProjectUrlNode(project: ProjectRow): NamedNode | null {
 	const value = (project.url || '').trim()
@@ -180,7 +182,7 @@ export async function processProjectsMutations(store: LiveStore, subject: NamedN
 	try {
 		await mutateProjectEntries(store, subject, mutationPlan)
 	} catch (error) {
-		const message = error instanceof Error ? error.message : String(error)
-		throw new Error(`Failed to save projects: ${message}`)
+		debugError(projectsMutationSaveFailedDebugText, error)
+		throw error instanceof Error ? error : new Error(String(error))
 	}
 }

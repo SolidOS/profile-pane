@@ -3,7 +3,6 @@ import { graph, st, sym, literal } from 'rdflib'
 import { ns } from 'solid-ui'
 import { presentSkillDetails, presentSkills } from '../../src/sections/skills/selectors'
 import { processSkillsMutations } from '../../src/sections/skills/mutations'
-import { mutationSaveSkillsFailedPrefixText } from '../../src/texts'
 
 describe('Skills selectors and mutations', () => {
   it('selector returns empty skills from empty store', () => {
@@ -47,7 +46,7 @@ describe('Skills selectors and mutations', () => {
     ])
   })
 
-  it('mutation wraps updater errors with skills prefix', async () => {
+  it('mutation surfaces section-specific unsupported store updater errors', async () => {
     const store = graph() as any
     const subject = sym('https://example.com/profile/card#me')
 
@@ -57,7 +56,7 @@ describe('Skills selectors and mutations', () => {
       remove: []
     }
     await expect(processSkillsMutations(store, subject, plan as any)).rejects.toThrow(
-      mutationSaveSkillsFailedPrefixText
+      'Skill updates are not supported by this store updater.'
     )
   })
 

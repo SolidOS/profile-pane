@@ -10,12 +10,14 @@ import { addErrorToErrorDisplay } from './contactsErrors'
 import { openInputDialog } from '../../ui/dialog'
 import {
   errorAddressBookCreation,
+  errorAddingContactWebIDToAddressBook,
   errorProcessingUriAddressBook,
   errorUnableToDetermineUserWorkspace,
   groupIsRequired
 } from '../../texts'
 import { AddressBookDetails, AddressBooksData, ContactData, SelectedAddressBookUris } from './contactsTypes'
 import { getAddressBooksData } from './selectors'
+import { error as debugError } from '../../utils/debug'
 
 async function addContactToAddressBook(
   context: DataBrowserContext,
@@ -98,20 +100,18 @@ function resolveAddressBookUri(addressBooksData: AddressBooksData | null, addres
 async function addANewAddressBookUriToAddressBooks(
   context: DataBrowserContext,
   contactsModule: ContactsModuleRdfLib,
-  addressBooksData: AddressBooksData,
+  _addressBooksData: AddressBooksData,
   enteredAddressBookUri: string
 ): Promise<{ addressBooksData: AddressBooksData, addressBook: AddressBookDetails, addressBookUri: string | null }> {
   try {
     const { nextData, matchingAddressBook, matchingAddressBookUri } = await getAddressData(context, contactsModule, enteredAddressBookUri)
     if (!matchingAddressBook || !nextData || !matchingAddressBookUri) {
-      return { addressBooksData, addressBook: null as any, addressBookUri: null }
+      throw new Error('Address book was not found for the entered URI.')
     }
     return { addressBooksData: nextData, addressBook: matchingAddressBook, addressBookUri: matchingAddressBookUri }
   } catch (error) {
-    addErrorToErrorDisplay(context, errorProcessingUriAddressBook + '\n' + error)
+    throw error instanceof Error ? error : new Error(String(error))
   }
-
-  return { addressBooksData, addressBook: null as any, addressBookUri: null }
 }
 
 async function addContactDetails(
@@ -200,7 +200,7 @@ async function createContactInAddressBook(
     }
     return contactUri
   } catch (error) {
-    addErrorToErrorDisplay(context, error)
+    throw error instanceof Error ? error : new Error(String(error))
   }
 
   return null as any
@@ -245,7 +245,8 @@ async function addWebIDToExistingContact(
     const contactNode = new NamedNode(contactUri)
     await addWebIDToContactCard(store, contactNode, contactData.webID, ns.vcard('WebID'))
   } catch (error) {
-    addErrorToErrorDisplay(context, error)
+    debugError(errorAddingContactWebIDToAddressBook, error)
+    throw error instanceof Error ? error : new Error(String(error))
   }
 }
 
@@ -336,7 +337,7 @@ async function updateAddressBookName(
 
     await store.updater.update(deletions, insertions)
   } catch (error) {
-    addErrorToErrorDisplay(context, error)
+    throw error instanceof Error ? error : new Error(String(error))
   }
 }
 
@@ -386,7 +387,7 @@ async function handleAddressBookCreation(
     addressBookUri = mintResult?.newInstance?.uri || `${newBase}index.ttl#this`
     await updateAddressBookName(dataBrowserContext, addressBookUri, sanitizedAddressName)
   } catch (error) {
-    addErrorToErrorDisplay(dataBrowserContext, errorAddressBookCreation + '\n' + error)
+    throw error instanceof Error ? error : new Error(String(error))
   }
   return addressBookUri
 }

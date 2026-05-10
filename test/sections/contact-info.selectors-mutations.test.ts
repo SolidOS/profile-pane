@@ -3,7 +3,7 @@ import { graph, literal, st, sym } from 'rdflib'
 import { ns } from 'solid-ui'
 import { presentContactInfo } from '../../src/sections/contactInfo/selectors'
 import { processContactInfoMutations } from '../../src/sections/contactInfo/mutations'
-import { mutationSaveContactInfoFailedPrefixText } from '../../src/texts'
+import { updaterUnsupportedStoreErrorMessageText } from '../../src/texts'
 
 describe('Contact info selectors and mutations', () => {
   it('selector returns empty contact arrays from empty store', () => {
@@ -16,7 +16,7 @@ describe('Contact info selectors and mutations', () => {
     expect(result.addresses).toEqual([])
   })
 
-  it('mutation wraps updater errors with contact prefix', async () => {
+  it('mutation surfaces unsupported store updater errors', async () => {
     const store = graph() as any
     const subject = sym('https://example.com/profile/card#me')
 
@@ -27,7 +27,7 @@ describe('Contact info selectors and mutations', () => {
     }
 
     await expect(processContactInfoMutations(store, subject, plan as any)).rejects.toThrow(
-      mutationSaveContactInfoFailedPrefixText
+      updaterUnsupportedStoreErrorMessageText
     )
   })
 

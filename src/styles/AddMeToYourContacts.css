@@ -59,34 +59,39 @@
   border-radius: 0;
   box-shadow: none;
   max-height: none;
+  min-width: 0;
 }
 
 .contacts-dialog__frame {
-  background: var(--color-background, #FFF);
-  border-radius: var(--border-radius-base);
-  max-height: min(88vh, 48rem);
-  overflow: hidden;
+  min-width: 0;
+  background: transparent;
+  border-radius: 0;
+  max-height: none;
+  overflow: visible;
 }
 
 .contacts-dialog__creation {
   width: 100%;
-  border-radius: var(--border-radius-base);
+  min-width: 0;
+  border-radius: 0;
   background: transparent;
   box-sizing: border-box;
   padding: 0;
-  gap: var(--spacing-xxs, 0.3125rem);
+  gap: 0;
 }
 
 .contacts-dialog__description {
   margin: 0;
-  padding: 0 0 1rem;
-  background: var(--color-background, #FFF);
+  padding: 0;
+  background: transparent;
   color: var(--gray-600, #4A5565);
   font-size: var(--font-size-sm, 0.875rem);
   font-weight: var(--font-weight-regular, 400);
 }
 
 .contacts-dialog__body {
+  min-width: 0;
+  margin-top: var(--spacing-lg, 1.5625rem);
   overflow: auto;
 }
 
@@ -94,10 +99,14 @@
   display: flex;
   justify-content: flex-end;
   align-items: center;
-  gap: var(--spacing-md);
-  padding: 1rem 0 0;
+  gap: var(--spacing-sm, 0.938rem);
+  width: auto;
+  min-width: 0;
+  margin: var(--spacing-lg, 1.5625rem) calc(-1 * var(--spacing-lg, 1.5625rem)) calc(-1 * var(--spacing-lg, 1.5625rem));
+  padding: var(--spacing-md, 1.25rem) calc(var(--spacing-lg, 1.5625rem) + var(--spacing-xxs, 0.3125rem));
   border-top: var(--border-width-sm, 0.1rem) solid var(--slate-200, #E2E8F0);
   background: var(--gray-50, #F9FAFB);
+  box-sizing: border-box;
 }
 
 .contacts-dialog__footer > solid-ui-button {
@@ -260,15 +269,15 @@ solid-ui-button.contacts-dialog__cancel--footer {
   width: 100%;
   min-width: 0;
   min-height: 0;
-  border-radius: var(--border-radius-base);
+  border-radius: 0;
   justify-content: flex-start;
   align-items: flex-start;
   box-sizing: border-box;
   gap: var(--spacing-sm, 0.938rem);
-  padding: var(--spacing-md, 1.25rem);
+  padding: 0;
   overflow-x: auto;
   overflow-y: auto;
-  background: var(--color-card-bg, #FFF);
+  background: transparent;
 }
 
 .contacts-dialog__address-book-list {
@@ -337,13 +346,17 @@ solid-ui-button.contacts-dialog__list-button {
 .contacts-dialog__inline-panel-region {
   display: none;
   min-width: 0;
+  order: 3;
 }
 
 .contacts-dialog__inline-panel-region--active {
   display: block;
+  flex: 0 0 20.75rem;
   min-width: 0;
-  width: calc(100% - 5px) !important;
-  max-width: min(100%, calc(32rem - 5px)) !important;
+  width: min(100%, 20.75rem) !important;
+  max-width: 20.75rem !important;
+  align-self: flex-start;
+  order: 3;
 }
 
 .contacts-dialog__inline-panel.contacts-dialog__popup {
@@ -351,14 +364,14 @@ solid-ui-button.contacts-dialog__list-button {
   inset: auto;
   transform: none;
   min-width: 0;
-  width: calc(100% - 5px) !important;
-  max-width: calc(100% - 5px) !important;
+  width: 100% !important;
+  max-width: 100% !important;
   max-height: none;
   margin: 0;
-  margin-right: 5px;
+  margin-right: 0;
   overflow: visible;
   box-shadow: none;
-  border: 1px solid var(--slate-200, #E2E8F0);
+  border-left: 1px solid var(--slate-200, #E2E8F0);
 }
 
 .contacts-dialog__address-form,
@@ -374,12 +387,16 @@ solid-ui-button.contacts-dialog__list-button {
   width: 100% !important;
   max-width: 100% !important;
   align-items: stretch;
-  background: var(--color-background-row-alternate, #f0f0f0);
+  border: 1px solid var(--slate-200, #E2E8F0);
+  background: var(--color-background, #F8F9FB);
   box-shadow: 0 18px 48px color-mix(in srgb, var(--black, #000) 20%, transparent);
 }
 
 .contacts-dialog__group-form {
-  background: var(--color-card-bg, #FFF);
+  border: none !important;
+  border-left: 1px solid var(--slate-200, #E2E8F0) !important;
+  border-radius: 0;
+  background: var(--color-background, #F8F9FB);
   box-shadow: 0 18px 48px color-mix(in srgb, var(--black, #000) 20%, transparent);
 }
 
@@ -388,8 +405,8 @@ solid-ui-button.contacts-dialog__list-button {
   max-width: 100% !important;
   min-width: 0;
   align-self: flex-start;
-  border: none;
-  background: var(--color-background-row-alternate, #f0f0f0);
+  border: 1px solid var(--slate-200, #E2E8F0);
+  background: var(--color-background, #F8F9FB);
 }
 
 .contacts-dialog__uri-entry-form {
@@ -564,17 +581,21 @@ solid-ui-button.contacts-dialog__close:focus-visible::part(button) {
   display: block;
 }
 
-.contacts-dialog__error {
+.contacts-dialog__error,
+.contacts-dialog__error[role='alert'] {
   position: relative;
   z-index: 3;
   display: none;
   width: 100%;
   align-self: stretch;
+  margin-top: var(--spacing-sm);
   padding: 0.75rem;
+  border: 1px solid var(--dialog-error-border, var(--pink-700, #ff98b3));
   border-radius: var(--border-radius-base);
-  background: #fff1f2;
-  color: #7f1d1d;
-  box-shadow: rgba(0, 0, 0, 0.08) 0 1px 4px;
+  background: var(--dialog-error-background, var(--pink-500, #ffdde6));
+  background-color: var(--dialog-error-background, var(--pink-500, #ffdde6));
+  color: var(--dialog-error-text, var(--red-600, #B00020));
+  text-align: center;
 }
 
 .contacts-dialog__error--visible {
@@ -595,10 +616,10 @@ solid-ui-button.contacts-dialog__error-close {
   --button-border: transparent;
   --button-border-width: 0;
   --button-border-radius: 0;
-  --button-text: #787878;
+  --button-text: var(--dialog-error-text, var(--red-600, #B00020));
   --button-hover-background: transparent;
   --button-hover-border: transparent;
-  --button-hover-text: #787878;
+  --button-hover-text: var(--dialog-error-text, var(--red-600, #B00020));
   --button-line-height: 1;
   --button-active-transform: none;
   --button-box-shadow: none;

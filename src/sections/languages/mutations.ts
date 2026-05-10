@@ -5,8 +5,9 @@ import { MutationOps, PrefixCapable, RdfStatement, RdfUpdater } from '../shared/
 import { presentLanguages } from './selectors'
 import { expandRdfList } from '../shared/rdfList'
 import { createIdNode } from '../shared/idNodeFactory'
-import { mutationSaveLanguagesFailedPrefixText } from '../../texts'
+import { languageMutationSaveFailedDebugText } from '../../texts'
 import { registerStorePrefix, runUpdateTransport } from '../shared/rdfMutationHelpers'
+import { error as debugError } from '../../utils/debug'
 
 export type LanguageMutationPlan = MutationOps<LanguageRow>
 // Language entries are serialized as an ordered rdf:List of id nodes, where
@@ -239,7 +240,7 @@ export async function processLanguageMutations(
     await mutateLanguageEntries(store, subject, mutationPlan, orderedRows)
 
   } catch (error) {
-    const message = error instanceof Error ? error.message : String(error)
-    throw new Error(`${mutationSaveLanguagesFailedPrefixText} ${message}`)
+    debugError(languageMutationSaveFailedDebugText, error)
+    throw error instanceof Error ? error : new Error(String(error))
   }
 } 

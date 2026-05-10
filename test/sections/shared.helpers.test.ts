@@ -226,8 +226,12 @@ describe('shared helper utilities', () => {
       const textEl = document.getElementById('desc') as HTMLElement
       const button = document.querySelector('.resume-card__description-toggle') as HTMLButtonElement
 
-      Object.defineProperty(textEl, 'scrollHeight', { configurable: true, value: 80 })
       Object.defineProperty(textEl, 'clientHeight', { configurable: true, value: 40 })
+      Object.defineProperty(textEl, 'clientWidth', { configurable: true, value: 320 })
+      Object.defineProperty(textEl, 'getBoundingClientRect', {
+        configurable: true,
+        value: () => ({ height: 80, width: 320, top: 0, left: 0, right: 320, bottom: 80, x: 0, y: 0, toJSON: () => ({}) })
+      })
 
       updateDescriptionOverflow(document)
       expect(button.hidden).toBe(false)

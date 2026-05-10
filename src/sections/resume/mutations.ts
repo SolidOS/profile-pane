@@ -4,7 +4,8 @@ import { ResumeRow } from './types'
 import { MutationOps } from '../shared/types'
 import { applyUpdaterPatch, collectLinkedNodeStatements, collectNodeStatements, findExistingNode, replacePredicateStatements } from '../shared/rdfMutationHelpers'
 import { createIdNode } from '../shared/idNodeFactory'
-import { mutationSaveResumeFailedPrefixText, resumeUpdateEntryNotFoundErrorMessageText } from '../../texts'
+import { resumeMutationSaveFailedDebugText, resumeUpdateEntryNotFoundErrorMessageText } from '../../texts'
+import { error as debugError } from '../../utils/debug'
 
 function asXsdDateLiteral(dateLike: { value?: string } | null | undefined) {
   const value = (dateLike?.value || '').trim()
@@ -205,7 +206,7 @@ export async function processResumeMutations(store: LiveStore, subject: NamedNod
     await mutateResumeEntries(store, subject, mutationPlan)
 
   } catch (error) {
-    const message = error instanceof Error ? error.message : String(error)
-    throw new Error(`${mutationSaveResumeFailedPrefixText} ${message}`)
+    debugError(resumeMutationSaveFailedDebugText, error)
+    throw error instanceof Error ? error : new Error(String(error))
   }
 } 

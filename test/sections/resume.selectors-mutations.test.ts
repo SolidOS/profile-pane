@@ -3,7 +3,7 @@ import { graph, literal, sym } from 'rdflib'
 import { ns } from 'solid-ui'
 import { presentCV } from '../../src/sections/resume/selectors'
 import { processResumeMutations } from '../../src/sections/resume/mutations'
-import { mutationSaveResumeFailedPrefixText } from '../../src/texts'
+import { updaterUnsupportedStoreErrorMessageText } from '../../src/texts'
 
 describe('Resume selectors and mutations', () => {
   it('selector returns empty roles from empty store', () => {
@@ -13,13 +13,13 @@ describe('Resume selectors and mutations', () => {
     expect(presentCV(subject, store)).toEqual([])
   })
 
-  it('mutation wraps updater errors with resume prefix', async () => {
+  it('mutation surfaces unsupported store updater errors', async () => {
     const store = graph() as any
     const subject = sym('https://example.com/profile/card#me')
 
     const plan = { create: [], update: [], remove: [] }
     await expect(processResumeMutations(store, subject, plan as any)).rejects.toThrow(
-      mutationSaveResumeFailedPrefixText
+      updaterUnsupportedStoreErrorMessageText
     )
   })
 

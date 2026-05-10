@@ -55,6 +55,9 @@ html[data-theme="dark"] {
   --dialog-cancel-button-hover-background: var(--color-primary, #B388FF);
   --dialog-cancel-button-hover-text: var(--color-text-on-action, #1e1e1e);
   --dialog-cancel-button-hover-border: var(--color-primary, #B388FF);
+  --dialog-error-background: rgba(176, 0, 32, 0.18);
+  --dialog-error-border: rgba(255, 118, 154, 0.5);
+  --dialog-error-text: #ffbbcd;
   
   
   /* Status Colors */

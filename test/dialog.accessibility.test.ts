@@ -76,11 +76,88 @@ describe('Dialog accessibility', () => {
     saveButton?.click()
     await new Promise(resolve => setTimeout(resolve, 0))
 
+    const errorSection = document.querySelector('#modal-error') as HTMLElement | null
+    expect(errorSection).not.toBeNull()
+    expect(errorSection?.getAttribute('role')).toBe('alert')
+    expect(errorSection?.getAttribute('aria-live')).toBe('assertive')
+    expect(errorSection?.getAttribute('aria-atomic')).toBe('true')
+    expect(errorSection?.getAttribute('aria-hidden')).toBe('false')
+    expect(document.activeElement).toBe(errorSection)
+
     expect(saveButton?.textContent).toBe('Save Changes')
 
     const cancelButton = getSharedDialogCancelButton(document)
     cancelButton?.click()
 
+    await expect(resultPromise).resolves.toBeNull()
+  })
+
+  it('announces validation errors accessibly and remains axe-clean while visible', async () => {
+    const form = document.createElement('form')
+    const input = document.createElement('input')
+    input.name = 'displayName'
+    form.appendChild(input)
+
+    const resultPromise = openInputDialog({
+      title: 'Edit display name',
+      dom: document,
+      form,
+      headerAction: { type: 'none' },
+      validate: () => 'Display name is required.'
+    })
+
+    const saveButton = getSharedDialogSaveButton(document)
+    saveButton?.click()
+    await new Promise(resolve => setTimeout(resolve, 0))
+
+    const errorSection = document.querySelector('#modal-error') as HTMLElement | null
+    expect(errorSection).not.toBeNull()
+    expect(errorSection?.textContent).toBe('Display name is required.')
+    expect(errorSection?.getAttribute('role')).toBe('alert')
+    expect(errorSection?.getAttribute('aria-live')).toBe('assertive')
+    expect(errorSection?.getAttribute('aria-atomic')).toBe('true')
+    expect(errorSection?.getAttribute('aria-hidden')).toBe('false')
+    expect(document.activeElement).toBe(errorSection)
+
+    const results = await runAxe(document.body)
+    expect(results.violations.length).toBe(0)
+
+    getSharedDialogCancelButton(document)?.click()
+    await expect(resultPromise).resolves.toBeNull()
+  })
+
+  it('announces save errors accessibly and remains axe-clean while visible', async () => {
+    const form = document.createElement('form')
+    const input = document.createElement('input')
+    input.name = 'displayName'
+    form.appendChild(input)
+
+    const resultPromise = openInputDialog({
+      title: 'Edit display name',
+      dom: document,
+      form,
+      headerAction: { type: 'none' },
+      onSave: async () => {
+        throw new Error('Save failed')
+      }
+    })
+
+    getSharedDialogSaveButton(document)?.click()
+    await new Promise(resolve => setTimeout(resolve, 0))
+
+    const errorSection = document.querySelector('#modal-error') as HTMLElement | null
+    expect(errorSection).not.toBeNull()
+    expect(errorSection?.textContent).toBe('Save failed')
+    expect(errorSection?.getAttribute('role')).toBe('alert')
+    expect(errorSection?.getAttribute('aria-live')).toBe('assertive')
+    expect(errorSection?.getAttribute('aria-atomic')).toBe('true')
+    expect(errorSection?.getAttribute('aria-hidden')).toBe('false')
+    expect(document.activeElement).toBe(errorSection)
+
+    const results = await runAxe(document.body)
+    expect(results.violations.length).toBe(0)
+
+    getSharedDialogCancelButton(document)?.click()
     await expect(resultPromise).resolves.toBeNull()
   })
 

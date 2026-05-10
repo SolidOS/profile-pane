@@ -3,7 +3,7 @@ import { graph, literal, st, sym } from 'rdflib'
 import { ns } from 'solid-ui'
 import { presentProfile, pronounsAsText } from '../../src/sections/heading/selectors'
 import { processHeadingMutations } from '../../src/sections/heading/mutations'
-import { saveHeadingUpdatesFailedPrefixText } from '../../src/texts'
+import { updaterUnsupportedStoreErrorMessageText } from '../../src/texts'
 
 describe('Intro selectors and mutations', () => {
   it('selectors return a stable profile shape from empty store', () => {
@@ -17,7 +17,7 @@ describe('Intro selectors and mutations', () => {
     expect(typeof profile.name).toBe('string')
   })
 
-  it('mutation wraps low-level updater errors', async () => {
+  it('mutation surfaces unsupported store updater errors', async () => {
     const store = graph() as any
     const subject = sym('https://example.com/profile/card#me')
 
@@ -29,7 +29,7 @@ describe('Intro selectors and mutations', () => {
     }
 
     await expect(processHeadingMutations(store, subject, plan as any)).rejects.toThrow(
-      saveHeadingUpdatesFailedPrefixText
+      updaterUnsupportedStoreErrorMessageText
     )
   })
 

@@ -118,12 +118,15 @@ describe('contactsHelpers', () => {
 			expect(predicates).toContain('http://www.w3.org/ns/solid/terms#preferredRelativePronoun')
 		})
 
-		it('skips detail writes when there are no detail fields', async () => {
+		it('only writes the webID link when there are no detail fields', async () => {
 			const context = {
 				session: {
 					store: {
 						fetcher: { load: jest.fn().mockResolvedValue(undefined) },
-						updater: { update: jest.fn().mockResolvedValue(undefined) }
+						updater: { update: jest.fn().mockResolvedValue(undefined) },
+						bnode: jest.fn(() => namedNode('https://pod.example/address-book/index.ttl#webid-node')),
+						each: jest.fn().mockReturnValue([]),
+						statementsMatching: jest.fn().mockReturnValue([])
 					}
 				}
 			} as any
@@ -142,7 +145,7 @@ describe('contactsHelpers', () => {
 				groupUris: ['https://pod.example/address-book/index.ttl#friends']
 			})
 
-			expect(context.session.store.updater.update).not.toHaveBeenCalled()
+			expect(context.session.store.updater.update).toHaveBeenCalledTimes(1)
 		})
 	})
 
@@ -298,7 +301,7 @@ describe('contactsHelpers', () => {
 			expect(updaterUpdate).not.toHaveBeenCalled()
 		})
 
-		it('reports errors when updater fails', async () => {
+		it('throws when updater fails', async () => {
 			const context = {
 				session: {
 					store: {
@@ -309,9 +312,9 @@ describe('contactsHelpers', () => {
 				}
 			} as any
 
-			await updateAddressBookName(context, 'https://pod.example/address-book/index.ttl#this', 'Book')
-
-			expect(addErrorToErrorDisplay).toHaveBeenCalled()
+			await expect(
+				updateAddressBookName(context, 'https://pod.example/address-book/index.ttl#this', 'Book')
+			).rejects.toThrow('update failed')
 		})
 	})
 
@@ -348,7 +351,7 @@ describe('contactsHelpers', () => {
 			])
 		})
 
-		it('reports errors when loading contact fails', async () => {
+		it('throws when loading contact fails', async () => {
 			const context = {
 				session: {
 					store: {
@@ -357,9 +360,9 @@ describe('contactsHelpers', () => {
 				}
 			} as any
 
-			await addWebIDToExistingContact(context, { webID: 'https://alice.example/profile#me' } as any, 'https://pod.example/contacts#alice')
-
-			expect(addErrorToErrorDisplay).toHaveBeenCalled()
+			await expect(
+				addWebIDToExistingContact(context, { webID: 'https://alice.example/profile#me' } as any, 'https://pod.example/contacts#alice')
+			).rejects.toThrow('load failed')
 		})
 	})
 })

@@ -176,6 +176,12 @@
 
 #profile-modal .modal__error-section {
   margin-top: var(--spacing-sm);
+  padding: 0.75rem;
+  border: 1px solid var(--dialog-error-border, var(--pink-700, #ff98b3));
+  border-radius: var(--border-radius-base);
+  background: var(--dialog-error-background, var(--pink-500, #ffdde6));
+  color: var(--dialog-error-text, var(--red-600, #B00020));
+  text-align: center;
 }
 
 #profile-modal .modal__error-section[hidden] {

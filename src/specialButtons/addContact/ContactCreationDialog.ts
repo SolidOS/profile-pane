@@ -7,13 +7,13 @@ import { addANewAddressBookUriToAddressBooks, addWebIDToExistingContact, createC
 import { AddressBookDetails, AddressBooksData, ContactData, GroupData } from './contactsTypes'
 import ContactsModuleRdfLib from '@solid-data-modules/contacts-rdflib'
 import { render } from 'lit-html'
-import { clearPreviousMessage, complain, mention } from '../../buttonsHelper'
-import { contactExistsMessage, contactWasAddedSuccesMessage, dialogCancelLabelText, errorContactCreation, errorGroupCreation, errorNotExistsAddressBookUri, groupIsRequired } from '../../texts'
-import { createErrorDisplaySection, addErrorToErrorDisplay, checkAndAddErrorToDisplay, checkAndRemoveErrorDisplay } from './contactsErrors'
+import { clearPreviousMessage, complain } from '../../buttonsHelper'
+import { contactExistsMessage, dialogCancelLabelText, errorAddingContactWebIDToAddressBook, errorAddressBookCreation, errorContactCreation, errorGroupCreation, errorNotExistsAddressBookUri, errorProcessingUriAddressBook, groupIsRequired } from '../../texts'
+import { createErrorDisplaySection, addErrorToErrorDisplay, checkAndAddErrorToDisplay, checkAndRemoveErrorDisplay, formatContactsDialogError } from './contactsErrors'
 import { literal, NamedNode, st, sym } from 'rdflib'
 import { closeIcon } from '../../icons-svg/profileIcons'
 import { ns } from 'solid-ui'
-import { getSharedDialogCancelButton, openInputDialog, setSharedDialogSavingState } from '../../ui/dialog'
+import { closeSharedDialog, getSharedDialogCancelButton, openInputDialog, setSharedDialogSavingState } from '../../ui/dialog'
 
 const CONTACTS_POPUP_OVERLAY_ID = 'contacts-popup-overlay'
 const CONTACTS_OVERLAY_ACTIVE_CLASS = 'contacts-dialog--overlay-active'
@@ -22,11 +22,18 @@ type ContactsButtonElement = SolidUIButtonElement
 function setContactsListButtonSelected(button: Element, isSelected: boolean): void {
   const listButton = button as ContactsButtonElement
   listButton.selected = isSelected
+  if (isSelected) {
+    listButton.setAttribute('selected', '')
+  } else {
+    listButton.removeAttribute('selected')
+  }
   listButton.setAttribute('aria-pressed', isSelected ? 'true' : 'false')
 }
 
 function isContactsListButtonSelected(button: Element | null): boolean {
-  return button instanceof HTMLElement && button.hasAttribute('selected')
+  if (!(button instanceof HTMLElement)) return false
+  const listButton = button as ContactsButtonElement
+  return listButton.selected || button.hasAttribute('selected')
 }
 
 function createContactsButtonElement(
@@ -67,8 +74,10 @@ export const createAddressBookContactCreationDialog = (context: DataBrowserConte
   addressBookContactCreationDialog.setAttribute('id', 'contacts-addressbook-picker-dialog')
 
   const dialogDescription = context.dom.createElement('p')
+  dialogDescription.setAttribute('id', 'contacts-dialog-description')
   dialogDescription.classList.add('contacts-dialog__description')
   dialogDescription.textContent = 'Choose an address book and group for this contact, or create them first.'
+  addressBookContactCreationDialog.setAttribute('aria-describedby', 'contacts-dialog-description')
 
   const addressBookContactCreationDiv = context.dom.createElement('section')
   addressBookContactCreationDiv.setAttribute('aria-label', 'Contact creation options')
@@ -214,32 +223,36 @@ const createAddressBookUriEntryForm = (
   const setButtonOnSubmitHandler = async (event) => {
     event.preventDefault()
     await runWithButtonLoading(context, submitButton, 'Adding...', async () => {
-      const addressBookUriField = context.dom.querySelector('#addressBookUriInput') as HTMLInputElement | null
+      try {
+        const addressBookUriField = context.dom.querySelector('#addressBookUriInput') as HTMLInputElement | null
 
-      const enteredAddressBookUri = sanitizeInput(addressBookUriField?.value || '')
-      if (addressBookUriField) addressBookUriField.value = enteredAddressBookUri
+        const enteredAddressBookUri = sanitizeInput(addressBookUriField?.value || '')
+        if (addressBookUriField) addressBookUriField.value = enteredAddressBookUri
 
-      if (!enteredAddressBookUri) {
-        addErrorToErrorDisplay(context, errorNotExistsAddressBookUri)
-        return
-      }
+        if (!enteredAddressBookUri) {
+          addErrorToErrorDisplay(context, errorNotExistsAddressBookUri)
+          return
+        }
 
-      const uriCheck = enteredAddressBookUri.substring(enteredAddressBookUri.length - 5, enteredAddressBookUri.length)
-      const normalizedUri = (uriCheck === '#this') ? enteredAddressBookUri : enteredAddressBookUri + '#this'
-      const books = await addANewAddressBookUriToAddressBooks(context, contactsModule, addressBooksData, normalizedUri)
+        const uriCheck = enteredAddressBookUri.substring(enteredAddressBookUri.length - 5, enteredAddressBookUri.length)
+        const normalizedUri = (uriCheck === '#this') ? enteredAddressBookUri : enteredAddressBookUri + '#this'
+        const books = await addANewAddressBookUriToAddressBooks(context, contactsModule, addressBooksData, normalizedUri)
 
-      const addressBookListDiv = context.dom.querySelector('#addressbook-list')
-      if (addressBookListDiv) {
-        clearInlinePanel(context)
-        removePopupOverlayIfNoPopup(context)
-        const addressBookCreationButton = context.dom.getElementById('contacts-create-addressbook-button')
-        const addressBookUriEntryButton = context.dom.getElementById('contacts-addressbook-uri-entry-button')
-        addressBookCreationButton.remove()
-        addressBookUriEntryButton.remove()
-        addressBookListDiv.appendChild(createAddressBookButton(context, contactsModule, books.addressBooksData, books.addressBook, enteredAddressBookUri, contactData))
-        addressBookListDiv.appendChild(createAddressBookCreationButton(context, contactsModule, books.addressBooksData, contactData))
-        addressBookListDiv.appendChild(createAddressBookUriEntryButton(context, contactsModule, books.addressBooksData, contactData))
-        announceContactsStatus(context, 'Address book added to the list.')
+        const addressBookListDiv = context.dom.querySelector('#addressbook-list')
+        if (addressBookListDiv) {
+          clearInlinePanel(context)
+          removePopupOverlayIfNoPopup(context)
+          const addressBookCreationButton = context.dom.getElementById('contacts-create-addressbook-button')
+          const addressBookUriEntryButton = context.dom.getElementById('contacts-addressbook-uri-entry-button')
+          addressBookCreationButton.remove()
+          addressBookUriEntryButton.remove()
+          addressBookListDiv.appendChild(createAddressBookButton(context, contactsModule, books.addressBooksData, books.addressBook, enteredAddressBookUri, contactData))
+          addressBookListDiv.appendChild(createAddressBookCreationButton(context, contactsModule, books.addressBooksData, contactData))
+          addressBookListDiv.appendChild(createAddressBookUriEntryButton(context, contactsModule, books.addressBooksData, contactData))
+          announceContactsStatus(context, 'Address book added to the list.')
+        }
+      } catch (error) {
+        addErrorToErrorDisplay(context, formatContactsDialogError(errorProcessingUriAddressBook, error))
       }
     })
   }
@@ -435,7 +448,7 @@ const createNewContactCreationButton = (
           const contactUri = await createContactInAddressBook(context, contactsModule, contactData, selectedAddressBookUris)
           finalizeContactEntry(context, addressBooksData, contactData, contactUri)
         } catch(error) {
-          addErrorToErrorDisplay(context, `${errorContactCreation}\n${error}`)
+          addErrorToErrorDisplay(context, formatContactsDialogError(errorContactCreation, error))
         }
       } else {
         addErrorToErrorDisplay(context, groupIsRequired)
@@ -534,32 +547,32 @@ const createNewAddressBookForm = (
   const newAddressBookEventListener = async (event) => {
     event.preventDefault()
     await runWithButtonLoading(context, submitButton, 'Creating...', async () => {
-      let enteredAddressBookUri = null
-      let newGroupNode: NamedNode | null = null
-
-      const addressNameField = context.dom.querySelector('#addressBookNameInput')
-
-      // @ts-ignore
-      const enteredAddressName = sanitizeInput(addressNameField.value)
-      // @ts-ignore
-      addressNameField.value = enteredAddressName
-
-      const addressContainerField = context.dom.querySelector('#addressBookContainerInput')
-
-      // @ts-ignore
-      const enteredAddressContainer = sanitizeInput(addressContainerField.value)
-      // @ts-ignore
-      addressContainerField.value = enteredAddressContainer
-
-      const groupNameField = context.dom.querySelector('#groupNameInput')
-      // @ts-ignore
-      const enteredGroupName = sanitizeInput(groupNameField.value)
-      // @ts-ignore
-      groupNameField.value = enteredGroupName
-
-      if (!enteredAddressName) return
-
       try {
+        let enteredAddressBookUri = null
+        let newGroupNode: NamedNode | null = null
+
+        const addressNameField = context.dom.querySelector('#addressBookNameInput')
+
+        // @ts-ignore
+        const enteredAddressName = sanitizeInput(addressNameField.value)
+        // @ts-ignore
+        addressNameField.value = enteredAddressName
+
+        const addressContainerField = context.dom.querySelector('#addressBookContainerInput')
+
+        // @ts-ignore
+        const enteredAddressContainer = sanitizeInput(addressContainerField.value)
+        // @ts-ignore
+        addressContainerField.value = enteredAddressContainer
+
+        const groupNameField = context.dom.querySelector('#groupNameInput')
+        // @ts-ignore
+        const enteredGroupName = sanitizeInput(groupNameField.value)
+        // @ts-ignore
+        groupNameField.value = enteredGroupName
+
+        if (!enteredAddressName) return
+
         enteredAddressBookUri = await handleAddressBookCreation(context, enteredAddressContainer, enteredAddressName)
         if (!enteredAddressBookUri) {
           throw new Error(errorNotExistsAddressBookUri)
@@ -595,7 +608,7 @@ const createNewAddressBookForm = (
         clearInlinePanel(context)
         removePopupOverlayIfNoPopup(context)
       } catch (error) {
-        addErrorToErrorDisplay(context, error)
+        addErrorToErrorDisplay(context, formatContactsDialogError(errorAddressBookCreation, error))
       }
     })
   }   
@@ -657,6 +670,11 @@ const createNewAddressBookForm = (
   groupNameInputBox.required = true
 
   const validationMessage = createValidationMessage(context)
+  validationMessage.setAttribute('id', 'contacts-addressbook-validation-message')
+
+  addressBookNameInputBox.setAttribute('aria-describedby', 'contacts-addressbook-validation-message')
+  addressBookContainerInputBox.setAttribute('aria-describedby', 'contacts-addressbook-validation-message')
+  groupNameInputBox.setAttribute('aria-describedby', 'contacts-addressbook-validation-message')
 
   attachSanitizingValidation(addressBookNameInputBox, validationMessage)
   attachSanitizingValidation(addressBookContainerInputBox, validationMessage)
@@ -875,26 +893,26 @@ const createGroupNameForm = (
   const addGroupEventListener = async (event) => {
     event.preventDefault()
     await runWithButtonLoading(context, submitButton, 'Creating...', async () => {
-      let selectedAddressBookUri = null 
+      try {
+        let selectedAddressBookUri = null 
 
-      const selectedAddressBookElements = context.dom.querySelectorAll('#addressbook-list .contacts-dialog__list-button[selected]')
-      selectedAddressBookElements.forEach((addressBookButton) => {
-        selectedAddressBookUri = addressBookButton.getAttribute('id')
-      })
-      
-      const groupNameField = context.dom.querySelector('#groupNameInput')
-      // @ts-ignore
-      const enteredGroupName = sanitizeInput(groupNameField.value)
-      // @ts-ignore
-      groupNameField.value = enteredGroupName
+        const selectedAddressBookElements = context.dom.querySelectorAll('#addressbook-list .contacts-dialog__list-button[selected]')
+        selectedAddressBookElements.forEach((addressBookButton) => {
+          selectedAddressBookUri = addressBookButton.getAttribute('id')
+        })
+        
+        const groupNameField = context.dom.querySelector('#groupNameInput')
+        // @ts-ignore
+        const enteredGroupName = sanitizeInput(groupNameField.value)
+        // @ts-ignore
+        groupNameField.value = enteredGroupName
 
-      if (!selectedAddressBookUri) {
-        addErrorToErrorDisplay(context, errorNotExistsAddressBookUri)
-        return
-      }
+        if (!selectedAddressBookUri) {
+          addErrorToErrorDisplay(context, errorNotExistsAddressBookUri)
+          return
+        }
 
-      if (enteredGroupName) {
-        try {
+        if (enteredGroupName) {
           const selectedAddressBookNode = new NamedNode(selectedAddressBookUri)
           const newGroupNode = await saveNewGroupToAddressBook(context, selectedAddressBookNode, enteredGroupName)
           const newGroup = { name: enteredGroupName, uri: newGroupNode.value }
@@ -915,9 +933,9 @@ const createGroupNameForm = (
           }
           clearInlinePanel(context)
           removePopupOverlayIfNoPopup(context)
-        } catch (error) {
-          addErrorToErrorDisplay(context, `${errorGroupCreation}\n${error}`)
         }
+      } catch (error) {
+        addErrorToErrorDisplay(context, formatContactsDialogError(errorGroupCreation, error))
       }
     })
   } 
@@ -943,6 +961,8 @@ const createGroupNameForm = (
   groupNameInputBox.classList.add('input')
 
   const validationMessage = createValidationMessage(context)
+  validationMessage.setAttribute('id', 'contacts-group-validation-message')
+  groupNameInputBox.setAttribute('aria-describedby', 'contacts-group-validation-message')
 
   attachSanitizingValidation(groupNameInputBox, validationMessage)
  
@@ -974,7 +994,7 @@ const createAddGroupButton = (
   const button = createContactsButtonElement(context, {
     id: 'contacts-create-group-button',
     type: 'button',
-    label: 'Create Group',
+    label: 'Add',
     variant: 'primary',
     size: 'md',
     classes: ['contacts-dialog__action-button', 'contacts-dialog__action-button--primary']
@@ -1023,6 +1043,7 @@ export const handleContactExistsByName = (
   contactExistsDialog.setAttribute('aria-modal', 'true')
   contactExistsDialog.setAttribute('aria-labelledby', 'contacts-contact-exists-title')
   contactExistsDialog.setAttribute('aria-describedby', 'contacts-contact-exists-message')
+  contactExistsDialog.setAttribute('tabindex', '-1')
   contactExistsDialog.classList.add('contacts-dialog__popup', 'contacts-dialog__contact-exists', 'flex-column')
 
   const popupBody = createPopupSection(context, 'contacts-dialog__popup-body', 'flex-column')
@@ -1084,7 +1105,7 @@ export const handleContactExistsByName = (
   contactExistsDialog.appendChild(popupFooter)
   showPopupOverlay(context)
   if (selectorDialog) selectorDialog.appendChild(contactExistsDialog)
-  setTimeout(() => confirmButton.focus(), 0)
+  setTimeout(() => contactExistsDialog.focus(), 0)
   return true
 }
 
@@ -1116,6 +1137,12 @@ async function openSharedContactExistsDialog(
       await addWebIDToExistingContact(context, contactData, contactExistsByNameUri)
       finalizeContactEntry(context, addressBooksData, contactData, addressBooksData.contactWebIDs.get(contactData.webID))
       refreshButton(context, addressBooksData, contactData)
+    },
+    formatSaveError: (error: unknown) => {
+      const message = error instanceof Error ? error.message : String(error)
+      return message.startsWith(errorAddingContactWebIDToAddressBook)
+        ? message
+        : `${errorAddingContactWebIDToAddressBook} ${message}`
     }
   })
 
@@ -1134,17 +1161,13 @@ const finalizeContactEntry = (
   contactData: ContactData,
   contactUri: string,
 ) => {
+    closeSharedDialog()
     addressBooksData.contactWebIDs.set(contactData.webID, contactUri)
     const selectorDialog = context.dom.getElementById('contacts-addressbook-picker-dialog')
     if (selectorDialog) {
       selectorDialog.remove()
     }
-    
-    const buttonContainer = getButtonContainer(context)
-    mention(buttonContainer, contactWasAddedSuccesMessage)
-    setTimeout(() => {
-      clearPreviousMessage(buttonContainer)
-    }, 2000)  
+
     refreshButton(context, addressBooksData, contactData)  
 }
 
@@ -1194,6 +1217,24 @@ export function getButtonContainer(
   return buttonContainer as HTMLDivElement
 }
 
+const setSelectorDialogBackgroundAccessibility = (
+  selectorDialog: HTMLElement,
+  isPopupActive: boolean
+): void => {
+  Array.from(selectorDialog.children).forEach((child) => {
+    if (!(child instanceof HTMLElement)) return
+    if (child.id === CONTACTS_POPUP_OVERLAY_ID || child.classList.contains('contacts-dialog__contact-exists')) return
+
+    if (isPopupActive) {
+      child.setAttribute('aria-hidden', 'true')
+      child.setAttribute('inert', '')
+    } else {
+      child.removeAttribute('aria-hidden')
+      child.removeAttribute('inert')
+    }
+  })
+}
+
 const showPopupOverlay = (
   context: DataBrowserContext
 ): void => {
@@ -1201,13 +1242,13 @@ const showPopupOverlay = (
   if (!selectorDialog) return
 
   selectorDialog.classList.add(CONTACTS_OVERLAY_ACTIVE_CLASS)
+  setSelectorDialogBackgroundAccessibility(selectorDialog, true)
 
   const existingOverlay = selectorDialog.querySelector(`#${CONTACTS_POPUP_OVERLAY_ID}`)
   if (existingOverlay) return
 
   const overlay = context.dom.createElement('div')
-  overlay.setAttribute('role', 'popupOverlay')
-  overlay.setAttribute('aria-label', 'Overlay to focus on the active popup message and disable interaction with the rest of the dialog')  
+  overlay.setAttribute('aria-hidden', 'true')
   overlay.setAttribute('id', CONTACTS_POPUP_OVERLAY_ID)
   overlay.classList.add('contacts-dialog__popup-overlay')
   selectorDialog.appendChild(overlay)
@@ -1219,12 +1260,13 @@ const removePopupOverlayIfNoPopup = (
   const selectorDialog = context.dom.getElementById('contacts-addressbook-picker-dialog')
   if (!selectorDialog) return
 
-  const activePopup = selectorDialog.querySelector('.contacts-dialog__popup, .contacts-dialog__contact-exists')
+  const activePopup = selectorDialog.querySelector('.contacts-dialog__contact-exists')
   if (activePopup) return
 
   const overlay = selectorDialog.querySelector(`#${CONTACTS_POPUP_OVERLAY_ID}`)
   if (overlay) overlay.remove()
   selectorDialog.classList.remove(CONTACTS_OVERLAY_ACTIVE_CLASS)
+  setSelectorDialogBackgroundAccessibility(selectorDialog, false)
 }
 /* Sanitization and validation */
 function sanitizeInput(input: string): string {

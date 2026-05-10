@@ -4,7 +4,8 @@ import { SkillRow } from './types'
 import { MutationOps, RdfStatement } from '../shared/types'
 import { collectLinkedNodeStatements, collectNodeStatements, findExistingNode, registerStorePrefix, runUpdateTransport } from '../shared/rdfMutationHelpers'
 import { createIdNode } from '../shared/idNodeFactory'
-import { mutationSaveSkillsFailedPrefixText } from '../../texts'
+import { skillsMutationSaveFailedDebugText } from '../../texts'
+import { error as debugError } from '../../utils/debug'
 
 export type SkillMutationPlan = MutationOps<SkillRow>
 
@@ -60,7 +61,7 @@ function buildSkillsStatements(subject: NamedNode, doc: NamedNode, node: NamedNo
   return [
     st(subject, ns.schema('skills'), node, doc),
     st(node, ns.solid('publicId'), publicIdNode, doc),
-    st(publicIdNode, ns.schema('name'), literal(skill.name), doc)
+    st(publicIdNode as any, ns.schema('name'), literal(skill.name), doc)
   ]
 }
 
@@ -129,7 +130,7 @@ export async function processSkillsMutations(store: LiveStore, subject: NamedNod
     await mutateSkillsEntries(store, subject, mutationPlan)
 
   } catch (error) {
-    const message = error instanceof Error ? error.message : String(error)
-    throw new Error(`${mutationSaveSkillsFailedPrefixText} ${message}`)
+    debugError(skillsMutationSaveFailedDebugText, error)
+    throw error instanceof Error ? error : new Error(String(error))
   }
 } 

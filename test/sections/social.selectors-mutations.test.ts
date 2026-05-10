@@ -41,13 +41,13 @@ describe('Social selectors and mutations', () => {
     expect(presentSocial(subject, store)).toEqual({ accounts: [] })
   })
 
-  it('mutation wraps updater errors with social prefix', async () => {
+  it('mutation surfaces unsupported store updater errors', async () => {
     const store = graph() as any
     const subject = sym('https://example.com/profile/card#me')
 
     const plan = { create: [], update: [], remove: [] }
     await expect(processSocialMutations(store, subject, plan as any)).rejects.toThrow(
-      saveSocialUpdatesFailedPrefixText
+      'Social updates are not supported by this store updater.'
     )
   })
 

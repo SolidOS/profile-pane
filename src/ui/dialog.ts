@@ -111,7 +111,7 @@ function ensureModalDialog (dom: Document): HTMLDialogElement {
         <div id="modal-header-action" class="flex-row align-center"></div>
       </div>
       <div id="modal-desc"></div>
-      <section id="modal-error" class="modal__error-section" aria-live="assertive" role="alert" hidden></section>
+      <section id="modal-error" class="modal__error-section" aria-live="assertive" aria-atomic="true" aria-hidden="true" role="alert" tabindex="-1" hidden></section>
       <div id="modal-buttons" class="flex-row align-center justify-end"></div>
       <div id="modal-saving-overlay" hidden></div>
     </div>
@@ -135,12 +135,17 @@ function getDialogElements (dialog: HTMLDialogElement): DialogElements {
 
 function clearModalError(elements: DialogElements): void {
   elements.error.textContent = ''
+  elements.error.setAttribute('aria-hidden', 'true')
   elements.error.hidden = true
 }
 
 function setModalError(elements: DialogElements, message: string): void {
   elements.error.textContent = message
+  elements.error.setAttribute('aria-hidden', 'false')
   elements.error.hidden = false
+  if (elements.error instanceof HTMLElement) {
+    elements.error.focus()
+  }
 }
 
 function openDialogElement (dialog: HTMLDialogElement): void {
@@ -334,6 +339,10 @@ function closeModal (_result: DialogButtonValue): void {
     if (headerActionButton) headerActionButton.onclick = null
     if (previousFocus && 'focus' in previousFocus) (previousFocus as HTMLElement).focus()
   }
+}
+
+export function closeSharedDialog(): void {
+  closeModal(null)
 }
 
 export function alertDialog (message: string, title = 'Information', dom: Document) {

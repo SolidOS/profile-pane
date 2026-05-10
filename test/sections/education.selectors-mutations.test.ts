@@ -3,7 +3,7 @@ import { blankNode, graph, literal, st, sym } from 'rdflib'
 import { ns } from 'solid-ui'
 import { presentEducation } from '../../src/sections/education/selectors'
 import { processEducationMutations } from '../../src/sections/education/mutations'
-import { mutationEducationFailedPrefixText } from '../../src/texts'
+import { updaterUnsupportedStoreErrorMessageText } from '../../src/texts'
 
 describe('Education selectors and mutations', () => {
   it('selector returns empty education list from empty store', () => {
@@ -13,13 +13,13 @@ describe('Education selectors and mutations', () => {
     expect(presentEducation(subject, store)).toEqual([])
   })
 
-  it('mutation wraps updater errors with education prefix', async () => {
+  it('mutation surfaces unsupported store updater errors', async () => {
     const store = graph() as any
     const subject = sym('https://example.com/profile/card#me')
 
     const plan = { create: [], update: [], remove: [] }
     await expect(processEducationMutations(store, subject, plan as any)).rejects.toThrow(
-      mutationEducationFailedPrefixText
+      updaterUnsupportedStoreErrorMessageText
     )
   })
 

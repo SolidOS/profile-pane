@@ -12,7 +12,7 @@ describe('Projects selectors and mutations', () => {
     await expect(presentProjects(subject, store)).resolves.toEqual([])
   })
 
-  it('mutation wraps updater errors with projects prefix', async () => {
+  it('mutation surfaces unsupported store updater errors', async () => {
     const store = graph() as any
     const subject = sym('https://example.com/profile/card#me')
 
@@ -21,7 +21,7 @@ describe('Projects selectors and mutations', () => {
       update: [],
       remove: []
     }
-    await expect(processProjectsMutations(store, subject, plan as any)).rejects.toThrow('Failed to save projects:')
+    await expect(processProjectsMutations(store, subject, plan as any)).rejects.toThrow('Project updates are not supported by this store updater.')
   })
 
   it('selector reads projects from solid:community links', async () => {
