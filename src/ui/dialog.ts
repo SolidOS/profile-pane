@@ -1,4 +1,4 @@
-import '../styles/dialog.css'
+import './dialog.css'
 import 'solid-ui/components/actions/button'
 import { html, render } from 'lit-html'
 import { closeIcon } from '../icons-svg/profileIcons'
