@@ -476,7 +476,7 @@ export async function createSocialEditDialog(
       if (viewerMode !== 'owner') {
         return ownerLoginRequiredDialogMessageText
       }
-      return validateSocialBeforeSave(formState.socialAccounts, formState.initialExistingOrder)
+      return validateSocialBeforeSave(formState.socialAccounts)
     },
     onSave: async () => {
       const socialOps = summarizeRowOps(formState.socialAccounts, rowHasContent)

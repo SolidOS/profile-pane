@@ -754,7 +754,7 @@ export async function createContactInfoEditDialog(
       if (viewerMode !== 'owner') {
         return ownerLoginRequiredDialogMessageText
       }
-      return validateContactInfoBeforeSave(formState)
+      return validateContactInfoBeforeSave()
     },
     onSave: async () => {
       const plan: ContactMutationPlan = {

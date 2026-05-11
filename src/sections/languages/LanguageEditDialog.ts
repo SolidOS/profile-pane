@@ -558,7 +558,7 @@ export async function createLanguageEditDialog(
       if (viewerMode !== 'owner') {
         return ownerLoginRequiredDialogMessageText
       }
-      return validateLanguagesBeforeSave(formState.languages, formState.initialExistingOrder)
+      return validateLanguagesBeforeSave(formState.languages)
     },
     onSave: async () => {
       const languageOps = summarizeRowOps(formState.languages, rowHasContent)

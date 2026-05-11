@@ -9,9 +9,7 @@ import { createAddressBookContactCreationDialog } from './ContactCreationDialog'
 import { addErrorToErrorDisplay } from './contactsErrors'
 import { openInputDialog } from '../../ui/dialog'
 import {
-  errorAddressBookCreation,
   errorAddingContactWebIDToAddressBook,
-  errorProcessingUriAddressBook,
   errorUnableToDetermineUserWorkspace,
   groupIsRequired
 } from '../../texts'

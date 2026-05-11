@@ -933,7 +933,7 @@ export async function createHeadingEditDialog(
       if (viewerMode !== 'owner') {
         return ownerLoginRequiredDialogMessageText
       }
-      return validateHeadingDataBeforeSave(formState)
+      return validateHeadingDataBeforeSave()
     },
     onSave: async () => {
       const phoneOps = summarizeRowOps([formState.phone], rowHasContent)
