@@ -70,7 +70,7 @@
 }
 
 .profile-grid .profile__section {
-  padding: var(--spacing-lg);
+  padding: var(--spacing-sm, 0.938rem);
   border-radius: var(--border-radius-base);
 }
 
