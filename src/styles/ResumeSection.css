@@ -7,6 +7,7 @@
   --resume-card-header-gap: var(--spacing-sm, 0.75rem);
   --resume-card-column-gap: var(--spacing-md, 1.25rem);
   --resume-card-row-gap: var(--spacing-2xs, 0.625rem);
+  --resume-card-description-offset: calc(var(--spacing-sm, 0.938rem) - var(--spacing-2xs, 0.625rem));
   --resume-card-title-color: var(--color-text-subheading, var(--gray-900, #101828));
   --resume-card-title-size: var(--font-size-lg, 1.125rem);
   --resume-card-title-weight: var(--font-weight-bold, 600);
@@ -117,7 +118,7 @@
   --resume-description-toggle-line-top: calc(100% - 1.5em + 0.28em - 11px);
   --resume-description-toggle-line-translate-y: 7px;
   --resume-description-overflow-padding-inline-end: 4.5rem;
-  margin: 0;
+  margin: var(--resume-card-description-offset) 0 0;
   position: relative;
   isolation: isolate;
 }
@@ -235,6 +236,12 @@ solid-ui-button.resume-card__description-toggle {
 
 /* Compact layout */
 :is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .resume-card__item {
+  --resume-card-title-size: var(--font-size-md, 1rem);
+  --resume-card-organization-size: var(--font-size-md, 1rem);
+  --resume-card-location-size: var(--font-size-sm, 0.875rem);
+  --resume-card-period-size: var(--font-size-xxs, 0.75rem);
+  --resume-card-description-size: var(--font-size-sm, 0.875rem);
+  --resume-card-description-offset: 0rem;
   grid-template-columns: minmax(0, 1fr);
   grid-template-areas:
     "title"
@@ -254,6 +261,12 @@ solid-ui-button.resume-card__description-toggle {
 
 @media (max-width: 576px) {
   .resume-card__item {
+    --resume-card-title-size: var(--font-size-md, 1rem);
+    --resume-card-organization-size: var(--font-size-md, 1rem);
+    --resume-card-location-size: var(--font-size-sm, 0.875rem);
+    --resume-card-period-size: var(--font-size-xxs, 0.75rem);
+    --resume-card-description-size: var(--font-size-sm, 0.875rem);
+    --resume-card-description-offset: 0rem;
     grid-template-columns: minmax(0, 1fr);
     grid-template-areas:
       "title"
@@ -274,6 +287,12 @@ solid-ui-button.resume-card__description-toggle {
 
 @container profile-pane (max-width: 576px) {
   .resume-card__item {
+    --resume-card-title-size: var(--font-size-md, 1rem);
+    --resume-card-organization-size: var(--font-size-md, 1rem);
+    --resume-card-location-size: var(--font-size-sm, 0.875rem);
+    --resume-card-period-size: var(--font-size-xxs, 0.75rem);
+    --resume-card-description-size: var(--font-size-sm, 0.875rem);
+    --resume-card-description-offset: 0rem;
     grid-template-columns: minmax(0, 1fr);
     grid-template-areas:
       "title"

@@ -27,38 +27,38 @@ function renderRole(role: RoleDetails, index: number) {
     : `${roleOrgId} ${rolePeriodId}`
 
   return html`
-    <li class="resume-card__item flex-column" role="listitem" aria-labelledby=${roleTitleId} aria-describedby=${ariaDescribedBy}>
+    <li class="resume-card__item" role="listitem" aria-labelledby=${roleTitleId} aria-describedby=${ariaDescribedBy}>
     <div class="resume-card__item-header">
       <h4 id=${roleTitleId}>${role.title}</h4>
     </div>
-      <p class="resume-card__organization" id=${roleOrgId}>
-        <strong class="resume-card__organization-name">${role.orgName}</strong>${role.orgLocation ? html`<span class="resume-card__organization-separator" aria-hidden="true"> | </span><span class="resume-card__organization-location">${role.orgLocation}</span>` : ''}
-      </p>
-      <p id=${rolePeriodId} class="resume-card__item-period">
-        <time datetime=${toMonthDateTime(role.startDate)}>${formatMonthYear(role.startDate)}</time>
-        <span aria-hidden="true"> to </span>
-        ${role.endDate
-          ? html`<time datetime=${toMonthDateTime(role.endDate)}>${formatMonthYear(role.endDate)}</time>`
-          : html`<span>Present</span>`}
-      </p>
-      ${role.description ? html`
-        <div class="resume-card__description-wrap">
-          <p class="resume-card__description-text" id=${roleDescriptionId}>${role.description}</p>
-          <solid-ui-button
-            type="button"
-            variant="secondary"
-            size="sm"
-            label="...more"
-            class="resume-card__description-toggle"
-            aria-controls=${roleDescriptionId}
-            aria-expanded="false"
-            hidden
-            @click=${toggleDescription}
-          >
-            ...more
-          </solid-ui-button>
-        </div>
-      ` : ''}
+    <p class="resume-card__organization" id=${roleOrgId}>
+      <strong class="resume-card__organization-name">${role.orgName}</strong>${role.orgLocation ? html`<span class="resume-card__organization-separator" aria-hidden="true"> | </span><span class="resume-card__organization-location">${role.orgLocation}</span>` : ''}
+    </p>
+    <p id=${rolePeriodId} class="resume-card__item-period">
+      <time datetime=${toMonthDateTime(role.startDate)}>${formatMonthYear(role.startDate)}</time>
+      <span aria-hidden="true"> to </span>
+      ${role.endDate
+        ? html`<time datetime=${toMonthDateTime(role.endDate)}>${formatMonthYear(role.endDate)}</time>`
+        : html`<span>Present</span>`}
+    </p>
+    ${role.description ? html`
+      <div class="resume-card__description-wrap">
+        <p class="resume-card__description-text" id=${roleDescriptionId}>${role.description}</p>
+        <solid-ui-button
+          type="button"
+          variant="secondary"
+          size="sm"
+          label="...more"
+          class="resume-card__description-toggle"
+          aria-controls=${roleDescriptionId}
+          aria-expanded="false"
+          hidden
+          @click=${toggleDescription}
+        >
+          ...more
+        </solid-ui-button>
+      </div>
+    ` : ''}
     </li>
   `
 }
