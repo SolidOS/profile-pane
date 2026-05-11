@@ -125,7 +125,7 @@ export async function hydrateQRCodeElement(QRCodeElement: HTMLElement): Promise<
     return
   }
 
-  const imageContainer = QRCodeElement.querySelector('div[aria-hidden="true"]') as HTMLElement | null
+  const imageContainer = QRCodeElement.querySelector('.qrcode-card__image') as HTMLElement | null
   if (!imageContainer) {
     debugError('QRCode image container missing')
     return
@@ -196,6 +196,7 @@ export const QRCodeCard = (
       aria-describedby="qr-code-description"
     >
       <div 
+        class="qrcode-card__image"
         aria-hidden="true"
       ></div>
       <figcaption 
