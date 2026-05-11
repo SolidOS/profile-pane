@@ -1,4 +1,5 @@
 .profile-friends-button__section {
+  --profile-friends-button-color: var(--color-primary, #7C4DFF);
   width: 100%;
   min-width: 0;
   display: grid;
@@ -7,13 +8,13 @@
 .profile-friends-button__section solid-ui-button.profile__btn-friends {
   width: 100%;
   min-width: 0;
-  --button-hover-background: var(--color-primary, #7C4DFF);
-  --button-hover-border: var(--color-primary, #7C4DFF);
+  --button-hover-background: var(--profile-friends-button-color);
+  --button-hover-border: var(--profile-friends-button-color);
   --button-hover-text: var(--color-text-on-action, var(--white, #FFF));
 }
 
-.profile__btn-friends-label {
-  color: var(--color-primary, #7C4DFF);
+.profile-friends-button__section .profile__btn-friends-label {
+  color: var(--profile-friends-button-color);
   font-size: var(--font-size-sm, 0.875rem);
   font-weight: var(--font-weight-md, 500);
   line-height: 1;
@@ -25,11 +26,11 @@
   color: var(--color-text-on-action, var(--white, #FFF));
 }
 
-.profile__btn-friends-label--short {
+.profile-friends-button__section .profile__btn-friends-label--short {
   display: none;
 }
 
-.profile__btn-friends-label--short::before {
+.profile-friends-button__section .profile__btn-friends-label--short::before {
   content: attr(data-short-label-text);
 }
 
