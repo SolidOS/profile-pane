@@ -652,7 +652,9 @@ function renderHeadingInfoInput(
       photoCapture.facingMode = 'environment'
       photoCapture.open = true
 
-      photoCapture.addEventListener('cancel', () => {
+      photoCapture.addEventListener('cancel', (event) => {
+        event.preventDefault()
+        event.stopPropagation()
         closeCameraFrame()
       })
 
