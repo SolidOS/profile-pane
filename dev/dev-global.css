@@ -75,6 +75,9 @@
   --color-text-accent-subtle: var(--color-text-control, var(--slate-700, #314158));
   --color-text-strong: var(--slate-900, #0F172B); /* new design */
   --color-text-strong-secondary: var(--slate-800, #1D293D); /* new design */
+  --color-text-detail: var(--slate-500, #62748E);
+  --color-text-empty-state: var(--gray-400, #99A1AF);
+  --color-icon-muted: var(--slate-400, #90A1B9);
   --color-text-light: #aaa;
   --color-text-link: #3B5998;
   --color-text-link-visited: #3B5998;
@@ -107,6 +110,9 @@
   --color-surface-overlay-header: var(--slate-50, #F8FAFC);
   --color-surface-tertiary: var(--gray-50, #F9FAFB);
   --color-surface-tertiary-hover: var(--gray-100, #F3F4F6);
+  --color-surface-chip: var(--gray-100, #F3F4F6);
+  --color-surface-framed-content: var(--color-surface-tertiary-hover, var(--gray-100, #F3F4F6));
+  --color-surface-placeholder: var(--gray-200, #E5E7EB);
   --color-surface-subtle: rgba(15, 23, 43, 0.04);
   --color-text-on-action: var(--white, #FFF);
   --color-border-muted: var(--gray-300, #D1D5DC);
