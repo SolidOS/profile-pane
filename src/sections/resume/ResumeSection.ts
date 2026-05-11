@@ -23,23 +23,23 @@ function renderRole(role: RoleDetails, index: number) {
   const roleDescriptionId = `cv-role-description-${index}`
 
   const ariaDescribedBy = role.description
-    ? `${rolePeriodId} ${roleOrgId} ${roleDescriptionId}`
-    : `${rolePeriodId} ${roleOrgId}`
+    ? `${roleOrgId} ${rolePeriodId} ${roleDescriptionId}`
+    : `${roleOrgId} ${rolePeriodId}`
 
   return html`
     <li class="resume-card__item flex-column" role="listitem" aria-labelledby=${roleTitleId} aria-describedby=${ariaDescribedBy}>
     <div class="resume-card__item-header">
       <h4 id=${roleTitleId}>${role.title}</h4>
+    </div>
+      <p class="resume-card__organization" id=${roleOrgId}>
+        <strong class="resume-card__organization-name">${role.orgName}</strong>${role.orgLocation ? html`<span class="resume-card__organization-separator" aria-hidden="true"> | </span><span class="resume-card__organization-location">${role.orgLocation}</span>` : ''}
+      </p>
       <p id=${rolePeriodId} class="resume-card__item-period">
         <time datetime=${toMonthDateTime(role.startDate)}>${formatMonthYear(role.startDate)}</time>
         <span aria-hidden="true"> to </span>
         ${role.endDate
           ? html`<time datetime=${toMonthDateTime(role.endDate)}>${formatMonthYear(role.endDate)}</time>`
           : html`<span>Present</span>`}
-      </p>
-    </div>
-      <p class="resume-card__organization" id=${roleOrgId}>
-        <strong>${role.orgName}</strong>${role.orgLocation ? html` | ${role.orgLocation}` : ''}
       </p>
       ${role.description ? html`
         <div class="resume-card__description-wrap">

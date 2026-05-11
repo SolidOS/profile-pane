@@ -1227,6 +1227,9 @@ const setSelectorDialogBackgroundAccessibility = (
   selectorDialog: HTMLElement,
   isPopupActive: boolean
 ): void => {
+  const popupManagedAriaHiddenAttribute = 'data-popup-managed-aria-hidden'
+  const popupManagedInertAttribute = 'data-popup-managed-inert'
+
   Array.from(selectorDialog.children).forEach((child) => {
     if (!(child instanceof HTMLElement)) return
     if (child.id === CONTACTS_POPUP_OVERLAY_ID || child.classList.contains('contacts-dialog__contact-exists')) return
@@ -1234,9 +1237,35 @@ const setSelectorDialogBackgroundAccessibility = (
     if (isPopupActive) {
       child.setAttribute('aria-hidden', 'true')
       child.setAttribute('inert', '')
+
+      const nestedRegions = child.matches('.contacts-dialog__main')
+        ? Array.from(child.querySelectorAll<HTMLElement>('.contacts-dialog__description, .contacts-dialog__body'))
+        : []
+
+      nestedRegions.forEach((region) => {
+        if (region.getAttribute('aria-hidden') !== 'true') {
+          region.setAttribute('aria-hidden', 'true')
+          region.setAttribute(popupManagedAriaHiddenAttribute, 'true')
+        }
+
+        if (region.matches('.contacts-dialog__body') && !region.hasAttribute('inert')) {
+          region.setAttribute('inert', '')
+          region.setAttribute(popupManagedInertAttribute, 'true')
+        }
+      })
     } else {
       child.removeAttribute('aria-hidden')
       child.removeAttribute('inert')
+
+      Array.from(child.querySelectorAll<HTMLElement>(`[${popupManagedAriaHiddenAttribute}="true"]`)).forEach((descendant) => {
+        descendant.removeAttribute('aria-hidden')
+        descendant.removeAttribute(popupManagedAriaHiddenAttribute)
+      })
+
+      Array.from(child.querySelectorAll<HTMLElement>(`[${popupManagedInertAttribute}="true"]`)).forEach((descendant) => {
+        descendant.removeAttribute('inert')
+        descendant.removeAttribute(popupManagedInertAttribute)
+      })
     }
   })
 }

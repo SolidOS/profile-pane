@@ -1,10 +1,16 @@
 /* CSS for the accessible modal dialogs created by dialog.ts */
 /* dialog host */
 #profile-modal {
+  --profile-modal-backdrop: var(--overlay-bg-muted, rgba(0, 0, 0, 0.5));
+  --profile-modal-panel-inline-padding: var(--spacing-lg, 1.5625rem);
+  --profile-modal-panel-block-padding: var(--spacing-md, 1.25rem);
+  --profile-modal-compact-padding: var(--spacing-sm, 0.9375rem);
+  --profile-modal-button-gap: var(--spacing-sm, 0.938rem);
+  --profile-modal-error-padding: var(--spacing-xs, 0.75rem);
   margin: 0;
   padding: 0;
   border: none;
-  background: rgba(0, 0, 0, 0.5);
+  background: var(--profile-modal-backdrop);
   max-width: none;
   max-height: none;
   width: 100%;
@@ -22,7 +28,7 @@
 }
 
 #profile-modal::backdrop {
-  background: rgba(0, 0, 0, 0.5);
+  background: var(--profile-modal-backdrop);
 }
 
 #profile-modal .modal {
@@ -44,7 +50,7 @@
   gap: var(--spacing-lg);
   width: 100%;
   min-width: 0;
-  padding: var(--spacing-md, 1.25rem) var(--spacing-lg, 1.5625rem);
+  padding: var(--profile-modal-panel-block-padding) var(--profile-modal-panel-inline-padding);
   box-sizing: border-box;
   border-radius: var(--border-radius-base, 0.3125rem) var(--border-radius-base, 0.3125rem) 0 0;
   border-bottom: var(--border-width-sm, 0.1rem) solid var(--color-border-lighter, var(--slate-200, #E2E8F0));
@@ -56,11 +62,12 @@
   overflow: auto;
   width: 100%;
   min-width: 0;
+  padding: var(--profile-modal-panel-inline-padding);
   box-sizing: border-box;
 }
 
 #profile-modal .modal #modal-desc:has(> .profile__edit-form--projects) {
-  padding: var(--spacing-2xs, 0.625rem) var(--spacing-lg, 1.5625rem);
+  padding: var(--spacing-2xs, 0.625rem) var(--profile-modal-panel-inline-padding);
 }
 
 #profile-modal .modal #modal-desc:has(> #contacts-addressbook-picker-dialog) {
@@ -74,7 +81,7 @@
 }
 
 #profile-modal .modal:has(.profile-edit-dialog__social-account-select[popup-open]) #modal-desc {
-  padding-bottom: calc(var(--spacing-lg, 1.5625rem) + 1.875rem);
+  padding-bottom: calc(var(--profile-modal-panel-inline-padding) + 1.875rem);
 }
 
 #profile-modal .modal #modal-title {
@@ -139,8 +146,8 @@
 #profile-modal #modal-buttons {
   width: 100%;
   min-width: 0;
-  padding: var(--spacing-md, 1.25rem) calc(var(--spacing-lg, 1.5625rem) + var(--spacing-xxs, 0.3125rem)) var(--spacing-sm, 0.9375rem);
-  gap: var(--spacing-sm, 0.938rem);
+  padding: var(--profile-modal-panel-block-padding) calc(var(--profile-modal-panel-inline-padding) + var(--spacing-xxs, 0.3125rem)) var(--profile-modal-compact-padding);
+  gap: var(--profile-modal-button-gap);
   align-self: stretch;
   box-sizing: border-box;
   border-top: var(--border-width-sm, 0.1rem) solid var(--color-border-lighter, var(--slate-200, #E2E8F0));
@@ -180,7 +187,7 @@
 
 #profile-modal .modal__error-section {
   margin-top: var(--spacing-sm);
-  padding: 0.75rem;
+  padding: var(--profile-modal-error-padding);
   border: 1px solid var(--dialog-error-border, var(--pink-700, #ff98b3));
   border-radius: var(--border-radius-base);
   background: var(--dialog-error-background, var(--pink-500, #ffdde6));
@@ -255,7 +262,7 @@
 
   #profile-modal .modal .modal-header {
     gap: var(--spacing-md);
-    padding: var(--spacing-sm, 0.9375rem);
+    padding: var(--profile-modal-compact-padding);
   }
 
   #profile-modal .modal #modal-title {
@@ -264,11 +271,11 @@
   }
 
   #profile-modal .modal #modal-desc {
-    padding: 0;
+    padding: var(--profile-modal-panel-inline-padding);
   }
 
   #profile-modal .modal #modal-desc:has(> .profile__edit-form--projects) {
-    padding: var(--spacing-2xs, 0.625rem) var(--spacing-sm, 0.9375rem);
+    padding: var(--spacing-2xs, 0.625rem) var(--profile-modal-compact-padding);
   }
 
   #profile-modal #modal-desc > .profile__edit-form--bio {
@@ -281,8 +288,8 @@
     flex-direction: row;
     align-items: center;
     justify-content: flex-end;
-    gap: var(--spacing-sm, 0.9375rem);
-    padding: var(--spacing-sm, 0.9375rem);
+    gap: var(--profile-modal-button-gap);
+    padding: var(--profile-modal-compact-padding);
     width: 100%;
   }
 
