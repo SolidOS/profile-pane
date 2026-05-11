@@ -63,6 +63,13 @@ html[data-theme="dark"] #add-to-contacts-button-container solid-ui-button.profil
   --contacts-dialog-list-width: 20rem;
   --contacts-dialog-panel-width: 20.75rem;
   --contacts-dialog-mobile-popup-max-width: calc(92vw - 5px);
+  --contacts-dialog-panel-border: var(--color-border-lighter, var(--slate-200, #E2E8F0));
+  --contacts-dialog-panel-background: var(--color-background, #F8F9FB);
+  --contacts-dialog-panel-header-background: var(--color-surface-overlay-header, var(--slate-50, #F8FAFC));
+  --contacts-dialog-panel-body-background: var(--color-card-bg, #FFF);
+  --contacts-dialog-panel-padding-inline: calc(var(--spacing-lg, 1.5625rem) + var(--spacing-xxs, 0.3125rem));
+  --contacts-dialog-inner-footer-padding: var(--spacing-sm, 0.9375rem) var(--spacing-lg, 1.5625rem);
+  --contacts-dialog-inner-footer-padding-mobile: var(--spacing-xs, 0.75rem) var(--spacing-sm, 0.9375rem);
   background: transparent;
   border-radius: 0;
   box-shadow: none;
@@ -117,8 +124,8 @@ html[data-theme="dark"] #add-to-contacts-button-container solid-ui-button.profil
   gap: var(--spacing-sm, 0.938rem);
   width: auto;
   min-width: 0;
-  padding: var(--spacing-md, 1.25rem) calc(var(--spacing-lg, 1.5625rem) + var(--spacing-xxs, 0.3125rem));
-  border-top: var(--border-width-sm, 0.1rem) solid var(--color-border-lighter, var(--slate-200, #E2E8F0));
+  padding: var(--spacing-md, 1.25rem) var(--contacts-dialog-panel-padding-inline);
+  border-top: var(--border-width-sm, 0.1rem) solid var(--contacts-dialog-panel-border);
   background: var(--color-surface-tertiary, var(--gray-50, #F9FAFB));
   box-sizing: border-box;
 }
@@ -238,13 +245,13 @@ solid-ui-button.contacts-dialog__cancel--footer {
 }
 
 .contacts-dialog__address-submit {
-  width: fit-content !important;
-  min-width: fit-content !important;
-  max-width: fit-content !important;
-  inline-size: fit-content !important;
+  width: fit-content;
+  min-width: fit-content;
+  max-width: fit-content;
+  inline-size: fit-content;
   flex: 0 0 auto;
-  align-self: auto !important;
-  margin: 0 0 0 auto !important;
+  align-self: auto;
+  margin: 0 0 0 auto;
   white-space: nowrap;
 }
 
@@ -260,13 +267,13 @@ solid-ui-button.contacts-dialog__cancel--footer {
 }
 
 .contacts-dialog__uri-submit {
-  width: fit-content !important;
-  min-width: fit-content !important;
-  max-width: fit-content !important;
-  inline-size: fit-content !important;
+  width: fit-content;
+  min-width: fit-content;
+  max-width: fit-content;
+  inline-size: fit-content;
   flex: 0 0 auto;
-  align-self: auto !important;
-  margin: 0 0 0 auto !important;
+  align-self: auto;
+  margin: 0 0 0 auto;
   line-height: 1;
   white-space: nowrap;
 }
@@ -277,7 +284,7 @@ solid-ui-button.contacts-dialog__cancel--footer {
   min-width: 0;
 }
 
-/* Main selection layout */
+/* Selection layout */
 .contacts-dialog__details {
   width: 100%;
   min-width: 0;
@@ -353,7 +360,7 @@ solid-ui-button.contacts-dialog__list-button {
   --button-focus-box-shadow: none !important;
 }
 
-/* Inline panel region and forms */
+/* Inline panel shells */
 .contacts-dialog__inline-panel-region {
   display: none;
   min-width: 0;
@@ -381,7 +388,7 @@ solid-ui-button.contacts-dialog__list-button {
   margin-right: 0;
   overflow: visible;
   box-shadow: none;
-  border-left: 1px solid var(--color-border-lighter, var(--slate-200, #E2E8F0));
+  border-left: 1px solid var(--contacts-dialog-panel-border);
 }
 
 .contacts-dialog__address-form,
@@ -397,15 +404,15 @@ solid-ui-button.contacts-dialog__list-button {
   width: 100% !important;
   max-width: 100% !important;
   align-items: stretch;
-  border: 1px solid var(--color-border-lighter, var(--slate-200, #E2E8F0));
-  background: var(--color-background, #F8F9FB);
+  border: 1px solid var(--contacts-dialog-panel-border);
+  background: var(--contacts-dialog-panel-background);
 }
 
 .contacts-dialog__group-form {
   border: none;
-  border-left: 1px solid var(--color-border-lighter, var(--slate-200, #E2E8F0));
+  border-left: 1px solid var(--contacts-dialog-panel-border);
   border-radius: 0;
-  background: var(--color-background, #F8F9FB);
+  background: var(--contacts-dialog-panel-background);
 }
 
 .contacts-dialog__uri-entry {
@@ -413,8 +420,8 @@ solid-ui-button.contacts-dialog__list-button {
   max-width: 100% !important;
   min-width: 0;
   align-self: flex-start;
-  border: 1px solid var(--color-border-lighter, var(--slate-200, #E2E8F0));
-  background: var(--color-background, #F8F9FB);
+  border: 1px solid var(--contacts-dialog-panel-border);
+  background: var(--contacts-dialog-panel-background);
 }
 
 .contacts-dialog__uri-entry-form {
@@ -427,6 +434,7 @@ solid-ui-button.contacts-dialog__list-button {
   background: var(--color-card-bg, #FFF);
 }
 
+/* Popup chrome */
 .contacts-dialog__header {
   display: flex;
   align-items: center;
@@ -455,8 +463,8 @@ solid-ui-button.contacts-dialog__list-button {
 .contacts-dialog__uri-entry .contacts-dialog__header {
   margin-bottom: 0;
   padding: var(--spacing-md, 1.25rem) var(--spacing-lg, 1.5625rem);
-  border-bottom: var(--border-width-sm, 0.1rem) solid var(--color-border-lighter, var(--slate-200, #E2E8F0));
-  background: var(--color-surface-overlay-header, var(--slate-50, #F8FAFC));
+  border-bottom: var(--border-width-sm, 0.1rem) solid var(--contacts-dialog-panel-border);
+  background: var(--contacts-dialog-panel-header-background);
 }
 
 solid-ui-button.contacts-dialog__close {
@@ -497,6 +505,7 @@ solid-ui-button.contacts-dialog__close:focus-visible::part(button) {
 .contacts-dialog__uri-entry .contacts-dialog__popup-body {
   padding: var(--spacing-lg, 1.5625rem);
   box-sizing: border-box;
+  background: var(--contacts-dialog-panel-body-background);
 }
 
 .contacts-dialog__popup .input {
@@ -542,7 +551,7 @@ solid-ui-button.contacts-dialog__close:focus-visible::part(button) {
   gap: var(--spacing-md);
   margin-top: 1rem;
   padding-top: 1rem;
-  border-top: var(--border-width-sm, 0.1rem) solid var(--color-border-lighter, var(--slate-200, #E2E8F0));
+  border-top: var(--border-width-sm, 0.1rem) solid var(--contacts-dialog-panel-border);
   background: var(--color-surface-tertiary, var(--gray-50, #F9FAFB));
 }
 
@@ -551,7 +560,7 @@ solid-ui-button.contacts-dialog__close:focus-visible::part(button) {
 .contacts-dialog__uri-entry .contacts-dialog__popup-footer {
   margin-top: 0;
   gap: var(--spacing-sm, 0.9375rem);
-  padding: var(--spacing-md, 1.25rem) calc(var(--spacing-lg, 1.5625rem) + var(--spacing-xxs, 0.3125rem));
+  padding: var(--contacts-dialog-inner-footer-padding);
 }
 
 .contacts-dialog__address-form .contacts-dialog__popup-footer,
@@ -561,13 +570,13 @@ solid-ui-button.contacts-dialog__close:focus-visible::part(button) {
 
 .contacts-dialog__popup-footer > solid-ui-button.contacts-dialog__confirm,
 .contacts-dialog__popup-footer > solid-ui-button.contacts-dialog__cancel {
-  width: 10.8rem;
-  min-width: 10.8rem;
-  max-width: 10.8rem;
-  inline-size: 10.8rem;
+  width: var(--contacts-dialog-action-width);
+  min-width: var(--contacts-dialog-action-width);
+  max-width: var(--contacts-dialog-action-width);
+  inline-size: var(--contacts-dialog-action-width);
 }
 
-/* Validation and errors */
+/* Validation and feedback */
 .contacts-dialog__validation {
   display: none;
   width: calc(100% - 0.5rem);
@@ -635,7 +644,7 @@ solid-ui-button.contacts-dialog__error-close {
   --button-active-box-shadow: none;
 }
 
-/* Popups and confirmation dialogs */
+/* Overlays and confirmation popups */
 .contacts-dialog__popup-overlay {
   position: absolute;
   inset: 0;
@@ -685,7 +694,7 @@ solid-ui-button.contacts-dialog__error-close {
   padding: 1rem;
   transform: translate(-50%, -50%);
   border-radius: var(--border-radius-base);
-  background: var(--color-surface-overlay, var(--white, #FFF)) !important;
+  background: var(--color-surface-overlay, var(--white, #FFF));
   color: var(--color-text-overlay, var(--gray-800, #1E2939));
   box-shadow: var(--box-shadow-modal, 0 2px 10px rgba(0, 0, 0, 0.3));
   align-items: center;
@@ -705,14 +714,17 @@ solid-ui-button.contacts-dialog__error-close {
 
 .contacts-dialog__contact-exists .contacts-dialog__confirm,
 .contacts-dialog__contact-exists .contacts-dialog__cancel {
-  width: auto !important;
+  width: auto;
   min-width: 6rem;
   flex: 0 0 auto;
   margin: 0;
   white-space: nowrap;
 }
 
-/* Mobile layout mode: keep in lockstep with the 576px block below. */
+/* Responsive overrides */
+
+/* Explicit mobile layout mode uses the same values as the small-screen rules,
+   but plain CSS still needs a separate block because `data-layout` is not a media query. */
 :is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .contacts-dialog__frame {
   max-height: none;
   overflow: visible;
@@ -789,13 +801,13 @@ solid-ui-button.contacts-dialog__error-close {
 :is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .contacts-dialog__address-form .contacts-dialog__popup-footer {
   justify-content: flex-end;
   gap: var(--spacing-sm, 0.9375rem);
-  padding: var(--spacing-sm, 0.9375rem);
+  padding: var(--contacts-dialog-inner-footer-padding-mobile);
 }
 
 :is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .contacts-dialog__group-form .contacts-dialog__popup-footer {
   justify-content: center;
   gap: var(--spacing-sm, 0.9375rem);
-  padding: var(--spacing-sm, 0.9375rem);
+  padding: var(--contacts-dialog-inner-footer-padding-mobile);
 }
 
 :is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .contacts-dialog__uri-entry .contacts-dialog__popup-footer > solid-ui-button,
@@ -819,7 +831,7 @@ solid-ui-button.contacts-dialog__error-close {
   inline-size: auto !important;
   margin-left: 0 !important;
   margin-right: 0 !important;
-  align-self: auto !important;
+  align-self: auto;
   display: inline-flex;
   justify-content: center;
   align-items: center;
@@ -855,11 +867,6 @@ solid-ui-button.contacts-dialog__error-close {
   margin-inline: auto;
 }
 
-:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .contacts-dialog__address-book-list {
-  padding-bottom: var(--spacing-base, 0.5rem);
-  border-bottom: var(--border-width-sm, 0.1rem) solid var(--color-border-lighter, var(--slate-200, #E2E8F0));
-}
-
 :is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .contacts-dialog__inline-panel.contacts-dialog__popup,
 :is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .contacts-dialog__group-form,
 :is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .contacts-dialog__uri-entry {
@@ -869,7 +876,6 @@ solid-ui-button.contacts-dialog__error-close {
   align-self: center;
 }
 
-/* Small-screen overrides */
 @media (max-width: 576px) {
   .contacts-dialog__frame {
     max-height: none;
@@ -947,13 +953,13 @@ solid-ui-button.contacts-dialog__error-close {
   .contacts-dialog__address-form .contacts-dialog__popup-footer {
     justify-content: flex-end;
     gap: var(--spacing-sm, 0.9375rem);
-    padding: var(--spacing-sm, 0.9375rem);
+    padding: var(--contacts-dialog-inner-footer-padding-mobile);
   }
 
   .contacts-dialog__group-form .contacts-dialog__popup-footer {
     justify-content: center;
     gap: var(--spacing-sm, 0.9375rem);
-    padding: var(--spacing-sm, 0.9375rem);
+    padding: var(--contacts-dialog-inner-footer-padding-mobile);
   }
 
   .contacts-dialog__uri-entry .contacts-dialog__popup-footer > solid-ui-button,
@@ -977,7 +983,7 @@ solid-ui-button.contacts-dialog__error-close {
     inline-size: auto !important;
     margin-left: 0 !important;
     margin-right: 0 !important;
-    align-self: auto !important;
+    align-self: auto;
     display: inline-flex;
     justify-content: center;
     align-items: center;
