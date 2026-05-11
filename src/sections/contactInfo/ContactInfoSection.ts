@@ -8,6 +8,7 @@ import '../../styles/ContactInfoSection.css'
 import { contactInfoEmptyHeadingText, contactInfoHeadingText } from '../../texts'
 import { toggleCollapsibleSection } from '../shared/collapsibleSection'
 import { ContactInfo } from './types'
+import { splitPhoneValue } from '../shared/phoneCountries'
 import { normalizeEmailTypeForEdit, normalizePhoneTypeForEdit } from '../shared/contactTypeUtils'
 import { addIcon, editIcon, envelopeIcon, locationIcon } from '../../icons-svg/profileIcons'
 import { emailIcon, phoneIcon } from '../../icons-svg/contactIcons'
@@ -23,9 +24,13 @@ function toText(value: unknown): string {
 }
 function normalizeContactValue(rawValue: string, kind: 'email' | 'phone'): string {
   if (!rawValue) return ''
-  return kind === 'email'
-    ? rawValue.replace(/^mailto:/i, '')
-    : rawValue.replace(/^tel:/i, '')
+  if (kind === 'email') {
+    return rawValue.replace(/^mailto:/i, '')
+  }
+
+  const normalizedPhone = rawValue.replace(/^tel:/i, '')
+  const { localNumber } = splitPhoneValue(normalizedPhone)
+  return localNumber || normalizedPhone
 }
 
 function resolveContactValue(store: LiveStore, point: any, kind: 'email' | 'phone'): string {
