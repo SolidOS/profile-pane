@@ -1,3 +1,4 @@
+/* Languages list */
 .languages__list {
   width: 100%;
   max-width: 100%;
@@ -7,7 +8,7 @@
   margin: 0;
   padding: 0;
   align-items: flex-start;
-  gap: var(--spacing-sm, 0.938rem);
+  gap: var(--spacing-sm, 0.9375rem);
   align-self: stretch;
 }
 
@@ -17,8 +18,15 @@
   font-weight: var(--font-weight-md, 500);
 }
 
+/* Empty state */
 .languages__empty-icon {
   width: var(--icon-xs, 1.5rem);
   height: var(--icon-xs, 1.5rem);
   flex-shrink: 0;
+}
+
+.languages__empty-icon svg {
+  display: block;
+  width: 100%;
+  height: 100%;
 }
