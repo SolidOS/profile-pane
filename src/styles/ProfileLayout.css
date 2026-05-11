@@ -20,6 +20,10 @@
 
 .profile-grid .profile__main {
   grid-column: 1;
+  grid-row: 2;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md, 1.25rem);
   margin-bottom: 0;
   overflow-wrap: anywhere;
   align-items: flex-start;
@@ -29,33 +33,61 @@
 .profile-grid .profile__intro-sidebar {
   display: flex;
   flex-direction: column;
-  align-self: stretch;
 }
 
 .profile-grid .profile__intro-main {
   grid-column: 1;
+  grid-row: 1;
+  align-self: stretch;
 }
 
 .profile-grid .profile__intro-sidebar {
   grid-column: 2;
+  grid-row: 1;
+  align-self: stretch;
   padding-block: 0;
+  padding-inline: var(--spacing-sm, 0.938rem);
+  background: transparent;
+  border-radius: 0;
 }
 
-.profile-grid .profile__intro-main > .profile__section,
-.profile-grid .profile__intro-main > .profile__section--empty,
+.profile-grid > .profile__sidebar:not(.profile__intro-sidebar) {
+  grid-row: 2;
+}
+
 .profile-grid .profile__intro-sidebar > .profile__section,
 .profile-grid .profile__intro-sidebar > .profile__section--empty {
   flex: 1 1 auto;
   height: 100%;
 }
 
-.profile-grid .profile__sidebar {
+.profile-grid .profile__intro-sidebar > [data-profile-section='social'] {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+  box-sizing: border-box;
+}
+
+.profile-grid .profile__intro-sidebar > [data-profile-section='social'] > .profile-section-collapsible__content {
+  flex: 1 1 auto;
+}
+
+.profile-grid .profile__sidebar:not(.profile__intro-sidebar) {
   grid-column: 2;
+  display: flex;
+  flex-direction: column;
+  padding: var(--spacing-sm, 0.938rem);
   align-items: stretch;
   text-align: left;
   border-radius: var(--border-radius-base);
   background: var(--color-background, #F8F9FB);
   overflow-x: clip;
+}
+
+.profile-grid .profile__sidebar-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md, 1.25rem);
 }
 
 .profile-grid > .profile__sidebar:not(.profile__intro-sidebar) {
@@ -476,4 +508,61 @@
   .profile-grid [data-profile-section='social'] { order: 7; }
   .profile-grid [data-profile-section='contact-info'] { order: 8; }
   .profile-grid [data-profile-section='qr-code'] { order: 9; }
+}
+
+/* Explicit desktop mode should keep the two-column grid even inside a narrow container. */
+:is(.profile-pane-host, .profile-pane-root)[data-layout='desktop'] .profile-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+  column-gap: var(--spacing-xxs, 0.3125rem);
+  row-gap: var(--spacing-md, 1.25rem);
+  padding-inline: 0;
+  align-items: start;
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='desktop'] .profile-grid .profile__intro-main,
+:is(.profile-pane-host, .profile-pane-root)[data-layout='desktop'] .profile-grid .profile__intro-sidebar,
+:is(.profile-pane-host, .profile-pane-root)[data-layout='desktop'] .profile-grid .profile__main,
+:is(.profile-pane-host, .profile-pane-root)[data-layout='desktop'] .profile-grid .profile__sidebar {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-width: 0;
+  order: initial;
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='desktop'] .profile-grid .profile__intro-main {
+  grid-column: 1;
+  grid-row: 1;
+  align-self: stretch;
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='desktop'] .profile-grid .profile__intro-sidebar {
+  grid-column: 2;
+  grid-row: 1;
+  align-self: stretch;
+  padding-block: 0 !important;
+  padding-inline: var(--spacing-sm, 0.938rem) !important;
+  background: transparent;
+  border-radius: 0;
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='desktop'] .profile-grid .profile__main {
+  grid-column: 1;
+  grid-row: 2;
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='desktop'] .profile-grid .profile__sidebar:not(.profile__intro-sidebar) {
+  grid-column: 2;
+  display: flex;
+  flex-direction: column;
+  padding: var(--spacing-sm, 0.938rem) !important;
+  align-self: stretch;
+  border-radius: var(--border-radius-base);
+  background: var(--color-background, #F8F9FB);
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='desktop'] .profile-grid > .profile__sidebar:not(.profile__intro-sidebar) {
+  grid-row: 2;
+  padding-top: 0 !important;
 }

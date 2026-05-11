@@ -42,7 +42,7 @@ export const SocialCard = (
         SocialData: SocialPresentation
       >
         <nav aria-label="Social media profiles">
-          <ul class="social-card__list list-reset flex-row flex-wrap justify-start" role="list">
+          <ul class="social-card__list list-reset" role="list">
             ${accounts.map(account => renderAccount(account))}
           </ul>
         </nav>
@@ -70,9 +70,9 @@ export const SocialCard = (
 
   function renderAccount(account: Account) {
     return html`
-      <li class="social-card__item flex-row align-center" role="listitem">
+      <li class="social-card__item" role="listitem">
         <a 
-          class="social-card__link flex-row align-center"
+          class="social-card__link"
           href="${account.homepage}" 
           target="_blank" 
           rel="noopener noreferrer" 
@@ -128,20 +128,20 @@ function renderSocialSectionDefault(
         <section 
           aria-labelledby="social-heading" 
           data-profile-section="social"
-          class="profile__section border-lighter profile-section-collapsible profile-section-collapsible--inline-mobile-actions" 
+          class="profile__section profile-section-collapsible profile-section-collapsible--inline-mobile-actions" 
           role="region"
           tabindex="-1"
           data-expanded="false"
         >
           <header class="profile__section-header profile-section-collapsible__header">
             <h2 id="social-heading" tabindex="-1">${socialAccountsHeadingText}</h2>
-            <div class="profile-section-collapsible__actions flex-column align-end">
+            <div class="profile-section-collapsible__actions">
               ${isOwner ? html`
                 <solid-ui-button
                   type="button"
                   variant="secondary"
                   size="sm"
-                  class="profile__action-button profile-action-text flex-center profile-section-collapsible__edit-button"
+                  class="profile__action-button profile-action-text profile-section-collapsible__edit-button"
                   aria-label="Edit social accounts"
                   @click=${handleEdit}
                 >
@@ -153,7 +153,7 @@ function renderSocialSectionDefault(
                 type="button"
                 variant="icon"
                 size="sm"
-                class="inline-flex-row justify-center"
+                class="profile-section-collapsible__toggle-button"
                 aria-label="Toggle social accounts section"
                 aria-controls="social-panel"
                 aria-expanded="false"
@@ -178,9 +178,9 @@ function renderOwnerEmptySocialContent(
   _onSaved?: () => Promise<void> | void
 ) {
   return html`
-      <div class="profile__empty-state-content flex-column-center" role="group" aria-label="Empty social accounts section">
+      <div class="profile__empty-state-content" role="group" aria-label="Empty social accounts section">
         <div class="social__empty-icon-wrapper">
-          <span class="social__empty-icon inline-flex-row">${globeIcon}</span>
+          <span class="social__empty-icon">${globeIcon}</span>
         </div>
         <p class="profile__empty-state-message social__empty-message">
             No social media links added yet.
@@ -200,19 +200,19 @@ function renderOwnerEmptySocialSection(
     <section 
       aria-labelledby="social-heading" 
       data-profile-section="social"
-      class="profile__section--empty border-lighter flex-column-center rounded-md gap-lg profile-section-collapsible profile-section-collapsible--inline-mobile-actions" 
+      class="profile__section--empty profile-section-collapsible profile-section-collapsible--inline-mobile-actions" 
       role="region"
       tabindex="-1"
       data-expanded="false"
     >
       <header class="profile__section-header profile-section-collapsible__header">
         <h2 id="social-heading" tabindex="-1">${socialAccountsHeadingText}</h2>
-        <div class="profile-section-collapsible__actions flex-column align-end">
+        <div class="profile-section-collapsible__actions">
           <solid-ui-button
             type="button"
             variant="secondary"
             size="sm"
-            class="profile__action-button profile-action-text flex-center profile-section-collapsible__edit-button"
+            class="profile__action-button profile-action-text profile-section-collapsible__edit-button"
             aria-label="Add social accounts"
             @click=${(event: Event) => {
               return createSocialEditDialog(
@@ -235,7 +235,7 @@ function renderOwnerEmptySocialSection(
             type="button"
             variant="icon"
             size="sm"
-            class="inline-flex-row justify-center"
+            class="profile-section-collapsible__toggle-button"
             aria-label="Toggle social accounts section"
             aria-controls="social-panel"
             aria-expanded="false"

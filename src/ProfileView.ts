@@ -36,18 +36,18 @@ function renderSidebar(
   onSaved?: () => Promise<void> | void
 ) {
   return html`
-    <aside 
+    <div 
       aria-labelledby="sidebar-heading" 
-      class="profile__sidebar flex-column p-sm" 
+      class="profile__sidebar" 
     >
       <h2 id="sidebar-heading" class="sr-only">Sidebar</h2>
-      <div class="flex-column gap-md">
+      <div class="profile__sidebar-content">
         ${renderSkillsSection(store, subject, skills, viewerMode, onSaved)}
         ${renderLanguageSection(store, subject, languages, viewerMode, onSaved)}
         ${renderContactInfoSection(store, subject, contactInfo, viewerMode, onSaved)}
         ${renderQRCodeSection(subject, store)}
       </div>
-    </aside>
+    </div>
   `
 }
 
@@ -119,31 +119,30 @@ export async function ProfileView (
       data-theme=${theme}
       data-input-mode=${inputMode}
     >
-      <main
+      <div
         id="main-content"
         class="profile-grid"
         tabindex="-1"
       > 
-        <h1 id="profile-content-heading" class="sr-only">Profile for ${profileDetails.name}</h1>
-
         <div class="profile__intro-main">
           ${headingSection}
         </div>
 
-        <div class="profile__intro-sidebar profile__sidebar flex-column p-sm">
+        <div class="profile__intro-sidebar profile__sidebar">
           ${socialSection}
         </div>
 
-        <section class="profile__main flex-column gap-md">
+        ${renderSidebar(store, subject, skills, languages, contactInfo, viewerMode, onSaved)}
+
+        <section class="profile__main">
           <h2 id="profile-main-heading" class="sr-only">Main Profile Content</h2>
 
           ${bioSection}
           ${cvSection}
           ${projectSection}
           
-        </section>
-        ${renderSidebar(store, subject, skills, languages, contactInfo, viewerMode, onSaved)}
-      </main>
+        </section>       
+      </div>
     </div>
   `
 }
