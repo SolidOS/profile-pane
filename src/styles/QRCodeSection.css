@@ -38,7 +38,7 @@
     var(--qrcode-card-frame-padding-left);
   border-radius: var(--border-radius-base, 0.3125rem);
   border: var(--border-width-thin, 0.1rem) solid var(--gray-200, #E5E7EB);
-  background: var(--color-surface-tertiary-hover, var(--gray-100, #F3F4F6));
+  background: var(--color-surface-framed-content, var(--color-surface-tertiary-hover, var(--gray-100, #F3F4F6)));
 }
 
 /* QR image */
