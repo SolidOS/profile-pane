@@ -1,17 +1,31 @@
 import { render } from 'lit-html'
 import { QRCodeCard } from '../src/sections/qrcode/QRCodeCard'
+import { renderQRCodeSection } from '../src/sections/qrcode/QRCodeSection'
 import { NamedNode, graph, parse, sym } from 'rdflib'
 import { runAxe } from './helpers/runAxe'
 
 describe('QRCodeCard accessibility', () => {
   it('has no accessibility violations', async () => {
-    const subject = { uri: 'https://example.com', value: 'https://example.com' } as NamedNode
+    const subject = sym('https://example.com/profile/card#me')
+    const store = graph() as any
     const container = document.createElement('div')
     document.body.appendChild(container)
-    render(QRCodeCard(subject), container)
+    render(renderQRCodeSection(subject, store), container)
 
     const results = await runAxe(container)
     expect(results.violations.length).toBe(0)
+  })
+
+  it('renders the visible helper text below the QR code as section text, not a detached figcaption', () => {
+    const subject = sym('https://example.com/profile/card#me')
+    const store = graph() as any
+    const container = document.createElement('div')
+    document.body.appendChild(container)
+    render(renderQRCodeSection(subject, store), container)
+
+    const helperText = container.querySelector('#qr-code-caption')
+
+    expect(helperText?.tagName).toBe('P')
   })
 
   it('does not create a redundant focus target inside the QR image', () => {
@@ -53,5 +67,17 @@ describe('QRCodeCard accessibility', () => {
     expect(payload).toContain('TEL:+1-555-0100')
     expect(payload).not.toContain('#emailEntry')
     expect(payload).not.toContain('#phoneEntry')
+  })
+
+  it('gives the standalone QR card its own accessible name', () => {
+    const subject = { uri: 'https://example.com', value: 'https://example.com' } as NamedNode
+    const container = document.createElement('div')
+    document.body.appendChild(container)
+    render(QRCodeCard(subject), container)
+
+    const qrCard = container.querySelector('[data-testid="qrcode-card"]')
+
+    expect(qrCard?.getAttribute('aria-labelledby')).toBe('qr-code-title')
+    expect(container.querySelector('#qr-code-title')?.textContent).toContain('QR code for')
   })
 })

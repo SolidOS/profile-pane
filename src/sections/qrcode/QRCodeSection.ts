@@ -11,12 +11,12 @@ export function renderQRCodeSection(subject: NamedNode, store: LiveStore) {
         <div class="qrcode-card__frame">
           ${QRCodeCard(subject, store)}
         </div>
-        <figcaption 
+        <p
           id="qr-code-caption" 
           class="qrcode-card__caption"
         >
           ${scanQrToConnectText}
-        </figcaption>
+        </p>
       </section>
   `
 }
