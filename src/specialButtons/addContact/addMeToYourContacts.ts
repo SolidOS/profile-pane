@@ -51,15 +51,8 @@ const addMeToYourContactsDiv = async (
   buttonContainer = context.dom.createElement('section') as HTMLDivElement
   buttonContainer.setAttribute('id', 'add-to-contacts-button-container')
   buttonContainer.setAttribute('class', 'profile-contacts-button__section text-truncate text-center section-centered')
-  buttonContainer.setAttribute('aria-labelledby', 'add-me-to-your-contacts-button-section')
+  buttonContainer.setAttribute('aria-label', 'Add me to your contacts actions')
   buttonContainer.setAttribute('data-testid', 'button')
-
-  // Add a visually hidden heading for accessibility
-  const heading = context.dom.createElement('h3')
-  heading.setAttribute('id', 'add-me-to-your-contacts-button-section')
-  heading.setAttribute('class', 'sr-only')
-  heading.textContent = 'Add me to your contacts actions'
-  buttonContainer.appendChild(heading)
 
   const button = await createAddMeToYourContactsButton(subject, context)
   button.classList.add('profile__action-button', 'profile__btn-contacts', 'flex-center')

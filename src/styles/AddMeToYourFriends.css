@@ -9,7 +9,7 @@
   min-width: 0;
   --button-hover-background: var(--color-primary, #7C4DFF);
   --button-hover-border: var(--color-primary, #7C4DFF);
-  --button-hover-text: var(--white, #FFF);
+  --button-hover-text: var(--color-text-on-action, var(--white, #FFF));
 }
 
 .profile__btn-friends-label {
@@ -22,7 +22,7 @@
 
 .profile-friends-button__section solid-ui-button.profile__btn-friends:hover .profile__btn-friends-label,
 .profile-friends-button__section solid-ui-button.profile__btn-friends:focus-visible .profile__btn-friends-label {
-  color: var(--white, #FFF);
+  color: var(--color-text-on-action, var(--white, #FFF));
 }
 
 .profile__btn-friends-label--short {

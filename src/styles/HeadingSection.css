@@ -469,7 +469,7 @@ transform: translateX(-4px);
   --button-font-size-sm: var(--font-size-xxs, 0.75rem);
   --button-hover-background: var(--color-primary, #7C4DFF);
   --button-hover-border: var(--color-primary, #7C4DFF);
-  --button-hover-text: var(--white, #FFF);
+  --button-hover-text: var(--color-text-on-action, var(--white, #FFF));
 }
 
 :is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile__heading-actions .profile__btn-friends-label,
@@ -728,7 +728,7 @@ transform: translateX(-4px);
     --button-font-size-sm: var(--font-size-xxs, 0.75rem);
     --button-hover-background: var(--color-primary, #7C4DFF);
     --button-hover-border: var(--color-primary, #7C4DFF);
-    --button-hover-text: var(--white, #FFF);
+    --button-hover-text: var(--color-text-on-action, var(--white, #FFF));
   }
 
   .profile__heading-actions .profile__btn-friends-label,

@@ -14,7 +14,7 @@
   display: inline;
   padding: var(--spacing-base, 0.5rem) var(--spacing-2xs, 0.625rem);
   border-radius: var(--border-radius-base, 0.3125rem);
-  background: var(--gray-100, #F3F4F6);
+  background: var(--color-surface-tertiary-hover, var(--gray-100, #F3F4F6));
 }
 
 .skills__item-label {

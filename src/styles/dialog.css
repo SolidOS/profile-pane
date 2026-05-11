@@ -37,7 +37,7 @@
   width: fit-content;
   max-height: 85vh;
   overflow: hidden;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+  box-shadow: var(--box-shadow-modal, 0 2px 10px rgba(0, 0, 0, 0.3));
 }
 
 #profile-modal .modal .modal-header {
@@ -47,8 +47,8 @@
   padding: var(--spacing-md, 1.25rem) var(--spacing-lg, 1.5625rem);
   box-sizing: border-box;
   border-radius: var(--border-radius-base, 0.3125rem) var(--border-radius-base, 0.3125rem) 0 0;
-  border-bottom: var(--border-width-sm, 0.1rem) solid var(--slate-200, #E2E8F0);
-  background: var(--slate-50, #F8FAFC);
+  border-bottom: var(--border-width-sm, 0.1rem) solid var(--color-border-lighter, var(--slate-200, #E2E8F0));
+  background: var(--color-surface-overlay-header, var(--slate-50, #F8FAFC));
 }
 
 #profile-modal .modal #modal-desc {
@@ -56,12 +56,15 @@
   overflow: auto;
   width: 100%;
   min-width: 0;
-  padding: var(--spacing-lg, 1.5625rem);
   box-sizing: border-box;
 }
 
 #profile-modal .modal #modal-desc:has(> .profile__edit-form--projects) {
   padding: var(--spacing-2xs, 0.625rem) var(--spacing-lg, 1.5625rem);
+}
+
+#profile-modal .modal #modal-desc:has(> #contacts-addressbook-picker-dialog) {
+  padding-top: 0;
 }
 
 #profile-modal #modal-desc > .profile__edit-form--projects {
@@ -76,6 +79,7 @@
 
 #profile-modal .modal #modal-title {
   margin: 0;
+  color: var(--color-text-subheading, var(--gray-900, #101828));
 }
 
 #profile-modal .modal #modal-header-action > solid-ui-button[aria-label="Close dialog"] {
@@ -106,7 +110,7 @@
 #profile-modal .modal #modal-header-action > solid-ui-button[aria-label="Close dialog"]:focus-visible::part(button) {
   outline: var(--focus-indicator-width) solid var(--color-primary);
   outline-offset: var(--outline-offset-sm);
-  box-shadow: 0 0 0 var(--focus-ring-width) var(--color-background), 0 0 0 calc(var(--focus-ring-width) + var(--focus-indicator-width)) var(--color-primary-alpha);
+  box-shadow: var(--box-shadow-focus-accessible, 0 0 0 var(--focus-ring-width) var(--color-background), 0 0 0 calc(var(--focus-ring-width) + var(--focus-indicator-width)) var(--color-primary-alpha));
 }
 
 #profile-modal .modal:has(#modal-desc > .profile__edit-form--projects) #modal-header-action,
@@ -135,12 +139,12 @@
 #profile-modal #modal-buttons {
   width: 100%;
   min-width: 0;
-  padding: var(--spacing-md, 1.25rem) calc(var(--spacing-lg, 1.5625rem) + var(--spacing-xxs, 0.3125rem));
+  padding: var(--spacing-md, 1.25rem) calc(var(--spacing-lg, 1.5625rem) + var(--spacing-xxs, 0.3125rem)) var(--spacing-sm, 0.9375rem);
   gap: var(--spacing-sm, 0.938rem);
   align-self: stretch;
   box-sizing: border-box;
-  border-top: var(--border-width-sm, 0.1rem) solid var(--slate-200, #E2E8F0);
-  background: var(--gray-50, #F9FAFB);
+  border-top: var(--border-width-sm, 0.1rem) solid var(--color-border-lighter, var(--slate-200, #E2E8F0));
+  background: var(--color-surface-tertiary, var(--gray-50, #F9FAFB));
 }
 
 #profile-modal #modal-buttons[hidden] {
@@ -162,7 +166,7 @@
   --button-background: var(--dialog-cancel-button-background, transparent);
   --button-hover-background: var(--dialog-cancel-button-hover-background, var(--blue-900, #083575));
   --button-hover-border: var(--dialog-cancel-button-hover-border, var(--blue-900, #083575));
-  --button-hover-text: var(--dialog-cancel-button-hover-text, var(--white, #FFF));
+  --button-hover-text: var(--dialog-cancel-button-hover-text, var(--color-text-on-action, var(--white, #FFF)));
   --button-font-size-md: var(--font-size-md, 1rem);
 }
 
@@ -171,7 +175,7 @@
 #profile-modal #modal-buttons solid-ui-button[data-cancel='true']:focus-within::part(button) {
   background: var(--dialog-cancel-button-hover-background, var(--blue-900, #083575));
   border-color: var(--dialog-cancel-button-hover-border, var(--blue-900, #083575));
-  color: var(--dialog-cancel-button-hover-text, var(--white, #FFF));
+  color: var(--dialog-cancel-button-hover-text, var(--color-text-on-action, var(--white, #FFF)));
 }
 
 #profile-modal .modal__error-section {
@@ -260,7 +264,7 @@
   }
 
   #profile-modal .modal #modal-desc {
-    padding: var(--spacing-sm, 0.9375rem) var(--spacing-sm, 0.9375rem) var(--spacing-lg, 1.5625rem) var(--spacing-sm, 0.9375rem);
+    padding: 0;
   }
 
   #profile-modal .modal #modal-desc:has(> .profile__edit-form--projects) {

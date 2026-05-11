@@ -80,6 +80,9 @@ export const createAddressBookContactCreationDialog = (context: DataBrowserConte
   dialogDescription.textContent = 'Choose an address book and group for this contact, or create them first.'
   addressBookContactCreationDialog.setAttribute('aria-describedby', 'contacts-dialog-description')
 
+  const mainContent = context.dom.createElement('div')
+  mainContent.classList.add('contacts-dialog__main')
+
   const addressBookContactCreationDiv = context.dom.createElement('section')
   addressBookContactCreationDiv.setAttribute('aria-label', 'Contact creation options')
   addressBookContactCreationDiv.classList.add('contacts-dialog__body', 'contacts-dialog__creation', 'flex-column')
@@ -101,9 +104,11 @@ export const createAddressBookContactCreationDialog = (context: DataBrowserConte
   footer.appendChild(cancelButton)
   footer.appendChild(addressBookContactSubmitButton)
 
-  addressBookContactCreationDialog.appendChild(dialogDescription)
-  addressBookContactCreationDialog.appendChild(addressBookContactCreationDiv)
-  addressBookContactCreationDialog.appendChild(errorDisplaySection)
+  mainContent.appendChild(dialogDescription)
+  mainContent.appendChild(addressBookContactCreationDiv)
+  mainContent.appendChild(errorDisplaySection)
+
+  addressBookContactCreationDialog.appendChild(mainContent)
   addressBookContactCreationDialog.appendChild(footer)
   addressBookContactCreationDialog.appendChild(statusRegion)
 
@@ -998,7 +1003,7 @@ const createAddGroupButton = (
     label: 'Add',
     variant: 'primary',
     size: 'md',
-    classes: ['contacts-dialog__action-button', 'contacts-dialog__action-button--primary']
+    classes: ['contacts-dialog__action-button', 'contacts-dialog__action-button--primary', 'contacts-dialog__group-submit']
   })
   button.addEventListener('click', setButtonOnClickHandler)
   return button

@@ -3,7 +3,7 @@
 }
 
 .profile__edit-form--contact-info .profile-edit-dialog__section + .profile-edit-dialog__section {
-  border-top: var(--border-width-sm, 0.1rem) solid var(--slate-200, #E2E8F0);
+  border-top: var(--border-width-sm, 0.1rem) solid var(--color-border-lighter, var(--slate-200, #E2E8F0));
   padding-top: var(--spacing-xs, 0.75rem);
 }
 

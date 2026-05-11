@@ -19,11 +19,11 @@ solid-ui-button.project-card__follow-button {
   --button-font-weight: var(--font-weight-md, 500);
   --button-padding-sm: var(--spacing-base, 0.5rem) var(--spacing-2xs, 0.625rem);
   --button-border-radius: var(--border-radius-md, 0.5rem);
-  --button-background: var(--white, #FFF);
+  --button-background: var(--color-card-bg, var(--white, #FFF));
   --button-text: var(--color-primary, #7C4DFF);
   --button-border: var(--color-primary, #7C4DFF);
   --button-hover-background: var(--color-primary, #7C4DFF);
-  --button-hover-text: var(--white, #FFF);
+  --button-hover-text: var(--color-text-on-action, var(--white, #FFF));
   --button-hover-border: var(--color-primary, #7C4DFF);
 }
 
@@ -131,7 +131,7 @@ solid-ui-button.project-card__follow-button:focus-within .project-card__follow-l
 
 .project-card__title {
   overflow: hidden;
-  color: var(--gray-900, #101828);
+  color: var(--color-text-subheading, var(--gray-900, #101828));
   text-overflow: ellipsis;
   white-space: nowrap;
   font-size: var(--font-size-lg, 1.125rem);
@@ -166,7 +166,7 @@ solid-ui-button.project-card__follow-button:focus-within .project-card__follow-l
 }
 
 .project-card__category--unknown {
-  color: var(--slate-700, #314158);
+  color: var(--color-text-control, var(--slate-700, #314158));
 }
 
 .project-card__meta {

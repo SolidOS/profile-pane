@@ -91,7 +91,7 @@
   --button-text: var(--color-text-primary, #314158);
   --button-border: var(--color-border-darker, #4A5565);
   --button-hover-background: var(--color-primary, #7C4DFF);
-  --button-hover-text: var(--white, #fff);
+  --button-hover-text: var(--color-text-on-action, var(--white, #fff));
   --button-hover-border: var(--color-primary, #7C4DFF);
 }
 
@@ -224,8 +224,8 @@
   gap: var(--spacing-2xs, 0.625rem);
   padding: var(--spacing-sm, 0.938rem); 
   border-radius: var(--border-radius-base, 0.3125rem);
-  border: var(--border-width-thin, 0.1rem) solid var(--gray-100, #F3F4F6);
-  background: var(--white, #FFF);
+  border: var(--border-width-thin, 0.1rem) solid var(--color-border-subtle, var(--gray-100, #F3F4F6));
+  background: var(--color-card-bg, var(--white, #FFF));
 }
 
 :is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__sidebar {
@@ -301,8 +301,8 @@
     gap: var(--spacing-2xs, 0.625rem);
     padding: var(--spacing-sm, 0.938rem); 
     border-radius: var(--border-radius-base, 0.3125rem);
-    border: var(--border-width-thin, 0.1rem) solid var(--gray-100, #F3F4F6);
-    background: var(--white, #FFF);
+    border: var(--border-width-thin, 0.1rem) solid var(--color-border-subtle, var(--gray-100, #F3F4F6));
+    background: var(--color-card-bg, var(--white, #FFF));
   }
 
   .profile-grid .profile__sidebar {
@@ -409,8 +409,8 @@
     gap: var(--spacing-2xs, 0.625rem);
     padding: var(--spacing-sm, 0.938rem);
     border-radius: var(--border-radius-base, 0.3125rem);
-    border: var(--border-width-thin, 0.1rem) solid var(--gray-100, #F3F4F6);
-    background: var(--white, #FFF);
+    border: var(--border-width-thin, 0.1rem) solid var(--color-border-subtle, var(--gray-100, #F3F4F6));
+    background: var(--color-card-bg, var(--white, #FFF));
   }
 
   .profile-grid .profile__section--empty.flex-column-center,

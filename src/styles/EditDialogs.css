@@ -84,7 +84,7 @@
 
 .profile-edit-dialog__row--resume-entry-header {
   align-items: center;
-  border-bottom: 1px solid var(--gray-400, #99A1AF);
+  border-bottom: 1px solid var(--color-border-button-hover, var(--gray-400, #99A1AF));
 }
 
 .profile-edit-dialog__row--resume-entry-header > .profile-edit-dialog__entry-heading {
@@ -151,11 +151,11 @@ solid-ui-button.profile-edit-dialog__image-camera-button {
   --button-height-md: 1.25rem;
   --button-padding-md: 0.1875rem;
   --button-icon-size-md: 0.875rem;
-  --button-background: var(--white, #FFF);
+  --button-background: var(--color-card-bg, var(--white, #FFF));
   --button-border-width: 0;
   --button-border-radius: 0.2083rem;
   --button-box-shadow: 0 0 0.2778rem 0 rgba(0, 0, 0, 0.25);
-  --button-hover-background: var(--white, #FFF);
+  --button-hover-background: var(--color-card-bg, var(--white, #FFF));
   --button-hover-border: transparent;
   --button-hover-text: currentColor;
   --button-hover-box-shadow: 0 0 0.2778rem 0 rgba(0, 0, 0, 0.25);
@@ -206,13 +206,13 @@ solid-ui-button.profile-edit-dialog__image-camera-button {
   --photo-capture-gap: var(--spacing-2xs, 0.625rem);
   --photo-capture-frame-max-width: 260px;
   --photo-capture-surface: transparent;
-  --photo-capture-text: var(--gray-900, #101828);
+  --photo-capture-text: var(--color-text-subheading, var(--gray-900, #101828));
   --photo-capture-muted-text: var(--color-text-secondary, #4A5565);
-  --photo-capture-border: var(--gray-300, #D1D5DC);
-  --photo-capture-hover: var(--gray-100, #F3F4F6);
+  --photo-capture-border: var(--color-border-button, var(--gray-300, #D1D5DC));
+  --photo-capture-hover: var(--color-surface-tertiary-hover, var(--gray-100, #F3F4F6));
   --photo-capture-shadow: none;
-  --photo-capture-trigger-background: var(--white, #FFF);
-  --photo-capture-trigger-text: var(--gray-900, #101828);
+  --photo-capture-trigger-background: var(--color-card-bg, var(--white, #FFF));
+  --photo-capture-trigger-text: var(--color-text-subheading, var(--gray-900, #101828));
 }
 
 .profile-edit-dialog__photo-capture::part(panel) {
@@ -239,14 +239,14 @@ solid-ui-button.profile-edit-dialog__image-camera-button {
   padding: 0;
   border: 0;
   background: transparent;
-  color: var(--gray-600, #4A5565);
+  color: var(--color-text-secondary, #4A5565);
   font-size: 1.25rem;
 }
 
 .profile-edit-dialog__photo-capture::part(close-button):hover,
 .profile-edit-dialog__photo-capture::part(close-button):focus-visible {
   background: transparent;
-  color: var(--gray-900, #101828);
+  color: var(--color-text-subheading, var(--gray-900, #101828));
 }
 
 .profile-edit-dialog__photo-capture::part(actions) {
@@ -260,9 +260,9 @@ solid-ui-button.profile-edit-dialog__image-camera-button {
   min-height: auto;
   padding: 0.4125rem 0.6922rem 0.4375rem 0.8rem;
   border-radius: var(--border-radius-base, 0.3125rem);
-  border: 0.8px solid var(--gray-300, #D1D5DC);
-  background: var(--white, #FFF);
-  color: var(--gray-900, #101828);
+  border: 0.8px solid var(--color-border-button, var(--gray-300, #D1D5DC));
+  background: var(--color-card-bg, var(--white, #FFF));
+  color: var(--color-text-subheading, var(--gray-900, #101828));
   font-size: var(--font-size-xxs, 0.75rem);
   font-weight: var(--font-weight-xbold, 700);
   line-height: var(--line-height-base, 1.5);
@@ -274,8 +274,8 @@ solid-ui-button.profile-edit-dialog__image-camera-button {
 .profile-edit-dialog__photo-capture::part(retake-button):focus-visible,
 .profile-edit-dialog__photo-capture::part(confirm-button):hover,
 .profile-edit-dialog__photo-capture::part(confirm-button):focus-visible {
-  background: var(--gray-100, #F3F4F6);
-  border-color: var(--gray-400, #99A1AF);
+  background: var(--color-surface-tertiary-hover, var(--gray-100, #F3F4F6));
+  border-color: var(--color-border-button-hover, var(--gray-400, #99A1AF));
 }
 
 .profile-edit-dialog__image-upload-button::part(button),
@@ -409,7 +409,7 @@ solid-ui-button.profile-edit-dialog__image-camera-button {
 .profile-edit-dialog--heading .profile-edit-dialog__row--heading-photo {
   padding-bottom: var(--spacing-md, 1.25rem);
   margin-bottom: var(--spacing-md, 1.25rem);
-  border-bottom: 1px solid var(--slate-200, #E2E8F0);
+  border-bottom: 1px solid var(--color-border-lighter, var(--slate-200, #E2E8F0));
 }
 
 .profile-edit-dialog--heading .profile-edit {
@@ -571,9 +571,9 @@ solid-ui-button.profile-edit-dialog__delete-button:focus-within {
 }
 
 .profile-edit-dialog__image-upload-button::part(button) {
-  color: var(--gray-900, #101828);
-  border: 0.8px solid var(--gray-300, #D1D5DC);
-  background: var(--white, #FFF);
+  color: var(--color-text-subheading, var(--gray-900, #101828));
+  border: 0.8px solid var(--color-border-button, var(--gray-300, #D1D5DC));
+  background: var(--color-card-bg, var(--white, #FFF));
   padding: 0.4125rem 0.6922rem 0.4375rem 0.8rem;
 }
 
@@ -581,15 +581,15 @@ solid-ui-button.profile-edit-dialog__delete-button:focus-within {
   color: var(--red-600, #E7000B);
   padding: 0.4125rem 0.8148rem 0.4375rem 0.8625rem;
   border: 0.8px solid rgba(0, 0, 0, 0.00);
-  background: var(--gray-100, #F3F4F6);
+  background: var(--color-surface-tertiary-hover, var(--gray-100, #F3F4F6));
 }
 
 #profile-modal .modal .profile-edit-dialog__image-upload-button:hover::part(button),
 #profile-modal .modal .profile-edit-dialog__image-upload-button:focus-within::part(button),
 #profile-modal .modal .profile-edit-dialog__image-remove-button:hover::part(button),
 #profile-modal .modal .profile-edit-dialog__image-remove-button:focus-within::part(button) {
-  background: var(--gray-100, #F3F4F6) !important;
-  border-color: var(--gray-400, #99A1AF) !important;
+  background: var(--color-surface-tertiary-hover, var(--gray-100, #F3F4F6)) !important;
+  border-color: var(--color-border-button-hover, var(--gray-400, #99A1AF)) !important;
 }
 
 /* Placeholder class for project paste action styling. */
@@ -606,12 +606,12 @@ solid-ui-button.profile-edit-dialog__delete-button:focus-within {
   --button-padding-md: 0.25rem 0.375rem;
   --button-font-size-md: var(--font-size-xxs, 0.75rem);
   --button-font-weight: var(--font-weight-normal, 400);
-  --button-background: var(--gray-100, #F3F4F6);
+  --button-background: var(--color-surface-tertiary-hover, var(--gray-100, #F3F4F6));
   --button-border-width: 0;
   --button-border-radius: var(--border-radius-base, 0.3125rem);
   --button-text: var(--gray-500, #6A7282);
   --button-box-shadow: none;
-  --button-hover-background: var(--gray-100, #F3F4F6);
+  --button-hover-background: var(--color-surface-tertiary-hover, var(--gray-100, #F3F4F6));
   --button-hover-text: var(--gray-700, #364153);
   --button-hover-box-shadow: none;
   --button-active-box-shadow: none;
@@ -650,7 +650,7 @@ solid-ui-button.profile-edit-dialog__drag-handle {
 }
 
 .profile-edit-dialog__row--drop-target {
-  outline: 1px dashed var(--gray-400, #99A1AF);
+  outline: 1px dashed var(--color-border-button-hover, var(--gray-400, #99A1AF));
   outline-offset: 2px;
 }
 
@@ -664,9 +664,9 @@ solid-ui-button.profile-edit-dialog__drag-handle {
   min-height: var(--min-touch-target, 44px);
   height: var(--min-touch-target, 44px);
   border-radius: var(--border-radius-base, 0.3125rem);
-  border: 1px solid var(--gray-400, #99A1AF);
-  background: var(--white, #FFF);
-  color: var(--gray-900, #101828);
+  border: 1px solid var(--color-border-button-hover, var(--gray-400, #99A1AF));
+  background: var(--color-card-bg, var(--white, #FFF));
+  color: var(--color-text-subheading, var(--gray-900, #101828));
   font-size: var(--font-size-sm, 0.875rem);
   font-weight: var(--font-weight-medium, 500);
   padding: var(--spacing-2xs, 0.625rem);
@@ -683,13 +683,13 @@ solid-ui-button.profile-edit-dialog__drag-handle {
 }
 
 .profile-edit-dialog__textarea {
-  color: var(--gray-900, #101828);
+  color: var(--color-text-subheading, var(--gray-900, #101828));
   font-size: var(--font-size-sm, 0.875rem);
   font-weight: var(--font-weight-md, 500);
   line-height: var(--line-height-loose, 1.6); /* 22.4px */
   border-radius: var(--border-radius-base, 0.3125rem);
-  border: var(--border-width-sm, 0.1rem) solid var(--gray-400, #99A1AF);
-  background: var(--white, #FFF);
+  border: var(--border-width-sm, 0.1rem) solid var(--color-border-button-hover, var(--gray-400, #99A1AF));
+  background: var(--color-card-bg, var(--white, #FFF));
 }
 
 .profile-edit-dialog__field textarea,
