@@ -5,11 +5,14 @@
   --qrcode-card-caption-padding-bottom: 0.25rem;
   --qrcode-card-frame-padding-top: 1rem;
   --qrcode-card-frame-padding-right: 1rem;
-  --qrcode-card-frame-padding-bottom: var(--spacing-md, 1.25rem);
-  --qrcode-card-frame-padding-left: 1.063rem;
+  --qrcode-card-frame-padding-bottom: 1.0625rem;
+  --qrcode-card-frame-padding-left: 1.0625rem;
+  display: flex;
+  flex-direction: column;
   align-items: var(--qrcode-section-align-items) !important;
   gap: var(--spacing-md, 1.25rem);
   align-self: stretch;
+  border: var(--border-width-thin, 0.1rem) solid var(--color-border-lighter, #E2E8F0);
 }
 
 /* Caption */
@@ -24,6 +27,9 @@
 
 /* Card and frame */
 .qrcode-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   width: var(--qrcode-card-width);
   margin: 0 auto;
   height: auto;
@@ -31,6 +37,11 @@
 }
 
 .qrcode-card__frame {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: fit-content;
+  align-self: center;
   padding:
     var(--qrcode-card-frame-padding-top)
     var(--qrcode-card-frame-padding-right)
