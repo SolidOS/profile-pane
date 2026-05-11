@@ -28,7 +28,7 @@ export const renderHeadingSection = async (
   
   const phoneValue = toText(primaryPhone?.valueNode).replace(/^tel:/i, '')
   const emailValue = toText(primaryEmail?.valueNode).replace(/^mailto:/i, '')
-  const dateOfBirthDisplay = toDisplayDateDMY(toText(dateOfBirth), 'DD-MM-YYYY')
+  const dateOfBirthDisplay = toDisplayDateDMY(toText(dateOfBirth), '')
  
   return html`
       <section class="profile__section border-lighter" data-profile-section="heading" aria-labelledby="profile-name">
