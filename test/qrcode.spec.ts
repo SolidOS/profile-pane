@@ -172,7 +172,7 @@ describe('profile pane qrcode integration', () => {
             const qrCard = result.querySelector('[data-testid="qrcode-card"]') as HTMLElement | null
             expect(qrCard).not.toBeNull()
             expect(qrCard?.getAttribute('data-value')).toContain('BEGIN:VCARD')
-            const qrImageContainer = qrCard?.querySelector('div[aria-hidden="true"]') as HTMLElement | null
+            const qrImageContainer = qrCard?.querySelector('.qrcode-card__image') as HTMLElement | null
             expect(qrImageContainer?.innerHTML).toContain('<svg')
         })
     })
