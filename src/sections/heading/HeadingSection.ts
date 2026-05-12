@@ -31,13 +31,13 @@ export const renderHeadingSection = async (
   const dateOfBirthDisplay = toDisplayDateDMY(toText(dateOfBirth), '')
  
   return html`
-      <section class="profile__section border-lighter" data-profile-section="heading" aria-labelledby="profile-name">
+      <section class="profile__section" data-profile-section="heading" aria-labelledby="profile-name">
         <div class="profile__heading-top">
           <div class="profile__avatar">
             ${Image(imageSrc, name)}
           </div>
-          <div class="profile__info flex-column">
-            <header class="profile__header-bar flex-column mb-md">
+          <div class="profile__info">
+            <header class="profile__header-bar mb-md">
               <div class="profile__identity" role="group" aria-label="Name and pronouns">
                 <h1 id="profile-name" class="profile__name">${name}</h1>
                 <span class="profile__pronouns">${pronouns ? `(${pronouns})` : ''}</span>
@@ -58,7 +58,7 @@ export const renderHeadingSection = async (
                       type="button"
                       variant="secondary"
                       size="sm"
-                      class="profile__action-button profile__heading-action-button profile-action-text flex-center profile-section-collapsible__edit-button"
+                      class="profile__action-button profile__heading-action-button profile-action-text profile-section-collapsible__edit-button"
                       aria-label="Add or edit heading information"
                       @click=${(event: Event) => {
                         return createHeadingEditDialog(
@@ -116,7 +116,7 @@ export const Image = (src, alt) =>
         />
       `
     : html`
-        <div class="profile__hero-alt flex-center" role="img" aria-label="${alt}">
+        <div class="profile__hero-alt" role="img" aria-label="${alt}">
           <span class="profile__hero-icon inline-flex-row justify-center">${personInCircleIcon}</span>
         </div>
       `

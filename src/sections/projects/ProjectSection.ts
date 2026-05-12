@@ -40,7 +40,7 @@ function renderProjectImage(src: string | undefined, altText: string) {
         />
       `
     : html`
-        <div class="project-card__thumb-fallback flex-center" role="img" aria-label=${altText}>
+        <div class="project-card__thumb-fallback" role="img" aria-label=${altText}>
           ${altText}
         </div>
       `
@@ -96,7 +96,7 @@ function renderProject(
     : 'Uncategorized'
 
   return html`
-    <li class="project-card flex-column" role="listitem">
+    <li class="project-card" role="listitem">
       <a
         class="project-card__link"
         href=${project.url}
@@ -105,7 +105,7 @@ function renderProject(
         aria-label=${project.title ? `Open ${project.title}` : 'Open project link'}
       >
         <div class="project-card__wrapper">
-          <div class="project-card__thumb flex-center">
+          <div class="project-card__thumb">
             ${renderProjectImage(project.imageUrl, project.title || 'Project preview')}
           </div>
           <div class="project-card__content">
@@ -122,7 +122,7 @@ function renderProject(
             variant="secondary"
             size="sm"
             label="Following"
-            class="project-card__follow-button flex-center gap-xxs"
+            class="project-card__follow-button gap-xxs"
             aria-label="Unfollow project"
             @click=${handleUnfollow}
           >
@@ -145,7 +145,7 @@ function renderOwnerEmptyProjectsContent(
   const projectDetails: ProjectDetails[] = projectData
 
   return html`
-    <div class="profile__empty-state-content flex-column-center" role="group" aria-label="Empty projects section">
+    <div class="profile__empty-state-content" role="group" aria-label="Empty projects section">
       <h2 id="projects-heading" tabindex="-1">${projectsHeadingText}</h2>
       <p class="profile__empty-state-message">
         You haven't added any projects yet. Consider adding a project to boost your profile.
@@ -185,19 +185,19 @@ function renderOwnerEmptyProjectSection(
     <section 
       aria-labelledby="projects-heading" 
       data-profile-section="projects"
-      class="profile__section--empty border-lighter flex-column-center rounded-md gap-lg profile-section-collapsible profile-section-collapsible--inline-mobile-actions profile-section-collapsible--empty-mobile-no-edit" 
+      class="profile__section--empty rounded-md gap-lg profile-section-collapsible profile-section-collapsible--inline-mobile-actions profile-section-collapsible--empty-mobile-no-edit" 
       role="region"
       tabindex="-1"
       data-expanded="false"
     >
       <header class="profile__section-header profile-section-collapsible__header">
         <h2 id="projects-heading" tabindex="-1">${projectsHeadingText}</h2>
-        <div class="profile-section-collapsible__actions flex-column align-end">
+        <div class="profile-section-collapsible__actions">
           <solid-ui-button
             type="button"
             variant="secondary"
             size="sm"
-            class="profile__action-button profile-action-text flex-center profile-section-collapsible__edit-button"
+            class="profile__action-button profile-action-text profile-section-collapsible__edit-button"
             aria-label="Add project details"
             @click=${(event: Event) => {
               return createProjectsEditDialog(
@@ -261,7 +261,7 @@ function renderProjectSectionDefault(
 
   return html`
       <section
-        class="profile__section border-lighter profile-section-collapsible profile-section-collapsible--inline-mobile-actions"
+        class="profile__section profile-section-collapsible profile-section-collapsible--inline-mobile-actions"
         data-profile-section="projects"
         aria-labelledby="projects-heading"
         role="region"
@@ -271,13 +271,13 @@ function renderProjectSectionDefault(
       >
         <header class="profile__section-header profile-section-collapsible__header">
           <h2 id="projects-heading">${projectsHeadingText}</h2>
-          <div class="profile-section-collapsible__actions flex-column align-end">
+          <div class="profile-section-collapsible__actions">
             ${isOwner ? html`
               <solid-ui-button
                 type="button"
                 variant="secondary"
                 size="sm"
-                class="profile__action-button profile-action-text flex-center profile-section-collapsible__edit-button"
+                class="profile__action-button profile-action-text profile-section-collapsible__edit-button"
                 aria-label="Add or edit projects"
                 @click=${(event: Event) => {
                   return createProjectsEditDialog(event, store, subject, projects, viewerMode, onSaved)

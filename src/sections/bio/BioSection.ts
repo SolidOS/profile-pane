@@ -110,7 +110,7 @@ function renderBioSectionDefault(
     <section 
       aria-labelledby="bio-heading" 
       data-profile-section="bio"
-      class="profile__section border-lighter" 
+      class="profile__section" 
       role="region"
       tabindex="-1"
     >
@@ -129,7 +129,7 @@ function renderOwnerEmptyBioContent(
   const bioDetails: BioDetails = bioData
 
   return html`
-    <div class="profile__empty-state-content flex-column-center" role="group" aria-label="Empty bio section">
+    <div class="profile__empty-state-content" role="group" aria-label="Empty bio section">
       <h2 id="bio-heading" tabindex="-1">${bioHeadingText}</h2>
       <p class="profile__empty-state-message">
         You haven't added any professional experience yet. Adding work history can boost your Bio.
@@ -169,7 +169,7 @@ function renderOwnerEmptyBioSection(
     <section 
       aria-labelledby="bio-heading" 
       data-profile-section="bio"
-      class="profile__section--empty border-lighter flex-column-center rounded-md gap-lg" 
+      class="profile__section--empty rounded-md gap-lg" 
       role="region"
       tabindex="-1"
     >

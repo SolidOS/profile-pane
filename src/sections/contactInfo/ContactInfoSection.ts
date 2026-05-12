@@ -62,10 +62,10 @@ function renderPhone(phone, store: LiveStore) {
   const phoneType = normalizePhoneTypeForEdit(phone.type)
 
   return html`<li class="contact-info__item flex gap-2xs" role="listitem">
-        <div class="contact-info__icon-wrapper flex-center">
+        <div class="contact-info__icon-wrapper">
           <span class="contact-info__icon" aria-hidden="true">${phoneIcon}</span>
         </div>
-        <div class="flex-column">
+        <div class="contact-info__item-body">
           <span class="contact-info__contact-point-value">${phoneValue}</span>
           ${phoneType ? html`<span class="contact-info__contact-point-type"> ${phoneType}</span>` : html``}
         </div>
@@ -83,10 +83,10 @@ function renderEmail(email, store: LiveStore) {
   const emailType = normalizeEmailTypeForEdit(email.type)
 
   return html`<li class="contact-info__item flex gap-2xs" role="listitem">
-        <div class="contact-info__icon-wrapper flex-center">
+        <div class="contact-info__icon-wrapper">
           <span class="contact-info__icon" aria-hidden="true">${emailIcon}</span>
         </div>
-        <div class="flex-column">
+        <div class="contact-info__item-body">
           <span class="contact-info__contact-point-value">${emailValue}</span>
           ${emailType ? html`<span class="contact-info__contact-point-type">${emailType}</span>` : html``}
         </div>
@@ -111,7 +111,7 @@ function renderAddress(address) {
 
   return html`
         <li class="contact-info__item flex gap-2xs" role="listitem">
-          <div class="contact-info__icon-wrapper flex-center">
+          <div class="contact-info__icon-wrapper">
             <span class="contact-info__icon" aria-hidden="true">${locationIcon}</span>
           </div>
           <span class="contact-info__address">
@@ -143,20 +143,20 @@ function renderContactInfoSectionDefault(
     <section
       aria-labelledby="contact-details-heading"
       data-profile-section="contact-info"
-      class="profile__section border-lighter profile-section-collapsible profile-section-collapsible--inline-mobile-actions"
+      class="profile__section profile-section-collapsible profile-section-collapsible--inline-mobile-actions"
       role="region"
       tabindex="-1"
       data-expanded="false"
     >
       <header class="profile__section-header profile-section-collapsible__header">
         <h2 id="contact-details-heading" tabindex="-1">${contactInfoHeadingText}</h2>
-        <div class="profile-section-collapsible__actions flex-column align-end">
+        <div class="profile-section-collapsible__actions">
           ${isOwner ? html`
             <solid-ui-button
               type="button"
               variant="secondary"
               size="sm"
-              class="profile__action-button profile-action-text flex-center profile-section-collapsible__edit-button"
+              class="profile__action-button profile-action-text profile-section-collapsible__edit-button"
               aria-label="Edit contact information"
               @click=${(event: Event) => {
                 return createContactInfoEditDialog(
@@ -190,21 +190,21 @@ function renderContactInfoSectionDefault(
       <div id="contact-details-panel" class="profile-section-collapsible__content" aria-hidden="true" hidden>
         ${contactInfo.phones.length > 0
           ? html`
-              <ul class="contact-info__list flex-column" role="list" aria-label="Phone numbers">
+              <ul class="contact-info__list" role="list" aria-label="Phone numbers">
                 ${renderPhones(contactInfo.phones, store)}
               </ul>
             `
           : html``}
         ${contactInfo.emails.length > 0
           ? html`
-              <ul class="contact-info__list flex-column" role="list" aria-label="Email addresses">
+              <ul class="contact-info__list" role="list" aria-label="Email addresses">
                 ${renderEmails(contactInfo.emails, store)}
               </ul>
             `
           : html``}
         ${contactInfo.addresses.length > 0
           ? html`
-              <ul class="contact-info__list flex-column" role="list" aria-label="Postal addresses">
+              <ul class="contact-info__list" role="list" aria-label="Postal addresses">
                 ${renderAddresses(contactInfo.addresses)}
               </ul>
             `
@@ -223,7 +223,7 @@ function renderOwnerEmptyContactInfoContent(
   _onSaved?: () => Promise<void> | void
 ) {
   return html`
-      <div class="profile__empty-state-content flex-column-center" role="group" aria-label="Empty contact information section">    
+      <div class="profile__empty-state-content" role="group" aria-label="Empty contact information section">    
         <div class="contact-info__empty-icon-wrapper">
           <span class="contact-info__empty-icon inline-flex-row">${envelopeIcon}</span>
         </div>
@@ -245,19 +245,19 @@ function renderOwnerEmptyContactInfoSection(
     <section 
       aria-labelledby="contact-details-heading" 
       data-profile-section="contact-info"
-      class="profile__section--empty border-lighter rounded-md gap-lg profile-section-collapsible profile-section-collapsible--inline-mobile-actions" 
+      class="profile__section--empty rounded-md gap-lg profile-section-collapsible profile-section-collapsible--inline-mobile-actions" 
       role="region"
       tabindex="-1"
       data-expanded="false"
     >
       <header class="profile__section-header profile-section-collapsible__header">
         <h2 id="contact-details-heading" tabindex="-1">${contactInfoEmptyHeadingText}</h2>
-        <div class="profile-section-collapsible__actions flex-column align-end">
+        <div class="profile-section-collapsible__actions">
           <solid-ui-button
             type="button"
             variant="secondary"
             size="sm"
-            class="profile__action-button profile-action-text flex-center profile-section-collapsible__edit-button"
+            class="profile__action-button profile-action-text profile-section-collapsible__edit-button"
             aria-label="Add contact information"
             @click=${(event: Event) => {
               return createContactInfoEditDialog(

@@ -29,7 +29,7 @@ function renderLanguagesSectionDefault(store: LiveStore, subject: NamedNode, lan
   const isOwner = viewerMode === 'owner'
   return html`
     <section
-      class="profile__section border-lighter profile-section-collapsible profile-section-collapsible--inline-mobile-actions"
+      class="profile__section profile-section-collapsible profile-section-collapsible--inline-mobile-actions"
       data-profile-section="languages"
       aria-labelledby="languages-heading"
       role="region"
@@ -38,13 +38,13 @@ function renderLanguagesSectionDefault(store: LiveStore, subject: NamedNode, lan
     >
       <header class="profile__section-header profile-section-collapsible__header">
         <h2 id="languages-heading">${languagesHeadingText}</h2>
-        <div class="profile-section-collapsible__actions flex-column align-end">
+        <div class="profile-section-collapsible__actions">
           ${isOwner ? html`
             <solid-ui-button
               type="button"
               variant="secondary"
               size="sm"
-              class="profile__action-button profile-action-text flex-center profile-section-collapsible__edit-button"
+              class="profile__action-button profile-action-text profile-section-collapsible__edit-button"
               aria-label="Add or edit languages"
               @click=${(event: Event) => createLanguageEditDialog(event, store, subject, languages, viewerMode, onSaved)}
             >
@@ -72,7 +72,7 @@ function renderLanguagesSectionDefault(store: LiveStore, subject: NamedNode, lan
       <div id="languages-panel" class="profile-section-collapsible__content" aria-hidden="true">
         ${hasLanguages
           ? html`
-              <ul class="languages__list flex-column" role="list" aria-label="Known languages">
+              <ul class="languages__list" role="list" aria-label="Known languages">
                 ${renderLanguages(languages, true)}
               </ul>
             `
@@ -92,7 +92,7 @@ function renderOwnerEmptyLanguagesContent(
   _onSaved?: () => Promise<void> | void
 ) {
   return html`
-      <div class="profile__empty-state-content flex-column-center" role="group" aria-label="Empty languages section">    
+      <div class="profile__empty-state-content" role="group" aria-label="Empty languages section">    
         <div class="languages__empty-icon-wrapper">
           <span class="languages__empty-icon inline-flex-row">${commentIcon}</span>
         </div>
@@ -114,19 +114,19 @@ function renderOwnerEmptyLanguagesSection(
     <section 
       aria-labelledby="languages-heading" 
       data-profile-section="languages"
-      class="profile__section--empty border-lighter rounded-md gap-lg profile-section-collapsible profile-section-collapsible--inline-mobile-actions" 
+      class="profile__section--empty rounded-md gap-lg profile-section-collapsible profile-section-collapsible--inline-mobile-actions" 
       role="region"
       tabindex="-1"
       data-expanded="false"
     >
       <header class="profile__section-header profile-section-collapsible__header">
         <h2 id="languages-heading" tabindex="-1">${languagesHeadingText}</h2>
-        <div class="profile-section-collapsible__actions flex-column align-end">
+        <div class="profile-section-collapsible__actions">
           <solid-ui-button
             type="button"
             variant="secondary"
             size="sm"
-            class="profile__action-button profile-action-text flex-center profile-section-collapsible__edit-button"
+            class="profile__action-button profile-action-text profile-section-collapsible__edit-button"
             aria-label="Add languages"
             @click=${(event: Event) => {
               return createLanguageEditDialog(

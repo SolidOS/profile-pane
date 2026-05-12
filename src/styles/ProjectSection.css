@@ -77,6 +77,8 @@ solid-ui-button.project-card__follow-button:focus-within .project-card__follow-l
 }
 
 .project-card {
+  display: flex;
+  flex-direction: column;
   flex: 0 0 var(--project-card-flex-basis);
   scroll-snap-align: start;
   border-radius: var(--border-radius-md, 0.5rem);
@@ -110,6 +112,9 @@ solid-ui-button.project-card__follow-button:focus-within .project-card__follow-l
 }
 
 .project-card__thumb {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   width: var(--project-card-thumb-size);
   height: var(--project-card-thumb-size);
   overflow: hidden;
@@ -127,6 +132,9 @@ solid-ui-button.project-card__follow-button:focus-within .project-card__follow-l
 }
 
 .project-card__thumb-fallback {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   width: 100%;
   height: 100%;
   font-size: 0.72rem;

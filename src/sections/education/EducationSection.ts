@@ -115,20 +115,20 @@ export function renderEducationSection(
   return showSection ? html`
     <section 
       aria-labelledby="education-heading" 
-      class="profile__section border-lighter profile-section-collapsible profile-section-collapsible--inline-mobile-actions"
+      class="profile__section profile-section-collapsible profile-section-collapsible--inline-mobile-actions"
       role="region"
       tabindex="-1"
       data-expanded="false"
     >
       <header class="profile__section-header profile-section-collapsible__header">
         <h2 id="education-heading" tabindex="-1">${educationHeadingText}</h2>
-        <div class="profile-section-collapsible__actions flex-column align-end">
+        <div class="profile-section-collapsible__actions">
           ${isOwner ? html`
             <solid-ui-button
               type="button"
               variant="secondary"
               size="sm"
-              class="profile__action-button profile-action-text flex-center profile-section-collapsible__edit-button"
+              class="profile__action-button profile-action-text profile-section-collapsible__edit-button"
               aria-label="Edit education details"
               @click=${(event: Event) => createEducationEditDialog(event, store, subject, educationDetails, viewerMode, onSaved)}
             >

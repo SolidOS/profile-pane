@@ -71,7 +71,7 @@ function renderSkillsSectionDefault(store: LiveStore, subject: NamedNode, skills
 
   return html`
     <section
-      class="profile__section border-lighter profile-section-collapsible profile-section-collapsible--inline-mobile-actions"
+      class="profile__section profile-section-collapsible profile-section-collapsible--inline-mobile-actions"
       data-profile-section="skills"
       aria-labelledby="skills-heading"
       role="region"
@@ -80,13 +80,13 @@ function renderSkillsSectionDefault(store: LiveStore, subject: NamedNode, skills
     >
       <header class="profile__section-header profile-section-collapsible__header">
         <h2 id="skills-heading">${skillsHeadingText}</h2>
-        <div class="profile-section-collapsible__actions flex-column align-end">
+        <div class="profile-section-collapsible__actions">
           ${isOwner ? html`
             <solid-ui-button
               type="button"
               variant="secondary"
               size="sm"
-              class="profile__action-button profile-action-text flex-center profile-section-collapsible__edit-button"
+              class="profile__action-button profile-action-text profile-section-collapsible__edit-button"
               aria-label="Add or edit skills"
               @click=${(event: Event) => createSkillsEditDialog(event, store, subject, skills, viewerMode, onSaved)}
             >
@@ -119,7 +119,7 @@ function renderSkillsSectionDefault(store: LiveStore, subject: NamedNode, skills
       >
         ${hasSkills
           ? html`
-              <ul class="skills__list flex-column" role="list" aria-label="Professional skills and competencies">
+              <ul class="skills__list" role="list" aria-label="Professional skills and competencies">
                 ${skills.map((detail) => renderSkillItem(detail, store, subject, viewerMode, onSaved))}
               </ul>
             `
@@ -136,7 +136,7 @@ function renderOwnerEmptySkillsContent(
   _onSaved?: () => Promise<void> | void
 ) {
   return html`
-      <div class="profile__empty-state-content flex-column-center" role="group" aria-label="Empty skills section">    
+      <div class="profile__empty-state-content" role="group" aria-label="Empty skills section">    
         <div class="skills__empty-icon-wrapper">
           <span class="skills__empty-icon inline-flex-row">${lighteningIcon}</span>
         </div>
@@ -158,19 +158,19 @@ function renderOwnerEmptySkillsSection(
     <section 
       aria-labelledby="skills-heading" 
       data-profile-section="skills"
-      class="profile__section--empty border-lighter rounded-md gap-lg profile-section-collapsible profile-section-collapsible--inline-mobile-actions" 
+      class="profile__section--empty rounded-md gap-lg profile-section-collapsible profile-section-collapsible--inline-mobile-actions" 
       role="region"
       tabindex="-1"
       data-expanded="false"
     >
       <header class="profile__section-header profile-section-collapsible__header">
         <h2 id="skills-heading" tabindex="-1">${skillsHeadingText}</h2>
-        <div class="profile-section-collapsible__actions flex-column align-end">
+        <div class="profile-section-collapsible__actions">
           <solid-ui-button
             type="button"
             variant="secondary"
             size="sm"
-            class="profile__action-button profile-action-text flex-center profile-section-collapsible__edit-button"
+            class="profile__action-button profile-action-text profile-section-collapsible__edit-button"
             aria-label="Add skills"
             @click=${(event: Event) => {
               return createSkillsEditDialog(

@@ -65,8 +65,12 @@ td.obj .profile-pane-root {
   margin: 0;
 }
 
-.profile__action-button {
-  display: inline-block;
+
+.profile__action-button,
+solid-ui-button.profile__action-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .profile__action-button,

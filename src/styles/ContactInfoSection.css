@@ -1,9 +1,17 @@
 /* Contact rows */
 .contact-info__icon-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   width: 2.25rem;
   height: 2.25rem;
   padding: 0 0.575rem;
   flex-shrink: 0;
+}
+
+.contact-info__item-body {
+  display: flex;
+  flex-direction: column;
 }
 
 .contact-info__icon {
@@ -35,6 +43,8 @@
 
 /* Lists */
 .contact-info__list {
+  display: flex;
+  flex-direction: column;
   width: 100%;
   max-width: 100%;
   min-width: 0;

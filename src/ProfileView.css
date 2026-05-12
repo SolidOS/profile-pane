@@ -98,6 +98,7 @@
 .profile-grid .profile__section,
 .profile-grid .profile__section--empty {
   background: var(--color-card-bg, #FFF);
+  border: var(--border-width-thin, 0.1rem) solid var(--color-border-lighter, #E2E8F0);
   overflow-x: clip;
 }
 
@@ -135,7 +136,17 @@
 }
 
 .profile-grid .profile__empty-state-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   gap: var(--spacing-2xs, 0.625rem);
+}
+
+.profile-grid [data-profile-section='bio'].profile__section--empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-lg, 1.5625rem);
 }
 
 .profile-grid .profile__empty-state-content > h2,
@@ -214,11 +225,6 @@
   border-radius: 0;
   background: transparent;
   align-self: stretch;
-}
-
-:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__section--empty.flex-column-center,
-:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__section--empty .profile__empty-state-content.flex-column-center {
-  align-items: center;
 }
 
 :is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid [data-profile-section='projects'].profile__section--empty > .profile-section-collapsible__header,
@@ -339,11 +345,6 @@
     background: var(--color-card-bg, var(--white, #FFF));
   }
 
-  .profile-grid .profile__section--empty.flex-column-center,
-  .profile-grid .profile__section--empty .profile__empty-state-content.flex-column-center {
-    align-items: center;
-  }
-
   .profile-grid [data-profile-section='projects'].profile__section--empty > .profile-section-collapsible__header,
   .profile-grid [data-profile-section='resume'].profile__section--empty > .profile-section-collapsible__header {
     display: flex;
@@ -435,11 +436,6 @@
     border-radius: var(--border-radius-base, 0.3125rem);
     border: var(--border-width-thin, 0.1rem) solid var(--color-border-subtle, var(--gray-100, #F3F4F6));
     background: var(--color-card-bg, var(--white, #FFF));
-  }
-
-  .profile-grid .profile__section--empty.flex-column-center,
-  .profile-grid .profile__section--empty .profile__empty-state-content.flex-column-center {
-    align-items: center;
   }
 
   .profile-grid [data-profile-section='projects'].profile__section--empty > .profile-section-collapsible__header,

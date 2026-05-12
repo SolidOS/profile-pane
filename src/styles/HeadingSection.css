@@ -95,6 +95,8 @@
 }
 
 .profile__info {
+  display: flex;
+  flex-direction: column;
   grid-area: info;
   flex: 1 1 auto;
   min-width: 0;
@@ -120,6 +122,8 @@
 }
 
 .profile__header-bar {
+  display: flex;
+  flex-direction: column;
   align-items: flex-start;
   gap: var(--profile-heading-header-bar-gap, 0.125rem);
   width: 100%;
@@ -294,6 +298,9 @@
 }
 
 .profile__hero-alt {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   padding: 0 var(--profile-heading-hero-alt-padding-inline, 2.275rem);
   border: var(--border-width-sm, 0.1rem) dashed var(--color-border-lighter, var(--slate-200, #E2E8F0));
   background: var(--color-surface-overlay-header, #F8FAFC);

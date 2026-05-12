@@ -103,20 +103,20 @@ function renderResumeSectionDefault(
     <section 
       aria-labelledby="cv-heading" 
       data-profile-section="resume"
-      class="profile__section border-lighter profile-section-collapsible profile-section-collapsible--inline-mobile-actions" 
+      class="profile__section profile-section-collapsible profile-section-collapsible--inline-mobile-actions" 
       role="region"
       tabindex="-1"
       data-expanded="false"
     >
       <header class="profile__section-header profile-section-collapsible__header">
         <h2 id="cv-heading" tabindex="-1">${resumeHeadingText}</h2>
-        <div class="profile-section-collapsible__actions flex-column align-end">
+        <div class="profile-section-collapsible__actions">
           ${isOwner ? html`
             <solid-ui-button
               type="button"
               variant="secondary"
               size="sm"
-              class="profile__action-button profile-action-text flex-center profile-section-collapsible__edit-button"
+              class="profile__action-button profile-action-text profile-section-collapsible__edit-button"
               aria-label="Edit resume details"
               @click=${(event: Event) => createResumeEditDialog(event, store, subject, resumeDetails, viewerMode, onSaved)}
             >
@@ -154,7 +154,7 @@ function renderOwnerEmptyResumeContent(
 ) {
 
   return html`
-    <div class="profile__empty-state-content flex-column-center" role="group" aria-label="Empty resume section">
+    <div class="profile__empty-state-content" role="group" aria-label="Empty resume section">
       <h2 id="resume-heading" tabindex="-1">${resumeHeadingText}</h2>
       <p class="profile__empty-state-message">
         You haven't included any professional experience yet. Consider adding your work history to enhance your resume.
@@ -193,19 +193,19 @@ function renderOwnerEmptyResumeSection(
     <section
       aria-labelledby="resume-heading" 
       data-profile-section="resume"
-      class="profile__section--empty border-lighter flex-column-center rounded-md gap-lg profile-section-collapsible profile-section-collapsible--inline-mobile-actions profile-section-collapsible--empty-mobile-no-edit" 
+      class="profile__section--empty rounded-md gap-lg profile-section-collapsible profile-section-collapsible--inline-mobile-actions profile-section-collapsible--empty-mobile-no-edit" 
       role="region"
       tabindex="-1"
       data-expanded="false"
     >
       <header class="profile__section-header profile-section-collapsible__header">
         <h2 id="resume-heading" tabindex="-1">${resumeHeadingText}</h2>
-        <div class="profile-section-collapsible__actions flex-column align-end">
+        <div class="profile-section-collapsible__actions">
           <solid-ui-button
             type="button"
             variant="secondary"
             size="sm"
-            class="profile__action-button profile-action-text flex-center profile-section-collapsible__edit-button"
+            class="profile__action-button profile-action-text profile-section-collapsible__edit-button"
             aria-label="Add resume details"
             @click=${(event: Event) => {
               return createResumeEditDialog(

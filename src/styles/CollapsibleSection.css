@@ -13,12 +13,17 @@
   --profile-section-collapsible-action-button-hover-background: var(--color-surface-accent-subtle, var(--lavender-300, #e6dcff));
   --profile-section-collapsible-edit-icon-size: 0.875rem;
   --profile-section-collapsible-mobile-action-gap: 0.25rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
   gap: var(--spacing-xs, 0.75rem);
   margin-top: -0.25rem;
 }
 
 .profile-section-collapsible__edit-button {
   min-width: 0;
+  align-items: center;
+  justify-content: center;
 }
 
 .profile-section-collapsible__edit-icon {
