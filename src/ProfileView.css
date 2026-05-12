@@ -492,7 +492,7 @@
   .profile-grid .profile__intro-sidebar,
   .profile-grid .profile__main,
   .profile-grid .profile__sidebar {
-    display: contents;
+    display: flex;
   }
 
   .profile-grid [data-profile-section='heading'] { order: 1; }
