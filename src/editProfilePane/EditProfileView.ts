@@ -41,8 +41,8 @@ const editProfileView: PaneDefinition = {
     div.setAttribute('aria-label', 'Edit your profile')
     let editableProfile: NamedNode | null
 
-    // Use <main> for the main content area, styled as a grid like ProfileView
-    const main = dom.createElement('main')
+    // Pane root content. The page-level <main> landmark is on the shell's #MainContent.
+    const main = dom.createElement('div')
     main.setAttribute('id', 'profile-edit-main-content')
     main.setAttribute('aria-busy', 'true')
     main.setAttribute('tabindex', '-1')

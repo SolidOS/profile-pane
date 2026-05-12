@@ -90,7 +90,7 @@ export async function ProfileView (
         data-theme=${theme}
         data-input-mode=${inputMode}
       >
-        <main
+        <div
           id="main-content"
           class="profile-grid"
           tabindex="-1"
@@ -107,7 +107,7 @@ export async function ProfileView (
           ${socialSection}
           ${contactInfoSection}
           ${qrCodeSection}
-        </main>
+        </div>
       </div>
     `
   }
