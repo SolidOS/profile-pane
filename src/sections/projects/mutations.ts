@@ -7,7 +7,10 @@ import {
 	projectUrlFromCommunityNode,
 	expandCommunityNodes
 } from '../shared/projectCommunityNodes'
-import { projectsMutationSaveFailedDebugText } from '../../texts'
+import {
+	projectsMutationSaveFailedDebugText,
+	saveProjectsUpdatesFailedMessageText
+} from '../../texts'
 import { runUpdateTransport } from '../shared/rdfMutationHelpers'
 import { error as debugError } from '../../utils/debug'
 
@@ -181,8 +184,9 @@ async function mutateProjectEntries(store: LiveStore, subject: NamedNode, projec
 export async function processProjectsMutations(store: LiveStore, subject: NamedNode, mutationPlan: ProjectMutationPlan) {
 	try {
 		await mutateProjectEntries(store, subject, mutationPlan)
-	} catch (error) {
-		debugError(projectsMutationSaveFailedDebugText, error)
-		throw error instanceof Error ? error : new Error(String(error))
+	} catch (err) {
+		const rootError = err instanceof Error ? err : new Error(String(err))
+		debugError(projectsMutationSaveFailedDebugText, rootError)
+		throw new Error(saveProjectsUpdatesFailedMessageText, { cause: rootError })
 	}
 }

@@ -1145,10 +1145,7 @@ async function openSharedContactExistsDialog(
       refreshButton(context, addressBooksData, contactData)
     },
     formatSaveError: (error: unknown) => {
-      const message = error instanceof Error ? error.message : String(error)
-      return message.startsWith(errorAddingContactWebIDToAddressBook)
-        ? message
-        : `${errorAddingContactWebIDToAddressBook} ${message}`
+      return error instanceof Error ? error.message : errorAddingContactWebIDToAddressBook
     }
   })
 

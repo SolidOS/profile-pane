@@ -15,7 +15,6 @@ import {
   editProjectsDialogTitleText,
   ownerLoginRequiredDialogMessageText,
   pasteEntryButtonTitleText,
-  saveProjectsUpdatesFailedPrefixText,
 } from '../../texts'
 
 type ProjectFormState = {
@@ -191,8 +190,7 @@ export async function createProjectsEditDialog(
       await processProjectsMutations(store, subject, plan)
     },
     formatSaveError: (error: unknown) => {
-      const message = error instanceof Error ? error.message : String(error)
-      return `${saveProjectsUpdatesFailedPrefixText} ${message}`
+      return error instanceof Error ? error.message : String(error)
     }
   })
 

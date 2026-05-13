@@ -18,7 +18,7 @@ import {
   dialogSubmitLabelText,
   editEducationDialogTitleText,
   ownerLoginRequiredDialogMessageText,
-  saveEducationUpdatesFailedPrefixText,
+  saveEducationUpdatesFailedMessageText,
 } from '../../texts'
 
 type EducationFormState = {
@@ -600,8 +600,7 @@ export async function createEducationEditDialog(
       rerender()
     },
     formatSaveError: (error: unknown) => {
-      const message = error instanceof Error ? error.message : String(error)
-      return `${saveEducationUpdatesFailedPrefixText} ${message}`
+      return error instanceof Error ? error.message : saveEducationUpdatesFailedMessageText
     }
   })
 

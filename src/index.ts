@@ -5,15 +5,12 @@ import { render } from 'lit-html'
 import { ProfileView } from './ProfileView'
 import { icons, ns } from 'solid-ui'
 import { hydrateQRCodes } from './sections/qrcode/QRCodeCard'
-import { configureDebugForBrowser } from './utils/debug'
 export {
   addMeToYourFriendsDiv,
   createAddMeToYourFriendsButton,
   saveNewThing,
   checkIfThingExists
 } from './specialButtons/addMeToYourFriends'
-
-configureDebugForBrowser({ defaultLevel: 'error' })
 
 async function loadExtendedProfile(store: LiveStore, subject: NamedNode) {
   const otherProfiles = store.each(

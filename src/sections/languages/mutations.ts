@@ -5,7 +5,7 @@ import { MutationOps, PrefixCapable, RdfStatement, RdfUpdater } from '../shared/
 import { presentLanguages } from './selectors'
 import { expandRdfList } from '../shared/rdfList'
 import { createIdNode } from '../shared/idNodeFactory'
-import { languageMutationSaveFailedDebugText } from '../../texts'
+import { languageMutationSaveFailedDebugText, saveLanguageUpdatesFailedMessageText } from '../../texts'
 import { registerStorePrefix, runUpdateTransport } from '../shared/rdfMutationHelpers'
 import { error as debugError } from '../../utils/debug'
 
@@ -240,7 +240,8 @@ export async function processLanguageMutations(
     await mutateLanguageEntries(store, subject, mutationPlan, orderedRows)
 
   } catch (error) {
-    debugError(languageMutationSaveFailedDebugText, error)
-    throw error instanceof Error ? error : new Error(String(error))
+    const rootError = error instanceof Error ? error : new Error(String(error))
+    debugError(languageMutationSaveFailedDebugText, rootError)
+    throw new Error(saveLanguageUpdatesFailedMessageText, { cause: rootError })
   }
 } 

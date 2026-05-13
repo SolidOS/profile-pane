@@ -18,7 +18,7 @@ import {
   dialogSubmitLabelText,
   editSocialDialogTitleText,
   ownerLoginRequiredDialogMessageText,
-  saveSocialUpdatesFailedPrefixText
+  saveSocialUpdatesFailedMessageText
 } from '../../texts'
 import { DEFAULT_ICON_URI } from './constants'
 import { findSocialAccountOption, getSocialAccountOptions, type SocialAccountOption } from './helpers'
@@ -488,10 +488,7 @@ export async function createSocialEditDialog(
       await processSocialMutations(store, subject, plan, formState.socialAccounts)
     },
     formatSaveError: (error: unknown) => {
-      const message = error instanceof Error ? error.message : String(error)
-      return message.startsWith(saveSocialUpdatesFailedPrefixText)
-        ? message
-        : `${saveSocialUpdatesFailedPrefixText} ${message}`
+      return error instanceof Error ? error.message : saveSocialUpdatesFailedMessageText
     }
   })
 

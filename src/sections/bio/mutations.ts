@@ -3,7 +3,7 @@ import { ns } from 'solid-ui'
 import { BioMutationPlan, BioRow } from './types'
 import { MutationOps } from '../shared/types'
 import { applyUpdaterPatch, replacePredicateStatements } from '../shared/rdfMutationHelpers'
-import { bioMutationSaveFailedDebugText } from '../../texts'
+import { bioMutationSaveFailedDebugText, saveBioUpdatesFailedMessageText } from '../../texts'
 import { error as debugError } from '../../utils/debug'
 // Need to find out if this is really how we should store the data
 async function mutateBioEntry(store: LiveStore, subject: NamedNode, bioOps: MutationOps<BioRow>) {
@@ -43,7 +43,8 @@ export async function processBioMutations(store: LiveStore, subject: NamedNode, 
   try {
     await mutateBioEntry(store, subject, mutationPlan)
   } catch (error) {
-    debugError(bioMutationSaveFailedDebugText, error)
-    throw error instanceof Error ? error : new Error(String(error))
+    const rootError = error instanceof Error ? error : new Error(String(error))
+    debugError(bioMutationSaveFailedDebugText, rootError)
+    throw new Error(saveBioUpdatesFailedMessageText, { cause: rootError })
   }
 } 

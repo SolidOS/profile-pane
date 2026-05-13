@@ -12,7 +12,7 @@ import {
   dialogSubmitLabelText,
   editBioDialogTitleText,
   ownerLoginRequiredDialogMessageText,
-  saveBioUpdatesFailedPrefixText
+  saveBioUpdatesFailedMessageText
 } from '../../texts'
 
 type BioFormState = {
@@ -130,8 +130,7 @@ export async function createBioEditDialog(
       await processBioMutations(store, subject, bioOps)
     },
     formatSaveError: (error: unknown) => {
-      const message = error instanceof Error ? error.message : String(error)
-      return `${saveBioUpdatesFailedPrefixText} ${message}`
+      return error instanceof Error ? error.message : saveBioUpdatesFailedMessageText
     }
   })
 

@@ -21,7 +21,7 @@ import {
   dialogSubmitLabelText,
   editContactInfoDialogTitleText,
   ownerLoginRequiredDialogMessageText,
-  saveContactUpdatesFailedPrefixText
+  saveContactUpdatesFailedMessageText
 } from '../../texts'
 import { sanitizeAddressFieldValue, sanitizeEmailValue, sanitizePhoneLocalValue } from '../shared/sanitizeUtils'
 import { addIcon, locationIcon, trashIcon } from '../../icons-svg/profileIcons'
@@ -765,8 +765,7 @@ export async function createContactInfoEditDialog(
       await processContactInfoMutations(store, subject, plan)
     },
     formatSaveError: (error: unknown) => {
-      const message = error instanceof Error ? error.message : String(error)
-      return `${saveContactUpdatesFailedPrefixText} ${message}`
+      return error instanceof Error ? error.message : saveContactUpdatesFailedMessageText
     }
   })
 

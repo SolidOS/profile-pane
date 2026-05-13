@@ -5,7 +5,7 @@ import { MutationOps } from '../shared/types'
 import { applyUpdaterPatch, collectLinkedNodeStatements, collectNodeStatements, findExistingNode, replacePredicateStatements } from '../shared/rdfMutationHelpers'
 import { createIdNode } from '../shared/idNodeFactory'
 import { ContactAddressRow, ContactPointRow } from '../contactInfo/types'
-import { headingMutationSaveFailedDebugText } from '../../texts'
+import { headingMutationSaveFailedDebugText, saveHeadingUpdatesFailedMessageText } from '../../texts'
 import { error as debugError } from '../../utils/debug'
 
 function splitPronouns(value?: string): { subjectPronoun?: string, objectPronoun?: string } {
@@ -277,7 +277,8 @@ export async function processHeadingMutations(store: LiveStore, subject: NamedNo
     await mutateEmailEntry(store, subject, mutationPlan.emailOps)
     await mutateAddressEntry(store, subject, mutationPlan.addressOps)
   } catch (error) {
-    debugError(headingMutationSaveFailedDebugText, error)
-    throw error instanceof Error ? error : new Error(String(error))
+    const rootError = error instanceof Error ? error : new Error(String(error))
+    debugError(headingMutationSaveFailedDebugText, rootError)
+    throw new Error(saveHeadingUpdatesFailedMessageText, { cause: rootError })
   }
 } 

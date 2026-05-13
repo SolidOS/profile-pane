@@ -10,7 +10,7 @@ import {
 	runUpdateTransport,
 	uniqueStatements
 } from '../shared/rdfMutationHelpers'
-import { socialMutationSaveFailedDebugText } from '../../texts'
+import { socialMutationSaveFailedDebugText, saveSocialUpdatesFailedMessageText } from '../../texts'
 import { findSocialAccountOption, getSocialAccountOptions } from './helpers'
 import { presentSocial } from './selectors'
 import { expandRdfList } from '../shared/rdfList'
@@ -279,7 +279,8 @@ export async function processSocialMutations(
 	try {
 		await mutateSocialEntries(store, subject, mutationPlan, orderedRows)
 	} catch (error) {
-		debugError(socialMutationSaveFailedDebugText, error)
-		throw error instanceof Error ? error : new Error(String(error))
+		const rootError = error instanceof Error ? error : new Error(String(error))
+		debugError(socialMutationSaveFailedDebugText, rootError)
+		throw new Error(saveSocialUpdatesFailedMessageText, { cause: rootError })
 	}
 }

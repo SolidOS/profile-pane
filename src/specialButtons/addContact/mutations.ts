@@ -9,6 +9,7 @@ import { createAddressBookContactCreationDialog } from './ContactCreationDialog'
 import { addErrorToErrorDisplay } from './contactsErrors'
 import { openInputDialog } from '../../ui/dialog'
 import {
+  addContactWebIdSaveFailedDebugText,
   errorAddingContactWebIDToAddressBook,
   errorUnableToDetermineUserWorkspace,
   groupIsRequired
@@ -245,8 +246,9 @@ async function addWebIDToExistingContact(
     const contactNode = new NamedNode(contactUri)
     await addWebIDToContactCard(store, contactNode, contactData.webID, ns.vcard('WebID'))
   } catch (error) {
-    debugError(errorAddingContactWebIDToAddressBook, error)
-    throw error instanceof Error ? error : new Error(String(error))
+    const rootError = error instanceof Error ? error : new Error(String(error))
+    debugError(addContactWebIdSaveFailedDebugText, rootError)
+    throw new Error(errorAddingContactWebIDToAddressBook, { cause: rootError })
   }
 }
 

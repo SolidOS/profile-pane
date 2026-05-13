@@ -18,7 +18,7 @@ import {
   dialogSubmitLabelText,
   editSkillsDialogTitleText,
   ownerLoginRequiredDialogMessageText,
-  saveSkillsUpdatesFailedPrefixText,
+  saveSkillsUpdatesFailedMessageText,
 } from '../../texts'
 
 type SkillFormState = {
@@ -437,10 +437,7 @@ export async function createSkillsEditDialog(
       await processSkillsMutations(store, subject, plan)
     },
     formatSaveError: (error: unknown) => {
-      const message = error instanceof Error ? error.message : String(error)
-      return message.startsWith(saveSkillsUpdatesFailedPrefixText)
-        ? message
-        : `${saveSkillsUpdatesFailedPrefixText} ${message}`
+      return error instanceof Error ? error.message : saveSkillsUpdatesFailedMessageText
     }
   })
 

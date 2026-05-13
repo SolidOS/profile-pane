@@ -1,10 +1,6 @@
 import { sym } from 'rdflib'
 import {
-  configureDebugForBrowser,
-  DEBUG_LEVEL_OPTIONS,
-  getDebugLevel,
   log,
-  setBrowserDebugLevel,
   warn,
 } from '../src/utils/debug'
 //import { default as pane } from '../src/editProfilePane/EditProfileView' //uncomment for profile editor
@@ -22,8 +18,6 @@ import {
 } from './context'
 import { authn, authSession } from 'solid-logic'
 import * as UI from 'solid-ui'
-
-configureDebugForBrowser({ defaultLevel: 'trace' })
 
 const loginBanner = document.getElementById('loginBanner')
 const webId = document.getElementById('webId')
@@ -163,19 +157,6 @@ function mountDevToolbar() {
       (inputMode) => {
         updateEnvironment({ inputMode })
         rerenderWithEnvironment()
-      }
-    ),
-    createSelectControl(
-      'dev-debug-select',
-      'Debug',
-      DEBUG_LEVEL_OPTIONS.map((level) => ({
-        label: level,
-        value: level,
-      })),
-      getDebugLevel(),
-      (level) => {
-        setBrowserDebugLevel(level)
-        log('[profile-pane/dev] debug level changed', { level })
       }
     )
   )

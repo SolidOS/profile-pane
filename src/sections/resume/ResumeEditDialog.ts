@@ -19,7 +19,7 @@ import {
   dialogSubmitLabelText,
   editResumeDialogTitleText,
   ownerLoginRequiredDialogMessageText,
-  saveResumeUpdatesFailedPrefixText
+  saveResumeUpdatesFailedMessageText
 } from '../../texts'
 
 type ResumeFormState = {
@@ -1030,8 +1030,7 @@ export async function createResumeEditDialog(
       rerender()
     },
     formatSaveError: (error: unknown) => {
-      const message = error instanceof Error ? error.message : String(error)
-      return `${saveResumeUpdatesFailedPrefixText} ${message}`
+      return error instanceof Error ? error.message : saveResumeUpdatesFailedMessageText
     }
   })
 

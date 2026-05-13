@@ -4,7 +4,7 @@ import { ContactAddressRow, ContactMutationPlan, ContactPointRow } from './types
 import { MutationOps } from '../shared/types'
 import { applyUpdaterPatch, collectLinkedNodeStatements, collectNodeStatements, findExistingNode } from '../shared/rdfMutationHelpers'
 import { createIdNode } from '../shared/idNodeFactory'
-import { contactInfoMutationSaveFailedDebugText } from '../../texts'
+import { contactInfoMutationSaveFailedDebugText, saveContactUpdatesFailedMessageText } from '../../texts'
 import { error as debugError } from '../../utils/debug'
 
 function buildPhoneStatements(subject: NamedNode, doc: NamedNode, node: Node, phone: ContactPointRow) {
@@ -172,7 +172,8 @@ export async function processContactInfoMutations(store: LiveStore, subject: Nam
     await mutateEmailEntries(store, subject, mutationPlan.emailOps)
     await mutateAddressEntries(store, subject, mutationPlan.addressOps)
   } catch (error) {
-    debugError(contactInfoMutationSaveFailedDebugText, error)
-    throw error instanceof Error ? error : new Error(String(error))
+    const rootError = error instanceof Error ? error : new Error(String(error))
+    debugError(contactInfoMutationSaveFailedDebugText, rootError)
+    throw new Error(saveContactUpdatesFailedMessageText, { cause: rootError })
   }
 } 

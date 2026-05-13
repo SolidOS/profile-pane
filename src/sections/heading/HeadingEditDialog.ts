@@ -26,7 +26,7 @@ import {
   dialogSubmitLabelText,
   editHeadingDialogTitleText,
   ownerLoginRequiredDialogMessageText,
-  saveHeadingUpdatesFailedPrefixText
+  saveHeadingUpdatesFailedMessageText
 } from '../../texts'
 import { error as debugError, warn as debugWarn } from '../../utils/debug'
 import { cameraIcon } from '../../icons-svg/profileIcons'
@@ -958,8 +958,7 @@ export async function createHeadingEditDialog(
       }
     },
     formatSaveError: (error: unknown) => {
-      const message = error instanceof Error ? error.message : String(error)
-      return `${saveHeadingUpdatesFailedPrefixText} ${message}`
+      return error instanceof Error ? error.message : saveHeadingUpdatesFailedMessageText
     }
   })
 

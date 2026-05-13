@@ -3,7 +3,7 @@ import { ns } from 'solid-ui'
 import { EducationMutationPlan, EducationRow } from './types'
 import { MutationOps } from '../shared/types'
 import { applyUpdaterPatch, collectNodeStatements, findExistingNode } from '../shared/rdfMutationHelpers'
-import { educationMutationSaveFailedDebugText } from '../../texts'
+import { educationMutationSaveFailedDebugText, saveEducationUpdatesFailedMessageText } from '../../texts'
 import { error as debugError } from '../../utils/debug'
 
 const educationMembershipType = ns.schema('EducationalOccupationalCredential')
@@ -69,7 +69,8 @@ export async function processEducationMutations(store: LiveStore, subject: Named
   try {
     await mutateEducationEntries(store, subject, mutationPlan)
   } catch (error) {
-    debugError(educationMutationSaveFailedDebugText, error)
-    throw error instanceof Error ? error : new Error(String(error))
+    const rootError = error instanceof Error ? error : new Error(String(error))
+    debugError(educationMutationSaveFailedDebugText, rootError)
+    throw new Error(saveEducationUpdatesFailedMessageText, { cause: rootError })
   }
 } 
