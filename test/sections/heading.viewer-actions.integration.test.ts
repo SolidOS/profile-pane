@@ -68,7 +68,10 @@ describe('Heading viewer actions integration', () => {
 
     render(await renderHeadingSection(context, ownerSubject, profile as any, 'authenticated'), container)
 
-    expect(container.querySelector('.profile-contacts-button__section')).not.toBeNull()
+    const contactsButtonSection = container.querySelector('.profile-contacts-button__section') as HTMLElement | null
+
+    expect(contactsButtonSection).not.toBeNull()
+    expect(contactsButtonSection?.hidden).toBe(true)
     expect(container.querySelector('.profile-friends-button__section')).not.toBeNull()
     expect(container.textContent).toContain(addMeToYourContactsButtonText)
     expect(container.textContent).toContain(addMeToYourFriendsButtonText)

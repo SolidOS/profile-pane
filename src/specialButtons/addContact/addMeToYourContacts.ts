@@ -14,7 +14,7 @@ import {
   addMeToYourContactsButtonText, contactExistsAlreadyButtonText, contactExistsAlreadyByNameButtonText, contactExistsMessage, logInAddMeToYourContactsButtonText, userNotLoggedInErrorMessage,
   errorAddingContactWebIDToAddressBook
 } from '../../texts'
-import '../../styles/AddMeToYourContacts.css'
+import './AddMeToYourContacts.css'
 import type ContactsModuleRdfLib from '@solid-data-modules/contacts-rdflib'
 import { addErrorToErrorDisplay } from './contactsErrors'
 import { handleContactExistsByName } from './ContactCreationDialog'
@@ -53,6 +53,7 @@ const addMeToYourContactsDiv = async (
   buttonContainer.setAttribute('class', 'profile-contacts-button__section text-truncate text-center section-centered')
   buttonContainer.setAttribute('aria-label', 'Add me to your contacts actions')
   buttonContainer.setAttribute('data-testid', 'button')
+  buttonContainer.hidden = true
 
   const button = await createAddMeToYourContactsButton(subject, context)
   button.classList.add('profile__action-button', 'profile__btn-contacts', 'flex-center')
