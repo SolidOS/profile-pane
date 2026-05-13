@@ -40,6 +40,8 @@ function renderSkillItem(
   const handleRemove = async (event: Event) => {
     event.preventDefault()
     if (viewerMode !== 'owner') return
+    const removeButton = event.currentTarget as HTMLElement | null
+    const skillRow = removeButton?.closest('.skills__item') as HTMLElement | null
     const section = (event.currentTarget as HTMLElement | null)?.closest('[data-profile-section="skills"]') as HTMLElement | null
 
     const removeRow: SkillRow = {
@@ -50,6 +52,10 @@ function renderSkillItem(
     }
 
     try {
+      removeButton?.setAttribute('disabled', '')
+      removeButton?.setAttribute('aria-busy', 'true')
+      removeButton?.setAttribute('data-loading', 'true')
+      skillRow?.setAttribute('data-pending', 'true')
       await processSkillsMutations(store, subject, {
         create: [],
         update: [],
@@ -66,6 +72,11 @@ function renderSkillItem(
       if (section) {
         setSkillsSectionError(section, error instanceof Error ? error.message : saveSkillsUpdatesFailedMessageText)
       }
+    } finally {
+      removeButton?.removeAttribute('disabled')
+      removeButton?.setAttribute('aria-busy', 'false')
+      removeButton?.removeAttribute('data-loading')
+      skillRow?.removeAttribute('data-pending')
     }
   }
 

@@ -27,6 +27,10 @@ solid-ui-button.skills__remove-button {
   background: var(--color-surface-chip, var(--gray-100, #F3F4F6));
 }
 
+.skills__item[data-pending='true'] {
+  opacity: 0.55;
+}
+
 .skills__item-label {
   display: inline;
   color: var(--color-text-strong, var(--slate-900, #0F172B));
@@ -60,6 +64,10 @@ solid-ui-button.skills__remove-button {
   --button-hover-background: transparent;
   --button-hover-border: transparent;
   --button-hover-text: currentColor;
+}
+
+solid-ui-button.skills__remove-button[data-loading='true'] {
+  pointer-events: none;
 }
 
 .skills__remove-button svg {

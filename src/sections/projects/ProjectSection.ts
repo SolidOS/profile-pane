@@ -10,6 +10,7 @@ import { addIcon, checkMarkIcon, editIcon, plusDarkIcon, twoDownArrowsIcon } fro
 import { MutationOps } from '../shared/types'
 import '../../styles/ProjectSection.css'
 import { toggleCollapsibleSection } from '../shared/collapsibleSection'
+import { createSpinner } from '../../ui/spinner'
 
 const MAX_VISIBLE_PROJECTS_MOBILE = 2
 
@@ -89,6 +90,7 @@ function renderProject(
     event.preventDefault()
     event.stopPropagation()
     if (viewerMode !== 'owner') return
+    const unfollowButton = event.currentTarget as HTMLElement | null
     const section = (event.currentTarget as HTMLElement | null)?.closest('[data-profile-section="projects"]') as HTMLElement | null
 
     const removePlan: MutationOps<ProjectRow> = {
@@ -98,6 +100,9 @@ function renderProject(
     }
 
     try {
+      unfollowButton?.setAttribute('disabled', '')
+      unfollowButton?.setAttribute('data-loading', 'true')
+      unfollowButton?.setAttribute('aria-busy', 'true')
       await processProjectsMutations(store, subject, removePlan)
       if (section) {
         setProjectsSectionError(section, null)
@@ -109,6 +114,10 @@ function renderProject(
       if (section) {
         setProjectsSectionError(section, error instanceof Error ? error.message : saveProjectsUpdatesFailedMessageText)
       }
+    } finally {
+      unfollowButton?.removeAttribute('disabled')
+      unfollowButton?.removeAttribute('data-loading')
+      unfollowButton?.setAttribute('aria-busy', 'false')
     }
   }
 
@@ -155,6 +164,7 @@ function renderProject(
           >
             <span class="project-card__follow-label project-card__follow-label--default">${checkMarkIcon} Following</span>
             <span class="project-card__follow-label project-card__follow-label--hover">Unfollow</span>
+            <span class="project-card__follow-label project-card__follow-label--loading">${createSpinner()}<span>Unfollowing...</span></span>
           </solid-ui-button>
         </div>
       ` : html``}

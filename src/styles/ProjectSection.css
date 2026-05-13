@@ -55,6 +55,12 @@ solid-ui-button.project-card__follow-button {
   display: none;
 }
 
+.project-card__follow-label--loading {
+  display: none;
+  align-items: center;
+  gap: var(--project-card-follow-label-gap);
+}
+
 solid-ui-button.project-card__follow-button:hover .project-card__follow-label--default,
 solid-ui-button.project-card__follow-button:focus-visible .project-card__follow-label--default,
 solid-ui-button.project-card__follow-button:focus-within .project-card__follow-label--default {
@@ -65,6 +71,25 @@ solid-ui-button.project-card__follow-button:hover .project-card__follow-label--h
 solid-ui-button.project-card__follow-button:focus-visible .project-card__follow-label--hover,
 solid-ui-button.project-card__follow-button:focus-within .project-card__follow-label--hover {
   display: inline-flex;
+}
+
+solid-ui-button.project-card__follow-button[data-loading='true'] {
+  pointer-events: none;
+}
+
+solid-ui-button.project-card__follow-button[data-loading='true'] .project-card__follow-label--default,
+solid-ui-button.project-card__follow-button[data-loading='true'] .project-card__follow-label--hover {
+  display: none;
+}
+
+solid-ui-button.project-card__follow-button[data-loading='true'] .project-card__follow-label--loading {
+  display: inline-flex;
+}
+
+solid-ui-button.project-card__follow-button[data-loading='true'] .loading-spinner {
+  width: var(--icon-xxs, 1rem);
+  height: var(--icon-xxs, 1rem);
+  border-width: 0.125rem;
 }
 
 .project-card__rail::-webkit-scrollbar {
