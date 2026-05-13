@@ -11,10 +11,23 @@ function formatContactsDialogError(prefix: string, error: unknown): string {
   return message.startsWith(prefix) ? message : `${prefix}\n${message}`
 }
 
+function getSharedDialogErrorSection(context: DataBrowserContext): HTMLElement | null {
+  return context.dom.querySelector('#profile-modal #modal-error') as HTMLElement | null
+}
+
 const addErrorToErrorDisplay = (
   context: DataBrowserContext,
   message: string
 ) => {
+  const sharedDialogErrorSection = getSharedDialogErrorSection(context)
+  if (sharedDialogErrorSection && context.dom.getElementById('contacts-addressbook-picker-dialog')) {
+    sharedDialogErrorSection.textContent = message
+    sharedDialogErrorSection.setAttribute('aria-hidden', 'false')
+    sharedDialogErrorSection.hidden = false
+    sharedDialogErrorSection.focus()
+    return
+  }
+
   const errorDisplaySection = context.dom.getElementById('error-display-section')
   if (errorDisplaySection) {
     const errorMessage = context.dom.getElementById('error-display-message')
@@ -91,6 +104,14 @@ const createErrorDisplaySection = (
 const checkAndRemoveErrorDisplay = (
   context: DataBrowserContext
 ) => {
+  const sharedDialogErrorSection = getSharedDialogErrorSection(context)
+  if (sharedDialogErrorSection && context.dom.getElementById('contacts-addressbook-picker-dialog')) {
+    sharedDialogErrorSection.textContent = ''
+    sharedDialogErrorSection.setAttribute('aria-hidden', 'true')
+    sharedDialogErrorSection.hidden = true
+    return
+  }
+
   const errorDisplaySection = context.dom.getElementById('error-display-section')
   if (errorDisplaySection && errorDisplaySection.classList.contains('contacts-dialog__error--visible')) {
     errorDisplaySection.classList.remove('contacts-dialog__error--visible')

@@ -145,6 +145,22 @@ function runUpdaterUpdate(
   })
 }
 
+export async function runDirectUpdaterUpdate(
+  store: LiveStore,
+  deletions: RdfStatement[],
+  insertions: RdfStatement[],
+  failureMessage = fallbackSaveUpdatesErrorMessageText
+) {
+  ensureStandardMutationPrefixes(store)
+
+  const updater = getStoreUpdater(store)
+  if (!updater) {
+    throw new Error(updaterUnsupportedStoreErrorMessageText)
+  }
+
+  await runUpdaterUpdate(updater, deletions, insertions, failureMessage)
+}
+
 export async function putResourceWithStatements(
   store: LiveStore,
   doc: NamedNode,
@@ -215,6 +231,7 @@ export async function runUpdateTransport(
   }
 
   const failureMessage = options.failureMessage || fallbackSaveUpdatesErrorMessageText
+
   const isPatchFailure = options.patchFailureMatcher || isPatchFailureMessage
   const isMissingGetRecord = options.missingGetRecordMatcher || isMissingGetRecordErrorMessage
 

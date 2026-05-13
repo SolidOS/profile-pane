@@ -3,7 +3,7 @@ import 'solid-ui/components/actions/button'
 import { LiveStore, NamedNode } from 'rdflib'
 import { ViewerMode } from '../../types'
 import { ProjectDetails, ProjectRow } from './types'
-import { projectsHeadingText, saveProjectsUpdatesFailedMessageText } from '../../texts'
+import { projectsHeadingText, unfollowProjectFailedMessageText } from '../../texts'
 import { createProjectsEditDialog } from './ProjectEditDialog'
 import { processProjectsMutations } from './mutations'
 import { addIcon, checkMarkIcon, editIcon, plusDarkIcon, twoDownArrowsIcon } from '../../icons-svg/profileIcons'
@@ -11,6 +11,7 @@ import { MutationOps } from '../shared/types'
 import '../../styles/ProjectSection.css'
 import { toggleCollapsibleSection } from '../shared/collapsibleSection'
 import { createSpinner } from '../../ui/spinner'
+import { formatDisplayError } from '../../utils/errorDisplay'
 
 const MAX_VISIBLE_PROJECTS_MOBILE = 2
 
@@ -112,7 +113,7 @@ function renderProject(
       }
     } catch (error) {
       if (section) {
-        setProjectsSectionError(section, error instanceof Error ? error.message : saveProjectsUpdatesFailedMessageText)
+        setProjectsSectionError(section, formatDisplayError(error, unfollowProjectFailedMessageText))
       }
     } finally {
       unfollowButton?.removeAttribute('disabled')

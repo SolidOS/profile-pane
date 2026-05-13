@@ -24,6 +24,7 @@ export const saveSkillsUpdatesFailedMessageText = 'Unable to save your skills.'
 export const saveResumeUpdatesFailedMessageText = 'Unable to save your resume.'
 export const saveEducationUpdatesFailedMessageText = 'Unable to save your education history.'
 export const saveProjectsUpdatesFailedMessageText = 'Unable to save your project data.'
+export const unfollowProjectFailedMessageText = 'Unable to unfollow the project.'
 export const saveSocialUpdatesFailedMessageText = 'Unable to save your social accounts.'
 export const saveBioUpdatesFailedMessageText = 'Unable to save your bio.'
 

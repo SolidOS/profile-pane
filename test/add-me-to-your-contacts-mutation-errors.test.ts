@@ -2,7 +2,8 @@ import { fireEvent, waitFor } from '@testing-library/dom'
 import { sym } from 'rdflib'
 
 import { context, fakeLogInAs, subject } from './setup'
-import { createAddressBookContactCreationDialog } from '../src/specialButtons/addContact/ContactCreationDialog'
+import { createAddressBookContactCreationDialog, createAddressBookContactCreationFooter } from '../src/specialButtons/addContact/ContactCreationDialog'
+import { closeSharedDialog, openInputDialog } from '../src/ui/dialog'
 import {
   errorNotExistsAddressBookUri,
   groupIsRequired
@@ -56,12 +57,36 @@ function mountDialog() {
     createAddressBooksData()
   )
 
-  document.body.appendChild(form)
+  const footer = createAddressBookContactCreationFooter(
+    context,
+    createContactsModule() as any,
+    createAddressBooksData(),
+    createContactData()
+  )
+
+  void openInputDialog({
+    title: 'Add contact to address book',
+    dom: document,
+    form,
+    headerAction: { type: 'none' }
+  })
+
+  const buttonsContainer = document.querySelector('#modal-buttons') as HTMLDivElement | null
+  if (buttonsContainer) {
+    const sharedButtons = Array.from(buttonsContainer.querySelectorAll(':scope > solid-ui-button')) as HTMLElement[]
+    sharedButtons.forEach((button) => {
+      button.hidden = true
+      button.setAttribute('aria-hidden', 'true')
+    })
+
+    buttonsContainer.appendChild(footer)
+  }
+
   return form
 }
 
 function getErrorMessage(): HTMLElement {
-  const error = document.getElementById('error-display-message')
+  const error = document.querySelector('#profile-modal #modal-error') as HTMLElement | null
   if (!error) throw new Error('Expected add-to-contact error message element to exist.')
   return error
 }
@@ -72,6 +97,7 @@ describe('add-to-contact dialog validation', () => {
   })
 
   afterEach(() => {
+    closeSharedDialog()
     document.body.innerHTML = ''
     jest.clearAllMocks()
   })
@@ -96,8 +122,8 @@ describe('add-to-contact dialog validation', () => {
     const launchUriButton = document.getElementById('contacts-addressbook-uri-entry-button') as HTMLElement
     fireEvent.click(launchUriButton)
 
-    const addButton = document.getElementById('contacts-addressbook-entry-button') as HTMLElement
-    fireEvent.click(addButton)
+    const uriForm = document.getElementById('contacts-address-uri-entry-form') as HTMLFormElement
+    uriForm.dispatchEvent(new Event('submit', { bubbles: false, cancelable: true }))
 
     await waitFor(() => {
       expect(getErrorMessage().textContent).toBe(errorNotExistsAddressBookUri)

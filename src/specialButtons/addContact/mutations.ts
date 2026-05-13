@@ -5,19 +5,21 @@ import type { NewContact } from '@solid-data-modules/contacts-rdflib'
 import { DataBrowserContext } from 'pane-registry'
 import { authn, solidLogicSingleton } from 'solid-logic'
 import contacts from 'contacts-pane'
-import { createAddressBookContactCreationDialog } from './ContactCreationDialog'
+import { createAddressBookContactCreationDialog, createAddressBookContactCreationFooter } from './ContactCreationDialog'
 import { addErrorToErrorDisplay } from './contactsErrors'
 import { openInputDialog } from '../../ui/dialog'
 import {
   addContactWebIdSaveFailedDebugText,
+  errorContactCreation,
   errorAddingContactWebIDToAddressBook,
+  errorAddressBookCreation,
   errorUnableToDetermineUserWorkspace,
   groupIsRequired
 } from '../../texts'
 import { AddressBookDetails, AddressBooksData, ContactData, SelectedAddressBookUris } from './contactsTypes'
 import { getAddressBooksData } from './selectors'
 import { error as debugError } from '../../utils/debug'
-import { ensureStandardMutationPrefixes } from '../../sections/shared/rdfMutationHelpers'
+import { ensureStandardMutationPrefixes, runDirectUpdaterUpdate } from '../../sections/shared/rdfMutationHelpers'
 
 async function addContactToAddressBook(
   context: DataBrowserContext,
@@ -30,12 +32,24 @@ async function addContactToAddressBook(
   if (launchButton) launchButton.disabled = true
 
   const form = createAddressBookContactCreationDialog(context, contactsModule, contactData, addressBooksData)
+  const footer = createAddressBookContactCreationFooter(context, contactsModule, addressBooksData, contactData)
   await openInputDialog({
     title: 'Add contact to address book',
     dom: context.dom,
     form,
     headerAction: { type: 'none' },
-    hideFooterButtons: true
+    onOpen: () => {
+      const buttonsContainer = context.dom.querySelector('#modal-buttons') as HTMLDivElement | null
+      if (!buttonsContainer) return
+
+      const sharedButtons = Array.from(buttonsContainer.querySelectorAll(':scope > solid-ui-button')) as HTMLElement[]
+      sharedButtons.forEach((button) => {
+        button.hidden = true
+        button.setAttribute('aria-hidden', 'true')
+      })
+
+      buttonsContainer.appendChild(footer)
+    }
   })
 
   const refreshedButton = container.querySelector('#add-to-contacts-button') as (HTMLButtonElement & { refresh?: () => void }) | null
@@ -159,8 +173,7 @@ async function addContactDetails(
       insertions.push(st(node, ns.vcard('value'), phoneInfo.phoneNumber, detailDoc))
     })
 
-    ensureStandardMutationPrefixes(store)
-    await store.updater.update([], insertions)
+    await runDirectUpdaterUpdate(store, [], insertions, errorContactCreation)
   } catch (error) {
     addErrorToErrorDisplay(context, error)
   }
@@ -269,9 +282,11 @@ async function updateAcrossDocuments(
   })
 
   await Promise.all(uniqueDocs.map((doc) =>
-    store.updater.update(
+    runDirectUpdaterUpdate(
+      store,
       deletions.filter((statement) => ('value' in statement.why ? statement.why.value : '__default__') === ('value' in doc ? doc.value : '__default__')),
-      insertions.filter((statement) => ('value' in statement.why ? statement.why.value : '__default__') === ('value' in doc ? doc.value : '__default__'))
+      insertions.filter((statement) => ('value' in statement.why ? statement.why.value : '__default__') === ('value' in doc ? doc.value : '__default__')),
+      errorAddingContactWebIDToAddressBook
     )
   ))
 }
@@ -339,8 +354,7 @@ async function updateAddressBookName(
       st(addressBookNode, ns.vcard('fn'), literal(trimmedName), addressBookDoc)
     ]
 
-    ensureStandardMutationPrefixes(store)
-    await store.updater.update(deletions, insertions)
+    await runDirectUpdaterUpdate(store, deletions, insertions, errorAddressBookCreation)
   } catch (error) {
     throw error instanceof Error ? error : new Error(String(error))
   }

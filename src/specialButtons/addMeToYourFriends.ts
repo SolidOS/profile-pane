@@ -98,19 +98,25 @@ const createAddMeToYourFriendsButton = (
 
     if (checkIfAnyUserLoggedIn(me)) {
       button.disabled = false
+      button.removeAttribute('disabled')
       checkIfThingExists(store, me, subject, ns.foaf('knows')).then((friendExists) => {
         if (friendExists) {
           //logged in and friend exists or friend was just added
           setAddToFriendsButtonLabel(button, friendExistsAlreadyButtonText)
+          button.disabled = true
+          button.setAttribute('disabled', 'true')
         } else {
           //logged in and friend does not exist yet
           setAddToFriendsButtonLabel(button, addMeToYourFriendsButtonText)
+          button.disabled = false
+          button.removeAttribute('disabled')
         }
       })
     } else {
       //not logged in — disable and indicate login is required
       setAddToFriendsButtonLabel(button, logInAddMeToYourFriendsButtonText)
       button.disabled = true
+      button.setAttribute('disabled', 'true')
     }
   }
 

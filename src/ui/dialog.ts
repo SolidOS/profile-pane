@@ -3,6 +3,7 @@ import 'solid-ui/components/actions/button'
 import { html, render } from 'lit-html'
 import { closeIcon } from '../icons-svg/profileIcons'
 import { createSpinner } from './spinner'
+import { formatDisplayError } from '../utils/errorDisplay'
 
 /* Copied from issue-pane, minor typescript adjustments */
 /* Changed modal from div to dialog element */
@@ -139,8 +140,8 @@ function clearModalError(elements: DialogElements): void {
   elements.error.hidden = true
 }
 
-function setModalError(elements: DialogElements, message: string): void {
-  elements.error.textContent = message
+function setModalError(elements: DialogElements, error: unknown, fallbackMessage?: string): void {
+  elements.error.textContent = formatDisplayError(error, fallbackMessage)
   elements.error.setAttribute('aria-hidden', 'false')
   elements.error.hidden = false
   if (elements.error instanceof HTMLElement) {
@@ -470,9 +471,8 @@ export function openInputDialog (options: OpenInputDialogCustom): Promise<InputD
             return true
           } catch (error) {
             updateSavingUI(dialog, submitLabel, false)
-            const fallback = error instanceof Error ? error.message : String(error)
-            const message = options.formatSaveError ? options.formatSaveError(error) : fallback
-            setModalError(elements, message)
+            const fallback = options.formatSaveError ? options.formatSaveError(error) : undefined
+            setModalError(elements, error, fallback)
             return false
           }
         }

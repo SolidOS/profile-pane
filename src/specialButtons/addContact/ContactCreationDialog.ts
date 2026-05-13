@@ -9,12 +9,13 @@ import ContactsModuleRdfLib from '@solid-data-modules/contacts-rdflib'
 import { render } from 'lit-html'
 import { clearPreviousMessage, complain } from '../../buttonsHelper'
 import { contactExistsMessage, dialogCancelLabelText, errorAddingContactWebIDToAddressBook, errorAddressBookCreation, errorContactCreation, errorGroupCreation, errorNotExistsAddressBookUri, errorProcessingUriAddressBook, groupIsRequired } from '../../texts'
-import { createErrorDisplaySection, addErrorToErrorDisplay, checkAndAddErrorToDisplay, checkAndRemoveErrorDisplay, formatContactsDialogError } from './contactsErrors'
+import { addErrorToErrorDisplay, checkAndAddErrorToDisplay, checkAndRemoveErrorDisplay, formatContactsDialogError } from './contactsErrors'
 import { literal, NamedNode, st, sym } from 'rdflib'
 import { closeIcon } from '../../icons-svg/profileIcons'
 import { ns } from 'solid-ui'
 import { closeSharedDialog, getSharedDialogCancelButton, openInputDialog, setSharedDialogSavingState } from '../../ui/dialog'
-import { ensureStandardMutationPrefixes } from '../../sections/shared/rdfMutationHelpers'
+import { ensureStandardMutationPrefixes, runDirectUpdaterUpdate } from '../../sections/shared/rdfMutationHelpers'
+import { error as debugError } from '../../utils/debug'
 
 const CONTACTS_POPUP_OVERLAY_ID = 'contacts-popup-overlay'
 const CONTACTS_OVERLAY_ACTIVE_CLASS = 'contacts-dialog--overlay-active'
@@ -87,13 +88,7 @@ export const createAddressBookContactCreationDialog = (context: DataBrowserConte
   addressBookContactCreationDiv.setAttribute('aria-label', 'Contact creation options')
   addressBookContactCreationDiv.classList.add('contacts-dialog__body', 'contacts-dialog__creation', 'flex-column')
 
-  const cancelButton = createDialogCancelButton(context, addressBookContactCreationDialog)
-  const addressBookContactSubmitButton = createNewContactCreationButton(context, contactsModule, addressBooksData, contactData)
-  const footer = context.dom.createElement('div')
-  footer.classList.add('contacts-dialog__footer')
-
   const addressBookDetailsSection = createAddressBookDetailsSection(context)
-  const errorDisplaySection = createErrorDisplaySection(context)
   const statusRegion = createContactsStatusRegion(context)
   const addressBookListDiv = createAddressBookListSection(context, contactsModule, contactData, addressBooksData)
   const inlinePanelRegion = createInlinePanelRegion(context)
@@ -101,15 +96,11 @@ export const createAddressBookContactCreationDialog = (context: DataBrowserConte
   addressBookDetailsSection.appendChild(inlinePanelRegion)
 
   addressBookContactCreationDiv.appendChild(addressBookDetailsSection)
-  footer.appendChild(cancelButton)
-  footer.appendChild(addressBookContactSubmitButton)
 
   mainContent.appendChild(dialogDescription)
   mainContent.appendChild(addressBookContactCreationDiv)
-  mainContent.appendChild(errorDisplaySection)
 
   addressBookContactCreationDialog.appendChild(mainContent)
-  addressBookContactCreationDialog.appendChild(footer)
   addressBookContactCreationDialog.appendChild(statusRegion)
 
   setTimeout(() => {
@@ -118,6 +109,23 @@ export const createAddressBookContactCreationDialog = (context: DataBrowserConte
   }, 0)
  
   return addressBookContactCreationDialog
+}
+
+export function createAddressBookContactCreationFooter(
+  context: DataBrowserContext,
+  contactsModule: ContactsModuleRdfLib,
+  addressBooksData: AddressBooksData,
+  contactData: ContactData
+): HTMLDivElement {
+  const footer = context.dom.createElement('div')
+  footer.classList.add('contacts-dialog__footer')
+
+  const cancelButton = createDialogCancelButton(context)
+  const submitButton = createNewContactCreationButton(context, contactsModule, addressBooksData, contactData)
+
+  footer.appendChild(cancelButton)
+  footer.appendChild(submitButton)
+  return footer
 }
 
 // Backward-compatible export name used by consumers and tests.
@@ -258,6 +266,7 @@ const createAddressBookUriEntryForm = (
           announceContactsStatus(context, 'Address book added to the list.')
         }
       } catch (error) {
+        debugError('Contacts address book URI processing failed', error)
         addErrorToErrorDisplay(context, formatContactsDialogError(errorProcessingUriAddressBook, error))
       }
     })
@@ -454,6 +463,7 @@ const createNewContactCreationButton = (
           const contactUri = await createContactInAddressBook(context, contactsModule, contactData, selectedAddressBookUris)
           finalizeContactEntry(context, addressBooksData, contactData, contactUri)
         } catch(error) {
+          debugError('Contacts contact creation failed', error)
           addErrorToErrorDisplay(context, formatContactsDialogError(errorContactCreation, error))
         }
       } else {
@@ -614,6 +624,7 @@ const createNewAddressBookForm = (
         clearInlinePanel(context)
         removePopupOverlayIfNoPopup(context)
       } catch (error) {
+        debugError('Contacts address book creation failed', error)
         addErrorToErrorDisplay(context, formatContactsDialogError(errorAddressBookCreation, error))
       }
     })
@@ -758,8 +769,7 @@ const createCloseButton = (
 }   
 
 function createDialogCancelButton(
-  context: DataBrowserContext,
-  _element: HTMLElement
+  context: DataBrowserContext
 ): SolidUIButtonElement {
   const cancelButton = createContactsButtonElement(context, {
     type: 'button',
@@ -941,6 +951,7 @@ const createGroupNameForm = (
           removePopupOverlayIfNoPopup(context)
         }
       } catch (error) {
+        debugError('Contacts group creation failed', error)
         addErrorToErrorDisplay(context, formatContactsDialogError(errorGroupCreation, error))
       }
     })
@@ -1164,7 +1175,12 @@ const finalizeContactEntry = (
   contactData: ContactData,
   contactUri: string,
 ) => {
-    closeSharedDialog()
+    const sharedCancelButton = getSharedDialogCancelButton(context.dom)
+    if (sharedCancelButton) {
+      sharedCancelButton.click()
+    } else {
+      closeSharedDialog()
+    }
     addressBooksData.contactWebIDs.set(contactData.webID, contactUri)
     const selectorDialog = context.dom.getElementById('contacts-addressbook-picker-dialog')
     if (selectorDialog) {
@@ -1441,9 +1457,11 @@ async function updateAcrossDocuments(
   })
 
   await Promise.all(uniqueDocs.map((doc) =>
-    store.updater.update(
+    runDirectUpdaterUpdate(
+      store,
       deletions.filter((statement) => getDocumentKey(statement.why) === getDocumentKey(doc)),
-      insertions.filter((statement) => getDocumentKey(statement.why) === getDocumentKey(doc))
+      insertions.filter((statement) => getDocumentKey(statement.why) === getDocumentKey(doc)),
+      errorGroupCreation
     )
   ))
 }

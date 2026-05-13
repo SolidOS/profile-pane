@@ -50,7 +50,7 @@
   gap: var(--spacing-lg);
   width: 100%;
   min-width: 0;
-  padding: var(--profile-modal-panel-block-padding) var(--profile-modal-panel-inline-padding);
+  padding: var(--profile-modal-panel-block-padding) var(--profile-modal-panel-inline-padding); 
   box-sizing: border-box;
   border-radius: var(--border-radius-base, 0.3125rem) var(--border-radius-base, 0.3125rem) 0 0;
   border-bottom: var(--border-width-sm, 0.1rem) solid var(--color-border-lighter, var(--slate-200, #E2E8F0));
@@ -187,12 +187,15 @@
 
 #profile-modal .modal__error-section {
   margin-top: var(--spacing-sm);
+  margin-bottom: 0;
   padding: var(--profile-modal-error-padding);
   border: 1px solid var(--dialog-error-border, var(--pink-700, #ff98b3));
   border-radius: var(--border-radius-base);
   background: var(--dialog-error-background, var(--pink-500, #ffdde6));
   color: var(--dialog-error-text, var(--red-600, #B00020));
   text-align: center;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
 }
 
 #profile-modal .modal__error-section[hidden] {

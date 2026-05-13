@@ -7,9 +7,12 @@ import '../../styles/SkillsSection.css'
 import { createSkillsEditDialog } from './SkillsEditDialog'
 import { SkillDetails, SkillRow } from './types'
 import { addIcon, deleteIcon, editIcon, lighteningIcon } from '../../icons-svg/profileIcons'
-import { saveSkillsUpdatesFailedMessageText, skillsHeadingText } from '../../texts'
+import { skillsHeadingText } from '../../texts'
 import { toggleCollapsibleSection } from '../shared/collapsibleSection'
 import { processSkillsMutations } from './mutations'
+import { formatDisplayError } from '../../utils/errorDisplay'
+
+const removeSkillFailedMessageText = 'Unable to remove your skill.'
 
 function setSkillsSectionError(section: HTMLElement, message: string | null): void {
   const errorBox = section.querySelector('.profile-section-inline-error') as HTMLElement | null
@@ -70,7 +73,7 @@ function renderSkillItem(
       }
     } catch (error) {
       if (section) {
-        setSkillsSectionError(section, error instanceof Error ? error.message : saveSkillsUpdatesFailedMessageText)
+        setSkillsSectionError(section, formatDisplayError(error, removeSkillFailedMessageText))
       }
     } finally {
       removeButton?.removeAttribute('disabled')

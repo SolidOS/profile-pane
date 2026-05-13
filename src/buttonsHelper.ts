@@ -1,13 +1,14 @@
 import { DataBrowserContext } from 'pane-registry'
 import { widgets } from 'solid-ui'
 import { NamedNode } from 'rdflib'
+import { formatDisplayError } from './utils/errorDisplay'
 
 function complain(
   buttonContainer: HTMLDivElement,
   context: DataBrowserContext,
-  error: string
+  error: unknown
 ): void {
-  const errorBlock = widgets.errorMessageBlock(context.dom, error)
+  const errorBlock = widgets.errorMessageBlock(context.dom, formatDisplayError(error))
   errorBlock.setAttribute('role', 'alert')
   errorBlock.setAttribute('aria-live', 'assertive')
   errorBlock.setAttribute('tabindex', '0')

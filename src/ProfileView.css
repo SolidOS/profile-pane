@@ -1,6 +1,10 @@
 /* Profile layout styles. */
 
 .profile-grid {
+  --profile-sidebar-min-width: 18.75rem;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(var(--profile-sidebar-min-width), 22rem);
+  align-items: start;
   column-gap: var(--spacing-xxs, 0.3125rem);
   row-gap: var(--spacing-md, 1.25rem);
 }
@@ -45,6 +49,7 @@
   grid-column: 2;
   grid-row: 1;
   align-self: stretch;
+  min-width: var(--profile-sidebar-min-width);
   padding-block: 0;
   padding-inline: var(--spacing-sm, 0.938rem);
   background: transparent;
@@ -76,6 +81,7 @@
   grid-column: 2;
   display: flex;
   flex-direction: column;
+  min-width: var(--profile-sidebar-min-width);
   padding: var(--spacing-sm, 0.938rem);
   align-items: stretch;
   text-align: left;
@@ -88,6 +94,14 @@
   display: flex;
   flex-direction: column;
   gap: var(--spacing-md, 1.25rem);
+  min-width: var(--profile-sidebar-min-width);
+}
+
+.profile-grid .profile__intro-sidebar > .profile__section,
+.profile-grid .profile__intro-sidebar > .profile__section--empty,
+.profile-grid .profile__sidebar-content > .profile__section,
+.profile-grid .profile__sidebar-content > .profile__section--empty {
+  min-width: var(--profile-sidebar-min-width);
 }
 
 .profile-grid > .profile__sidebar:not(.profile__intro-sidebar) {
@@ -222,9 +236,18 @@
 
 :is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__sidebar {
   padding: 0 !important;
+  min-width: 0;
   border-radius: 0;
   background: transparent;
   align-self: stretch;
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__sidebar-content,
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__intro-sidebar > .profile__section,
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__intro-sidebar > .profile__section--empty,
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__sidebar-content > .profile__section,
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__sidebar-content > .profile__section--empty {
+  min-width: 0;
 }
 
 :is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid [data-profile-section='projects'].profile__section--empty > .profile-section-collapsible__header,

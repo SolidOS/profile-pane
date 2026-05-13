@@ -535,6 +535,12 @@
   --button-hover-text: var(--profile-heading-compact-button-hover-text, var(--color-text-on-action, var(--white, #FFF)));
 }
 
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile__heading-actions > #add-to-contacts-button-container > solid-ui-button.profile__btn-contacts {
+  --button-hover-background: var(--dialog-cancel-button-hover-background, var(--blue-900, #083575));
+  --button-hover-border: var(--dialog-cancel-button-hover-border, var(--blue-900, #083575));
+  --button-hover-text: var(--dialog-cancel-button-hover-text, var(--color-text-on-action, var(--white, #FFF)));
+}
+
 :is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile__name {
   font-size: var(--profile-heading-compact-name-size, var(--profile-mobile-header-name-size, var(--font-size-xl, 1.375rem)));
   line-height: var(--profile-heading-compact-name-line-height, 1.15);
@@ -637,6 +643,12 @@
     --button-hover-background: var(--profile-heading-compact-button-hover-background, var(--color-primary, #7C4DFF));
     --button-hover-border: var(--profile-heading-compact-button-hover-border, var(--color-primary, #7C4DFF));
     --button-hover-text: var(--profile-heading-compact-button-hover-text, var(--color-text-on-action, var(--white, #FFF)));
+  }
+
+  .profile__heading-actions > #add-to-contacts-button-container > solid-ui-button.profile__btn-contacts {
+    --button-hover-background: var(--dialog-cancel-button-hover-background, var(--blue-900, #083575));
+    --button-hover-border: var(--dialog-cancel-button-hover-border, var(--blue-900, #083575));
+    --button-hover-text: var(--dialog-cancel-button-hover-text, var(--color-text-on-action, var(--white, #FFF)));
   }
 
   .profile__name {

@@ -27,6 +27,8 @@ jest.mock('../src/buttonsHelper', () => ({
   mention: jest.fn()
 }))
 
+import { waitFor } from '@testing-library/dom'
+
 jest.mock('../src/specialButtons/addContact/contactsErrors', () => {
   const actual = jest.requireActual('../src/specialButtons/addContact/contactsErrors')
   return {
@@ -37,7 +39,8 @@ jest.mock('../src/specialButtons/addContact/contactsErrors', () => {
   }
 })
 
-import { createAddressBookUriSelectorDialog } from '../src/specialButtons/addContact/ContactCreationDialog'
+import { createAddressBookContactCreationFooter, createAddressBookUriSelectorDialog } from '../src/specialButtons/addContact/ContactCreationDialog'
+import { closeSharedDialog, openInputDialog } from '../src/ui/dialog'
 
 describe('ContactCreationDialog', () => {
   const context = { dom: document } as any
@@ -67,9 +70,37 @@ describe('ContactCreationDialog', () => {
     document.body.appendChild(buttonContainer)
   })
 
-  it('opens the new address-book form from create button', () => {
+  afterEach(() => {
+    closeSharedDialog()
+  })
+
+  function mountSharedDialog() {
     const dialog = createAddressBookUriSelectorDialog(context, contactsModule, contactData, addressBooksData)
-    document.body.appendChild(dialog)
+    const footer = createAddressBookContactCreationFooter(context, contactsModule, addressBooksData, contactData)
+
+    void openInputDialog({
+      title: 'Add contact to address book',
+      dom: document,
+      form: dialog,
+      headerAction: { type: 'none' }
+    })
+
+    const buttonsContainer = document.querySelector('#modal-buttons') as HTMLDivElement | null
+    if (buttonsContainer) {
+      const sharedButtons = Array.from(buttonsContainer.querySelectorAll(':scope > solid-ui-button')) as HTMLElement[]
+      sharedButtons.forEach((button) => {
+        button.hidden = true
+        button.setAttribute('aria-hidden', 'true')
+      })
+
+      buttonsContainer.appendChild(footer)
+    }
+
+    return dialog
+  }
+
+  it('opens the new address-book form from create button', () => {
+    const dialog = mountSharedDialog()
 
     const createButton = dialog.querySelector('#contacts-create-addressbook-button') as HTMLButtonElement
     expect(createButton).toBeTruthy()
@@ -79,12 +110,11 @@ describe('ContactCreationDialog', () => {
     const newForm = dialog.querySelector('#new-addressbook-form')
     expect(newForm).toBeTruthy()
     expect(newForm?.closest('#contacts-inline-panel-region')).toBeTruthy()
-    expect((dialog.querySelector('#contacts-submit-contact-button') as HTMLButtonElement)?.disabled).toBe(true)
+    expect((document.getElementById('contacts-submit-contact-button') as HTMLButtonElement | null)?.disabled).toBe(true)
   })
 
   it('opens the address-book URI flow inside the inline panel region', () => {
-    const dialog = createAddressBookUriSelectorDialog(context, contactsModule, contactData, addressBooksData)
-    document.body.appendChild(dialog)
+    const dialog = mountSharedDialog()
 
     const uriButton = dialog.querySelector('#contacts-addressbook-uri-entry-button') as HTMLButtonElement
     expect(uriButton).toBeTruthy()
@@ -96,18 +126,19 @@ describe('ContactCreationDialog', () => {
     expect(uriPanel?.closest('#contacts-inline-panel-region')).toBeTruthy()
   })
 
-  it('renders chooser content with footer actions', () => {
-    const dialog = createAddressBookUriSelectorDialog(context, contactsModule, contactData, addressBooksData)
-    document.body.appendChild(dialog)
+  it('renders chooser content with footer actions', async () => {
+    const dialog = mountSharedDialog()
 
     expect(dialog.querySelector('.contacts-dialog__description')?.textContent).toContain('Choose an address book and group')
-    expect(dialog.querySelector('#contacts-submit-contact-button')?.textContent).toContain('Add Contact')
-    expect(Array.from(dialog.querySelectorAll('button, solid-ui-button')).some((button) => button.textContent?.trim() === 'Cancel')).toBe(true)
+
+    await waitFor(() => {
+      expect(document.getElementById('contacts-submit-contact-button')?.textContent).toContain('Add Contact')
+      expect(Array.from(document.querySelectorAll('#modal-buttons button, #modal-buttons solid-ui-button')).some((button) => button.textContent?.trim() === 'Cancel')).toBe(true)
+    })
   })
 
   it('sanitizes invalid characters and toggles validation message visibility', () => {
-    const dialog = createAddressBookUriSelectorDialog(context, contactsModule, contactData, addressBooksData)
-    document.body.appendChild(dialog)
+    const dialog = mountSharedDialog()
 
     const createButton = dialog.querySelector('#contacts-create-addressbook-button') as HTMLButtonElement
     createButton.click()
@@ -133,8 +164,7 @@ describe('ContactCreationDialog', () => {
   })
 
   it('preserves spaces while typing in address book inputs', () => {
-    const dialog = createAddressBookUriSelectorDialog(context, contactsModule, contactData, addressBooksData)
-    document.body.appendChild(dialog)
+    const dialog = mountSharedDialog()
 
     const createButton = dialog.querySelector('#contacts-create-addressbook-button') as HTMLButtonElement
     createButton.click()

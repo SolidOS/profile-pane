@@ -26,6 +26,18 @@ import { addWebIDToContacts } from 'contacts-pane'
 import { addErrorToErrorDisplay } from '../src/specialButtons/addContact/contactsErrors'
 import { errorAddingContactWebIDToAddressBook } from '../src/texts'
 
+function mockUpdaterUpdateSuccess() {
+	return jest.fn((_deletions, _insertions, callback) => {
+		callback('', true)
+	})
+}
+
+function mockUpdaterUpdateFailure(message: string) {
+	return jest.fn((_deletions, _insertions, callback) => {
+		callback('', false, message)
+	})
+}
+
 describe('contactsHelpers', () => {
 	beforeEach(() => {
 		jest.clearAllMocks()
@@ -67,7 +79,7 @@ describe('contactsHelpers', () => {
 		it('persists nickname and preferred pronouns when present', async () => {
 			const createdContactUri = 'https://pod.example/address-book/index.ttl#new-contact'
 			const fetcherLoad = jest.fn().mockResolvedValue(undefined)
-			const updaterUpdate = jest.fn().mockResolvedValue(undefined)
+			const updaterUpdate = mockUpdaterUpdateSuccess()
 			const bnode = jest.fn(() => namedNode('https://pod.example/address-book/index.ttl#webid-node'))
 			const context = {
 				session: {
@@ -124,7 +136,7 @@ describe('contactsHelpers', () => {
 				session: {
 					store: {
 						fetcher: { load: jest.fn().mockResolvedValue(undefined) },
-						updater: { update: jest.fn().mockResolvedValue(undefined) },
+						updater: { update: mockUpdaterUpdateSuccess() },
 						bnode: jest.fn(() => namedNode('https://pod.example/address-book/index.ttl#webid-node')),
 						each: jest.fn().mockReturnValue([]),
 						statementsMatching: jest.fn().mockReturnValue([])
@@ -262,7 +274,7 @@ describe('contactsHelpers', () => {
 		it('updates title and fn statements with trimmed name', async () => {
 			const fetcherLoad = jest.fn().mockResolvedValue(undefined)
 			const statementsMatching = jest.fn().mockReturnValue([{ id: 'old' }])
-			const updaterUpdate = jest.fn().mockResolvedValue(undefined)
+			const updaterUpdate = mockUpdaterUpdateSuccess()
 			const context = {
 				session: {
 					store: {
@@ -308,7 +320,7 @@ describe('contactsHelpers', () => {
 					store: {
 						fetcher: { load: jest.fn().mockResolvedValue(undefined) },
 						statementsMatching: jest.fn().mockReturnValue([]),
-						updater: { update: jest.fn().mockRejectedValue(new Error('update failed')) }
+						updater: { update: mockUpdaterUpdateFailure('update failed') }
 					}
 				}
 			} as any
@@ -326,7 +338,7 @@ describe('contactsHelpers', () => {
 
 		it('loads contact and adds webID triple', async () => {
 			const fetcherLoad = jest.fn().mockResolvedValue(undefined)
-			const updaterUpdate = jest.fn().mockResolvedValue(undefined)
+			const updaterUpdate = mockUpdaterUpdateSuccess()
 			const context = {
 				session: {
 					store: {

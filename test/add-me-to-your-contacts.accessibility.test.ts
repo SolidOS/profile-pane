@@ -1,8 +1,9 @@
 import { afterEach, beforeEach, describe, expect, it, jest } from '@jest/globals'
 import { fireEvent, waitFor } from '@testing-library/dom'
 
-import { createAddressBookContactCreationDialog, handleContactExistsByName } from '../src/specialButtons/addContact/ContactCreationDialog'
+import { createAddressBookContactCreationDialog, createAddressBookContactCreationFooter, handleContactExistsByName } from '../src/specialButtons/addContact/ContactCreationDialog'
 import type { AddressBooksData, ContactData } from '../src/specialButtons/addContact/contactsTypes'
+import { closeSharedDialog, openInputDialog } from '../src/ui/dialog'
 import { runAxe } from './helpers/runAxe'
 import { context, fakeLogInAs, subject } from './setup'
 
@@ -53,7 +54,31 @@ function mountDialog(): HTMLFormElement {
     createAddressBooksData()
   )
 
-  document.body.appendChild(form)
+  const footer = createAddressBookContactCreationFooter(
+    context,
+    createContactsModule() as any,
+    createAddressBooksData(),
+    createContactData()
+  )
+
+  void openInputDialog({
+    title: 'Add contact to address book',
+    dom: document,
+    form,
+    headerAction: { type: 'none' }
+  })
+
+  const buttonsContainer = document.querySelector('#modal-buttons') as HTMLDivElement | null
+  if (buttonsContainer) {
+    const sharedButtons = Array.from(buttonsContainer.querySelectorAll(':scope > solid-ui-button')) as HTMLElement[]
+    sharedButtons.forEach((button) => {
+      button.hidden = true
+      button.setAttribute('aria-hidden', 'true')
+    })
+
+    buttonsContainer.appendChild(footer)
+  }
+
   return form
 }
 
@@ -63,16 +88,18 @@ describe('Add me to your contacts accessibility', () => {
   })
 
   afterEach(() => {
+    closeSharedDialog()
     document.body.innerHTML = ''
     jest.clearAllMocks()
   })
 
   it('has no accessibility violations for the chooser dialog', async () => {
     const form = mountDialog()
+    const modal = document.getElementById('profile-modal') as HTMLElement
 
     expect(form.getAttribute('aria-describedby')).toBe('contacts-dialog-description')
 
-    const results = await runAxe(form)
+    const results = await runAxe(modal)
     expect(results.violations.length).toBe(0)
   })
 
@@ -101,6 +128,7 @@ describe('Add me to your contacts accessibility', () => {
 
   it('announces shared errors accessibly and remains axe-clean when an error is visible', async () => {
     const form = mountDialog()
+    const modal = document.getElementById('profile-modal') as HTMLElement
 
     const addressBookButton = form.querySelector(`#${CSS.escape(addressBookUri)}`) as HTMLElement | null
     if (addressBookButton) {
@@ -109,22 +137,21 @@ describe('Add me to your contacts accessibility', () => {
       fireEvent.click(document.getElementById(addressBookUri) as HTMLElement)
     }
 
-    fireEvent.click(form.querySelector('#contacts-submit-contact-button') as HTMLElement)
+    fireEvent.click(document.getElementById('contacts-submit-contact-button') as HTMLElement)
 
-    const errorSection = form.querySelector('#error-display-section') as HTMLElement
-    const errorMessage = form.querySelector('#error-display-message') as HTMLElement
+    const errorSection = modal.querySelector('#modal-error') as HTMLElement
 
     await waitFor(() => {
-      expect(errorSection.classList.contains('contacts-dialog__error--visible')).toBe(true)
+      expect(errorSection.hidden).toBe(false)
       expect(errorSection.getAttribute('role')).toBe('alert')
       expect(errorSection.getAttribute('aria-live')).toBe('assertive')
       expect(errorSection.getAttribute('aria-atomic')).toBe('true')
       expect(errorSection.getAttribute('aria-hidden')).toBe('false')
       expect(document.activeElement).toBe(errorSection)
-      expect(errorMessage.textContent).toBe('You need to either pick a group or enter one.')
+      expect(errorSection.textContent).toBe('You need to either pick a group or enter one.')
     })
 
-    const results = await runAxe(form)
+    const results = await runAxe(modal)
     expect(results.violations.length).toBe(0)
   })
 
@@ -145,7 +172,6 @@ describe('Add me to your contacts accessibility', () => {
     const overlay = form.querySelector('#contacts-popup-overlay') as HTMLElement
     const description = form.querySelector('.contacts-dialog__description') as HTMLElement
     const body = form.querySelector('.contacts-dialog__body') as HTMLElement
-    const footer = form.querySelector('.contacts-dialog__footer') as HTMLElement
 
     await waitFor(() => {
       expect(popup.getAttribute('role')).toBe('alertdialog')
@@ -153,7 +179,6 @@ describe('Add me to your contacts accessibility', () => {
       expect(popup.getAttribute('tabindex')).toBe('-1')
       expect(description.getAttribute('aria-hidden')).toBe('true')
       expect(body.getAttribute('aria-hidden')).toBe('true')
-      expect(footer.getAttribute('aria-hidden')).toBe('true')
       expect(overlay.getAttribute('aria-hidden')).toBe('true')
       expect(overlay.hasAttribute('role')).toBe(false)
       expect(document.activeElement).toBe(popup)

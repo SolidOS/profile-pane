@@ -238,7 +238,9 @@ solid-ui-button.project-card__follow-button[data-loading='true'] .loading-spinne
   border-radius: var(--border-radius-base, 0.3125rem);
   background: var(--dialog-error-background, var(--pink-500, #ffdde6));
   color: var(--dialog-error-text, var(--red-600, #B00020));
-  text-align: center;
+  text-align: left;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
 }
 
 /* Action buttons */

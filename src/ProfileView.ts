@@ -29,6 +29,7 @@ function getViewerMode(subject: NamedNode): ViewerMode {
 function renderSidebar(
   store: LiveStore,
   subject: NamedNode,
+  accounts,
   skills: SkillDetails[],
   languages: LanguageDetails[],
   contactInfo: ContactInfo,
@@ -42,6 +43,7 @@ function renderSidebar(
     >
       <h2 id="sidebar-heading" class="sr-only">Sidebar</h2>
       <div class="profile__sidebar-content">
+        ${renderSocialSection(store, subject, accounts, viewerMode, onSaved)}
         ${renderSkillsSection(store, subject, skills, viewerMode, onSaved)}
         ${renderLanguageSection(store, subject, languages, viewerMode, onSaved)}
         ${renderContactInfoSection(store, subject, contactInfo, viewerMode, onSaved)}
@@ -124,24 +126,17 @@ export async function ProfileView (
         class="profile-grid"
         tabindex="-1"
       > 
-        <div class="profile__intro-main">
-          ${headingSection}
-        </div>
-
-        <div class="profile__intro-sidebar profile__sidebar">
-          ${socialSection}
-        </div>
-
-        ${renderSidebar(store, subject, skills, languages, contactInfo, viewerMode, onSaved)}
-
+  
         <section class="profile__main">
           <h2 id="profile-main-heading" class="sr-only">Main Profile Content</h2>
 
+          ${headingSection}
           ${bioSection}
           ${cvSection}
           ${projectSection}
           
-        </section>       
+        </section>   
+        ${renderSidebar(store, subject, accounts, skills, languages, contactInfo, viewerMode, onSaved)}    
       </div>
     </div>
   `

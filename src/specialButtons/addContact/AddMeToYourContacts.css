@@ -100,7 +100,6 @@ html[data-theme="dark"] #add-to-contacts-button-container solid-ui-button.profil
   border-radius: 0;
   box-shadow: none;
   max-height: none;
-  max-width: 100%;
   min-width: 0;
 }
 
@@ -114,11 +113,9 @@ html[data-theme="dark"] #add-to-contacts-button-container solid-ui-button.profil
 
 .contacts-dialog__main {
   width: 100%;
-  max-width: 100%;
   min-width: 0;
-  padding: var(--spacing-sm, 0.9375rem) var(--spacing-sm, 0.9375rem) 0;
+  padding: var(--spacing-sm, 0.938rem);
   box-sizing: border-box;
-  overflow-x: hidden;
 }
 
 .contacts-dialog__creation {
@@ -132,8 +129,7 @@ html[data-theme="dark"] #add-to-contacts-button-container solid-ui-button.profil
 }
 
 .contacts-dialog__description {
-  margin: 0;
-  padding: 0;
+  padding: var(--spacing-xs, 0.75rem);
   background: transparent;
   color: var(--color-text-secondary, var(--gray-600, #4A5565));
   font-size: var(--font-size-sm, 0.875rem);
@@ -143,8 +139,7 @@ html[data-theme="dark"] #add-to-contacts-button-container solid-ui-button.profil
 .contacts-dialog__body {
   min-width: 0;
   margin-top: var(--spacing-lg, 1.5625rem);
-  overflow-x: hidden;
-  overflow-y: visible;
+  overflow: auto;
 }
 
 .contacts-dialog__footer {
@@ -317,26 +312,24 @@ solid-ui-button.contacts-dialog__cancel--footer {
 /* Selection layout */
 .contacts-dialog__details {
   width: 100%;
-  max-width: 100%;
   min-width: 0;
   min-height: 0;
   border-radius: 0;
   justify-content: flex-start;
   align-items: flex-start;
-  flex-wrap: wrap;
   box-sizing: border-box;
   gap: var(--spacing-sm, 0.938rem);
   padding: 0;
-  overflow-x: hidden;
-  overflow-y: visible;
+  overflow-x: auto;
+  overflow-y: auto;
   background: transparent;
 }
 
 .contacts-dialog__address-book-list {
-  flex: 1 1 15rem;
+  flex: 0 0 15rem;
   width: 100%;
   max-width: 16rem;
-  min-width: 15rem;
+  min-width: 240px;
   display: flex;
   flex-direction: column;
   gap: 1px;
@@ -344,7 +337,6 @@ solid-ui-button.contacts-dialog__cancel--footer {
 }
 
 .contacts-dialog__group-list {
-  flex: 1 1 12.5rem;
   width: auto;
   max-width: 14rem;
   min-width: 12.5rem;
@@ -638,8 +630,8 @@ solid-ui-button.contacts-dialog__close:focus-visible::part(button) {
   display: none;
   width: 100%;
   align-self: stretch;
-  margin-top: var(--spacing-sm);
-  padding: 0.75rem;
+  margin: 0;
+  padding: 0;
   border: 1px solid var(--dialog-error-border, var(--pink-700, #ff98b3));
   border-radius: var(--border-radius-base);
   background: var(--dialog-error-background, var(--pink-500, #ffdde6));
