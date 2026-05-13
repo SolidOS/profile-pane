@@ -36,7 +36,7 @@ function renderRole(role: RoleDetails, index: number) {
     </p>
     <p id=${rolePeriodId} class="resume-card__item-period">
       <time datetime=${toMonthDateTime(role.startDate)}>${formatMonthYear(role.startDate)}</time>
-      <span aria-hidden="true"> to </span>
+      <span> to </span>
       ${role.endDate
         ? html`<time datetime=${toMonthDateTime(role.endDate)}>${formatMonthYear(role.endDate)}</time>`
         : html`<span>Present</span>`}
@@ -138,7 +138,7 @@ function renderResumeSectionDefault(
           </solid-ui-button>
         </div>
       </header>
-      <div id="cv-panel" class="profile-section-collapsible__content" aria-hidden="true">
+      <div id="cv-panel" class="profile-section-collapsible__content">
         ${hasResume ? cv : html`<p>No resume details added yet.</p>`}
       </div>
     </section>
@@ -238,7 +238,7 @@ function renderOwnerEmptyResumeSection(
           </solid-ui-button>
         </div>
       </header>
-      <div id="cv-panel" class="profile-section-collapsible__content" aria-hidden="true" hidden>
+      <div id="cv-panel" class="profile-section-collapsible__content">
         ${renderOwnerEmptyResumeContent(store, subject, resumeDetails, viewerMode, onSaved)}
       </div>
     </section>

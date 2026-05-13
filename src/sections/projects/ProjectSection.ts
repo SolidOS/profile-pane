@@ -268,7 +268,7 @@ function renderOwnerEmptyProjectSection(
           </solid-ui-button>
         </div>
       </header>
-      <div id="projects-panel" class="profile-section-collapsible__content" aria-hidden="true" hidden>
+      <div id="projects-panel" class="profile-section-collapsible__content">
         ${renderOwnerEmptyProjectsContent(store, subject, projectData, viewerMode, onSaved)}
       </div>
     </section>
@@ -342,7 +342,7 @@ function renderProjectSectionDefault(
             </solid-ui-button>
           </div>
         </header>
-        <div id="projects-panel" class="profile-section-collapsible__content" aria-hidden="true" hidden>
+        <div id="projects-panel" class="profile-section-collapsible__content">
           ${hasProjects
             ? html`
                 <ul id="projects-rail" class="project-card__rail" role="list" aria-label="Known projects">

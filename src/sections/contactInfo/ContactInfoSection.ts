@@ -149,7 +149,7 @@ function renderContactInfoSectionDefault(
       data-expanded="false"
     >
       <header class="profile__section-header profile-section-collapsible__header">
-        <h2 id="contact-details-heading" tabindex="-1">${contactInfoHeadingText}</h2>
+        <h3 id="contact-details-heading" tabindex="-1">${contactInfoHeadingText}</h3>
         <div class="profile-section-collapsible__actions">
           ${isOwner ? html`
             <solid-ui-button
@@ -187,7 +187,7 @@ function renderContactInfoSectionDefault(
           </solid-ui-button>
         </div>
       </header>
-      <div id="contact-details-panel" class="profile-section-collapsible__content" aria-hidden="true" hidden>
+      <div id="contact-details-panel" class="profile-section-collapsible__content">
         ${contactInfo.phones.length > 0
           ? html`
               <ul class="contact-info__list" role="list" aria-label="Phone numbers">
@@ -251,7 +251,7 @@ function renderOwnerEmptyContactInfoSection(
       data-expanded="false"
     >
       <header class="profile__section-header profile-section-collapsible__header">
-        <h2 id="contact-details-heading" tabindex="-1">${contactInfoEmptyHeadingText}</h2>
+        <h3 id="contact-details-heading" tabindex="-1">${contactInfoEmptyHeadingText}</h3>
         <div class="profile-section-collapsible__actions">
           <solid-ui-button
             type="button"
@@ -287,7 +287,7 @@ function renderOwnerEmptyContactInfoSection(
           </solid-ui-button>
         </div>
       </header>
-      <div id="contact-details-panel" class="profile-section-collapsible__content" aria-hidden="true" hidden>
+      <div id="contact-details-panel" class="profile-section-collapsible__content">
         ${renderOwnerEmptyContactInfoContent(store, subject, contactInfo, viewerMode, onSaved)}
       </div>
     </section>
