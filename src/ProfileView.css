@@ -1,10 +1,11 @@
 /* Profile layout styles. */
 
 .profile-grid {
-  --profile-sidebar-min-width: 20.625rem;
+  --profile-main-section-min-width: 37.5rem;
+  --profile-sidebar-min-width: 25rem;
   --profile-sidebar-section-padding: var(--spacing-lg, 1.5625rem);
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(var(--profile-sidebar-min-width), 22rem);
+  grid-template-columns: minmax(0, 1fr) var(--profile-sidebar-min-width);
   align-items: start;
   column-gap: var(--spacing-xxs, 0.3125rem);
   row-gap: var(--spacing-md, 1.25rem);
@@ -103,6 +104,13 @@
 .profile-grid .profile__sidebar-content > .profile__section,
 .profile-grid .profile__sidebar-content > .profile__section--empty {
   min-width: var(--profile-sidebar-min-width);
+}
+
+.profile-grid .profile__intro-main > .profile__section,
+.profile-grid .profile__intro-main > .profile__section--empty,
+.profile-grid .profile__main > .profile__section,
+.profile-grid .profile__main > .profile__section--empty {
+  min-width: var(--profile-main-section-min-width);
 }
 
 .profile-grid > .profile__sidebar:not(.profile__intro-sidebar) {
@@ -257,6 +265,10 @@
 :is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__sidebar-content,
 :is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__intro-sidebar > .profile__section,
 :is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__intro-sidebar > .profile__section--empty,
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__intro-main > .profile__section,
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__intro-main > .profile__section--empty,
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__main > .profile__section,
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__main > .profile__section--empty,
 :is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__sidebar-content > .profile__section,
 :is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__sidebar-content > .profile__section--empty {
   min-width: 0;
@@ -306,7 +318,7 @@
   display: inline !important;
 }
 
-@container profile-pane (max-width: 1000px) {
+@container profile-pane (max-width: 1005px) {
   #main-content.profile-grid {
     width: 100%;
     max-width: 100%;
@@ -316,46 +328,7 @@
 }
 
 /* Narrow stacked auto layout */
-@media (max-width: 784px) {
-  .profile-grid .profile__intro-main,
-  .profile-grid .profile__intro-sidebar,
-  .profile-grid .profile__main,
-  .profile-grid .profile__sidebar {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    min-width: 0;
-    grid-column: 1;
-    align-self: stretch;
-  }
-
-  .profile-grid .profile__intro-main { order: 1; }
-  .profile-grid .profile__main { order: 2; }
-  .profile-grid .profile__intro-sidebar { order: 3; }
-  .profile-grid .profile__sidebar { order: 4; }
-}
-
-@container profile-pane (max-width: 784px) {
-  .profile-grid .profile__intro-main,
-  .profile-grid .profile__intro-sidebar,
-  .profile-grid .profile__main,
-  .profile-grid .profile__sidebar {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    min-width: 0;
-    grid-column: 1;
-    align-self: stretch;
-  }
-
-  .profile-grid .profile__intro-main { order: 1; }
-  .profile-grid .profile__main { order: 2; }
-  .profile-grid .profile__intro-sidebar { order: 3; }
-  .profile-grid .profile__sidebar { order: 4; }
-}
-
-/* Narrow-phone fallback once the layout is already stacked. */
-@media (max-width: 576px) {
+@media (max-width: 1005px) {
   .profile-grid {
     display: flex;
     flex-direction: column;
@@ -363,77 +336,14 @@
     gap: 0;
   }
 
-  .profile-grid .profile__sidebar {
-    padding: 0 !important;
-    border-radius: 0;
-    background: transparent;
-    align-self: stretch;
-  }
-
-  .profile-grid .profile__section,
-  .profile-grid .profile__section--empty {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    border-radius: var(--border-radius-base, 0.3125rem);
-    border: var(--border-width-thin, 0.1rem) solid var(--color-border-subtle, var(--gray-100, #F3F4F6));
-    background: var(--color-card-bg, var(--white, #FFF));
-  }
-
-  .profile-grid [data-profile-section='projects'].profile__section--empty > .profile-section-collapsible__header,
-  .profile-grid [data-profile-section='resume'].profile__section--empty > .profile-section-collapsible__header {
-    display: flex;
-  }
-
-  .profile-grid [data-profile-section='projects'].profile__section--empty .profile-section-collapsible__content .profile__empty-state-content > h2,
-  .profile-grid [data-profile-section='resume'].profile__section--empty .profile-section-collapsible__content .profile__empty-state-content > h2 {
-    display: none;
-  }
-
-  .profile-grid .profile__section--empty .profile__action-button--empty {
-    align-self: center;
-  }
-
-  .profile-grid .profile__empty-state-content > h2,
-  .profile-grid .resume-card__section h3 {
-    font-size: var(--profile-mobile-section-heading-size, var(--font-size-lg, 1.125rem)) !important;
-    line-height: 1.2 !important;
-  }
-
-  .profile-grid .profile__name {
-    font-size: var(--profile-mobile-header-name-size, var(--font-size-xl, 1.375rem)) !important;
-    line-height: 1.15 !important;
-  }
-
-  .profile-grid .profile__role-org {
-    font-size: var(--profile-mobile-header-job-title-size, var(--font-size-md, 1rem)) !important;
-  }
-
-  .profile-grid .profile__details {
-    font-size: var(--profile-mobile-header-detail-size, var(--font-size-xxs, 0.75rem)) !important;
-  }
-
-  .profile-grid .profile__pronouns {
-    font-size: var(--profile-mobile-header-pronouns-size, 0.6875rem) !important;
-    line-height: 1.1 !important;
-  }
-
-  .profile__section--empty .profile-section-collapsible__actions > .profile-section-collapsible__edit-button {
-    order: 2;
-  }
-
-  .profile__section--empty .profile-section-collapsible__edit-label {
-    display: none !important;
-  }
-
-  .profile__section--empty .profile-section-collapsible__edit-icon {
-    display: inline !important;
-  }
-
   .profile-grid .profile__intro-main,
   .profile-grid .profile__intro-sidebar,
   .profile-grid .profile__main,
-  .profile-grid .profile__sidebar {
+  .profile-grid .profile__sidebar-content {
+    display: contents;
+  }
+
+  .profile-grid .profile__sidebar:not(.profile__intro-sidebar) {
     display: contents;
   }
 
@@ -446,9 +356,14 @@
   .profile-grid [data-profile-section='social'] { order: 7; }
   .profile-grid [data-profile-section='contact-info'] { order: 8; }
   .profile-grid [data-profile-section='qr-code'] { order: 9; }
+
+  .profile-grid .profile__section,
+  .profile-grid .profile__section--empty {
+    min-width: 0;
+  }
 }
 
-@container profile-pane (max-width: 576px) {
+@container profile-pane (max-width: 1005px) {
   .profile-grid {
     display: flex;
     flex-direction: column;
@@ -456,8 +371,38 @@
     gap: 0;
   }
 
-  .profile-grid .profile__sidebar {
+  .profile-grid .profile__intro-main,
+  .profile-grid .profile__intro-sidebar,
+  .profile-grid .profile__main,
+  .profile-grid .profile__sidebar-content {
+    display: contents;
+  }
+
+  .profile-grid .profile__sidebar:not(.profile__intro-sidebar) {
+    display: contents;
+  }
+
+  .profile-grid [data-profile-section='heading'] { order: 1; }
+  .profile-grid [data-profile-section='bio'] { order: 2; }
+  .profile-grid [data-profile-section='skills'] { order: 3; }
+  .profile-grid [data-profile-section='languages'] { order: 4; }
+  .profile-grid [data-profile-section='resume'] { order: 5; }
+  .profile-grid [data-profile-section='projects'] { order: 6; }
+  .profile-grid [data-profile-section='social'] { order: 7; }
+  .profile-grid [data-profile-section='contact-info'] { order: 8; }
+  .profile-grid [data-profile-section='qr-code'] { order: 9; }
+
+  .profile-grid .profile__section,
+  .profile-grid .profile__section--empty {
+    min-width: 0;
+  }
+}
+
+/* Narrow-phone fallback once the layout is already stacked. */
+@media (max-width: 576px) {
+  .profile-grid .profile__sidebar:not(.profile__intro-sidebar) {
     padding: 0 !important;
+    display: contents;
     border-radius: 0;
     background: transparent;
     align-self: stretch;
@@ -522,78 +467,74 @@
   .profile__section--empty .profile-section-collapsible__edit-icon {
     display: inline !important;
   }
+}
 
-  .profile-grid .profile__intro-main,
-  .profile-grid .profile__intro-sidebar,
-  .profile-grid .profile__main,
-  .profile-grid .profile__sidebar {
+@container profile-pane (max-width: 576px) {
+  .profile-grid .profile__sidebar:not(.profile__intro-sidebar) {
+    padding: 0 !important;
+    display: contents;
+    border-radius: 0;
+    background: transparent;
+    align-self: stretch;
+  }
+
+  .profile-grid .profile__section,
+  .profile-grid .profile__section--empty {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    border-radius: var(--border-radius-base, 0.3125rem);
+    border: var(--border-width-thin, 0.1rem) solid var(--color-border-subtle, var(--gray-100, #F3F4F6));
+    background: var(--color-card-bg, var(--white, #FFF));
+  }
+
+  .profile-grid [data-profile-section='projects'].profile__section--empty > .profile-section-collapsible__header,
+  .profile-grid [data-profile-section='resume'].profile__section--empty > .profile-section-collapsible__header {
     display: flex;
   }
 
-  .profile-grid [data-profile-section='heading'] { order: 1; }
-  .profile-grid [data-profile-section='bio'] { order: 2; }
-  .profile-grid [data-profile-section='skills'] { order: 3; }
-  .profile-grid [data-profile-section='languages'] { order: 4; }
-  .profile-grid [data-profile-section='resume'] { order: 5; }
-  .profile-grid [data-profile-section='projects'] { order: 6; }
-  .profile-grid [data-profile-section='social'] { order: 7; }
-  .profile-grid [data-profile-section='contact-info'] { order: 8; }
-  .profile-grid [data-profile-section='qr-code'] { order: 9; }
-}
+  .profile-grid [data-profile-section='projects'].profile__section--empty .profile-section-collapsible__content .profile__empty-state-content > h2,
+  .profile-grid [data-profile-section='resume'].profile__section--empty .profile-section-collapsible__content .profile__empty-state-content > h2 {
+    display: none;
+  }
 
-/* Explicit desktop mode should keep the two-column grid even inside a narrow container. */
-:is(.profile-pane-host, .profile-pane-root)[data-layout='desktop'] .profile-grid {
-  display: grid;
-  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
-  column-gap: var(--spacing-xxs, 0.3125rem);
-  row-gap: var(--spacing-md, 1.25rem);
-  padding-inline: 0;
-  align-items: start;
-}
+  .profile-grid .profile__section--empty .profile__action-button--empty {
+    align-self: center;
+  }
 
-:is(.profile-pane-host, .profile-pane-root)[data-layout='desktop'] .profile-grid .profile__intro-main,
-:is(.profile-pane-host, .profile-pane-root)[data-layout='desktop'] .profile-grid .profile__intro-sidebar,
-:is(.profile-pane-host, .profile-pane-root)[data-layout='desktop'] .profile-grid .profile__main,
-:is(.profile-pane-host, .profile-pane-root)[data-layout='desktop'] .profile-grid .profile__sidebar {
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  min-width: 0;
-  order: initial;
-}
+  .profile-grid .profile__empty-state-content > h2,
+  .profile-grid .resume-card__section h3 {
+    font-size: var(--profile-mobile-section-heading-size, var(--font-size-lg, 1.125rem)) !important;
+    line-height: 1.2 !important;
+  }
 
-:is(.profile-pane-host, .profile-pane-root)[data-layout='desktop'] .profile-grid .profile__intro-main {
-  grid-column: 1;
-  grid-row: 1;
-  align-self: stretch;
-}
+  .profile-grid .profile__name {
+    font-size: var(--profile-mobile-header-name-size, var(--font-size-xl, 1.375rem)) !important;
+    line-height: 1.15 !important;
+  }
 
-:is(.profile-pane-host, .profile-pane-root)[data-layout='desktop'] .profile-grid .profile__intro-sidebar {
-  grid-column: 2;
-  grid-row: 1;
-  align-self: stretch;
-  padding-block: 0 !important;
-  padding-inline: var(--spacing-sm, 0.938rem) !important;
-  background: transparent;
-  border-radius: 0;
-}
+  .profile-grid .profile__role-org {
+    font-size: var(--profile-mobile-header-job-title-size, var(--font-size-md, 1rem)) !important;
+  }
 
-:is(.profile-pane-host, .profile-pane-root)[data-layout='desktop'] .profile-grid .profile__main {
-  grid-column: 1;
-  grid-row: 2;
-}
+  .profile-grid .profile__details {
+    font-size: var(--profile-mobile-header-detail-size, var(--font-size-xxs, 0.75rem)) !important;
+  }
 
-:is(.profile-pane-host, .profile-pane-root)[data-layout='desktop'] .profile-grid .profile__sidebar:not(.profile__intro-sidebar) {
-  grid-column: 2;
-  display: flex;
-  flex-direction: column;
-  padding: var(--spacing-sm, 0.938rem) !important;
-  align-self: stretch;
-  border-radius: var(--border-radius-base);
-  background: var(--color-background, #F8F9FB);
-}
+  .profile-grid .profile__pronouns {
+    font-size: var(--profile-mobile-header-pronouns-size, 0.6875rem) !important;
+    line-height: 1.1 !important;
+  }
 
-:is(.profile-pane-host, .profile-pane-root)[data-layout='desktop'] .profile-grid > .profile__sidebar:not(.profile__intro-sidebar) {
-  grid-row: 2;
-  padding-top: 0 !important;
+  .profile__section--empty .profile-section-collapsible__actions > .profile-section-collapsible__edit-button {
+    order: 2;
+  }
+
+  .profile__section--empty .profile-section-collapsible__edit-label {
+    display: none !important;
+  }
+
+  .profile__section--empty .profile-section-collapsible__edit-icon {
+    display: inline !important;
+  }
 }
