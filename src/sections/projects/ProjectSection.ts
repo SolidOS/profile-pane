@@ -3,7 +3,7 @@ import 'solid-ui/components/actions/button'
 import { LiveStore, NamedNode } from 'rdflib'
 import { ViewerMode } from '../../types'
 import { ProjectDetails, ProjectRow } from './types'
-import { projectsHeadingText } from '../../texts'
+import { projectsHeadingText, saveProjectsUpdatesFailedMessageText } from '../../texts'
 import { createProjectsEditDialog } from './ProjectEditDialog'
 import { processProjectsMutations } from './mutations'
 import { addIcon, checkMarkIcon, editIcon, plusDarkIcon, twoDownArrowsIcon } from '../../icons-svg/profileIcons'
@@ -12,6 +12,23 @@ import '../../styles/ProjectSection.css'
 import { toggleCollapsibleSection } from '../shared/collapsibleSection'
 
 const MAX_VISIBLE_PROJECTS_MOBILE = 2
+
+function setProjectsSectionError(section: HTMLElement, message: string | null): void {
+  const errorBox = section.querySelector('.profile-section-inline-error') as HTMLElement | null
+  if (!errorBox) return
+
+  if (!message) {
+    errorBox.textContent = ''
+    errorBox.hidden = true
+    errorBox.setAttribute('aria-hidden', 'true')
+    return
+  }
+
+  errorBox.textContent = message
+  errorBox.hidden = false
+  errorBox.setAttribute('aria-hidden', 'false')
+  errorBox.focus()
+}
 
 function toggleProjectsMobileList(event: Event): void {
   const button = event.currentTarget as HTMLButtonElement | null
@@ -72,6 +89,7 @@ function renderProject(
     event.preventDefault()
     event.stopPropagation()
     if (viewerMode !== 'owner') return
+    const section = (event.currentTarget as HTMLElement | null)?.closest('[data-profile-section="projects"]') as HTMLElement | null
 
     const removePlan: MutationOps<ProjectRow> = {
       create: [],
@@ -79,9 +97,18 @@ function renderProject(
       remove: [toProjectRow(project, 'deleted')]
     }
 
-    await processProjectsMutations(store, subject, removePlan)
-    if (onSaved) {
-      await onSaved()
+    try {
+      await processProjectsMutations(store, subject, removePlan)
+      if (section) {
+        setProjectsSectionError(section, null)
+      }
+      if (onSaved) {
+        await onSaved()
+      }
+    } catch (error) {
+      if (section) {
+        setProjectsSectionError(section, error instanceof Error ? error.message : saveProjectsUpdatesFailedMessageText)
+      }
     }
   }
 
@@ -334,6 +361,15 @@ function renderProjectSectionDefault(
                       </solid-ui-button>
                     `
                   : html``}
+                <div
+                  class="profile-section-inline-error"
+                  role="alert"
+                  aria-live="assertive"
+                  aria-atomic="true"
+                  aria-hidden="true"
+                  tabindex="-1"
+                  hidden
+                ></div>
               `
             : html`<p>No projects added yet.</p>`}
         </div>

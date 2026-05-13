@@ -7,9 +7,26 @@ import '../../styles/SkillsSection.css'
 import { createSkillsEditDialog } from './SkillsEditDialog'
 import { SkillDetails, SkillRow } from './types'
 import { addIcon, deleteIcon, editIcon, lighteningIcon } from '../../icons-svg/profileIcons'
-import { skillsHeadingText } from '../../texts'
+import { saveSkillsUpdatesFailedMessageText, skillsHeadingText } from '../../texts'
 import { toggleCollapsibleSection } from '../shared/collapsibleSection'
 import { processSkillsMutations } from './mutations'
+
+function setSkillsSectionError(section: HTMLElement, message: string | null): void {
+  const errorBox = section.querySelector('.profile-section-inline-error') as HTMLElement | null
+  if (!errorBox) return
+
+  if (!message) {
+    errorBox.textContent = ''
+    errorBox.hidden = true
+    errorBox.setAttribute('aria-hidden', 'true')
+    return
+  }
+
+  errorBox.textContent = message
+  errorBox.hidden = false
+  errorBox.setAttribute('aria-hidden', 'false')
+  errorBox.focus()
+}
 
 function renderSkillItem(
   detail: SkillDetails,
@@ -23,6 +40,7 @@ function renderSkillItem(
   const handleRemove = async (event: Event) => {
     event.preventDefault()
     if (viewerMode !== 'owner') return
+    const section = (event.currentTarget as HTMLElement | null)?.closest('[data-profile-section="skills"]') as HTMLElement | null
 
     const removeRow: SkillRow = {
       name: detail.name,
@@ -31,14 +49,23 @@ function renderSkillItem(
       status: 'deleted'
     }
 
-    await processSkillsMutations(store, subject, {
-      create: [],
-      update: [],
-      remove: [removeRow]
-    })
+    try {
+      await processSkillsMutations(store, subject, {
+        create: [],
+        update: [],
+        remove: [removeRow]
+      })
 
-    if (onSaved) {
-      await onSaved()
+      if (section) {
+        setSkillsSectionError(section, null)
+      }
+      if (onSaved) {
+        await onSaved()
+      }
+    } catch (error) {
+      if (section) {
+        setSkillsSectionError(section, error instanceof Error ? error.message : saveSkillsUpdatesFailedMessageText)
+      }
     }
   }
 
@@ -122,6 +149,15 @@ function renderSkillsSectionDefault(store: LiveStore, subject: NamedNode, skills
               <ul class="skills__list" role="list" aria-label="Professional skills and competencies">
                 ${skills.map((detail) => renderSkillItem(detail, store, subject, viewerMode, onSaved))}
               </ul>
+              <div
+                class="profile-section-inline-error"
+                role="alert"
+                aria-live="assertive"
+                aria-atomic="true"
+                aria-hidden="true"
+                tabindex="-1"
+                hidden
+              ></div>
             `
           : html`<p>No skills added yet.</p>`}
       </div>
