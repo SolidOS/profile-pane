@@ -187,7 +187,7 @@ function renderContactInfoSectionDefault(
           </solid-ui-button>
         </div>
       </header>
-      <div id="contact-details-panel" class="profile-section-collapsible__content" aria-hidden="true" hidden>
+      <div id="contact-details-panel" class="profile-section-collapsible__content">
         ${contactInfo.phones.length > 0
           ? html`
               <ul class="contact-info__list" role="list" aria-label="Phone numbers">
@@ -287,7 +287,7 @@ function renderOwnerEmptyContactInfoSection(
           </solid-ui-button>
         </div>
       </header>
-      <div id="contact-details-panel" class="profile-section-collapsible__content" aria-hidden="true" hidden>
+      <div id="contact-details-panel" class="profile-section-collapsible__content">
         ${renderOwnerEmptyContactInfoContent(store, subject, contactInfo, viewerMode, onSaved)}
       </div>
     </section>

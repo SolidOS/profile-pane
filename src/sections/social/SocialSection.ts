@@ -163,7 +163,7 @@ function renderSocialSectionDefault(
               </solid-ui-button>
             </div>
           </header>
-          <div id="social-panel" class="profile-section-collapsible__content" aria-hidden="true" hidden>
+          <div id="social-panel" class="profile-section-collapsible__content">
             ${renderSocialSectionContent(socialData, viewerMode)}
           </div>
         </section>
@@ -245,7 +245,7 @@ function renderOwnerEmptySocialSection(
           </solid-ui-button>
         </div>
       </header>
-      <div id="social-panel" class="profile-section-collapsible__content" aria-hidden="true" hidden>
+      <div id="social-panel" class="profile-section-collapsible__content">
         ${renderOwnerEmptySocialContent(store, subject, socialData, viewerMode, onSaved)}
       </div>
     </section>

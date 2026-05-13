@@ -155,8 +155,6 @@ function renderSkillsSectionDefault(store: LiveStore, subject: NamedNode, skills
       <div
         id="skills-panel"
         class="profile-section-collapsible__content"
-        aria-hidden="true"
-        hidden
       >
         ${hasSkills
           ? html`
@@ -253,7 +251,7 @@ function renderOwnerEmptySkillsSection(
           </solid-ui-button>
         </div>
       </header>
-      <div id="skills-panel" class="profile-section-collapsible__content" aria-hidden="true" hidden>
+      <div id="skills-panel" class="profile-section-collapsible__content">
         ${renderOwnerEmptySkillsContent(store, subject, skills, viewerMode, onSaved)}
       </div>
     </section>

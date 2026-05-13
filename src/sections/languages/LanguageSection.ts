@@ -69,7 +69,7 @@ function renderLanguagesSectionDefault(store: LiveStore, subject: NamedNode, lan
           </solid-ui-button>
         </div>
       </header>
-      <div id="languages-panel" class="profile-section-collapsible__content" aria-hidden="true">
+      <div id="languages-panel" class="profile-section-collapsible__content">
         ${hasLanguages
           ? html`
               <ul class="languages__list" role="list" aria-label="Known languages">
@@ -159,7 +159,7 @@ function renderOwnerEmptyLanguagesSection(
           </solid-ui-button>
         </div>
       </header>
-      <div id="languages-panel" class="profile-section-collapsible__content" aria-hidden="true">
+      <div id="languages-panel" class="profile-section-collapsible__content">
         ${renderOwnerEmptyLanguagesContent(store, subject, languages, viewerMode, onSaved)}
       </div>
     </section>
