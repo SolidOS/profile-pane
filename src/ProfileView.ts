@@ -37,9 +37,9 @@ function renderSidebar(
   onSaved?: () => Promise<void> | void
 ) {
   return html`
-    <div 
-      aria-labelledby="sidebar-heading" 
-      class="profile__sidebar" 
+    <div
+      aria-labelledby="sidebar-heading"
+      class="profile__sidebar"
     >
       <h2 id="sidebar-heading" class="sr-only">Sidebar</h2>
       <div class="profile__sidebar-content">
@@ -97,9 +97,6 @@ export async function ProfileView (
           class="profile-grid"
           tabindex="-1"
         >
-          <h1 id="profile-content-heading" class="sr-only">Profile for ${profileDetails.name}</h1>
-          <h2 id="profile-main-heading" class="sr-only">Main Profile Content</h2>
-
           ${headingSection}
           ${bioSection}
           ${skillsSection}
@@ -113,8 +110,8 @@ export async function ProfileView (
       </div>
     `
   }
-  
-  return html` 
+
+  return html`
     <div
       class="profile-pane-root"
       data-layout=${layout}
@@ -125,18 +122,16 @@ export async function ProfileView (
         id="main-content"
         class="profile-grid"
         tabindex="-1"
-      > 
-  
-        <section class="profile__main">
-          <h2 id="profile-main-heading" class="sr-only">Main Profile Content</h2>
+      >
 
+        <section class="profile__main">
           ${headingSection}
           ${bioSection}
           ${cvSection}
           ${projectSection}
-          
-        </section>   
-        ${renderSidebar(store, subject, accounts, skills, languages, contactInfo, viewerMode, onSaved)}    
+
+        </section>
+        ${renderSidebar(store, subject, accounts, skills, languages, contactInfo, viewerMode, onSaved)}
       </div>
     </div>
   `
