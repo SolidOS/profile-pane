@@ -91,6 +91,10 @@ export default [
           directory: './node_modules',
           publicPath: '/node_modules'
         }
+      ],
+      watchFiles: [
+        './src/**/*',
+        '../solid-ui/dist/**/*'
       ]
     },
     devtool: "source-map",
