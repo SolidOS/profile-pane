@@ -100,16 +100,22 @@ const createAddMeToYourFriendsButton = (
       button.disabled = false
       button.removeAttribute('disabled')
       checkIfThingExists(store, me, subject, ns.foaf('knows')).then((friendExists) => {
+        const isMobileLayout = context.environment?.layout === 'mobile'
+
         if (friendExists) {
           //logged in and friend exists or friend was just added
           setAddToFriendsButtonLabel(button, friendExistsAlreadyButtonText)
           button.disabled = true
           button.setAttribute('disabled', 'true')
+          buttonContainer.hidden = isMobileLayout
+          buttonContainer.style.display = isMobileLayout ? 'none' : ''
         } else {
           //logged in and friend does not exist yet
           setAddToFriendsButtonLabel(button, addMeToYourFriendsButtonText)
           button.disabled = false
           button.removeAttribute('disabled')
+          buttonContainer.hidden = false
+          buttonContainer.style.display = ''
         }
       })
     } else {
@@ -117,6 +123,7 @@ const createAddMeToYourFriendsButton = (
       setAddToFriendsButtonLabel(button, logInAddMeToYourFriendsButtonText)
       button.disabled = true
       button.setAttribute('disabled', 'true')
+      buttonContainer.hidden = false
     }
   }
 

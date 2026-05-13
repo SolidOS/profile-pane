@@ -5,6 +5,10 @@
   display: grid;
 }
 
+.profile-friends-button__section[hidden] {
+  display: none !important;
+}
+
 .profile-friends-button__section solid-ui-button.profile__btn-friends {
   width: 100%;
   min-width: 0;

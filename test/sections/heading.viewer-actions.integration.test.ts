@@ -12,6 +12,7 @@ import { render } from 'lit-html'
 import { authn } from 'solid-logic'
 import { sym } from 'rdflib'
 import { renderHeadingSection } from '../../src/sections/heading/HeadingSection'
+import { addMeToYourFriendsDiv } from '../../src/specialButtons/addMeToYourFriends'
 import {
   addMeToYourContactsButtonText,
   addMeToYourFriendsButtonText
@@ -74,6 +75,25 @@ describe('Heading viewer actions integration', () => {
     expect(container.querySelector('.profile__heading-edit-action')).toBeNull()
 
     container.remove()
+  })
+
+  it('hides the friends button on mobile when the viewer is already a friend', async () => {
+    jest.spyOn(authn, 'currentUser').mockReturnValue(authenticatedViewer as any)
+    baseStore.whether = jest.fn().mockReturnValue(1)
+    context.environment = { layout: 'mobile' } as any
+
+    const container = document.createElement('div')
+    document.body.appendChild(container)
+
+    render(await addMeToYourFriendsDiv(ownerSubject, context, 'authenticated'), container)
+    await new Promise((resolve) => setTimeout(resolve, 0))
+
+    const friendsButtonSection = container.querySelector('.profile-friends-button__section')
+    expect(friendsButtonSection).not.toBeNull()
+    expect(friendsButtonSection?.hidden).toBe(true)
+
+    container.remove()
+    context.environment = undefined
   })
 
   it('renders only the edit action for owners', async () => {
