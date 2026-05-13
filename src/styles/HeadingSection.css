@@ -189,6 +189,10 @@
   flex: var(--profile-heading-action-item-flex, 0 0 auto);
 }
 
+.profile__heading-actions > #add-to-contacts-button-container {
+  display: none !important;
+}
+
 .profile__heading-actions > .profile-friends-button__section > solid-ui-button.profile__btn-friends,
 .profile__heading-actions > #add-to-contacts-button-container > solid-ui-button.profile__btn-contacts {
   width: auto;
