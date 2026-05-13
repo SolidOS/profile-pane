@@ -120,7 +120,7 @@ function renderSkillsSectionDefault(store: LiveStore, subject: NamedNode, skills
       data-expanded="false"
     >
       <header class="profile__section-header profile-section-collapsible__header">
-        <h2 id="skills-heading">${skillsHeadingText}</h2>
+        <h3 id="skills-heading">${skillsHeadingText}</h3>
         <div class="profile-section-collapsible__actions">
           ${isOwner ? html`
             <solid-ui-button
@@ -214,7 +214,7 @@ function renderOwnerEmptySkillsSection(
       data-expanded="false"
     >
       <header class="profile__section-header profile-section-collapsible__header">
-        <h2 id="skills-heading" tabindex="-1">${skillsHeadingText}</h2>
+        <h3 id="skills-heading" tabindex="-1">${skillsHeadingText}</h3>
         <div class="profile-section-collapsible__actions">
           <solid-ui-button
             type="button"
