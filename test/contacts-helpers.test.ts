@@ -24,6 +24,7 @@ import { addGroupToAddressBookData } from '../src/specialButtons/addContact/help
 import { namedNode, sym } from 'rdflib'
 import { addWebIDToContacts } from 'contacts-pane'
 import { addErrorToErrorDisplay } from '../src/specialButtons/addContact/contactsErrors'
+import { errorAddingContactWebIDToAddressBook } from '../src/texts'
 
 describe('contactsHelpers', () => {
 	beforeEach(() => {
@@ -362,7 +363,10 @@ describe('contactsHelpers', () => {
 
 			await expect(
 				addWebIDToExistingContact(context, { webID: 'https://alice.example/profile#me' } as any, 'https://pod.example/contacts#alice')
-			).rejects.toThrow('load failed')
+			).rejects.toMatchObject({
+				message: errorAddingContactWebIDToAddressBook,
+				cause: expect.objectContaining({ message: 'load failed' })
+			})
 		})
 	})
 })

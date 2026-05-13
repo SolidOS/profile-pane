@@ -3,7 +3,7 @@ import { graph, literal, st, sym } from 'rdflib'
 import { ns } from 'solid-ui'
 import { presentContactInfo } from '../../src/sections/contactInfo/selectors'
 import { processContactInfoMutations } from '../../src/sections/contactInfo/mutations'
-import { updaterUnsupportedStoreErrorMessageText } from '../../src/texts'
+import { saveContactUpdatesFailedMessageText, updaterUnsupportedStoreErrorMessageText } from '../../src/texts'
 
 describe('Contact info selectors and mutations', () => {
   it('selector returns empty contact arrays from empty store', () => {
@@ -26,9 +26,10 @@ describe('Contact info selectors and mutations', () => {
       addressOps: { create: [], update: [], remove: [] }
     }
 
-    await expect(processContactInfoMutations(store, subject, plan as any)).rejects.toThrow(
-      updaterUnsupportedStoreErrorMessageText
-    )
+    await expect(processContactInfoMutations(store, subject, plan as any)).rejects.toMatchObject({
+      message: saveContactUpdatesFailedMessageText,
+      cause: expect.objectContaining({ message: updaterUnsupportedStoreErrorMessageText })
+    })
   })
 
   it('creates phone/email/address entries with #id + 13 digits and URI values', async () => {

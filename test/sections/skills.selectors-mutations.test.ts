@@ -3,6 +3,7 @@ import { graph, st, sym, literal } from 'rdflib'
 import { ns } from 'solid-ui'
 import { presentSkillDetails, presentSkills } from '../../src/sections/skills/selectors'
 import { processSkillsMutations } from '../../src/sections/skills/mutations'
+import { saveSkillsUpdatesFailedMessageText } from '../../src/texts'
 
 describe('Skills selectors and mutations', () => {
   it('selector returns empty skills from empty store', () => {
@@ -55,9 +56,12 @@ describe('Skills selectors and mutations', () => {
       update: [],
       remove: []
     }
-    await expect(processSkillsMutations(store, subject, plan as any)).rejects.toThrow(
-      'Skill updates are not supported by this store updater.'
-    )
+    await expect(processSkillsMutations(store, subject, plan as any)).rejects.toMatchObject({
+      message: saveSkillsUpdatesFailedMessageText,
+      cause: expect.objectContaining({
+        message: 'Skill updates are not supported by this store updater.'
+      })
+    })
   })
 
   it('writes created skills with skill: node publicId and name on the publicId node', async () => {

@@ -4,7 +4,7 @@ import { ns } from 'solid-ui'
 import { presentSocial } from '../../src/sections/social/selectors'
 import { processSocialMutations } from '../../src/sections/social/mutations'
 import { findSocialAccountOption, getSocialAccountOptions, homepageForAccount } from '../../src/sections/social/helpers'
-import { saveSocialUpdatesFailedPrefixText } from '../../src/texts'
+import { saveSocialUpdatesFailedMessageText } from '../../src/texts'
 import { expandRdfList } from '../../src/sections/shared/rdfList'
 
 jest.mock('../../src/sections/social/helpers', () => {
@@ -46,9 +46,12 @@ describe('Social selectors and mutations', () => {
     const subject = sym('https://example.com/profile/card#me')
 
     const plan = { create: [], update: [], remove: [] }
-    await expect(processSocialMutations(store, subject, plan as any)).rejects.toThrow(
-      'Social updates are not supported by this store updater.'
-    )
+    await expect(processSocialMutations(store, subject, plan as any)).rejects.toMatchObject({
+      message: saveSocialUpdatesFailedMessageText,
+      cause: expect.objectContaining({
+        message: 'Social updates are not supported by this store updater.'
+      })
+    })
   })
 
   it('writes new social entry as id node with foaf account structure', async () => {

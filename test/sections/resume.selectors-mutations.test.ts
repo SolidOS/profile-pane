@@ -3,7 +3,7 @@ import { graph, literal, sym } from 'rdflib'
 import { ns } from 'solid-ui'
 import { presentCV } from '../../src/sections/resume/selectors'
 import { processResumeMutations } from '../../src/sections/resume/mutations'
-import { updaterUnsupportedStoreErrorMessageText } from '../../src/texts'
+import { saveResumeUpdatesFailedMessageText, updaterUnsupportedStoreErrorMessageText } from '../../src/texts'
 
 describe('Resume selectors and mutations', () => {
   it('selector returns empty roles from empty store', () => {
@@ -18,9 +18,10 @@ describe('Resume selectors and mutations', () => {
     const subject = sym('https://example.com/profile/card#me')
 
     const plan = { create: [], update: [], remove: [] }
-    await expect(processResumeMutations(store, subject, plan as any)).rejects.toThrow(
-      updaterUnsupportedStoreErrorMessageText
-    )
+    await expect(processResumeMutations(store, subject, plan as any)).rejects.toMatchObject({
+      message: saveResumeUpdatesFailedMessageText,
+      cause: expect.objectContaining({ message: updaterUnsupportedStoreErrorMessageText })
+    })
   })
 
   it('creates resume membership and organization nodes with #id + 13 digits', async () => {

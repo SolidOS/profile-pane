@@ -3,7 +3,7 @@ import { graph, literal, st, sym } from 'rdflib'
 import { ns } from 'solid-ui'
 import { presentProfile, pronounsAsText } from '../../src/sections/heading/selectors'
 import { processHeadingMutations } from '../../src/sections/heading/mutations'
-import { updaterUnsupportedStoreErrorMessageText } from '../../src/texts'
+import { saveHeadingUpdatesFailedMessageText, updaterUnsupportedStoreErrorMessageText } from '../../src/texts'
 
 describe('Intro selectors and mutations', () => {
   it('selectors return a stable profile shape from empty store', () => {
@@ -28,9 +28,10 @@ describe('Intro selectors and mutations', () => {
       addressOps: { create: [], update: [], remove: [] }
     }
 
-    await expect(processHeadingMutations(store, subject, plan as any)).rejects.toThrow(
-      updaterUnsupportedStoreErrorMessageText
-    )
+    await expect(processHeadingMutations(store, subject, plan as any)).rejects.toMatchObject({
+      message: saveHeadingUpdatesFailedMessageText,
+      cause: expect.objectContaining({ message: updaterUnsupportedStoreErrorMessageText })
+    })
   })
 
   it('prefers work email and phone when present', () => {

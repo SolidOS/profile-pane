@@ -3,6 +3,7 @@ import { Collection, graph, literal, st, sym } from 'rdflib'
 import { ns } from 'solid-ui'
 import { presentLanguages } from '../../src/sections/languages/selectors'
 import { processLanguageMutations } from '../../src/sections/languages/mutations'
+import { saveLanguageUpdatesFailedMessageText } from '../../src/texts'
 describe('Languages selectors and mutations', () => {
   it('selector returns empty list from empty store', () => {
     const store = graph() as any
@@ -23,7 +24,10 @@ describe('Languages selectors and mutations', () => {
       update: [],
       remove: []
     }
-    await expect(processLanguageMutations(store, subject, plan as any)).rejects.toThrow('boom')
+    await expect(processLanguageMutations(store, subject, plan as any)).rejects.toMatchObject({
+      message: saveLanguageUpdatesFailedMessageText,
+      cause: expect.objectContaining({ message: 'boom' })
+    })
   })
 
   it('reads canonical id-node list with solid publicId URI and schema name', () => {

@@ -3,6 +3,7 @@ import { blankNode, graph, literal, st, sym } from 'rdflib'
 import { ns } from 'solid-ui'
 import { presentProjects } from '../../src/sections/projects/selectors'
 import { processProjectsMutations } from '../../src/sections/projects/mutations'
+import { saveProjectsUpdatesFailedMessageText } from '../../src/texts'
 
 describe('Projects selectors and mutations', () => {
   it('selector returns empty projects from empty store', async () => {
@@ -21,7 +22,12 @@ describe('Projects selectors and mutations', () => {
       update: [],
       remove: []
     }
-    await expect(processProjectsMutations(store, subject, plan as any)).rejects.toThrow('Project updates are not supported by this store updater.')
+    await expect(processProjectsMutations(store, subject, plan as any)).rejects.toMatchObject({
+      message: saveProjectsUpdatesFailedMessageText,
+      cause: expect.objectContaining({
+        message: 'Project updates are not supported by this store updater.'
+      })
+    })
   })
 
   it('selector reads projects from solid:community links', async () => {

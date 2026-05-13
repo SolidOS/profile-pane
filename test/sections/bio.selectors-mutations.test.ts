@@ -3,7 +3,7 @@ import { graph, literal, st, sym } from 'rdflib'
 import { ns } from 'solid-ui'
 import { presentBio } from '../../src/sections/bio/selectors'
 import { processBioMutations } from '../../src/sections/bio/mutations'
-import { updaterUnsupportedStoreErrorMessageText } from '../../src/texts'
+import { saveBioUpdatesFailedMessageText, updaterUnsupportedStoreErrorMessageText } from '../../src/texts'
 
 describe('Bio selectors and mutations', () => {
   it('selector returns empty bio details from empty store', () => {
@@ -20,9 +20,10 @@ describe('Bio selectors and mutations', () => {
     const subject = sym('https://example.com/profile/card#me')
 
     const plan = { create: [], update: [], remove: [] }
-    await expect(processBioMutations(store, subject, plan as any)).rejects.toThrow(
-      updaterUnsupportedStoreErrorMessageText
-    )
+    await expect(processBioMutations(store, subject, plan as any)).rejects.toMatchObject({
+      message: saveBioUpdatesFailedMessageText,
+      cause: expect.objectContaining({ message: updaterUnsupportedStoreErrorMessageText })
+    })
   })
 
   it('selector reads the stored bio note', () => {
