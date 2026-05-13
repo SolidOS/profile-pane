@@ -1,7 +1,8 @@
 /* Profile layout styles. */
 
 .profile-grid {
-  --profile-sidebar-min-width: 18.75rem;
+  --profile-sidebar-min-width: 20.625rem;
+  --profile-sidebar-section-padding: var(--spacing-lg, 1.5625rem);
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(var(--profile-sidebar-min-width), 22rem);
   align-items: start;
@@ -117,12 +118,23 @@
 }
 
 .profile-grid .profile__section {
-  padding: var(--spacing-sm, 0.938rem);
+  padding: var(--spacing-lg, 1.5625rem);
   border-radius: var(--border-radius-base);
 }
 
 .profile-grid .profile__section--empty {
   padding: var(--spacing-1xl, 2.5rem) var(--spacing-lg, 1.5625rem);
+}
+
+.profile-grid .profile__sidebar-content > [data-profile-section='social'].profile__section,
+.profile-grid .profile__sidebar-content > [data-profile-section='social'].profile__section--empty,
+.profile-grid .profile__sidebar-content > [data-profile-section='skills'].profile__section,
+.profile-grid .profile__sidebar-content > [data-profile-section='skills'].profile__section--empty,
+.profile-grid .profile__sidebar-content > [data-profile-section='languages'].profile__section,
+.profile-grid .profile__sidebar-content > [data-profile-section='languages'].profile__section--empty,
+.profile-grid .profile__sidebar-content > [data-profile-section='contact-info'].profile__section,
+.profile-grid .profile__sidebar-content > [data-profile-section='contact-info'].profile__section--empty {
+  padding: var(--profile-sidebar-section-padding);
 }
 
 .profile-grid solid-ui-button.profile__action-button--empty {
