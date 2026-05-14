@@ -109,7 +109,7 @@ export async function uploadPhotoFile(store: LiveStore, subject: NamedNode, file
   if (currentUser) {
     try {
       await solidLogicSingleton.acl.setACLUserPublic(candidateUri, currentUser, {
-        public: ['Read']
+        public: ['Read'] as unknown as []
       })
     } catch (error) {
       debugError(`Error setting uploaded picture permissions: ${error}`)
