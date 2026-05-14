@@ -270,7 +270,7 @@ function renderOwnerEmptyContactInfoSection(
               )
             }}
           >
-            <span class="profile-section-collapsible__edit-label">${addIcon} Add Contact</span>
+            <span class="profile-section-collapsible__edit-label">${addIcon} Add More</span>
             <span class="profile-section-collapsible__edit-icon" aria-hidden="true">${editIcon}</span>
           </solid-ui-button>
           <solid-ui-button

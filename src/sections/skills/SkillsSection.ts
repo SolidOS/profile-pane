@@ -233,7 +233,7 @@ function renderOwnerEmptySkillsSection(
           >
             <span class="profile-section-collapsible__edit-label profile__add-more-content">
               <span class="profile__add-more-icon" aria-hidden="true">${addIcon}</span>
-              <span>Add Skills</span>
+              <span>Add More</span>
             </span>
             <span class="profile-section-collapsible__edit-icon" aria-hidden="true">${editIcon}</span>
           </solid-ui-button>
