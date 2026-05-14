@@ -1,8 +1,8 @@
 jest.mock('@solid-data-modules/contacts-rdflib', () => ({
   __esModule: true,
   default: jest.fn().mockImplementation(() => ({
-    listAddressBooks: jest.fn().mockResolvedValue({ publicUris: [], privateUris: [] }),
-    readAddressBook: jest.fn().mockResolvedValue(null),
+    listAddressBooks: jest.fn(async () => ({ publicUris: [], privateUris: [] })),
+    readAddressBook: jest.fn(async () => null),
     createNewContact: jest.fn()
   }))
 }))
@@ -52,10 +52,10 @@ describe('Heading viewer actions integration', () => {
   beforeEach(() => {
     jest.restoreAllMocks()
     baseStore.fetcher = {
-      load: jest.fn().mockResolvedValue(undefined)
+      load: jest.fn(async () => undefined)
     }
     baseStore.updater = {
-      update: jest.fn().mockResolvedValue(undefined)
+      update: jest.fn(async () => undefined)
     }
     baseStore.whether = jest.fn().mockReturnValue(0)
   })
@@ -93,7 +93,7 @@ describe('Heading viewer actions integration', () => {
 
     const friendsButtonSection = container.querySelector('.profile-friends-button__section')
     expect(friendsButtonSection).not.toBeNull()
-    expect(friendsButtonSection?.hidden).toBe(true)
+    expect((friendsButtonSection as HTMLElement | null)?.hidden).toBe(true)
 
     container.remove()
     context.environment = undefined

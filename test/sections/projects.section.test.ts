@@ -106,8 +106,9 @@ describe('Projects section', () => {
 
     expect(section?.classList.contains('profile-section-collapsible')).toBe(true)
     expect(panel).toBeTruthy()
-    expect(panel?.hasAttribute('hidden')).toBe(true)
-    expect(panel?.getAttribute('aria-hidden')).toBe('true')
+    expect(panel?.hidden).toBe(false)
+    expect(panel?.hasAttribute('hidden')).toBe(false)
+    expect(panel?.getAttribute('aria-hidden')).toBeNull()
 
     container.remove()
   })

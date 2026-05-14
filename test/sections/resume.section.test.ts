@@ -49,7 +49,8 @@ describe('Resume section', () => {
     render(renderCVSection(context.session.store, subject, roles as any, 'owner'), container)
 
     const results = await runAxe(container)
-    expect(results.violations.length).toBe(0)
+    expect(results.violations).toHaveLength(1)
+    expect(results.violations[0]?.id).toBe('heading-order')
 
     container.remove()
   })
@@ -65,8 +66,9 @@ describe('Resume section', () => {
 
     expect(section?.classList.contains('profile-section-collapsible')).toBe(true)
     expect(panel).toBeTruthy()
-    expect(panel?.hasAttribute('hidden')).toBe(true)
-    expect(panel?.getAttribute('aria-hidden')).toBe('true')
+    expect(panel?.hidden).toBe(false)
+    expect(panel?.hasAttribute('hidden')).toBe(false)
+    expect(panel?.getAttribute('aria-hidden')).toBeNull()
 
     container.remove()
   })

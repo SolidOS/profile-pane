@@ -58,7 +58,8 @@ describe('Languages section', () => {
 
     expect(section?.getAttribute('data-expanded')).toBe('false')
     expect(toggleButton?.getAttribute('aria-expanded')).toBe('false')
-    expect(panel?.getAttribute('aria-hidden')).toBe('true')
+    expect(panel?.hidden).toBe(false)
+    expect(panel?.getAttribute('aria-hidden')).toBeNull()
     expect(addMoreLabel?.textContent).toContain('Add More')
 
     toggleButton?.click()
@@ -66,6 +67,13 @@ describe('Languages section', () => {
     expect(section?.getAttribute('data-expanded')).toBe('true')
     expect(toggleButton?.getAttribute('aria-expanded')).toBe('true')
     expect(panel?.getAttribute('aria-hidden')).toBe('false')
+
+    toggleButton?.click()
+
+    expect(section?.getAttribute('data-expanded')).toBe('false')
+    expect(toggleButton?.getAttribute('aria-expanded')).toBe('false')
+    expect(panel?.getAttribute('aria-hidden')).toBe('true')
+    expect(panel?.hidden).toBe(true)
 
     container.remove()
   })

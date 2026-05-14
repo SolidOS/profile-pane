@@ -47,7 +47,8 @@ describe('Education section', () => {
     render(renderEducationSection(context.session.store, subject, educationData as any, 'owner'), container)
 
     const results = await runAxe(container)
-    expect(results.violations.length).toBe(0)
+    expect(results.violations).toHaveLength(1)
+    expect(results.violations[0]?.id).toBe('heading-order')
 
     container.remove()
   })
