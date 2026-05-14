@@ -1,6 +1,9 @@
 import { LiveStore, NamedNode, sym } from 'rdflib'
 import { ns } from 'solid-ui'
+import { authn, solidLogicSingleton } from 'solid-logic'
 import { error as debugError } from '../../utils/debug'
+
+const resolvedHeadingImageCache = new Map<string, string>()
 /* Code copied from contact-pane/src/mugshotGallery and modified to fit the needs of the new design */
 const mimeMap: Record<string, string> = {
   'image/png': 'png',
@@ -33,6 +36,36 @@ function subjectDirectoryUri(subject: NamedNode): string {
   const docUri = subject.doc().uri
   const lastSlash = docUri.lastIndexOf('/')
   return lastSlash >= 0 ? docUri.slice(0, lastSlash + 1) : docUri
+}
+
+export async function resolvePhotoDisplaySrc(store: LiveStore, imageSrc?: string): Promise<string | undefined> {
+  if (!imageSrc || imageSrc.startsWith('blob:') || imageSrc.startsWith('data:')) {
+    return imageSrc
+  }
+
+  const cachedImageSrc = resolvedHeadingImageCache.get(imageSrc)
+  if (cachedImageSrc) {
+    return cachedImageSrc
+  }
+
+  const fetcher = store.fetcher as { _fetch?: (url: string) => Promise<Response> } | undefined
+  if (!fetcher?._fetch || typeof URL.createObjectURL !== 'function') {
+    return imageSrc
+  }
+
+  try {
+    const response = await fetcher._fetch(imageSrc)
+    if (!response.ok) {
+      return imageSrc
+    }
+
+    const imageBlob = await response.blob()
+    const resolvedImageSrc = URL.createObjectURL(imageBlob)
+    resolvedHeadingImageCache.set(imageSrc, resolvedImageSrc)
+    return resolvedImageSrc
+  } catch {
+    return imageSrc
+  }
 }
 
 export async function uploadPhotoFile(store: LiveStore, subject: NamedNode, file: File): Promise<string> {
@@ -70,6 +103,17 @@ export async function uploadPhotoFile(store: LiveStore, subject: NamedNode, file
     }
   } catch (error) {
     throw new Error(`Error uploading picture: ${error}`)
+  }
+
+  const currentUser = authn.currentUser()
+  if (currentUser) {
+    try {
+      await solidLogicSingleton.acl.setACLUserPublic(candidateUri, currentUser, {
+        public: ['Read']
+      })
+    } catch (error) {
+      debugError(`Error setting uploaded picture permissions: ${error}`)
+    }
   }
   
   return candidateUri

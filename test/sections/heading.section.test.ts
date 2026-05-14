@@ -70,6 +70,80 @@ describe('Intro section', () => {
     container.remove()
   })
 
+  it('renders saved heading photos through an authenticated blob url', async () => {
+    const container = document.createElement('div')
+    document.body.appendChild(container)
+
+    const fetchSpy = jest.spyOn((context.session.store.fetcher as any), '_fetch').mockResolvedValue({
+      ok: true,
+      blob: async () => new Blob(['image-bytes'], { type: 'image/png' })
+    } as Response)
+    const originalCreateObjectURL = URL.createObjectURL
+    const createObjectUrlMock = jest.fn(() => 'blob:heading-section-photo')
+    Object.defineProperty(URL, 'createObjectURL', {
+      configurable: true,
+      value: createObjectUrlMock
+    })
+
+    const profile = {
+      entryNode: sym('https://example.com/profile#entry'),
+      name: 'Jane Doe',
+      nickname: 'Jane',
+      imageSrc: 'https://example.com/private/avatar.png',
+      location: 'Amsterdam',
+      pronouns: 'She/Her',
+      jobTitle: 'Engineer',
+      orgName: 'SolidOS'
+    }
+
+    render(await renderHeadingSection(context, subject, profile as any, 'owner'), container)
+
+    const image = container.querySelector('img.profile__hero') as HTMLImageElement | null
+    expect(fetchSpy).toHaveBeenCalledWith('https://example.com/private/avatar.png')
+    expect(createObjectUrlMock).toHaveBeenCalled()
+    expect(image?.getAttribute('src')).toBe('blob:heading-section-photo')
+
+    fetchSpy.mockRestore()
+    Object.defineProperty(URL, 'createObjectURL', {
+      configurable: true,
+      value: originalCreateObjectURL
+    })
+    container.remove()
+  })
+
+  it('falls back to the default placeholder when a heading image fails to load', async () => {
+    const container = document.createElement('div')
+    document.body.appendChild(container)
+
+    const profile = {
+      entryNode: sym('https://example.com/profile#entry'),
+      name: 'Jane Doe',
+      nickname: 'Jane',
+      imageSrc: 'https://example.com/profile/broken.png',
+      location: 'Amsterdam',
+      pronouns: 'She/Her',
+      jobTitle: 'Engineer',
+      orgName: 'SolidOS'
+    }
+
+    render(await renderHeadingSection(context, subject, profile as any, 'owner'), container)
+
+    const image = container.querySelector('img.profile__hero') as HTMLImageElement | null
+    const fallback = container.querySelector('.profile__hero-alt') as HTMLElement | null
+    const frame = container.querySelector('.profile__image-frame') as HTMLElement | null
+
+    expect(image?.hidden).toBe(false)
+    expect(frame?.classList.contains('profile__image-frame--fallback')).toBe(false)
+
+    image?.dispatchEvent(new Event('error'))
+
+    expect(image?.hidden).toBe(true)
+    expect(frame?.classList.contains('profile__image-frame--fallback')).toBe(true)
+    expect(fallback?.getAttribute('aria-label')).toBe('Jane Doe')
+
+    container.remove()
+  })
+
   it('renders add to contacts and add as friend actions for authenticated viewers only', async () => {
     const container = document.createElement('div')
     document.body.appendChild(container)

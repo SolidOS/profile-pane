@@ -622,7 +622,7 @@ function renderResumeInputRow({
   return html`
     <div class="profile-edit-dialog__row profile-edit-dialog__row--resume-entry-header" role="group" aria-labelledby=${experienceHeadingId}>
       <h3 id=${experienceHeadingId} class="profile-edit-dialog__entry-heading">${label}</h3>
-      <div class="profile-edit-dialog__actions profile-edit-dialog__actions--edge flex-row align-center justify-end">
+      <div class="profile-edit-dialog__actions profile-edit-dialog__actions--edge">
         <solid-ui-button
           type="button"
           variant="icon"
@@ -776,7 +776,7 @@ function renderResumeInputRow({
       </label>
     </div>
     <div class="profile-edit-dialog__row profile-edit-dialog__row--inline-end">
-      <label class="label profile-edit-dialog__checkbox-label inline-flex-row gap-xs" for=${isCurrentRoleId}>
+      <label class="label profile-edit-dialog__checkbox-label" for=${isCurrentRoleId}>
         <input
           class="profile-edit-dialog__checkbox-input"
           type="checkbox"
@@ -816,7 +816,7 @@ function renderResumeSection(resumeData: ResumeRow[], onAddRow: () => void) {
     .filter(({ resume }) => resume.status !== 'deleted')
 
   return html`
-    <section class="profile-edit-dialog__section profile-edit-dialog__section--resume flex-column gap-xs" aria-label="Resume">
+    <section class="profile-edit-dialog__section profile-edit-dialog__section--resume" aria-label="Resume">
       <fieldset>
         <legend class="sr-only">Resume entries</legend>
         ${visibleResumeRows.map(({ index }, displayIndex) => renderResumeInputRow({

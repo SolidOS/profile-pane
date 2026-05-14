@@ -393,7 +393,7 @@ function renderLanguageInputRow({
           <option value="Fluent">Fluent</option>
         </select>
       </label>
-      <div class="profile-edit-dialog__actions profile-edit-dialog__actions--edge flex-row align-center justify-end">
+      <div class="profile-edit-dialog__actions profile-edit-dialog__actions--edge">
         <solid-ui-button
           type="button"
           variant="icon"
@@ -455,7 +455,7 @@ function renderLanguageSection(
     .filter(({ row }) => row.status !== 'deleted')
 
   return html`
-    <section class="profile-edit-dialog__section flex-column gap-xs" aria-label="Languages">
+    <section class="profile-edit-dialog__section" aria-label="Languages">
       <fieldset>
         <legend class="sr-only">Language entries</legend>
         ${visibleRows.map(({ index }, displayIndex) => renderLanguageInputRow({

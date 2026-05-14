@@ -333,7 +333,7 @@ function renderEducationInputRow({
   return html`
     <div class="profile-edit-dialog__row" role="group" aria-labelledby=${educationHeadingId}>
       <h4 id=${educationHeadingId} class="profile-edit-dialog__entry-heading">${label}</h4>
-      <div class="profile-edit-dialog__actions profile-edit-dialog__actions--edge flex-row align-center justify-end">
+      <div class="profile-edit-dialog__actions profile-edit-dialog__actions--edge">
         <solid-ui-button
           type="button"
           variant="icon"
@@ -495,7 +495,7 @@ function renderEducationSection(educationData: EducationRow[], onAddRow: () => v
           type="button"
           variant="secondary"
           size="sm"
-          class="profile__action-button profile-action-text flex-center"
+          class="profile__action-button profile-action-text profile-edit-dialog__add-button"
           data-dialog-add-more="true"
           aria-label="Add another education entry"
           @click=${createNewRow}

@@ -303,7 +303,7 @@ function renderSkillInputRow({
         ></solid-ui-combobox>
         <small class="profile-edit-dialog__input-help-text">Type to search ESCO, or enter your own skill.</small>
       </label>
-      <div class="profile-edit-dialog__actions profile-edit-dialog__actions--edge flex-row align-center justify-end">
+      <div class="profile-edit-dialog__actions profile-edit-dialog__actions--edge">
         <solid-ui-button
           type="button"
           variant="icon"
@@ -329,7 +329,7 @@ function renderSkillsSection(
     .filter(({ row }) => row.status !== 'deleted')
 
   return html`
-    <section class="profile-edit-dialog__section flex-column gap-xs" aria-label="Skills">
+    <section class="profile-edit-dialog__section" aria-label="Skills">
       <fieldset>
         <legend class="sr-only">Skill entries</legend>
         ${visibleRows.map(({ index }, displayIndex) => renderSkillInputRow({

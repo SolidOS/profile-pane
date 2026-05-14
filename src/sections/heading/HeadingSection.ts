@@ -12,6 +12,18 @@ import { birthdayIcon, editIcon, locationIcon, personInCircleIcon } from '../../
 import { emailIcon, phoneIcon } from '../../icons-svg/contactIcons'
 import { addMeToYourFriendsDiv } from '../../specialButtons/addMeToYourFriends'
 import { addMeToYourContactsDiv } from '../../specialButtons/addContact/addMeToYourContacts'
+import { resolvePhotoDisplaySrc } from './imageHelpers'
+
+const showHeadingImageFallback = (event: Event) => {
+  const image = event.currentTarget as HTMLImageElement | null
+  const frame = image?.parentElement
+  if (!image || !frame) {
+    return
+  }
+
+  image.hidden = true
+  frame.classList.add('profile__image-frame--fallback')
+}
 
 export const renderHeadingSection = async (
   context: DataBrowserContext,
@@ -21,6 +33,7 @@ export const renderHeadingSection = async (
   onSaved?: () => Promise<void> | void
 ) => {
   const { name, pronouns, jobTitle, dateOfBirth, location, primaryPhone, primaryEmail, imageSrc } = profileData
+  const resolvedImageSrc = await resolvePhotoDisplaySrc(context.session.store, imageSrc)
   const isOwner = viewerMode === 'owner'
   const isAuthenticatedViewer = viewerMode === 'authenticated'
   const contactsButton = isAuthenticatedViewer ? await addMeToYourContactsDiv(subject, context) : nothing
@@ -34,7 +47,7 @@ export const renderHeadingSection = async (
       <section class="profile__section" data-profile-section="heading" aria-labelledby="profile-name">
         <div class="profile__heading-top">
           <div class="profile__avatar">
-            ${Image(imageSrc, name)}
+            ${Image(resolvedImageSrc, name)}
           </div>
           <div class="profile__info">
             <header class="profile__header-bar mb-md">
@@ -103,20 +116,23 @@ const Line = (value, prefix: TemplateResult | symbol | string = nothing, label: 
     </div>
   ` : nothing
 
-export const Image = (src, alt) =>
-  src
-    ? html`
-        <img
-          class="profile__hero"
-          src=${src}
-          alt="${alt}"
-          width="140"
-          height="140"
-          loading="eager"
-        />
-      `
-    : html`
-        <div class="profile__hero-alt" role="img" aria-label="${alt}">
-          <span class="profile__hero-icon inline-flex-row justify-center">${personInCircleIcon}</span>
-        </div>
-      `
+export const Image = (src, alt) => html`
+  <div class=${src ? 'profile__image-frame' : 'profile__image-frame profile__image-frame--fallback'}>
+    ${src
+      ? html`
+          <img
+            class="profile__hero"
+            src=${src}
+            alt="${alt}"
+            width="140"
+            height="140"
+            loading="eager"
+            @error=${showHeadingImageFallback}
+          />
+        `
+      : nothing}
+    <div class="profile__hero-alt" role="img" aria-label="${alt}">
+      <span class="profile__hero-icon inline-flex-row justify-center">${personInCircleIcon}</span>
+    </div>
+  </div>
+`

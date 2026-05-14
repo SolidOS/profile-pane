@@ -261,7 +261,7 @@ function renderContactPhoneInputRow({
           @change=${handleTypeInput}
         ></solid-ui-select>
       </label>
-      <div class="profile-edit-dialog__actions flex-row align-center justify-end">
+      <div class="profile-edit-dialog__actions">
         <solid-ui-button
           type="button"
           variant="icon"
@@ -292,7 +292,7 @@ function renderContactInfoPhoneSection(phones: ContactPointRow[], onAddRow: (opt
   return html`
     <section 
       aria-labelledby="phone-numbers-heading" 
-      class="profile-edit-dialog__section flex-column gap-xs">
+      class="profile-edit-dialog__section">
       <header class="profile__section-header">
         <h3 id="phone-numbers-heading" class="profile-edit-dialog__section-heading">
           <span class="profile-edit-dialog__section-title-icon" aria-hidden="true">${phoneIcon}</span>
@@ -302,7 +302,7 @@ function renderContactInfoPhoneSection(phones: ContactPointRow[], onAddRow: (opt
           type="button"
           variant="secondary"
           size="sm"
-          class="profile__action-button profile-action-text flex-center"
+          class="profile__action-button profile-action-text profile-edit-dialog__add-button"
           aria-label="Add another phone number"
           @click=${createNewRow}
         >
@@ -390,7 +390,7 @@ function renderContactEmailInputRow({
           @change=${handleTypeInput}
         ></solid-ui-select>
       </label>
-      <div class="profile-edit-dialog__actions flex-row align-center justify-end">
+      <div class="profile-edit-dialog__actions">
         <solid-ui-button
           type="button"
           variant="icon"
@@ -421,7 +421,7 @@ function renderContactInfoEmailSection(emails: ContactPointRow[], onAddRow: (opt
   return html`
     <section 
       aria-labelledby="email-addresses-heading" 
-      class="profile-edit-dialog__section flex-column gap-xs">
+      class="profile-edit-dialog__section">
       <header class="profile__section-header">
         <h3 id="email-addresses-heading" class="profile-edit-dialog__section-heading">
           <span class="profile-edit-dialog__section-title-icon" aria-hidden="true">${emailIcon}</span>
@@ -431,7 +431,7 @@ function renderContactInfoEmailSection(emails: ContactPointRow[], onAddRow: (opt
           type="button"
           variant="secondary"
           size="sm"
-          class="profile__action-button profile-action-text flex-center"
+          class="profile__action-button profile-action-text profile-edit-dialog__add-button"
           aria-label="Add another email address"
           @click=${createNewRow}
         >
@@ -505,7 +505,7 @@ function renderContactAddressInputRow({
           <option value="Work">Work</option>
         </select>
       </label>
-      <div class="profile-edit-dialog__actions profile-edit-dialog__actions--edge flex-row align-center justify-end">
+      <div class="profile-edit-dialog__actions profile-edit-dialog__actions--edge">
         <solid-ui-button
           type="button"
           variant="icon"
@@ -633,7 +633,7 @@ function renderContactInfoAddressSection(addresses: ContactAddressRow[], onAddRo
   return html`
     <section 
       aria-labelledby="address-heading" 
-      class="profile-edit-dialog__section flex-column gap-xs">
+      class="profile-edit-dialog__section">
       <header class="profile__section-header">
         <h3 id="address-heading" class="profile-edit-dialog__section-heading">
           <span class="profile-edit-dialog__section-title-icon" aria-hidden="true">${locationIcon}</span>
@@ -643,7 +643,7 @@ function renderContactInfoAddressSection(addresses: ContactAddressRow[], onAddRo
           type="button"
           variant="secondary"
           size="sm"
-          class="profile__action-button profile-action-text flex-center"
+          class="profile__action-button profile-action-text profile-edit-dialog__add-button"
           aria-label="Add another address"
           @click=${createNewRow}
         >

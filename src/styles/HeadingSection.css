@@ -292,6 +292,14 @@
   border-radius: var(--border-radius-full, 0.625rem); /* 10px */
 }
 
+.profile__image-frame:not(.profile__image-frame--fallback) .profile__hero-alt {
+  display: none;
+}
+
+.profile__image-frame--fallback .profile__hero {
+  display: none;
+}
+
 /* Profile image */
 .profile__hero {
   border: var(--border-width-sm, 0.1rem) solid var(--color-primary, #7C4DFF);

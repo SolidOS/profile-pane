@@ -33,7 +33,7 @@ import { cameraIcon } from '../../icons-svg/profileIcons'
 import { ContactAddressRow, ContactPointRow } from '../contactInfo/types'
 import { sanitizeAddressFieldValue, sanitizeBasicInputFieldValue, sanitizeEmailValue, sanitizePhoneLocalValue } from '../shared/sanitizeUtils'
 import { toStorageDateISO } from './dateHelpers'
-import { deletePhotoFile, uploadPhotoFile } from './imageHelpers'
+import { deletePhotoFile, resolvePhotoDisplaySrc, uploadPhotoFile } from './imageHelpers'
 /* Note: new design - has address type in More Edit Contacts for now we will leave
          out Address Type, but a ticket will be created to add type later
          so I will keep the code and just comment it out for now. 
@@ -63,6 +63,8 @@ type HeadingFormState = {
   email: ContactPointRow
   phone: ContactPointRow
   address: ContactAddressRow
+  imagePreviewSrc: string
+  clearImagePreview: () => void
 }
 
 type HeadingContactTypeOption = {
@@ -255,8 +257,52 @@ function toFormState(profileData: ProfileDetails): HeadingFormState {
       basicInfo: (basicInfo) ? basicInfo : { name: '', nickname: '', imageSrc: '', location: '', pronouns: '', dateOfBirth: '', jobTitle: '', orgName: '', entryNode: '', status: 'new' },
       email: (email) ? email : { value: '', type: '', entryNode: '', status: 'new' },
       phone: (phone) ? phone : { value: '', type: '', entryNode: '', status: 'new' },
-      address: (address) ? address : { streetAddress: '', locality: '', region: '', postalCode: '', countryName: '', type: '', entryNode: '', status: 'new' }
+      address: (address) ? address : { streetAddress: '', locality: '', region: '', postalCode: '', countryName: '', type: '', entryNode: '', status: 'new' },
+      imagePreviewSrc: '',
+      clearImagePreview: () => undefined
     }
+}
+
+function setHeadingImagePreview(formState: HeadingFormState, file: File) {
+  formState.clearImagePreview()
+
+  if (typeof URL.createObjectURL !== 'function') {
+    formState.imagePreviewSrc = ''
+    formState.clearImagePreview = () => undefined
+    return
+  }
+
+  const previewUrl = URL.createObjectURL(file)
+  formState.imagePreviewSrc = previewUrl
+  formState.clearImagePreview = () => {
+    URL.revokeObjectURL(previewUrl)
+    formState.imagePreviewSrc = ''
+    formState.clearImagePreview = () => undefined
+  }
+}
+
+function setResolvedHeadingPreview(formState: HeadingFormState, resolvedImageSrc?: string) {
+  formState.clearImagePreview()
+
+  if (!resolvedImageSrc) {
+    return
+  }
+
+  formState.imagePreviewSrc = resolvedImageSrc
+
+  if (resolvedImageSrc.startsWith('blob:') && typeof URL.revokeObjectURL === 'function') {
+    formState.clearImagePreview = () => {
+      URL.revokeObjectURL(resolvedImageSrc)
+      formState.imagePreviewSrc = ''
+      formState.clearImagePreview = () => undefined
+    }
+    return
+  }
+
+  formState.clearImagePreview = () => {
+    formState.imagePreviewSrc = ''
+    formState.clearImagePreview = () => undefined
+  }
 }
 
 type ProfileBasicEditableField =
@@ -552,11 +598,10 @@ function renderContactAddressInput({
 function renderHeadingInfoInput(
   store: LiveStore,
   subject: NamedNode,
-  basicInfo: ProfileBasicRow,
-  phone: ContactPointRow,
-  email: ContactPointRow,
+  formState: HeadingFormState,
   rerender: () => void
 ): TemplateResult {
+  const { basicInfo, phone, email, imagePreviewSrc } = formState
   const imageSrcLabel = 'Profile Photo'
   const recommendedImageToLoad = 'Recommended: Square JPG, PNG. Max 2MB.'
   const nameLabel = 'Full Name'
@@ -607,6 +652,7 @@ function renderHeadingInfoInput(
 
       try {
         const uploadedUri = await uploadPhotoFile(store, subject, file)
+        setHeadingImagePreview(formState, file)
         applyRowFieldChange(basicInfo, 'imageSrc', uploadedUri, rowHasContent)
         rerender()
       } catch (error) {
@@ -665,6 +711,7 @@ function renderHeadingInfoInput(
         try {
           const uploadedUri = await uploadPhotoFile(store, subject, detail.file)
           closeCameraFrame()
+          setHeadingImagePreview(formState, detail.file)
           applyRowFieldChange(basicInfo, 'imageSrc', uploadedUri, rowHasContent)
           rerender()
         } catch (error) {
@@ -681,6 +728,7 @@ function renderHeadingInfoInput(
 
   const handleDelete = async (_e: Event) => {
     if (!basicInfo) return
+    formState.clearImagePreview()
     applyRowFieldChange(basicInfo, 'imageSrc', '', rowHasContent)
     rerender()
   }
@@ -689,10 +737,10 @@ function renderHeadingInfoInput(
     <div class="profile-edit-dialog__row profile-edit-dialog__row--heading-photo">
       <header class="mb-md" aria-label="Profile Image">
         <div class="profile-edit-dialog__image-frame">
-          ${Image(basicInfo.imageSrc, basicInfo.name)}
+          ${Image(imagePreviewSrc || basicInfo.imageSrc, basicInfo.name)}
           <solid-ui-button
             type="button"
-            class="profile-edit-dialog__image-camera-button flex-center"
+            class="profile-edit-dialog__image-camera-button"
             variant="icon"
             size="md"
             aria-label="Take a photo"
@@ -736,10 +784,10 @@ function renderHeadingInfoInput(
         </div>
       </div>
     </div>
-    <div class="profile-edit-dialog__image-camera-capture-row flex-row justify-center">
-      <div class="profile-edit-dialog__image-camera-capture-frame flex-column-center" hidden></div>
+    <div class="profile-edit-dialog__image-camera-capture-row">
+      <div class="profile-edit-dialog__image-camera-capture-frame" hidden></div>
     </div>
-    <div class="profile-edit flex-column gap-lg">
+    <div class="profile-edit">
       <div class="profile-edit-dialog__row profile-edit-dialog__row--equal">
         <label aria-label=${nameLabel} class="label profile-edit-dialog__field">
           ${nameLabel}
@@ -864,7 +912,7 @@ function renderHeadingEditTemplate(
   const rerender = () => renderHeadingEditTemplate(form, formState, store, subject, viewerMode)
  
   render(html`
-    ${renderHeadingInfoInput(store, subject, formState.basicInfo, formState.phone, formState.email, rerender)}
+    ${renderHeadingInfoInput(store, subject, formState, rerender)}
     ${renderContactAddressInput({ address: formState.address })}
     ${viewerMode !== 'owner'
       ? html`<p class="profile-edit-dialog__login-message">${ownerLoginRequiredDialogMessageText}</p>`
@@ -910,6 +958,14 @@ export async function createHeadingEditDialog(
   const dom = document
   const originalPhotoUri = sanitizeTextValue(toText(profileData.imageSrc || ''))
   const { form, formState } = createHeadingEditForm(store, subject, profileData, viewerMode)
+
+  if (formState.basicInfo.imageSrc) {
+    const resolvedImageSrc = await resolvePhotoDisplaySrc(store, formState.basicInfo.imageSrc)
+    if (resolvedImageSrc && resolvedImageSrc !== formState.basicInfo.imageSrc) {
+      setResolvedHeadingPreview(formState, resolvedImageSrc)
+      renderHeadingEditTemplate(form, formState, store, subject, viewerMode)
+    }
+  }
 
   const result = await openInputDialog({
     title: editHeadingDialogTitleText,

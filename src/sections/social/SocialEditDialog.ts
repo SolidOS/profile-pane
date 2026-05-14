@@ -311,7 +311,7 @@ function renderSocialInputRow({
         />
           <small class="profile-edit-dialog__input-help-text">Enter your profile link, handle, or username.</small>
       </label>
-      <div class="profile-edit-dialog__actions profile-edit-dialog__actions--edge flex-row align-center justify-end">
+      <div class="profile-edit-dialog__actions profile-edit-dialog__actions--edge">
         <solid-ui-button
           type="button"
           variant="icon"
@@ -370,7 +370,7 @@ function renderSocialSection(rows: SocialRow[], options: SocialAccountOption[], 
     .filter(({ row }) => row.status !== 'deleted')
 
   return html`
-    <section class="profile-edit-dialog__section flex-column gap-xs" aria-label="Social Accounts">
+    <section class="profile-edit-dialog__section" aria-label="Social Accounts">
       <fieldset>
         <legend class="sr-only">Social account entries</legend>
         ${visibleRows.map(({ index }, displayIndex) =>

@@ -6,6 +6,20 @@
   width: 100%;
 }
 
+/* Shared dialog section layout */
+.profile-edit-dialog__section,
+.profile-edit-dialog__section--education {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs, 0.75rem);
+}
+
+.profile-edit {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg, 1.25rem);
+}
+
 .profile-edit-dialog__section h4 {
   margin: 0;
 }
@@ -141,6 +155,8 @@ solid-ui-button.profile-edit-dialog__delete-button.profile-edit-dialog__delete-b
 .profile-edit-dialog__image-camera-button {
   display: none;
   position: absolute;
+  align-items: center;
+  justify-content: center;
   right: var(--spacing-2xs, 0.625rem);
   bottom: var(--spacing-2xs, 0.625rem);
   z-index: 1;
@@ -174,6 +190,8 @@ solid-ui-button.profile-edit-dialog__image-camera-button {
   flex-shrink: 0;
 }
 .profile-edit-dialog__image-camera-capture-row {
+  display: flex;
+  justify-content: center;
   width: 100%;
 }
 
@@ -183,6 +201,10 @@ solid-ui-button.profile-edit-dialog__image-camera-button {
 
 .profile-edit-dialog__image-camera-capture-frame {
   position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
   width: fit-content;
   max-width: 100%;
   margin-left: auto;
@@ -299,7 +321,6 @@ solid-ui-button.profile-edit-dialog__image-camera-button {
 }
 
 .profile-edit-dialog__field {
-  /* flex: 1 1 auto; */
   min-width: 0;
 }
 
@@ -470,6 +491,9 @@ solid-ui-button.profile-edit-dialog__image-camera-button {
 
 .profile-edit-dialog__checkbox-label {
   margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-xs, 0.75rem);
   cursor: var(--profile-interactive-cursor, pointer);
 }
 
@@ -511,11 +535,20 @@ solid-ui-button.profile-edit-dialog__image-camera-button {
 }
 
 .profile-edit-dialog__actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
   flex: 0 0 auto;
 }
 
 .profile-edit-dialog__actions--edge {
   margin-left: auto;
+}
+
+.profile-edit-dialog__add-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .profile-edit-dialog__input-wrap {
@@ -622,7 +655,6 @@ solid-ui-button.profile-edit-dialog__delete-button:focus-within {
   --button-active-box-shadow: none;
   --button-active-transform: none;
   --button-icon-size-md: 0.813rem;
-  --button-icon-size-lg: 0.813rem;
   --spacing-xxs: var(--spacing-xxs, 0.3125rem);
 }
 
