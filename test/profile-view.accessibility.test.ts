@@ -1,13 +1,26 @@
+import { afterEach, beforeEach, describe, expect, it } from '@jest/globals'
 import { ProfileView } from '../src/ProfileView'
 import { render } from 'lit-html'
 import { runAxe } from './helpers/runAxe'
+import { createTestContext, resetTestSetup, subject } from './setup'
 
 describe('ProfileView accessibility', () => {
-  it('has no accessibility violations', async () => {
-    const container = document.createElement('div')
+  let container: HTMLDivElement
+
+  beforeEach(() => {
+    resetTestSetup()
+    container = document.createElement('div')
     document.body.appendChild(container)
-    // Use shared context and subject mocks
-    const { context, subject } = require('./setup')
+  })
+
+  afterEach(() => {
+    container.remove()
+    document.body.innerHTML = ''
+    resetTestSetup()
+  })
+
+  it('has no accessibility violations', async () => {
+    const context = createTestContext()
     // Render ProfileView (returns a Promise<TemplateResult>)
     const result = await ProfileView(subject, context)
     render(result, container)
@@ -17,5 +30,5 @@ describe('ProfileView accessibility', () => {
       console.log('Axe violations:', JSON.stringify(results.violations, null, 2))
     }
     expect(results.violations.length).toBe(0)
-  })
+  }, 15000)
 })

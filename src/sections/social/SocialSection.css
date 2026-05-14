@@ -27,16 +27,6 @@
   justify-content: center;
 }
 
-.profile__section[data-profile-section='social'] .profile-section-collapsible__toggle-button,
-.profile__section--empty[data-profile-section='social'] .profile-section-collapsible__toggle-button {
-  display: none;
-}
-
-:is(.profile-pane-host, .profile-pane-root)[data-layout='desktop'] .profile__section[data-profile-section='social'] .profile-section-collapsible__toggle-button,
-:is(.profile-pane-host, .profile-pane-root)[data-layout='desktop'] .profile__section--empty[data-profile-section='social'] .profile-section-collapsible__toggle-button {
-  display: none !important;
-}
-
 .profile__section--empty[data-profile-section='social'] {
   display: flex;
   flex-direction: column;
@@ -172,13 +162,6 @@ solid-ui-button.social-card__more-button::part(button) {
 }
 
 @media (max-width: 784px) {
-  .profile__section[data-profile-section='social'] .profile-section-collapsible__toggle-button,
-  .profile__section--empty[data-profile-section='social'] .profile-section-collapsible__toggle-button {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-  }
-
   .social-card .social-card__list {
     display: grid;
     grid-template-columns: var(--social-card-collapsed-columns);
@@ -205,13 +188,6 @@ solid-ui-button.social-card__more-button::part(button) {
 }
 
 @container profile-pane (max-width: 784px) {
-  .profile__section[data-profile-section='social'] .profile-section-collapsible__toggle-button,
-  .profile__section--empty[data-profile-section='social'] .profile-section-collapsible__toggle-button {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-  }
-
   .social-card .social-card__list {
     display: grid;
     grid-template-columns: var(--social-card-collapsed-columns);

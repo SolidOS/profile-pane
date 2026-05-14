@@ -258,8 +258,8 @@
   }
 }
 
-/* Viewport fallback for narrow panes when no explicit layout attribute is available. */
-@media (max-width: 576px) {
+/* Viewport fallback for stacked panes when no explicit layout attribute is available. */
+@media (max-width: 1005px) {
   .profile-section-collapsible--inline-mobile-actions > .profile-section-collapsible__header h2 {
     flex: 1 1 auto;
     min-width: 0;
@@ -345,8 +345,8 @@
   }
 }
 
-/* Container-driven fallback for narrow panes inside a wider viewport. */
-@container profile-pane (max-width: 576px) {
+/* Container-driven fallback for stacked panes inside a wider viewport. */
+@container profile-pane (max-width: 1005px) {
   .profile-section-collapsible--inline-mobile-actions > .profile-section-collapsible__header h2 {
     flex: 1 1 auto;
     min-width: 0;
