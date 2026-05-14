@@ -4,6 +4,7 @@
   --profile-main-section-min-width: 37.5rem;
   --profile-sidebar-min-width: 25rem;
   --profile-sidebar-section-padding: var(--spacing-lg, 1.5625rem);
+  --profile-stacked-section-gap: var(--spacing-sm, 0.9375rem);
   display: grid;
   grid-template-columns: minmax(0, 1fr) var(--profile-sidebar-min-width);
   align-items: start;
@@ -218,7 +219,7 @@
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 0;
+  gap: var(--profile-stacked-section-gap);
 }
 
 :is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__intro-main,
@@ -333,7 +334,7 @@
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    gap: 0;
+    gap: var(--profile-stacked-section-gap);
   }
 
   .profile-grid .profile__intro-main,
@@ -368,7 +369,7 @@
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    gap: 0;
+    gap: var(--profile-stacked-section-gap);
   }
 
   .profile-grid .profile__intro-main,

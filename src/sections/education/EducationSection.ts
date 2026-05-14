@@ -140,7 +140,7 @@ export function renderEducationSection(
             type="button"
             variant="icon"
             size="sm"
-            class="inline-flex-row justify-center"
+            class="profile-section-collapsible__toggle-button"
             aria-label="Toggle education section"
             aria-controls="education-panel"
             aria-expanded="false"
