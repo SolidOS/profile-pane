@@ -10,6 +10,10 @@ import { formatDisplayError } from '../utils/errorDisplay'
 let modalDialog: HTMLDialogElement | null = null
 let previousFocus: Element | null = null
 
+function getDialogMountTarget(dom: Document): HTMLElement {
+  return (dom.querySelector('.profile-pane-root') as HTMLElement | null) || dom.body
+}
+
 type DialogButtonValue = boolean | 'save' | null
 type DialogButton = {
   label: string,
@@ -93,10 +97,17 @@ export function getSharedDialogCancelButton(root: ParentNode): DialogActionContr
 }
 
 function ensureModalDialog (dom: Document): HTMLDialogElement {
+  const mountTarget = getDialogMountTarget(dom)
+
   // if we previously created a dialog but it was removed from the document
   // (tests clear body), rebuild it. Checking presence ensures our reference
   // doesn't point at a detached element.
-  if (modalDialog && dom.body.contains(modalDialog)) return modalDialog
+  if (modalDialog && dom.body.contains(modalDialog)) {
+    if (modalDialog.parentElement !== mountTarget) {
+      mountTarget.appendChild(modalDialog)
+    }
+    return modalDialog
+  }
 
   modalDialog = null
   modalDialog = dom.createElement('dialog')
@@ -118,7 +129,7 @@ function ensureModalDialog (dom: Document): HTMLDialogElement {
     </div>
   `
 
-  dom.body.appendChild(modalDialog)
+  mountTarget.appendChild(modalDialog)
   return modalDialog
 }
 
@@ -205,7 +216,13 @@ function focusInitialDialogTarget (description: HTMLDivElement, buttons: HTMLDiv
     const focusTarget = getInitialFocusTarget(initialInput)
     focusTarget.focus()
     if (focusTarget instanceof HTMLInputElement || focusTarget instanceof HTMLTextAreaElement) {
-      focusTarget.select()
+      focusTarget.setSelectionRange(0, 0)
+      focusTarget.scrollLeft = 0
+      focusTarget.scrollTop = 0
+      requestAnimationFrame(() => {
+        focusTarget.scrollLeft = 0
+        focusTarget.scrollTop = 0
+      })
     }
     return
   }

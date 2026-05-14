@@ -919,8 +919,14 @@ function focusResumeFieldElement(element: HTMLElement | null): void {
 
   focusTarget.focus({ preventScroll: true })
   if (focusTarget instanceof HTMLInputElement || focusTarget instanceof HTMLTextAreaElement) {
-    const caretPosition = focusTarget.value.length
+    const caretPosition = 0
     focusTarget.setSelectionRange(caretPosition, caretPosition)
+    focusTarget.scrollLeft = 0
+    focusTarget.scrollTop = 0
+    requestAnimationFrame(() => {
+      focusTarget.scrollLeft = 0
+      focusTarget.scrollTop = 0
+    })
   }
 
   if (element?.tagName === 'SOLID-UI-COMBOBOX') {

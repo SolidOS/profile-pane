@@ -226,8 +226,8 @@ solid-ui-button.resume-card__description-toggle {
 
 .resume-card__section h3 {
   color: var(--resume-card-heading-color);
-  font-size: var(--font-size-lg, 1.125rem);
-  font-weight: var(--font-weight-bold, 600);
+  font-size: var(--font-size-xl, 1.375rem);
+  font-weight: var(--font-weight-md, 500);
   line-height: var(--line-height-tight, 1.4);
   margin-bottom: var(--resume-card-item-gap);
   border-bottom: 1px solid var(--resume-card-heading-border);

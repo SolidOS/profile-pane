@@ -63,6 +63,8 @@ td.obj .profile-pane-root {
 .profile__section-header h3,
 .profile__section-header h4 {
   margin: 0;
+  font-size: var(--font-size-xl, 1.375rem);
+  font-weight: var(--font-weight-md, 500);
 }
 
 
@@ -204,7 +206,6 @@ solid-ui-button.profile-action-text:focus-visible::part(button) {
 :is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__action-button {
   min-height: calc(var(--min-touch-target, 44px) + 0.5rem) !important;
   font-size: clamp(0.9rem, 2.1vw, 1rem) !important;
-  padding: var(--spacing-xs, 0.75rem) 0.9rem !important;
 }
 
 :is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile__section-header h2,
@@ -242,7 +243,6 @@ solid-ui-button.profile-action-text:focus-visible::part(button) {
   .profile-grid .profile__action-button {
     min-height: calc(var(--min-touch-target, 44px) + 0.5rem) !important;
     font-size: clamp(0.9rem, 2.1vw, 1rem) !important;
-    padding: var(--spacing-xs, 0.75rem) 0.9rem !important;
   }
 }
 
@@ -263,7 +263,6 @@ solid-ui-button.profile-action-text:focus-visible::part(button) {
   .profile-grid .profile__action-button {
     min-height: calc(var(--min-touch-target, 44px) + 0.5rem) !important;
     font-size: clamp(0.9rem, 2.1vw, 1rem) !important;
-    padding: var(--spacing-xs, 0.75rem) 0.9rem !important;
   }
 }
 

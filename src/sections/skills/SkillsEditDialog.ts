@@ -243,8 +243,12 @@ function focusSkillField(form: HTMLFormElement, selector: string): void {
   const focusTarget = comboboxInput || nextField
   focusTarget.focus()
   if (focusTarget instanceof HTMLInputElement) {
-    const caretPosition = focusTarget.value.length
+    const caretPosition = 0
     focusTarget.setSelectionRange(caretPosition, caretPosition)
+    focusTarget.scrollLeft = 0
+    requestAnimationFrame(() => {
+      focusTarget.scrollLeft = 0
+    })
   }
 
   if (comboboxHost?._closePopup) {

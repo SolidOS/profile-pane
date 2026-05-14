@@ -7,6 +7,9 @@
   --profile-modal-compact-padding: var(--spacing-sm, 0.9375rem);
   --profile-modal-button-gap: var(--spacing-sm, 0.938rem);
   --profile-modal-error-padding: var(--spacing-xs, 0.75rem);
+  --profile-modal-panel-width: 90vw;
+  --profile-modal-panel-max-width: 37.5rem;
+  --profile-modal-panel-max-height: 90vh;
   margin: 0;
   padding: 0;
   border: none;
@@ -39,9 +42,9 @@
   margin: 0;
   background: var(--color-background);
   border-radius: var(--border-radius-base);
-  max-width: 92vw;
-  width: fit-content;
-  max-height: 85vh;
+  max-width: var(--profile-modal-panel-max-width);
+  width: var(--profile-modal-panel-width);
+  max-height: var(--profile-modal-panel-max-height);
   overflow: hidden;
   box-shadow: var(--box-shadow-modal, 0 2px 10px rgba(0, 0, 0, 0.3));
 }
@@ -243,6 +246,7 @@
 
 @media (max-width: 576px) {
   #profile-modal {
+    --profile-modal-panel-max-height: calc(100dvh - 4 * var(--spacing-sm));
     padding-top: max(var(--spacing-sm), env(safe-area-inset-top));
     padding-right: 0;
     padding-bottom: max(var(--spacing-sm), env(safe-area-inset-bottom));
@@ -251,10 +255,7 @@
   }
 
   #profile-modal .modal {
-    width: min(400px, calc(100dvw - 2 * var(--spacing-sm)));
-    max-width: calc(100dvw - 2 * var(--spacing-sm));
     min-width: 0;
-    max-height: calc(100dvh - 2 * var(--spacing-sm));
     padding: 0;
     border-radius: calc(var(--border-radius-base) * 0.75);
     overscroll-behavior: contain;
@@ -264,8 +265,8 @@
   }
 
   #profile-modal .modal .modal-header {
-    gap: var(--spacing-md);
-    padding: var(--profile-modal-compact-padding);
+    gap: var(--spacing-lg, 1.5625rem);
+    padding: var(--spacing-sm, 0.938rem);
   }
 
   #profile-modal .modal #modal-title {
@@ -274,11 +275,11 @@
   }
 
   #profile-modal .modal #modal-desc {
-    padding: var(--profile-modal-panel-inline-padding);
+    padding: var(--spacing-sm, 0.938rem) var(--spacing-sm, 0.938rem) var(--spacing-lg, 1.5625rem);
   }
 
   #profile-modal .modal #modal-desc:has(> .profile__edit-form--projects) {
-    padding: var(--spacing-2xs, 0.625rem) var(--profile-modal-compact-padding);
+    padding: var(--spacing-sm, 0.938rem) var(--spacing-sm, 0.938rem) var(--spacing-lg, 1.5625rem);
   }
 
   #profile-modal #modal-desc > .profile__edit-form--bio {
@@ -303,4 +304,124 @@
     --button-font-size-md: var(--font-size-md, 1rem);
   }
 
+}
+
+html[data-layout='mobile'] #profile-modal {
+  --profile-modal-panel-max-height: calc(100dvh - 4 * var(--spacing-sm));
+  padding-top: max(var(--spacing-sm), env(safe-area-inset-top));
+  padding-right: 0;
+  padding-bottom: max(var(--spacing-sm), env(safe-area-inset-bottom));
+  padding-left: 0;
+  place-items: center;
+}
+
+html[data-layout='mobile'] #profile-modal .modal {
+  min-width: 0;
+  padding: 0;
+  border-radius: calc(var(--border-radius-base) * 0.75);
+  overscroll-behavior: contain;
+  justify-self: center;
+  align-self: center;
+  margin: 0 auto;
+}
+
+html[data-layout='mobile'] #profile-modal .modal .modal-header {
+  gap: var(--spacing-lg, 1.5625rem);
+  padding: var(--spacing-sm, 0.938rem);
+}
+
+html[data-layout='mobile'] #profile-modal .modal #modal-title {
+  font-size: var(--font-size-lg, 1.125rem);
+  line-height: var(--line-height-tight, 1.4);
+}
+
+html[data-layout='mobile'] #profile-modal .modal #modal-desc {
+  padding: var(--spacing-sm, 0.938rem) var(--spacing-sm, 0.938rem) var(--spacing-lg, 1.5625rem);
+}
+
+html[data-layout='mobile'] #profile-modal .modal #modal-desc:has(> .profile__edit-form--projects) {
+  padding: var(--spacing-sm, 0.938rem) var(--spacing-sm, 0.938rem) var(--spacing-lg, 1.5625rem);
+}
+
+html[data-layout='mobile'] #profile-modal #modal-desc > .profile__edit-form--bio {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md, 1.25rem);
+}
+
+html[data-layout='mobile'] #profile-modal #modal-buttons {
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--profile-modal-button-gap);
+  padding: var(--profile-modal-compact-padding);
+  width: 100%;
+}
+
+html[data-layout='mobile'] #profile-modal #modal-buttons > solid-ui-button {
+  flex: 1 0 0;
+  width: auto;
+  min-width: 0;
+  --button-font-size-md: var(--font-size-md, 1rem);
+}
+
+@container profile-pane (max-width: 576px) {
+  #profile-modal {
+    --profile-modal-panel-max-height: calc(100dvh - 4 * var(--spacing-sm));
+    padding-top: max(var(--spacing-sm), env(safe-area-inset-top));
+    padding-right: 0;
+    padding-bottom: max(var(--spacing-sm), env(safe-area-inset-bottom));
+    padding-left: 0;
+    place-items: center;
+  }
+
+  #profile-modal .modal {
+    min-width: 0;
+    padding: 0;
+    border-radius: calc(var(--border-radius-base) * 0.75);
+    overscroll-behavior: contain;
+    justify-self: center;
+    align-self: center;
+    margin: 0 auto;
+  }
+
+  #profile-modal .modal .modal-header {
+    gap: var(--spacing-lg, 1.5625rem);
+    padding: var(--spacing-sm, 0.938rem);
+  }
+
+  #profile-modal .modal #modal-title {
+    font-size: var(--font-size-lg, 1.125rem);
+    line-height: var(--line-height-tight, 1.4);
+  }
+
+  #profile-modal .modal #modal-desc {
+    padding: var(--spacing-sm, 0.938rem) var(--spacing-sm, 0.938rem) var(--spacing-lg, 1.5625rem);
+  }
+
+  #profile-modal .modal #modal-desc:has(> .profile__edit-form--projects) {
+    padding: var(--spacing-sm, 0.938rem) var(--spacing-sm, 0.938rem) var(--spacing-lg, 1.5625rem);
+  }
+
+  #profile-modal #modal-desc > .profile__edit-form--bio {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md, 1.25rem);
+  }
+
+  #profile-modal #modal-buttons {
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-end;
+    gap: var(--profile-modal-button-gap);
+    padding: var(--profile-modal-compact-padding);
+    width: 100%;
+  }
+
+  #profile-modal #modal-buttons > solid-ui-button {
+    flex: 1 0 0;
+    width: auto;
+    min-width: 0;
+    --button-font-size-md: var(--font-size-md, 1rem);
+  }
 }

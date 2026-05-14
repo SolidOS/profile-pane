@@ -50,3 +50,19 @@
   overflow-wrap: anywhere;
   text-align: center;
 }
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .languages__item-label {
+  font-size: var(--font-size-sm, 0.875rem);
+}
+
+@media (max-width: 576px) {
+  .languages__item-label {
+    font-size: var(--font-size-sm, 0.875rem);
+  }
+}
+
+@container profile-pane (max-width: 576px) {
+  .languages__item-label {
+    font-size: var(--font-size-sm, 0.875rem);
+  }
+}
