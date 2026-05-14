@@ -26,6 +26,32 @@ async function waitForDialogFocus(): Promise<void> {
 }
 
 describe('Dialog accessibility', () => {
+  it('mounts the shared dialog inside the profile pane root when available', async () => {
+    const paneRoot = document.createElement('div')
+    paneRoot.className = 'profile-pane-root'
+    document.body.appendChild(paneRoot)
+
+    const form = document.createElement('form')
+    const input = document.createElement('input')
+    input.name = 'displayName'
+    form.appendChild(input)
+    paneRoot.appendChild(form)
+
+    const resultPromise = openInputDialog({
+      title: 'Edit display name',
+      dom: document,
+      form,
+      headerAction: { type: 'none' }
+    })
+
+    const dialog = paneRoot.querySelector('#profile-modal') as HTMLDialogElement | null
+    expect(dialog).not.toBeNull()
+    expect(document.body.querySelector(':scope > #profile-modal')).toBeNull()
+
+    getSharedDialogCancelButton(document)?.click()
+    await expect(resultPromise).resolves.toBeNull()
+  })
+
   it('has no accessibility violations for the shared input dialog', async () => {
     const form = document.createElement('form')
     const label = document.createElement('label')
