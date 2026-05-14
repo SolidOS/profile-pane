@@ -352,12 +352,18 @@
   .profile-grid .profile__intro-main,
   .profile-grid .profile__intro-sidebar,
   .profile-grid .profile__main,
+  .profile-grid .profile__sidebar,
   .profile-grid .profile__sidebar-content {
     display: contents;
+    min-width: 0;
   }
 
   .profile-grid .profile__sidebar:not(.profile__intro-sidebar) {
+    padding: 0 !important;
     display: contents;
+    border-radius: 0;
+    background: transparent;
+    align-self: stretch;
   }
 
   .profile-grid [data-profile-section='heading'] { order: 1; }
@@ -370,9 +376,41 @@
   .profile-grid [data-profile-section='contact-info'] { order: 8; }
   .profile-grid [data-profile-section='qr-code'] { order: 9; }
 
-  .profile-grid .profile__section,
-  .profile-grid .profile__section--empty {
+  .profile-grid .profile__intro-sidebar > .profile__section,
+  .profile-grid .profile__intro-sidebar > .profile__section--empty,
+  .profile-grid .profile__intro-main > .profile__section,
+  .profile-grid .profile__intro-main > .profile__section--empty,
+  .profile-grid .profile__main > .profile__section,
+  .profile-grid .profile__main > .profile__section--empty,
+  .profile-grid .profile__sidebar-content > .profile__section,
+  .profile-grid .profile__sidebar-content > .profile__section--empty {
     min-width: 0;
+  }
+
+  .profile-grid [data-profile-section='social'].profile__section,
+  .profile-grid [data-profile-section='social'].profile__section--empty {
+    border: none;
+    background: transparent;
+  }
+
+  .profile-grid [data-profile-section='projects'].profile__section--empty > .profile-section-collapsible__header,
+  .profile-grid [data-profile-section='resume'].profile__section--empty > .profile-section-collapsible__header {
+    display: flex;
+  }
+
+  .profile-grid [data-profile-section='projects'].profile__section--empty .profile-section-collapsible__content .profile__empty-state-content > h2,
+  .profile-grid [data-profile-section='resume'].profile__section--empty .profile-section-collapsible__content .profile__empty-state-content > h2 {
+    display: none;
+  }
+
+  .profile-grid [data-profile-section='bio'] .profile-section-collapsible__edit-button {
+    --button-background: transparent;
+    --button-border-width: 0;
+    --button-border: transparent;
+    --button-text: var(--profile-section-collapsible-action-button-text, var(--color-text, #1A1A1A));
+    --button-hover-background: var(--profile-section-collapsible-action-button-hover-background, var(--color-surface-accent-subtle, var(--lavender-300, #e6dcff)));
+    --button-hover-border: transparent;
+    --button-hover-text: var(--profile-section-collapsible-action-button-text, var(--color-text, #1A1A1A));
   }
 }
 
@@ -387,12 +425,18 @@
   .profile-grid .profile__intro-main,
   .profile-grid .profile__intro-sidebar,
   .profile-grid .profile__main,
+  .profile-grid .profile__sidebar,
   .profile-grid .profile__sidebar-content {
     display: contents;
+    min-width: 0;
   }
 
   .profile-grid .profile__sidebar:not(.profile__intro-sidebar) {
+    padding: 0 !important;
     display: contents;
+    border-radius: 0;
+    background: transparent;
+    align-self: stretch;
   }
 
   .profile-grid [data-profile-section='heading'] { order: 1; }
@@ -405,9 +449,41 @@
   .profile-grid [data-profile-section='contact-info'] { order: 8; }
   .profile-grid [data-profile-section='qr-code'] { order: 9; }
 
-  .profile-grid .profile__section,
-  .profile-grid .profile__section--empty {
+  .profile-grid .profile__intro-sidebar > .profile__section,
+  .profile-grid .profile__intro-sidebar > .profile__section--empty,
+  .profile-grid .profile__intro-main > .profile__section,
+  .profile-grid .profile__intro-main > .profile__section--empty,
+  .profile-grid .profile__main > .profile__section,
+  .profile-grid .profile__main > .profile__section--empty,
+  .profile-grid .profile__sidebar-content > .profile__section,
+  .profile-grid .profile__sidebar-content > .profile__section--empty {
     min-width: 0;
+  }
+
+  .profile-grid [data-profile-section='social'].profile__section,
+  .profile-grid [data-profile-section='social'].profile__section--empty {
+    border: none;
+    background: transparent;
+  }
+
+  .profile-grid [data-profile-section='projects'].profile__section--empty > .profile-section-collapsible__header,
+  .profile-grid [data-profile-section='resume'].profile__section--empty > .profile-section-collapsible__header {
+    display: flex;
+  }
+
+  .profile-grid [data-profile-section='projects'].profile__section--empty .profile-section-collapsible__content .profile__empty-state-content > h2,
+  .profile-grid [data-profile-section='resume'].profile__section--empty .profile-section-collapsible__content .profile__empty-state-content > h2 {
+    display: none;
+  }
+
+  .profile-grid [data-profile-section='bio'] .profile-section-collapsible__edit-button {
+    --button-background: transparent;
+    --button-border-width: 0;
+    --button-border: transparent;
+    --button-text: var(--profile-section-collapsible-action-button-text, var(--color-text, #1A1A1A));
+    --button-hover-background: var(--profile-section-collapsible-action-button-hover-background, var(--color-surface-accent-subtle, var(--lavender-300, #e6dcff)));
+    --button-hover-border: transparent;
+    --button-hover-text: var(--profile-section-collapsible-action-button-text, var(--color-text, #1A1A1A));
   }
 }
 
