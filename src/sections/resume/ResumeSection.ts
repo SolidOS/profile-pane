@@ -13,7 +13,7 @@ import {
   toggleDescription
 } from '../shared/sectionCardHelpers'
 import { toggleCollapsibleSection } from '../shared/collapsibleSection'
-import { addIcon, editIcon, plusDarkIcon } from '../../icons-svg/profileIcons'
+import { addIcon, chevronDownIcon, editIcon, plusDarkIcon } from '../../icons-svg/profileIcons'
 
 function renderRole(role: RoleDetails, index: number) {
   if (!role) return html``
@@ -134,7 +134,7 @@ function renderResumeSectionDefault(
             aria-expanded="false"
             @click=${toggleCollapsibleSection}
           >
-            <span slot="icon" class="profile-section-collapsible__chevron" aria-hidden="true">⌄</span>
+            <span slot="icon" class="profile-section-collapsible__chevron" aria-hidden="true">${chevronDownIcon}</span>
           </solid-ui-button>
         </div>
       </header>
@@ -234,7 +234,7 @@ function renderOwnerEmptyResumeSection(
             aria-expanded="false"
             @click=${toggleCollapsibleSection}
           >
-            <span slot="icon" class="profile-section-collapsible__chevron" aria-hidden="true">⌄</span>
+            <span slot="icon" class="profile-section-collapsible__chevron" aria-hidden="true">${chevronDownIcon}</span>
           </solid-ui-button>
         </div>
       </header>

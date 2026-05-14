@@ -6,7 +6,7 @@ import { ViewerMode } from '../../types'
 import '../../styles/SkillsSection.css'
 import { createSkillsEditDialog } from './SkillsEditDialog'
 import { SkillDetails, SkillRow } from './types'
-import { addIcon, deleteIcon, editIcon, lighteningIcon } from '../../icons-svg/profileIcons'
+import { addIcon, chevronDownIcon, deleteIcon, editIcon, lighteningIcon } from '../../icons-svg/profileIcons'
 import { skillsHeadingText } from '../../texts'
 import { toggleCollapsibleSection } from '../shared/collapsibleSection'
 import { processSkillsMutations } from './mutations'
@@ -148,7 +148,7 @@ function renderSkillsSectionDefault(store: LiveStore, subject: NamedNode, skills
             aria-expanded="false"
             @click=${toggleCollapsibleSection}
           >
-            <span slot="icon" class="profile-section-collapsible__chevron" aria-hidden="true">⌄</span>
+            <span slot="icon" class="profile-section-collapsible__chevron" aria-hidden="true">${chevronDownIcon}</span>
           </solid-ui-button>
         </div>
       </header>
@@ -247,7 +247,7 @@ function renderOwnerEmptySkillsSection(
             aria-expanded="false"
             @click=${toggleCollapsibleSection}
           >
-            <span slot="icon" class="profile-section-collapsible__chevron" aria-hidden="true">⌄</span>
+            <span slot="icon" class="profile-section-collapsible__chevron" aria-hidden="true">${chevronDownIcon}</span>
           </solid-ui-button>
         </div>
       </header>

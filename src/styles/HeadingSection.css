@@ -526,6 +526,16 @@
   justify-content: var(--profile-heading-secondary-edit-justify-content, flex-end);
 }
 
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile__heading-edit-action > solid-ui-button.profile__heading-action-button {
+  --button-background: transparent;
+  --button-border-width: 0;
+  --button-border: transparent;
+  --button-text: var(--color-text, #1A1A1A);
+  --button-hover-background: var(--color-surface-accent-subtle, var(--lavender-300, #e6dcff));
+  --button-hover-border: transparent;
+  --button-hover-text: var(--color-text, #1A1A1A);
+}
+
 :is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile__heading-actions > .profile-friends-button__section > solid-ui-button.profile__btn-friends,
 :is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile__heading-actions > #add-to-contacts-button-container > solid-ui-button.profile__btn-contacts {
   min-width: 0;
@@ -635,6 +645,16 @@
     margin-left: var(--profile-heading-secondary-edit-margin-left, auto);
     margin-right: var(--profile-heading-secondary-edit-margin-right, 0);
     justify-content: var(--profile-heading-secondary-edit-justify-content, flex-end);
+  }
+
+  .profile__heading-edit-action > solid-ui-button.profile__heading-action-button {
+    --button-background: transparent;
+    --button-border-width: 0;
+    --button-border: transparent;
+    --button-text: var(--color-text, #1A1A1A);
+    --button-hover-background: var(--color-surface-accent-subtle, var(--lavender-300, #e6dcff));
+    --button-hover-border: transparent;
+    --button-hover-text: var(--color-text, #1A1A1A);
   }
   .profile__heading-actions > .profile-friends-button__section > solid-ui-button.profile__btn-friends,
   .profile__heading-actions > #add-to-contacts-button-container > solid-ui-button.profile__btn-contacts {
@@ -746,6 +766,16 @@
     margin-left: var(--profile-heading-secondary-edit-margin-left, auto);
     margin-right: var(--profile-heading-secondary-edit-margin-right, 0);
     justify-content: var(--profile-heading-secondary-edit-justify-content, flex-end);
+  }
+
+  .profile__heading-edit-action > solid-ui-button.profile__heading-action-button {
+    --button-background: transparent;
+    --button-border-width: 0;
+    --button-border: transparent;
+    --button-text: var(--color-text, #1A1A1A);
+    --button-hover-background: var(--color-surface-accent-subtle, var(--lavender-300, #e6dcff));
+    --button-hover-border: transparent;
+    --button-hover-text: var(--color-text, #1A1A1A);
   }
   .profile__heading-actions > .profile-friends-button__section > solid-ui-button.profile__btn-friends,
   .profile__heading-actions > #add-to-contacts-button-container > solid-ui-button.profile__btn-contacts {

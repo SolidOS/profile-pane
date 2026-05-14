@@ -289,6 +289,18 @@
   align-self: center;
 }
 
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__section--empty .profile__empty-state-content {
+  align-items: center;
+  text-align: center;
+  width: 100%;
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__section--empty .profile__empty-state-content > h2,
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__section--empty .profile__empty-state-content > p {
+  text-align: center;
+  width: 100%;
+}
+
 :is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__name {
   font-size: var(--profile-mobile-header-name-size, var(--font-size-xl, 1.375rem)) !important;
   line-height: 1.15 !important;
@@ -433,6 +445,18 @@
     align-self: center;
   }
 
+  .profile-grid .profile__section--empty .profile__empty-state-content {
+    align-items: center;
+    text-align: center;
+    width: 100%;
+  }
+
+  .profile-grid .profile__section--empty .profile__empty-state-content > h2,
+  .profile-grid .profile__section--empty .profile__empty-state-content > p {
+    text-align: center;
+    width: 100%;
+  }
+
   .profile-grid .profile__empty-state-content > h2,
   .profile-grid .resume-card__section h3 {
     font-size: var(--profile-mobile-section-heading-size, var(--font-size-lg, 1.125rem)) !important;
@@ -501,6 +525,18 @@
 
   .profile-grid .profile__section--empty .profile__action-button--empty {
     align-self: center;
+  }
+
+  .profile-grid .profile__section--empty .profile__empty-state-content {
+    align-items: center;
+    text-align: center;
+    width: 100%;
+  }
+
+  .profile-grid .profile__section--empty .profile__empty-state-content > h2,
+  .profile-grid .profile__section--empty .profile__empty-state-content > p {
+    text-align: center;
+    width: 100%;
   }
 
   .profile-grid .profile__empty-state-content > h2,

@@ -12,7 +12,7 @@ import {
   toggleDescription,
 } from '../shared/sectionCardHelpers'
 import { toggleCollapsibleSection } from '../shared/collapsibleSection'
-import { editIcon } from '../../icons-svg/profileIcons'
+import { chevronDownIcon, editIcon } from '../../icons-svg/profileIcons'
 
 function formatEducationMonthYearFull(date?: string): string {
   if (!date) return ''
@@ -146,7 +146,7 @@ export function renderEducationSection(
             aria-expanded="false"
             @click=${toggleCollapsibleSection}
           >
-            <span slot="icon" class="profile-section-collapsible__chevron" aria-hidden="true">⌄</span>
+            <span slot="icon" class="profile-section-collapsible__chevron" aria-hidden="true">${chevronDownIcon}</span>
           </solid-ui-button>
         </div>
       </header>

@@ -7,7 +7,7 @@ import { socialAccountsHeadingText } from '../../texts'
 import { createSocialEditDialog } from './SocialEditDialog'
 import { LiveStore, NamedNode } from 'rdflib'
 import { toggleCollapsibleSection } from '../shared/collapsibleSection'
-import { addIcon, editIcon, globeIcon } from '../../icons-svg/profileIcons'
+import { addIcon, chevronDownIcon, editIcon, globeIcon } from '../../icons-svg/profileIcons'
 
 const MAX_VISIBLE_SOCIAL_ACCOUNTS_MOBILE = 10
 
@@ -145,7 +145,10 @@ function renderSocialSectionDefault(
                   aria-label="Edit social accounts"
                   @click=${handleEdit}
                 >
-                  <span class="profile-section-collapsible__edit-label">${editIcon} Edit</span>
+                  <span class="profile-section-collapsible__edit-label profile__add-more-content">
+                    <span class="profile__add-more-icon" aria-hidden="true">${addIcon}</span>
+                    <span>Add More</span>
+                  </span>
                   <span class="profile-section-collapsible__edit-icon" aria-hidden="true">${editIcon}</span>
                 </solid-ui-button>
               ` : html``}
@@ -159,7 +162,7 @@ function renderSocialSectionDefault(
                 aria-expanded="false"
                 @click=${toggleCollapsibleSection}
               >
-                <span slot="icon" class="profile-section-collapsible__chevron" aria-hidden="true">⌄</span>
+                <span slot="icon" class="profile-section-collapsible__chevron" aria-hidden="true">${chevronDownIcon}</span>
               </solid-ui-button>
             </div>
           </header>
@@ -241,7 +244,7 @@ function renderOwnerEmptySocialSection(
             aria-expanded="false"
             @click=${toggleCollapsibleSection}
           >
-            <span slot="icon" class="profile-section-collapsible__chevron" aria-hidden="true">⌄</span>
+            <span slot="icon" class="profile-section-collapsible__chevron" aria-hidden="true">${chevronDownIcon}</span>
           </solid-ui-button>
         </div>
       </header>

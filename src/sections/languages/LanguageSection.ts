@@ -6,7 +6,7 @@ import { ViewerMode } from '../../types'
 import '../../styles/LanguageSection.css'
 import { createLanguageEditDialog } from './LanguageEditDialog'
 import { LanguageDetails } from './types'
-import { addIcon, commentIcon, editIcon } from '../../icons-svg/profileIcons'
+import { addIcon, chevronDownIcon, commentIcon, editIcon } from '../../icons-svg/profileIcons'
 import { languagesHeadingText } from '../../texts'
 import { toggleCollapsibleSection } from '../shared/collapsibleSection'
 
@@ -65,7 +65,7 @@ function renderLanguagesSectionDefault(store: LiveStore, subject: NamedNode, lan
             aria-expanded="false"
             @click=${toggleCollapsibleSection}
           >
-            <span slot="icon" class="profile-section-collapsible__chevron" aria-hidden="true">⌄</span>
+            <span slot="icon" class="profile-section-collapsible__chevron" aria-hidden="true">${chevronDownIcon}</span>
           </solid-ui-button>
         </div>
       </header>
@@ -155,7 +155,7 @@ function renderOwnerEmptyLanguagesSection(
             aria-expanded="false"
             @click=${toggleCollapsibleSection}
           >
-            <span slot="icon" class="profile-section-collapsible__chevron" aria-hidden="true">⌄</span>
+            <span slot="icon" class="profile-section-collapsible__chevron" aria-hidden="true">${chevronDownIcon}</span>
           </solid-ui-button>
         </div>
       </header>

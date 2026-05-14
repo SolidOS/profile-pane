@@ -6,7 +6,7 @@ import { ProjectDetails, ProjectRow } from './types'
 import { projectsHeadingText, unfollowProjectFailedMessageText } from '../../texts'
 import { createProjectsEditDialog } from './ProjectEditDialog'
 import { processProjectsMutations } from './mutations'
-import { addIcon, checkMarkIcon, editIcon, plusDarkIcon, twoDownArrowsIcon } from '../../icons-svg/profileIcons'
+import { addIcon, checkMarkIcon, chevronDownIcon, editIcon, plusDarkIcon, twoDownArrowsIcon } from '../../icons-svg/profileIcons'
 import { MutationOps } from '../shared/types'
 import '../../styles/ProjectSection.css'
 import { toggleCollapsibleSection } from '../shared/collapsibleSection'
@@ -264,7 +264,7 @@ function renderOwnerEmptyProjectSection(
             aria-expanded="false"
             @click=${toggleCollapsibleSection}
           >
-            <span slot="icon" class="profile-section-collapsible__chevron" aria-hidden="true">⌄</span>
+            <span slot="icon" class="profile-section-collapsible__chevron" aria-hidden="true">${chevronDownIcon}</span>
           </solid-ui-button>
         </div>
       </header>
@@ -338,7 +338,7 @@ function renderProjectSectionDefault(
               aria-expanded="false"
               @click=${toggleCollapsibleSection}
             >
-              <span slot="icon" class="profile-section-collapsible__chevron" aria-hidden="true">⌄</span>
+              <span slot="icon" class="profile-section-collapsible__chevron" aria-hidden="true">${chevronDownIcon}</span>
             </solid-ui-button>
           </div>
         </header>

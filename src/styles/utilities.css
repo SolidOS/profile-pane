@@ -81,17 +81,21 @@ solid-ui-button.profile__action-button {
   box-sizing: border-box;
 }
 
-.profile__add-more-content {
-  display: inline;
+.profile__add-more-content,
+.profile__action-icon {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-xxs, 0.3125rem);
 }
 
 .profile__add-more-icon {
   display: inline-block;
   width: var(--icon-xxxs, 0.75rem);
   height: var(--icon-xxxs, 0.75rem);
-  margin-right: var(--spacing-xxs, 0.3125rem);
+  margin-right: 0;
   line-height: 0;
-  vertical-align: text-top;
+  position: relative;
+  top: 0;
 }
 
 .profile__add-more-icon svg {
@@ -180,7 +184,7 @@ solid-ui-button.profile-action-text:focus-visible::part(button) {
 
 @media (min-width: 769px) {
   .profile__add-more-icon {
-    transform: translateY(-0.125rem);
+    transform: translateY(0);
   }
 }
 

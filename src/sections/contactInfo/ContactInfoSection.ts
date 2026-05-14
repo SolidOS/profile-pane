@@ -10,7 +10,7 @@ import { toggleCollapsibleSection } from '../shared/collapsibleSection'
 import { ContactInfo } from './types'
 import { splitPhoneValue } from '../shared/phoneCountries'
 import { normalizeEmailTypeForEdit, normalizePhoneTypeForEdit } from '../shared/contactTypeUtils'
-import { addIcon, editIcon, envelopeIcon, locationIcon } from '../../icons-svg/profileIcons'
+import { addIcon, chevronDownIcon, editIcon, envelopeIcon, locationIcon } from '../../icons-svg/profileIcons'
 import { emailIcon, phoneIcon } from '../../icons-svg/contactIcons'
 
 function toText(value: unknown): string {
@@ -169,7 +169,10 @@ function renderContactInfoSectionDefault(
                 )
               }}
             >
-              <span class="profile-section-collapsible__edit-label">${editIcon} Edit</span>
+              <span class="profile-section-collapsible__edit-label profile__add-more-content">
+                <span class="profile__add-more-icon" aria-hidden="true">${addIcon}</span>
+                <span>Add More</span>
+              </span>
               <span class="profile-section-collapsible__edit-icon" aria-hidden="true">${editIcon}</span>
             </solid-ui-button>
           ` : html``}
@@ -183,7 +186,7 @@ function renderContactInfoSectionDefault(
             aria-expanded="false"
             @click=${toggleCollapsibleSection}
           >
-            <span slot="icon" class="profile-section-collapsible__chevron" aria-hidden="true">⌄</span>
+            <span slot="icon" class="profile-section-collapsible__chevron" aria-hidden="true">${chevronDownIcon}</span>
           </solid-ui-button>
         </div>
       </header>
@@ -283,7 +286,7 @@ function renderOwnerEmptyContactInfoSection(
             aria-expanded="false"
             @click=${toggleCollapsibleSection}
           >
-            <span slot="icon" class="profile-section-collapsible__chevron" aria-hidden="true">⌄</span>
+            <span slot="icon" class="profile-section-collapsible__chevron" aria-hidden="true">${chevronDownIcon}</span>
           </solid-ui-button>
         </div>
       </header>
