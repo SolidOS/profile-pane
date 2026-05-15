@@ -233,29 +233,6 @@ function renderOwnerEmptyProjectSection(
         <div class="profile-section-collapsible__actions">
           <solid-ui-button
             type="button"
-            variant="secondary"
-            size="sm"
-            class="profile__action-button profile-action-text profile-section-collapsible__edit-button"
-            aria-label="Add project details"
-            @click=${(event: Event) => {
-              return createProjectsEditDialog(
-                event,
-                store,
-                subject,
-                projectData,
-                viewerMode,
-                onSaved
-              )
-            }}
-          >
-            <span class="profile-section-collapsible__edit-label profile__add-more-content">
-              <span class="profile__add-more-icon" aria-hidden="true">${addIcon}</span>
-              <span>Add Project</span>
-            </span>
-            <span class="profile-section-collapsible__edit-icon" aria-hidden="true">${editIcon}</span>
-          </solid-ui-button>
-          <solid-ui-button
-            type="button"
             variant="icon"
             size="sm"
             class="profile-section-collapsible__toggle-button"

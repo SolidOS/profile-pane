@@ -13,7 +13,7 @@ import {
   toggleDescription
 } from '../shared/sectionCardHelpers'
 import { toggleCollapsibleSection } from '../shared/collapsibleSection'
-import { addIcon, chevronDownIcon, editIcon, plusDarkIcon } from '../../icons-svg/profileIcons'
+import { chevronDownIcon, editIcon, plusDarkIcon } from '../../icons-svg/profileIcons'
 
 function renderRole(role: RoleDetails, index: number) {
   if (!role) return html``
@@ -201,29 +201,6 @@ function renderOwnerEmptyResumeSection(
       <header class="profile__section-header profile-section-collapsible__header">
         <h2 id="resume-heading" tabindex="-1">${resumeHeadingText}</h2>
         <div class="profile-section-collapsible__actions">
-          <solid-ui-button
-            type="button"
-            variant="secondary"
-            size="sm"
-            class="profile__action-button profile-action-text profile-section-collapsible__edit-button"
-            aria-label="Add resume details"
-            @click=${(event: Event) => {
-              return createResumeEditDialog(
-                event,
-                store,
-                subject,
-                resumeDetails,
-                viewerMode,
-                onSaved
-              )
-            }}
-          >
-            <span class="profile-section-collapsible__edit-label profile__add-more-content">
-              <span class="profile__add-more-icon" aria-hidden="true">${addIcon}</span>
-              <span>Add Resume</span>
-            </span>
-            <span class="profile-section-collapsible__edit-icon" aria-hidden="true">${editIcon}</span>
-          </solid-ui-button>
           <solid-ui-button
             type="button"
             variant="icon"
