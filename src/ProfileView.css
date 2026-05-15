@@ -290,6 +290,19 @@
   min-width: 0;
 }
 
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__intro-sidebar > .profile__section,
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__intro-sidebar > .profile__section--empty,
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__sidebar-content > [data-profile-section='social'].profile__section,
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__sidebar-content > [data-profile-section='social'].profile__section--empty,
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__sidebar-content > [data-profile-section='skills'].profile__section,
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__sidebar-content > [data-profile-section='skills'].profile__section--empty,
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__sidebar-content > [data-profile-section='languages'].profile__section,
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__sidebar-content > [data-profile-section='languages'].profile__section--empty,
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__sidebar-content > [data-profile-section='contact-info'].profile__section,
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__sidebar-content > [data-profile-section='contact-info'].profile__section--empty {
+  padding: var(--profile-mobile-section-padding);
+}
+
 :is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid [data-profile-section='projects'].profile__section--empty > .profile-section-collapsible__header,
 :is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid [data-profile-section='resume'].profile__section--empty > .profile-section-collapsible__header {
   display: flex;
@@ -414,8 +427,14 @@
 
   .profile-grid .profile__intro-sidebar > .profile__section,
   .profile-grid .profile__intro-sidebar > .profile__section--empty,
-  .profile-grid .profile__sidebar-content > .profile__section,
-  .profile-grid .profile__sidebar-content > .profile__section--empty {
+  .profile-grid .profile__sidebar-content > [data-profile-section='social'].profile__section,
+  .profile-grid .profile__sidebar-content > [data-profile-section='social'].profile__section--empty,
+  .profile-grid .profile__sidebar-content > [data-profile-section='skills'].profile__section,
+  .profile-grid .profile__sidebar-content > [data-profile-section='skills'].profile__section--empty,
+  .profile-grid .profile__sidebar-content > [data-profile-section='languages'].profile__section,
+  .profile-grid .profile__sidebar-content > [data-profile-section='languages'].profile__section--empty,
+  .profile-grid .profile__sidebar-content > [data-profile-section='contact-info'].profile__section,
+  .profile-grid .profile__sidebar-content > [data-profile-section='contact-info'].profile__section--empty {
     padding: var(--profile-mobile-section-padding);
   }
 
@@ -494,8 +513,14 @@
 
   .profile-grid .profile__intro-sidebar > .profile__section,
   .profile-grid .profile__intro-sidebar > .profile__section--empty,
-  .profile-grid .profile__sidebar-content > .profile__section,
-  .profile-grid .profile__sidebar-content > .profile__section--empty {
+  .profile-grid .profile__sidebar-content > [data-profile-section='social'].profile__section,
+  .profile-grid .profile__sidebar-content > [data-profile-section='social'].profile__section--empty,
+  .profile-grid .profile__sidebar-content > [data-profile-section='skills'].profile__section,
+  .profile-grid .profile__sidebar-content > [data-profile-section='skills'].profile__section--empty,
+  .profile-grid .profile__sidebar-content > [data-profile-section='languages'].profile__section,
+  .profile-grid .profile__sidebar-content > [data-profile-section='languages'].profile__section--empty,
+  .profile-grid .profile__sidebar-content > [data-profile-section='contact-info'].profile__section,
+  .profile-grid .profile__sidebar-content > [data-profile-section='contact-info'].profile__section--empty {
     padding: var(--profile-mobile-section-padding);
   }
 
@@ -545,6 +570,19 @@
     border-radius: var(--border-radius-base, 0.3125rem);
     border: var(--border-width-thin, 0.1rem) solid var(--color-border-subtle, var(--gray-100, #F3F4F6));
     background: var(--color-card-bg, var(--white, #FFF));
+  }
+
+  .profile-grid .profile__intro-sidebar > .profile__section,
+  .profile-grid .profile__intro-sidebar > .profile__section--empty,
+  .profile-grid .profile__sidebar-content > [data-profile-section='social'].profile__section,
+  .profile-grid .profile__sidebar-content > [data-profile-section='social'].profile__section--empty,
+  .profile-grid .profile__sidebar-content > [data-profile-section='skills'].profile__section,
+  .profile-grid .profile__sidebar-content > [data-profile-section='skills'].profile__section--empty,
+  .profile-grid .profile__sidebar-content > [data-profile-section='languages'].profile__section,
+  .profile-grid .profile__sidebar-content > [data-profile-section='languages'].profile__section--empty,
+  .profile-grid .profile__sidebar-content > [data-profile-section='contact-info'].profile__section,
+  .profile-grid .profile__sidebar-content > [data-profile-section='contact-info'].profile__section--empty {
+    padding: var(--profile-mobile-section-padding);
   }
 
   .profile-grid [data-profile-section='projects'].profile__section--empty > .profile-section-collapsible__header,
@@ -628,6 +666,19 @@
     border-radius: var(--border-radius-base, 0.3125rem);
     border: var(--border-width-thin, 0.1rem) solid var(--color-border-subtle, var(--gray-100, #F3F4F6));
     background: var(--color-card-bg, var(--white, #FFF));
+  }
+
+  .profile-grid .profile__intro-sidebar > .profile__section,
+  .profile-grid .profile__intro-sidebar > .profile__section--empty,
+  .profile-grid .profile__sidebar-content > [data-profile-section='social'].profile__section,
+  .profile-grid .profile__sidebar-content > [data-profile-section='social'].profile__section--empty,
+  .profile-grid .profile__sidebar-content > [data-profile-section='skills'].profile__section,
+  .profile-grid .profile__sidebar-content > [data-profile-section='skills'].profile__section--empty,
+  .profile-grid .profile__sidebar-content > [data-profile-section='languages'].profile__section,
+  .profile-grid .profile__sidebar-content > [data-profile-section='languages'].profile__section--empty,
+  .profile-grid .profile__sidebar-content > [data-profile-section='contact-info'].profile__section,
+  .profile-grid .profile__sidebar-content > [data-profile-section='contact-info'].profile__section--empty {
+    padding: var(--profile-mobile-section-padding);
   }
 
   .profile-grid [data-profile-section='projects'].profile__section--empty > .profile-section-collapsible__header,
