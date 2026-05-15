@@ -138,6 +138,11 @@
   padding: var(--spacing-1xl, 2.5rem) var(--spacing-lg, 1.5625rem);
 }
 
+:is(.profile-pane-host, .profile-pane-root)[data-layout='desktop'] .profile-grid [data-profile-section='projects'].profile__section,
+:is(.profile-pane-host, .profile-pane-root)[data-layout='desktop'] .profile-grid [data-profile-section='projects'].profile__section--empty {
+  padding: var(--spacing-lg, 1.5625rem);
+}
+
 .profile-grid .profile__sidebar-content > [data-profile-section='social'].profile__section,
 .profile-grid .profile__sidebar-content > [data-profile-section='social'].profile__section--empty,
 .profile-grid .profile__sidebar-content > [data-profile-section='skills'].profile__section,
