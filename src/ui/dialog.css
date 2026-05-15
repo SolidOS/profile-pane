@@ -7,9 +7,9 @@
   --profile-modal-compact-padding: var(--spacing-sm, 0.9375rem);
   --profile-modal-button-gap: var(--spacing-sm, 0.938rem);
   --profile-modal-error-padding: var(--spacing-xs, 0.75rem);
-  --profile-modal-panel-width: 90vw;
+  --profile-modal-panel-width: min(37.5rem, calc(100vw - 2rem));
   --profile-modal-panel-max-width: 37.5rem;
-  --profile-modal-panel-max-height: 90vh;
+  --profile-modal-panel-max-height: calc(100dvh - 2rem);
   margin: 0;
   padding: 0;
   border: none;
@@ -316,9 +316,12 @@ html[data-layout='mobile'] #profile-modal {
 }
 
 html[data-layout='mobile'] #profile-modal .modal {
+  width: 100%;
+  height: 100dvh;
+  max-height: 100dvh;
   min-width: 0;
   padding: 0;
-  border-radius: calc(var(--border-radius-base) * 0.75);
+  border-radius: 0;
   overscroll-behavior: contain;
   justify-self: center;
   align-self: center;
