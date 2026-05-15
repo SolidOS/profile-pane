@@ -1,5 +1,4 @@
 import { DataBrowserContext } from 'pane-registry'
-import './styles/utilities.css'
 import { NamedNode, LiveStore } from 'rdflib'
 import { render } from 'lit-html'
 import { ProfileView } from './ProfileView'
