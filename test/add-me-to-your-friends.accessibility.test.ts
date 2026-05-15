@@ -13,10 +13,10 @@ describe('Add me to your friends accessibility', () => {
   beforeEach(() => {
     jest.restoreAllMocks()
     baseStore.fetcher = {
-      load: jest.fn().mockResolvedValue(undefined)
+      load: jest.fn(async () => undefined)
     }
     baseStore.updater = {
-      update: jest.fn().mockResolvedValue(undefined)
+      update: jest.fn(async () => undefined)
     }
     baseStore.whether = jest.fn().mockReturnValue(0)
   })

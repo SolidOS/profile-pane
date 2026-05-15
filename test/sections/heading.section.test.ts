@@ -1,5 +1,5 @@
 import { describe, expect, it, jest } from "@jest/globals"
-import { html, render } from 'lit-html'
+import { render } from 'lit-html'
 import { sym } from 'rdflib'
 import { renderHeadingSection } from '../../src/sections/heading/HeadingSection'
 import { addMeToYourContactsButtonText, addMeToYourFriendsButtonText } from '../../src/texts/buttonTexts'

@@ -1,5 +1,4 @@
 import { fireEvent, waitFor } from '@testing-library/dom'
-import { sym } from 'rdflib'
 
 import { context, fakeLogInAs, subject } from './setup'
 import { createAddressBookContactCreationDialog, createAddressBookContactCreationFooter } from '../src/specialButtons/addContact/ContactCreationDialog'

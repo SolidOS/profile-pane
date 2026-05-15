@@ -23,7 +23,6 @@ import {
 import { addGroupToAddressBookData } from '../src/specialButtons/addContact/helpers'
 import { namedNode, sym } from 'rdflib'
 import { addWebIDToContacts } from 'contacts-pane'
-import { addErrorToErrorDisplay } from '../src/specialButtons/addContact/contactsErrors'
 import { errorAddingContactWebIDToAddressBook } from '../src/texts'
 
 function mockUpdaterUpdateSuccess() {

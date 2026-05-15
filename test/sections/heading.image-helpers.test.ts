@@ -39,7 +39,7 @@ describe('heading image helper uploads', () => {
   it('attempts to make uploaded heading images public-read', async () => {
     const subject = sym('https://example.com/profile/card#me')
     const currentUser = sym('https://example.com/profile/card#me')
-    const webOperation = jest.fn().mockResolvedValue({ ok: true })
+    const webOperation = jest.fn(async (..._args: unknown[]) => ({ ok: true }))
     const store = {
       fetcher: { webOperation },
       holds: jest.fn(() => false)
@@ -47,7 +47,7 @@ describe('heading image helper uploads', () => {
     const file = createImageFile()
 
     mockCurrentUser.mockReturnValue(currentUser)
-    mockSetACLUserPublic.mockResolvedValue(sym('https://example.com/profile/avatar.png.acl'))
+    mockSetACLUserPublic.mockImplementation(async () => sym('https://example.com/profile/avatar.png.acl'))
 
     const uploadedUri = await uploadPhotoFile(store, subject, file)
 
@@ -64,7 +64,7 @@ describe('heading image helper uploads', () => {
   it('keeps uploaded heading images when the public ACL write fails', async () => {
     const subject = sym('https://example.com/profile/card#me')
     const currentUser = sym('https://example.com/profile/card#me')
-    const webOperation = jest.fn().mockResolvedValue({ ok: true })
+    const webOperation = jest.fn(async (..._args: unknown[]) => ({ ok: true }))
     const store = {
       fetcher: { webOperation },
       holds: jest.fn(() => false)
@@ -72,7 +72,9 @@ describe('heading image helper uploads', () => {
     const file = createImageFile()
 
     mockCurrentUser.mockReturnValue(currentUser)
-    mockSetACLUserPublic.mockRejectedValue(new Error('ACL write failed'))
+    mockSetACLUserPublic.mockImplementation(async () => {
+      throw new Error('ACL write failed')
+    })
 
     const uploadedUri = await uploadPhotoFile(store, subject, file)
 

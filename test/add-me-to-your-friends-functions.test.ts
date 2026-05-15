@@ -17,10 +17,10 @@ describe('add-me-to-your-friends functions', () => {
     beforeEach(() => {
       jest.restoreAllMocks()
       baseStore.fetcher = {
-        load: jest.fn().mockResolvedValue(undefined)
+        load: jest.fn(async () => undefined)
       }
       baseStore.updater = {
-        update: jest.fn().mockResolvedValue(undefined)
+        update: jest.fn(async () => undefined)
       }
       baseStore.whether = jest.fn().mockReturnValue(0)
     })
@@ -35,7 +35,7 @@ describe('add-me-to-your-friends functions', () => {
       })
   
       it('runs', () => {
-        expect(addMeToYourFriendsDiv(subject, context)).toBeTruthy()
+        expect(addMeToYourFriendsDiv(subject, context, 'authenticated')).toBeTruthy()
       })
     })
   

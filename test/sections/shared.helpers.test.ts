@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, jest } from '@jest/globals'
-import { Collection, graph, literal, st, sym } from 'rdflib'
+import { graph, literal, st, sym } from 'rdflib'
 import { ns } from 'solid-ui'
 import {
   applyRowFieldChange,
@@ -12,7 +12,6 @@ import {
   applyUpdaterPatch,
   collectLinkedNodeStatements,
   findExistingNode,
-  ensureStandardMutationPrefixes,
   runUpdateTransport,
   replacePredicateStatements
 } from '../../src/sections/shared/rdfMutationHelpers'
@@ -124,7 +123,7 @@ describe('shared helper utilities', () => {
       await applyUpdaterPatch(
         store,
         [existing, st(subject, ns.vcard('role'), literal('Missing'), doc)],
-        [st(subject, ns.vcard('role'), literal('Engineer'), doc), { subject }]
+        [st(subject, ns.vcard('role'), literal('Engineer'), doc), { subject } as any]
       )
 
       expect(update).toHaveBeenCalledTimes(1)

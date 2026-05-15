@@ -14,7 +14,7 @@ import {
 } from '../texts'
 import { ViewerMode } from '../types'
 import { ensureStandardMutationPrefixes } from '../sections/shared/rdfMutationHelpers'
-import '../styles/AddMeToYourFriends.css'
+import './AddMeToYourFriends.css'
 
 let buttonContainer = <HTMLDivElement>document.createElement('section')
 

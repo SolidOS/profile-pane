@@ -1,5 +1,5 @@
 import { describe, expect, it } from "@jest/globals"
-import { graph, literal, st, sym } from 'rdflib'
+import { graph, st, sym } from 'rdflib'
 import { ns } from 'solid-ui'
 import { presentProfile, pronounsAsText } from '../../src/sections/heading/selectors'
 import { processHeadingMutations } from '../../src/sections/heading/mutations'

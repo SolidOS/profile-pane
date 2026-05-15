@@ -8,7 +8,7 @@ import { saveSocialUpdatesFailedMessageText } from '../../src/texts'
 import { expandRdfList } from '../../src/sections/shared/rdfList'
 
 jest.mock('../../src/sections/social/helpers', () => {
-  const actual = jest.requireActual('../../src/sections/social/helpers')
+  const actual = jest.requireActual('../../src/sections/social/helpers') as Record<string, unknown>
   return {
     ...actual,
     ensureSocialOntologyLoaded: jest.fn()
@@ -264,7 +264,7 @@ describe('Social selectors and mutations', () => {
     const doc = subject.doc()
 
     const serialize = jest.fn((_docValue: string, _statements: any[], _contentType: string) => 'serialized-body')
-    const webOperation = jest.fn(async () => ({ ok: true, status: 200 }))
+    const webOperation = jest.fn(async (..._args: unknown[]) => ({ ok: true, status: 200 }))
 
     store.fetcher = { webOperation }
     store.updater = {
@@ -279,7 +279,7 @@ describe('Social selectors and mutations', () => {
     } as any)
 
     expect(serialize).toHaveBeenCalledTimes(1)
-    expect(webOperation).toHaveBeenCalledWith('PUT', doc.value, expect.objectContaining({
+    expect(webOperation as any).toHaveBeenCalledWith('PUT', doc.value, expect.objectContaining({
       contentType: 'text/turtle',
       body: 'serialized-body'
     }))
