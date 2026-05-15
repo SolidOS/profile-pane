@@ -35,6 +35,7 @@
     "test-coverage": "jest --coverage",
     "typecheck": "tsc --noEmit",
     "typecheck-test": "tsc --noEmit -p tsconfig.test.json",
+    "prepush": "npm test && npm run lint-fix && npm run typecheck && npm run typecheck-test",
     "prepublishOnly": "npm run test && npm run build",
     "preversion": "npm run lint && npm run typecheck && npm test",
     "postpublish": "git push origin main --follow-tags",
@@ -63,7 +64,7 @@
   "peerDependencies": {
     "rdflib": "^2.3.6",
     "solid-logic": "^4.0.6",
-    "solid-ui": "file:../solid-ui"
+    "solid-ui": "^3.1.0"
   },
   "overrides": {
     "solid-ui": "$solid-ui"
@@ -95,7 +96,7 @@
     "node-polyfill-webpack-plugin": "^4.1.0",
     "rdflib": "^2.3.6",
     "solid-logic": "^4.0.6",
-    "solid-ui": "file:../solid-ui",
+    "solid-ui": "^3.1.0",
     "style-loader": "^4.0.0",
     "terser-webpack-plugin": "^5.3.16",
     "ts-loader": "^9.5.4",
