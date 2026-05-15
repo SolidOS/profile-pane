@@ -4,6 +4,7 @@
   --profile-main-section-min-width: 37.5rem;
   --profile-sidebar-min-width: 25rem;
   --profile-sidebar-section-padding: var(--spacing-lg, 1.5625rem);
+  --profile-mobile-section-padding: var(--spacing-sm, 0.9375rem);
   --profile-stacked-section-gap: var(--spacing-sm, 0.9375rem);
   display: grid;
   grid-template-columns: minmax(0, 1fr) var(--profile-sidebar-min-width);
@@ -256,7 +257,8 @@
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  padding: var(--spacing-sm, 0.938rem);
+  /* Keep all mobile section cards at 15px padding across layout, media, and container fallbacks. */
+  padding: var(--profile-mobile-section-padding);
   border-radius: var(--border-radius-base, 0.3125rem);
   border: var(--border-width-thin, 0.1rem) solid var(--color-border-subtle, var(--gray-100, #F3F4F6));
   background: var(--color-card-bg, var(--white, #FFF));
@@ -414,7 +416,7 @@
   .profile-grid .profile__intro-sidebar > .profile__section--empty,
   .profile-grid .profile__sidebar-content > .profile__section,
   .profile-grid .profile__sidebar-content > .profile__section--empty {
-    padding: var(--spacing-sm, 0.938rem);
+    padding: var(--profile-mobile-section-padding);
   }
 
   .profile-grid [data-profile-section='social'].profile__section,
@@ -494,7 +496,7 @@
   .profile-grid .profile__intro-sidebar > .profile__section--empty,
   .profile-grid .profile__sidebar-content > .profile__section,
   .profile-grid .profile__sidebar-content > .profile__section--empty {
-    padding: var(--spacing-sm, 0.938rem);
+    padding: var(--profile-mobile-section-padding);
   }
 
   .profile-grid [data-profile-section='social'].profile__section,
@@ -539,7 +541,7 @@
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    padding: var(--spacing-sm, 0.938rem);
+    padding: var(--profile-mobile-section-padding);
     border-radius: var(--border-radius-base, 0.3125rem);
     border: var(--border-width-thin, 0.1rem) solid var(--color-border-subtle, var(--gray-100, #F3F4F6));
     background: var(--color-card-bg, var(--white, #FFF));
@@ -622,7 +624,7 @@
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    padding: var(--spacing-sm, 0.938rem);
+    padding: var(--profile-mobile-section-padding);
     border-radius: var(--border-radius-base, 0.3125rem);
     border: var(--border-width-thin, 0.1rem) solid var(--color-border-subtle, var(--gray-100, #F3F4F6));
     background: var(--color-card-bg, var(--white, #FFF));
