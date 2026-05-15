@@ -308,11 +308,6 @@ solid-ui-button.profile-action-text:focus-visible::part(button) {
   padding: var(--spacing-1xl, 2.5rem) var(--spacing-lg, 1.5625rem);
 }
 
-:is(.profile-pane-host, .profile-pane-root)[data-layout='desktop'] .profile-grid [data-profile-section='projects'].profile__section,
-:is(.profile-pane-host, .profile-pane-root)[data-layout='desktop'] .profile-grid [data-profile-section='projects'].profile__section--empty {
-  padding: var(--spacing-lg, 1.5625rem);
-}
-
 .profile-grid .profile__sidebar-content > [data-profile-section='social'].profile__section,
 .profile-grid .profile__sidebar-content > [data-profile-section='social'].profile__section--empty,
 .profile-grid .profile__sidebar-content > [data-profile-section='skills'].profile__section,
@@ -518,6 +513,11 @@ solid-ui-button.profile-action-text:focus-visible::part(button) {
 }
 
 /* App-driven mobile: empty-state presentation */
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid [data-profile-section='projects'].profile__section--empty,
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid [data-profile-section='resume'].profile__section--empty {
+  gap: 0;
+}
+
 :is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid [data-profile-section='projects'].profile__section--empty > .profile-section-collapsible__header,
 :is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid [data-profile-section='resume'].profile__section--empty > .profile-section-collapsible__header {
   display: flex;
@@ -706,6 +706,11 @@ solid-ui-button.profile-action-text:focus-visible::part(button) {
     background: transparent;
   }
 
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid [data-profile-section='projects'].profile__section--empty,
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid [data-profile-section='resume'].profile__section--empty {
+    gap: 0;
+  }
+
   :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid [data-profile-section='projects'].profile__section--empty > .profile-section-collapsible__header,
   :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid [data-profile-section='resume'].profile__section--empty > .profile-section-collapsible__header {
     display: flex;
@@ -832,6 +837,11 @@ solid-ui-button.profile-action-text:focus-visible::part(button) {
   .profile-grid [data-profile-section='social'].profile__section--empty {
     border: none;
     background: transparent;
+  }
+
+  .profile-grid [data-profile-section='projects'].profile__section--empty,
+  .profile-grid [data-profile-section='resume'].profile__section--empty {
+    gap: 0;
   }
 
   .profile-grid [data-profile-section='projects'].profile__section--empty > .profile-section-collapsible__header,
