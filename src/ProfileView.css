@@ -171,6 +171,7 @@ solid-ui-button.profile-action-text:focus-visible::part(button) {
 .profile-grid {
   --profile-main-section-min-width: 37.5rem;
   --profile-sidebar-min-width: 18.75rem;
+  --profile-sidebar-width: clamp(var(--profile-sidebar-min-width), 33.333%, 21.875rem);
   --profile-sidebar-section-padding: var(--spacing-lg, 1.5625rem);
   --profile-mobile-section-padding: var(--spacing-sm, 0.9375rem);
   --profile-stacked-section-gap: var(--spacing-sm, 0.9375rem);
@@ -178,7 +179,7 @@ solid-ui-button.profile-action-text:focus-visible::part(button) {
   display: grid;
   grid-template-columns:
     minmax(var(--profile-main-section-min-width), 1fr)
-    minmax(var(--profile-sidebar-min-width), var(--profile-sidebar-min-width));
+    minmax(var(--profile-sidebar-min-width), var(--profile-sidebar-width));
   align-items: start;
   column-gap: var(--spacing-xxs, 0.3125rem);
   row-gap: var(--spacing-md, 1.25rem);
@@ -562,22 +563,16 @@ solid-ui-button.profile-action-text:focus-visible::part(button) {
   line-height: 1.1 !important;
 }
 
-:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid [data-profile-section='bio'] .profile-section-collapsible__edit-button {
-  --button-background: transparent;
-  --button-border-width: 0;
-  --button-border: transparent;
-  --button-text: var(--profile-section-collapsible-action-button-text, var(--color-text, #1A1A1A));
-  --button-hover-background: var(--profile-section-collapsible-action-button-hover-background, var(--color-surface-accent-subtle, var(--lavender-300, #e6dcff)));
-  --button-hover-border: transparent;
-  --button-hover-text: var(--profile-section-collapsible-action-button-text, var(--color-text, #1A1A1A));
-}
-
 :is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile__section--empty .profile-section-collapsible__actions > .profile-section-collapsible__edit-button {
   order: 2;
 }
 
 :is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile__section--empty .profile-section-collapsible__edit-label {
   display: none !important;
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] [data-profile-section='bio'].profile__section--empty .profile-section-collapsible__actions {
+  --profile-section-collapsible-action-button-text: var(--color-text-primary, #314158);
 }
 
 :is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile__section--empty .profile-section-collapsible__edit-icon {
@@ -675,6 +670,10 @@ solid-ui-button.profile-action-text:focus-visible::part(button) {
     background: var(--color-card-bg, var(--white, #FFF));
   }
 
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid [data-profile-section='bio'].profile__section--empty .profile-section-collapsible__actions {
+    --profile-section-collapsible-action-button-text: var(--color-text-primary, #314158);
+  }
+
   /* Viewport stacked: width and sidebar padding overrides */
   :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid .profile__intro-sidebar > .profile__section,
   :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid .profile__intro-sidebar > .profile__section--empty,
@@ -715,17 +714,6 @@ solid-ui-button.profile-action-text:focus-visible::part(button) {
   :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid [data-profile-section='projects'].profile__section--empty .profile-section-collapsible__content .profile__empty-state-content > h2,
   :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid [data-profile-section='resume'].profile__section--empty .profile-section-collapsible__content .profile__empty-state-content > h2 {
     display: none;
-  }
-
-  /* Viewport stacked: bio actions */
-  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid [data-profile-section='bio'] .profile-section-collapsible__edit-button {
-    --button-background: transparent;
-    --button-border-width: 0;
-    --button-border: transparent;
-    --button-text: var(--profile-section-collapsible-action-button-text, var(--color-text, #1A1A1A));
-    --button-hover-background: var(--profile-section-collapsible-action-button-hover-background, var(--color-surface-accent-subtle, var(--lavender-300, #e6dcff)));
-    --button-hover-border: transparent;
-    --button-hover-text: var(--profile-section-collapsible-action-button-text, var(--color-text, #1A1A1A));
   }
 }
 
@@ -810,6 +798,10 @@ solid-ui-button.profile-action-text:focus-visible::part(button) {
     background: var(--color-card-bg, var(--white, #FFF));
   }
 
+  .profile-grid [data-profile-section='bio'].profile__section--empty .profile-section-collapsible__actions {
+    --profile-section-collapsible-action-button-text: var(--color-text-primary, #314158);
+  }
+
   /* Container stacked: width and sidebar padding overrides */
   .profile-grid .profile__intro-sidebar > .profile__section,
   .profile-grid .profile__intro-sidebar > .profile__section--empty,
@@ -850,17 +842,6 @@ solid-ui-button.profile-action-text:focus-visible::part(button) {
   .profile-grid [data-profile-section='projects'].profile__section--empty .profile-section-collapsible__content .profile__empty-state-content > h2,
   .profile-grid [data-profile-section='resume'].profile__section--empty .profile-section-collapsible__content .profile__empty-state-content > h2 {
     display: none;
-  }
-
-  /* Container stacked: bio actions */
-  .profile-grid [data-profile-section='bio'] .profile-section-collapsible__edit-button {
-    --button-background: transparent;
-    --button-border-width: 0;
-    --button-border: transparent;
-    --button-text: var(--profile-section-collapsible-action-button-text, var(--color-text, #1A1A1A));
-    --button-hover-background: var(--profile-section-collapsible-action-button-hover-background, var(--color-surface-accent-subtle, var(--lavender-300, #e6dcff)));
-    --button-hover-border: transparent;
-    --button-hover-text: var(--profile-section-collapsible-action-button-text, var(--color-text, #1A1A1A));
   }
 }
 

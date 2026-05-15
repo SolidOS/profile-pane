@@ -32,7 +32,7 @@
 
 /* Actions */
 .profile-section-collapsible__actions {
-  --profile-section-collapsible-action-button-text: var(--color-text, #1A1A1A);
+  --profile-section-collapsible-action-button-text: var(--color-primary, #7C4DFF);
   --profile-section-collapsible-action-button-hover-background: var(--color-surface-accent-subtle, var(--lavender-300, #e6dcff));
   --profile-section-collapsible-edit-icon-size: 0.75rem;
   --profile-section-collapsible-mobile-action-gap: 0.25rem;
@@ -210,9 +210,12 @@
     top: 0;
   }
 
-  .profile-section-collapsible__edit-label svg path,
-  .profile__action-icon svg path {
-    fill: var(--color-primary, #7C4DFF);
+  .profile-section-collapsible__edit-label {
+    color: var(--profile-section-collapsible-action-button-text);
+  }
+
+  .profile-section-collapsible__edit-label svg path {
+    fill: currentColor;
   }
 
   .profile-section-collapsible__edit-label {
@@ -241,9 +244,12 @@
     top: 0;
   }
 
-  .profile-section-collapsible__edit-label svg path,
-  .profile__action-icon svg path {
-    fill: var(--color-primary, #7C4DFF);
+  .profile-section-collapsible__edit-label {
+    color: var(--profile-section-collapsible-action-button-text);
+  }
+
+  .profile-section-collapsible__edit-label svg path {
+    fill: currentColor;
   }
 
   .profile-section-collapsible__edit-label {
