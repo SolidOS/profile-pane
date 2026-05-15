@@ -161,7 +161,7 @@ solid-ui-button.social-card__more-button::part(button) {
   display: none;
 }
 
-@media (max-width: 784px) {
+@media (max-width: 768px) {
   .social-card .social-card__list {
     display: grid;
     grid-template-columns: var(--social-card-collapsed-columns);
@@ -187,7 +187,7 @@ solid-ui-button.social-card__more-button::part(button) {
   }
 }
 
-@container profile-pane (max-width: 784px) {
+@container profile-pane (max-width: 768px) {
   .social-card .social-card__list {
     display: grid;
     grid-template-columns: var(--social-card-collapsed-columns);

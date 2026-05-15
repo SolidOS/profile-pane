@@ -433,7 +433,7 @@
 
 }
 
-@media (max-width: 784px) {
+@media (max-width: 768px) {
   .profile__heading-top {
     grid-template-columns: auto minmax(0, 1fr) auto;
     grid-template-areas:
@@ -468,7 +468,7 @@
   }
 }
 
-@container profile-pane (max-width: 784px) {
+@container profile-pane (max-width: 768px) {
   .profile__heading-top {
     grid-template-columns: auto minmax(0, 1fr) auto;
     grid-template-areas:

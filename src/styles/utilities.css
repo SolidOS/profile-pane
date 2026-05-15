@@ -59,9 +59,9 @@ td.obj .profile-pane-root {
   width: 100%;
 }
 
-.profile__section-header h2,
-.profile__section-header h3,
-.profile__section-header h4 {
+.profile__section-header:not(.profile-edit-dialog__contact-section-header) h2,
+.profile__section-header:not(.profile-edit-dialog__contact-section-header) h3,
+.profile__section-header:not(.profile-edit-dialog__contact-section-header) h4 {
   margin: 0;
   font-size: var(--font-size-xl, 1.375rem);
   font-weight: var(--font-weight-md, 500);
@@ -208,9 +208,9 @@ solid-ui-button.profile-action-text:focus-visible::part(button) {
   font-size: clamp(0.9rem, 2.1vw, 1rem) !important;
 }
 
-:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile__section-header h2,
-:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile__section-header h3,
-:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile__section-header h4 {
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile__section-header:not(.profile-edit-dialog__contact-section-header) h2,
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile__section-header:not(.profile-edit-dialog__contact-section-header) h3,
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile__section-header:not(.profile-edit-dialog__contact-section-header) h4 {
   font-size: var(--profile-mobile-section-heading-size, var(--font-size-lg, 1.125rem)) !important;
   line-height: 1.2 !important;
 }
@@ -227,7 +227,7 @@ solid-ui-button.profile-action-text:focus-visible::part(button) {
 }
 
 /* Viewport fallback for one-column mobile and narrow-tablet layout. */
-@media (max-width: 784px) {
+@media (max-width: 768px) {
   .profile-grid {
     font-size: clamp(0.9rem, 1.1vw + 0.65rem, 1rem);
     grid-template-columns: 1fr;
@@ -247,7 +247,7 @@ solid-ui-button.profile-action-text:focus-visible::part(button) {
 }
 
 /* Container fallback when the pane is narrow inside a wider page. */
-@container profile-pane (max-width: 784px) {
+@container profile-pane (max-width: 768px) {
   .profile-grid {
     font-size: clamp(0.9rem, 1.1vw + 0.65rem, 1rem);
     grid-template-columns: 1fr;
@@ -268,9 +268,9 @@ solid-ui-button.profile-action-text:focus-visible::part(button) {
 
 /* Narrow-phone typography refinements once the layout is already stacked. */
 @media (max-width: 576px) {
-  .profile__section-header h2,
-  .profile__section-header h3,
-  .profile__section-header h4 {
+  .profile__section-header:not(.profile-edit-dialog__contact-section-header) h2,
+  .profile__section-header:not(.profile-edit-dialog__contact-section-header) h3,
+  .profile__section-header:not(.profile-edit-dialog__contact-section-header) h4 {
     font-size: var(--profile-mobile-section-heading-size, var(--font-size-lg, 1.125rem)) !important;
     line-height: 1.2 !important;
   }
@@ -289,9 +289,9 @@ solid-ui-button.profile-action-text:focus-visible::part(button) {
 
 /* Narrow-pane typography fallback for embedded mobile layouts. */
 @container profile-pane (max-width: 576px) {
-  .profile__section-header h2,
-  .profile__section-header h3,
-  .profile__section-header h4 {
+  .profile__section-header:not(.profile-edit-dialog__contact-section-header) h2,
+  .profile__section-header:not(.profile-edit-dialog__contact-section-header) h3,
+  .profile__section-header:not(.profile-edit-dialog__contact-section-header) h4 {
     font-size: var(--profile-mobile-section-heading-size, var(--font-size-lg, 1.125rem)) !important;
     line-height: 1.2 !important;
   }
