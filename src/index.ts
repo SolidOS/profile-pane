@@ -24,6 +24,80 @@ async function loadExtendedProfile(store: LiveStore, subject: NamedNode) {
   }
 }
 
+const HEADING_SECTION_SELECTOR = '[data-profile-section="heading"]'
+const SOCIAL_SECTION_SELECTOR = '[data-profile-section="social"]'
+
+function syncSocialSectionHeight(root: HTMLElement): () => void {
+  let animationFrameId = 0
+
+  const updateHeight = () => {
+    animationFrameId = 0
+
+    const grid = root.querySelector('.profile-grid') as HTMLElement | null
+    const headingSection = root.querySelector(HEADING_SECTION_SELECTOR) as HTMLElement | null
+    const socialSection = root.querySelector(SOCIAL_SECTION_SELECTOR) as HTMLElement | null
+
+    if (!grid || !headingSection || !socialSection) {
+      return
+    }
+
+    const isDesktopGrid = root.dataset.layout !== 'mobile' && getComputedStyle(grid).display === 'grid'
+    if (!isDesktopGrid) {
+      socialSection.style.removeProperty('min-height')
+      return
+    }
+
+    const nextMinHeight = `${Math.ceil(headingSection.getBoundingClientRect().height)}px`
+    if (socialSection.style.minHeight !== nextMinHeight) {
+      socialSection.style.minHeight = nextMinHeight
+    }
+  }
+
+  const scheduleUpdate = () => {
+    if (animationFrameId !== 0) {
+      return
+    }
+
+    animationFrameId = window.requestAnimationFrame(updateHeight)
+  }
+
+  updateHeight()
+
+  if (typeof ResizeObserver === 'undefined') {
+    window.addEventListener('resize', scheduleUpdate)
+
+    return () => {
+      if (animationFrameId !== 0) {
+        window.cancelAnimationFrame(animationFrameId)
+      }
+
+      window.removeEventListener('resize', scheduleUpdate)
+    }
+  }
+
+  const resizeObserver = new ResizeObserver(scheduleUpdate)
+  resizeObserver.observe(root)
+
+  const headingSection = root.querySelector(HEADING_SECTION_SELECTOR) as HTMLElement | null
+  const socialSection = root.querySelector(SOCIAL_SECTION_SELECTOR) as HTMLElement | null
+
+  if (headingSection) {
+    resizeObserver.observe(headingSection)
+  }
+
+  if (socialSection) {
+    resizeObserver.observe(socialSection)
+  }
+
+  return () => {
+    if (animationFrameId !== 0) {
+      window.cancelAnimationFrame(animationFrameId)
+    }
+
+    resizeObserver.disconnect()
+  }
+}
+
 function applyEnvironmentAttributes(
   element: HTMLElement,
   context: DataBrowserContext
@@ -59,11 +133,15 @@ const Pane = {
   render: (subject: NamedNode, context: DataBrowserContext): HTMLElement => {
     const target = context.dom.createElement('div')
     const store = context.session.store
+    let cleanupSocialSectionHeightSync: (() => void) | null = null
+
     applyEnvironmentAttributes(target, context)
 
     const renderWithData = async () => {
       applyEnvironmentAttributes(target, context)
       render(await ProfileView(subject, context, renderWithData), target)
+      cleanupSocialSectionHeightSync?.()
+      cleanupSocialSectionHeightSync = syncSocialSectionHeight(target)
       await hydrateQRCodes(target)
     }
 
