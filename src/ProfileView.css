@@ -1,5 +1,6 @@
 /* Profile layout styles. */
 
+/* Shell */
 :root {
   --profile-image-size: 3rem;
   --profile-interactive-cursor: pointer;
@@ -36,6 +37,7 @@ td.obj .profile-pane-root {
   min-width: 0;
 }
 
+/* Shared controls */
 .profile__section-header {
   display: flex;
   align-items: center;
@@ -164,6 +166,7 @@ solid-ui-button.profile-action-text:focus-visible::part(button) {
   text-decoration: underline;
 }
 
+/* Base grid layout */
 .profile-grid {
   --profile-main-section-min-width: 37.5rem;
   --profile-sidebar-min-width: 18.75rem;
@@ -319,6 +322,7 @@ solid-ui-button.profile-action-text:focus-visible::part(button) {
   padding: var(--profile-sidebar-section-padding);
 }
 
+/* Empty states */
 .profile-grid solid-ui-button.profile__action-button--empty {
   width: fit-content;
   min-width: fit-content;
@@ -387,11 +391,13 @@ solid-ui-button.profile-action-text:focus-visible::part(button) {
   margin-top: 0;
 }
 
+/* Theme */
 .profile-pane-host[data-theme='dark'] .profile-grid .profile__section,
 .profile-pane-host[data-theme='dark'] .profile-grid .profile__section--empty {
   border: var(--border-width-thin, 1px) solid var(--color-border, #444);
 }
 
+/* Minor viewport tweak */
 @media (min-width: 769px) {
   .profile__add-more-icon {
     transform: translateY(0);
@@ -413,6 +419,7 @@ solid-ui-button.profile-action-text:focus-visible::part(button) {
   overflow-x: clip;
 }
 
+/* App-driven mobile: flatten wrappers */
 :is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__intro-main,
 :is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__intro-sidebar,
 :is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__main,
@@ -421,6 +428,7 @@ solid-ui-button.profile-action-text:focus-visible::part(button) {
   display: contents;
 }
 
+/* App-driven mobile: section ordering */
 :is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid [data-profile-section='heading'] { order: 1; }
 :is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid [data-profile-section='bio'] { order: 2; }
 :is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid [data-profile-section='skills'] { order: 3; }
@@ -431,6 +439,7 @@ solid-ui-button.profile-action-text:focus-visible::part(button) {
 :is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid [data-profile-section='contact-info'] { order: 8; }
 :is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid [data-profile-section='qr-code'] { order: 9; }
 
+/* App-driven mobile: interaction and typography */
 :is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__action-button {
   min-height: calc(var(--min-touch-target, 44px) + 0.5rem) !important;
   font-size: clamp(0.9rem, 2.1vw, 1rem) !important;
@@ -460,6 +469,7 @@ solid-ui-button.profile-action-text:focus-visible::part(button) {
   line-height: 1.2 !important;
 }
 
+/* App-driven mobile: cards and sidebar */
 :is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__section,
 :is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__section--empty {
   display: flex;
@@ -486,6 +496,7 @@ solid-ui-button.profile-action-text:focus-visible::part(button) {
   background: transparent;
 }
 
+/* App-driven mobile: width and sidebar padding overrides */
 :is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__sidebar-content,
 :is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__intro-sidebar > .profile__section,
 :is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__intro-sidebar > .profile__section--empty,
@@ -511,6 +522,7 @@ solid-ui-button.profile-action-text:focus-visible::part(button) {
   padding: var(--profile-mobile-section-padding);
 }
 
+/* App-driven mobile: empty-state presentation */
 :is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid [data-profile-section='projects'].profile__section--empty > .profile-section-collapsible__header,
 :is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid [data-profile-section='resume'].profile__section--empty > .profile-section-collapsible__header {
   display: flex;
@@ -537,6 +549,7 @@ solid-ui-button.profile-action-text:focus-visible::part(button) {
   width: 100%;
 }
 
+/* App-driven mobile: profile header and bio actions */
 :is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__name {
   font-size: var(--profile-mobile-header-name-size, var(--font-size-xl, 1.375rem)) !important;
   line-height: 1.15 !important;
@@ -577,6 +590,7 @@ solid-ui-button.profile-action-text:focus-visible::part(button) {
   display: inline !important;
 }
 
+/* Container width guard for embedded panes */
 @container profile-pane (max-width: 56.5625rem) {
   #main-content.profile-grid {
     width: 100%;
@@ -586,8 +600,9 @@ solid-ui-button.profile-action-text:focus-visible::part(button) {
   }
 }
 
-/* Narrow stacked auto layout */
+/* Viewport-driven stacked layout */
 @media (max-width: 56.5625rem) {
+  /* Viewport stacked: layout shell */
   .profile-grid {
     font-size: clamp(0.9rem, 1.1vw + 0.65rem, 1rem);
     display: flex;
@@ -602,6 +617,7 @@ solid-ui-button.profile-action-text:focus-visible::part(button) {
     overflow-x: clip;
   }
 
+  /* Viewport stacked: interaction and wrappers */
   .profile-grid .profile__action-button {
     min-height: calc(var(--min-touch-target, 44px) + 0.5rem) !important;
     font-size: clamp(0.9rem, 2.1vw, 1rem) !important;
@@ -624,6 +640,7 @@ solid-ui-button.profile-action-text:focus-visible::part(button) {
     align-self: stretch;
   }
 
+  /* Viewport stacked: section ordering */
   .profile-grid [data-profile-section='heading'] { order: 1; }
   .profile-grid [data-profile-section='bio'] { order: 2; }
   .profile-grid [data-profile-section='skills'] { order: 3; }
@@ -634,6 +651,7 @@ solid-ui-button.profile-action-text:focus-visible::part(button) {
   .profile-grid [data-profile-section='contact-info'] { order: 8; }
   .profile-grid [data-profile-section='qr-code'] { order: 9; }
 
+  /* Viewport stacked: typography */
   .profile__section-header:not(.profile-edit-dialog__contact-section-header) h2,
   .profile__section-header:not(.profile-edit-dialog__contact-section-header) h3,
   .profile__section-header:not(.profile-edit-dialog__contact-section-header) h4 {
@@ -652,6 +670,18 @@ solid-ui-button.profile-action-text:focus-visible::part(button) {
     line-height: 1.1 !important;
   }
 
+  .profile-grid .profile__section,
+  .profile-grid .profile__section--empty {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: var(--profile-mobile-section-padding);
+    border-radius: var(--border-radius-base, 0.3125rem);
+    border: var(--border-width-thin, 0.1rem) solid var(--color-border-subtle, var(--gray-100, #F3F4F6));
+    background: var(--color-card-bg, var(--white, #FFF));
+  }
+
+  /* Viewport stacked: width and sidebar padding overrides */
   .profile-grid .profile__intro-sidebar > .profile__section,
   .profile-grid .profile__intro-sidebar > .profile__section--empty,
   .profile-grid .profile__intro-main > .profile__section,
@@ -676,6 +706,7 @@ solid-ui-button.profile-action-text:focus-visible::part(button) {
     padding: var(--profile-mobile-section-padding);
   }
 
+  /* Viewport stacked: card exceptions */
   .profile-grid [data-profile-section='social'].profile__section,
   .profile-grid [data-profile-section='social'].profile__section--empty {
     border: none;
@@ -692,6 +723,7 @@ solid-ui-button.profile-action-text:focus-visible::part(button) {
     display: none;
   }
 
+  /* Viewport stacked: bio actions */
   .profile-grid [data-profile-section='bio'] .profile-section-collapsible__edit-button {
     --button-background: transparent;
     --button-border-width: 0;
@@ -703,7 +735,9 @@ solid-ui-button.profile-action-text:focus-visible::part(button) {
   }
 }
 
+/* Container-driven stacked layout */
 @container profile-pane (max-width: 56.5625rem) {
+  /* Container stacked: layout shell */
   .profile-grid {
     font-size: clamp(0.9rem, 1.1vw + 0.65rem, 1rem);
     display: flex;
@@ -718,6 +752,7 @@ solid-ui-button.profile-action-text:focus-visible::part(button) {
     overflow-x: clip;
   }
 
+  /* Container stacked: interaction and wrappers */
   .profile-grid .profile__action-button {
     min-height: calc(var(--min-touch-target, 44px) + 0.5rem) !important;
     font-size: clamp(0.9rem, 2.1vw, 1rem) !important;
@@ -740,6 +775,7 @@ solid-ui-button.profile-action-text:focus-visible::part(button) {
     align-self: stretch;
   }
 
+  /* Container stacked: section ordering */
   .profile-grid [data-profile-section='heading'] { order: 1; }
   .profile-grid [data-profile-section='bio'] { order: 2; }
   .profile-grid [data-profile-section='skills'] { order: 3; }
@@ -750,6 +786,7 @@ solid-ui-button.profile-action-text:focus-visible::part(button) {
   .profile-grid [data-profile-section='contact-info'] { order: 8; }
   .profile-grid [data-profile-section='qr-code'] { order: 9; }
 
+  /* Container stacked: typography */
   .profile__section-header:not(.profile-edit-dialog__contact-section-header) h2,
   .profile__section-header:not(.profile-edit-dialog__contact-section-header) h3,
   .profile__section-header:not(.profile-edit-dialog__contact-section-header) h4 {
@@ -768,6 +805,18 @@ solid-ui-button.profile-action-text:focus-visible::part(button) {
     line-height: 1.1 !important;
   }
 
+  .profile-grid .profile__section,
+  .profile-grid .profile__section--empty {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: var(--profile-mobile-section-padding);
+    border-radius: var(--border-radius-base, 0.3125rem);
+    border: var(--border-width-thin, 0.1rem) solid var(--color-border-subtle, var(--gray-100, #F3F4F6));
+    background: var(--color-card-bg, var(--white, #FFF));
+  }
+
+  /* Container stacked: width and sidebar padding overrides */
   .profile-grid .profile__intro-sidebar > .profile__section,
   .profile-grid .profile__intro-sidebar > .profile__section--empty,
   .profile-grid .profile__intro-main > .profile__section,
@@ -792,6 +841,7 @@ solid-ui-button.profile-action-text:focus-visible::part(button) {
     padding: var(--profile-mobile-section-padding);
   }
 
+  /* Container stacked: card exceptions */
   .profile-grid [data-profile-section='social'].profile__section,
   .profile-grid [data-profile-section='social'].profile__section--empty {
     border: none;
@@ -808,6 +858,7 @@ solid-ui-button.profile-action-text:focus-visible::part(button) {
     display: none;
   }
 
+  /* Container stacked: bio actions */
   .profile-grid [data-profile-section='bio'] .profile-section-collapsible__edit-button {
     --button-background: transparent;
     --button-border-width: 0;
@@ -821,6 +872,7 @@ solid-ui-button.profile-action-text:focus-visible::part(button) {
 
 /* Narrow-phone fallback once the layout is already stacked. */
 @media (max-width: 576px) {
+  /* Narrow viewport: cards and sidebar */
   .profile-grid .profile__sidebar:not(.profile__intro-sidebar) {
     padding: 0 !important;
     display: contents;
@@ -853,6 +905,7 @@ solid-ui-button.profile-action-text:focus-visible::part(button) {
     padding: var(--profile-mobile-section-padding);
   }
 
+  /* Narrow viewport: empty states */
   .profile-grid [data-profile-section='projects'].profile__section--empty > .profile-section-collapsible__header,
   .profile-grid [data-profile-section='resume'].profile__section--empty > .profile-section-collapsible__header {
     display: flex;
@@ -879,6 +932,7 @@ solid-ui-button.profile-action-text:focus-visible::part(button) {
     width: 100%;
   }
 
+  /* Narrow viewport: typography */
   .profile-grid .profile__empty-state-content > h2,
   .profile-grid .resume-card__section h3 {
     font-size: var(--profile-mobile-section-heading-size, var(--font-size-lg, 1.125rem)) !important;
@@ -903,6 +957,7 @@ solid-ui-button.profile-action-text:focus-visible::part(button) {
     line-height: 1.1 !important;
   }
 
+  /* Narrow viewport: empty-state edit actions */
   .profile__section--empty .profile-section-collapsible__actions > .profile-section-collapsible__edit-button {
     order: 2;
   }
@@ -916,7 +971,9 @@ solid-ui-button.profile-action-text:focus-visible::part(button) {
   }
 }
 
+/* Narrow container fallback */
 @container profile-pane (max-width: 576px) {
+  /* Narrow container: cards and sidebar */
   .profile-grid .profile__sidebar:not(.profile__intro-sidebar) {
     padding: 0 !important;
     display: contents;
@@ -949,6 +1006,7 @@ solid-ui-button.profile-action-text:focus-visible::part(button) {
     padding: var(--profile-mobile-section-padding);
   }
 
+  /* Narrow container: empty states */
   .profile-grid [data-profile-section='projects'].profile__section--empty > .profile-section-collapsible__header,
   .profile-grid [data-profile-section='resume'].profile__section--empty > .profile-section-collapsible__header {
     display: flex;
@@ -975,6 +1033,7 @@ solid-ui-button.profile-action-text:focus-visible::part(button) {
     width: 100%;
   }
 
+  /* Narrow container: typography */
   .profile-grid .profile__empty-state-content > h2,
   .profile-grid .resume-card__section h3 {
     font-size: var(--profile-mobile-section-heading-size, var(--font-size-lg, 1.125rem)) !important;
@@ -999,6 +1058,7 @@ solid-ui-button.profile-action-text:focus-visible::part(button) {
     line-height: 1.1 !important;
   }
 
+  /* Narrow container: empty-state edit actions */
   .profile__section--empty .profile-section-collapsible__actions > .profile-section-collapsible__edit-button {
     order: 2;
   }
