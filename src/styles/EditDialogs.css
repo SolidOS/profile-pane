@@ -984,13 +984,14 @@ solid-ui-button.profile-edit-dialog__drag-handle {
 }
 
 :is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-edit-dialog--heading .profile-edit-dialog__row--heading-photo .profile-edit-dialog__image-preview-actions {
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: var(--spacing-xxs, 0.3125rem);
   width: 100%;
+  align-items: stretch;
 }
 
 :is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-edit-dialog--heading .profile-edit-dialog__row--heading-photo .profile-edit-dialog__image-button {
-  flex: 1 1 100%;
   width: 100%;
   min-width: 0;
 }
@@ -1232,13 +1233,14 @@ solid-ui-button.profile-edit-dialog__drag-handle {
   }
 
   .profile-edit-dialog--heading .profile-edit-dialog__row--heading-photo .profile-edit-dialog__image-preview-actions {
-    flex-wrap: nowrap;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: var(--spacing-xs, 0.5rem);
     width: 100%;
+    align-items: stretch;
   }
 
   .profile-edit-dialog--heading .profile-edit-dialog__row--heading-photo .profile-edit-dialog__image-button {
-    flex: 1 1 0;
     width: 100%;
     min-width: 0;
   }
@@ -1490,13 +1492,14 @@ solid-ui-button.profile-edit-dialog__drag-handle {
   }
 
   .profile-edit-dialog--heading .profile-edit-dialog__row--heading-photo .profile-edit-dialog__image-preview-actions {
-    flex-wrap: nowrap;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: var(--spacing-xs, 0.5rem);
     width: 100%;
+    align-items: stretch;
   }
 
   .profile-edit-dialog--heading .profile-edit-dialog__row--heading-photo .profile-edit-dialog__image-button {
-    flex: 1 1 0;
     width: 100%;
     min-width: 0;
   }
