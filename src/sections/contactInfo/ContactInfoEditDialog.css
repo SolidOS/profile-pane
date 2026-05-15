@@ -1,6 +1,7 @@
 .profile__edit-form--contact-info .profile-edit-dialog__section {
   --contact-info-dialog-contact-point-row-gap: var(--spacing-sm, 0.9375rem);
   --contact-info-dialog-contact-point-row-align: flex-start;
+  --contact-info-dialog-contact-point-row-direction: row;
   --contact-info-dialog-contact-point-row-wrap: wrap;
   --contact-info-dialog-contact-point-field-flex: 1 1 auto;
   --contact-info-dialog-contact-point-type-width: 6.5rem;
@@ -18,7 +19,9 @@
   padding-top: var(--spacing-xs, 0.75rem);
 }
 
-.profile__edit-form--contact-info .profile__section-header {
+.profile__edit-form--contact-info .profile-edit-dialog__contact-section-header {
+  padding: 0;
+  gap: 1.875rem;
   margin-bottom: 0;
 }
 
@@ -40,6 +43,8 @@
   width: 0.8333rem;
   height: 0.8333rem;
   flex: 0 0 0.8333rem;
+  flex-shrink: 0;
+  aspect-ratio: 1 / 1;
 }
 
 .profile__edit-form--contact-info .profile-edit-dialog__section-title-icon svg {
@@ -53,6 +58,7 @@
   border: 0;
   outline: 0;
   box-shadow: none;
+  flex-direction: var(--contact-info-dialog-contact-point-row-direction);
   align-items: var(--contact-info-dialog-contact-point-row-align);
   flex-wrap: var(--contact-info-dialog-contact-point-row-wrap);
   gap: var(--contact-info-dialog-contact-point-row-gap);
@@ -80,6 +86,11 @@
   min-width: 0;
 }
 
+.profile-edit-dialog__row--contact-point > label.profile-edit-dialog__field {
+  display: block;
+  width: 100%;
+}
+
 .profile-edit-dialog__row--contact-point > .profile-edit-dialog__field > .label {
   display: block;
   width: 100%;
@@ -103,6 +114,33 @@
   flex: var(--contact-info-dialog-contact-point-actions-flex);
   margin-left: var(--contact-info-dialog-contact-point-actions-margin-left);
   justify-content: var(--contact-info-dialog-contact-point-actions-justify);
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile__edit-form--contact-info .profile-edit-dialog__row--contact-point {
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: center;
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile__edit-form--contact-info .profile-edit-dialog__row--contact-point > .profile-edit-dialog__field {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile__edit-form--contact-info .profile-edit-dialog__row--contact-point > .profile-edit-dialog__field-type.profile-edit-dialog__phone-type-row,
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile__edit-form--contact-info .profile-edit-dialog__row--contact-point > .profile-edit-dialog__field-type.emailTypeRow {
+  flex: 0 0 5.5rem;
+  width: 5.5rem;
+  min-width: 5.5rem;
+  max-width: 5.5rem;
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile__edit-form--contact-info .profile-edit-dialog__row--contact-point > .profile-edit-dialog__actions {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  margin-left: 0;
 }
 
 .profile__edit-form--contact-info .profile-edit-dialog__field-type.profile-edit-dialog__phone-type-row > select,
@@ -139,6 +177,7 @@
 :is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile__edit-form--contact-info .profile-edit-dialog__section {
   --contact-info-dialog-contact-point-row-gap: var(--spacing-2xs, 0.625rem);
   --contact-info-dialog-contact-point-row-align: center;
+  --contact-info-dialog-contact-point-row-direction: row;
   --contact-info-dialog-contact-point-row-wrap: nowrap;
   --contact-info-dialog-contact-point-field-flex: 1 1 0;
   --contact-info-dialog-contact-point-type-width: 5.5rem;
@@ -150,29 +189,73 @@
   --contact-info-dialog-contact-point-select-line-height: var(--line-height-base, 1.5);
 }
 
-:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] #profile-modal .modal .profile__edit-form--contact-info .profile__section-header .profile-edit-dialog__section-heading {
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] #profile-modal .modal .profile__edit-form--contact-info .profile-edit-dialog__contact-section-header {
+  padding: 0;
+  gap: 0.625rem;
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] #profile-modal .modal .profile__edit-form--contact-info .profile-edit-dialog__contact-section-header .profile-edit-dialog__section-heading {
   font-size: var(--font-size-md, 1rem);
 }
 
-:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] #profile-modal .modal .profile__edit-form--contact-info .profile__section-header .profile__add-more-content {
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] #profile-modal .modal .profile__edit-form--contact-info .profile-edit-dialog__contact-section-header .profile-edit-dialog__section-title-icon {
+  width: 0.8333rem;
+  height: 0.8333rem;
+  flex-basis: 0.8333rem;
+  flex-shrink: 0;
+  aspect-ratio: 1 / 1;
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] #profile-modal .modal .profile__edit-form--contact-info .profile-edit-dialog__contact-section-header .profile__add-more-content {
   font-size: var(--font-size-sm, 0.875rem);
 }
 
-:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] #profile-modal .modal .profile__edit-form--contact-info .profile__section-header .profile__add-more-icon {
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] #profile-modal .modal .profile__edit-form--contact-info .profile-edit-dialog__contact-section-header .profile__add-more-icon {
+  display: inline-flex;
   width: var(--font-size-xxs, 0.75rem);
   height: var(--font-size-xxs, 0.75rem);
+  flex-shrink: 0;
+  aspect-ratio: 1 / 1;
   padding: 0;
 }
 
-:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] #profile-modal .modal .profile__edit-form--contact-info .profile__section-header .profile__add-more-icon svg {
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] #profile-modal .modal .profile__edit-form--contact-info .profile-edit-dialog__contact-section-header .profile__add-more-icon svg {
   width: 100%;
   height: 100%;
 }
 
 @media (max-width: 576px) {
+  .profile__edit-form--contact-info .profile-edit-dialog__row--contact-point {
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: center;
+  }
+
+  .profile__edit-form--contact-info .profile-edit-dialog__row--contact-point > .profile-edit-dialog__field {
+    flex: 1 1 0;
+    min-width: 0;
+  }
+
+  .profile__edit-form--contact-info .profile-edit-dialog__row--contact-point > .profile-edit-dialog__field-type.profile-edit-dialog__phone-type-row,
+  .profile__edit-form--contact-info .profile-edit-dialog__row--contact-point > .profile-edit-dialog__field-type.emailTypeRow {
+    flex: 0 0 5.5rem;
+    width: 5.5rem;
+    min-width: 5.5rem;
+    max-width: 5.5rem;
+  }
+
+  .profile__edit-form--contact-info .profile-edit-dialog__row--contact-point > .profile-edit-dialog__actions {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    margin-left: 0;
+  }
+
   .profile__edit-form--contact-info .profile-edit-dialog__section {
     --contact-info-dialog-contact-point-row-gap: var(--spacing-2xs, 0.625rem);
     --contact-info-dialog-contact-point-row-align: center;
+    --contact-info-dialog-contact-point-row-direction: row;
     --contact-info-dialog-contact-point-row-wrap: nowrap;
     --contact-info-dialog-contact-point-field-flex: 1 1 0;
     --contact-info-dialog-contact-point-type-width: 5.5rem;
@@ -184,30 +267,74 @@
     --contact-info-dialog-contact-point-select-line-height: var(--line-height-base, 1.5);
   }
 
-  #profile-modal .modal .profile__edit-form--contact-info .profile__section-header .profile-edit-dialog__section-heading {
+  #profile-modal .modal .profile__edit-form--contact-info .profile-edit-dialog__contact-section-header {
+    padding: 0;
+    gap: 1.875rem;
+  }
+
+  #profile-modal .modal .profile__edit-form--contact-info .profile-edit-dialog__contact-section-header .profile-edit-dialog__section-heading {
     font-size: var(--font-size-md, 1rem);
   }
 
-  #profile-modal .modal .profile__edit-form--contact-info .profile__section-header .profile__add-more-content {
+  #profile-modal .modal .profile__edit-form--contact-info .profile-edit-dialog__contact-section-header .profile-edit-dialog__section-title-icon {
+    width: 0.8333rem;
+    height: 0.8333rem;
+    flex-basis: 0.8333rem;
+    flex-shrink: 0;
+    aspect-ratio: 1 / 1;
+  }
+
+  #profile-modal .modal .profile__edit-form--contact-info .profile-edit-dialog__contact-section-header .profile__add-more-content {
     font-size: var(--font-size-sm, 0.875rem);
   }
 
-  #profile-modal .modal .profile__edit-form--contact-info .profile__section-header .profile__add-more-icon {
+  #profile-modal .modal .profile__edit-form--contact-info .profile-edit-dialog__contact-section-header .profile__add-more-icon {
+    display: inline-flex;
     width: var(--font-size-xxs, 0.75rem);
     height: var(--font-size-xxs, 0.75rem);
+    flex-shrink: 0;
+    aspect-ratio: 1 / 1;
     padding: 0;
   }
 
-  #profile-modal .modal .profile__edit-form--contact-info .profile__section-header .profile__add-more-icon svg {
+  #profile-modal .modal .profile__edit-form--contact-info .profile-edit-dialog__contact-section-header .profile__add-more-icon svg {
     width: 100%;
     height: 100%;
   }
 }
 
 @container profile-pane (max-width: 576px) {
+  .profile__edit-form--contact-info .profile-edit-dialog__row--contact-point {
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: center;
+  }
+
+  .profile__edit-form--contact-info .profile-edit-dialog__row--contact-point > .profile-edit-dialog__field {
+    flex: 1 1 0;
+    min-width: 0;
+  }
+
+  .profile__edit-form--contact-info .profile-edit-dialog__row--contact-point > .profile-edit-dialog__field-type.profile-edit-dialog__phone-type-row,
+  .profile__edit-form--contact-info .profile-edit-dialog__row--contact-point > .profile-edit-dialog__field-type.emailTypeRow {
+    flex: 0 0 5.5rem;
+    width: 5.5rem;
+    min-width: 5.5rem;
+    max-width: 5.5rem;
+  }
+
+  .profile__edit-form--contact-info .profile-edit-dialog__row--contact-point > .profile-edit-dialog__actions {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    margin-left: 0;
+  }
+
   .profile__edit-form--contact-info .profile-edit-dialog__section {
     --contact-info-dialog-contact-point-row-gap: var(--spacing-2xs, 0.625rem);
     --contact-info-dialog-contact-point-row-align: center;
+    --contact-info-dialog-contact-point-row-direction: row;
     --contact-info-dialog-contact-point-row-wrap: nowrap;
     --contact-info-dialog-contact-point-field-flex: 1 1 0;
     --contact-info-dialog-contact-point-type-width: 5.5rem;
@@ -219,22 +346,50 @@
     --contact-info-dialog-contact-point-select-line-height: var(--line-height-base, 1.5);
   }
 
-  #profile-modal .modal .profile__edit-form--contact-info .profile__section-header .profile-edit-dialog__section-heading {
+  #profile-modal .modal .profile__edit-form--contact-info .profile-edit-dialog__contact-section-header {
+    padding: 0;
+    gap: 1.875rem;
+  }
+
+  #profile-modal .modal .profile__edit-form--contact-info .profile-edit-dialog__contact-section-header .profile-edit-dialog__section-heading {
     font-size: var(--font-size-md, 1rem);
   }
 
-  #profile-modal .modal .profile__edit-form--contact-info .profile__section-header .profile__add-more-content {
+  #profile-modal .modal .profile__edit-form--contact-info .profile-edit-dialog__contact-section-header .profile-edit-dialog__section-title-icon {
+    width: 0.8333rem;
+    height: 0.8333rem;
+    flex-basis: 0.8333rem;
+    flex-shrink: 0;
+    aspect-ratio: 1 / 1;
+  }
+
+  #profile-modal .modal .profile__edit-form--contact-info .profile-edit-dialog__contact-section-header .profile__add-more-content {
     font-size: var(--font-size-sm, 0.875rem);
   }
 
-  #profile-modal .modal .profile__edit-form--contact-info .profile__section-header .profile__add-more-icon {
+  #profile-modal .modal .profile__edit-form--contact-info .profile-edit-dialog__contact-section-header .profile__add-more-icon {
+    display: inline-flex;
     width: var(--font-size-xxs, 0.75rem);
     height: var(--font-size-xxs, 0.75rem);
+    flex-shrink: 0;
+    aspect-ratio: 1 / 1;
     padding: 0;
   }
 
-  #profile-modal .modal .profile__edit-form--contact-info .profile__section-header .profile__add-more-icon svg {
+  #profile-modal .modal .profile__edit-form--contact-info .profile-edit-dialog__contact-section-header .profile__add-more-icon svg {
     width: 100%;
     height: 100%;
+  }
+}
+
+@media (max-width: 320px) {
+  #profile-modal .modal .profile__edit-form--contact-info .profile-edit-dialog__contact-section-header {
+    gap: 0.625rem;
+  }
+}
+
+@container profile-pane (max-width: 320px) {
+  #profile-modal .modal .profile__edit-form--contact-info .profile-edit-dialog__contact-section-header {
+    gap: 0.625rem;
   }
 }

@@ -293,7 +293,7 @@ function renderContactInfoPhoneSection(phones: ContactPointRow[], onAddRow: (opt
     <section 
       aria-labelledby="phone-numbers-heading" 
       class="profile-edit-dialog__section">
-      <header class="profile__section-header">
+      <header class="profile__section-header profile-edit-dialog__contact-section-header">
         <h3 id="phone-numbers-heading" class="profile-edit-dialog__section-heading">
           <span class="profile-edit-dialog__section-title-icon" aria-hidden="true">${phoneIcon}</span>
           Phone Numbers
@@ -422,7 +422,7 @@ function renderContactInfoEmailSection(emails: ContactPointRow[], onAddRow: (opt
     <section 
       aria-labelledby="email-addresses-heading" 
       class="profile-edit-dialog__section">
-      <header class="profile__section-header">
+      <header class="profile__section-header profile-edit-dialog__contact-section-header">
         <h3 id="email-addresses-heading" class="profile-edit-dialog__section-heading">
           <span class="profile-edit-dialog__section-title-icon" aria-hidden="true">${emailIcon}</span>
           Email Addresses
@@ -634,7 +634,7 @@ function renderContactInfoAddressSection(addresses: ContactAddressRow[], onAddRo
     <section 
       aria-labelledby="address-heading" 
       class="profile-edit-dialog__section">
-      <header class="profile__section-header">
+      <header class="profile__section-header profile-edit-dialog__contact-section-header">
         <h3 id="address-heading" class="profile-edit-dialog__section-heading">
           <span class="profile-edit-dialog__section-title-icon" aria-hidden="true">${locationIcon}</span>
           Addresses
