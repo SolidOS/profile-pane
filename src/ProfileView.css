@@ -2,12 +2,14 @@
 
 .profile-grid {
   --profile-main-section-min-width: 37.5rem;
-  --profile-sidebar-min-width: 25rem;
+  --profile-sidebar-min-width: 18.75rem;
   --profile-sidebar-section-padding: var(--spacing-lg, 1.5625rem);
   --profile-mobile-section-padding: var(--spacing-sm, 0.9375rem);
   --profile-stacked-section-gap: var(--spacing-sm, 0.9375rem);
   display: grid;
-  grid-template-columns: minmax(0, 1fr) var(--profile-sidebar-min-width);
+  grid-template-columns:
+    minmax(var(--profile-main-section-min-width), 1fr)
+    minmax(var(--profile-sidebar-min-width), var(--profile-sidebar-min-width));
   align-items: start;
   column-gap: var(--spacing-xxs, 0.3125rem);
   row-gap: var(--spacing-md, 1.25rem);
@@ -369,7 +371,7 @@
   display: inline !important;
 }
 
-@container profile-pane (max-width: 1005px) {
+@container profile-pane (max-width: 56.5625rem) {
   #main-content.profile-grid {
     width: 100%;
     max-width: 100%;
@@ -379,7 +381,7 @@
 }
 
 /* Narrow stacked auto layout */
-@media (max-width: 1005px) {
+@media (max-width: 56.5625rem) {
   .profile-grid {
     display: flex;
     flex-direction: column;
@@ -465,7 +467,7 @@
   }
 }
 
-@container profile-pane (max-width: 1005px) {
+@container profile-pane (max-width: 56.5625rem) {
   .profile-grid {
     display: flex;
     flex-direction: column;
