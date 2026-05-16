@@ -44,12 +44,12 @@ function renderLanguagesSectionDefault(store: LiveStore, subject: NamedNode, lan
               type="button"
               variant="secondary"
               size="sm"
-              class="profile__action-button languages__edit-button profile-section-collapsible__edit-button"
+              class="profile__action-button profile-action-text profile-section-collapsible__edit-button"
               aria-label="Add or edit languages"
               @click=${(event: Event) => createLanguageEditDialog(event, store, subject, languages, viewerMode, onSaved)}
             >
-              <span class="profile-section-collapsible__edit-label languages__edit-label">
-                <span class="languages__edit-label-icon" aria-hidden="true">${addIcon}</span>
+              <span class="profile-section-collapsible__edit-label profile__add-more-content">
+                <span class="profile__add-more-icon" aria-hidden="true">${addIcon}</span>
                 <span>Add More</span>
               </span>
               <span class="profile-section-collapsible__edit-icon" aria-hidden="true">${editIcon}</span>
@@ -126,7 +126,7 @@ function renderOwnerEmptyLanguagesSection(
             type="button"
             variant="secondary"
             size="sm"
-            class="profile__action-button languages__edit-button profile-section-collapsible__edit-button"
+            class="profile__action-button profile-action-text profile-section-collapsible__edit-button"
             aria-label="Add languages"
             @click=${(event: Event) => {
               return createLanguageEditDialog(
@@ -139,8 +139,8 @@ function renderOwnerEmptyLanguagesSection(
               )
             }}
           >
-            <span class="profile-section-collapsible__edit-label languages__edit-label">
-              <span class="languages__edit-label-icon" aria-hidden="true">${addIcon}</span>
+            <span class="profile-section-collapsible__edit-label profile__add-more-content">
+              <span class="profile__add-more-icon" aria-hidden="true">${addIcon}</span>
               <span>Add More</span>
             </span>
             <span class="profile-section-collapsible__edit-icon" aria-hidden="true">${editIcon}</span>
