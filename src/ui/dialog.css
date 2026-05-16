@@ -88,7 +88,8 @@
   gap: var(--spacing-2xs, 0.625rem);
 }
 
-#profile-modal .modal:has(.profile-edit-dialog__social-account-select[popup-open]) #modal-desc {
+#profile-modal .modal:has(.profile-edit-dialog__social-account-select[popup-open]) #modal-desc,
+#profile-modal .modal:has(#modal-desc > .profile__edit-form solid-ui-combobox:focus-within) #modal-desc {
   padding-bottom: calc(var(--profile-modal-panel-inline-padding) + 1.875rem);
 }
 
