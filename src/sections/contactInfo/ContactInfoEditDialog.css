@@ -88,7 +88,8 @@
 
 .profile-edit-dialog__row--contact-point > label.profile-edit-dialog__field {
   display: block;
-  width: 100%;
+  width: auto;
+  min-width: 0;
 }
 
 .profile-edit-dialog__row--contact-point > .profile-edit-dialog__field > .label {
