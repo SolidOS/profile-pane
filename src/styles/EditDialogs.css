@@ -879,8 +879,7 @@ solid-ui-button.profile-edit-dialog__drag-handle {
 }
 
 :is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-edit-dialog__row--social .profile-edit-dialog__social-icon {
-  width: var(--icon-xs, 1.5rem);
-  height: var(--icon-xs, 1.5rem);
+  display: none;
 }
 
 :is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-edit-dialog__field--social-type {
@@ -1151,8 +1150,7 @@ solid-ui-button.profile-edit-dialog__drag-handle {
   }
 
   .profile-edit-dialog__row--social .profile-edit-dialog__social-icon {
-    width: 1.5rem;
-    height: 1.5rem;
+    display: none;
   }
 
   .profile-edit-dialog__field--social-type {
@@ -1415,8 +1413,7 @@ solid-ui-button.profile-edit-dialog__drag-handle {
   }
 
   .profile-edit-dialog__row--social .profile-edit-dialog__social-icon {
-    width: 1.5rem;
-    height: 1.5rem;
+    display: none;
   }
 
   .profile-edit-dialog__field--social-type {
