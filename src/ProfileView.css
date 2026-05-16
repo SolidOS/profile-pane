@@ -335,6 +335,13 @@ solid-ui-button.profile-action-text:focus-visible::part(button) {
   --button-hover-border: var(--color-primary, #7C4DFF);
 }
 
+.profile-grid solid-ui-button.profile__action-button--empty:hover .profile__action-icon svg path,
+.profile-grid solid-ui-button.profile__action-button--empty:focus-visible .profile__action-icon svg path,
+.profile-grid solid-ui-button.profile__action-button--empty:focus-within .profile__action-icon svg path {
+  stroke: var(--color-text-on-action, var(--white, #FFF));
+  fill: var(--color-text-on-action, var(--white, #FFF));
+}
+
 .profile-grid .profile__empty-state-message {
   color: var(--color-text-empty-state, var(--gray-400, #99A1AF));
   text-align: center;
