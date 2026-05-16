@@ -366,6 +366,7 @@ solid-ui-button.profile-edit-dialog__image-camera-button {
 
 .profile__edit-form--resume .profile-edit-dialog__field > input,
 .profile__edit-form--resume .profile-edit-dialog__field > solid-ui-select,
+.profile__edit-form--resume .profile-edit-dialog__field > solid-ui-combobox,
 .profile__edit-form--resume .profile-edit-dialog__field > textarea,
 .profile__edit-form--resume .profile-edit-dialog__field-type > input,
 .profile__edit-form--resume .profile-edit-dialog__field-type > solid-ui-select,
@@ -736,6 +737,16 @@ solid-ui-button.profile-edit-dialog__drag-handle {
   max-width: 100%;
   box-sizing: border-box;
   align-self: stretch;
+}
+
+.profile__edit-form--resume .profile-edit-dialog__field > solid-ui-combobox {
+  min-height: var(--min-touch-target, 44px);
+  height: var(--min-touch-target, 44px);
+}
+
+.profile__edit-form--resume .profile-edit-dialog__field > solid-ui-combobox::part(input) {
+  min-height: var(--min-touch-target, 44px);
+  height: var(--min-touch-target, 44px);
 }
 
 .profile-edit-dialog__textarea {

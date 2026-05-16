@@ -16,7 +16,8 @@
 - [x] Clean up the language section CSS file and language section TS utility classes; this is for the section, not the edit dialog.
 - [x] On mobile only, remove the icon from the social edit dialog while keeping it on desktop.
 - [x] Make the empty-state add icons for Resume, Bio, and Projects turn white on hover.
-- [ ] Clean up the resume section CSS: reorganize it, remove duplication where possible, and replace utility classes with specific classes.
+- [x] Clean up the resume section CSS: reorganize it, remove duplication where possible, and replace utility classes with specific classes.
+- [ ] on skills the combobox drop down goes over the dialog footer so that all the values can be seen, can you do htat for all the comboboxes the other seem to go underneath the footer. 
 - [ ] Clean up the project section CSS: reorganize it, remove duplication where possible, and replace utility classes with specific classes.
 - [ ] Clean up the skills section CSS: reorganize it, remove duplication where possible, and replace utility classes with specific classes.
 - [ ] Clean up the bio section CSS: reorganize it, remove duplication where possible, and replace utility classes with specific classes.

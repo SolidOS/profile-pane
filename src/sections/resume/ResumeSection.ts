@@ -116,7 +116,7 @@ function renderResumeSectionDefault(
               type="button"
               variant="secondary"
               size="sm"
-              class="profile__action-button profile-action-text profile-section-collapsible__edit-button"
+              class="profile__action-button resume__edit-button profile-section-collapsible__edit-button"
               aria-label="Edit resume details"
               @click=${(event: Event) => createResumeEditDialog(event, store, subject, resumeDetails, viewerMode, onSaved)}
             >

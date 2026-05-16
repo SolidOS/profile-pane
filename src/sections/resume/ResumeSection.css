@@ -1,13 +1,50 @@
 /* Resume section styles. */
 
-.resume-card__section,
-.resume-card__description-wrap {
+/* Section actions */
+.resume__edit-button {
+  width: auto;
+  min-width: 0;
+  max-width: none;
+  padding: var(--spacing-xxs, 0.3125rem);
+  border: none;
+  background: none;
+  color: var(--color-primary, #7C4DFF);
+  cursor: var(--profile-interactive-cursor, pointer);
+  font-size: var(--font-size-sm, 0.875rem);
+}
+
+solid-ui-button.resume__edit-button {
+  width: auto;
+  min-width: 0;
+  max-width: none;
+  --button-height-sm: 0;
+  --button-padding-sm: var(--spacing-xxs, 0.3125rem);
+  --button-font-size-sm: var(--font-size-sm, 0.875rem);
+  --button-font-weight: var(--font-weight-regular, 400);
+  --button-background: transparent;
+  --button-border-width: 0;
+  --button-border: transparent;
+  --button-text: var(--color-primary, #7C4DFF);
+  --button-hover-background: transparent;
+  --button-hover-border: transparent;
+  --button-hover-text: var(--color-primary, #7C4DFF);
+}
+
+.resume__edit-button:hover {
+  text-decoration: underline;
+}
+
+solid-ui-button.resume__edit-button:hover::part(button),
+solid-ui-button.resume__edit-button:focus-visible::part(button) {
+  text-decoration: underline;
+}
+
+.resume-card {
   --resume-card-section-gap: var(--spacing-md, 1.25rem);
   --resume-card-item-gap: var(--spacing-xs, 0.75rem);
   --resume-card-header-gap: var(--spacing-sm, 0.75rem);
   --resume-card-column-gap: var(--spacing-md, 1.25rem);
   --resume-card-row-gap: var(--spacing-2xs, 0.625rem);
-  --resume-card-description-offset: calc(var(--spacing-sm, 0.938rem) - var(--spacing-2xs, 0.625rem));
   --resume-card-title-color: var(--color-text-subheading, var(--gray-900, #101828));
   --resume-card-title-size: var(--font-size-lg, 1.125rem);
   --resume-card-title-weight: var(--font-weight-bold, 600);
@@ -61,8 +98,6 @@
 .resume-card__item-header {
   grid-area: title;
   display: flex;
-  flex-direction: row;
-  justify-content: flex-start;
   align-items: baseline;
   gap: var(--resume-card-header-gap);
   min-width: 0;
@@ -114,6 +149,7 @@
 /* Description toggle */
 .resume-card__description-wrap {
   grid-area: description;
+  --resume-card-description-offset: calc(var(--spacing-sm, 0.938rem) - var(--spacing-2xs, 0.625rem));
   --resume-description-toggle-inline-offset: 0;
   --resume-description-toggle-line-top: calc(100% - 1.5em + 0.28em - 11px);
   --resume-description-toggle-line-translate-y: 7px;
