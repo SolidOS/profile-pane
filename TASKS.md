@@ -13,7 +13,7 @@
 - [x] Reorganize the language section CSS, remove utility classes, and minimize duplication where possible.
 - [x] On mobile, the social section edit button should sit to the left of the chevron like the other sections instead of above it.
 - [x] Fix edit dialog positioning so it stays top-aligned on mobile and centered on desktop.
-- [ ] Clean up the language section CSS file and language section TS utility classes; this is for the section, not the edit dialog.
+- [x] Clean up the language section CSS file and language section TS utility classes; this is for the section, not the edit dialog.
 - [ ] On mobile only, remove the icon from the social edit dialog while keeping it on desktop.
 - [ ] Make the empty-state add icons for Resume, Bio, and Projects turn white on hover.
 - [ ] Clean up the resume section CSS: reorganize it, remove duplication where possible, and replace utility classes with specific classes.
