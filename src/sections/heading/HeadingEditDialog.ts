@@ -735,7 +735,7 @@ function renderHeadingInfoInput(
 
   return html`
     <div class="profile-edit-dialog__row profile-edit-dialog__row--heading-photo">
-      <header class="mb-md" aria-label="Profile Image">
+      <header class="profile-edit-dialog__image-preview-header" aria-label="Profile Image">
         <div class="profile-edit-dialog__image-frame">
           ${Image(imagePreviewSrc || basicInfo.imageSrc, basicInfo.name)}
           <solid-ui-button
@@ -756,7 +756,7 @@ function renderHeadingInfoInput(
         <p class="profile-edit-dialog__image-preview-label"><strong>${imageSrcLabel}</strong></p>
         <p class="profile-edit-dialog__image-preview-description">${recommendedImageToLoad}</p>
 
-        <div class="profile-edit-dialog__image-preview-actions flex-row align-center gap-xs">
+        <div class="profile-edit-dialog__image-preview-actions">
           <solid-ui-button
             type="button"
             variant="secondary"
@@ -930,7 +930,7 @@ function createHeadingEditForm(
   viewerMode: ViewerMode
 ) {
   const form = document.createElement('form')
-  form.classList.add('profile__edit-form', 'profile-edit-dialog--heading', 'flex-column', 'gap-sm')
+  form.classList.add('profile__edit-form', 'profile__edit-form--heading', 'profile-edit-dialog--heading')
   form.autocomplete = 'off'
   form.setAttribute('data-lpignore', 'true')
   form.setAttribute('data-1p-ignore', 'true')

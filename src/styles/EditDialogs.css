@@ -10,6 +10,12 @@
   width: 100%;
 }
 
+.profile__edit-form--heading {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
 /* Shared dialog section layout */
 .profile-edit-dialog__section,
 .profile-edit-dialog__section--education {
@@ -143,6 +149,16 @@ solid-ui-button.profile-edit-dialog__delete-button.profile-edit-dialog__delete-b
 .profile-edit-dialog__image-preview {
   display: grid;
   gap: var(--spacing-xs);
+}
+
+.profile-edit-dialog__image-preview-header {
+  margin-bottom: var(--spacing-md, 1.25rem);
+}
+
+.profile-edit-dialog__image-preview-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs, 0.75rem);
 }
 
 .profile-edit-dialog__image-preview-label,
@@ -438,7 +454,6 @@ solid-ui-button.profile-edit-dialog__image-camera-button {
 
 .profile-edit-dialog--heading .profile-edit-dialog__row--heading-photo {
   padding-bottom: var(--spacing-md, 1.25rem);
-  margin-bottom: var(--spacing-md, 1.25rem);
   border-bottom: 1px solid var(--color-border-lighter, var(--slate-200, #E2E8F0));
 }
 
@@ -838,6 +853,18 @@ solid-ui-button.profile-edit-dialog__drag-handle {
   max-width: 100%;
 }
 
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-edit-dialog--heading .profile-edit-dialog__row--contact-point {
+  flex-direction: row;
+  align-items: stretch;
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-edit-dialog--heading .profile-edit-dialog__row--contact-point.profile-edit-dialog__row--equal > .profile-edit-dialog__field-type.profile-edit-dialog__field-type--contact-point {
+  flex: 0 0 6.4375rem;
+  width: 6.4375rem;
+  min-width: 6.4375rem;
+  max-width: 6.4375rem;
+}
+
 :is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-edit-dialog__row--address-header {
   flex-direction: row;
   align-items: flex-end;
@@ -1098,6 +1125,18 @@ solid-ui-button.profile-edit-dialog__drag-handle {
     max-width: 100%;
   }
 
+  .profile-edit-dialog--heading .profile-edit-dialog__row--contact-point {
+    flex-direction: row;
+    align-items: stretch;
+  }
+
+  .profile-edit-dialog--heading .profile-edit-dialog__row--contact-point.profile-edit-dialog__row--equal > .profile-edit-dialog__field-type.profile-edit-dialog__field-type--contact-point {
+    flex: 0 0 6.4375rem;
+    width: 6.4375rem;
+    min-width: 6.4375rem;
+    max-width: 6.4375rem;
+  }
+
   .profile-edit-dialog__row--address-header {
     flex-direction: row;
     align-items: flex-end;
@@ -1344,6 +1383,18 @@ solid-ui-button.profile-edit-dialog__drag-handle {
     flex: 1 1 auto;
     width: 100%;
     max-width: 100%;
+  }
+
+  .profile-edit-dialog--heading .profile-edit-dialog__row--contact-point {
+    flex-direction: row;
+    align-items: stretch;
+  }
+
+  .profile-edit-dialog--heading .profile-edit-dialog__row--contact-point.profile-edit-dialog__row--equal > .profile-edit-dialog__field-type.profile-edit-dialog__field-type--contact-point {
+    flex: 0 0 6.4375rem;
+    width: 6.4375rem;
+    min-width: 6.4375rem;
+    max-width: 6.4375rem;
   }
 
   .profile-edit-dialog__row--address-header {
