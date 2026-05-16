@@ -74,12 +74,12 @@
   margin-left: 0;
 }
 
-.profile-edit-dialog__row--language > .profile-edit-dialog__field {
+.profile-edit-dialog__row--language > .profile-edit-dialog__field--language-name {
   flex: 1 1 0;
   min-width: 0;
 }
 
-.profile-edit-dialog__row--language > .profile-edit-dialog__actions--edge {
+.profile-edit-dialog__actions--language {
   margin-left: 0;
 }
 
@@ -908,18 +908,18 @@ solid-ui-button.profile-edit-dialog__drag-handle {
   margin-left: calc(-1 * var(--spacing-xxs, 0.3125rem));
 }
 
-:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-edit-dialog__row--language > .profile-edit-dialog__field {
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-edit-dialog__row--language > .profile-edit-dialog__field--language-name {
   flex: 1 1 0;
   min-width: 0;
   margin-left: calc(-1 * var(--spacing-xxs, 0.3125rem));
 }
 
-:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-edit-dialog__row--language > .profile-edit-dialog__actions--edge {
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-edit-dialog__actions--language {
   margin-left: 0;
 }
 
 :is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-edit-dialog__row--language > solid-ui-button.profile-edit-dialog__drag-handle,
-:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-edit-dialog__row--language > .profile-edit-dialog__actions--edge > solid-ui-button.profile-edit-dialog__delete-button {
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-edit-dialog__actions--language > solid-ui-button.profile-edit-dialog__delete-button {
   min-width: 1.5rem;
   min-height: 1.5rem;
   --button-height-md: 1.5rem;
@@ -1180,10 +1180,14 @@ solid-ui-button.profile-edit-dialog__drag-handle {
     margin-left: calc(-1 * var(--spacing-xxs, 0.3125rem));
   }
 
-  .profile-edit-dialog__row--language > .profile-edit-dialog__field {
+  .profile-edit-dialog__row--language > .profile-edit-dialog__field--language-name {
     flex: 1 1 0;
     min-width: 0;
     margin-left: calc(-1 * var(--spacing-xxs, 0.3125rem));
+  }
+
+  .profile-edit-dialog__actions--language {
+    margin-left: 0;
   }
 
   .profile-edit-dialog__row--resume-entry-header {
@@ -1440,18 +1444,18 @@ solid-ui-button.profile-edit-dialog__drag-handle {
     margin-left: calc(-1 * var(--spacing-xxs, 0.3125rem));
   }
 
-  .profile-edit-dialog__row--language > .profile-edit-dialog__field {
+  .profile-edit-dialog__row--language > .profile-edit-dialog__field--language-name {
     flex: 1 1 0;
     min-width: 0;
     margin-left: calc(-1 * var(--spacing-xxs, 0.3125rem));
   }
 
-  .profile-edit-dialog__row--language > .profile-edit-dialog__actions--edge {
+  .profile-edit-dialog__actions--language {
     margin-left: 0;
   }
 
   .profile-edit-dialog__row--language > solid-ui-button.profile-edit-dialog__drag-handle,
-  .profile-edit-dialog__row--language > .profile-edit-dialog__actions--edge > solid-ui-button.profile-edit-dialog__delete-button {
+  .profile-edit-dialog__actions--language > solid-ui-button.profile-edit-dialog__delete-button {
     min-width: 1.5rem;
     min-height: 1.5rem;
     --button-height-md: 1.5rem;
@@ -1600,16 +1604,16 @@ solid-ui-button.profile-edit-dialog__drag-handle {
     margin-left: calc(-1 * var(--spacing-2xs, 0.625rem));
   }
 
-  .profile-edit-dialog__row--language > .profile-edit-dialog__field {
+  .profile-edit-dialog__row--language > .profile-edit-dialog__field--language-name {
     margin-left: calc(-1 * var(--spacing-xxs, 0.3125rem));
   }
 
-  .profile-edit-dialog__row--language > .profile-edit-dialog__actions--edge {
+  .profile-edit-dialog__actions--language {
     margin-left: 0;
   }
 
   .profile-edit-dialog__row--language > solid-ui-button.profile-edit-dialog__drag-handle,
-  .profile-edit-dialog__row--language > .profile-edit-dialog__actions--edge > solid-ui-button.profile-edit-dialog__delete-button {
+  .profile-edit-dialog__actions--language > solid-ui-button.profile-edit-dialog__delete-button {
     min-width: 1.5rem;
     min-height: 1.5rem;
     --button-height-md: 1.5rem;
@@ -1637,16 +1641,16 @@ solid-ui-button.profile-edit-dialog__drag-handle {
     margin-left: calc(-1 * var(--spacing-2xs, 0.625rem));
   }
 
-  .profile-edit-dialog__row--language > .profile-edit-dialog__field {
+  .profile-edit-dialog__row--language > .profile-edit-dialog__field--language-name {
     margin-left: calc(-1 * var(--spacing-xxs, 0.3125rem));
   }
 
-  .profile-edit-dialog__row--language > .profile-edit-dialog__actions--edge {
+  .profile-edit-dialog__actions--language {
     margin-left: 0;
   }
 
   .profile-edit-dialog__row--language > solid-ui-button.profile-edit-dialog__drag-handle,
-  .profile-edit-dialog__row--language > .profile-edit-dialog__actions--edge > solid-ui-button.profile-edit-dialog__delete-button {
+  .profile-edit-dialog__actions--language > solid-ui-button.profile-edit-dialog__delete-button {
     min-width: 1.5rem;
     min-height: 1.5rem;
     --button-height-md: 1.5rem;

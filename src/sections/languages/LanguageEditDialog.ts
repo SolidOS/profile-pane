@@ -380,7 +380,7 @@ function renderLanguageInputRow({
       >
         <span slot="icon" aria-hidden="true">${bentoIcon}</span>
       </solid-ui-button>
-      <label aria-label=${`${label} Language`} class="label profile-edit-dialog__field">
+      <label aria-label=${`${label} Language`} class="label profile-edit-dialog__field profile-edit-dialog__field--language-name">
         <solid-ui-combobox
           aria-label=${`${label} Language`}
           data-language-row-index=${String(index)}
@@ -397,7 +397,7 @@ function renderLanguageInputRow({
           <option value="Fluent">Fluent</option>
         </select>
       </label>
-      <div class="profile-edit-dialog__actions profile-edit-dialog__actions--edge">
+      <div class="profile-edit-dialog__actions profile-edit-dialog__actions--edge profile-edit-dialog__actions--language">
         <solid-ui-button
           type="button"
           variant="icon"

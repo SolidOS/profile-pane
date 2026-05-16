@@ -10,7 +10,7 @@
 ## Current Tasks
 - [x] Project empty padding should be `15px` on mobile.
 - [x] In the heading edit dialog on mobile, phone number + phone type should be on one row, and email + email type should be on one row.
-- [ ] Reorganize the language section CSS, remove utility classes, and minimize duplication where possible.
+- [x] Reorganize the language section CSS, remove utility classes, and minimize duplication where possible.
 - [ ] On mobile, the social section edit button should sit to the left of the chevron like the other sections instead of above it.
 
 ## Notes
