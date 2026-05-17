@@ -42,7 +42,7 @@ export const SocialCard = (
         SocialData: SocialPresentation
       >
         <nav aria-label="Social media profiles">
-          <ul class="social-card__list list-reset" role="list">
+          <ul class="social-card__list" role="list">
             ${accounts.map(account => renderAccount(account))}
           </ul>
         </nav>
