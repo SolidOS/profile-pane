@@ -222,6 +222,49 @@ describe('Social selectors and mutations', () => {
     expect(expanded.map((node: any) => node.value)).toEqual([instagramNode.value, facebookNode.value])
   })
 
+  it('returns reordered social accounts from the selector after saving orderedRows', async () => {
+    const store = graph() as any
+    const subject = sym('https://example.com/profile/card#me')
+    const doc = subject.doc()
+
+    const facebookNode = sym('https://example.com/profile/card#id1111111111111')
+    const instagramNode = sym('https://example.com/profile/card#id2222222222222')
+    const facebookClass = sym('https://solidos.github.io/profile-pane/src/ontology/socialMedia.ttl#FacebookAccount')
+    const instagramClass = sym('https://solidos.github.io/profile-pane/src/ontology/socialMedia.ttl#InstagramAccount')
+
+    store.updater = {
+      update: (deletions: any[], insertions: any[], callback: Function) => {
+        deletions.forEach((statement) => store.remove(st(statement.subject, statement.predicate, statement.object, statement.why)))
+        insertions.forEach((statement) => store.add(statement.subject, statement.predicate, statement.object, statement.why))
+        callback('', true)
+      }
+    }
+
+    store.add(subject, ns.foaf('account'), new Collection([facebookNode, instagramNode]), doc)
+    store.add(facebookNode, ns.rdf('type'), facebookClass, doc)
+    store.add(facebookNode, ns.foaf('accountName'), literal('sharon-facebook'), doc)
+    store.add(instagramNode, ns.rdf('type'), instagramClass, doc)
+    store.add(instagramNode, ns.foaf('accountName'), literal('sharon-instagram'), doc)
+
+    await processSocialMutations(
+      store,
+      subject,
+      { create: [], update: [], remove: [] } as any,
+      [
+        { name: 'Instagram', icon: '', homepage: 'https://www.instagram.com/sharon-instagram', entryNode: instagramNode.value, status: 'existing' },
+        { name: 'Facebook', icon: '', homepage: 'https://www.facebook.com/sharon-facebook', entryNode: facebookNode.value, status: 'existing' }
+      ] as any
+    )
+
+    const accounts = presentSocial(subject, store).accounts
+
+    expect(accounts.map((account) => account.entryNode.value)).toEqual([instagramNode.value, facebookNode.value])
+    expect(accounts.map((account) => account.homepage)).toEqual([
+      'https://www.instagram.com/sharon-instagram',
+      'https://www.facebook.com/sharon-facebook'
+    ])
+  })
+
   it('writes other accounts with homepage and icon instead of accountName', async () => {
     const store = graph() as any
     const subject = sym('https://example.com/profile/card#me')

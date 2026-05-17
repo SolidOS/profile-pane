@@ -209,6 +209,46 @@ describe('Languages selectors and mutations', () => {
     expect(store.statementsMatching(legacyEntry1, ns.rdf('type'), ns.schema('Language'), doc)).toHaveLength(0)
   })
 
+  it('returns reordered languages from the selector after saving orderedRows', async () => {
+    const store = graph() as any
+    const subject = sym('https://example.com/profile/card#me')
+    const doc = subject.doc()
+    const englishEntry = sym('https://example.com/profile/card#id-en')
+    const frenchEntry = sym('https://example.com/profile/card#id-fr')
+
+    store.add(subject, ns.schema('knowsLanguage'), new Collection([englishEntry, frenchEntry]), doc)
+    store.add(englishEntry, ns.solid('publicId'), sym('https://www.w3.org/ns/iana/language-code/en'), doc)
+    store.add(sym('https://www.w3.org/ns/iana/language-code/en'), ns.schema('name'), literal('English', 'en'), doc)
+    store.add(frenchEntry, ns.solid('publicId'), sym('https://www.w3.org/ns/iana/language-code/fr'), doc)
+    store.add(sym('https://www.w3.org/ns/iana/language-code/fr'), ns.schema('name'), literal('French', 'en'), doc)
+
+    store.updater = {
+      update: (deletions: any[], insertions: any[], callback: Function) => {
+        deletions.forEach((statement) => store.remove(st(statement.subject, statement.predicate, statement.object, statement.why)))
+        insertions.forEach((statement) => store.add(statement.subject, statement.predicate, statement.object, statement.why))
+        callback('', true)
+      }
+    }
+
+    await processLanguageMutations(
+      store,
+      subject,
+      { create: [], update: [], remove: [] } as any,
+      [
+        { name: 'French', publicId: 'https://www.w3.org/ns/iana/language-code/fr', proficiency: '', entryNode: frenchEntry.value, status: 'existing' },
+        { name: 'English', publicId: 'https://www.w3.org/ns/iana/language-code/en', proficiency: '', entryNode: englishEntry.value, status: 'existing' }
+      ] as any
+    )
+
+    const languages = presentLanguages(subject, store)
+
+    expect(languages.map((item) => item.publicId)).toEqual([
+      'https://www.w3.org/ns/iana/language-code/fr',
+      'https://www.w3.org/ns/iana/language-code/en'
+    ])
+    expect(languages.map((item) => item.name)).toEqual(['French', 'English'])
+  })
+
   it('falls back to updateDav when update fails with PATCH error', async () => {
     const store = graph() as any
     const subject = sym('https://example.com/profile/card#me')
