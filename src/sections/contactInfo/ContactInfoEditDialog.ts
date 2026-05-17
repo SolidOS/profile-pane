@@ -251,7 +251,7 @@ function renderContactPhoneInputRow({
             data-contact-field="value"
             data-entry-node=${phoneRow?.entryNode || ''}
             data-row-status=${phoneRow?.status || 'n/a'}
-            placeholder="Phone Number"
+            placeholder=${label}
             autocomplete="tel-national"
             inputmode="tel"
             @input=${handleValueInput}
@@ -726,7 +726,34 @@ function createContactInfoEditForm(contactInfo: ContactInfo, viewerMode: ViewerM
   return { form, formState }
 }
 
-function validateContactInfoBeforeSave(): string | null {
+function isValidEmailAddress(value: string): boolean {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)
+}
+
+function isValidPhoneNumber(value: string): boolean {
+  return /^\d+$/.test(value)
+}
+
+function validateContactInfoBeforeSave(formState: ContactInfoFormState): string | null {
+  const visiblePhones = formState.phones.filter((phone) => phone.status !== 'deleted')
+  for (const [index, phone] of visiblePhones.entries()) {
+    if (!rowHasContent(phone)) continue
+
+    const { localNumber } = splitPhoneValue(phone.value || '')
+    if (!isValidPhoneNumber(localNumber)) {
+      return `Phone Number ${index + 1} should contain only numbers.`
+    }
+  }
+
+  const visibleEmails = formState.emails.filter((email) => email.status !== 'deleted')
+  for (const [index, email] of visibleEmails.entries()) {
+    if (!rowHasContent(email)) continue
+
+    if (!isValidEmailAddress(email.value || '')) {
+      return `Email address ${index + 1} must be a valid email address.`
+    }
+  }
+
   return null
 }
 
@@ -764,7 +791,7 @@ export async function createContactInfoEditDialog(
       if (viewerMode !== 'owner') {
         return ownerLoginRequiredDialogMessageText
       }
-      return validateContactInfoBeforeSave()
+      return validateContactInfoBeforeSave(formState)
     },
     onSave: async () => {
       const phoneOps = summarizeRowOps(formState.phones, rowHasContent)

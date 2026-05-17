@@ -69,7 +69,7 @@ describe('Edit dialog phone value regression', () => {
     document.body.innerHTML = ''
   })
 
-  it('saves the heading phone exactly as typed when no country code is entered', async () => {
+  it('shows a numbered validation error when the heading phone contains spaces', async () => {
     const store = graph() as any
     const subject = sym('https://example.com/profile/card#me')
     const profileData: ProfileDetails = {
@@ -86,12 +86,14 @@ describe('Edit dialog phone value regression', () => {
     dispatchInput(phoneInput as HTMLInputElement, '555 123 4567')
 
     getSharedDialogSaveButton(document)?.click()
-    await resultPromise
+    await flushUi()
 
-    expect(mockProcessHeadingMutations).toHaveBeenCalledTimes(1)
-    const plan = mockProcessHeadingMutations.mock.calls[0][2]
-    expect(plan.phoneOps.create).toHaveLength(1)
-    expect(plan.phoneOps.create[0]?.value).toBe('555 123 4567')
+    const errorBox = document.querySelector('#modal-error') as HTMLElement | null
+    expect(errorBox?.textContent).toBe('Phone Number 1 should contain only numbers.')
+    expect(mockProcessHeadingMutations).not.toHaveBeenCalled()
+
+    getSharedDialogCancelButton(document)?.click()
+    await resultPromise
   })
 
   it('keeps the uploaded heading photo visible in the preview frame', async () => {
@@ -154,7 +156,39 @@ describe('Edit dialog phone value regression', () => {
     await resultPromise
   })
 
-  it('saves the contact info phone exactly as typed when no country code is entered', async () => {
+  it('persists default heading phone and email types when existing values have no stored type', async () => {
+    const store = graph() as any
+    const subject = sym('https://example.com/profile/card#me')
+    const profileData: ProfileDetails = {
+      entryNode: subject,
+      name: 'Jane Doe',
+      primaryPhone: {
+        entryNode: sym('https://example.com/profile/card#phone'),
+        type: undefined as any,
+        valueNode: sym('tel:5551234567')
+      },
+      primaryEmail: {
+        entryNode: sym('https://example.com/profile/card#email'),
+        type: undefined as any,
+        valueNode: sym('mailto:jane@example.com')
+      }
+    }
+
+    const resultPromise = createHeadingEditDialog(createDialogEvent(), store, subject, profileData, 'owner')
+    await flushUi()
+
+    getSharedDialogSaveButton(document)?.click()
+    await resultPromise
+
+    expect(mockProcessHeadingMutations).toHaveBeenCalledTimes(1)
+    const plan = mockProcessHeadingMutations.mock.calls[0][2]
+    expect(plan.phoneOps.update).toHaveLength(1)
+    expect(plan.phoneOps.update[0]?.type).toBe('Cell')
+    expect(plan.emailOps.update).toHaveLength(1)
+    expect(plan.emailOps.update[0]?.type).toBe('Home')
+  })
+
+  it('shows a numbered validation error when the contact info phone contains spaces', async () => {
     const store = graph() as any
     const subject = sym('https://example.com/profile/card#me')
     const resultPromise = createContactInfoEditDialog(
@@ -172,11 +206,13 @@ describe('Edit dialog phone value regression', () => {
     dispatchInput(phoneInput as HTMLInputElement, '555 123 4567')
 
     getSharedDialogSaveButton(document)?.click()
-    await resultPromise
+    await flushUi()
 
-    expect(mockProcessContactInfoMutations).toHaveBeenCalledTimes(1)
-    const plan = mockProcessContactInfoMutations.mock.calls[0][2]
-    expect(plan.phoneOps.create).toHaveLength(1)
-    expect(plan.phoneOps.create[0]?.value).toBe('555 123 4567')
+    const errorBox = document.querySelector('#modal-error') as HTMLElement | null
+    expect(errorBox?.textContent).toBe('Phone Number 1 should contain only numbers.')
+    expect(mockProcessContactInfoMutations).not.toHaveBeenCalled()
+
+    getSharedDialogCancelButton(document)?.click()
+    await resultPromise
   })
 })

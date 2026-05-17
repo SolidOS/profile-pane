@@ -63,6 +63,8 @@ type HeadingFormState = {
   email: ContactPointRow
   phone: ContactPointRow
   address: ContactAddressRow
+  emailTypeWasMissing: boolean
+  phoneTypeWasMissing: boolean
   imagePreviewSrc: string
   clearImagePreview: () => void
 }
@@ -148,6 +150,16 @@ function getHeadingContactTypeValue(
   return normalizeHeadingContactTypeValue(row?.type || '', getHeadingContactTypeOptions(kind))
 }
 
+function withDefaultHeadingContactType(
+  row: ContactPointRow,
+  kind: HeadingContactTypeKind
+): ContactPointRow {
+  return {
+    ...row,
+    type: normalizeHeadingContactTypeValue(row.type || '', getHeadingContactTypeOptions(kind))
+  }
+}
+
 function initializeHeadingContactTypeSelects(form: HTMLFormElement, formState: HeadingFormState): void {
   const selectElements = form.querySelectorAll('solid-ui-select[data-heading-contact-type-kind]') as NodeListOf<HeadingContactTypeSelectElement>
 
@@ -224,6 +236,8 @@ function toFormState(profileData: ProfileDetails): HeadingFormState {
   const primaryEmail = profileData.primaryEmail
   const primaryPhone = profileData.primaryPhone
   const primaryAddress = profileData.primaryAddress
+  const emailTypeWasMissing = !normalizeEmailTypeForEdit(primaryEmail?.type)
+  const phoneTypeWasMissing = !normalizePhoneTypeForEdit(primaryPhone?.type)
 
   const normalizedEmailType = normalizeEmailTypeForEdit(primaryEmail?.type)
   const normalizedPhoneType = normalizePhoneTypeForEdit(primaryPhone?.type)
@@ -258,6 +272,8 @@ function toFormState(profileData: ProfileDetails): HeadingFormState {
       email: (email) ? email : { value: '', type: '', entryNode: '', status: 'new' },
       phone: (phone) ? phone : { value: '', type: '', entryNode: '', status: 'new' },
       address: (address) ? address : { streetAddress: '', locality: '', region: '', postalCode: '', countryName: '', type: '', entryNode: '', status: 'new' },
+      emailTypeWasMissing,
+      phoneTypeWasMissing,
       imagePreviewSrc: '',
       clearImagePreview: () => undefined
     }
@@ -335,8 +351,8 @@ type ContactAddressInputRowProps = {
 
 function mapEmailOpsForSave(ops: { create: ContactPointRow[], update: ContactPointRow[], remove: ContactPointRow[] }) {
   const mapRow = (row: ContactPointRow): ContactPointRow => ({
-    ...row,
-    type: toSavedHeadingEmailType(row.type)
+    ...withDefaultHeadingContactType(row, 'email'),
+    type: toSavedHeadingEmailType(withDefaultHeadingContactType(row, 'email').type)
   })
 
   return {
@@ -348,8 +364,8 @@ function mapEmailOpsForSave(ops: { create: ContactPointRow[], update: ContactPoi
 
 function mapPhoneOpsForSave(ops: { create: ContactPointRow[], update: ContactPointRow[], remove: ContactPointRow[] }) {
   const mapRow = (row: ContactPointRow): ContactPointRow => ({
-    ...row,
-    type: toSavedHeadingPhoneType(row.type)
+    ...withDefaultHeadingContactType(row, 'phone'),
+    type: toSavedHeadingPhoneType(withDefaultHeadingContactType(row, 'phone').type)
   })
 
   return {
@@ -359,11 +375,37 @@ function mapPhoneOpsForSave(ops: { create: ContactPointRow[], update: ContactPoi
   }
 }
 
+function summarizeHeadingContactOps(
+  row: ContactPointRow,
+  kind: HeadingContactTypeKind,
+  typeWasMissing: boolean
+) {
+  const ops = summarizeRowOps([row], rowHasContent)
+
+  if (
+    typeWasMissing &&
+    row.entryNode &&
+    row.status === 'existing' &&
+    rowHasContent(row) &&
+    ops.create.length === 0 &&
+    ops.update.length === 0 &&
+    ops.remove.length === 0
+  ) {
+    return {
+      create: ops.create,
+      update: [withDefaultHeadingContactType({ ...row, status: 'modified' }, kind)],
+      remove: ops.remove
+    }
+  }
+
+  return ops
+}
+
 function renderContactPhoneInput({
   phone
 }: ContactPhoneInputRowProps) {
-  const label = 'Phone Number'
-  const typeLabel = 'Phone Type'
+  const label = 'Phone Number 1'
+  const typeLabel = 'Phone Type 1'
   const inputName = 'phone-value'
   const splitValue = splitPhoneValue(phone?.value || '')
   let selectedDialCode = splitValue.dialCode
@@ -396,7 +438,7 @@ function renderContactPhoneInput({
             data-contact-field="value"
             data-entry-node=${phone?.entryNode || ''}
             data-row-status=${phone?.status || 'n/a'}
-            placeholder="Phone Number"
+            placeholder=${label}
             autocomplete="tel-national"
             inputmode="tel"
             @input=${handleValueInput}
@@ -942,7 +984,24 @@ function createHeadingEditForm(
   return { form, formState }
 }
 
-function validateHeadingDataBeforeSave(): string | null {
+function isValidHeadingEmailAddress(value: string): boolean {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)
+}
+
+function isValidHeadingPhoneNumber(value: string): boolean {
+  return /^\d+$/.test(value)
+}
+
+function validateHeadingDataBeforeSave(formState: HeadingFormState): string | null {
+  const { localNumber } = splitPhoneValue(formState.phone?.value || '')
+  if (rowHasContent(formState.phone) && !isValidHeadingPhoneNumber(localNumber)) {
+    return 'Phone Number 1 should contain only numbers.'
+  }
+
+  if (rowHasContent(formState.email) && !isValidHeadingEmailAddress(formState.email?.value || '')) {
+    return 'Email address must be a valid email address.'
+  }
+
   return null
 }
 
@@ -976,8 +1035,8 @@ export async function createHeadingEditDialog(
     cancelLabel: dialogCancelLabelText,
     shouldCloseWithoutSave: () => {
       const basicInfoOps = summarizeRowOps([formState.basicInfo], rowHasContent)
-      const phoneOps = summarizeRowOps([formState.phone], rowHasContent)
-      const emailOps = summarizeRowOps([formState.email], rowHasContent)
+      const phoneOps = summarizeHeadingContactOps(formState.phone, 'phone', formState.phoneTypeWasMissing)
+      const emailOps = summarizeHeadingContactOps(formState.email, 'email', formState.emailTypeWasMissing)
       const addressOps = summarizeRowOps([formState.address], rowHasContent)
 
       return (
@@ -991,11 +1050,11 @@ export async function createHeadingEditDialog(
       if (viewerMode !== 'owner') {
         return ownerLoginRequiredDialogMessageText
       }
-      return validateHeadingDataBeforeSave()
+      return validateHeadingDataBeforeSave(formState)
     },
     onSave: async () => {
-      const phoneOps = summarizeRowOps([formState.phone], rowHasContent)
-      const emailOps = summarizeRowOps([formState.email], rowHasContent)
+      const phoneOps = summarizeHeadingContactOps(formState.phone, 'phone', formState.phoneTypeWasMissing)
+      const emailOps = summarizeHeadingContactOps(formState.email, 'email', formState.emailTypeWasMissing)
       const plan: HeadingMutationPlan = {
         basicOps: summarizeRowOps([formState.basicInfo], rowHasContent),
         phoneOps: mapPhoneOpsForSave(phoneOps),
