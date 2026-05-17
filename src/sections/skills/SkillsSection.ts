@@ -206,7 +206,7 @@ function renderOwnerEmptySkillsSection(
     <section 
       aria-labelledby="skills-heading" 
       data-profile-section="skills"
-      class="profile__section--empty profile-section-collapsible profile-section-collapsible--inline-mobile-actions" 
+      class="profile__section--empty profile__section--empty-sidebar profile-section-collapsible profile-section-collapsible--inline-mobile-actions" 
       role="region"
       tabindex="-1"
       data-expanded="false"

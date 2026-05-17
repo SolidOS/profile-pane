@@ -169,7 +169,7 @@ function renderOwnerEmptyBioSection(
     <section 
       aria-labelledby="bio-heading" 
       data-profile-section="bio"
-      class="profile__section--empty bio-section--empty" 
+      class="profile__section--empty profile__section--empty-main bio-section--empty" 
       role="region"
       tabindex="-1"
     >

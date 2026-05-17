@@ -193,7 +193,7 @@ function renderOwnerEmptyResumeSection(
     <section
       aria-labelledby="resume-heading" 
       data-profile-section="resume"
-      class="profile__section--empty profile-section-collapsible profile-section-collapsible--inline-mobile-actions profile-section-collapsible--empty-mobile-no-edit" 
+      class="profile__section--empty profile__section--empty-main profile-section-collapsible profile-section-collapsible--inline-mobile-actions profile-section-collapsible--empty-mobile-no-edit" 
       role="region"
       tabindex="-1"
       data-expanded="false"

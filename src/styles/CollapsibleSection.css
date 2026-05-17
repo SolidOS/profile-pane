@@ -15,7 +15,6 @@
 }
 
 .profile-section-collapsible__content {
-  margin-top: var(--spacing-2xs, 0.625rem);
   width: 100%;
   max-width: 100%;
   min-width: 0;

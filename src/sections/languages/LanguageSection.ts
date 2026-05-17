@@ -114,7 +114,7 @@ function renderOwnerEmptyLanguagesSection(
     <section 
       aria-labelledby="languages-heading" 
       data-profile-section="languages"
-      class="profile__section--empty profile-section-collapsible profile-section-collapsible--inline-mobile-actions" 
+      class="profile__section--empty profile__section--empty-sidebar profile-section-collapsible profile-section-collapsible--inline-mobile-actions" 
       role="region"
       tabindex="-1"
       data-expanded="false"

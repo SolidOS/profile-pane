@@ -304,6 +304,12 @@ solid-ui-button.profile-action-text:focus-visible::part(button) {
   border-radius: var(--border-radius-base);
 }
 
+.profile-grid .profile__section.profile-section-collapsible {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg, 1.5625rem);
+}
+
 .profile-grid .profile__section--empty {
   padding: var(--spacing-1xl, 2.5rem) var(--spacing-lg, 1.5625rem);
 }
@@ -358,11 +364,19 @@ solid-ui-button.profile-action-text:focus-visible::part(button) {
   gap: var(--spacing-2xs, 0.625rem);
 }
 
-.profile-grid [data-profile-section='bio'].profile__section--empty {
+.profile-grid .profile__intro-main > .profile__section--empty.profile__section--empty-main,
+.profile-grid .profile__main > .profile__section--empty.profile__section--empty-main {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: var(--spacing-lg, 1.5625rem);
+}
+
+.profile-grid .profile__intro-sidebar > .profile__section--empty.profile__section--empty-sidebar,
+.profile-grid .profile__sidebar-content > .profile__section--empty.profile__section--empty-sidebar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .profile-grid .profile__empty-state-content > h2,
@@ -375,8 +389,8 @@ solid-ui-button.profile-action-text:focus-visible::part(button) {
   font-weight: var(--font-weight-md, 500);
 }
 
-.profile-grid .profile__empty-state-content > .profile__empty-state-message {
-  margin: 0 0 var(--spacing-md, 1.25rem);
+.profile-grid .profile__section--empty.profile__section--empty-main .profile__empty-state-message {
+  margin-bottom: 0;
 }
 
 .profile-grid .profile__section--empty .profile-section-collapsible__content {
@@ -385,9 +399,17 @@ solid-ui-button.profile-action-text:focus-visible::part(button) {
   align-items: center;
 }
 
+.profile-grid .profile__section--empty.profile__section--empty-main .profile-section-collapsible__content {
+  gap: var(--spacing-lg, 1.5625rem);
+}
+
 .profile-grid [data-profile-section='projects'].profile__section--empty > .profile-section-collapsible__header,
 .profile-grid [data-profile-section='resume'].profile__section--empty > .profile-section-collapsible__header {
   display: none;
+}
+
+.profile-grid .profile__section--empty.profile__section--empty-main > .profile-section-collapsible__content > .profile__empty-state-content {
+  gap: var(--spacing-2xs, 0.625rem);
 }
 
 .profile-grid [data-profile-section='projects'].profile__section--empty > .profile-section-collapsible__content,
@@ -520,9 +542,8 @@ solid-ui-button.profile-action-text:focus-visible::part(button) {
 }
 
 /* App-driven mobile: empty-state presentation */
-:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid [data-profile-section='projects'].profile__section--empty,
-:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid [data-profile-section='resume'].profile__section--empty {
-  gap: 0;
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__section--empty.profile-section-collapsible {
+  gap: var(--spacing-2xs, 0.625rem);
 }
 
 :is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid [data-profile-section='projects'].profile__section--empty > .profile-section-collapsible__header,
@@ -713,9 +734,8 @@ solid-ui-button.profile-action-text:focus-visible::part(button) {
     background: transparent;
   }
 
-  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid [data-profile-section='projects'].profile__section--empty,
-  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid [data-profile-section='resume'].profile__section--empty {
-    gap: 0;
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid .profile__section--empty.profile-section-collapsible {
+    gap: var(--spacing-2xs, 0.625rem);
   }
 
   :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid [data-profile-section='projects'].profile__section--empty > .profile-section-collapsible__header,
@@ -845,9 +865,8 @@ solid-ui-button.profile-action-text:focus-visible::part(button) {
     background: transparent;
   }
 
-  .profile-grid [data-profile-section='projects'].profile__section--empty,
-  .profile-grid [data-profile-section='resume'].profile__section--empty {
-    gap: 0;
+  .profile-grid .profile__section--empty.profile-section-collapsible {
+    gap: var(--spacing-2xs, 0.625rem);
   }
 
   .profile-grid [data-profile-section='projects'].profile__section--empty > .profile-section-collapsible__header,
