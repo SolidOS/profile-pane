@@ -50,7 +50,7 @@ export const renderHeadingSection = async (
             ${Image(resolvedImageSrc, name)}
           </div>
           <div class="profile__info">
-            <header class="profile__header-bar mb-md">
+            <header class="profile__header-bar">
               <div class="profile__identity" role="group" aria-label="Name and pronouns">
                 <h1 id="profile-name" class="profile__name">${name}</h1>
                 <span class="profile__pronouns">${pronouns ? `(${pronouns})` : ''}</span>
@@ -107,7 +107,7 @@ export const renderHeadingSection = async (
 
 const Line = (value, prefix: TemplateResult | symbol | string = nothing, label: string = '') =>
   value ? html`
-    <div class="profile__item flex-row align-center ${label ? '' : 'profile__item--valueOnly'}">
+    <div class="profile__item ${label ? '' : 'profile__item--valueOnly'}">
       ${label ? html`<span class="profile__label">${label}</span>` : nothing}
       <span class="profile__value">
         ${prefix !== '' && prefix !== nothing ? html`<span class="profile__prefix-icon" aria-hidden="true">${prefix}</span>` : nothing}
