@@ -159,7 +159,7 @@ function renderProject(
             variant="secondary"
             size="sm"
             label="Following"
-            class="project-card__follow-button gap-xxs"
+            class="project-card__follow-button"
             aria-label="Unfollow project"
             @click=${handleUnfollow}
           >
@@ -223,7 +223,7 @@ function renderOwnerEmptyProjectSection(
     <section 
       aria-labelledby="projects-heading" 
       data-profile-section="projects"
-      class="profile__section--empty profile-section-collapsible profile-section-collapsible--inline-mobile-actions profile-section-collapsible--empty-mobile-no-edit" 
+      class="profile__section--empty profile__section--empty-main profile-section-collapsible profile-section-collapsible--inline-mobile-actions profile-section-collapsible--empty-mobile-no-edit" 
       role="region"
       tabindex="-1"
       data-expanded="false"

@@ -3,7 +3,12 @@
 .profile__section[data-profile-section='projects'],
 .profile__section--empty[data-profile-section='projects'] {
   --project-card-rail-gap: var(--spacing-md, 1rem);
+  --project-card-rail-wrap: nowrap;
+  --project-card-rail-overflow-x: auto;
+  --project-card-rail-scroll-snap-type: x proximity;
   --project-card-flex-basis: min(420px, 88vw);
+  --project-card-flex: 0 0 var(--project-card-flex-basis);
+  --project-card-max-width: none;
   --project-card-scrollbar-height: 0.5rem;
   --project-card-thumb-column-width: 88px;
   --project-card-thumb-size: 4.125rem;
@@ -11,27 +16,33 @@
   --project-card-organization-margin-top: var(--spacing-xxs, 0.3125rem);
   --project-card-meta-margin-top: var(--spacing-xs, 0.75rem);
   --project-card-meta-font-size: 0.86rem;
-  --project-card-footer-margin-top: var(--spacing-sm, 0.938rem);
   --project-card-footer-padding: var(--spacing-xs, 0.75rem);
   --project-card-more-button-gap: var(--spacing-xs, 0.375rem);
+  --project-card-more-button-width: auto;
+  --project-card-more-button-part-width: auto;
   --project-card-mobile-more-button-margin-top: var(--spacing-xs, 0.75rem);
+  --project-card-more-button-margin-top: 0;
+  --project-card-collapsed-extra-display: flex;
+  --project-card-more-icon-transform: rotate(0deg);
 }
 
 /* Rail and cards */
 .project-card__rail {
   display: flex;
   gap: var(--project-card-rail-gap);
-  overflow-x: auto;
+  overflow-x: var(--project-card-rail-overflow-x, auto);
   padding: 0;
   margin: 0;
   list-style: none;
-  scroll-snap-type: x proximity;
+  flex-wrap: var(--project-card-rail-wrap, nowrap);
+  scroll-snap-type: var(--project-card-rail-scroll-snap-type, x proximity);
 }
 
 solid-ui-button.project-card__follow-button {
   width: auto;
   min-width: 0;
   max-width: none;
+  gap: var(--project-card-follow-label-gap);
   --button-border-width: var(--border-width-sm, 0.1rem);
   --button-font-size-sm: var(--font-size-sm, 0.875rem);
   --button-font-weight: var(--font-weight-md, 500);
@@ -104,7 +115,8 @@ solid-ui-button.project-card__follow-button[data-loading='true'] .loading-spinne
 .project-card {
   display: flex;
   flex-direction: column;
-  flex: 0 0 var(--project-card-flex-basis);
+  flex: var(--project-card-flex, 0 0 var(--project-card-flex-basis));
+  max-width: var(--project-card-max-width, none);
   scroll-snap-align: start;
   border-radius: var(--border-radius-md, 0.5rem);
   border: var(--border-width-sm, 0.1rem) solid var(--color-border, var(--gray-200, #E5E7EB));
@@ -227,8 +239,11 @@ solid-ui-button.project-card__follow-button[data-loading='true'] .loading-spinne
 }
 
 .project-card__footer {
-  margin-top: var(--project-card-footer-margin-top);
-  padding: var(--project-card-footer-padding, var(--spacing-xs, 0.75rem));
+  display: flex;
+  justify-content: flex-start;
+  align-self: stretch;
+  margin-top: auto;
+  padding: var(--spacing-sm, 0.938rem) 0 0;
 }
 
 .profile__section[data-profile-section='projects'] .profile-section-inline-error {
@@ -246,6 +261,8 @@ solid-ui-button.project-card__follow-button[data-loading='true'] .loading-spinne
 /* Action buttons */
 
 solid-ui-button.project-card__more-button {
+  width: var(--project-card-more-button-width, auto);
+  margin-top: var(--project-card-more-button-margin-top, 0);
   --button-height-sm: 0;
   --button-padding-x-sm: 0;
   --button-background: transparent;
@@ -260,12 +277,14 @@ solid-ui-button.project-card__more-button {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  transform: var(--project-card-more-icon-transform, rotate(0deg));
   transition: transform var(--animation-duration, 0.2s) ease;
 }
 
 solid-ui-button.project-card__more-button::part(button) {
   align-items: center;
   justify-content: center;
+  width: var(--project-card-more-button-part-width, auto);
   gap: var(--project-card-more-button-gap, 0.375rem);
   padding: 0;
   border: 0;
@@ -277,64 +296,52 @@ solid-ui-button.project-card__more-button::part(button) {
 }
 
 /* Compact layout */
-:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .project-card__rail {
-  flex-wrap: wrap;
-  overflow-x: visible;
-  scroll-snap-type: none;
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile__section[data-profile-section='projects'],
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile__section--empty[data-profile-section='projects'] {
+  --project-card-rail-wrap: wrap;
+  --project-card-rail-overflow-x: visible;
+  --project-card-rail-scroll-snap-type: none;
+  --project-card-flex: 1 1 100%;
+  --project-card-max-width: 100%;
+  --project-card-more-button-width: 100%;
+  --project-card-more-button-part-width: 100%;
+  --project-card-more-button-margin-top: var(--project-card-mobile-more-button-margin-top, var(--spacing-xs, 0.75rem));
 }
 
-:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .project-card {
-  flex: 1 1 100%;
-  max-width: 100%;
+.profile-section-collapsible[data-mobile-expanded="false"] .project-card:nth-child(n + 3) {
+  display: var(--project-card-collapsed-extra-display, flex);
 }
 
-:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-section-collapsible[data-mobile-expanded="false"] .project-card:nth-child(n + 3) {
-  display: none;
-}
-
-:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] solid-ui-button.project-card__more-button {
-  display: inline-flex;
-  width: 100%;
-  margin-top: var(--project-card-mobile-more-button-margin-top, var(--spacing-xs, 0.75rem));
-}
-
-:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] solid-ui-button.project-card__more-button::part(button) {
-  display: inline-flex;
-  width: 100%;
-}
-
-:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] solid-ui-button.project-card__more-button[data-mobile-expanded="true"] .project-card__more-icon {
-  transform: rotate(180deg);
+solid-ui-button.project-card__more-button[data-mobile-expanded="true"] .project-card__more-icon {
+  --project-card-more-icon-transform: rotate(180deg);
 }
 
 @media (max-width: 576px) {
-  .project-card__rail {
-    flex-wrap: wrap;
-    overflow-x: visible;
-    scroll-snap-type: none;
+  .profile__section[data-profile-section='projects'],
+  .profile__section--empty[data-profile-section='projects'] {
+    --project-card-rail-wrap: wrap;
+    --project-card-rail-overflow-x: visible;
+    --project-card-rail-scroll-snap-type: none;
+    --project-card-flex: 1 1 100%;
+    --project-card-max-width: 100%;
+    --project-card-more-button-width: 100%;
+    --project-card-more-button-part-width: 100%;
+    --project-card-more-button-margin-top: var(--project-card-mobile-more-button-margin-top, var(--spacing-xs, 0.75rem));
+    --project-card-collapsed-extra-display: none;
   }
+}
 
-  .project-card {
-    flex: 1 1 100%;
-    max-width: 100%;
-  }
-
-  .profile-section-collapsible[data-mobile-expanded="false"] .project-card:nth-child(n + 3) {
-    display: none;
-  }
-
-  solid-ui-button.project-card__more-button {
-    display: inline-flex;
-    width: 100%;
-    margin-top: var(--project-card-mobile-more-button-margin-top, var(--spacing-xs, 0.75rem));
-  }
-
-  solid-ui-button.project-card__more-button::part(button) {
-    display: inline-flex;
-    width: 100%;
-  }
-
-  solid-ui-button.project-card__more-button[data-mobile-expanded="true"] .project-card__more-icon {
-    transform: rotate(180deg);
+@container profile-pane (max-width: 576px) {
+  .profile__section[data-profile-section='projects'],
+  .profile__section--empty[data-profile-section='projects'] {
+    --project-card-rail-wrap: wrap;
+    --project-card-rail-overflow-x: visible;
+    --project-card-rail-scroll-snap-type: none;
+    --project-card-flex: 1 1 100%;
+    --project-card-max-width: 100%;
+    --project-card-more-button-width: 100%;
+    --project-card-more-button-part-width: 100%;
+    --project-card-more-button-margin-top: var(--project-card-mobile-more-button-margin-top, var(--spacing-xs, 0.75rem));
+    --project-card-collapsed-extra-display: none;
   }
 }
