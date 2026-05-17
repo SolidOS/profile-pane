@@ -146,8 +146,10 @@ function renderProject(
             ${renderProjectImage(project.imageUrl, project.title || 'Project preview')}
           </div>
           <div class="project-card__content">
-            <p class="project-card__title"><strong>${project.title || project.url}</strong></p>
-            <p class="project-card__organization">${project.orgName || 'Organization unknown'}</p>
+            <div class="project-card__heading-group">
+              <p class="project-card__title">${project.title || project.url}</p>
+              <p class="project-card__organization">${project.orgName || 'Organization unknown'}</p>
+            </div>
             <p class="project-card__category project-card__category--${categoryModifier}">${categoryLabel}</p>
           </div>
         </div>

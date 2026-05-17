@@ -20,15 +20,15 @@
 - [x] On desktop the email type and input are not next to each other. they should be side by side like the phone and phone type.
 - [x] Clean up the skills section CSS: reorganize it, remove duplication where possible, and replace utility classes with specific classes.
 - [x] Clean up the bio section CSS: reorganize it, remove duplication where possible, and replace utility classes with specific classes.
-- [ ] Clean up the heading section CSS: reorganize it, remove duplication where possible, and replace utility classes with specific classes.
-- [ ] Clean up the contact info section CSS: reorganize it, remove duplication where possible, and replace utility classes with specific classes.
-- [ ] Clean up the project section CSS: reorganize it, remove duplication where possible, and replace utility classes with specific classes.
+- [x] Clean up the heading section CSS: reorganize it, remove duplication where possible, and replace utility classes with specific classes.
+- [x] Clean up the contact info section CSS: reorganize it, remove duplication where possible, and replace utility classes with specific classes.
+- [x] Clean up the project section CSS: reorganize it, remove duplication where possible, and replace utility classes with specific classes.
 - [ ] can you check if we have done a pass at cleaning up each sections css files. let me know if there are any more to do and i'll add them to the list.
 - [ ] Do a final utility-class audit so only `sr-only` and `hidden` remain.
 - [ ] when an input is not correct like the phone number for instance put a more descriptive message in the error box instead of just unable to save contacts for instance.  check all dialogs and make sure the input checks make specific error message based on teh error that has happened.  only for mutations should the error just be Unable to save "X" X being the section type. if there are no checks for input at least add one for the phone number to allow numbers only and let the user know without a generic message, maybe it's just an error on the input itself like the ones you had done previously checking if it's a url.
 - [ ] on skills the combobox drop down goes over the dialog footer so that all the values can be seen, can you do htat for all the comboboxes the other seem to go underneath the footer. you'll need to look through all the edit dialog and find the ones that have combobox.  i can think of resume, social, languages, please double check the others just to be sure. maybe do them one by one and i can check each time adn 
 we can then commit them separately.
-- [ ] check project card and make sure styling matches design. I need to do this and give you the details.
+- [x] check project card and make sure styling matches design. I need to do this and give you the details.
 - [ ] the social section on layout = mobile does not have the correct background. can you check the background var used for the other sections and make sure it matches on both desktop and mobile it should match the other sections and again check container, media and layout= mobile so that they are all in line.
 - [ ] use wiki data for the business names in resume.
 - [ ] hide edit button on socialPane in solid-panes don't remove yet because we may want to add it later make a comment in the code about this doesn't match design will revist.
@@ -39,6 +39,7 @@ we can then commit them separately.
 - [ ] I need to test how the ordered list are working in social section and the languages with the new changes in rdflib please let me know i need to do this when you get to it.
 - [ ] again a task for me is to look at solid-logic. I need to bring down the new solid logic  so let me know i need to check this and do this. then i'll need you to set the space up to allow me to make changes there and see them in mashlib.
 - [ ] Revisit the mobile heading pronouns layout and edit-button placement later.
+- [ ] In resume, when tabbing to the company name, highlight the chevron icon differently.
 
 ## Notes
 - Add new items here as they come up.
