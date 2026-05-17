@@ -88,7 +88,7 @@ function renderSkillItem(
       <span class="skills__item-label">${strToUpperCase(detail.name)}</span>
       ${viewerMode === 'owner'
         ? html`
-            <span class="skills__item-tail inline-flex-row">
+            <span class="skills__item-tail">
               <solid-ui-button
                 type="button"
                 variant="icon"
@@ -186,7 +186,7 @@ function renderOwnerEmptySkillsContent(
   return html`
       <div class="profile__empty-state-content" role="group" aria-label="Empty skills section">    
         <div class="skills__empty-icon-wrapper">
-          <span class="skills__empty-icon inline-flex-row">${lighteningIcon}</span>
+          <span class="skills__empty-icon">${lighteningIcon}</span>
         </div>
         <p class="profile__empty-state-message skills__empty-message">
             No skills added yet.

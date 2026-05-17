@@ -41,11 +41,19 @@ solid-ui-button.skills__remove-button {
 }
 
 .skills__item-tail {
+  display: inline-flex;
+  align-items: center;
   white-space: nowrap;
 }
 
 .skills__item-tail::before {
   content: '\00a0';
+}
+
+.skills__empty-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* Remove button */
@@ -106,11 +114,6 @@ solid-ui-button.skills__remove-button[data-loading='true'] {
   font-size: var(--font-size-sm, 0.875rem);
 }
 
-:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .skills__item-tail {
-  display: inline-flex;
-  align-items: center;
-}
-
 :is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .skills__item-tail::before {
   content: none;
 }
@@ -132,11 +135,6 @@ solid-ui-button.skills__remove-button[data-loading='true'] {
 
   .skills__item-label {
     font-size: var(--font-size-sm, 0.875rem);
-  }
-
-  .skills__item-tail {
-    display: inline-flex;
-    align-items: center;
   }
 
   .skills__item-tail::before {
@@ -161,11 +159,6 @@ solid-ui-button.skills__remove-button[data-loading='true'] {
 
   .skills__item-label {
     font-size: var(--font-size-sm, 0.875rem);
-  }
-
-  .skills__item-tail {
-    display: inline-flex;
-    align-items: center;
   }
 
   .skills__item-tail::before {
