@@ -75,7 +75,7 @@ function renderBioSectionContent(
           type="button"
           variant="secondary"
           size="sm"
-          class="profile__action-button profile-action-text flex-center profile-section-collapsible__edit-button"
+          class="profile__action-button profile-action-text bio-section__edit-button profile-section-collapsible__edit-button"
           aria-label="Edit bio details"
           @click=${(event: Event) => {
             return createBioEditDialog(
@@ -169,7 +169,7 @@ function renderOwnerEmptyBioSection(
     <section 
       aria-labelledby="bio-heading" 
       data-profile-section="bio"
-      class="profile__section--empty rounded-md gap-lg" 
+      class="profile__section--empty bio-section--empty" 
       role="region"
       tabindex="-1"
     >

@@ -10,6 +10,20 @@
 	margin: 0;
 	position: relative;
 	isolation: isolate;
+	--bio-description-toggle-top: calc(100% - 1.5em + 0.28em - 11px);
+	--bio-description-toggle-transform: translateY(7px);
+}
+
+.bio-section__edit-button,
+solid-ui-button.bio-section__edit-button {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.bio-section--empty {
+	border-radius: var(--border-radius-md, 0.5rem);
+	gap: var(--spacing-lg, 1.5625rem);
 }
 
 .bio-card__description-text {
@@ -83,9 +97,9 @@ solid-ui-button.bio-card__description-toggle {
 }
 
 .bio-card__description-wrap .bio-card__description-text:not(.bio-card__description-text--expanded) + .bio-card__description-toggle {
-	top: calc(100% - 1.5em + 0.28em - 11px);
+	top: var(--bio-description-toggle-top);
 	bottom: auto;
-	transform: translateY(7px);
+	transform: var(--bio-description-toggle-transform);
 }
 
 .bio-card__description-text--expanded + .bio-card__description-toggle,
@@ -124,17 +138,15 @@ solid-ui-button.bio-card__description-toggle {
 		line-clamp: 2;
 	}
 
-	.bio-card__description-wrap .bio-card__description-text:not(.bio-card__description-text--expanded) + .bio-card__description-toggle {
-		top: calc(100% - 1.5em);
-		bottom: auto;
-		transform: none;
+	.bio-card__description-wrap {
+		--bio-description-toggle-top: calc(100% - 1.5em);
+		--bio-description-toggle-transform: none;
 	}
 }
 
-:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .bio-card__description-wrap .bio-card__description-text:not(.bio-card__description-text--expanded) + .bio-card__description-toggle {
-	top: calc(100% - 1.5em);
-	bottom: auto;
-	transform: none;
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .bio-card__description-wrap {
+	--bio-description-toggle-top: calc(100% - 1.5em);
+	--bio-description-toggle-transform: none;
 }
 
 @media (max-width: 576px) {
@@ -145,9 +157,8 @@ solid-ui-button.bio-card__description-toggle {
 		line-clamp: 2;
 	}
 
-	.bio-card__description-wrap .bio-card__description-text:not(.bio-card__description-text--expanded) + .bio-card__description-toggle {
-		top: calc(100% - 1.5em);
-		bottom: auto;
-		transform: none;
+	.bio-card__description-wrap {
+		--bio-description-toggle-top: calc(100% - 1.5em);
+		--bio-description-toggle-transform: none;
 	}
 }

@@ -19,8 +19,9 @@
 - [x] Clean up the resume section CSS: reorganize it, remove duplication where possible, and replace utility classes with specific classes.
 - [x] On desktop the email type and input are not next to each other. they should be side by side like the phone and phone type.
 - [x] Clean up the skills section CSS: reorganize it, remove duplication where possible, and replace utility classes with specific classes.
-- [ ] Clean up the bio section CSS: reorganize it, remove duplication where possible, and replace utility classes with specific classes.
+- [x] Clean up the bio section CSS: reorganize it, remove duplication where possible, and replace utility classes with specific classes.
 - [ ] Clean up the heading section CSS: reorganize it, remove duplication where possible, and replace utility classes with specific classes.
+- [ ] can you check if we have done a pass at cleaning up each sections css files. let me know if there are any more to do and i'll add them to the list.
 - [ ] Do a final utility-class audit so only `sr-only` and `hidden` remain.
 - [ ] when an input is not correct like the phone number for instance put a more descriptive message in the error box instead of just unable to save contacts for instance.  check all dialogs and make sure the input checks make specific error message based on teh error that has happened.  only for mutations should the error just be Unable to save "X" X being the section type. if there are no checks for input at least add one for the phone number to allow numbers only and let the user know without a generic message, maybe it's just an error on the input itself like the ones you had done previously checking if it's a url.
 - [ ] Clean up the project section CSS: reorganize it, remove duplication where possible, and replace utility classes with specific classes.
