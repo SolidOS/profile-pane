@@ -95,8 +95,9 @@ const RESUME_MONTH_OPTIONS: ResumeOrganizationTypeOption[] = [
   { value: '12', label: 'December' }
 ]
 
-const ESCO_ORGANIZATION_SEARCH_URI = 'https://ec.europa.eu/esco/api/search?language=$(language)&type=occupation&text=$(name)&selectedVersion=v1.2.0'
-const ESCO_ORGANIZATION_SEARCH_LANGUAGE = 'en'
+const WIKIDATA_ORGANIZATION_SEARCH_URI = 'https://www.wikidata.org/w/api.php?action=wbsearchentities&language=$(language)&type=item&limit=$(limit)&format=json&origin=*&search=$(name)'
+const WIKIDATA_ORGANIZATION_SEARCH_LANGUAGE = 'en'
+const WIKIDATA_ORGANIZATION_SEARCH_LIMIT = 8
 
 const RESUME_PRESENT_MONTH_VALUE = '__present__'
 
@@ -108,34 +109,39 @@ function normalizeResumeOrganizationPublicId(value: string): string {
   return sanitizeResumeFieldValue(value)
 }
 
-function buildEscoOrganizationSearchUrl(name: string): string {
-  return ESCO_ORGANIZATION_SEARCH_URI
-    .replace('$(language)', encodeURIComponent(ESCO_ORGANIZATION_SEARCH_LANGUAGE))
+function buildWikidataOrganizationSearchUrl(name: string): string {
+  return WIKIDATA_ORGANIZATION_SEARCH_URI
+    .replace('$(language)', encodeURIComponent(WIKIDATA_ORGANIZATION_SEARCH_LANGUAGE))
+    .replace('$(limit)', encodeURIComponent(String(WIKIDATA_ORGANIZATION_SEARCH_LIMIT)))
     .replace('$(name)', encodeURIComponent(name))
 }
 
 function toResumeOrganizationLabel(result: any): string {
-  return result?.title || result?.searchHit || result?.preferredLabel?.en || result?.uri || ''
+  return result?.label || result?.match?.text || result?.id || ''
 }
 
-async function fetchEscoOrganizationSuggestions(name: string): Promise<ResumeOrganizationSuggestion[]> {
+async function fetchWikidataOrganizationSuggestions(name: string): Promise<ResumeOrganizationSuggestion[]> {
   const query = sanitizeResumeFieldValue(name)
   if (query.length < 2 || typeof fetch !== 'function') return []
 
   try {
-    const response = await fetch(buildEscoOrganizationSearchUrl(query), {
-      headers: { Accept: 'application/json' }
-    })
+    const response = await fetch(buildWikidataOrganizationSearchUrl(query))
     if (!response.ok) return []
 
     const payload = await response.json() as any
-    const results = Array.isArray(payload?._embedded?.results) ? payload._embedded.results : []
+    const results = Array.isArray(payload?.search) ? payload.search : []
     const seen = new Set<string>()
 
     return results
       .map((result: any) => {
         const label = sanitizeResumeFieldValue(toResumeOrganizationLabel(result))
-        const publicId = normalizeResumeOrganizationPublicId(typeof result?.uri === 'string' ? result.uri : '')
+        const publicId = normalizeResumeOrganizationPublicId(
+          typeof result?.concepturi === 'string'
+            ? result.concepturi
+            : typeof result?.url === 'string'
+              ? result.url
+              : ''
+        )
         return { label, publicId }
       })
       .filter((suggestion: ResumeOrganizationSuggestion) => {
@@ -184,7 +190,7 @@ function readResumeOrganizationComboboxChange(event: Event): ResumeOrganizationC
 
 function createResumeOrganizationSuggestionProvider(): (query: string) => Promise<ResumeOrganizationComboboxOption[]> {
   return async (query: string) => {
-    const suggestions = await fetchEscoOrganizationSuggestions(query)
+    const suggestions = await fetchWikidataOrganizationSuggestions(query)
     return suggestions.map(toResumeOrganizationComboboxOption)
   }
 }
