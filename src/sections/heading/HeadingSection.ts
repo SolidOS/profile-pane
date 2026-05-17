@@ -132,7 +132,7 @@ export const Image = (src, alt) => html`
         `
       : nothing}
     <div class="profile__hero-alt" role="img" aria-label="${alt}">
-      <span class="profile__hero-icon inline-flex-row justify-center">${personInCircleIcon}</span>
+      <span class="profile__hero-icon">${personInCircleIcon}</span>
     </div>
   </div>
 `

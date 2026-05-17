@@ -331,6 +331,9 @@
 
 /* Counteracts mashlib alignment so the placeholder icon stays centered. */
 .profile__hero-alt .profile__hero-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   line-height: 0;
 }
 
