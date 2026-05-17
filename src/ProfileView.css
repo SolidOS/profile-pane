@@ -509,12 +509,6 @@ solid-ui-button.profile-action-text:focus-visible::part(button) {
   align-self: stretch;
 }
 
-:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid [data-profile-section='social'].profile__section,
-:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid [data-profile-section='social'].profile__section--empty {
-  border: none;
-  background: transparent;
-}
-
 /* App-driven mobile: width and sidebar padding overrides */
 :is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__sidebar-content,
 :is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__intro-sidebar > .profile__section,
@@ -731,13 +725,6 @@ solid-ui-button.profile-action-text:focus-visible::part(button) {
     padding: var(--profile-mobile-section-padding);
   }
 
-  /* Viewport stacked: card exceptions */
-  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid [data-profile-section='social'].profile__section,
-  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid [data-profile-section='social'].profile__section--empty {
-    border: none;
-    background: transparent;
-  }
-
   :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid .profile__section.profile-section-collapsible {
     gap: 0;
   }
@@ -864,13 +851,6 @@ solid-ui-button.profile-action-text:focus-visible::part(button) {
   .profile-grid .profile__sidebar-content > [data-profile-section='contact-info'].profile__section,
   .profile-grid .profile__sidebar-content > [data-profile-section='contact-info'].profile__section--empty {
     padding: var(--profile-mobile-section-padding);
-  }
-
-  /* Container stacked: card exceptions */
-  .profile-grid [data-profile-section='social'].profile__section,
-  .profile-grid [data-profile-section='social'].profile__section--empty {
-    border: none;
-    background: transparent;
   }
 
   .profile-grid .profile__section.profile-section-collapsible {
