@@ -95,6 +95,16 @@ function getContactTypeValue(
   return normalizeContactTypeValue(row?.type || '', getContactTypeOptions(kind))
 }
 
+function withDefaultContactType(
+  row: ContactPointRow,
+  kind: ContactTypeSelectKind
+): ContactPointRow {
+  return {
+    ...row,
+    type: normalizeContactTypeValue(row.type || '', getContactTypeOptions(kind))
+  }
+}
+
 function initializeContactTypeSelects(form: HTMLFormElement, formState: ContactInfoFormState): void {
   const selectElements = form.querySelectorAll('solid-ui-select[data-contact-type-kind]') as NodeListOf<ContactTypeSelectElement>
 
@@ -757,9 +767,20 @@ export async function createContactInfoEditDialog(
       return validateContactInfoBeforeSave()
     },
     onSave: async () => {
+      const phoneOps = summarizeRowOps(formState.phones, rowHasContent)
+      const emailOps = summarizeRowOps(formState.emails, rowHasContent)
+
       const plan: ContactMutationPlan = {
-        phoneOps: summarizeRowOps(formState.phones, rowHasContent),
-        emailOps: summarizeRowOps(formState.emails, rowHasContent),
+        phoneOps: {
+          create: phoneOps.create.map((row) => withDefaultContactType(row, 'phone')),
+          update: phoneOps.update.map((row) => withDefaultContactType(row, 'phone')),
+          remove: phoneOps.remove
+        },
+        emailOps: {
+          create: emailOps.create.map((row) => withDefaultContactType(row, 'email')),
+          update: emailOps.update.map((row) => withDefaultContactType(row, 'email')),
+          remove: emailOps.remove
+        },
         addressOps: summarizeRowOps(formState.addresses, rowHasContent)
       }
       await processContactInfoMutations(store, subject, plan)
