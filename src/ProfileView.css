@@ -542,6 +542,10 @@ solid-ui-button.profile-action-text:focus-visible::part(button) {
 }
 
 /* App-driven mobile: empty-state presentation */
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__section.profile-section-collapsible {
+  gap: 0;
+}
+
 :is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__section--empty.profile-section-collapsible {
   gap: var(--spacing-2xs, 0.625rem);
 }
@@ -734,6 +738,10 @@ solid-ui-button.profile-action-text:focus-visible::part(button) {
     background: transparent;
   }
 
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid .profile__section.profile-section-collapsible {
+    gap: 0;
+  }
+
   :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid .profile__section--empty.profile-section-collapsible {
     gap: var(--spacing-2xs, 0.625rem);
   }
@@ -863,6 +871,10 @@ solid-ui-button.profile-action-text:focus-visible::part(button) {
   .profile-grid [data-profile-section='social'].profile__section--empty {
     border: none;
     background: transparent;
+  }
+
+  .profile-grid .profile__section.profile-section-collapsible {
+    gap: 0;
   }
 
   .profile-grid .profile__section--empty.profile-section-collapsible {
