@@ -21,10 +21,11 @@
 - [x] Clean up the skills section CSS: reorganize it, remove duplication where possible, and replace utility classes with specific classes.
 - [x] Clean up the bio section CSS: reorganize it, remove duplication where possible, and replace utility classes with specific classes.
 - [ ] Clean up the heading section CSS: reorganize it, remove duplication where possible, and replace utility classes with specific classes.
+- [ ] Clean up the contact info section CSS: reorganize it, remove duplication where possible, and replace utility classes with specific classes.
+- [ ] Clean up the project section CSS: reorganize it, remove duplication where possible, and replace utility classes with specific classes.
 - [ ] can you check if we have done a pass at cleaning up each sections css files. let me know if there are any more to do and i'll add them to the list.
 - [ ] Do a final utility-class audit so only `sr-only` and `hidden` remain.
 - [ ] when an input is not correct like the phone number for instance put a more descriptive message in the error box instead of just unable to save contacts for instance.  check all dialogs and make sure the input checks make specific error message based on teh error that has happened.  only for mutations should the error just be Unable to save "X" X being the section type. if there are no checks for input at least add one for the phone number to allow numbers only and let the user know without a generic message, maybe it's just an error on the input itself like the ones you had done previously checking if it's a url.
-- [ ] Clean up the project section CSS: reorganize it, remove duplication where possible, and replace utility classes with specific classes.
 - [ ] on skills the combobox drop down goes over the dialog footer so that all the values can be seen, can you do htat for all the comboboxes the other seem to go underneath the footer. you'll need to look through all the edit dialog and find the ones that have combobox.  i can think of resume, social, languages, please double check the others just to be sure. maybe do them one by one and i can check each time adn 
 we can then commit them separately.
 - [ ] check project card and make sure styling matches design. I need to do this and give you the details.

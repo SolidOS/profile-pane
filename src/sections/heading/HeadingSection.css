@@ -140,6 +140,7 @@
 .profile__heading-actions {
   grid-area: actions;
   margin-left: auto;
+  margin-bottom: 0;
   align-self: flex-start;
   justify-self: end;
   display: flex;
@@ -428,11 +429,9 @@
   }
 
   .profile__heading-actions {
-    position: static;
     justify-self: var(--profile-heading-narrow-actions-justify-self, center);
     margin-left: var(--profile-heading-narrow-actions-margin-left, auto);
     margin-right: var(--profile-heading-narrow-actions-margin-right, auto);
-    margin-bottom: 0;
     max-inline-size: none;
     justify-content: var(--profile-heading-narrow-actions-justify-content, center);
     align-items: center;
@@ -442,7 +441,6 @@
   }
 
   .profile__heading-edit-action {
-    position: static;
     justify-self: var(--profile-heading-secondary-edit-justify-self, end);
     align-self: var(--profile-heading-secondary-edit-align-self, flex-start);
     margin-left: var(--profile-heading-secondary-edit-margin-left, auto);
@@ -463,11 +461,9 @@
   }
 
   .profile__heading-actions {
-    position: static;
     justify-self: var(--profile-heading-narrow-actions-justify-self, center);
     margin-left: var(--profile-heading-narrow-actions-margin-left, auto);
     margin-right: var(--profile-heading-narrow-actions-margin-right, auto);
-    margin-bottom: 0;
     max-inline-size: none;
     justify-content: var(--profile-heading-narrow-actions-justify-content, center);
     align-items: center;
@@ -477,7 +473,6 @@
   }
 
   .profile__heading-edit-action {
-    position: static;
     justify-self: var(--profile-heading-secondary-edit-justify-self, end);
     align-self: var(--profile-heading-secondary-edit-align-self, flex-start);
     margin-left: var(--profile-heading-secondary-edit-margin-left, auto);
@@ -514,11 +509,9 @@
   --profile-heading-action-contact-icon-gap: var(--profile-heading-compact-contact-icon-gap);
   --profile-heading-action-full-label-display: none;
   --profile-heading-action-short-label-display: inline;
-  position: static;
   justify-self: var(--profile-heading-compact-actions-justify-self, start);
   margin-left: var(--profile-heading-compact-actions-margin-left, 0);
   margin-right: var(--profile-heading-compact-actions-margin-right, auto);
-  margin-bottom: 0;
   max-inline-size: none;
   justify-content: var(--profile-heading-compact-actions-justify-content, flex-start);
   align-items: center;
@@ -528,7 +521,6 @@
 }
 
 :is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile__heading-edit-action {
-  position: static;
   justify-self: var(--profile-heading-secondary-edit-justify-self, end);
   align-self: var(--profile-heading-secondary-edit-align-self, flex-start);
   margin-left: var(--profile-heading-secondary-edit-margin-left, auto);
@@ -647,11 +639,9 @@
     --profile-heading-action-contact-icon-gap: var(--profile-heading-compact-contact-icon-gap);
     --profile-heading-action-full-label-display: none;
     --profile-heading-action-short-label-display: inline;
-    position: static;
     justify-self: var(--profile-heading-compact-actions-justify-self, start);
     margin-left: var(--profile-heading-compact-actions-margin-left, 0);
     margin-right: var(--profile-heading-compact-actions-margin-right, auto);
-    margin-bottom: 0;
     max-inline-size: none;
     justify-content: var(--profile-heading-compact-actions-justify-content, flex-start);
     align-items: center;
@@ -661,7 +651,6 @@
   }
 
   .profile__heading-edit-action {
-    position: static;
     justify-self: var(--profile-heading-secondary-edit-justify-self, end);
     align-self: var(--profile-heading-secondary-edit-align-self, flex-start);
     margin-left: var(--profile-heading-secondary-edit-margin-left, auto);
@@ -780,11 +769,9 @@
     --profile-heading-action-contact-icon-gap: var(--profile-heading-compact-contact-icon-gap);
     --profile-heading-action-full-label-display: none;
     --profile-heading-action-short-label-display: inline;
-    position: static;
     justify-self: var(--profile-heading-compact-actions-justify-self, start);
     margin-left: var(--profile-heading-compact-actions-margin-left, 0);
     margin-right: var(--profile-heading-compact-actions-margin-right, auto);
-    margin-bottom: 0;
     max-inline-size: none;
     justify-content: var(--profile-heading-compact-actions-justify-content, flex-start);
     align-items: center;
@@ -794,7 +781,6 @@
   }
 
   .profile__heading-edit-action {
-    position: static;
     justify-self: var(--profile-heading-secondary-edit-justify-self, end);
     align-self: var(--profile-heading-secondary-edit-align-self, flex-start);
     margin-left: var(--profile-heading-secondary-edit-margin-left, auto);
