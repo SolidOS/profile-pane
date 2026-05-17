@@ -1,3 +1,11 @@
+.profile__section[data-profile-section='contact-info'],
+.profile__section--empty[data-profile-section='contact-info'] {
+  --contact-info-icon-padding-inline: 0.575rem;
+  --contact-info-icon-size: var(--icon-xxs, 1rem);
+  --contact-info-contact-point-value-size: var(--font-size-sm, 0.875rem);
+  --contact-info-contact-point-type-size: var(--font-size-xxs, 0.75rem);
+}
+
 /* Contact rows */
 .contact-info__icon-wrapper {
   display: flex;
@@ -5,8 +13,15 @@
   justify-content: center;
   width: 2.25rem;
   height: 2.25rem;
-  padding: 0 0.575rem;
+  padding: 0 var(--contact-info-icon-padding-inline, 0.575rem);
   flex-shrink: 0;
+}
+
+.contact-info__item {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-2xs, 0.625rem);
+  margin-inline-start: 0;
 }
 
 .contact-info__item-body {
@@ -15,8 +30,8 @@
 }
 
 .contact-info__icon {
-  width: var(--icon-xxs, 1rem);
-  height: var(--icon-xxs, 1rem);
+  width: var(--contact-info-icon-size, var(--icon-xxs, 1rem));
+  height: var(--contact-info-icon-size, var(--icon-xxs, 1rem));
   flex-shrink: 0;
   stroke-width: 1.333px;
   stroke: var(--color-icon-muted, var(--slate-400, #90A1B9));
@@ -25,7 +40,7 @@
 .contact-info__contact-point-value,
 .contact-info__address {
   color: var(--color-text-strong-secondary, var(--slate-800, #1D293D));
-  font-size: var(--font-size-sm, 0.875rem);
+  font-size: var(--contact-info-contact-point-value-size, var(--font-size-sm, 0.875rem));
   font-weight: var(--font-weight-bold, 600);
 }
 
@@ -37,7 +52,7 @@
 
 .contact-info__contact-point-type {
   color: var(--color-text-detail, var(--slate-500, #62748E));
-  font-size: var(--font-size-xxs, 0.75rem);
+  font-size: var(--contact-info-contact-point-type-size, var(--font-size-xxs, 0.75rem));
   font-weight: var(--font-weight-md, 500);
 }
 
@@ -63,11 +78,13 @@
   margin-top: var(--spacing-2xs, 0.625rem);
 }
 
-.contact-info__item {
-  margin-inline-start: 0;
+/* Empty state */
+.contact-info__empty-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
-/* Empty state */
 .contact-info__empty-icon svg {
   width: var(--icon-md, 2.5rem);
   height: var(--icon-md, 2.5rem);
@@ -92,56 +109,27 @@
 }
 
 :is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .contact-info__icon-wrapper {
-  padding: 0;
+  --contact-info-icon-padding-inline: 0;
 }
 
-:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .contact-info__icon {
-  width: 0.8287rem;
-  height: 0.8303rem;
-}
-
-:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .contact-info__contact-point-value {
-  font-size: var(--font-size-sm, 0.875rem);
-}
-
-:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .contact-info__contact-point-type {
-  font-size: var(--font-size-xxs, 0.75rem);
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile__section[data-profile-section='contact-info'],
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile__section--empty[data-profile-section='contact-info'] {
+  --contact-info-icon-padding-inline: 0;
+  --contact-info-icon-size: 0.8295rem;
 }
 
 @media (max-width: 576px) {
-  .contact-info__icon-wrapper {
-    padding: 0;
-  }
-
-  .contact-info__icon {
-    width: 0.8287rem;
-    height: 0.8303rem;
-  }
-
-  .contact-info__contact-point-value {
-    font-size: var(--font-size-sm, 0.875rem);
-  }
-
-  .contact-info__contact-point-type {
-    font-size: var(--font-size-xxs, 0.75rem);
+  .profile__section[data-profile-section='contact-info'],
+  .profile__section--empty[data-profile-section='contact-info'] {
+    --contact-info-icon-padding-inline: 0;
+    --contact-info-icon-size: 0.8295rem;
   }
 }
 
 @container profile-pane (max-width: 576px) {
-  .contact-info__icon-wrapper {
-    padding: 0;
-  }
-
-  .contact-info__icon {
-    width: 0.8287rem;
-    height: 0.8303rem;
-  }
-
-  .contact-info__contact-point-value {
-    font-size: var(--font-size-sm, 0.875rem);
-  }
-
-  .contact-info__contact-point-type {
-    font-size: var(--font-size-xxs, 0.75rem);
+  .profile__section[data-profile-section='contact-info'],
+  .profile__section--empty[data-profile-section='contact-info'] {
+    --contact-info-icon-padding-inline: 0;
+    --contact-info-icon-size: 0.8295rem;
   }
 }

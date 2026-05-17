@@ -61,7 +61,7 @@ function renderPhone(phone, store: LiveStore) {
   const phoneValue = resolveContactValue(store, phone, 'phone')
   const phoneType = normalizePhoneTypeForEdit(phone.type)
 
-  return html`<li class="contact-info__item flex gap-2xs" role="listitem">
+  return html`<li class="contact-info__item" role="listitem">
         <div class="contact-info__icon-wrapper">
           <span class="contact-info__icon" aria-hidden="true">${phoneIcon}</span>
         </div>
@@ -82,7 +82,7 @@ function renderEmail(email, store: LiveStore) {
   const emailValue = resolveContactValue(store, email, 'email')
   const emailType = normalizeEmailTypeForEdit(email.type)
 
-  return html`<li class="contact-info__item flex gap-2xs" role="listitem">
+  return html`<li class="contact-info__item" role="listitem">
         <div class="contact-info__icon-wrapper">
           <span class="contact-info__icon" aria-hidden="true">${emailIcon}</span>
         </div>
@@ -110,7 +110,7 @@ function renderAddress(address) {
   const localityRegionPostal = [localityRegion, postalCode].filter(Boolean).join(' ')
 
   return html`
-        <li class="contact-info__item flex gap-2xs" role="listitem">
+        <li class="contact-info__item" role="listitem">
           <div class="contact-info__icon-wrapper">
             <span class="contact-info__icon" aria-hidden="true">${locationIcon}</span>
           </div>
@@ -228,7 +228,7 @@ function renderOwnerEmptyContactInfoContent(
   return html`
       <div class="profile__empty-state-content" role="group" aria-label="Empty contact information section">    
         <div class="contact-info__empty-icon-wrapper">
-          <span class="contact-info__empty-icon inline-flex-row">${envelopeIcon}</span>
+          <span class="contact-info__empty-icon">${envelopeIcon}</span>
         </div>
         <p class="profile__empty-state-message contact-info__empty-message">
             No additional contact info added yet.
