@@ -38,6 +38,7 @@ we can then commit them separately.
 - [ ] What do you think about teh edit dialog css file is it too big, should we split this up into different css files per section that it is styling. Investigate let me know your thoughts and we will proceed from there.
 - [ ] I need to test how the ordered list are working in social section and the languages with the new changes in rdflib please let me know i need to do this when you get to it.
 - [ ] again a task for me is to look at solid-logic. I need to bring down the new solid logic  so let me know i need to check this and do this. then i'll need you to set the space up to allow me to make changes there and see them in mashlib.
+- [ ] Revisit the mobile heading pronouns layout and edit-button placement later.
 
 ## Notes
 - Add new items here as they come up.

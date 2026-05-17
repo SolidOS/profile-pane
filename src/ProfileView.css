@@ -742,7 +742,6 @@ solid-ui-button.profile-action-text:focus-visible::part(button) {
     max-width: 100%;
     box-sizing: border-box;
     margin: 0 auto;
-    padding-inline: var(--spacing-xxs, 0.3125rem);
     overflow-x: clip;
   }
 
