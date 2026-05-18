@@ -376,6 +376,64 @@ describe('Dialog accessibility', () => {
     expect(skillName?.value).toBe('Facilitation')
   })
 
+  it('keeps a typed custom skill when using Add More before saving', async () => {
+    const store = graph() as any
+    const subject = sym('https://example.com/profile/card#me')
+    const doc = subject.doc()
+    const trigger = document.createElement('button')
+    trigger.textContent = 'Open dialog'
+    document.body.appendChild(trigger)
+
+    store.fetcher = {
+      load: async () => undefined
+    }
+    store.updater = {
+      update: (deletions: any[], insertions: any[], callback: Function) => {
+        deletions.forEach((statement) => store.remove(statement.subject, statement.predicate, statement.object, statement.why))
+        insertions.forEach((statement) => store.add(statement.subject, statement.predicate, statement.object, statement.why))
+        callback('', true)
+      }
+    }
+
+    const skillsPromise = createSkillsEditDialog(
+      { currentTarget: trigger } as unknown as Event,
+      store,
+      subject,
+      [],
+      'owner'
+    )
+
+    await waitForDialogFocus()
+
+    const firstSkillsCombobox = document.querySelector('solid-ui-combobox[data-skill-row-index="0"]') as HTMLElement | null
+    const firstSkillsInput = firstSkillsCombobox?.shadowRoot?.querySelector('input') as HTMLInputElement | null
+    expect(firstSkillsInput).not.toBeNull()
+
+    firstSkillsInput!.value = 'Facilitation'
+    firstSkillsInput!.dispatchEvent(new Event('input', { bubbles: true, composed: true }))
+
+    const addMoreButton = document.querySelector('#modal-header-action solid-ui-button') as HTMLElement | null
+    expect(addMoreButton).not.toBeNull()
+    addMoreButton?.click()
+
+    await waitForDialogFocus()
+
+    const preservedCombobox = document.querySelector('solid-ui-combobox[data-skill-row-index="1"]') as HTMLElement | null
+    const preservedInput = preservedCombobox?.shadowRoot?.querySelector('input') as HTMLInputElement | null
+    expect(preservedInput?.value).toBe('Facilitation')
+
+    getSharedDialogSaveButton(document)?.click()
+    await expect(skillsPromise).resolves.toBeUndefined()
+
+    const skillLinks = store.statementsMatching(subject, ns.schema('skills'), null, doc)
+    expect(skillLinks).toHaveLength(1)
+
+    const entryNode = skillLinks[0].object
+    const publicIdLink = store.any(entryNode, ns.solid('publicId'), null, doc)
+    const skillName = store.any(publicIdLink as any, ns.schema('name'), null, doc)
+    expect(skillName?.value).toBe('Facilitation')
+  })
+
   it('treats typed custom resume organizations as changes and saves them from the dialog', async () => {
     const store = graph() as any
     const subject = sym('https://example.com/profile/card#me')
