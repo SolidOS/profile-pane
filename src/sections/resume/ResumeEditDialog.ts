@@ -96,8 +96,30 @@ const RESUME_MONTH_OPTIONS: ResumeOrganizationTypeOption[] = [
 ]
 
 const WIKIDATA_ORGANIZATION_SEARCH_URI = 'https://www.wikidata.org/w/api.php?action=wbsearchentities&language=$(language)&type=item&limit=$(limit)&format=json&origin=*&search=$(name)'
+const WIKIDATA_ENTITY_LOOKUP_URI = 'https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&origin=*&props=claims&ids=$(ids)'
 const WIKIDATA_ORGANIZATION_SEARCH_LANGUAGE = 'en'
 const WIKIDATA_ORGANIZATION_SEARCH_LIMIT = 8
+const WIKIDATA_ORGANIZATION_SEARCH_CANDIDATE_LIMIT = 24
+
+const RESUME_ORGANIZATION_TYPE_WIKIDATA_CLASS_URIS: Record<string, string[]> = {
+  Corporation: ['http://www.wikidata.org/entity/Q6881511', 'http://www.wikidata.org/entity/Q4830453'],
+  EducationalOrganization: ['http://www.wikidata.org/entity/Q178706', 'http://www.wikidata.org/entity/Q2385804', 'http://www.wikidata.org/entity/Q1664720'],
+  ResearchOrganization: ['http://www.wikidata.org/entity/Q31855'],
+  GovernmentOrganization: ['http://www.wikidata.org/entity/Q327333'],
+  NGO: ['http://www.wikidata.org/entity/Q163740', 'http://www.wikidata.org/entity/Q79913', 'http://www.wikidata.org/entity/Q708676'],
+  PerformingGroup: ['http://www.wikidata.org/entity/Q32178211'],
+  Project: ['http://www.wikidata.org/entity/Q170584'],
+  SportsOrganization: ['http://www.wikidata.org/entity/Q4438121'],
+  Other: ['http://www.wikidata.org/entity/Q43229']
+}
+
+const RESUME_ORGANIZATION_SEARCH_CLASS_URIS = Array.from(
+  new Set(
+    RESUME_ORGANIZATION_TYPE_OPTIONS.flatMap(
+      (option) => RESUME_ORGANIZATION_TYPE_WIKIDATA_CLASS_URIS[option.value] || []
+    )
+  )
+)
 
 const RESUME_PRESENT_MONTH_VALUE = '__present__'
 
@@ -109,15 +131,116 @@ function normalizeResumeOrganizationPublicId(value: string): string {
   return sanitizeResumeFieldValue(value)
 }
 
+type WikidataSearchResult = {
+  id?: string
+  label?: string
+  match?: { text?: string }
+  concepturi?: string
+  url?: string
+}
+
+type WikidataEntity = {
+  claims?: Record<string, Array<{
+    mainsnak?: {
+      snaktype?: string
+      datavalue?: {
+        value?: { id?: string }
+      }
+    }
+  }>>
+}
+
 function buildWikidataOrganizationSearchUrl(name: string): string {
   return WIKIDATA_ORGANIZATION_SEARCH_URI
     .replace('$(language)', encodeURIComponent(WIKIDATA_ORGANIZATION_SEARCH_LANGUAGE))
-    .replace('$(limit)', encodeURIComponent(String(WIKIDATA_ORGANIZATION_SEARCH_LIMIT)))
+    .replace('$(limit)', encodeURIComponent(String(WIKIDATA_ORGANIZATION_SEARCH_CANDIDATE_LIMIT)))
     .replace('$(name)', encodeURIComponent(name))
+}
+
+function buildWikidataEntityLookupUrl(ids: string[]): string {
+  return WIKIDATA_ENTITY_LOOKUP_URI.replace('$(ids)', encodeURIComponent(ids.join('|')))
+}
+
+function getWikidataIdFromUri(value: string): string {
+  const trimmed = sanitizeResumeFieldValue(value)
+  const match = trimmed.match(/Q\d+/)
+  return match ? match[0] : ''
+}
+
+function getWikidataClaimIds(entity: WikidataEntity | undefined, property: 'P31' | 'P279'): string[] {
+  const claims = entity?.claims?.[property] || []
+
+  return claims
+    .map((claim) => claim?.mainsnak)
+    .filter((snak) => snak?.snaktype === 'value')
+    .map((snak) => snak?.datavalue?.value?.id)
+    .filter((id): id is string => typeof id === 'string' && id.length > 0)
+}
+
+async function fetchWikidataEntities(ids: string[]): Promise<Record<string, WikidataEntity>> {
+  const uniqueIds = Array.from(new Set(ids.filter(Boolean)))
+  if (!uniqueIds.length || typeof fetch !== 'function') return {}
+
+  const response = await fetch(buildWikidataEntityLookupUrl(uniqueIds))
+  if (!response.ok) return {}
+
+  const payload = await response.json() as { entities?: Record<string, WikidataEntity> }
+  return payload?.entities || {}
+}
+
+function entityMatchesAllowedOrganizationTypes(entityId: string, entityMap: Record<string, WikidataEntity>): boolean {
+  const allowedIds = new Set(
+    RESUME_ORGANIZATION_SEARCH_CLASS_URIS.map((uri) => getWikidataIdFromUri(uri))
+  )
+  const visited = new Set<string>()
+  const agenda = [entityId]
+
+  while (agenda.length) {
+    const currentId = agenda.shift()
+    if (!currentId || visited.has(currentId)) continue
+    visited.add(currentId)
+
+    if (allowedIds.has(currentId)) {
+      return true
+    }
+
+    const entity = entityMap[currentId]
+    agenda.push(...getWikidataClaimIds(entity, 'P31'))
+    agenda.push(...getWikidataClaimIds(entity, 'P279'))
+  }
+
+  return false
 }
 
 function toResumeOrganizationLabel(result: any): string {
   return result?.label || result?.match?.text || result?.id || ''
+}
+
+function toResumeOrganizationSuggestion(result: WikidataSearchResult): ResumeOrganizationSuggestion {
+  const label = sanitizeResumeFieldValue(toResumeOrganizationLabel(result))
+  const publicId = normalizeResumeOrganizationPublicId(
+    typeof result?.concepturi === 'string'
+      ? result.concepturi
+      : typeof result?.url === 'string'
+        ? result.url
+        : ''
+  )
+
+  return { label, publicId }
+}
+
+function dedupeResumeOrganizationSuggestions(
+  suggestions: ResumeOrganizationSuggestion[]
+): ResumeOrganizationSuggestion[] {
+  const seen = new Set<string>()
+
+  return suggestions.filter((suggestion) => {
+    if (!suggestion.label || !suggestion.publicId) return false
+    const key = suggestion.label.toLowerCase()
+    if (seen.has(key)) return false
+    seen.add(key)
+    return true
+  })
 }
 
 async function fetchWikidataOrganizationSuggestions(name: string): Promise<ResumeOrganizationSuggestion[]> {
@@ -129,28 +252,42 @@ async function fetchWikidataOrganizationSuggestions(name: string): Promise<Resum
     if (!response.ok) return []
 
     const payload = await response.json() as any
-    const results = Array.isArray(payload?.search) ? payload.search : []
-    const seen = new Set<string>()
+    const results = Array.isArray(payload?.search) ? payload.search as WikidataSearchResult[] : []
+    const suggestions = dedupeResumeOrganizationSuggestions(
+      results.map((result: WikidataSearchResult) => toResumeOrganizationSuggestion(result))
+    )
+    const resultIds = suggestions
+      .map((suggestion) => getWikidataIdFromUri(suggestion.publicId))
+      .filter(Boolean)
 
-    return results
-      .map((result: any) => {
-        const label = sanitizeResumeFieldValue(toResumeOrganizationLabel(result))
-        const publicId = normalizeResumeOrganizationPublicId(
-          typeof result?.concepturi === 'string'
-            ? result.concepturi
-            : typeof result?.url === 'string'
-              ? result.url
-              : ''
-        )
-        return { label, publicId }
-      })
-      .filter((suggestion: ResumeOrganizationSuggestion) => {
-        if (!suggestion.label || !suggestion.publicId) return false
-        const key = `${suggestion.label.toLowerCase()}|${suggestion.publicId}`
-        if (seen.has(key)) return false
-        seen.add(key)
-        return true
-      })
+    if (!resultIds.length) {
+      return suggestions.slice(0, WIKIDATA_ORGANIZATION_SEARCH_LIMIT)
+    }
+
+    const resultEntities = await fetchWikidataEntities(resultIds)
+    const relatedIds = Array.from(new Set(
+      Object.values(resultEntities).flatMap((entity) => [
+        ...getWikidataClaimIds(entity, 'P31'),
+        ...getWikidataClaimIds(entity, 'P279')
+      ])
+    ))
+    const relatedEntities = await fetchWikidataEntities(relatedIds)
+    const entityMap = {
+      ...resultEntities,
+      ...relatedEntities
+    }
+
+    if (Object.keys(entityMap).length === 0) {
+      return suggestions.slice(0, WIKIDATA_ORGANIZATION_SEARCH_LIMIT)
+    }
+
+    const filteredSuggestions = suggestions.filter((suggestion) => {
+      const entityId = getWikidataIdFromUri(suggestion.publicId)
+      return entityMatchesAllowedOrganizationTypes(entityId, entityMap)
+    })
+
+    return (filteredSuggestions.length > 0 ? filteredSuggestions : suggestions)
+      .slice(0, WIKIDATA_ORGANIZATION_SEARCH_LIMIT)
   } catch {
     return []
   }
