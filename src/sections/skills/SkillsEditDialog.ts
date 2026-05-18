@@ -184,6 +184,7 @@ function initializeSkillComboboxes(form: HTMLFormElement, rows: SkillRow[]): voi
     if (Number.isNaN(rowIndex)) return
 
     const row = rows[rowIndex]
+    const nextInputValue = row?.name || ''
     const options = row?.publicId && row?.name
       ? [{ label: row.name, value: row.publicId, publicId: row.publicId }]
       : []
@@ -191,9 +192,14 @@ function initializeSkillComboboxes(form: HTMLFormElement, rows: SkillRow[]): voi
     comboboxElement.suggestionProvider = createSkillSuggestionProvider()
     comboboxElement.options = options
     comboboxElement.value = row?.publicId || ''
-    comboboxElement.inputValue = row?.name || ''
+    comboboxElement.inputValue = nextInputValue
     comboboxElement.label = ''
     comboboxElement.placeholder = 'Skill'
+
+    const comboboxInput = comboboxElement.shadowRoot?.querySelector('input') as HTMLInputElement | null
+    if (comboboxInput) {
+      comboboxInput.value = nextInputValue
+    }
   })
 }
 
@@ -356,7 +362,10 @@ function renderSkillsEditTemplate(
   viewerMode: ViewerMode,
   options: SkillRerenderOptions = {}
 ) {
-  const rerender = (nextOptions: SkillRerenderOptions = {}) => renderSkillsEditTemplate(form, formState, viewerMode, nextOptions)
+  const rerender = (nextOptions: SkillRerenderOptions = {}) => {
+    syncSkillRowsFromComboboxes(form, formState.skills)
+    renderSkillsEditTemplate(form, formState, viewerMode, nextOptions)
+  }
 
   render(html`
     ${renderSkillsSection(formState.skills, rerender)}
@@ -381,6 +390,7 @@ function createSkillsEditForm(details: SkillDetails[], viewerMode: ViewerMode) {
   renderSkillsEditTemplate(form, formState, viewerMode)
 
   const addRow = () => {
+    syncSkillRowsFromComboboxes(form, formState.skills)
     formState.skills.unshift({
       name: '',
       publicId: '',
