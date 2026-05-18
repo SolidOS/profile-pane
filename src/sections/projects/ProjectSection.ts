@@ -1,16 +1,36 @@
 import { html } from 'lit-html'
+import 'solid-ui/components/actions/button'
 import { LiveStore, NamedNode } from 'rdflib'
 import { ViewerMode } from '../../types'
 import { ProjectDetails, ProjectRow } from './types'
-import { projectsHeadingText } from '../../texts'
+import { projectsHeadingText, unfollowProjectFailedMessageText } from '../../texts'
 import { createProjectsEditDialog } from './ProjectEditDialog'
 import { processProjectsMutations } from './mutations'
-import { addIcon, checkMarkIcon, plusDarkIcon, twoDownArrowsIcon } from '../../icons-svg/profileIcons'
+import { addIcon, checkMarkIcon, chevronDownIcon, editIcon, plusDarkIcon, twoDownArrowsIcon } from '../../icons-svg/profileIcons'
 import { MutationOps } from '../shared/types'
-import '../../styles/ProjectsCard.css'
+import './ProjectSection.css'
 import { toggleCollapsibleSection } from '../shared/collapsibleSection'
+import { createSpinner } from '../../ui/spinner'
+import { formatDisplayError } from '../../utils/errorDisplay'
 
 const MAX_VISIBLE_PROJECTS_MOBILE = 2
+
+function setProjectsSectionError(section: HTMLElement, message: string | null): void {
+  const errorBox = section.querySelector('.profile-section-inline-error') as HTMLElement | null
+  if (!errorBox) return
+
+  if (!message) {
+    errorBox.textContent = ''
+    errorBox.hidden = true
+    errorBox.setAttribute('aria-hidden', 'true')
+    return
+  }
+
+  errorBox.textContent = message
+  errorBox.hidden = false
+  errorBox.setAttribute('aria-hidden', 'false')
+  errorBox.focus()
+}
 
 function toggleProjectsMobileList(event: Event): void {
   const button = event.currentTarget as HTMLButtonElement | null
@@ -39,7 +59,7 @@ function renderProjectImage(src: string | undefined, altText: string) {
         />
       `
     : html`
-        <div class="project-card__thumb-fallback flex-center" role="img" aria-label=${altText} tabindex="0">
+        <div class="project-card__thumb-fallback" role="img" aria-label=${altText}>
           ${altText}
         </div>
       `
@@ -69,7 +89,10 @@ function renderProject(
 
   const handleUnfollow = async (event: Event) => {
     event.preventDefault()
+    event.stopPropagation()
     if (viewerMode !== 'owner') return
+    const unfollowButton = event.currentTarget as HTMLElement | null
+    const section = (event.currentTarget as HTMLElement | null)?.closest('[data-profile-section="projects"]') as HTMLElement | null
 
     const removePlan: MutationOps<ProjectRow> = {
       create: [],
@@ -77,9 +100,25 @@ function renderProject(
       remove: [toProjectRow(project, 'deleted')]
     }
 
-    await processProjectsMutations(store, subject, removePlan)
-    if (onSaved) {
-      await onSaved()
+    try {
+      unfollowButton?.setAttribute('disabled', '')
+      unfollowButton?.setAttribute('data-loading', 'true')
+      unfollowButton?.setAttribute('aria-busy', 'true')
+      await processProjectsMutations(store, subject, removePlan)
+      if (section) {
+        setProjectsSectionError(section, null)
+      }
+      if (onSaved) {
+        await onSaved()
+      }
+    } catch (error) {
+      if (section) {
+        setProjectsSectionError(section, formatDisplayError(error, unfollowProjectFailedMessageText))
+      }
+    } finally {
+      unfollowButton?.removeAttribute('disabled')
+      unfollowButton?.removeAttribute('data-loading')
+      unfollowButton?.setAttribute('aria-busy', 'false')
     }
   }
 
@@ -94,7 +133,7 @@ function renderProject(
     : 'Uncategorized'
 
   return html`
-    <li class="project-card flex-column" role="listitem">
+    <li class="project-card" role="listitem">
       <a
         class="project-card__link"
         href=${project.url}
@@ -103,26 +142,33 @@ function renderProject(
         aria-label=${project.title ? `Open ${project.title}` : 'Open project link'}
       >
         <div class="project-card__wrapper">
-          <div class="project-card__thumb flex-center">
+          <div class="project-card__thumb">
             ${renderProjectImage(project.imageUrl, project.title || 'Project preview')}
           </div>
           <div class="project-card__content">
-            <p class="project-card__title"><strong>${project.title || project.url}</strong></p>
-            <p class="project-card__organization">${project.orgName || 'Organization unknown'}</p>
+            <div class="project-card__heading-group">
+              <p class="project-card__title">${project.title || project.url}</p>
+              <p class="project-card__organization">${project.orgName || 'Organization unknown'}</p>
+            </div>
             <p class="project-card__category project-card__category--${categoryModifier}">${categoryLabel}</p>
           </div>
         </div>
       </a>
       ${viewerMode === 'owner' ? html`
         <div class="project-card__footer">
-          <button
+          <solid-ui-button
             type="button"
-            class="project-card__follow-button flex-center gap-xxs"
+            variant="secondary"
+            size="sm"
+            label="Following"
+            class="project-card__follow-button"
             aria-label="Unfollow project"
             @click=${handleUnfollow}
           >
-            <span>${checkMarkIcon} Following</span>
-          </button>
+            <span class="project-card__follow-label project-card__follow-label--default">${checkMarkIcon} Following</span>
+            <span class="project-card__follow-label project-card__follow-label--hover">Unfollow</span>
+            <span class="project-card__follow-label project-card__follow-label--loading">${createSpinner()}<span>Unfollowing...</span></span>
+          </solid-ui-button>
         </div>
       ` : html``}
     </li>
@@ -139,14 +185,16 @@ function renderOwnerEmptyProjectsContent(
   const projectDetails: ProjectDetails[] = projectData
 
   return html`
-    <div class="profile__empty-state-content flex-column-center" role="group" aria-label="Empty projects section">
+    <div class="profile__empty-state-content" role="group" aria-label="Empty projects section">
       <h2 id="projects-heading" tabindex="-1">${projectsHeadingText}</h2>
       <p class="profile__empty-state-message">
         You haven't added any projects yet. Consider adding a project to boost your profile.
       </p>
     </div>
-    <button
+    <solid-ui-button
       type="button"
+      variant="secondary"
+      size="sm"
       class="profile__action-button--empty"
       aria-label="Add project details"
       @click=${(event: Event) => {
@@ -161,7 +209,7 @@ function renderOwnerEmptyProjectsContent(
       }}
     >
       <span class="profile__action-icon" aria-hidden="true">${plusDarkIcon} Add Project</span>
-    </button>
+    </solid-ui-button>
 
   `
 }
@@ -177,11 +225,31 @@ function renderOwnerEmptyProjectSection(
     <section 
       aria-labelledby="projects-heading" 
       data-profile-section="projects"
-      class="profile__section--empty border-lighter flex-column-center rounded-md gap-lg" 
+      class="profile__section--empty profile__section--empty-main profile-section-collapsible profile-section-collapsible--inline-mobile-actions profile-section-collapsible--empty-mobile-no-edit" 
       role="region"
       tabindex="-1"
+      data-expanded="false"
     >
-      ${renderOwnerEmptyProjectsContent(store, subject, projectData, viewerMode, onSaved)}
+      <header class="profile__section-header profile-section-collapsible__header">
+        <h2 id="projects-heading" tabindex="-1">${projectsHeadingText}</h2>
+        <div class="profile-section-collapsible__actions">
+          <solid-ui-button
+            type="button"
+            variant="icon"
+            size="sm"
+            class="profile-section-collapsible__toggle-button"
+            aria-label="Toggle projects section"
+            aria-controls="projects-panel"
+            aria-expanded="false"
+            @click=${toggleCollapsibleSection}
+          >
+            <span slot="icon" class="profile-section-collapsible__chevron" aria-hidden="true">${chevronDownIcon}</span>
+          </solid-ui-button>
+        </div>
+      </header>
+      <div id="projects-panel" class="profile-section-collapsible__content">
+        ${renderOwnerEmptyProjectsContent(store, subject, projectData, viewerMode, onSaved)}
+      </div>
     </section>
   `
 }
@@ -210,7 +278,8 @@ function renderProjectSectionDefault(
 
   return html`
       <section
-        class="profile__section border-lighter profile-section-collapsible profile-section-collapsible--inline-mobile-actions"
+        class="profile__section profile-section-collapsible profile-section-collapsible--inline-mobile-actions"
+        data-profile-section="projects"
         aria-labelledby="projects-heading"
         role="region"
         tabindex="-1"
@@ -219,36 +288,40 @@ function renderProjectSectionDefault(
       >
         <header class="profile__section-header profile-section-collapsible__header">
           <h2 id="projects-heading">${projectsHeadingText}</h2>
-          <div class="profile-section-collapsible__actions flex-column">
+          <div class="profile-section-collapsible__actions">
             ${isOwner ? html`
-              <button
+              <solid-ui-button
                 type="button"
-                class="profile__action-button profile-action-text flex-center profile-section-collapsible__edit-button"
+                variant="secondary"
+                size="sm"
+                class="profile__action-button profile-action-text profile-section-collapsible__edit-button"
                 aria-label="Add or edit projects"
                 @click=${(event: Event) => {
                   return createProjectsEditDialog(event, store, subject, projects, viewerMode, onSaved)
                 }}
               >
-                <span class="profile-section-collapsible__edit-label profile__add-more-content inline-flex-row">
-                  <span class="profile__add-more-icon inline-flex-row" aria-hidden="true">${addIcon}</span>
-                  Add More
+                <span class="profile-section-collapsible__edit-label profile__add-more-content">
+                  <span class="profile__add-more-icon" aria-hidden="true">${addIcon}</span>
+                  <span>Add More</span>
                 </span>
-                <span class="profile-section-collapsible__edit-icon profile-section-collapsible__edit-icon--add profile-section-collapsible__edit-icon--projects" aria-hidden="true">${plusDarkIcon}</span>
-              </button>
+                <span class="profile-section-collapsible__edit-icon" aria-hidden="true">${editIcon}</span>
+              </solid-ui-button>
             ` : html``}
-            <button
+            <solid-ui-button
               type="button"
-              class="inline-flex-row"
+              variant="icon"
+              size="sm"
+              class="profile-section-collapsible__toggle-button"
               aria-label="Toggle projects section"
               aria-controls="projects-panel"
               aria-expanded="false"
               @click=${toggleCollapsibleSection}
             >
-              <span class="profile-section-collapsible__chevron" aria-hidden="true">⌄</span>
-            </button>
+              <span slot="icon" class="profile-section-collapsible__chevron" aria-hidden="true">${chevronDownIcon}</span>
+            </solid-ui-button>
           </div>
         </header>
-        <div id="projects-panel" class="profile-section-collapsible__content" aria-hidden="true">
+        <div id="projects-panel" class="profile-section-collapsible__content">
           ${hasProjects
             ? html`
                 <ul id="projects-rail" class="project-card__rail" role="list" aria-label="Known projects">
@@ -262,8 +335,11 @@ function renderProjectSectionDefault(
                 </ul>
                 ${hiddenProjectsCount > 0
                   ? html`
-                      <button
+                      <solid-ui-button
                         type="button"
+                        variant="secondary"
+                        size="sm"
+                        label="View More"
                         class="project-card__more-button"
                         aria-controls="projects-rail"
                         aria-expanded="false"
@@ -272,9 +348,18 @@ function renderProjectSectionDefault(
                       >
                         <span class="project-card__more-icon" aria-hidden="true">${twoDownArrowsIcon}</span>
                         <span class="project-card__more-label">View More</span>
-                      </button>
+                      </solid-ui-button>
                     `
                   : html``}
+                <div
+                  class="profile-section-inline-error"
+                  role="alert"
+                  aria-live="assertive"
+                  aria-atomic="true"
+                  aria-hidden="true"
+                  tabindex="-1"
+                  hidden
+                ></div>
               `
             : html`<p>No projects added yet.</p>`}
         </div>

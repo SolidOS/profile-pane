@@ -4,8 +4,20 @@ import { ProfileBasicRow, HeadingMutationPlan } from './types'
 import { MutationOps } from '../shared/types'
 import { applyUpdaterPatch, collectLinkedNodeStatements, collectNodeStatements, findExistingNode, replacePredicateStatements } from '../shared/rdfMutationHelpers'
 import { createIdNode } from '../shared/idNodeFactory'
-import { saveHeadingUpdatesFailedPrefixText } from '../../texts'
 import { ContactAddressRow, ContactPointRow } from '../contactInfo/types'
+import { headingMutationSaveFailedDebugText, saveHeadingUpdatesFailedMessageText } from '../../texts'
+import { error as debugError } from '../../utils/debug'
+
+function splitPronouns(value?: string): { subjectPronoun?: string, objectPronoun?: string } {
+  const normalized = (value || '').trim()
+  if (!normalized) return {}
+
+  const [subjectPronounRaw, objectPronounRaw] = normalized.split('/').map((part) => part.trim())
+  const subjectPronoun = subjectPronounRaw || undefined
+  const objectPronoun = objectPronounRaw || undefined
+
+  return { subjectPronoun, objectPronoun }
+}
 
 function buildPhoneStatements(subject: NamedNode, doc: NamedNode, node: Node, phone: ContactPointRow) {
   const normalizedValue = phone.value.startsWith('tel:') ? phone.value : `tel:${phone.value}`
@@ -41,11 +53,11 @@ function buildAddressStatements(subject: NamedNode, doc: NamedNode, node: Node, 
   const inserts = [st(subject, ns.vcard('hasAddress'), node as any, doc)]
 
   if (address.type) inserts.push(st(node as any, ns.rdf('type'), ns.vcard(address.type), doc))
-  if (address.streetAddress) inserts.push(st(node as any, ns.vcard('street-address'), address.streetAddress as any, doc))
-  if (address.locality) inserts.push(st(node as any, ns.vcard('locality'), address.locality as any, doc))
-  if (address.region) inserts.push(st(node as any, ns.vcard('region'), address.region as any, doc))
-  if (address.postalCode) inserts.push(st(node as any, ns.vcard('postal-code'), address.postalCode as any, doc))
-  if (address.countryName) inserts.push(st(node as any, ns.vcard('country-name'), address.countryName as any, doc))
+  if (address.streetAddress) inserts.push(st(node as any, ns.vcard('street-address'), literal(address.streetAddress), doc))
+  if (address.locality) inserts.push(st(node as any, ns.vcard('locality'), literal(address.locality), doc))
+  if (address.region) inserts.push(st(node as any, ns.vcard('region'), literal(address.region), doc))
+  if (address.postalCode) inserts.push(st(node as any, ns.vcard('postal-code'), literal(address.postalCode), doc))
+  if (address.countryName) inserts.push(st(node as any, ns.vcard('country-name'), literal(address.countryName), doc))
 
   return inserts
 }
@@ -190,11 +202,44 @@ async function mutateBasicProfileEntry(store: LiveStore, subject: NamedNode, bas
     replacePredicateStatements(store, subject, ns.vcard('hasPhoto'), doc, deletions, insertions, nextObject)
   }
 
+  const replacePronounFields = (value?: string) => {
+    const { subjectPronoun, objectPronoun } = splitPronouns(value)
+
+    replacePredicateStatements(
+      store,
+      subject,
+      ns.solid('preferredSubjectPronoun'),
+      doc,
+      deletions,
+      insertions,
+      subjectPronoun ? literal(subjectPronoun) : null
+    )
+    replacePredicateStatements(
+      store,
+      subject,
+      ns.solid('preferredObjectPronoun'),
+      doc,
+      deletions,
+      insertions,
+      objectPronoun ? literal(objectPronoun) : null
+    )
+    replacePredicateStatements(
+      store,
+      subject,
+      ns.solid('preferredRelativePronoun'),
+      doc,
+      deletions,
+      insertions,
+      null
+    )
+  }
+
   const applyBasics = (basic: ProfileBasicRow, clearAll = false) => {
     const data = clearAll
       ? {
           name: '',
           nickname: '',
+          pronouns: '',
           dateOfBirth: '',
           jobTitle: '',
           orgName: '',
@@ -209,6 +254,7 @@ async function mutateBasicProfileEntry(store: LiveStore, subject: NamedNode, bas
     replaceLiteralField(ns.vcard('bday'), data.dateOfBirth)
     replaceLiteralField(ns.vcard('role'), data.jobTitle)
     replaceLiteralField(ns.vcard('organization-name'), data.orgName)
+    replacePronounFields(data.pronouns)
     replacePhotoField(data.imageSrc)
   }
 
@@ -231,7 +277,8 @@ export async function processHeadingMutations(store: LiveStore, subject: NamedNo
     await mutateEmailEntry(store, subject, mutationPlan.emailOps)
     await mutateAddressEntry(store, subject, mutationPlan.addressOps)
   } catch (error) {
-    const message = error instanceof Error ? error.message : String(error)
-    throw new Error(`${saveHeadingUpdatesFailedPrefixText} ${message}`)
+    const rootError = error instanceof Error ? error : new Error(String(error))
+    debugError(headingMutationSaveFailedDebugText, rootError)
+    throw new Error(saveHeadingUpdatesFailedMessageText, { cause: rootError })
   }
 } 

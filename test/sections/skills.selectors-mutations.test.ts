@@ -1,9 +1,9 @@
-import { describe, expect, it } from "@jest/globals"
+import { describe, expect, it, jest } from "@jest/globals"
 import { graph, st, sym, literal } from 'rdflib'
 import { ns } from 'solid-ui'
-import { presentSkills } from '../../src/sections/skills/selectors'
+import { presentSkillDetails, presentSkills } from '../../src/sections/skills/selectors'
 import { processSkillsMutations } from '../../src/sections/skills/mutations'
-import { mutationSaveSkillsFailedPrefixText } from '../../src/texts'
+import { saveSkillsUpdatesFailedMessageText } from '../../src/texts'
 
 describe('Skills selectors and mutations', () => {
   it('selector returns empty skills from empty store', () => {
@@ -27,7 +27,27 @@ describe('Skills selectors and mutations', () => {
     expect(presentSkills(subject, store)).toEqual(['TypeScript'])
   })
 
-  it('mutation wraps updater errors with skills prefix', async () => {
+  it('selector reads names from blank-node publicId and preserves blank-node identifier', () => {
+    const store = graph() as any
+    const subject = sym('https://example.com/profile/card#me')
+    const doc = subject.doc()
+    const skillEntry = sym(`${doc.value}#id1`)
+    const skillPublicId = store.bnode('custom-skill')
+
+    store.add(subject, ns.schema('skills'), skillEntry, doc)
+    store.add(skillEntry, ns.solid('publicId'), skillPublicId, doc)
+    store.add(skillPublicId, ns.schema('name'), 'Facilitation', doc)
+
+    expect(presentSkills(subject, store)).toEqual(['Facilitation'])
+    expect(presentSkillDetails(subject, store)).toEqual([
+      expect.objectContaining({
+        name: 'Facilitation',
+        publicId: '_:custom-skill'
+      })
+    ])
+  })
+
+  it('mutation surfaces section-specific unsupported store updater errors', async () => {
     const store = graph() as any
     const subject = sym('https://example.com/profile/card#me')
 
@@ -36,9 +56,12 @@ describe('Skills selectors and mutations', () => {
       update: [],
       remove: []
     }
-    await expect(processSkillsMutations(store, subject, plan as any)).rejects.toThrow(
-      mutationSaveSkillsFailedPrefixText
-    )
+    await expect(processSkillsMutations(store, subject, plan as any)).rejects.toMatchObject({
+      message: saveSkillsUpdatesFailedMessageText,
+      cause: expect.objectContaining({
+        message: 'Skill updates are not supported by this store updater.'
+      })
+    })
   })
 
   it('writes created skills with skill: node publicId and name on the publicId node', async () => {
@@ -75,6 +98,82 @@ describe('Skills selectors and mutations', () => {
 
     const legacyNameOnEntry = store.any(entryNode, ns.schema('name'), null, doc)
     expect(legacyNameOnEntry).toBeNull()
+  })
+
+  it('writes created custom skills with blank-node publicId and name on that blank node', async () => {
+    const store = graph() as any
+    const subject = sym('https://example.com/profile/card#me')
+    const doc = subject.doc()
+
+    store.updater = {
+      update: (deletions: any[], insertions: any[], callback: Function) => {
+        deletions.forEach((statement) => store.remove(st(statement.subject, statement.predicate, statement.object, statement.why)))
+        insertions.forEach((statement) => store.add(statement.subject, statement.predicate, statement.object, statement.why))
+        callback('', true)
+      }
+    }
+
+    const plan = {
+      create: [{ name: 'Facilitation', publicId: '', entryNode: '', status: 'new' }],
+      update: [],
+      remove: []
+    }
+
+    await processSkillsMutations(store, subject, plan as any)
+
+    const skillLinks = store.statementsMatching(subject, ns.schema('skills'), null, doc)
+    expect(skillLinks).toHaveLength(1)
+
+    const entryNode = skillLinks[0].object
+    const publicIdLink = store.any(entryNode, ns.solid('publicId'), null, doc)
+    expect(publicIdLink?.termType).toBe('BlankNode')
+
+    const skillName = store.any(publicIdLink as any, ns.schema('name'), null, doc)
+    expect(skillName?.value).toBe('Facilitation')
+
+    const legacyNameOnEntry = store.any(entryNode, ns.schema('name'), null, doc)
+    expect(legacyNameOnEntry).toBeNull()
+  })
+
+  it('falls back to updateDav for custom skills when PATCH fails', async () => {
+    const store = graph() as any
+    const subject = sym('https://example.com/profile/card#me')
+    const doc = subject.doc()
+
+    const updateDav = jest.fn((passedDoc: any, deletions: any[], insertions: any[], callback: Function) => {
+      deletions.forEach((statement) => store.remove(st(statement.subject, statement.predicate, statement.object, statement.why)))
+      insertions.forEach((statement) => store.add(statement.subject, statement.predicate, statement.object, statement.why))
+      callback(passedDoc.value, true)
+    })
+
+    store.fetcher = {
+      load: jest.fn(async () => undefined)
+    }
+
+    store.updater = {
+      update: (_deletions: any[], _insertions: any[], callback: Function) => callback('', false, 'Web error: 501 on PATCH'),
+      updateDav
+    }
+
+    const plan = {
+      create: [{ name: 'Facilitation', publicId: '', entryNode: '', status: 'new' }],
+      update: [],
+      remove: []
+    }
+
+    await processSkillsMutations(store, subject, plan as any)
+
+    expect(updateDav).toHaveBeenCalledTimes(1)
+
+    const skillLinks = store.statementsMatching(subject, ns.schema('skills'), null, doc)
+    expect(skillLinks).toHaveLength(1)
+
+    const entryNode = skillLinks[0].object
+    const publicIdLink = store.any(entryNode, ns.solid('publicId'), null, doc)
+    expect(publicIdLink?.termType).toBe('BlankNode')
+
+    const skillName = store.any(publicIdLink as any, ns.schema('name'), null, doc)
+    expect(skillName?.value).toBe('Facilitation')
   })
 
   it('deletes both skill entry triples and schema:skills pointer', async () => {

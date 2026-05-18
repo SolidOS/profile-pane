@@ -1,11 +1,13 @@
-import { blankNode, LiveStore, NamedNode, st, sym, literal } from 'rdflib'
+import { BlankNode, Collection, LiveStore, NamedNode, Node, st, sym, literal } from 'rdflib'
 import { ns } from 'solid-ui'
 import { LanguageRow } from './types'
-import { MutationOps } from '../shared/types'
+import { MutationOps, PrefixCapable, RdfStatement, RdfUpdater } from '../shared/types'
 import { presentLanguages } from './selectors'
 import { expandRdfList } from '../shared/rdfList'
 import { createIdNode } from '../shared/idNodeFactory'
-import { mutationSaveLanguagesFailedPrefixText } from '../../texts'
+import { languageMutationSaveFailedDebugText, saveLanguageUpdatesFailedMessageText } from '../../texts'
+import { findExistingNode, registerStorePrefix, runUpdateTransport } from '../shared/rdfMutationHelpers'
+import { error as debugError } from '../../utils/debug'
 
 export type LanguageMutationPlan = MutationOps<LanguageRow>
 // Language entries are serialized as an ordered rdf:List of id nodes, where
@@ -13,21 +15,8 @@ export type LanguageMutationPlan = MutationOps<LanguageRow>
 const LANGUAGE_IANA_NS = 'https://www.w3.org/ns/iana/language-code/'
 
 function ensureLanguagePrefix(store: LiveStore) {
-  const registerPrefix = (target: any) => {
-    if (!target) return
-    if (typeof target.setPrefixForURI === 'function') {
-      target.setPrefixForURI('l', LANGUAGE_IANA_NS)
-      return
-    }
-    if (!target.namespaces) {
-      target.namespaces = {}
-    }
-    target.namespaces.l = LANGUAGE_IANA_NS
-  }
-
-  const anyStore = store as any
-  registerPrefix(anyStore)
-  registerPrefix(anyStore?.updater?.store)
+  registerStorePrefix(store, 'l', LANGUAGE_IANA_NS)
+  registerStorePrefix((store.updater as RdfUpdater | undefined)?.store as PrefixCapable | undefined, 'l', LANGUAGE_IANA_NS)
 }
 
 function normalizeText(value: string | undefined): string {
@@ -58,46 +47,48 @@ function rowsFromOrderedInput(orderedRows: LanguageRow[]): LanguageRow[] {
     }))
 }
 
-function buildRdfListStatements(items: NamedNode[], doc: NamedNode) {
-  if (!items.length) {
-    return {
-      head: ns.rdf('nil'),
-      statements: [] as any[]
-    }
-  }
-
-  const listNodes = items.map(() => blankNode())
-  const statements: any[] = []
-
-  items.forEach((item, index) => {
-    const current = listNodes[index]
-    const next = listNodes[index + 1] || ns.rdf('nil')
-    statements.push(st(current as any, ns.rdf('first'), item as any, doc))
-    statements.push(st(current as any, ns.rdf('rest'), next as any, doc))
-  })
-
-  return {
-    head: listNodes[0],
-    statements
-  }
+function nodeKey(node: Node): string {
+  return `${node.termType}:${node.value}`
 }
 
-function buildLanguageStatements(subject: NamedNode, doc: NamedNode, rows: LanguageRow[]) {
+type LanguageEntryNode = NamedNode | BlankNode
+
+function isLanguageEntryNode(node: Node | null | undefined): node is LanguageEntryNode {
+  return Boolean(node && (node.termType === 'NamedNode' || node.termType === 'BlankNode'))
+}
+
+function buildLanguageStatements(
+  subject: NamedNode,
+  doc: NamedNode,
+  rows: LanguageRow[],
+  existingLanguageNodes: LanguageEntryNode[]
+) {
   const languageRows = rows
     .map((row) => ({
       name: normalizeText(row.name),
       publicId: normalizeLanguageCode(row.publicId),
+      entryNode: normalizeText(row.entryNode)
     }))
     .filter((row) => Boolean(row.publicId))
 
-  if (languageRows.length === 0) return []
+  if (languageRows.length === 0) {
+    return { statements: [] as RdfStatement[], entryNodes: [] as LanguageEntryNode[] }
+  }
 
-  const entryNodes = languageRows.map(() => createIdNode(doc))
-  const statements: any[] = []
+  const entryNodes = languageRows.map<LanguageEntryNode>((row) => {
+    const existingNode = row.entryNode
+      ? findExistingNode(existingLanguageNodes, row.entryNode)
+      : null
 
-  const rdfList = buildRdfListStatements(entryNodes, doc)
-  statements.push(st(subject, ns.schema('knowsLanguage'), rdfList.head as any, doc))
-  statements.push(...rdfList.statements)
+    if (isLanguageEntryNode(existingNode)) {
+      return existingNode
+    }
+
+    return createIdNode(doc)
+  })
+  const statements: RdfStatement[] = []
+
+  statements.push(st(subject, ns.schema('knowsLanguage'), new Collection(entryNodes), doc))
 
   entryNodes.forEach((entryNode, index) => {
     const publicIdNode = sym(`${LANGUAGE_IANA_NS}${languageRows[index].publicId}`)
@@ -107,13 +98,13 @@ function buildLanguageStatements(subject: NamedNode, doc: NamedNode, rows: Langu
     }
   })
 
-  return statements
+  return { statements, entryNodes }
 }
 
-function collectListChainNodes(store: LiveStore, listHead: any, doc: NamedNode): any[] {
+function collectListChainNodes(store: LiveStore, listHead: NamedNode, doc: NamedNode): NamedNode[] {
   const visited = new Set<string>()
-  const nodes: any[] = []
-  let current = listHead
+  const nodes: NamedNode[] = []
+  let current: NamedNode | null = listHead
 
   while (current) {
     const key = `${current.termType}:${current.value}`
@@ -121,142 +112,14 @@ function collectListChainNodes(store: LiveStore, listHead: any, doc: NamedNode):
     visited.add(key)
     nodes.push(current)
 
-    const rest = store.any(current as NamedNode, ns.rdf('rest'), null, doc) as any
+    const rest = store.any(current as any, ns.rdf('rest'), null, doc)
     if (!rest || (rest.termType === 'NamedNode' && rest.value === ns.rdf('nil').value)) {
       break
     }
-    current = rest
+    current = (rest.termType === 'NamedNode' || rest.termType === 'BlankNode') ? rest as NamedNode : null
   }
 
   return nodes
-}
-
-function isPatchFailure(message: string): boolean {
-  const text = (message || '').toLowerCase()
-  // Different pods surface PATCH incompatibility with different status codes/messages.
-  return text.includes(' on patch ') || text.includes('web error: 501') || text.includes('web error: 405') || text.includes('web error: 400')
-}
-
-function isMissingGetRecordError(message: string): boolean {
-  return (message || '').toLowerCase().includes('no record of our http get request for document')
-}
-
-function statementKey(statement: any): string {
-  return `${statement.subject?.toNT?.() || statement.subject?.value} ${statement.predicate?.toNT?.() || statement.predicate?.value} ${statement.object?.toNT?.() || statement.object?.value} ${statement.why?.toNT?.() || statement.why?.value}`
-}
-
-function sanitizePatchStatements(store: LiveStore, deletions: any[], insertions: any[]) {
-  const safeDeletions = Array.from(new Map(
-    (deletions || [])
-      .filter((statement) => {
-        if (!statement || !statement.subject || !statement.predicate || !statement.object) return false
-        if (store.holds(statement.subject, statement.predicate, statement.object, statement.why)) return true
-        return store.statementsMatching(statement.subject, statement.predicate, statement.object, statement.why).length > 0
-      })
-      .map((statement) => [statementKey(statement), statement])
-  ).values())
-
-  const safeInsertions = Array.from(new Map(
-    (insertions || [])
-      .filter((statement) => Boolean(statement && statement.subject && statement.predicate && statement.object))
-      .map((statement) => [statementKey(statement), statement])
-  ).values())
-
-  return { safeDeletions, safeInsertions }
-}
-
-async function runPutFallback(store: LiveStore, doc: NamedNode, deletions: any[], insertions: any[]) {
-  const updater = store.updater as any
-  const fetcher = (store as any).fetcher
-
-  if (!updater || typeof updater.serialize !== 'function' || !fetcher || typeof fetcher.webOperation !== 'function') {
-    throw new Error('Language updates are not supported by this store updater.')
-  }
-
-  const currentStatements = store.statementsMatching(undefined, undefined, undefined, doc).slice()
-  const deletionKeys = new Set((deletions || []).map((statement) => statementKey(statement)))
-  // Rebuild full document state for PUT when patch-oriented flows cannot be used.
-  const nextStatements = currentStatements.filter((statement) => !deletionKeys.has(statementKey(statement))).concat(insertions || [])
-
-  const contentType = 'text/turtle'
-  const body = updater.serialize(doc.value, nextStatements, contentType)
-  const response = await fetcher.webOperation('PUT', doc.value, {
-    noMeta: true,
-    contentType,
-    body
-  })
-
-  if (!response || response.ok !== true) {
-    const status = response?.status || 'unknown'
-    throw new Error(`Web error: ${status} on PUT of <${doc.value}>`)
-  }
-
-  // PUT bypasses UpdateManager's local-store patching, so apply the same changes locally.
-  store.remove(deletions)
-  insertions.forEach((statement) => {
-    store.add(statement.subject, statement.predicate, statement.object, statement.why)
-  })
-}
-
-async function runUpdateWithDavFallback(store: LiveStore, doc: NamedNode, deletions: any[], insertions: any[]) {
-  const updater = store.updater as any
-  if (!updater || typeof updater.update !== 'function') {
-    throw new Error('Language updates are not supported by this store updater.')
-  }
-
-  const { safeDeletions, safeInsertions } = sanitizePatchStatements(store, deletions, insertions)
-  if (safeDeletions.length === 0 && safeInsertions.length === 0) {
-    return
-  }
-
-  const tryUpdate = () => new Promise<void>((resolve, reject) => {
-    updater.update(safeDeletions, safeInsertions, (_uri: string, ok: boolean, message?: string) => {
-      if (ok === true) {
-        resolve()
-        return
-      }
-      reject(new Error(message || 'Failed to save languages'))
-    })
-  })
-
-  try {
-    // Preferred path: let rdflib pick the server-supported update protocol.
-    await tryUpdate()
-    return
-  } catch (error) {
-    const message = error instanceof Error ? error.message : String(error)
-    if (!isPatchFailure(message) || typeof updater.updateDav !== 'function') {
-      throw error
-    }
-
-    if (store.fetcher && typeof (store.fetcher as any).load === 'function') {
-      try {
-        await (store.fetcher as any).load(doc)
-      } catch {
-        // Continue; updateDav may still fail and we handle that below.
-      }
-    }
-
-    try {
-      // First fallback for PATCH failures: DAV-style whole-document update.
-      await new Promise<void>((resolve, reject) => {
-        updater.updateDav(doc, safeDeletions, safeInsertions, (_uri: string, ok: boolean, body?: string) => {
-          if (ok === true) {
-            resolve()
-            return
-          }
-          reject(new Error(body || message || 'Failed to save languages'))
-        })
-      })
-    } catch (davError) {
-      const davMessage = davError instanceof Error ? davError.message : String(davError)
-      if (!isMissingGetRecordError(davMessage)) {
-        throw davError
-      }
-      // Some stores cannot run updateDav without prior fetch metadata; use direct PUT.
-      await runPutFallback(store, doc, safeDeletions, safeInsertions)
-    }
-  }
 }
 
 function mergeLanguageOps(existingRows: LanguageRow[], languageOps: MutationOps<LanguageRow>): LanguageRow[] {
@@ -321,7 +184,7 @@ async function mutateLanguageEntries(
     : mergeLanguageOps(existingRows, languageOps)
 
   const listObjects = store.each(subject, ns.schema('knowsLanguage'), null, doc)
-  const existingListHeads = listObjects.filter((node) => node.termType === 'BlankNode' || node.termType === 'NamedNode')
+  const existingListHeads = listObjects.filter((node): node is NamedNode => node.termType === 'BlankNode' || node.termType === 'NamedNode')
 
   const existingListNodes = Array.from(new Map(
     existingListHeads
@@ -329,7 +192,7 @@ async function mutateLanguageEntries(
       .map((node) => [`${node.termType}:${node.value}`, node])
   ).values())
 
-  const existingLanguageNodes = Array.from(new Set(
+  const existingLanguageNodes: LanguageEntryNode[] = Array.from(new Set(
     listObjects
       .flatMap((node) => expandRdfList(store, node))
       .filter((node) => node.termType === 'NamedNode' || node.termType === 'BlankNode')
@@ -347,21 +210,45 @@ async function mutateLanguageEntries(
       .map((node) => [`${node.termType}:${node.value}`, node])
   ).values())
 
-  const deletions = store.statementsMatching(subject, ns.schema('knowsLanguage'), null, doc)
+  const {
+    statements: insertions,
+    entryNodes: nextEntryNodes
+  } = buildLanguageStatements(subject, doc, nextRows, existingLanguageNodes)
+
+  const retainedEntryNodeKeys = new Set(nextEntryNodes.map((node) => nodeKey(node)))
+  const retainedLanguageNodes = existingLanguageNodes.filter((node) => retainedEntryNodeKeys.has(nodeKey(node)))
+  const removedLanguageNodes = existingLanguageNodes.filter((node) => !retainedEntryNodeKeys.has(nodeKey(node)))
+
+  const retainedPublicIdNodes = Array.from(new Map(
+    retainedLanguageNodes
+      .map((node) => store.any(node as NamedNode, ns.solid('publicId'), null, doc))
+      .filter((node): node is NamedNode => Boolean(node && node.termType === 'NamedNode'))
+      .map((node) => [nodeKey(node), node])
+  ).values())
+
+  const deletions: RdfStatement[] = store.statementsMatching(subject, ns.schema('knowsLanguage'), null, doc)
   existingListNodes.forEach((node) => {
-    deletions.push(...store.statementsMatching(node as any, null, null, doc))
+    deletions.push(...store.statementsMatching(node, null, null, doc))
   })
-  existingLanguageNodes.forEach((node) => {
-    // Remove old language-entry statements so save always rewrites canonical shape.
+  removedLanguageNodes.forEach((node) => {
     deletions.push(...store.statementsMatching(node as NamedNode, null, null, doc))
   })
+  retainedLanguageNodes.forEach((node) => {
+    deletions.push(...store.statementsMatching(node as NamedNode, ns.solid('publicId'), null, doc))
+  })
   existingPublicIdNodes.forEach((node) => {
-    // Language labels are attached to the publicId resource (l:xx) and should be removed for deleted rows.
     deletions.push(...store.statementsMatching(node as NamedNode, ns.schema('name'), null, doc))
   })
-  const insertions = buildLanguageStatements(subject, doc, nextRows)
+  retainedPublicIdNodes.forEach((node) => {
+    deletions.push(...store.statementsMatching(node as NamedNode, ns.schema('name'), null, doc))
+  })
 
-  await runUpdateWithDavFallback(store, doc, deletions, insertions)
+  await runUpdateTransport(store, doc, deletions, insertions, {
+    unsupportedMessage: 'Language updates are not supported by this store updater.',
+    failureMessage: 'Failed to save languages',
+    useDavFallback: true,
+    usePutFallback: true
+  })
 }
 
 export async function processLanguageMutations(
@@ -374,7 +261,8 @@ export async function processLanguageMutations(
     await mutateLanguageEntries(store, subject, mutationPlan, orderedRows)
 
   } catch (error) {
-    const message = error instanceof Error ? error.message : String(error)
-    throw new Error(`${mutationSaveLanguagesFailedPrefixText} ${message}`)
+    const rootError = error instanceof Error ? error : new Error(String(error))
+    debugError(languageMutationSaveFailedDebugText, rootError)
+    throw new Error(saveLanguageUpdatesFailedMessageText, { cause: rootError })
   }
 } 

@@ -1,0 +1,194 @@
+/* Social section styles. */
+
+.profile__section[data-profile-section='social'],
+.profile__section--empty[data-profile-section='social'] {
+  --social-card-collapsed-columns: repeat(5, max-content);
+  --social-card-expanded-columns: repeat(3, max-content);
+  --social-card-icon-size: var(--icon-base, 2rem);
+  --social-card-list-display: flex;
+  --social-card-list-columns: none;
+  --social-card-list-gap: var(--spacing-xxs, 0.3125rem);
+  --social-card-link-gap: var(--spacing-xs, 0.75rem);
+  --social-card-link-padding: var(--spacing-xs, 0.75rem);
+  --social-card-link-hover-background: var(--color-surface-accent-subtle, var(--lavender-300, #e6dcff));
+  --social-card-hidden-item-display: flex;
+  --social-card-more-button-display: none;
+  --social-card-more-button-margin-top: var(--spacing-xs, 0.75rem);
+  border: var(--border-width-thin, 1px) solid var(--color-border-lighter, #D1D5DB);
+}
+
+.profile__section--empty[data-profile-section='social'] {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Card and list */
+.social-card,
+.social-card__list {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+.social-card__list {
+  display: var(--social-card-list-display);
+  grid-template-columns: var(--social-card-list-columns);
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  gap: var(--social-card-list-gap);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.social-card__item,
+.social-card__link,
+.profile__section--empty[data-profile-section='social'] .profile__empty-state-content {
+  display: flex;
+  align-items: center;
+}
+
+.profile__section--empty[data-profile-section='social'] .profile__empty-state-content {
+  flex-direction: column;
+  gap: var(--spacing-2xs, 0.625rem);
+}
+
+.social__empty-icon {
+  display: inline-flex;
+}
+
+/* Links */
+.social-card__link {
+  color: var(--color-primary, #7C4DFF);
+  text-decoration: none;
+  gap: var(--social-card-link-gap);
+  padding: var(--social-card-link-padding);
+  border-radius: var(--border-radius-base, 0.3125rem);
+  transition: background-color var(--animation-duration, 0.2s) ease;
+  position: relative;
+  flex: 1;
+  min-width: 0;
+}
+
+.social-card__link:hover,
+.social-card__link:focus {
+  text-decoration: underline;
+  background-color: var(--social-card-link-hover-background);
+}
+
+.social-card__link[href^="http"]:after {
+  content: " (external link)";
+  position: absolute;
+  left: -10000px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+.social-card__icon {
+  width: var(--social-card-icon-size);
+  height: var(--social-card-icon-size);
+  border-radius: var(--border-radius-base, 0.3125rem);
+  background: var(--color-card-bg, #FFFFFF);
+  flex-shrink: 0;
+}
+
+/* Toggle button */
+
+solid-ui-button.social-card__more-button {
+  --button-height-sm: 0;
+  --button-padding-x-sm: 0;
+  --button-background: transparent;
+  --button-border: transparent;
+  --button-text: var(--color-primary, #7C4DFF);
+  --button-hover-background: transparent;
+  --button-hover-border: transparent;
+  --button-hover-text: var(--color-primary, #7C4DFF);
+}
+
+.social-card__more-button,
+solid-ui-button.social-card__more-button::part(button) {
+  display: var(--social-card-more-button-display);
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--color-primary, #7C4DFF);
+  font: inherit;
+  font-weight: var(--font-weight-bold, 600);
+  cursor: var(--profile-interactive-cursor, pointer);
+}
+
+.social-card[data-mobile-expanded="false"] .social-card__item:nth-child(n + 11) {
+  display: var(--social-card-hidden-item-display);
+}
+
+.social-card[data-mobile-expanded="true"] {
+  --social-card-list-columns: var(--social-card-expanded-columns);
+  --social-card-hidden-item-display: flex;
+  --social-card-more-button-display: none;
+}
+
+/* Compact layout */
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile__section[data-profile-section='social'],
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile__section--empty[data-profile-section='social'] {
+  --social-card-list-display: grid;
+  --social-card-list-columns: var(--social-card-collapsed-columns);
+  --social-card-hidden-item-display: none;
+  --social-card-more-button-display: inline-flex;
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .social-card .social-card__list {
+  justify-content: flex-start;
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile__section[data-profile-section='social'] .profile-section-collapsible__toggle-button,
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile__section--empty[data-profile-section='social'] .profile-section-collapsible__toggle-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .social-card__more-button,
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] solid-ui-button.social-card__more-button::part(button) {
+  margin-top: var(--social-card-more-button-margin-top);
+}
+
+@media (max-width: 768px) {
+  .profile__section[data-profile-section='social'],
+  .profile__section--empty[data-profile-section='social'] {
+    --social-card-list-display: grid;
+    --social-card-list-columns: var(--social-card-collapsed-columns);
+    --social-card-hidden-item-display: none;
+    --social-card-more-button-display: inline-flex;
+  }
+
+  .social-card .social-card__list {
+    justify-content: flex-start;
+  }
+
+  .social-card__more-button,
+  solid-ui-button.social-card__more-button::part(button) {
+    margin-top: var(--social-card-more-button-margin-top);
+  }
+}
+
+@container profile-pane (max-width: 768px) {
+  .profile__section[data-profile-section='social'],
+  .profile__section--empty[data-profile-section='social'] {
+    --social-card-list-display: grid;
+    --social-card-list-columns: var(--social-card-collapsed-columns);
+    --social-card-hidden-item-display: none;
+    --social-card-more-button-display: inline-flex;
+  }
+
+  .social-card .social-card__list {
+    justify-content: flex-start;
+  }
+
+  .social-card__more-button,
+  solid-ui-button.social-card__more-button::part(button) {
+    margin-top: var(--social-card-more-button-margin-top);
+  }
+}

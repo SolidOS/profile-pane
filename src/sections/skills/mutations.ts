@@ -1,10 +1,11 @@
-import { LiveStore, NamedNode, st, literal, sym } from 'rdflib'
+import { blankNode, LiveStore, NamedNode, Node, st, literal, sym } from 'rdflib'
 import { ns } from 'solid-ui'
 import { SkillRow } from './types'
-import { MutationOps } from '../shared/types'
-import { applyUpdaterPatch, collectLinkedNodeStatements, collectNodeStatements, findExistingNode } from '../shared/rdfMutationHelpers'
+import { MutationOps, RdfStatement } from '../shared/types'
+import { collectLinkedNodeStatements, collectNodeStatements, findExistingNode, registerStorePrefix, runUpdateTransport } from '../shared/rdfMutationHelpers'
 import { createIdNode } from '../shared/idNodeFactory'
-import { mutationSaveSkillsFailedPrefixText } from '../../texts'
+import { saveSkillsUpdatesFailedMessageText, skillsMutationSaveFailedDebugText } from '../../texts'
+import { error as debugError } from '../../utils/debug'
 
 export type SkillMutationPlan = MutationOps<SkillRow>
 
@@ -12,28 +13,26 @@ const ESCO_SKILL_BASE_URI = 'http://data.europa.eu/esco/skill/'
 const SKILL_PREFIX_BASE_URI = 'skill:'
 
 function ensureSkillPrefix(store: LiveStore) {
-  const anyStore = store as any
-  if (typeof anyStore.setPrefixForURI === 'function') {
-    anyStore.setPrefixForURI('skill', SKILL_PREFIX_BASE_URI)
-    return
-  }
-  if (!anyStore.namespaces) {
-    anyStore.namespaces = {}
-  }
-  anyStore.namespaces.skill = SKILL_PREFIX_BASE_URI
+  registerStorePrefix(store, 'skill', SKILL_PREFIX_BASE_URI)
 }
 
-function normalizeSkillPublicIdUri(publicId: string): string {
+function buildSkillPublicIdNode(publicId: string): Node {
   const normalized = publicId.trim()
-  if (!normalized) return normalized
+  if (!normalized) return blankNode()
+  if (normalized.startsWith('_:')) {
+    return blankNode(normalized.slice(2))
+  }
   if (normalized.startsWith('skill:')) {
-    return normalized
+    return sym(normalized)
   }
   if (normalized.startsWith(ESCO_SKILL_BASE_URI)) {
     const suffix = normalized.slice(ESCO_SKILL_BASE_URI.length)
-    return suffix ? `skill:${suffix}` : normalized
+    return sym(suffix ? `skill:${suffix}` : normalized)
   }
-  return normalized
+  if (!normalized.includes(':')) {
+    return blankNode(normalized)
+  }
+  return sym(normalized)
 }
 
 function normalizeNodeId(value: string): string {
@@ -57,14 +56,11 @@ function collectSkillLinkStatementsByEntryValue(
 
 function buildSkillsStatements(subject: NamedNode, doc: NamedNode, node: NamedNode, skill: SkillRow) {
   if (!skill.name) return []
-  if (!skill.publicId) {
-    throw new Error(`Missing skill publicId for skill: ${skill.name}`)
-  }
-  const publicIdNode = sym(normalizeSkillPublicIdUri(skill.publicId))
+  const publicIdNode = buildSkillPublicIdNode(skill.publicId)
 
   return [
     st(subject, ns.schema('skills'), node, doc),
-    st(node, ns.solid('publicId'), publicIdNode as any, doc),
+    st(node, ns.solid('publicId'), publicIdNode, doc),
     st(publicIdNode as any, ns.schema('name'), literal(skill.name), doc)
   ]
 }
@@ -74,8 +70,8 @@ async function mutateSkillsEntries(store: LiveStore, subject: NamedNode, skillOp
   const doc = subject.doc()
   const existingSkillNodes = store.each(subject, ns.schema('skills'))
 
-  const deletions: any[] = []
-  const insertions: any[] = []
+  const deletions: RdfStatement[] = []
+  const insertions: RdfStatement[] = []
 
   const collectLinkedPublicIdStatements = (skillNode: NamedNode) => {
     const linkedPublicIdStatements = collectLinkedNodeStatements(store, skillNode, ns.solid('publicId'), doc)
@@ -121,7 +117,12 @@ async function mutateSkillsEntries(store: LiveStore, subject: NamedNode, skillOp
     insertions.push(...buildSkillsStatements(subject, doc, createIdNode(doc), skill))
   })
 
-  await applyUpdaterPatch(store, deletions, insertions)
+  await runUpdateTransport(store, doc, deletions, insertions, {
+    unsupportedMessage: 'Skill updates are not supported by this store updater.',
+    failureMessage: 'Failed to save skills',
+    useDavFallback: true,
+    usePutFallback: true
+  })
 }
 
 export async function processSkillsMutations(store: LiveStore, subject: NamedNode, mutationPlan: SkillMutationPlan) {
@@ -129,7 +130,8 @@ export async function processSkillsMutations(store: LiveStore, subject: NamedNod
     await mutateSkillsEntries(store, subject, mutationPlan)
 
   } catch (error) {
-    const message = error instanceof Error ? error.message : String(error)
-    throw new Error(`${mutationSaveSkillsFailedPrefixText} ${message}`)
+    const rootError = error instanceof Error ? error : new Error(String(error))
+    debugError(skillsMutationSaveFailedDebugText, rootError)
+    throw new Error(saveSkillsUpdatesFailedMessageText, { cause: rootError })
   }
 } 

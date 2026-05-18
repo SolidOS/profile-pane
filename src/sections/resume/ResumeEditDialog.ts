@@ -1,8 +1,11 @@
 import { alertDialog, openInputDialog } from '../../ui/dialog'
 import { html, render } from 'lit-html'
+import 'solid-ui/components/actions/button'
+import 'solid-ui/components/forms/combobox'
+import 'solid-ui/components/forms/select'
 import { RoleDetails, ResumeRow } from './types'
 import '../../styles/EditDialogs.css'
-import '../../styles/ContactInfoEditDialog.css'
+import '../contactInfo/ContactInfoEditDialog.css'
 import { LiveStore, NamedNode, literal } from 'rdflib'
 import { processResumeMutations } from './mutations'
 import { ViewerMode } from '../../types'
@@ -16,7 +19,7 @@ import {
   dialogSubmitLabelText,
   editResumeDialogTitleText,
   ownerLoginRequiredDialogMessageText,
-  saveResumeUpdatesFailedPrefixText
+  saveResumeUpdatesFailedMessageText
 } from '../../texts'
 
 type ResumeFormState = {
@@ -28,8 +31,396 @@ type ResumeValidationResult = {
   message?: string
 }
 
+type ResumeOrganizationTypeOption = {
+  label: string
+  value: string
+}
+
+type ResumeOrganizationSuggestion = {
+  label: string
+  publicId: string
+}
+
+type ResumeOrganizationComboboxOption = {
+  label: string
+  value: string
+  publicId?: string
+}
+
+type ResumeOrganizationComboboxElement = HTMLElement & {
+  suggestionProvider?: (query: string) => Promise<ResumeOrganizationComboboxOption[]>
+  options?: ResumeOrganizationComboboxOption[]
+  value?: string
+  inputValue?: string
+  label?: string
+  placeholder?: string
+}
+
+type ResumeFocusableElement = HTMLElement & {
+  _closePopup?: () => void
+}
+
+type ResumeDateSelectKind = 'start-month' | 'start-year' | 'end-month' | 'end-year'
+
+type ResumeOrganizationTypeSelectElement = HTMLElement & {
+  options?: ResumeOrganizationTypeOption[]
+  value?: string
+  label?: string
+}
+
+const RESUME_ORGANIZATION_TYPE_OPTIONS: ResumeOrganizationTypeOption[] = [
+  { label: 'Corporation', value: 'Corporation' },
+  { label: 'Educational Organization', value: 'EducationalOrganization' },
+  { label: 'Research Organization', value: 'ResearchOrganization' },
+  { label: 'Government Organization', value: 'GovernmentOrganization' },
+  { label: 'NGO', value: 'NGO' },
+  { label: 'Performing Group', value: 'PerformingGroup' },
+  { label: 'Project', value: 'Project' },
+  { label: 'Sports Organization', value: 'SportsOrganization' },
+  { label: 'Other', value: 'Other' }
+]
+
+const RESUME_MONTH_OPTIONS: ResumeOrganizationTypeOption[] = [
+  { value: '01', label: 'January' },
+  { value: '02', label: 'February' },
+  { value: '03', label: 'March' },
+  { value: '04', label: 'April' },
+  { value: '05', label: 'May' },
+  { value: '06', label: 'June' },
+  { value: '07', label: 'July' },
+  { value: '08', label: 'August' },
+  { value: '09', label: 'September' },
+  { value: '10', label: 'October' },
+  { value: '11', label: 'November' },
+  { value: '12', label: 'December' }
+]
+
+const WIKIDATA_ORGANIZATION_SEARCH_URI = 'https://www.wikidata.org/w/api.php?action=wbsearchentities&language=$(language)&type=item&limit=$(limit)&format=json&origin=*&search=$(name)'
+const WIKIDATA_ENTITY_LOOKUP_URI = 'https://www.wikidata.org/w/api.php?action=wbgetentities&format=json&origin=*&props=claims&ids=$(ids)'
+const WIKIDATA_ORGANIZATION_SEARCH_LANGUAGE = 'en'
+const WIKIDATA_ORGANIZATION_SEARCH_LIMIT = 8
+const WIKIDATA_ORGANIZATION_SEARCH_CANDIDATE_LIMIT = 24
+
+const RESUME_ORGANIZATION_TYPE_WIKIDATA_CLASS_URIS: Record<string, string[]> = {
+  Corporation: ['http://www.wikidata.org/entity/Q6881511', 'http://www.wikidata.org/entity/Q4830453'],
+  EducationalOrganization: ['http://www.wikidata.org/entity/Q178706', 'http://www.wikidata.org/entity/Q2385804', 'http://www.wikidata.org/entity/Q1664720'],
+  ResearchOrganization: ['http://www.wikidata.org/entity/Q31855'],
+  GovernmentOrganization: ['http://www.wikidata.org/entity/Q327333'],
+  NGO: ['http://www.wikidata.org/entity/Q163740', 'http://www.wikidata.org/entity/Q79913', 'http://www.wikidata.org/entity/Q708676'],
+  PerformingGroup: ['http://www.wikidata.org/entity/Q32178211'],
+  Project: ['http://www.wikidata.org/entity/Q170584'],
+  SportsOrganization: ['http://www.wikidata.org/entity/Q4438121'],
+  Other: ['http://www.wikidata.org/entity/Q43229']
+}
+
+const RESUME_ORGANIZATION_SEARCH_CLASS_URIS = Array.from(
+  new Set(
+    RESUME_ORGANIZATION_TYPE_OPTIONS.flatMap(
+      (option) => RESUME_ORGANIZATION_TYPE_WIKIDATA_CLASS_URIS[option.value] || []
+    )
+  )
+)
+
+const RESUME_PRESENT_MONTH_VALUE = '__present__'
+
 function sanitizeResumeFieldValue(value: string): string {
   return sanitizeTextValue(value)
+}
+
+function normalizeResumeOrganizationPublicId(value: string): string {
+  return sanitizeResumeFieldValue(value)
+}
+
+type WikidataSearchResult = {
+  id?: string
+  label?: string
+  match?: { text?: string }
+  concepturi?: string
+  url?: string
+}
+
+type WikidataEntity = {
+  claims?: Record<string, Array<{
+    mainsnak?: {
+      snaktype?: string
+      datavalue?: {
+        value?: { id?: string }
+      }
+    }
+  }>>
+}
+
+function buildWikidataOrganizationSearchUrl(name: string): string {
+  return WIKIDATA_ORGANIZATION_SEARCH_URI
+    .replace('$(language)', encodeURIComponent(WIKIDATA_ORGANIZATION_SEARCH_LANGUAGE))
+    .replace('$(limit)', encodeURIComponent(String(WIKIDATA_ORGANIZATION_SEARCH_CANDIDATE_LIMIT)))
+    .replace('$(name)', encodeURIComponent(name))
+}
+
+function buildWikidataEntityLookupUrl(ids: string[]): string {
+  return WIKIDATA_ENTITY_LOOKUP_URI.replace('$(ids)', encodeURIComponent(ids.join('|')))
+}
+
+function getWikidataIdFromUri(value: string): string {
+  const trimmed = sanitizeResumeFieldValue(value)
+  const match = trimmed.match(/Q\d+/)
+  return match ? match[0] : ''
+}
+
+function getWikidataClaimIds(entity: WikidataEntity | undefined, property: 'P31' | 'P279'): string[] {
+  const claims = entity?.claims?.[property] || []
+
+  return claims
+    .map((claim) => claim?.mainsnak)
+    .filter((snak) => snak?.snaktype === 'value')
+    .map((snak) => snak?.datavalue?.value?.id)
+    .filter((id): id is string => typeof id === 'string' && id.length > 0)
+}
+
+async function fetchWikidataEntities(ids: string[]): Promise<Record<string, WikidataEntity>> {
+  const uniqueIds = Array.from(new Set(ids.filter(Boolean)))
+  if (!uniqueIds.length || typeof fetch !== 'function') return {}
+
+  const response = await fetch(buildWikidataEntityLookupUrl(uniqueIds))
+  if (!response.ok) return {}
+
+  const payload = await response.json() as { entities?: Record<string, WikidataEntity> }
+  return payload?.entities || {}
+}
+
+function entityMatchesAllowedOrganizationTypes(entityId: string, entityMap: Record<string, WikidataEntity>): boolean {
+  const allowedIds = new Set(
+    RESUME_ORGANIZATION_SEARCH_CLASS_URIS.map((uri) => getWikidataIdFromUri(uri))
+  )
+  const visited = new Set<string>()
+  const agenda = [entityId]
+
+  while (agenda.length) {
+    const currentId = agenda.shift()
+    if (!currentId || visited.has(currentId)) continue
+    visited.add(currentId)
+
+    if (allowedIds.has(currentId)) {
+      return true
+    }
+
+    const entity = entityMap[currentId]
+    agenda.push(...getWikidataClaimIds(entity, 'P31'))
+    agenda.push(...getWikidataClaimIds(entity, 'P279'))
+  }
+
+  return false
+}
+
+function toResumeOrganizationLabel(result: any): string {
+  return result?.label || result?.match?.text || result?.id || ''
+}
+
+function toResumeOrganizationSuggestion(result: WikidataSearchResult): ResumeOrganizationSuggestion {
+  const label = sanitizeResumeFieldValue(toResumeOrganizationLabel(result))
+  const publicId = normalizeResumeOrganizationPublicId(
+    typeof result?.concepturi === 'string'
+      ? result.concepturi
+      : typeof result?.url === 'string'
+        ? result.url
+        : ''
+  )
+
+  return { label, publicId }
+}
+
+function dedupeResumeOrganizationSuggestions(
+  suggestions: ResumeOrganizationSuggestion[]
+): ResumeOrganizationSuggestion[] {
+  const seen = new Set<string>()
+
+  return suggestions.filter((suggestion) => {
+    if (!suggestion.label || !suggestion.publicId) return false
+    const key = suggestion.label.toLowerCase()
+    if (seen.has(key)) return false
+    seen.add(key)
+    return true
+  })
+}
+
+async function fetchWikidataOrganizationSuggestions(name: string): Promise<ResumeOrganizationSuggestion[]> {
+  const query = sanitizeResumeFieldValue(name)
+  if (query.length < 2 || typeof fetch !== 'function') return []
+
+  try {
+    const response = await fetch(buildWikidataOrganizationSearchUrl(query))
+    if (!response.ok) return []
+
+    const payload = await response.json() as any
+    const results = Array.isArray(payload?.search) ? payload.search as WikidataSearchResult[] : []
+    const suggestions = dedupeResumeOrganizationSuggestions(
+      results.map((result: WikidataSearchResult) => toResumeOrganizationSuggestion(result))
+    )
+    const resultIds = suggestions
+      .map((suggestion) => getWikidataIdFromUri(suggestion.publicId))
+      .filter(Boolean)
+
+    if (!resultIds.length) {
+      return suggestions.slice(0, WIKIDATA_ORGANIZATION_SEARCH_LIMIT)
+    }
+
+    const resultEntities = await fetchWikidataEntities(resultIds)
+    const relatedIds = Array.from(new Set(
+      Object.values(resultEntities).flatMap((entity) => [
+        ...getWikidataClaimIds(entity, 'P31'),
+        ...getWikidataClaimIds(entity, 'P279')
+      ])
+    ))
+    const relatedEntities = await fetchWikidataEntities(relatedIds)
+    const entityMap = {
+      ...resultEntities,
+      ...relatedEntities
+    }
+
+    if (Object.keys(entityMap).length === 0) {
+      return suggestions.slice(0, WIKIDATA_ORGANIZATION_SEARCH_LIMIT)
+    }
+
+    const filteredSuggestions = suggestions.filter((suggestion) => {
+      const entityId = getWikidataIdFromUri(suggestion.publicId)
+      return entityMatchesAllowedOrganizationTypes(entityId, entityMap)
+    })
+
+    return (filteredSuggestions.length > 0 ? filteredSuggestions : suggestions)
+      .slice(0, WIKIDATA_ORGANIZATION_SEARCH_LIMIT)
+  } catch {
+    return []
+  }
+}
+
+function toResumeOrganizationComboboxOption(suggestion: ResumeOrganizationSuggestion): ResumeOrganizationComboboxOption {
+  return {
+    label: suggestion.label,
+    value: suggestion.publicId,
+    publicId: suggestion.publicId
+  }
+}
+
+function readResumeOrganizationComboboxInputValue(event: Event): string {
+  const customEvent = event as CustomEvent<{ value?: string }>
+  if (typeof customEvent.detail?.value === 'string') {
+    return customEvent.detail.value
+  }
+
+  const target = event.target as HTMLInputElement | null
+  return typeof target?.value === 'string' ? target.value : ''
+}
+
+function readResumeOrganizationComboboxChange(event: Event): ResumeOrganizationComboboxOption | null {
+  const customEvent = event as CustomEvent<{
+    value?: string,
+    label?: string,
+    option?: ResumeOrganizationComboboxOption
+  }>
+
+  if (customEvent.detail?.option) {
+    return customEvent.detail.option
+  }
+
+  return null
+}
+
+function createResumeOrganizationSuggestionProvider(): (query: string) => Promise<ResumeOrganizationComboboxOption[]> {
+  return async (query: string) => {
+    const suggestions = await fetchWikidataOrganizationSuggestions(query)
+    return suggestions.map(toResumeOrganizationComboboxOption)
+  }
+}
+
+function normalizeResumeOrganizationTypeValue(value: string): string {
+  return RESUME_ORGANIZATION_TYPE_OPTIONS.some((option) => option.value === value)
+    ? value
+    : RESUME_ORGANIZATION_TYPE_OPTIONS[0]?.value || ''
+}
+
+function readResumeOrganizationTypeChange(event: Event): string {
+  const customEvent = event as CustomEvent<{ value?: string }>
+  if (typeof customEvent.detail?.value === 'string') {
+    return customEvent.detail.value
+  }
+
+  const target = event.target as HTMLSelectElement | HTMLInputElement | null
+  return typeof target?.value === 'string' ? target.value : ''
+}
+
+function readResumeSelectChange(event: Event): string {
+  return readResumeOrganizationTypeChange(event)
+}
+
+function getResumeYearOptions(selectedYears: string[]): ResumeOrganizationTypeOption[] {
+  const currentYear = new Date().getFullYear()
+  const baseYearOptions = Array.from({ length: 120 }, (_, i) => String(currentYear - i))
+  const yearOptions = Array.from(new Set([
+    ...baseYearOptions,
+    ...selectedYears
+  ].filter(Boolean))).sort((a, b) => Number(b) - Number(a))
+
+  return yearOptions.map((year) => ({ label: year, value: year }))
+}
+
+function getResumeDateSelectOptions(
+  kind: ResumeDateSelectKind,
+  selectedYears: string[],
+  isCurrentRole: boolean
+): ResumeOrganizationTypeOption[] {
+  if (kind === 'start-month') {
+    return RESUME_MONTH_OPTIONS
+  }
+
+  if (kind === 'start-year') {
+    return getResumeYearOptions(selectedYears)
+  }
+
+  if (kind === 'end-month') {
+    if (isCurrentRole) {
+      return [{ value: RESUME_PRESENT_MONTH_VALUE, label: 'Present' }]
+    }
+
+    return RESUME_MONTH_OPTIONS
+  }
+
+  if (kind === 'end-year' && isCurrentRole) {
+    return [{ value: '', label: '' }]
+  }
+
+  return getResumeYearOptions(selectedYears)
+}
+
+function getResumeDateSelectLabel(kind: ResumeDateSelectKind, row: ResumeRow): string {
+  switch (kind) {
+    case 'start-month':
+    case 'end-month':
+      return row?.isCurrentRole && kind === 'end-month' ? 'Present' : 'Select Month'
+    case 'start-year':
+      return 'Select Year'
+    case 'end-year':
+      return row?.isCurrentRole ? '' : 'Select Year'
+    default:
+      return ''
+  }
+}
+
+function getResumeDateSelectValue(kind: ResumeDateSelectKind, row: ResumeRow): string {
+  const startDateParts = parseYearMonthFromDateText(toText(row?.startDate))
+  const endDateParts = parseYearMonthFromDateText(toText(row?.endDate))
+
+  switch (kind) {
+    case 'start-month':
+      return startDateParts.month
+    case 'start-year':
+      return startDateParts.year
+    case 'end-month':
+      return row?.isCurrentRole ? RESUME_PRESENT_MONTH_VALUE : endDateParts.month
+    case 'end-year':
+      return row?.isCurrentRole ? '' : endDateParts.year
+    default:
+      return ''
+  }
 }
 
 function parseYearMonthFromDateText(dateText: string): { year: string, month: string } {
@@ -73,7 +464,8 @@ function toFormState(resumeData: RoleDetails[]): ResumeFormState {
       endDate: role.endDate,
       isCurrentRole: role.isCurrentRole ?? !role.endDate,
       orgName: sanitizeResumeFieldValue(toText(role.orgName)),
-      orgType: sanitizeResumeFieldValue(toText(role.orgType)),
+      orgPublicId: normalizeResumeOrganizationPublicId(sanitizeResumeFieldValue(toText(role.orgPublicId))),
+      orgType: normalizeResumeOrganizationTypeValue(sanitizeResumeFieldValue(toText(role.orgType))),
       orgLocation: sanitizeResumeFieldValue(toText(role.orgLocation)),
       orgHomePage: sanitizeResumeFieldValue(toText(role.orgHomePage)),
       description: sanitizeResumeFieldValue(toText(role.description)),
@@ -92,7 +484,8 @@ function toFormState(resumeData: RoleDetails[]): ResumeFormState {
         endDate: undefined,
         isCurrentRole: false,
         orgName: '',
-        orgType: '',
+        orgPublicId: '',
+        orgType: RESUME_ORGANIZATION_TYPE_OPTIONS[0].value,
         orgLocation: '',
         orgHomePage: '',
         description: '',
@@ -139,6 +532,82 @@ type ResumeRowProps = {
   onChange: () => void
 }
 
+function initializeResumeOrganizationTypeSelects(form: HTMLFormElement, resumeData: ResumeRow[]): void {
+  const selectElements = form.querySelectorAll('solid-ui-select[data-resume-organization-type-index]') as NodeListOf<ResumeOrganizationTypeSelectElement>
+
+  selectElements.forEach((selectElement) => {
+    const rowIndex = Number(selectElement.dataset.resumeOrganizationTypeIndex)
+    if (Number.isNaN(rowIndex)) return
+
+    const resumeRow = resumeData[rowIndex]
+    if (!resumeRow) return
+
+    selectElement.options = RESUME_ORGANIZATION_TYPE_OPTIONS
+    selectElement.value = normalizeResumeOrganizationTypeValue(resumeRow.orgType || '')
+    selectElement.label = ''
+  })
+}
+
+function initializeResumeOrganizationComboboxes(form: HTMLFormElement, resumeData: ResumeRow[]): void {
+  const comboboxElements = form.querySelectorAll('solid-ui-combobox[data-resume-organization-index]') as NodeListOf<ResumeOrganizationComboboxElement>
+
+  comboboxElements.forEach((comboboxElement) => {
+    const rowIndex = Number(comboboxElement.dataset.resumeOrganizationIndex)
+    if (Number.isNaN(rowIndex)) return
+
+    const resumeRow = resumeData[rowIndex]
+    if (!resumeRow) return
+
+    const options = resumeRow.orgPublicId && resumeRow.orgName
+      ? [{ label: resumeRow.orgName, value: resumeRow.orgPublicId, publicId: resumeRow.orgPublicId }]
+      : []
+
+    comboboxElement.suggestionProvider = createResumeOrganizationSuggestionProvider()
+    comboboxElement.options = options
+    comboboxElement.value = resumeRow.orgPublicId || ''
+    comboboxElement.inputValue = resumeRow.orgName || ''
+    comboboxElement.label = ''
+    comboboxElement.placeholder = 'Company or Organization'
+  })
+}
+
+function syncResumeOrganizationRowsFromComboboxes(form: HTMLFormElement, resumeData: ResumeRow[]): void {
+  const comboboxElements = form.querySelectorAll('solid-ui-combobox[data-resume-organization-index]') as NodeListOf<ResumeOrganizationComboboxElement>
+
+  comboboxElements.forEach((comboboxElement) => {
+    const rowIndex = Number(comboboxElement.dataset.resumeOrganizationIndex)
+    if (Number.isNaN(rowIndex) || !resumeData[rowIndex]) return
+
+    const comboboxInput = comboboxElement.shadowRoot?.querySelector('input') as HTMLInputElement | null
+    const nextName = sanitizeResumeFieldValue(comboboxInput?.value || comboboxElement.inputValue || '')
+    const nextPublicId = normalizeResumeOrganizationPublicId(comboboxElement.value || '')
+
+    applyRowFieldChange(resumeData[rowIndex], 'orgName', nextName, rowHasContent)
+    resumeData[rowIndex].orgPublicId = nextPublicId
+  })
+}
+
+function initializeResumeDateSelects(form: HTMLFormElement, resumeData: ResumeRow[]): void {
+  const selectElements = form.querySelectorAll('solid-ui-select[data-resume-date-kind]') as NodeListOf<ResumeOrganizationTypeSelectElement>
+
+  selectElements.forEach((selectElement) => {
+    const kind = selectElement.dataset.resumeDateKind as ResumeDateSelectKind | undefined
+    const rowIndex = Number(selectElement.dataset.resumeRowIndex)
+    if (!kind || Number.isNaN(rowIndex)) return
+
+    const resumeRow = resumeData[rowIndex]
+    if (!resumeRow) return
+
+    const startDateParts = parseYearMonthFromDateText(toText(resumeRow.startDate))
+    const endDateParts = parseYearMonthFromDateText(toText(resumeRow.endDate))
+    const selectedYears = [startDateParts.year, endDateParts.year]
+
+    selectElement.options = getResumeDateSelectOptions(kind, selectedYears, Boolean(resumeRow.isCurrentRole))
+    selectElement.value = getResumeDateSelectValue(kind, resumeRow)
+    selectElement.label = getResumeDateSelectLabel(kind, resumeRow)
+  })
+}
+
 function renderResumeInputRow({
   resumeData,
   index,
@@ -183,41 +652,7 @@ function renderResumeInputRow({
   const endYearParsedText = endDateParts.year
   const isCurrentRoleId = `resume-current-role-${index}`
   const currentYear = new Date().getFullYear()
-  const baseYearOptions = Array.from({ length: 120 }, (_, i) => String(currentYear - i))
-  const yearOptions = Array.from(new Set([
-    ...baseYearOptions,
-    startYearText,
-    endYearParsedText
-  ].filter(Boolean))).sort((a, b) => Number(b) - Number(a))
-
-  const monthOptions = [
-    { value: '01', label: 'January' },
-    { value: '02', label: 'February' },
-    { value: '03', label: 'March' },
-    { value: '04', label: 'April' },
-    { value: '05', label: 'May' },
-    { value: '06', label: 'June' },
-    { value: '07', label: 'July' },
-    { value: '08', label: 'August' },
-    { value: '09', label: 'September' },
-    { value: '10', label: 'October' },
-    { value: '11', label: 'November' },
-    { value: '12', label: 'December' }
-  ]
-
-  const renderMonthOptions = (selectedMonth: string, emptyLabel = 'Select Month') => html`
-    <option value="" ?selected=${!selectedMonth}>${emptyLabel}</option>
-    ${monthOptions.map((month) => html`
-      <option value=${month.value} ?selected=${month.value === selectedMonth}>${month.label}</option>
-    `)}
-  `
-
-  const renderYearOptions = (selectedYear: string, emptyLabel = 'Select Year') => html`
-    <option value="" ?selected=${!selectedYear}>${emptyLabel}</option>
-    ${yearOptions.map((year) => html`
-      <option value=${year} ?selected=${year === selectedYear}>${year}</option>
-    `)}
-  `
+  const selectedYears = [startYearText, endYearParsedText]
 
   const handleResumeInput = (field: ResumeEditableField) => (e: Event) => {
     const target = e.target as HTMLInputElement
@@ -241,8 +676,7 @@ function renderResumeInputRow({
   /* The following function was generated by AI Model: GPT-5.3-Codex  */
   /* Prompt: can you make this a month drop down for the start year */
   const handleStartMonthChange = (event: Event) => {
-    const target = event.target as HTMLSelectElement
-    const month = target.value
+    const month = readResumeSelectChange(event)
     const year = parseYearMonthFromDateText(toText(resumeData[index]?.startDate)).year || String(currentYear)
     const nextStartDate = buildDateLiteral(month, year)
     if (resumeData[index]) {
@@ -252,8 +686,7 @@ function renderResumeInputRow({
   }
 
   const handleStartYearChange = (event: Event) => {
-    const target = event.target as HTMLSelectElement
-    const year = target.value
+    const year = readResumeSelectChange(event)
     const month = parseYearMonthFromDateText(toText(resumeData[index]?.startDate)).month || '01'
     const nextStartDate = buildDateLiteral(month, year)
     if (resumeData[index]) {
@@ -263,8 +696,8 @@ function renderResumeInputRow({
   }
 
   const handleEndMonthChange = (event: Event) => {
-    const target = event.target as HTMLSelectElement
-    const month = target.value
+    if (resumeData[index]?.isCurrentRole) return
+    const month = readResumeSelectChange(event)
     const year = parseYearMonthFromDateText(toText(resumeData[index]?.endDate)).year || String(currentYear)
     const nextEndDate = buildDateLiteral(month, year)
     if (resumeData[index]) {
@@ -274,8 +707,8 @@ function renderResumeInputRow({
   }
 
   const handleEndYearChange = (event: Event) => {
-    const target = event.target as HTMLSelectElement
-    const year = target.value
+    if (resumeData[index]?.isCurrentRole) return
+    const year = readResumeSelectChange(event)
     const month = parseYearMonthFromDateText(toText(resumeData[index]?.endDate)).month || '01'
     const nextEndDate = buildDateLiteral(month, year)
     if (resumeData[index]) {
@@ -301,52 +734,49 @@ function renderResumeInputRow({
         applyRowFieldChange(resumeData[index], 'endDate', undefined, rowHasContent)
       }
 
-      const formRoot = target.form || target.closest('form')
-      const endMonthSelect = formRoot?.querySelector(`#${endMonthSelectId}`) as HTMLSelectElement | null
-      const endYearSelect = formRoot?.querySelector(`#${endYearSelectId}`) as HTMLSelectElement | null
-
-      if (endMonthSelect) {
-        endMonthSelect.disabled = target.checked
-        endMonthSelect.value = ''
-        const emptyOption = endMonthSelect.options[0]
-        if (emptyOption) {
-          emptyOption.text = target.checked ? 'Present' : 'Select Month'
-        }
-      }
-
-      if (endYearSelect) {
-        endYearSelect.disabled = target.checked
-        endYearSelect.value = ''
-        const emptyOption = endYearSelect.options[0]
-        if (emptyOption) {
-          emptyOption.text = target.checked ? '' : 'Select Year'
-        }
-      }
+      onChange()
     }
   }
 
   const handleOrganizationTypeInput = (e: Event) => {
-    const target = e.target as HTMLSelectElement
-    const nextType = target.value
+    const nextType = normalizeResumeOrganizationTypeValue(readResumeOrganizationTypeChange(e))
     if (resumeRow) {
       applyRowSelectChange(resumeRow, 'orgType', nextType)
       onChange()
     }
   }
 
+  const handleOrganizationNameInput = (e: Event) => {
+    const nextValue = sanitizeResumeFieldValue(readResumeOrganizationComboboxInputValue(e))
+    if (resumeRow) {
+      applyRowFieldChange(resumeRow, 'orgName', nextValue, rowHasContent)
+      resumeRow.orgPublicId = ''
+    }
+  }
+
+  const handleOrganizationNameChange = (e: Event) => {
+    const selectedOption = readResumeOrganizationComboboxChange(e)
+    if (!resumeRow || !selectedOption?.publicId) return
+
+    applyRowFieldChange(resumeRow, 'orgName', sanitizeResumeFieldValue(selectedOption.label), rowHasContent)
+    resumeRow.orgPublicId = selectedOption.publicId
+  }
+
   return html`
     <div class="profile-edit-dialog__row profile-edit-dialog__row--resume-entry-header" role="group" aria-labelledby=${experienceHeadingId}>
       <h3 id=${experienceHeadingId} class="profile-edit-dialog__entry-heading">${label}</h3>
       <div class="profile-edit-dialog__actions profile-edit-dialog__actions--edge">
-        <button
+        <solid-ui-button
           type="button"
+          variant="icon"
+          size="md"
           class="profile-edit-dialog__delete-button"
           aria-label=${`Delete resume ${displayIndex + 1}`}
           title=${deleteEntryButtonTitleText}
           @click=${handleDelete}
         >
-          <span class="profile-edit-dialog__delete-icon" aria-hidden="true">${trashIcon}</span>
-        </button>
+          <span slot="icon" class="profile-edit-dialog__delete-icon" aria-hidden="true">${trashIcon}</span>
+        </solid-ui-button>
       </div>
     </div>
     <label aria-label=${`${label} Title`} class="label profile-edit-dialog__field">
@@ -368,34 +798,26 @@ function renderResumeInputRow({
     <div class="profile-edit-dialog__row">
       <label aria-label=${`${label} Organization Name`} class="label profile-edit-dialog__field">
         Company or Organization 
-        <input
-          class="input"
-          type="text"
+        <solid-ui-combobox
           name=${organizationName}
-          .value=${resumeRow?.orgName || ''}
+          data-resume-organization-index=${String(index)}
           required
-          data-contact-field="organizationName"
-          data-entry-node=${resumeRow?.entryNode || ''}
-          data-row-status=${resumeRow?.status || 'n/a'}
-          placeholder="Company or Organization"
-          autocomplete="organization"
-          inputmode="text"
-          @change=${handleResumeInput('orgName')}
-        />
+          @input=${handleOrganizationNameInput}
+          @change=${handleOrganizationNameChange}
+        ></solid-ui-combobox>
       </label>
       <label aria-label=${`${label} Organization Type`} class="label profile-edit-dialog__field">
         Organization Type
-        <select name=${organizationTypeName} id=${organizationTypeSelectId} @change=${handleOrganizationTypeInput} .value=${resumeRow?.orgType || ''}>
-          <option value="Corporation">Corporation</option>
-          <option value="EducationalOrganization">Educational Organization</option>
-          <option value="ResearchOrganization">Research Organization</option>
-          <option value="GovernmentOrganization">Government Organization</option>
-          <option value="NGO">NGO</option>
-          <option value="PerformingGroup">Performing Group</option>
-          <option value="Project">Project</option>
-          <option value="SportsOrganization">Sports Organization</option>
-          <option value="Other">Other</option>
-        </select>
+        <solid-ui-select
+          class="profile-edit-dialog__resume-organization-type-select"
+          name=${organizationTypeName}
+          id=${organizationTypeSelectId}
+          data-resume-organization-type-index=${String(index)}
+          .options=${RESUME_ORGANIZATION_TYPE_OPTIONS}
+          .value=${normalizeResumeOrganizationTypeValue(resumeRow?.orgType || '')}
+          .label=${''}
+          @change=${handleOrganizationTypeInput}
+        ></solid-ui-select>
       </label>
     </div>  
     <div class="profile-edit-dialog__row">
@@ -436,35 +858,63 @@ function renderResumeInputRow({
       <label aria-label=${`Start Date ${displayIndex + 1}`} class="label profile-edit-dialog__field profile-edit-dialog__field--date-group">
         <span>Start Date</span>
         <div class="profile-edit-dialog__date-pair">
-          <select name=${startMonthInputName} id=${startMonthSelectId} aria-label=${startMonthLabel} @change=${handleStartMonthChange}>
-            ${renderMonthOptions(startMonthValue)}
-          </select>
-          <select name=${startYearInputName} id=${startYearSelectId} aria-label=${startYearLabel} @change=${handleStartYearChange}>
-            ${renderYearOptions(startYearText)}
-          </select>
+          <solid-ui-select
+            class="profile-edit-dialog__resume-date-select"
+            name=${startMonthInputName}
+            id=${startMonthSelectId}
+            aria-label=${startMonthLabel}
+            data-resume-date-kind="start-month"
+            data-resume-row-index=${String(index)}
+            .options=${getResumeDateSelectOptions('start-month', selectedYears, Boolean(resumeRow?.isCurrentRole))}
+            .value=${startMonthValue}
+            .label=${getResumeDateSelectLabel('start-month', resumeRow)}
+            @change=${handleStartMonthChange}
+          ></solid-ui-select>
+          <solid-ui-select
+            class="profile-edit-dialog__resume-date-select"
+            name=${startYearInputName}
+            id=${startYearSelectId}
+            aria-label=${startYearLabel}
+            data-resume-date-kind="start-year"
+            data-resume-row-index=${String(index)}
+            .options=${getResumeDateSelectOptions('start-year', selectedYears, Boolean(resumeRow?.isCurrentRole))}
+            .value=${startYearText}
+            .label=${getResumeDateSelectLabel('start-year', resumeRow)}
+            @change=${handleStartYearChange}
+          ></solid-ui-select>
         </div>
       </label>
       <label aria-label=${`End Date ${displayIndex + 1}`} class="label profile-edit-dialog__field profile-edit-dialog__field--date-group">
         <span>End Date</span>
         <div class="profile-edit-dialog__date-pair">
-          <select
+          <solid-ui-select
+            class=${`profile-edit-dialog__resume-date-select${resumeRow?.isCurrentRole ? ' profile-edit-dialog__resume-date-select--disabled' : ''}`}
             name=${endMonthInputName}
             id=${endMonthSelectId}
             aria-label=${endMonthLabel}
+            aria-disabled=${String(Boolean(resumeRow?.isCurrentRole))}
+            tabindex=${resumeRow?.isCurrentRole ? '-1' : '0'}
+            data-resume-date-kind="end-month"
+            data-resume-row-index=${String(index)}
+            .options=${getResumeDateSelectOptions('end-month', selectedYears, Boolean(resumeRow?.isCurrentRole))}
+            .value=${resumeRow?.isCurrentRole ? RESUME_PRESENT_MONTH_VALUE : endMonthValue}
+            .label=${getResumeDateSelectLabel('end-month', resumeRow)}
             @change=${handleEndMonthChange}
-            ?disabled=${Boolean(resumeRow?.isCurrentRole)}
-          >
-            ${renderMonthOptions(endMonthValue, resumeRow?.isCurrentRole ? 'Present' : 'Select Month')}
-          </select>
-          <select
+          ></solid-ui-select>
+          <solid-ui-select
+            class=${`profile-edit-dialog__resume-date-select${resumeRow?.isCurrentRole ? ' profile-edit-dialog__resume-date-select--disabled' : ''}`}
             name=${endYearInputName}
             id=${endYearSelectId}
             aria-label=${endYearLabel}
+            aria-disabled=${String(Boolean(resumeRow?.isCurrentRole))}
+            tabindex=${resumeRow?.isCurrentRole ? '-1' : '0'}
+            data-resume-date-kind="end-year"
+            data-resume-row-index=${String(index)}
+            .options=${getResumeDateSelectOptions('end-year', selectedYears, Boolean(resumeRow?.isCurrentRole))}
+            .value=${resumeRow?.isCurrentRole ? '' : endYearParsedText}
+            .label=${getResumeDateSelectLabel('end-year', resumeRow)}
             @change=${handleEndYearChange}
-            ?disabled=${Boolean(resumeRow?.isCurrentRole)}
-          >
-            ${renderYearOptions(endYearParsedText, resumeRow?.isCurrentRole ? '' : 'Select Year')}
-          </select>
+          ></solid-ui-select>
         </div>
       </label>
     </div>
@@ -539,6 +989,10 @@ function renderResumeEditTemplate(
       ? html`<p class="profile-edit-dialog__login-message">${ownerLoginRequiredDialogMessageText}</p>`
       : null}
   `, form)
+
+  initializeResumeOrganizationTypeSelects(form, formState.resumeData)
+  initializeResumeOrganizationComboboxes(form, formState.resumeData)
+  initializeResumeDateSelects(form, formState.resumeData)
 }
 
 type ResumeDialogRenderState = {
@@ -588,19 +1042,51 @@ function restoreResumeDialogRenderState(form: HTMLFormElement, state: ResumeDial
     nextActive = form.querySelector(`[name="${escapedName}"]`) as HTMLElement | null
   }
 
-  if (nextActive && typeof nextActive.focus === 'function') {
-    nextActive.focus({ preventScroll: true })
+  focusResumeFieldElement(nextActive)
+}
+
+function getResumeFocusableTarget(element: HTMLElement | null): HTMLElement | null {
+  if (!element) return null
+
+  if (element.tagName === 'SOLID-UI-COMBOBOX') {
+    const comboboxInput = element.shadowRoot?.querySelector('input') as HTMLInputElement | null
+    if (comboboxInput) return comboboxInput
+  }
+
+  return element
+}
+
+function focusResumeFieldElement(element: HTMLElement | null): void {
+  const focusTarget = getResumeFocusableTarget(element)
+  if (!focusTarget || typeof focusTarget.focus !== 'function') return
+
+  focusTarget.focus({ preventScroll: true })
+  if (focusTarget instanceof HTMLInputElement || focusTarget instanceof HTMLTextAreaElement) {
+    const caretPosition = 0
+    focusTarget.setSelectionRange(caretPosition, caretPosition)
+    focusTarget.scrollLeft = 0
+    focusTarget.scrollTop = 0
+    requestAnimationFrame(() => {
+      focusTarget.scrollLeft = 0
+      focusTarget.scrollTop = 0
+    })
+  }
+
+  if (element?.tagName === 'SOLID-UI-COMBOBOX') {
+    const comboboxHost = element as ResumeFocusableElement
+    if (comboboxHost._closePopup) {
+      requestAnimationFrame(() => {
+        comboboxHost._closePopup?.()
+      })
+    }
   }
 }
 
 function focusResumeField(form: HTMLFormElement, selector: string): void {
   const nextField = form.querySelector(selector) as HTMLElement | null
-  if (!nextField || typeof nextField.focus !== 'function') return
+  if (!nextField) return
 
-  nextField.focus({ preventScroll: true })
-  if (nextField instanceof HTMLInputElement || nextField instanceof HTMLTextAreaElement) {
-    nextField.select()
-  }
+  focusResumeFieldElement(nextField)
 }
 
 function createResumeEditForm(resumeData: RoleDetails[], viewerMode: ViewerMode) {
@@ -630,7 +1116,8 @@ function createResumeEditForm(resumeData: RoleDetails[], viewerMode: ViewerMode)
       endDate: undefined,
       isCurrentRole: false,
       orgName: '',
-      orgType: '',
+      orgPublicId: '',
+      orgType: RESUME_ORGANIZATION_TYPE_OPTIONS[0].value,
       orgLocation: '',
       orgHomePage: '',
       description: '',
@@ -659,6 +1146,11 @@ export async function createResumeEditDialog(
     title: editResumeDialogTitleText,
     dom,
     form,
+    shouldCloseWithoutSave: () => {
+      syncResumeOrganizationRowsFromComboboxes(form, formState.resumeData)
+      const plan: MutationOps<ResumeRow> = summarizeRowOps(formState.resumeData, rowHasContent)
+      return plan.create.length === 0 && plan.update.length === 0 && plan.remove.length === 0
+    },
     headerAction: {
       type: 'button',
       label: '+ Add More',
@@ -668,14 +1160,9 @@ export async function createResumeEditDialog(
     submitLabel: dialogSubmitLabelText,
     cancelLabel: dialogCancelLabelText,
     validate: async () => {
+      syncResumeOrganizationRowsFromComboboxes(form, formState.resumeData)
       if (viewerMode !== 'owner') {
         return ownerLoginRequiredDialogMessageText
-      }
-
-      const plan: MutationOps<ResumeRow> = summarizeRowOps(formState.resumeData, rowHasContent)
-      const hasChanges = plan.create.length > 0 || plan.update.length > 0 || plan.remove.length > 0
-      if (!hasChanges) {
-        return 'No resume changes detected.'
       }
 
       const validation = validateResumeBeforeSave(formState.resumeData)
@@ -686,13 +1173,13 @@ export async function createResumeEditDialog(
       return null
     },
     onSave: async () => {
+      syncResumeOrganizationRowsFromComboboxes(form, formState.resumeData)
       const plan: MutationOps<ResumeRow> = summarizeRowOps(formState.resumeData, rowHasContent)
       await processResumeMutations(store, subject, plan)
       rerender()
     },
     formatSaveError: (error: unknown) => {
-      const message = error instanceof Error ? error.message : String(error)
-      return `${saveResumeUpdatesFailedPrefixText} ${message}`
+      return error instanceof Error ? error.message : saveResumeUpdatesFailedMessageText
     }
   })
 

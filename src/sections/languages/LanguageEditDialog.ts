@@ -1,8 +1,10 @@
-import { openInputDialog } from '../../ui/dialog'
+import { getSharedDialogSaveButton, openInputDialog } from '../../ui/dialog'
 import { html, render } from 'lit-html'
+import 'solid-ui/components/actions/button'
+import 'solid-ui/components/forms/combobox'
 import { LanguageDetails, LanguageRow } from './types'
 import '../../styles/EditDialogs.css'
-import '../../styles/ContactInfoEditDialog.css'
+import '../contactInfo/ContactInfoEditDialog.css'
 import { LiveStore, NamedNode } from 'rdflib'
 import { ViewerMode } from '../../types'
 import { applyRowFieldChange, applyRowSelectChange, deleteRow, summarizeRowOps } from '../shared/rowState'
@@ -16,7 +18,7 @@ import {
   dialogSubmitLabelText,
   editLanguagesDialogTitleText,
   ownerLoginRequiredDialogMessageText,
-  saveLanguageUpdatesFailedPrefixText,
+  saveLanguageUpdatesFailedMessageText,
 } from '../../texts'
 
 type LanguageFormState = {
@@ -28,6 +30,22 @@ type LanguageSuggestion = {
   name: string
   publicId: string
   code: string
+}
+
+type LanguageComboboxOption = {
+  label: string
+  value: string
+  publicId?: string
+  meta?: Record<string, unknown>
+}
+
+type LanguageComboboxElement = HTMLElement & {
+  suggestionProvider?: (query: string) => Promise<LanguageComboboxOption[]>
+  options?: LanguageComboboxOption[]
+  value?: string
+  inputValue?: string
+  label?: string
+  placeholder?: string
 }
 
 const WIKIDATA_LANGUAGE_ENDPOINT = 'https://query.wikidata.org/sparql'
@@ -53,15 +71,6 @@ function rowHasContent(row: LanguageRow): boolean {
 
 function normalizeLanguageCode(value: string): string {
   return (value || '').trim().toLowerCase()
-}
-
-function normalizeSuggestionKey(value: string): string {
-  return sanitizeLanguageFieldValue(value)
-    .toLowerCase()
-    .replace(/\(.*?\)/g, ' ')
-    .replace(/[^a-z\s-]/g, ' ')
-    .replace(/\s+/g, ' ')
-    .trim()
 }
 
 function escapeSparqlRegex(value: string): string {
@@ -131,17 +140,73 @@ async function fetchLanguageSuggestions(term: string): Promise<LanguageSuggestio
   }
 }
 
-function matchLanguageSuggestion(suggestions: LanguageSuggestion[], value: string): LanguageSuggestion | null {
-  const normalized = sanitizeLanguageFieldValue(value).toLowerCase()
-  if (!normalized) return null
+function toLanguageComboboxOption(suggestion: LanguageSuggestion): LanguageComboboxOption {
+  return {
+    label: suggestion.name,
+    value: suggestion.publicId,
+    publicId: suggestion.publicId,
+    meta: { code: suggestion.code }
+  }
+}
 
-  const exact = suggestions.find((suggestion) => suggestion.name.toLowerCase() === normalized)
-  if (exact) return exact
+function readLanguageComboboxInputValue(event: Event): string {
+  const customEvent = event as CustomEvent<{ value?: string }>
+  if (typeof customEvent.detail?.value === 'string') {
+    return customEvent.detail.value
+  }
 
-  const normalizedKey = normalizeSuggestionKey(value)
-  if (!normalizedKey) return null
+  const target = event.target as HTMLInputElement | null
+  return typeof target?.value === 'string' ? target.value : ''
+}
 
-  return suggestions.find((suggestion) => normalizeSuggestionKey(suggestion.name) === normalizedKey) || null
+function readLanguageComboboxChange(event: Event): LanguageComboboxOption | null {
+  const customEvent = event as CustomEvent<{
+    value?: string
+    label?: string
+    option?: LanguageComboboxOption
+  }>
+
+  if (customEvent.detail?.option) {
+    return customEvent.detail.option
+  }
+
+  if (typeof customEvent.detail?.value === 'string') {
+    return {
+      label: typeof customEvent.detail?.label === 'string' ? customEvent.detail.label : '',
+      value: customEvent.detail.value,
+      publicId: customEvent.detail.value
+    }
+  }
+
+  return null
+}
+
+function createLanguageSuggestionProvider(): (query: string) => Promise<LanguageComboboxOption[]> {
+  return async (query: string) => {
+    const suggestions = await fetchLanguageSuggestions(query)
+    return suggestions.map(toLanguageComboboxOption)
+  }
+}
+
+function initializeLanguageComboboxes(form: HTMLFormElement, rows: LanguageRow[]): void {
+  const comboboxElements = form.querySelectorAll('solid-ui-combobox[data-language-row-index]') as NodeListOf<LanguageComboboxElement>
+
+  comboboxElements.forEach((comboboxElement) => {
+    const rowIndex = Number(comboboxElement.dataset.languageRowIndex)
+    if (Number.isNaN(rowIndex)) return
+
+    const row = rows[rowIndex]
+    const options = row?.publicId && row?.name
+      ? [{ label: row.name, value: row.publicId, publicId: row.publicId }]
+      : []
+
+    comboboxElement.suggestionProvider = createLanguageSuggestionProvider()
+    comboboxElement.options = options
+    comboboxElement.value = row?.publicId || ''
+    comboboxElement.inputValue = row?.name || ''
+    comboboxElement.label = ''
+    comboboxElement.placeholder = 'Language'
+  })
 }
 
 function toFormState(details: LanguageDetails[]): LanguageFormState {
@@ -176,12 +241,7 @@ function hasOrderChanged(rows: LanguageRow[], initialExistingOrder: string[]): b
   return false
 }
 
-function validateLanguagesBeforeSave(rows: LanguageRow[], initialExistingOrder: string[]): string | null {
-  const ops = summarizeRowOps(rows, rowHasContent)
-  const hasChanges = ops.create.length > 0 || ops.update.length > 0 || ops.remove.length > 0
-  const orderChanged = hasOrderChanged(rows, initialExistingOrder)
-  if (!hasChanges && !orderChanged) return 'No language changes detected.'
-
+function validateLanguagesBeforeSave(rows: LanguageRow[]): string | null {
   for (let i = 0; i < rows.length; i++) {
     const row = rows[i]
     if (!row || row.status === 'deleted') continue
@@ -203,7 +263,7 @@ function hasInvalidLanguageSelection(rows: LanguageRow[]): boolean {
 }
 
 function updateLanguagesSubmitEnabled(rows: LanguageRow[]): void {
-  const submitButton = document.querySelector('#profile-modal #modal-buttons button.btn-primary') as HTMLButtonElement | null
+  const submitButton = getSharedDialogSaveButton(document)
   if (!submitButton) return
   submitButton.disabled = hasInvalidLanguageSelection(rows)
 }
@@ -212,10 +272,30 @@ function focusLanguageField(form: HTMLFormElement, selector: string): void {
   const nextField = form.querySelector(selector) as HTMLElement | null
   if (!nextField || typeof nextField.focus !== 'function') return
 
-  nextField.scrollIntoView({ block: 'start', behavior: 'auto' })
-  nextField.focus()
-  if (nextField instanceof HTMLInputElement || nextField instanceof HTMLTextAreaElement) {
-    nextField.select()
+  if (typeof nextField.scrollIntoView === 'function') {
+    nextField.scrollIntoView({ block: 'start', behavior: 'auto' })
+  }
+  const comboboxHost = nextField.tagName === 'SOLID-UI-COMBOBOX'
+    ? (nextField as HTMLElement & { _closePopup?: () => void })
+    : null
+  const comboboxInput = comboboxHost
+    ? comboboxHost.shadowRoot?.querySelector('input') as HTMLInputElement | null
+    : null
+  const focusTarget = comboboxInput || nextField
+  focusTarget.focus()
+  if (focusTarget instanceof HTMLInputElement) {
+    const caretPosition = 0
+    focusTarget.setSelectionRange(caretPosition, caretPosition)
+    focusTarget.scrollLeft = 0
+    requestAnimationFrame(() => {
+      focusTarget.scrollLeft = 0
+    })
+  }
+
+  if (comboboxHost?._closePopup) {
+    requestAnimationFrame(() => {
+      comboboxHost._closePopup?.()
+    })
   }
 }
 
@@ -224,9 +304,6 @@ type ContactLanguageInputRowProps = {
   index: number
   displayIndex: number
   onDelete: () => void
-  onChange: () => void
-  onSearch: (index: number, term: string) => void
-  suggestions: LanguageSuggestion[]
   onDragStart: (index: number) => void
   onDragOver: (event: DragEvent) => void
   onDrop: (index: number) => void
@@ -239,9 +316,6 @@ function renderLanguageInputRow({
   index,
   displayIndex,
   onDelete,
-  onChange,
-  onSearch,
-  suggestions,
   onDragStart,
   onDragOver,
   onDrop,
@@ -251,29 +325,26 @@ function renderLanguageInputRow({
   const row = rows[index]
   const label = `Language ${displayIndex + 1}`
   const proficiencyLabel = `Language Proficiency ${displayIndex + 1}`
-  const languageName = `language-${index}`
   const proficiencyInputName = `proficiency-${index}`
   const proficiencySelectId = `proficiency-${index}`
-  const datalistId = `language-suggestions-${index}`
   const hasSelectionIssue = Boolean(row && row.status !== 'deleted' && hasNonEmptyText(row.name) && !hasNonEmptyText(row.publicId))
 
   const handleLanguageInput = (field: LanguageEditableField) => (e: Event) => {
-    const target = e.target as HTMLInputElement
-    const nextValue = sanitizeLanguageFieldValue(target.value)
+    const nextValue = sanitizeLanguageFieldValue(readLanguageComboboxInputValue(e))
     if (rows[index]) {
       applyRowFieldChange(rows[index], field, nextValue, rowHasContent)
-      const matchedSuggestion = matchLanguageSuggestion(suggestions, nextValue)
-      rows[index].publicId = matchedSuggestion?.publicId || ''
-      if (matchedSuggestion) {
-        rows[index].name = sanitizeLanguageFieldValue(matchedSuggestion.name)
-      }
-      onSearch(index, nextValue)
-      onChange()
+      rows[index].publicId = ''
+      updateLanguagesSubmitEnabled(rows)
     }
   }
 
   const handleLanguageChange = (field: LanguageEditableField) => (e: Event) => {
-    handleLanguageInput(field)(e)
+    const selectedOption = readLanguageComboboxChange(e)
+    if (!rows[index] || !selectedOption) return
+
+    applyRowFieldChange(rows[index], field, sanitizeLanguageFieldValue(selectedOption.label), rowHasContent)
+    rows[index].publicId = selectedOption.publicId || selectedOption.value || ''
+    updateLanguagesSubmitEnabled(rows)
   }
 
   const handleProficiencyInput = (e: Event) => {
@@ -281,7 +352,7 @@ function renderLanguageInputRow({
     const nextType = target.value
     if (rows[index]) {
       applyRowSelectChange(rows[index], 'proficiency', nextType)
-      onChange()
+      updateLanguagesSubmitEnabled(rows)
     }
   }
 
@@ -296,38 +367,27 @@ function renderLanguageInputRow({
       @dragover=${(event: DragEvent) => onDragOver(event)}
       @drop=${() => onDrop(index)}
     >
-      <button
+      <solid-ui-button
         type="button"
         class="profile-edit-dialog__drag-handle"
+        variant="icon"
+        size="md"
         aria-label=${`Reorder language ${displayIndex + 1}`}
         title="Drag to reorder"
         draggable="true"
         @dragstart=${() => onDragStart(index)}
         @dragend=${() => onDragEnd()}
       >
-        ${bentoIcon}
-      </button>
-      <label aria-label=${`${label} Language`} class="label profile-edit-dialog__field">
-        <input
-          class="input"
-          type="text"
-          name=${languageName}
-          .value=${row?.name || ''}
-          required
-          data-contact-field="name"
-          data-entry-node=${row?.entryNode || ''}
-          data-row-status=${row?.status || 'n/a'}
-          placeholder="Language"
-          autocomplete="off"
-          list=${datalistId}
-          inputmode="text"
+        <span slot="icon" aria-hidden="true">${bentoIcon}</span>
+      </solid-ui-button>
+      <label aria-label=${`${label} Language`} class="label profile-edit-dialog__field profile-edit-dialog__field--language-name">
+        <solid-ui-combobox
+          aria-label=${`${label} Language`}
+          data-language-row-index=${String(index)}
           aria-invalid=${hasSelectionIssue ? 'true' : 'false'}
           @input=${handleLanguageInput('name')}
           @change=${handleLanguageChange('name')}
-        />
-        <datalist id=${datalistId}>
-          ${suggestions.map((suggestion) => html`<option value=${suggestion.name}></option>`)}
-        </datalist>
+        ></solid-ui-combobox>
         <small class="profile-edit-dialog__input-help-text">Type to search and select one language suggestion.</small>
       </label>
       <label aria-label=${proficiencyLabel} class="label" hidden>
@@ -337,16 +397,18 @@ function renderLanguageInputRow({
           <option value="Fluent">Fluent</option>
         </select>
       </label>
-      <div class="profile-edit-dialog__actions profile-edit-dialog__actions--edge">
-        <button
+      <div class="profile-edit-dialog__actions profile-edit-dialog__actions--edge profile-edit-dialog__actions--language">
+        <solid-ui-button
           type="button"
+          variant="icon"
+          size="md"
           class="profile-edit-dialog__delete-button"
           aria-label=${`Delete language ${displayIndex + 1}`}
           title=${deleteEntryButtonTitleText}
           @click=${handleDelete}
         >
-          <span class="profile-edit-dialog__delete-icon" aria-hidden="true">${trashIcon}</span>
-        </button>
+          <span slot="icon" class="profile-edit-dialog__delete-icon" aria-hidden="true">${trashIcon}</span>
+        </solid-ui-button>
       </div>
     </div>
   `
@@ -354,9 +416,7 @@ function renderLanguageInputRow({
 
 function renderLanguageSection(
   rows: LanguageRow[],
-  onAddRow: (options?: LanguageRerenderOptions) => void,
-  suggestionByIndex: Record<number, LanguageSuggestion[]>,
-  onSearch: (index: number, term: string) => void
+  onAddRow: (options?: LanguageRerenderOptions) => void
 ) {
   let dragSourceIndex: number | null = null
   let dropTargetIndex: number | null = null
@@ -367,10 +427,6 @@ function renderLanguageSection(
     if (!row) return
     rows.splice(from, 1)
     rows.splice(to, 0, row)
-
-    Object.keys(suggestionByIndex).forEach((key) => {
-      delete suggestionByIndex[Number(key)]
-    })
   }
 
   const handleDragStart = (index: number) => {
@@ -410,9 +466,6 @@ function renderLanguageSection(
           rows,
           index,
           displayIndex,
-          onChange: onAddRow,
-          onSearch,
-          suggestions: suggestionByIndex[index] || [],
           onDragStart: handleDragStart,
           onDragOver: handleDragOver,
           onDrop: handleDrop,
@@ -420,7 +473,6 @@ function renderLanguageSection(
           isDropTarget: dropTargetIndex === index,
           onDelete: () => {
             deleteRow(rows, index)
-            delete suggestionByIndex[index]
             onAddRow()
           }
         }))}
@@ -435,55 +487,16 @@ function renderLanguageEditTemplate(
   viewerMode: ViewerMode,
   options: LanguageRerenderOptions = {}
 ) {
-  const formStateWithSearch = formState as LanguageFormState & {
-    suggestionByIndex?: Record<number, LanguageSuggestion[]>
-    searchSeqByIndex?: Record<number, number>
-    searchTimerByIndex?: Record<number, ReturnType<typeof setTimeout>>
-  }
-
-  const suggestionByIndex = formStateWithSearch.suggestionByIndex || (formStateWithSearch.suggestionByIndex = {})
-  const searchSeqByIndex = formStateWithSearch.searchSeqByIndex || (formStateWithSearch.searchSeqByIndex = {})
-  const searchTimerByIndex = formStateWithSearch.searchTimerByIndex || (formStateWithSearch.searchTimerByIndex = {})
-
   const rerender = (nextOptions: LanguageRerenderOptions = {}) => renderLanguageEditTemplate(form, formState, viewerMode, nextOptions)
-  const onSearch = (index: number, term: string) => {
-    if (searchTimerByIndex[index]) {
-      clearTimeout(searchTimerByIndex[index])
-    }
-
-    const normalized = sanitizeLanguageFieldValue(term)
-    if (normalized.length < 2) {
-      suggestionByIndex[index] = []
-      rerender()
-      return
-    }
-
-    const seq = (searchSeqByIndex[index] || 0) + 1
-    searchSeqByIndex[index] = seq
-
-    searchTimerByIndex[index] = setTimeout(async () => {
-      const suggestions = await fetchLanguageSuggestions(normalized)
-      if (searchSeqByIndex[index] !== seq) return
-      suggestionByIndex[index] = suggestions
-
-      const row = formState.languages[index]
-      if (row) {
-        const matchedSuggestion = matchLanguageSuggestion(suggestions, row.name)
-        row.publicId = matchedSuggestion?.publicId || row.publicId
-      }
-
-      rerender()
-    }, 220)
-  }
-
 
   render(html`
-    ${renderLanguageSection(formState.languages, rerender, suggestionByIndex, onSearch)}
+    ${renderLanguageSection(formState.languages, rerender)}
     ${viewerMode !== 'owner'
       ? html`<p class="profile-edit-dialog__login-message">${ownerLoginRequiredDialogMessageText}</p>`
       : null}
   `, form)
 
+  initializeLanguageComboboxes(form, formState.languages)
   updateLanguagesSubmitEnabled(formState.languages)
 
   if (options.focusSelector) {
@@ -509,15 +522,7 @@ function createLanguageEditForm(details: LanguageDetails[], viewerMode: ViewerMo
       entryNode: '',
       status: 'new'
     })
-    const formStateWithSearch = formState as LanguageFormState & {
-      suggestionByIndex?: Record<number, LanguageSuggestion[]>
-      searchSeqByIndex?: Record<number, number>
-      searchTimerByIndex?: Record<number, ReturnType<typeof setTimeout>>
-    }
-    formStateWithSearch.suggestionByIndex = {}
-    formStateWithSearch.searchSeqByIndex = {}
-    formStateWithSearch.searchTimerByIndex = {}
-    renderLanguageEditTemplate(form, formState, viewerMode, { focusSelector: '[name="language-0"]' })
+    renderLanguageEditTemplate(form, formState, viewerMode, { focusSelector: '[data-language-row-index="0"]' })
   }
 
   return { form, formState, addRow }
@@ -539,6 +544,12 @@ export async function createLanguageEditDialog(
     title: editLanguagesDialogTitleText,
     dom,
     form,
+    onOpen: () => focusLanguageField(form, '[data-language-row-index="0"]'),
+    shouldCloseWithoutSave: () => {
+      const ops = summarizeRowOps(formState.languages, rowHasContent)
+      const orderChanged = hasOrderChanged(formState.languages, formState.initialExistingOrder)
+      return ops.create.length === 0 && ops.update.length === 0 && ops.remove.length === 0 && !orderChanged
+    },
     headerAction: {
       type: 'button',
       label: '+ Add More',
@@ -551,7 +562,7 @@ export async function createLanguageEditDialog(
       if (viewerMode !== 'owner') {
         return ownerLoginRequiredDialogMessageText
       }
-      return validateLanguagesBeforeSave(formState.languages, formState.initialExistingOrder)
+      return validateLanguagesBeforeSave(formState.languages)
     },
     onSave: async () => {
       const languageOps = summarizeRowOps(formState.languages, rowHasContent)
@@ -563,8 +574,7 @@ export async function createLanguageEditDialog(
       await processLanguageMutations(store, subject, plan, formState.languages)
     },
     formatSaveError: (error: unknown) => {
-      const message = error instanceof Error ? error.message : String(error)
-      return `${saveLanguageUpdatesFailedPrefixText} ${message}`
+      return error instanceof Error ? error.message : saveLanguageUpdatesFailedMessageText
     }
   })
 

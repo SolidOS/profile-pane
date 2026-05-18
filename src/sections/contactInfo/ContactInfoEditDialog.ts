@@ -1,8 +1,10 @@
 import { openInputDialog } from '../../ui/dialog'
 import { html, render } from 'lit-html'
+import 'solid-ui/components/actions/button'
+import 'solid-ui/components/forms/select'
 import { ContactAddressRow, ContactInfo, ContactMutationPlan, ContactPointRow } from './types'
 import '../../styles/EditDialogs.css'
-import '../../styles/ContactInfoEditDialog.css'
+import './ContactInfoEditDialog.css'
 import { LiveStore, NamedNode } from 'rdflib'
 import { processContactInfoMutations } from './mutations'
 import { ViewerMode } from '../../types'
@@ -19,7 +21,7 @@ import {
   dialogSubmitLabelText,
   editContactInfoDialogTitleText,
   ownerLoginRequiredDialogMessageText,
-  saveContactUpdatesFailedPrefixText
+  saveContactUpdatesFailedMessageText
 } from '../../texts'
 import { sanitizeAddressFieldValue, sanitizeEmailValue, sanitizePhoneLocalValue } from '../shared/sanitizeUtils'
 import { addIcon, locationIcon, trashIcon } from '../../icons-svg/profileIcons'
@@ -40,6 +42,81 @@ type ContactInfoFormState = {
 
 type ContactInfoRerenderOptions = {
   focusSelector?: string
+}
+
+type ContactTypeSelectOption = {
+  label: string
+  value: string
+}
+
+type ContactTypeSelectKind = 'phone' | 'email'
+
+type ContactTypeSelectElement = HTMLElement & {
+  options?: ContactTypeSelectOption[]
+  value?: string
+  label?: string
+}
+
+const PHONE_TYPE_OPTIONS: ContactTypeSelectOption[] = [
+  { label: 'Mobile', value: 'Cell' },
+  { label: 'Home', value: 'Home' },
+  { label: 'Work', value: 'Work' }
+]
+
+const EMAIL_TYPE_OPTIONS: ContactTypeSelectOption[] = [
+  { label: 'Personal', value: 'Home' },
+  { label: 'Office', value: 'Office' }
+]
+
+function normalizeContactTypeValue(value: string, options: ContactTypeSelectOption[]): string {
+  return options.some((option) => option.value === value) ? value : options[0]?.value || ''
+}
+
+function readContactTypeChange(event: Event): string {
+  const customEvent = event as CustomEvent<{ value?: string }>
+  if (typeof customEvent.detail?.value === 'string') {
+    return customEvent.detail.value
+  }
+
+  const target = event.target as HTMLSelectElement | HTMLInputElement | null
+  return typeof target?.value === 'string' ? target.value : ''
+}
+
+function getContactTypeOptions(kind: ContactTypeSelectKind): ContactTypeSelectOption[] {
+  return kind === 'phone' ? PHONE_TYPE_OPTIONS : EMAIL_TYPE_OPTIONS
+}
+
+function getContactTypeValue(
+  kind: ContactTypeSelectKind,
+  formState: ContactInfoFormState,
+  rowIndex: number
+): string {
+  const row = kind === 'phone' ? formState.phones[rowIndex] : formState.emails[rowIndex]
+  return normalizeContactTypeValue(row?.type || '', getContactTypeOptions(kind))
+}
+
+function withDefaultContactType(
+  row: ContactPointRow,
+  kind: ContactTypeSelectKind
+): ContactPointRow {
+  return {
+    ...row,
+    type: normalizeContactTypeValue(row.type || '', getContactTypeOptions(kind))
+  }
+}
+
+function initializeContactTypeSelects(form: HTMLFormElement, formState: ContactInfoFormState): void {
+  const selectElements = form.querySelectorAll('solid-ui-select[data-contact-type-kind]') as NodeListOf<ContactTypeSelectElement>
+
+  selectElements.forEach((selectElement) => {
+    const kind = selectElement.dataset.contactTypeKind as ContactTypeSelectKind | undefined
+    const rowIndex = Number(selectElement.dataset.rowIndex)
+    if (!kind || Number.isNaN(rowIndex)) return
+
+    selectElement.options = getContactTypeOptions(kind)
+    selectElement.value = getContactTypeValue(kind, formState, rowIndex)
+    selectElement.label = ''
+  })
 }
 
 function isContactPointRow(row: ContactPointRow | ContactAddressRow): row is ContactPointRow {
@@ -64,7 +141,7 @@ function toFormState(contactInfo: ContactInfo): ContactInfoFormState {
   const emails = (contactInfo.emails || [])
     .map((email) => ({
       value: sanitizeEmailValue(toText(email.valueNode).replace(/^mailto:/i, '')),
-      type: normalizeEmailTypeForContactInfoEdit(email.type),
+      type: normalizeContactTypeValue(normalizeEmailTypeForContactInfoEdit(email.type), EMAIL_TYPE_OPTIONS),
       entryNode: toText(email.entryNode),
       status: toText(email.entryNode) ? 'existing' as const : 'new' as const
     }))
@@ -73,7 +150,7 @@ function toFormState(contactInfo: ContactInfo): ContactInfoFormState {
   const phones = (contactInfo.phones || [])
     .map((phone) => ({
       value: sanitizeTextValue(toText(phone.valueNode).replace(/^tel:/i, '')),
-      type: normalizePhoneTypeForContactInfoEdit(phone.type),
+      type: normalizeContactTypeValue(normalizePhoneTypeForContactInfoEdit(phone.type), PHONE_TYPE_OPTIONS),
       entryNode: toText(phone.entryNode),
       status: 'existing' as const
     }))
@@ -92,8 +169,8 @@ function toFormState(contactInfo: ContactInfo): ContactInfoFormState {
     .filter((address) => rowHasContent(address) || Boolean(address.entryNode || address.type))
 
   return {
-    emails: emails.length ? emails : [{ value: '', type: '', entryNode: '', status: 'new' }],
-    phones: phones.length ? phones : [{ value: '', type: '', entryNode: '', status: 'new' }],
+    emails: emails.length ? emails : [{ value: '', type: EMAIL_TYPE_OPTIONS[0].value, entryNode: '', status: 'new' }],
+    phones: phones.length ? phones : [{ value: '', type: PHONE_TYPE_OPTIONS[0].value, entryNode: '', status: 'new' }],
     addresses: addresses.length
       ? addresses
       : [{ streetAddress: '', locality: '', region: '', postalCode: '', countryName: '', type: '', entryNode: '', status: 'new' }]
@@ -127,25 +204,6 @@ type ContactAddressInputRowProps = {
   displayIndex: number
   onDelete: () => void
 }
-/* not needed for now
-function renderCountryPrefixSelect(
-  name: string,
-  value: string,
-  label: string,
-  onChange: (event: Event) => void
-) {
-  return html`
-    <label class="label profile-edit-dialog__phone-prefix-field" aria-label=${label}>
-      <select class="phonePrefixSelect" name=${name} .value=${value} @change=${onChange}>
-        ${COUNTRY_PREFIX_OPTIONS.map((option) => html`
-          <option value=${option.dialCode}>
-            ${countryCodeToFlag(option.iso2)} ${option.dialCode}
-          </option>
-        `)}
-      </select>
-    </label>
-  `
-} */
 
 function renderContactPhoneInputRow({
   phones,
@@ -155,11 +213,8 @@ function renderContactPhoneInputRow({
 }: ContactPhoneInputRowProps) {
   const phoneRow = phones[index]
   const label = `Phone Number ${displayIndex + 1}`
-  // const countryCodeLabel = `Country Calling Code ${displayIndex + 1}`
   const typeLabel = `Phone Type ${displayIndex + 1}`
-  // const prefixInputName = `phone-prefix-${index}`
   const inputName = `phone-value-${index}`
-  const typeInputName = `phone-type-${index}`
   const splitValue = splitPhoneValue(phoneRow?.value || '')
   let selectedDialCode = splitValue.dialCode
 
@@ -170,20 +225,9 @@ function renderContactPhoneInputRow({
       applyRowFieldChange(phones[index], 'value', combinePhoneValue(selectedDialCode, nextValue), rowHasContent)
     }
   }
-/* Not needed for now
-  const handleCountryCodeInput = (e: Event) => {
-    const target = e.target as HTMLSelectElement
-    selectedDialCode = target.value
-
-    if (phones[index]) {
-      const localNumber = splitPhoneValue(phones[index].value).localNumber
-      applyRowFieldChange(phones[index], 'value', combinePhoneValue(selectedDialCode, localNumber), rowHasContent)
-    }
-  } */
 
   const handleTypeInput = (e: Event) => {
-    const target = e.target as HTMLSelectElement
-    const nextType = target.value
+    const nextType = readContactTypeChange(e)
     if (phones[index]) {
       applyRowSelectChange(phones[index], 'type', nextType)
     }
@@ -207,7 +251,7 @@ function renderContactPhoneInputRow({
             data-contact-field="value"
             data-entry-node=${phoneRow?.entryNode || ''}
             data-row-status=${phoneRow?.status || 'n/a'}
-            placeholder="Phone Number"
+            placeholder=${label}
             autocomplete="tel-national"
             inputmode="tel"
             @input=${handleValueInput}
@@ -215,22 +259,30 @@ function renderContactPhoneInputRow({
         </label>
       </div>
       <label aria-label=${typeLabel} class="label profile-edit-dialog__field-type profile-edit-dialog__phone-type-row">
-        <select name=${typeInputName} id="phone-type-select-${inputName}" @change=${handleTypeInput} .value=${phoneRow?.type || ''}>
-          <option value="Cell">Mobile</option>
-          <option value="Home">Home</option>
-          <option value="Work">Work</option>
-        </select>
+        <solid-ui-select
+          class="profile-edit-dialog__type-select"
+          id=${`phone-type-select-${inputName}`}
+          data-contact-type-kind="phone"
+          data-row-index=${String(index)}
+          aria-label=${typeLabel}
+          .label=${''}
+          .options=${PHONE_TYPE_OPTIONS}
+          .value=${normalizeContactTypeValue(phoneRow?.type || '', PHONE_TYPE_OPTIONS)}
+          @change=${handleTypeInput}
+        ></solid-ui-select>
       </label>
       <div class="profile-edit-dialog__actions">
-        <button
+        <solid-ui-button
           type="button"
+          variant="icon"
+          size="md"
           class="profile-edit-dialog__delete-button"
           aria-label=${`Delete phone number ${displayIndex + 1}`}
           title=${deleteEntryButtonTitleText}
           @click=${handleDelete}
         >
-          <span class="profile-edit-dialog__delete-icon" aria-hidden="true">${trashIcon}</span>
-        </button>
+          <span slot="icon" class="profile-edit-dialog__delete-icon" aria-hidden="true">${trashIcon}</span>
+        </solid-ui-button>
       </div>
     </div>
   `
@@ -239,7 +291,7 @@ function renderContactPhoneInputRow({
 function renderContactInfoPhoneSection(phones: ContactPointRow[], onAddRow: (options?: ContactInfoRerenderOptions) => void) {
   const createNewRow = (event: Event) => {
     event.preventDefault()
-    phones.unshift({ value: '', type: '', entryNode: '', status: 'new' })
+    phones.unshift({ value: '', type: PHONE_TYPE_OPTIONS[0].value, entryNode: '', status: 'new' })
     onAddRow({ focusSelector: '[name="phone-value-0"]' })
   }
 
@@ -251,22 +303,24 @@ function renderContactInfoPhoneSection(phones: ContactPointRow[], onAddRow: (opt
     <section 
       aria-labelledby="phone-numbers-heading" 
       class="profile-edit-dialog__section">
-      <header class="profile__section-header">
+      <header class="profile__section-header profile-edit-dialog__contact-section-header">
         <h3 id="phone-numbers-heading" class="profile-edit-dialog__section-heading">
-          <span class="sectionTitleIcon" aria-hidden="true">${phoneIcon}</span>
+          <span class="profile-edit-dialog__section-title-icon" aria-hidden="true">${phoneIcon}</span>
           Phone Numbers
         </h3>
-        <button
+        <solid-ui-button
           type="button"
-          class="profile__action-button profile-action-text flex-center"
+          variant="secondary"
+          size="sm"
+          class="profile__action-button profile-action-text profile-edit-dialog__add-button"
           aria-label="Add another phone number"
           @click=${createNewRow}
         >
-          <span class="profile__add-more-content inline-flex-row">
-            <span class="profile__add-more-icon inline-flex-row" aria-hidden="true">${addIcon}</span>
-            Add More
+          <span class="profile__add-more-content">
+            <span class="profile__add-more-icon" aria-hidden="true">${addIcon}</span>
+            <span>Add More</span>
           </span>
-        </button>
+        </solid-ui-button>
       </header>
       <fieldset>
         <legend class="sr-only">Phone number entries</legend>
@@ -294,7 +348,6 @@ function renderContactEmailInputRow({
   const label = `Email Address ${displayIndex + 1}`
   const typeLabel = `Email Type ${displayIndex + 1}`
   const inputName = `email-value-${index}`
-  const typeInputName = `email-type-${index}`
 
   const handleValueInput = (e: Event) => {
     const target = e.target as HTMLInputElement
@@ -305,8 +358,7 @@ function renderContactEmailInputRow({
   }
 
   const handleTypeInput = (e: Event) => {
-    const target = e.target as HTMLSelectElement
-    const nextType = target.value
+    const nextType = readContactTypeChange(e)
     if (emails[index]) {
       applyRowSelectChange(emails[index], 'type', nextType)
     }
@@ -336,21 +388,30 @@ function renderContactEmailInputRow({
         />
       </label>
       <label aria-label=${typeLabel} class="label profile-edit-dialog__field-type emailTypeRow">
-        <select name=${typeInputName} id="email-type-select-${inputName}" @change=${handleTypeInput} .value=${emailRow?.type || ''}>
-          <option value="Home">Personal</option>
-          <option value="Office">Office</option>
-        </select>
+        <solid-ui-select
+          class="profile-edit-dialog__type-select"
+          id=${`email-type-select-${inputName}`}
+          data-contact-type-kind="email"
+          data-row-index=${String(index)}
+          aria-label=${typeLabel}
+          .label=${''}
+          .options=${EMAIL_TYPE_OPTIONS}
+          .value=${normalizeContactTypeValue(emailRow?.type || '', EMAIL_TYPE_OPTIONS)}
+          @change=${handleTypeInput}
+        ></solid-ui-select>
       </label>
       <div class="profile-edit-dialog__actions">
-        <button
+        <solid-ui-button
           type="button"
+          variant="icon"
+          size="md"
           class="profile-edit-dialog__delete-button"
           aria-label=${`Delete email address ${displayIndex + 1}`}
           title=${deleteEntryButtonTitleText}
           @click=${handleDelete}
         >
-          <span class="profile-edit-dialog__delete-icon" aria-hidden="true">${trashIcon}</span>
-        </button>
+          <span slot="icon" class="profile-edit-dialog__delete-icon" aria-hidden="true">${trashIcon}</span>
+        </solid-ui-button>
       </div>
     </div>
   `
@@ -359,7 +420,7 @@ function renderContactEmailInputRow({
 function renderContactInfoEmailSection(emails: ContactPointRow[], onAddRow: (options?: ContactInfoRerenderOptions) => void) {
   const createNewRow = (event: Event) => {
     event.preventDefault()
-    emails.unshift({ value: '', type: '', entryNode: '', status: 'new' })
+    emails.unshift({ value: '', type: EMAIL_TYPE_OPTIONS[0].value, entryNode: '', status: 'new' })
     onAddRow({ focusSelector: '[name="email-value-0"]' })
   }
 
@@ -371,22 +432,24 @@ function renderContactInfoEmailSection(emails: ContactPointRow[], onAddRow: (opt
     <section 
       aria-labelledby="email-addresses-heading" 
       class="profile-edit-dialog__section">
-      <header class="profile__section-header">
+      <header class="profile__section-header profile-edit-dialog__contact-section-header">
         <h3 id="email-addresses-heading" class="profile-edit-dialog__section-heading">
-          <span class="sectionTitleIcon" aria-hidden="true">${emailIcon}</span>
+          <span class="profile-edit-dialog__section-title-icon" aria-hidden="true">${emailIcon}</span>
           Email Addresses
         </h3>
-        <button
+        <solid-ui-button
           type="button"
-          class="profile__action-button profile-action-text flex-center"
+          variant="secondary"
+          size="sm"
+          class="profile__action-button profile-action-text profile-edit-dialog__add-button"
           aria-label="Add another email address"
           @click=${createNewRow}
         >
-          <span class="profile__add-more-content inline-flex-row">
-            <span class="profile__add-more-icon inline-flex-row" aria-hidden="true">${addIcon}</span>
-            Add More
+          <span class="profile__add-more-content">
+            <span class="profile__add-more-icon" aria-hidden="true">${addIcon}</span>
+            <span>Add More</span>
           </span>
-        </button>
+        </solid-ui-button>
       </header>
       <fieldset>
         <legend class="sr-only">Email address entries</legend>
@@ -453,15 +516,17 @@ function renderContactAddressInputRow({
         </select>
       </label>
       <div class="profile-edit-dialog__actions profile-edit-dialog__actions--edge">
-        <button
+        <solid-ui-button
           type="button"
+          variant="icon"
+          size="md"
           class="profile-edit-dialog__delete-button"
           aria-label=${`Delete address ${displayIndex + 1}`}
           title=${deleteEntryButtonTitleText}
           @click=${handleDelete}
         >
-          <span class="profile-edit-dialog__delete-icon" aria-hidden="true">${trashIcon}</span>
-        </button>
+          <span slot="icon" class="profile-edit-dialog__delete-icon" aria-hidden="true">${trashIcon}</span>
+        </solid-ui-button>
       </div>
     </div>
     <div class="profile-edit-dialog__row profile-edit-dialog__row--full">
@@ -579,22 +644,24 @@ function renderContactInfoAddressSection(addresses: ContactAddressRow[], onAddRo
     <section 
       aria-labelledby="address-heading" 
       class="profile-edit-dialog__section">
-      <header class="profile__section-header">
+      <header class="profile__section-header profile-edit-dialog__contact-section-header">
         <h3 id="address-heading" class="profile-edit-dialog__section-heading">
-          <span class="sectionTitleIcon" aria-hidden="true">${locationIcon}</span>
+          <span class="profile-edit-dialog__section-title-icon" aria-hidden="true">${locationIcon}</span>
           Addresses
         </h3>
-        <button
+        <solid-ui-button
           type="button"
-          class="profile__action-button profile-action-text flex-center"
+          variant="secondary"
+          size="sm"
+          class="profile__action-button profile-action-text profile-edit-dialog__add-button"
           aria-label="Add another address"
           @click=${createNewRow}
         >
-          <span class="profile__add-more-content inline-flex-row">
-            <span class="profile__add-more-icon inline-flex-row" aria-hidden="true">${addIcon}</span>
-            Add More
+          <span class="profile__add-more-content">
+            <span class="profile__add-more-icon" aria-hidden="true">${addIcon}</span>
+            <span>Add More</span>
           </span>
-        </button>
+        </solid-ui-button>
       </header>
       <fieldset>
         <legend class="sr-only">Address entries</legend>
@@ -641,6 +708,8 @@ function renderContactInfoEditTemplate(
       : null}
   `, form)
 
+  initializeContactTypeSelects(form, formState)
+
   if (options.focusSelector) {
     focusContactInfoField(form, options.focusSelector)
   }
@@ -657,16 +726,34 @@ function createContactInfoEditForm(contactInfo: ContactInfo, viewerMode: ViewerM
   return { form, formState }
 }
 
-function validateContactInfoBeforeSave(formState: ContactInfoFormState): string | null {
-  const phoneOps = summarizeRowOps(formState.phones, rowHasContent)
-  const emailOps = summarizeRowOps(formState.emails, rowHasContent)
-  const addressOps = summarizeRowOps(formState.addresses, rowHasContent)
-  const hasChanges =
-    phoneOps.create.length > 0 || phoneOps.update.length > 0 || phoneOps.remove.length > 0 ||
-    emailOps.create.length > 0 || emailOps.update.length > 0 || emailOps.remove.length > 0 ||
-    addressOps.create.length > 0 || addressOps.update.length > 0 || addressOps.remove.length > 0
+function isValidEmailAddress(value: string): boolean {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)
+}
 
-  if (!hasChanges) return 'No contact info changes detected.'
+function isValidPhoneNumber(value: string): boolean {
+  return /^\d+$/.test(value)
+}
+
+function validateContactInfoBeforeSave(formState: ContactInfoFormState): string | null {
+  const visiblePhones = formState.phones.filter((phone) => phone.status !== 'deleted')
+  for (const [index, phone] of visiblePhones.entries()) {
+    if (!rowHasContent(phone)) continue
+
+    const { localNumber } = splitPhoneValue(phone.value || '')
+    if (!isValidPhoneNumber(localNumber)) {
+      return `Phone Number ${index + 1} should contain only numbers.`
+    }
+  }
+
+  const visibleEmails = formState.emails.filter((email) => email.status !== 'deleted')
+  for (const [index, email] of visibleEmails.entries()) {
+    if (!rowHasContent(email)) continue
+
+    if (!isValidEmailAddress(email.value || '')) {
+      return `Email address ${index + 1} must be a valid email address.`
+    }
+  }
+
   return null
 }
 
@@ -689,6 +776,17 @@ export async function createContactInfoEditDialog(
     headerAction: { type: 'close' },
     submitLabel: dialogSubmitLabelText,
     cancelLabel: dialogCancelLabelText,
+    shouldCloseWithoutSave: () => {
+      const phoneOps = summarizeRowOps(formState.phones, rowHasContent)
+      const emailOps = summarizeRowOps(formState.emails, rowHasContent)
+      const addressOps = summarizeRowOps(formState.addresses, rowHasContent)
+
+      return (
+        phoneOps.create.length === 0 && phoneOps.update.length === 0 && phoneOps.remove.length === 0 &&
+        emailOps.create.length === 0 && emailOps.update.length === 0 && emailOps.remove.length === 0 &&
+        addressOps.create.length === 0 && addressOps.update.length === 0 && addressOps.remove.length === 0
+      )
+    },
     validate: () => {
       if (viewerMode !== 'owner') {
         return ownerLoginRequiredDialogMessageText
@@ -696,16 +794,26 @@ export async function createContactInfoEditDialog(
       return validateContactInfoBeforeSave(formState)
     },
     onSave: async () => {
+      const phoneOps = summarizeRowOps(formState.phones, rowHasContent)
+      const emailOps = summarizeRowOps(formState.emails, rowHasContent)
+
       const plan: ContactMutationPlan = {
-        phoneOps: summarizeRowOps(formState.phones, rowHasContent),
-        emailOps: summarizeRowOps(formState.emails, rowHasContent),
+        phoneOps: {
+          create: phoneOps.create.map((row) => withDefaultContactType(row, 'phone')),
+          update: phoneOps.update.map((row) => withDefaultContactType(row, 'phone')),
+          remove: phoneOps.remove
+        },
+        emailOps: {
+          create: emailOps.create.map((row) => withDefaultContactType(row, 'email')),
+          update: emailOps.update.map((row) => withDefaultContactType(row, 'email')),
+          remove: emailOps.remove
+        },
         addressOps: summarizeRowOps(formState.addresses, rowHasContent)
       }
       await processContactInfoMutations(store, subject, plan)
     },
     formatSaveError: (error: unknown) => {
-      const message = error instanceof Error ? error.message : String(error)
-      return `${saveContactUpdatesFailedPrefixText} ${message}`
+      return error instanceof Error ? error.message : saveContactUpdatesFailedMessageText
     }
   })
 

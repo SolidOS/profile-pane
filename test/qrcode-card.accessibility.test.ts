@@ -1,16 +1,16 @@
 import { render } from 'lit-html'
-import { QRCodeCard } from '../src/QRCodeCard'
+import { QRCodeCard } from '../src/sections/qrcode/QRCodeCard'
 import { NamedNode, graph, parse, sym } from 'rdflib'
-import axe from 'axe-core'
+import { runAxe } from './helpers/runAxe'
 
 describe('QRCodeCard accessibility', () => {
   it('has no accessibility violations', async () => {
     const subject = { uri: 'https://example.com', value: 'https://example.com' } as NamedNode
     const container = document.createElement('div')
     document.body.appendChild(container)
-    render(QRCodeCard('#000', '#fff', subject), container)
+    render(QRCodeCard(subject), container)
 
-    const results = await axe.run(container)
+    const results = await runAxe(container)
     expect(results.violations.length).toBe(0)
   })
 
@@ -18,12 +18,12 @@ describe('QRCodeCard accessibility', () => {
     const subject = { uri: 'https://example.com', value: 'https://example.com' } as NamedNode
     const container = document.createElement('div')
     document.body.appendChild(container)
-    render(QRCodeCard('#000', '#fff', subject), container)
+    render(QRCodeCard(subject), container)
 
-    // Find the inner focusable QR container used for keyboard accessibility
     const qr = container.querySelector('[data-testid="qrcode-card"] [role="img"][tabindex="0"]')
+
     expect(qr).not.toBeNull()
-    expect(qr.getAttribute('tabindex')).toBe('0')
+    expect(qr?.getAttribute('tabindex')).toBe('0')
   })
 
   it('uses linked contact values instead of contact entry node ids in the vCard payload', () => {
@@ -55,5 +55,17 @@ describe('QRCodeCard accessibility', () => {
     expect(payload).toContain('TEL:+1-555-0100')
     expect(payload).not.toContain('#emailEntry')
     expect(payload).not.toContain('#phoneEntry')
+  })
+
+  it('references its caption and description for accessibility', () => {
+    const subject = { uri: 'https://example.com', value: 'https://example.com' } as NamedNode
+    const container = document.createElement('div')
+    document.body.appendChild(container)
+    render(QRCodeCard(subject), container)
+
+    const qrCard = container.querySelector('[data-testid="qrcode-card"]')
+
+    expect(qrCard?.getAttribute('aria-labelledby')).toBe('qr-code-caption')
+    expect(qrCard?.getAttribute('aria-describedby')).toBe('qr-code-description')
   })
 })

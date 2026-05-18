@@ -11,17 +11,25 @@ describe('CVPresenter', () => {
     store.removeDocument(doc)
   })
 
-  it.skip('presents minimum available info', () => {
+  it('returns an empty list when no memberships exist', () => {
     const result = presentCV(jane, store)
-    expect(result.rolesByType).toBeNull()
-    expect(result.skills).toBeNull()
+    expect(result).toEqual([])
   })
 
-  it.skip('presents minimum available info', () => {
+  it('presents a role entry from an org membership', () => {
+    const membership = blankNode()
     const organization = blankNode()
-    store.add(jane, ns.org('member'), organization, doc)
+
+    store.add(membership, ns.org('member'), jane, doc)
+    store.add(membership, ns.vcard('role'), 'Developer', doc)
+    store.add(membership, ns.schema('startDate'), '2024-01-01', doc)
+    store.add(membership, ns.org('organization'), organization, doc)
     store.add(organization, ns.schema('name'), 'Inrupt', doc)
+
     const result = presentCV(jane, store)
-    expect(result.rolesByType).toBe('Inrupt')
+
+    expect(result).toHaveLength(1)
+    expect(result[0].title).toBe('Developer')
+    expect(result[0].orgName).toBe('Inrupt')
   })
 })

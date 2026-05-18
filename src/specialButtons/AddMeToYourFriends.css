@@ -1,0 +1,54 @@
+.profile-friends-button__section {
+  --profile-friends-button-color: var(--color-primary, #7C4DFF);
+  width: 100%;
+  min-width: 0;
+  display: grid;
+}
+
+.profile-friends-button__section[hidden] {
+  display: none !important;
+}
+
+.profile-friends-button__section solid-ui-button.profile__btn-friends {
+  width: 100%;
+  min-width: 0;
+  --button-hover-background: var(--profile-friends-button-color);
+  --button-hover-border: var(--profile-friends-button-color);
+  --button-hover-text: var(--color-text-on-action, var(--white, #FFF));
+}
+
+.profile-friends-button__section solid-ui-button.profile__btn-friends[disabled],
+.profile-friends-button__section solid-ui-button.profile__btn-friends[aria-disabled="true"] {
+  pointer-events: none;
+  --button-hover-background: var(--button-background, transparent);
+  --button-hover-border: var(--button-border, var(--profile-friends-button-color));
+  --button-hover-text: var(--button-text, var(--profile-friends-button-color));
+}
+
+.profile-friends-button__section .profile__btn-friends-label {
+  color: var(--profile-friends-button-color);
+  font-size: var(--font-size-sm, 0.875rem);
+  font-weight: var(--font-weight-md, 500);
+  line-height: 1;
+  letter-spacing: -0.01em;
+}
+
+.profile-friends-button__section solid-ui-button.profile__btn-friends:not([disabled]):hover .profile__btn-friends-label,
+.profile-friends-button__section solid-ui-button.profile__btn-friends:not([disabled]):focus-visible .profile__btn-friends-label,
+.profile-friends-button__section solid-ui-button.profile__btn-friends:not([aria-disabled="true"]):hover .profile__btn-friends-label,
+.profile-friends-button__section solid-ui-button.profile__btn-friends:not([aria-disabled="true"]):focus-visible .profile__btn-friends-label {
+  color: var(--color-text-on-action, var(--white, #FFF));
+}
+
+.profile-friends-button__section .profile__btn-friends-label--short {
+  display: none;
+}
+
+.profile-friends-button__section .profile__btn-friends-label--short::before {
+  content: attr(data-short-label-text);
+}
+
+.profile-friends-button__container input[type="text"] {
+  width: 100%;
+  box-sizing: border-box;
+}

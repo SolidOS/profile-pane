@@ -16,7 +16,7 @@ import { EditContactsSection } from './EditContactsCard'
 import { EditFriendsSection } from './EditFriendsCard'
 import { EditSocialSection } from './EditSocialCard'
 import { EditProfileCommunitiesSection } from './EditCommunitiesCard'
-import '../styles/utilities.css'
+import '../ProfileView.css'
 import { EditCVSection } from './EditCVCard'
 import { EditOtherPreferencesSection } from './EditOtherPreferences'
 import { skipLabelsFromTabbing } from '../rdfFormsHelper'
@@ -30,8 +30,7 @@ const editProfileView: PaneDefinition = {
 
   label: () => null, // don't use this in the normal solid-panes dispatching
 
-  render: function (subject, context) {
-    //console.log('@@@ render edit profile pane:  subject, context', subject, context)
+  render: function (_subject, context) {
     const dom = context.dom
     const store = context.session.store as Store
 
@@ -42,8 +41,8 @@ const editProfileView: PaneDefinition = {
     div.setAttribute('aria-label', 'Edit your profile')
     let editableProfile: NamedNode | null
 
-    // Use <main> for the main content area, styled as a grid like ProfileView
-    const main = dom.createElement('main')
+    // Pane root content. The page-level <main> landmark is on the shell's #MainContent.
+    const main = dom.createElement('div')
     main.setAttribute('id', 'profile-edit-main-content')
     main.setAttribute('aria-busy', 'true')
     main.setAttribute('tabindex', '-1')

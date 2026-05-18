@@ -1,7 +1,9 @@
 import { openInputDialog } from '../../ui/dialog'
 import { html, render } from 'lit-html'
+import 'solid-ui/components/actions/button'
+import 'solid-ui/components/forms/select'
 import type { Account, SocialRow } from './types'
-import '../../styles/ContactInfoEditDialog.css'
+import '../contactInfo/ContactInfoEditDialog.css'
 import '../../styles/EditDialogs.css'
 import { LiveStore, NamedNode } from 'rdflib'
 import { ViewerMode } from '../../types'
@@ -16,7 +18,7 @@ import {
   dialogSubmitLabelText,
   editSocialDialogTitleText,
   ownerLoginRequiredDialogMessageText,
-  saveSocialUpdatesFailedPrefixText
+  saveSocialUpdatesFailedMessageText
 } from '../../texts'
 import { DEFAULT_ICON_URI } from './constants'
 import { findSocialAccountOption, getSocialAccountOptions, type SocialAccountOption } from './helpers'
@@ -38,6 +40,17 @@ type SocialRerenderOptions = {
   focusSelector?: string
 }
 
+type SocialAccountSelectOption = {
+  label: string
+  value: string
+}
+
+type SocialAccountSelectElement = HTMLElement & {
+  options?: SocialAccountSelectOption[]
+  value?: string
+  label?: string
+}
+
 type SocialRowInputProps = {
   rows: SocialRow[]
   index: number
@@ -52,23 +65,73 @@ type SocialRowInputProps = {
   isDropTarget: boolean
 }
 
+function toSocialAccountSelectOptions(options: SocialAccountOption[]): SocialAccountSelectOption[] {
+  return options.map((option) => ({
+    label: option.label,
+    value: option.label
+  }))
+}
+
+function getSocialAccountSelectValue(row: SocialRow, options: SocialAccountOption[]): string {
+  const selected = findSocialAccountOption(options, row?.name || '')
+  return selected?.label || ''
+}
+
+function readSocialAccountTypeChange(event: Event): string {
+  const customEvent = event as CustomEvent<{ value?: string }>
+  if (typeof customEvent.detail?.value === 'string') {
+    return customEvent.detail.value
+  }
+
+  const target = event.target as HTMLSelectElement | HTMLInputElement | null
+  return typeof target?.value === 'string' ? target.value : ''
+}
+
+function initializeSocialAccountSelects(
+  form: HTMLFormElement,
+  rows: SocialRow[],
+  options: SocialAccountOption[]
+): void {
+  const selectOptions = toSocialAccountSelectOptions(options)
+  const selectElements = form.querySelectorAll('solid-ui-select[data-social-account-row-index]') as NodeListOf<SocialAccountSelectElement>
+
+  selectElements.forEach((selectElement) => {
+    const rowIndex = Number(selectElement.dataset.socialAccountRowIndex)
+    if (Number.isNaN(rowIndex)) return
+
+    const row = rows[rowIndex]
+    if (!row) return
+
+    selectElement.options = selectOptions
+    selectElement.value = getSocialAccountSelectValue(row, options)
+    selectElement.label = ''
+  })
+}
+
+function focusSocialField(form: HTMLFormElement, selector: string): void {
+  const nextField = form.querySelector(selector) as HTMLElement | null
+  if (!nextField) return
+
+  if (typeof nextField.scrollIntoView === 'function') {
+    nextField.scrollIntoView({ block: 'start', behavior: 'auto' })
+  }
+  if (nextField.tagName === 'SOLID-UI-SELECT') {
+    const triggerButton = nextField.shadowRoot?.querySelector('button') as HTMLButtonElement | null
+    triggerButton?.focus()
+    return
+  }
+
+  if (typeof nextField.focus === 'function') {
+    nextField.focus()
+  }
+}
+
 function sanitizeSocialFieldValue(value: string): string {
   return sanitizeTextValue(value)
 }
 
 function sanitizeUrlFieldValue(value: string): string {
   return sanitizeTextValue(value).replace(/\s+/g, '')
-}
-
-function isValidProfileUrl(value: string): boolean {
-  const normalized = (value || '').trim()
-  if (!normalized) return false
-  try {
-    const parsed = new URL(normalized)
-    return parsed.protocol === 'http:' || parsed.protocol === 'https:'
-  } catch {
-    return false
-  }
 }
 
 function rowHasContent(row: SocialRow): boolean {
@@ -109,12 +172,7 @@ function hasOrderChanged(rows: SocialRow[], initialExistingOrder: string[]): boo
   return false
 }
 
-function validateSocialBeforeSave(rows: SocialRow[], initialExistingOrder: string[]): string | null {
-  const ops = summarizeRowOps(rows, rowHasContent)
-  const hasChanges = ops.create.length > 0 || ops.update.length > 0 || ops.remove.length > 0
-  const orderChanged = hasOrderChanged(rows, initialExistingOrder)
-  if (!hasChanges && !orderChanged) return 'No social changes detected.'
-
+function validateSocialBeforeSave(rows: SocialRow[]): string | null {
   for (let i = 0; i < rows.length; i++) {
     const row = rows[i]
     if (!row || row.status === 'deleted') continue
@@ -129,10 +187,6 @@ function validateSocialBeforeSave(rows: SocialRow[], initialExistingOrder: strin
     if (!hasNonEmptyText(row.homepage)) {
       return `Social account ${i + 1}: please enter your personal profile link.`
     }
-
-    if (!isValidProfileUrl(row.homepage || '')) {
-      return `Social account ${i + 1}: profile link must be a valid http(s) URL.`
-    }
   }
 
   return null
@@ -144,22 +198,19 @@ function renderSocialAccountInputSelect(
   options: SocialAccountOption[],
   onChange: (event: Event) => void
 ) {
-  const selected = findSocialAccountOption(options, row?.name || '')
-  const selectedLabel = selected?.label || ''
+  const selectedLabel = getSocialAccountSelectValue(row, options)
 
   return html`
-    <select
+    <solid-ui-select
       class="profile-edit-dialog__social-account-select"
       name=${`social-account-type-${rowIndex}`}
-      data-row-index=${String(rowIndex)}
+      data-social-account-row-index=${String(rowIndex)}
       autocomplete="off"
+      .options=${toSocialAccountSelectOptions(options)}
+      .value=${selectedLabel}
+      .label=${''}
       @change=${onChange}
-    >
-      <option value="">Select</option>
-      ${options.map((option) => html`
-        <option value=${option.label} ?selected=${option.label === selectedLabel}>${option.label}</option>
-      `)}
-    </select>
+    ></solid-ui-select>
   `
 }
 
@@ -192,8 +243,7 @@ function renderSocialInputRow({
   }
 
   const handleAccountTypeInput = (event: Event) => {
-    const target = event.target as HTMLSelectElement
-    const selected = findSocialAccountOption(options, target.value)
+    const selected = findSocialAccountOption(options, readSocialAccountTypeChange(event))
     if (!rows[index]) return
 
     if (!selected) {
@@ -220,17 +270,19 @@ function renderSocialInputRow({
       @dragover=${(event: DragEvent) => onDragOver(event)}
       @drop=${() => onDrop(index)}
     >
-      <button
+      <solid-ui-button
         type="button"
         class="profile-edit-dialog__drag-handle"
+        variant="icon"
+        size="md"
         aria-label=${`Reorder social account ${displayIndex + 1}`}
         title="Drag to reorder"
         draggable="true"
         @dragstart=${() => onDragStart(index)}
         @dragend=${() => onDragEnd()}
       >
-        ${bentoIcon}
-      </button>
+        <span slot="icon" aria-hidden="true">${bentoIcon}</span>
+      </solid-ui-button>
       <img 
         class="profile-edit-dialog__social-icon" 
         src="${row?.icon || DEFAULT_ICON_URI}" 
@@ -245,30 +297,32 @@ function renderSocialInputRow({
       <label aria-label=${homepageLabel} class="label profile-edit-dialog__field profile-edit-dialog__field--social-url">
         <input
           class="input"
-          type="url"
+          type="text"
           name=${`social-homepage-${index}`}
           .value=${row?.homepage || ''}
           data-contact-field="homepage"
           data-entry-node=${row?.entryNode || ''}
           data-row-status=${row?.status || 'n/a'}
-          placeholder="Profile URL"
-          autocomplete="url"
-          inputmode="url"
+          placeholder="Profile link or handle"
+          autocomplete="off"
+          inputmode="text"
           required
           @input=${handleTextInput('homepage')}
         />
-          <small class="profile-edit-dialog__input-help-text">Paste your full profile URL (for example: https://example.com/username)</small>
+          <small class="profile-edit-dialog__input-help-text">Enter your profile link, handle, or username.</small>
       </label>
       <div class="profile-edit-dialog__actions profile-edit-dialog__actions--edge">
-        <button
+        <solid-ui-button
           type="button"
+          variant="icon"
+          size="md"
           class="profile-edit-dialog__delete-button"
           aria-label=${`Delete social account ${displayIndex + 1}`}
           title=${deleteEntryButtonTitleText}
           @click=${handleDelete}
         >
-          <span class="profile-edit-dialog__delete-icon" aria-hidden="true">${trashIcon}</span>
-        </button>
+          <span slot="icon" class="profile-edit-dialog__delete-icon" aria-hidden="true">${trashIcon}</span>
+        </solid-ui-button>
       </div>
     </div>
   `
@@ -342,14 +396,6 @@ function renderSocialSection(rows: SocialRow[], options: SocialAccountOption[], 
   `
 }
 
-function focusSocialField(form: HTMLFormElement, selector: string): void {
-  const nextField = form.querySelector(selector) as HTMLElement | null
-  if (!nextField || typeof nextField.focus !== 'function') return
-
-  nextField.scrollIntoView({ block: 'start', behavior: 'auto' })
-  nextField.focus()
-}
-
 function renderSocialEditTemplate(
   form: HTMLFormElement,
   formState: SocialFormState,
@@ -365,6 +411,8 @@ function renderSocialEditTemplate(
       ? html`<p class="profile-edit-dialog__login-message">${ownerLoginRequiredDialogMessageText}</p>`
       : null}
   `, form)
+
+  initializeSocialAccountSelects(form, formState.socialAccounts, socialOptions)
 
   if (rerenderOptions.focusSelector) {
     focusSocialField(form, rerenderOptions.focusSelector)
@@ -410,6 +458,12 @@ export async function createSocialEditDialog(
     title: editSocialDialogTitleText,
     dom,
     form,
+    onOpen: () => focusSocialField(form, '[name="social-account-type-0"]'),
+    shouldCloseWithoutSave: () => {
+      const ops = summarizeRowOps(formState.socialAccounts, rowHasContent)
+      const orderChanged = hasOrderChanged(formState.socialAccounts, formState.initialExistingOrder)
+      return ops.create.length === 0 && ops.update.length === 0 && ops.remove.length === 0 && !orderChanged
+    },
     headerAction: {
       type: 'button',
       label: '+ Add More',
@@ -422,7 +476,7 @@ export async function createSocialEditDialog(
       if (viewerMode !== 'owner') {
         return ownerLoginRequiredDialogMessageText
       }
-      return validateSocialBeforeSave(formState.socialAccounts, formState.initialExistingOrder)
+      return validateSocialBeforeSave(formState.socialAccounts)
     },
     onSave: async () => {
       const socialOps = summarizeRowOps(formState.socialAccounts, rowHasContent)
@@ -434,10 +488,7 @@ export async function createSocialEditDialog(
       await processSocialMutations(store, subject, plan, formState.socialAccounts)
     },
     formatSaveError: (error: unknown) => {
-      const message = error instanceof Error ? error.message : String(error)
-      return message.startsWith(saveSocialUpdatesFailedPrefixText)
-        ? message
-        : `${saveSocialUpdatesFailedPrefixText} ${message}`
+      return error instanceof Error ? error.message : saveSocialUpdatesFailedMessageText
     }
   })
 

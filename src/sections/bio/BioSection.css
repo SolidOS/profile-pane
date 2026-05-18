@@ -1,0 +1,164 @@
+.bio-card,
+.bio-card__section {
+	width: 100%;
+	max-width: 100%;
+	min-width: 0;
+	box-sizing: border-box;
+}
+
+.bio-card__description-wrap {
+	margin: 0;
+	position: relative;
+	isolation: isolate;
+	--bio-description-toggle-top: calc(100% - 1.5em + 0.28em - 11px);
+	--bio-description-toggle-transform: translateY(7px);
+}
+
+.bio-section__edit-button,
+solid-ui-button.bio-section__edit-button {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+}
+
+.bio-section--empty {
+	border-radius: var(--border-radius-md, 0.5rem);
+	gap: var(--spacing-lg, 1.5625rem);
+}
+
+.bio-card__description-text {
+	margin: 0;
+	width: 100%;
+	max-width: none;
+	display: -webkit-box;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 2;
+	line-clamp: 2;
+	line-height: var(--line-height-base, 1.5);
+	overflow: hidden;
+}
+
+.bio-card__description-text--overflowing {
+	padding-right: 4.5rem;
+}
+
+.bio-card__description-text--expanded {
+	display: block;
+	-webkit-line-clamp: unset;
+	line-clamp: unset;
+	padding-right: 0;
+	overflow: visible;
+}
+
+.bio-card__description-toggle,
+solid-ui-button.bio-card__description-toggle {
+	margin: 0;
+	padding: 0;
+	position: absolute;
+	right: 0;
+	bottom: 0;
+	background-color: var(--color-card-bg, #FFFFFF);
+	white-space: nowrap;
+	z-index: 0;
+}
+
+.bio-card__description-toggle {
+	border: 0;
+	background: none;
+	color: var(--color-primary, #7C4DFF);
+	cursor: var(--profile-interactive-cursor, pointer);
+	font: inherit;
+	font-size: var(--font-size-sm, 0.875rem);
+	line-height: var(--line-height-base, 1.5);
+	min-height: auto;
+	min-width: auto;
+	padding-left: 0;
+	padding-right: 0;
+	padding-top: 0;
+	padding-bottom: 0;
+	margin-left: 0;
+	margin-right: 0;
+}
+
+solid-ui-button.bio-card__description-toggle {
+	min-height: 0;
+	min-width: 0;
+	--button-height-sm: 0;
+	--button-padding-sm: 0;
+	--button-font-size-sm: var(--font-size-sm, 0.875rem);
+	--button-line-height: var(--line-height-base, 1.5);
+	--button-background: none;
+	--button-border-width: 0;
+	--button-border: transparent;
+	--button-text: var(--color-primary, #7C4DFF);
+	--button-hover-background: none;
+	--button-hover-border: transparent;
+	--button-hover-text: var(--color-primary, #7C4DFF);
+}
+
+.bio-card__description-wrap .bio-card__description-text:not(.bio-card__description-text--expanded) + .bio-card__description-toggle {
+	top: var(--bio-description-toggle-top);
+	bottom: auto;
+	transform: var(--bio-description-toggle-transform);
+}
+
+.bio-card__description-text--expanded + .bio-card__description-toggle,
+.bio-card__description-text--expanded + solid-ui-button.bio-card__description-toggle {
+	position: static;
+	display: block;
+	width: fit-content;
+	margin-left: auto;
+	padding-left: 0;
+	top: auto;
+	bottom: auto;
+	transform: none;
+}
+
+.bio-card__description-text--expanded + solid-ui-button.bio-card__description-toggle::part(button) {
+	position: static;
+	display: inline-flex;
+	padding-left: 0;
+	top: auto;
+	bottom: auto;
+	transform: none;
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .bio-card__description-text {
+	font-size: var(--font-size-sm, 0.875rem);
+	line-height: var(--line-height-base, 1.5);
+	-webkit-line-clamp: 2;
+	line-clamp: 2;
+}
+
+@container profile-pane (max-width: 576px) {
+	.bio-card__description-text {
+		font-size: var(--font-size-sm, 0.875rem);
+		line-height: var(--line-height-base, 1.5);
+		-webkit-line-clamp: 2;
+		line-clamp: 2;
+	}
+
+	.bio-card__description-wrap {
+		--bio-description-toggle-top: calc(100% - 1.5em);
+		--bio-description-toggle-transform: none;
+	}
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .bio-card__description-wrap {
+	--bio-description-toggle-top: calc(100% - 1.5em);
+	--bio-description-toggle-transform: none;
+}
+
+@media (max-width: 576px) {
+	.bio-card__description-text {
+		font-size: var(--font-size-sm, 0.875rem);
+		line-height: var(--line-height-base, 1.5);
+		-webkit-line-clamp: 2;
+		line-clamp: 2;
+	}
+
+	.bio-card__description-wrap {
+		--bio-description-toggle-top: calc(100% - 1.5em);
+		--bio-description-toggle-transform: none;
+	}
+}

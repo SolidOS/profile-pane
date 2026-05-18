@@ -1,11 +1,19 @@
-import { LiveStore, NamedNode, st, sym } from 'rdflib'
+import { LiveStore, NamedNode, Node, st, sym } from 'rdflib'
 import { ns } from 'solid-ui'
 import { ProjectMutationPlan, ProjectRow } from './types'
-import { MutationOps } from '../shared/types'
+import { MutationOps, RdfStatement } from '../shared/types'
+import {
+	isRdfListNode,
+	projectUrlFromCommunityNode,
+	expandCommunityNodes
+} from '../shared/projectCommunityNodes'
+import {
+	projectsMutationSaveFailedDebugText,
+	saveProjectsUpdatesFailedMessageText
+} from '../../texts'
+import { runUpdateTransport } from '../shared/rdfMutationHelpers'
+import { error as debugError } from '../../utils/debug'
 
-/* This code is AI generated from Model: GPT-5.3-Codex */
-/* Prompt: I need to store Project data only the url of the project how
-   should I store it please generate the code. Follow other sections */
 function toProjectUrlNode(project: ProjectRow): NamedNode | null {
 	const value = (project.url || '').trim()
 	if (!value) return null
@@ -28,192 +36,157 @@ function normalizeProjectUrlKey(value: string): string {
 	}
 }
 
-function isPatchFailure(message: string): boolean {
-	const text = (message || '').toLowerCase()
-	return (
-		text.includes(' on patch ') ||
-		text.includes('web error: 500') ||
-		text.includes('web error: 501') ||
-		text.includes('web error: 405') ||
-		text.includes('web error: 400')
-	)
-}
+function collectListChainNodes(store: LiveStore, listHead: unknown, doc: NamedNode): Node[] {
+	if (!store.any(listHead as NamedNode, ns.rdf('first'), null, doc)) return []
 
-function isMissingGetRecordError(message: string): boolean {
-	return (message || '').toLowerCase().includes('no record of our http get request for document')
-}
+	const visited = new Set<string>()
+	const nodes: Node[] = []
+	let current = listHead as Node | null
 
-function statementKey(statement: any): string {
-	return `${statement.subject?.toNT?.() || statement.subject?.value} ${statement.predicate?.toNT?.() || statement.predicate?.value} ${statement.object?.toNT?.() || statement.object?.value} ${statement.why?.toNT?.() || statement.why?.value}`
-}
+	while (current) {
+		const key = `${current.termType}:${current.value}`
+		if (visited.has(key)) break
+		visited.add(key)
+		nodes.push(current)
 
-function sanitizePatchStatements(store: LiveStore, deletions: any[], insertions: any[]) {
-	const safeDeletions = Array.from(new Map(
-		(deletions || [])
-			.filter((statement) => {
-				if (!statement || !statement.subject || !statement.predicate || !statement.object) return false
-				return store.holds(statement.subject, statement.predicate, statement.object, statement.why)
-			})
-			.map((statement) => [statementKey(statement), statement])
-	).values())
-
-	const safeInsertions = Array.from(new Map(
-		(insertions || [])
-			.filter((statement) => Boolean(statement && statement.subject && statement.predicate && statement.object))
-			.map((statement) => [statementKey(statement), statement])
-	).values())
-
-	return { safeDeletions, safeInsertions }
-}
-
-async function runPutFallback(store: LiveStore, doc: NamedNode, deletions: any[], insertions: any[]) {
-	const updater = store.updater as any
-	const fetcher = (store as any).fetcher
-
-	if (!updater || typeof updater.serialize !== 'function' || !fetcher || typeof fetcher.webOperation !== 'function') {
-		throw new Error('Project updates are not supported by this store updater.')
+		const rest = store.any(current as NamedNode, ns.rdf('rest'), null, doc) as Node | null
+		if (!rest || (rest.termType === 'NamedNode' && rest.value === ns.rdf('nil').value)) {
+			break
+		}
+		current = rest
 	}
 
-	const currentStatements = store.statementsMatching(undefined, undefined, undefined, doc).slice()
-	const deletionKeys = new Set((deletions || []).map((statement) => statementKey(statement)))
-	const nextStatements = currentStatements.filter((statement) => !deletionKeys.has(statementKey(statement))).concat(insertions || [])
-
-	const contentType = 'text/turtle'
-	const body = updater.serialize(doc.value, nextStatements, contentType)
-	const response = await fetcher.webOperation('PUT', doc.value, {
-		noMeta: true,
-		contentType,
-		body
-	})
-
-	if (!response || response.ok !== true) {
-		const status = response?.status || 'unknown'
-		throw new Error(`Web error: ${status} on PUT of <${doc.value}>`)
-	}
-
-	store.remove(deletions)
-	insertions.forEach((statement) => {
-		store.add(statement.subject, statement.predicate, statement.object, statement.why)
-	})
+	return nodes
 }
 
-async function runUpdateWithDavFallback(store: LiveStore, doc: NamedNode, deletions: any[], insertions: any[]) {
-	const updater = store.updater as any
-	if (!updater || typeof updater.update !== 'function') {
-		throw new Error('Project updates are not supported by this store updater.')
-	}
+function collectCommunityCleanupStatements(store: LiveStore, statement: RdfStatement, fallbackDoc: NamedNode): RdfStatement[] {
+	const doc = (statement.why as NamedNode | null) || fallbackDoc
+	const cleanup = [st(statement.subject, statement.predicate, statement.object, doc)]
+	const objectNode = statement.object
 
-	const { safeDeletions, safeInsertions } = sanitizePatchStatements(store, deletions, insertions)
-	if (safeDeletions.length === 0 && safeInsertions.length === 0) {
-		return
-	}
-
-	const tryUpdate = () => new Promise<void>((resolve, reject) => {
-		updater.update(safeDeletions, safeInsertions, (_uri: string, ok: boolean, message?: string) => {
-			if (ok === true) {
-				resolve()
-				return
-			}
-			reject(new Error(message || 'Failed to save projects'))
+	if (isRdfListNode(store, objectNode, doc)) {
+		collectListChainNodes(store, objectNode, doc).forEach((listNode) => {
+			cleanup.push(...store.statementsMatching(listNode as NamedNode, null, null, doc))
 		})
-	})
-
-	try {
-		await tryUpdate()
-		return
-	} catch (error) {
-		const message = error instanceof Error ? error.message : String(error)
-		if (!isPatchFailure(message) || typeof updater.updateDav !== 'function') {
-			throw error
-		}
-
-		if (store.fetcher && typeof (store.fetcher as any).load === 'function') {
-			try {
-				await (store.fetcher as any).load(doc)
-			} catch {
-				// continue to fallback
-			}
-		}
-
-		try {
-			await new Promise<void>((resolve, reject) => {
-				updater.updateDav(doc, safeDeletions, safeInsertions, (_uri: string, ok: boolean, body?: string) => {
-					if (ok === true) {
-						resolve()
-						return
-					}
-					reject(new Error(body || message || 'Failed to save projects'))
-				})
-			})
-		} catch (davError) {
-			const davMessage = davError instanceof Error ? davError.message : String(davError)
-			if (!isMissingGetRecordError(davMessage)) {
-				throw davError
-			}
-			await runPutFallback(store, doc, safeDeletions, safeInsertions)
-		}
+		return cleanup
 	}
+
+	if (objectNode.termType === 'BlankNode') {
+		cleanup.push(...store.statementsMatching(objectNode as unknown as NamedNode, null, null, doc))
+	}
+
+	return cleanup
 }
 
 async function mutateProjectEntries(store: LiveStore, subject: NamedNode, projectOps: MutationOps<ProjectRow>) {
 	const doc = subject.doc()
-	const existingLinks = store.each(subject, ns.solid('community'), null, doc)
-	const existingByUrl = new Map<string, NamedNode>()
-	existingLinks.forEach((linkNode: any) => {
-		if (!linkNode || linkNode.termType !== 'NamedNode') return
-		const key = normalizeProjectUrlKey(linkNode.value)
-		if (key && !existingByUrl.has(key)) {
-			existingByUrl.set(key, linkNode as NamedNode)
-		}
+	type DocBatch = {
+		doc: NamedNode
+		cleanupStatements: RdfStatement[]
+		currentUrlsByKey: Map<string, string>
+	}
+
+	const existingLinks = store.statementsMatching(subject, ns.solid('community'), null, null)
+	const batchesByDoc = new Map<string, DocBatch>()
+	const docKeyByUrl = new Map<string, string>()
+	const touchedDocs = new Set<string>()
+
+	const getDocBatch = (targetDoc: NamedNode) => {
+		const existing = batchesByDoc.get(targetDoc.value)
+		if (existing) return existing
+		const next: DocBatch = { doc: targetDoc, cleanupStatements: [], currentUrlsByKey: new Map() }
+		batchesByDoc.set(targetDoc.value, next)
+		return next
+	}
+
+	existingLinks.forEach((statement) => {
+		const targetDoc = (statement.why as NamedNode | null) || doc
+		const batch = getDocBatch(targetDoc)
+		batch.cleanupStatements.push(...collectCommunityCleanupStatements(store, statement as RdfStatement, doc))
+
+		const objectNode = statement.object
+		const communityNodes = expandCommunityNodes(store, objectNode as Node, targetDoc)
+
+		communityNodes.forEach((communityNode) => {
+			const url = projectUrlFromCommunityNode(communityNode, store)
+			const key = normalizeProjectUrlKey(url)
+			if (!key || docKeyByUrl.has(key)) return
+			docKeyByUrl.set(key, targetDoc.value)
+			batch.currentUrlsByKey.set(key, url)
+		})
 	})
 
-	const deletions: any[] = []
-	const insertions: any[] = []
-	const removeLink = (link: NamedNode) => {
-		deletions.push(st(subject, ns.solid('community'), link, doc))
+	const ensureDocTouched = (docKey: string) => {
+		touchedDocs.add(docKey)
 	}
-	const addLink = (link: NamedNode) => {
-		insertions.push(st(subject, ns.solid('community'), link, doc))
+
+	const removeExistingUrl = (key: string) => {
+		const targetDocKey = docKeyByUrl.get(key)
+		if (!targetDocKey) return null
+		const batch = batchesByDoc.get(targetDocKey)
+		if (!batch) return null
+		batch.currentUrlsByKey.delete(key)
+		docKeyByUrl.delete(key)
+		ensureDocTouched(targetDocKey)
+		return batch.doc
+	}
+
+	const addUrlToDoc = (targetDoc: NamedNode, url: string) => {
+		const key = normalizeProjectUrlKey(url)
+		if (!key || docKeyByUrl.has(key)) return
+		const batch = getDocBatch(targetDoc)
+		batch.currentUrlsByKey.set(key, url)
+		docKeyByUrl.set(key, targetDoc.value)
+		ensureDocTouched(targetDoc.value)
 	}
 
 	projectOps.remove.forEach((project) => {
 		const entryKey = normalizeProjectUrlKey(project.entryNode || '')
 		const urlKey = normalizeProjectUrlKey(project.url)
-		const existing = (entryKey && existingByUrl.get(entryKey)) || (urlKey && existingByUrl.get(urlKey))
-		if (existing) removeLink(existing)
+		if (entryKey) {
+			removeExistingUrl(entryKey)
+			return
+		}
+		if (urlKey) {
+			removeExistingUrl(urlKey)
+		}
 	})
 
 	projectOps.update.forEach((project) => {
 		const newLink = toProjectUrlNode(project)
-		const urlKey = normalizeProjectUrlKey(project.url)
 		const entryKey = normalizeProjectUrlKey(project.entryNode || '')
-		const existing = (entryKey && existingByUrl.get(entryKey)) || (urlKey && existingByUrl.get(urlKey))
-		if (existing) removeLink(existing)
-		if (newLink) addLink(newLink)
+		const urlKey = normalizeProjectUrlKey(project.url)
+		const removedDoc = (entryKey && removeExistingUrl(entryKey)) || (urlKey && removeExistingUrl(urlKey)) || doc
+		if (newLink) {
+			addUrlToDoc(removedDoc, newLink.value)
+		}
 	})
 
-	const seenCreateUrlKeys = new Set<string>()
 	projectOps.create.forEach((project) => {
-		const urlKey = normalizeProjectUrlKey(project.url)
-		if (urlKey && (existingByUrl.has(urlKey) || seenCreateUrlKeys.has(urlKey))) {
-			return
-		}
 		const newLink = toProjectUrlNode(project)
 		if (!newLink) return
-		addLink(newLink)
-		if (urlKey) {
-			seenCreateUrlKeys.add(urlKey)
-		}
+		addUrlToDoc(doc, newLink.value)
 	})
 
-	await runUpdateWithDavFallback(store, doc, deletions, insertions)
+	for (const docKey of touchedDocs) {
+		const batch = batchesByDoc.get(docKey)
+		if (!batch) continue
+		const insertions = Array.from(batch.currentUrlsByKey.values()).map((url) => st(subject, ns.solid('community'), sym(url), batch.doc))
+		await runUpdateTransport(store, batch.doc, batch.cleanupStatements, insertions, {
+			unsupportedMessage: 'Project updates are not supported by this store updater.',
+			failureMessage: 'Failed to save projects',
+			useDavFallback: true,
+			usePutFallback: true
+		})
+	}
 }
 
 export async function processProjectsMutations(store: LiveStore, subject: NamedNode, mutationPlan: ProjectMutationPlan) {
 	try {
 		await mutateProjectEntries(store, subject, mutationPlan)
-	} catch (error) {
-		const message = error instanceof Error ? error.message : String(error)
-		throw new Error(`Failed to save projects: ${message}`)
+	} catch (err) {
+		const rootError = err instanceof Error ? err : new Error(String(err))
+		debugError(projectsMutationSaveFailedDebugText, rootError)
+		throw new Error(saveProjectsUpdatesFailedMessageText, { cause: rootError })
 	}
 }

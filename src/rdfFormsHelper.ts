@@ -1,4 +1,16 @@
-/** Project-local: currently unused component. Keep temporarily; do not add new usage. */
+/**
+ * Solid-UI form bridge used by the edit-profile flows and by shared helpers that
+ * need ontology/form documents loaded into an RDF store.
+ *
+ * This file is intentionally kept in src because it is still active production
+ * code, even though the main form rendering path is currently concentrated in
+ * editProfilePane. In particular:
+ * - editProfilePane imports renderForm and skipLabelsFromTabbing
+ * - social helpers import loadDocument for ontology-backed option loading
+ *
+ * If forms are reworked later, this module is the current integration boundary
+ * to replace rather than dormant legacy code to remove blindly.
+ */
 import { NamedNode, Store, Namespace, sym, parse } from 'rdflib'
 import { widgets } from 'solid-ui'
 
