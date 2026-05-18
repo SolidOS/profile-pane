@@ -265,6 +265,48 @@ describe('Social selectors and mutations', () => {
     ])
   })
 
+  it('preserves unrelated statements on reused social entry nodes', async () => {
+    const store = graph() as any
+    const subject = sym('https://example.com/profile/card#me')
+    const doc = subject.doc()
+
+    const facebookNode = sym('https://example.com/profile/card#id1111111111111')
+    const instagramNode = sym('https://example.com/profile/card#id2222222222222')
+    const facebookClass = sym('https://solidos.github.io/profile-pane/src/ontology/socialMedia.ttl#FacebookAccount')
+    const instagramClass = sym('https://solidos.github.io/profile-pane/src/ontology/socialMedia.ttl#InstagramAccount')
+
+    store.updater = {
+      update: (deletions: any[], insertions: any[], callback: Function) => {
+        deletions.forEach((statement) => store.remove(st(statement.subject, statement.predicate, statement.object, statement.why)))
+        insertions.forEach((statement) => store.add(statement.subject, statement.predicate, statement.object, statement.why))
+        callback('', true)
+      }
+    }
+
+    store.add(subject, ns.foaf('account'), new Collection([facebookNode, instagramNode]), doc)
+    store.add(facebookNode, ns.rdf('type'), facebookClass, doc)
+    store.add(facebookNode, ns.foaf('accountName'), literal('sharon-facebook'), doc)
+    store.add(instagramNode, ns.rdf('type'), instagramClass, doc)
+    store.add(instagramNode, ns.foaf('accountName'), literal('sharon-instagram'), doc)
+    store.add(instagramNode, ns.rdfs('comment'), literal('keep-me'), doc)
+
+    await processSocialMutations(
+      store,
+      subject,
+      { create: [], update: [], remove: [] } as any,
+      [
+        { name: 'Instagram', icon: '', homepage: 'https://www.instagram.com/sharon-instagram', entryNode: instagramNode.value, status: 'existing' },
+        { name: 'Facebook', icon: '', homepage: 'https://www.facebook.com/sharon-facebook', entryNode: facebookNode.value, status: 'existing' }
+      ] as any
+    )
+
+    expect(store.any(instagramNode, ns.rdfs('comment'), null, doc)?.value).toBe('keep-me')
+    expect(presentSocial(subject, store).accounts.map((account) => account.entryNode.value)).toEqual([
+      instagramNode.value,
+      facebookNode.value
+    ])
+  })
+
   it('writes other accounts with homepage and icon instead of accountName', async () => {
     const store = graph() as any
     const subject = sym('https://example.com/profile/card#me')
