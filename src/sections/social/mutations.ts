@@ -1,4 +1,4 @@
-import { blankNode, LiveStore, NamedNode, Node, st, literal, sym } from 'rdflib'
+import { Collection, LiveStore, NamedNode, Node, st, literal, sym } from 'rdflib'
 import { ns } from 'solid-ui'
 import { SocialMutationPlan, SocialRow } from './types'
 import { MutationOps, RdfStatement } from '../shared/types'
@@ -25,6 +25,10 @@ const SOCIAL_ONTOLOGY_NS = 'https://solidos.github.io/profile-pane/src/ontology/
 
 function ensureSocialPrefix(store: LiveStore) {
 	registerStorePrefix(store, 'soc', SOCIAL_ONTOLOGY_NS)
+}
+
+function nodeKey(node: Node): string {
+	return `${node.termType}:${node.value}`
 }
 
 function toObjectNode(value?: string): Node | null {
@@ -110,30 +114,6 @@ function buildSocialStatements(
 	}
 
 	return inserts
-}
-
-function buildRdfListStatements(doc: NamedNode, items: NamedNode[]) {
-	if (!items.length) {
-		return {
-			head: ns.rdf('nil') as Node,
-			statements: [] as RdfStatement[]
-		}
-	}
-
-	const listNodes = items.map(() => blankNode())
-	const statements: RdfStatement[] = []
-
-	items.forEach((item, index) => {
-		const current = listNodes[index]
-		const next = listNodes[index + 1] || ns.rdf('nil')
-		statements.push(st(current, ns.rdf('first'), item, doc))
-		statements.push(st(current, ns.rdf('rest'), next, doc))
-	})
-
-	return {
-		head: listNodes[0] as Node,
-		statements
-	}
 }
 
 function collectListChainNodes(store: LiveStore, listHead: Node, doc: NamedNode): Node[] {
@@ -245,11 +225,13 @@ async function mutateSocialEntries(
 		return createIdNode(doc)
 	})
 
+	const retainedAccountNodeKeys = new Set(rowEntryNodes.map((node) => nodeKey(node)))
+	const retainedAccountNodes = existingAccountNodes.filter((node) => retainedAccountNodeKeys.has(nodeKey(node)))
+	const removedAccountNodes = existingAccountNodes.filter((node) => !retainedAccountNodeKeys.has(nodeKey(node)))
+
 	const insertions: RdfStatement[] = []
 	if (rowEntryNodes.length > 0) {
-		const rdfList = buildRdfListStatements(doc, rowEntryNodes)
-		insertions.push(st(subject, ns.foaf('account'), rdfList.head, doc))
-		insertions.push(...rdfList.statements)
+		insertions.push(st(subject, ns.foaf('account'), new Collection(rowEntryNodes), doc))
 	}
 
 	nextRows.forEach((row, index) => {
@@ -259,7 +241,14 @@ async function mutateSocialEntries(
 	const deletions = uniqueStatements([
 		...store.statementsMatching(subject, ns.foaf('account'), null, doc),
 		...existingListNodes,
-		...existingAccountNodes.flatMap((node) => collectNodeStatements(store, node, doc))
+		...removedAccountNodes.flatMap((node) => collectNodeStatements(store, node, doc)),
+		...retainedAccountNodes.flatMap((node) => [
+			...store.statementsMatching(node, ns.rdf('type'), null, doc),
+			...store.statementsMatching(node, ns.foaf('accountName'), null, doc),
+			...store.statementsMatching(node, ns.foaf('homepage'), null, doc),
+			...store.statementsMatching(node, ns.foaf('icon'), null, doc),
+			...store.statementsMatching(node, ns.rdfs('label'), null, doc)
+		])
 	])
 
 	await runUpdateTransport(store, doc, deletions, uniqueStatements(insertions), {
