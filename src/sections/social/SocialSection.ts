@@ -134,7 +134,7 @@ function renderSocialSectionDefault(
           data-expanded="false"
         >
           <header class="profile__section-header profile-section-collapsible__header">
-            <h3 id="social-heading" tabindex="-1">${socialAccountsHeadingText}</h3>
+            <h2 id="social-heading" tabindex="-1">${socialAccountsHeadingText}</h2>
             <div class="profile-section-collapsible__actions">
               ${isOwner ? html`
                 <solid-ui-button
@@ -209,7 +209,7 @@ function renderOwnerEmptySocialSection(
       data-expanded="false"
     >
       <header class="profile__section-header profile-section-collapsible__header">
-        <h3 id="social-heading" tabindex="-1">${socialAccountsHeadingText}</h3>
+        <h2 id="social-heading" tabindex="-1">${socialAccountsHeadingText}</h2>
         <div class="profile-section-collapsible__actions">
           <solid-ui-button
             type="button"
