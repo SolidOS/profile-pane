@@ -38,17 +38,15 @@ function renderSidebar(
 ) {
   return html`
     <div
-      aria-labelledby="sidebar-heading"
       class="profile__sidebar"
     >
-      <h2 id="sidebar-heading" class="sr-only">Sidebar</h2>
-      <div class="profile__sidebar-content">
+      <aside class="profile__sidebar-content">
         ${renderSocialSection(store, subject, accounts, viewerMode, onSaved)}
         ${renderSkillsSection(store, subject, skills, viewerMode, onSaved)}
         ${renderLanguageSection(store, subject, languages, viewerMode, onSaved)}
         ${renderContactInfoSection(store, subject, contactInfo, viewerMode, onSaved)}
         ${renderQRCodeSection(subject, store)}
-      </div>
+      </aside>
     </div>
   `
 }
