@@ -37,7 +37,7 @@ function renderLanguagesSectionDefault(store: LiveStore, subject: NamedNode, lan
       data-expanded="false"
     >
       <header class="profile__section-header profile-section-collapsible__header">
-        <h3 id="languages-heading">${languagesHeadingText}</h3>
+        <h2 id="languages-heading">${languagesHeadingText}</h2>
         <div class="profile-section-collapsible__actions">
           ${isOwner ? html`
             <solid-ui-button
@@ -120,7 +120,7 @@ function renderOwnerEmptyLanguagesSection(
       data-expanded="false"
     >
       <header class="profile__section-header profile-section-collapsible__header">
-        <h3 id="languages-heading" tabindex="-1">${languagesHeadingText}</h3>
+        <h2 id="languages-heading" tabindex="-1">${languagesHeadingText}</h2>
         <div class="profile-section-collapsible__actions">
           <solid-ui-button
             type="button"
