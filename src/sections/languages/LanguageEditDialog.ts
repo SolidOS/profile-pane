@@ -304,10 +304,15 @@ type ContactLanguageInputRowProps = {
   index: number
   displayIndex: number
   onDelete: () => void
-  onDragStart: (index: number) => void
-  onDragOver: (event: DragEvent) => void
-  onDrop: (index: number) => void
+  onDragStart: (event: DragEvent, index: number) => void
+  onDragEnter: (index: number) => void
+  onDragOver: (event: DragEvent, index: number) => void
+  onDrop: (event: DragEvent, index: number) => void
   onDragEnd: () => void
+  onPointerDown: (event: PointerEvent, index: number) => void
+  onPointerMove: (event: PointerEvent) => void
+  onPointerUp: (event: PointerEvent) => void
+  onPointerCancel: (event: PointerEvent) => void
   isDropTarget: boolean
 }
 
@@ -317,9 +322,14 @@ function renderLanguageInputRow({
   displayIndex,
   onDelete,
   onDragStart,
+  onDragEnter,
   onDragOver,
   onDrop,
   onDragEnd,
+  onPointerDown,
+  onPointerMove,
+  onPointerUp,
+  onPointerCancel,
   isDropTarget
 }: ContactLanguageInputRowProps) {
   const row = rows[index]
@@ -364,8 +374,10 @@ function renderLanguageInputRow({
   return html`
     <div
       class="profile-edit-dialog__row profile-edit-dialog__row--language ${isDropTarget ? 'profile-edit-dialog__row--drop-target' : ''}"
-      @dragover=${(event: DragEvent) => onDragOver(event)}
-      @drop=${() => onDrop(index)}
+      data-language-reorder-index=${String(index)}
+      @dragenter=${() => onDragEnter(index)}
+      @dragover=${(event: DragEvent) => onDragOver(event, index)}
+      @drop=${(event: DragEvent) => onDrop(event, index)}
     >
       <solid-ui-button
         type="button"
@@ -375,10 +387,14 @@ function renderLanguageInputRow({
         aria-label=${`Reorder language ${displayIndex + 1}`}
         title="Drag to reorder"
         draggable="true"
-        @dragstart=${() => onDragStart(index)}
+        @dragstart=${(event: DragEvent) => onDragStart(event, index)}
         @dragend=${() => onDragEnd()}
+        @pointerdown=${(event: PointerEvent) => onPointerDown(event, index)}
+        @pointermove=${(event: PointerEvent) => onPointerMove(event)}
+        @pointerup=${(event: PointerEvent) => onPointerUp(event)}
+        @pointercancel=${(event: PointerEvent) => onPointerCancel(event)}
       >
-        <span slot="icon" aria-hidden="true">${bentoIcon}</span>
+        <span slot="icon" class="profile-edit-dialog__drag-handle-icon" aria-hidden="true">${bentoIcon}</span>
       </solid-ui-button>
       <label aria-label=${`${label} Language`} class="label profile-edit-dialog__field profile-edit-dialog__field--language-name">
         <solid-ui-combobox
@@ -420,6 +436,7 @@ function renderLanguageSection(
 ) {
   let dragSourceIndex: number | null = null
   let dropTargetIndex: number | null = null
+  let touchPointerId: number | null = null
 
   const reorderRows = (from: number, to: number) => {
     if (from === to) return
@@ -429,27 +446,98 @@ function renderLanguageSection(
     rows.splice(to, 0, row)
   }
 
-  const handleDragStart = (index: number) => {
+  const handleDragStart = (event: DragEvent, index: number) => {
     dragSourceIndex = index
+    dropTargetIndex = index
+
+    if (event.dataTransfer) {
+      event.dataTransfer.effectAllowed = 'move'
+      event.dataTransfer.setData('text/plain', String(index))
+    }
+  }
+
+  const handleDragEnter = (index: number) => {
+    if (dragSourceIndex === null) return
     dropTargetIndex = index
   }
 
-  const handleDragOver = (event: DragEvent) => {
+  const handleDragOver = (event: DragEvent, index: number) => {
     event.preventDefault()
+    if (dragSourceIndex !== null) {
+      dropTargetIndex = index
+    }
     if (event.dataTransfer) {
       event.dataTransfer.dropEffect = 'move'
     }
   }
 
-  const handleDrop = (index: number) => {
-    if (dragSourceIndex === null) return
-    reorderRows(dragSourceIndex, index)
+  const handleDrop = (event: DragEvent, index: number) => {
+    event.preventDefault()
+    const transferIndex = event.dataTransfer?.getData('text/plain')
+    const sourceIndex = dragSourceIndex ?? (transferIndex ? Number(transferIndex) : null)
+    if (sourceIndex === null || Number.isNaN(sourceIndex)) return
+    reorderRows(sourceIndex, index)
     dragSourceIndex = null
     dropTargetIndex = null
     onAddRow()
   }
 
   const handleDragEnd = () => {
+    dragSourceIndex = null
+    dropTargetIndex = null
+  }
+
+  const updateTouchDropTarget = (event: PointerEvent) => {
+    const target = (document.elementFromPoint(event.clientX, event.clientY) as HTMLElement | null)
+      ?.closest('[data-language-reorder-index]') as HTMLElement | null
+    if (!target) return
+
+    const nextIndex = Number(target.dataset.languageReorderIndex)
+    if (!Number.isNaN(nextIndex)) {
+      dropTargetIndex = nextIndex
+    }
+  }
+
+  const handlePointerDown = (event: PointerEvent, index: number) => {
+    if (event.pointerType !== 'touch') return
+
+    event.preventDefault()
+    dragSourceIndex = index
+    dropTargetIndex = index
+    touchPointerId = event.pointerId
+    ;(event.currentTarget as HTMLElement | null)?.setPointerCapture?.(event.pointerId)
+  }
+
+  const handlePointerMove = (event: PointerEvent) => {
+    if (event.pointerType !== 'touch' || touchPointerId !== event.pointerId || dragSourceIndex === null) return
+
+    event.preventDefault()
+    updateTouchDropTarget(event)
+  }
+
+  const handlePointerUp = (event: PointerEvent) => {
+    if (event.pointerType !== 'touch' || touchPointerId !== event.pointerId) return
+
+    event.preventDefault()
+    updateTouchDropTarget(event)
+    const sourceIndex = dragSourceIndex
+    const targetIndex = dropTargetIndex
+    ;(event.currentTarget as HTMLElement | null)?.releasePointerCapture?.(event.pointerId)
+    touchPointerId = null
+    dragSourceIndex = null
+    dropTargetIndex = null
+
+    if (sourceIndex === null || targetIndex === null || sourceIndex === targetIndex) return
+
+    reorderRows(sourceIndex, targetIndex)
+    onAddRow()
+  }
+
+  const handlePointerCancel = (event: PointerEvent) => {
+    if (event.pointerType !== 'touch' || touchPointerId !== event.pointerId) return
+
+    ;(event.currentTarget as HTMLElement | null)?.releasePointerCapture?.(event.pointerId)
+    touchPointerId = null
     dragSourceIndex = null
     dropTargetIndex = null
   }
@@ -467,9 +555,14 @@ function renderLanguageSection(
           index,
           displayIndex,
           onDragStart: handleDragStart,
+          onDragEnter: handleDragEnter,
           onDragOver: handleDragOver,
           onDrop: handleDrop,
           onDragEnd: handleDragEnd,
+          onPointerDown: handlePointerDown,
+          onPointerMove: handlePointerMove,
+          onPointerUp: handlePointerUp,
+          onPointerCancel: handlePointerCancel,
           isDropTarget: dropTargetIndex === index,
           onDelete: () => {
             deleteRow(rows, index)
