@@ -683,6 +683,17 @@ function focusContactInfoField(form: HTMLFormElement, selector: string): void {
   const nextField = form.querySelector(selector) as HTMLElement | null
   if (!nextField || typeof nextField.focus !== 'function') return
 
+  const view = form.ownerDocument.defaultView
+  const shouldAvoidFocus = Boolean(
+    view?.matchMedia &&
+    (view.matchMedia('(pointer: coarse)').matches || view.matchMedia('(max-width: 640px)').matches)
+  )
+
+  if (shouldAvoidFocus) {
+    nextField.scrollIntoView({ block: 'nearest', behavior: 'auto' })
+    return
+  }
+
   nextField.scrollIntoView({ block: 'nearest', behavior: 'auto' })
   nextField.focus()
   if (nextField instanceof HTMLInputElement || nextField instanceof HTMLTextAreaElement) {
