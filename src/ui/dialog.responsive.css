@@ -28,17 +28,19 @@
     padding-right: 0;
     padding-bottom: max(var(--spacing-sm), env(safe-area-inset-bottom));
     padding-left: 0;
-    place-items: start center;
+    place-items: center;
   }
 
   #profile-modal .modal {
+    width: var(--profile-modal-panel-width);
+    max-width: var(--profile-modal-panel-max-width);
     min-width: 0;
     padding: 0;
-    border-radius: calc(var(--border-radius-base) * 0.75);
+    border-radius: var(--border-radius-base);
     overscroll-behavior: contain;
     justify-self: center;
-    align-self: start;
-    margin: 0 auto;
+    align-self: center;
+    margin: 0;
   }
 
   #profile-modal .modal .modal-header {
@@ -88,20 +90,21 @@ html[data-layout='mobile'] #profile-modal {
   padding-right: 0;
   padding-bottom: max(var(--spacing-sm), env(safe-area-inset-bottom));
   padding-left: 0;
-  place-items: start center;
+  place-items: center;
 }
 
 html[data-layout='mobile'] #profile-modal .modal {
-  width: 100%;
+  width: var(--profile-modal-panel-width);
   height: auto;
   max-height: var(--profile-modal-panel-max-height);
+  max-width: var(--profile-modal-panel-max-width);
   min-width: 0;
   padding: 0;
-  border-radius: 0;
+  border-radius: var(--border-radius-base);
   overscroll-behavior: contain;
   justify-self: center;
-  align-self: start;
-  margin: 0 auto;
+  align-self: center;
+  margin: 0;
 }
 
 html[data-layout='mobile'] #profile-modal .modal .modal-header {
@@ -151,17 +154,19 @@ html[data-layout='mobile'] #profile-modal #modal-buttons > solid-ui-button {
     padding-right: 0;
     padding-bottom: max(var(--spacing-sm), env(safe-area-inset-bottom));
     padding-left: 0;
-    place-items: start center;
+    place-items: center;
   }
 
   #profile-modal .modal {
+    width: var(--profile-modal-panel-width);
+    max-width: var(--profile-modal-panel-max-width);
     min-width: 0;
     padding: 0;
-    border-radius: calc(var(--border-radius-base) * 0.75);
+    border-radius: var(--border-radius-base);
     overscroll-behavior: contain;
     justify-self: center;
-    align-self: start;
-    margin: 0 auto;
+    align-self: center;
+    margin: 0;
   }
 
   #profile-modal .modal .modal-header {
