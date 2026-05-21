@@ -29,7 +29,7 @@ function renderRole(role: RoleDetails, index: number) {
   return html`
     <li class="resume-card__item" role="listitem" aria-labelledby=${roleTitleId} aria-describedby=${ariaDescribedBy}>
     <div class="resume-card__item-header">
-      <h4 id=${roleTitleId}>${role.title}</h4>
+      <h3 id=${roleTitleId}>${role.title}</h3>
     </div>
     <p class="resume-card__organization" id=${roleOrgId}>
       <strong class="resume-card__organization-name">${role.orgName}</strong>${role.orgLocation ? html`<span class="resume-card__organization-separator" aria-hidden="true"> | </span><span class="resume-card__organization-location">${role.orgLocation}</span>` : ''}
