@@ -259,6 +259,59 @@ describe('Dialog accessibility', () => {
     expect(document.activeElement).toBe(trigger)
   })
 
+  it('locks document scrolling while the shared dialog is open and restores it on close', async () => {
+    document.documentElement.style.overflow = 'auto'
+    document.body.style.overflow = 'scroll'
+    document.body.style.position = 'relative'
+    document.body.style.top = '3px'
+    document.body.style.left = '4px'
+    document.body.style.right = '5px'
+    document.body.style.width = '80%'
+
+    Object.defineProperty(window, 'scrollY', {
+      configurable: true,
+      value: 240
+    })
+
+    const scrollTo = jest.fn()
+    Object.defineProperty(window, 'scrollTo', {
+      configurable: true,
+      value: scrollTo
+    })
+
+    const form = document.createElement('form')
+    const input = document.createElement('input')
+    input.name = 'displayName'
+    form.appendChild(input)
+
+    const resultPromise = openInputDialog({
+      title: 'Edit display name',
+      dom: document,
+      form,
+      headerAction: { type: 'none' }
+    })
+
+    expect(document.documentElement.style.overflow).toBe('hidden')
+    expect(document.body.style.overflow).toBe('hidden')
+    expect(document.body.style.position).toBe('fixed')
+    expect(document.body.style.top).toBe('-240px')
+    expect(document.body.style.left).toBe('0px')
+    expect(document.body.style.right).toBe('0px')
+    expect(document.body.style.width).toBe('100%')
+
+    getSharedDialogCancelButton(document)?.click()
+    await expect(resultPromise).resolves.toBeNull()
+
+    expect(document.documentElement.style.overflow).toBe('auto')
+    expect(document.body.style.overflow).toBe('scroll')
+    expect(document.body.style.position).toBe('relative')
+    expect(document.body.style.top).toBe('3px')
+    expect(document.body.style.left).toBe('4px')
+    expect(document.body.style.right).toBe('5px')
+    expect(document.body.style.width).toBe('80%')
+    expect(scrollTo).toHaveBeenCalledWith(0, 240)
+  })
+
   it('opens social, skills, and language dialogs with focus on the first field while keeping popups closed', async () => {
     const store = graph() as any
     const subject = sym('https://example.com/profile/card#me')
