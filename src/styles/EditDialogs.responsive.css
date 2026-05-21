@@ -26,15 +26,15 @@ html[data-layout='mobile'] #profile-modal .modal .profile-edit-dialog--heading .
   align-items: stretch;
 }
 
-:is(html, .profile-pane-host, .profile-pane-root)[data-layout='mobile'] #profile-modal .modal .profile-edit-dialog--heading .profile-edit-dialog__row--heading-dob > .profile-edit-dialog__field,
-:is(html, .profile-pane-host, .profile-pane-root)[data-layout='mobile'] #profile-modal .modal .profile-edit-dialog--heading .profile-edit-dialog__row--heading-dob > .profile-edit-dialog__field-type {
+html[data-layout='mobile'] #profile-modal .modal .profile-edit-dialog--heading .profile-edit-dialog__row--heading-dob > .profile-edit-dialog__field,
+html[data-layout='mobile'] #profile-modal .modal .profile-edit-dialog--heading .profile-edit-dialog__row--heading-dob > .profile-edit-dialog__field-type {
   width: 100%;
   max-width: 100%;
   min-width: 0;
   flex: 1 1 auto;
 }
 
-:is(html, .profile-pane-host, .profile-pane-root)[data-layout='mobile'] #profile-modal .modal .profile-edit-dialog--heading .profile-edit-dialog__input--dob {
+html[data-layout='mobile'] #profile-modal .modal .profile-edit-dialog--heading .profile-edit-dialog__input--dob {
   display: block;
   width: 90%;
   inline-size: 90%;
@@ -53,9 +53,9 @@ html[data-layout='mobile'] #profile-modal .modal .profile-edit-dialog--heading .
   text-align: center;
 }
 
-:is(html, .profile-pane-host, .profile-pane-root)[data-layout='mobile'] #profile-modal .modal .profile-edit-dialog--heading .profile-edit-dialog__input--dob::-webkit-date-and-time-value,
-:is(html, .profile-pane-host, .profile-pane-root)[data-layout='mobile'] #profile-modal .modal .profile-edit-dialog--heading .profile-edit-dialog__input--dob::-webkit-datetime-edit,
-:is(html, .profile-pane-host, .profile-pane-root)[data-layout='mobile'] #profile-modal .modal .profile-edit-dialog--heading .profile-edit-dialog__input--dob::-webkit-datetime-edit-fields-wrapper {
+html[data-layout='mobile'] #profile-modal .modal .profile-edit-dialog--heading .profile-edit-dialog__input--dob::-webkit-date-and-time-value,
+html[data-layout='mobile'] #profile-modal .modal .profile-edit-dialog--heading .profile-edit-dialog__input--dob::-webkit-datetime-edit,
+html[data-layout='mobile'] #profile-modal .modal .profile-edit-dialog--heading .profile-edit-dialog__input--dob::-webkit-datetime-edit-fields-wrapper {
   width: 100%;
   min-width: 0;
   max-width: 100%;
@@ -63,7 +63,7 @@ html[data-layout='mobile'] #profile-modal .modal .profile-edit-dialog--heading .
   text-align: center;
 }
 
-:is(html, .profile-pane-host, .profile-pane-root)[data-layout='mobile'] #profile-modal .modal .profile-edit-dialog--heading .profile-edit-dialog__input--dob::-webkit-date-and-time-value {
+html[data-layout='mobile'] #profile-modal .modal .profile-edit-dialog--heading .profile-edit-dialog__input--dob::-webkit-date-and-time-value {
   text-align: center;
   white-space: nowrap;
 }
@@ -143,19 +143,19 @@ html[data-layout='mobile'] .profile-edit-dialog__paste-button {
   --button-icon-size-lg: var(--font-size-xxs, 0.75rem);
 }
 
-:is(html, .profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-edit-dialog__field input,
-:is(html, .profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-edit-dialog__field select,
-:is(html, .profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-edit-dialog__field-type input,
-:is(html, .profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-edit-dialog__field-type select,
-:is(html, .profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-edit-dialog__textarea {
-  font-size: 1rem; /* SAM old font size: var(--font-size-xs, 0.75rem) or var(--font-size-sm, 0.875rem) */
+html[data-layout='mobile'] .profile-edit-dialog__field input,
+html[data-layout='mobile'] .profile-edit-dialog__field select,
+html[data-layout='mobile'] .profile-edit-dialog__field-type input,
+html[data-layout='mobile'] .profile-edit-dialog__field-type select,
+html[data-layout='mobile'] .profile-edit-dialog__textarea {
+  font-size: 1rem; 
 }
 
-:is(html, .profile-pane-host, .profile-pane-root)[data-layout='mobile'] #profile-modal .modal .profile-edit-dialog__field solid-ui-select,
-:is(html, .profile-pane-host, .profile-pane-root)[data-layout='mobile'] #profile-modal .modal .profile-edit-dialog__field solid-ui-combobox,
-:is(html, .profile-pane-host, .profile-pane-root)[data-layout='mobile'] #profile-modal .modal .profile-edit-dialog__field-type solid-ui-select,
-:is(html, .profile-pane-host, .profile-pane-root)[data-layout='mobile'] #profile-modal .modal .profile-edit-dialog__field-type solid-ui-combobox {
-  --font-size-sm: 1rem; /* SAM old font size: inherited/default */
+html[data-layout='mobile'] #profile-modal .modal .profile-edit-dialog__field solid-ui-select,
+html[data-layout='mobile'] #profile-modal .modal .profile-edit-dialog__field solid-ui-combobox,
+html[data-layout='mobile'] #profile-modal .modal .profile-edit-dialog__field-type solid-ui-select,
+html[data-layout='mobile'] #profile-modal .modal .profile-edit-dialog__field-type solid-ui-combobox {
+  --font-size-sm: 1rem; 
 }
 
 
@@ -233,7 +233,7 @@ html[data-layout='mobile'] .profile-edit-dialog__actions--language {
   margin-left: 0;
 }
 
-html[data-layout='mobile'] .profile-edit-dialog__row--language > solid-ui-button.profile-edit-dialog__drag-handle,
+html[data-layout='mobile'] .profile-edit-dialog__row--language > .profile-edit-dialog__drag-handle,
 html[data-layout='mobile'] .profile-edit-dialog__actions--language > solid-ui-button.profile-edit-dialog__delete-button {
   min-width: var(--min-touch-target, 44px);
   min-height: var(--min-touch-target, 44px);
