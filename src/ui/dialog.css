@@ -12,24 +12,22 @@
   --profile-modal-panel-width: min(37.5rem, calc(100vw - 2rem));
   --profile-modal-panel-max-width: 37.5rem;
   --profile-modal-panel-max-height: calc(100dvh - 2rem);
+  box-sizing: border-box;
   margin: 0;
   padding: 0;
   border: none;
-  background: var(--profile-modal-backdrop);
+  background: transparent;
   max-width: none;
   max-height: none;
   width: 100%;
-  height: 100%;
-  overflow: hidden;
-  position: fixed;
-  inset: 0;
+  height: auto;
+  overflow: visible;
   display: grid;
-  place-items: center;
+  justify-items: center;
   padding-top: env(safe-area-inset-top);
   padding-right: 0;
   padding-bottom: max(var(--spacing-lg, 1.5625rem), env(safe-area-inset-bottom));
   padding-left: 0;
-  z-index: 9999;
 }
 
 #profile-modal:not([open]) {
@@ -45,7 +43,7 @@
   position: relative;
   display: grid;
   grid-template-rows: auto minmax(0, 1fr) auto auto;
-  margin: 0;
+  margin: 0 auto;
   background: var(--color-background);
   border-radius: var(--border-radius-base);
   max-width: var(--profile-modal-panel-max-width);
