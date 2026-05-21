@@ -1,5 +1,495 @@
-@import './EditDialogs.base.css';
 @import './EditDialogs.responsive.css';
+
+.profile__edit-form {
+  --profile-edit-dialog-row-max-width: 34rem;
+  --profile-edit-dialog-action-hover-background: var(--color-surface-accent-subtle, var(--lavender-300, #e6dcff));
+  --profile-edit-dialog-muted-text: var(--color-text-secondary, #4A5565);
+  --profile-edit-dialog-quiet-text: var(--color-text-primary, var(--gray-700, #364153));
+  --profile-edit-dialog-mobile-image-button-font-size: var(--font-size-xxs, 0.75rem);
+  --profile-edit-dialog-mobile-image-label-font-size: var(--font-size-sm, 0.875rem);
+  --profile-edit-dialog-mobile-image-description-font-size: 0.625rem;
+  --profile-edit-dialog-mobile-image-button-padding: 0.4125rem 0.7547rem 0.4375rem 0.8625rem;
+  width: 100%;
+}
+
+.profile-edit-dialog__section,
+.profile-edit-dialog__section--education {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs, 0.75rem);
+}
+
+.profile-edit {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg, 1.25rem);
+}
+
+.profile-edit-dialog__section h4 {
+  margin: 0;
+}
+
+.profile-edit-dialog__section fieldset {
+  width: 100%;
+  margin: 0;
+  display: grid;
+  gap: var(--spacing-sm);
+  border: 0;
+  padding: 0;
+  min-inline-size: 0;
+}
+
+.profile-edit-dialog__field-description {
+  color: var(--profile-edit-dialog-muted-text);
+  font-size: var(--font-size-sm, 0.875rem);
+  font-weight: var(--font-weight-normal, normal);
+  line-height: var(--line-height-base, 1.5);
+}
+
+.profile-edit-dialog__row {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--spacing-sm);
+  max-width: var(--profile-edit-dialog-row-max-width);
+}
+
+.profile-edit-dialog__row--full {
+  max-width: 100%;
+  width: 100%;
+}
+
+.profile-edit-dialog__field,
+.profile-edit-dialog__field-type {
+  display: block;
+  margin: 0;
+}
+
+.profile-edit-dialog__field-type {
+  width: 100%;
+}
+
+.profile-edit-dialog__field {
+  min-width: 0;
+}
+
+.profile-edit-dialog__field--stack {
+  display: grid;
+}
+
+.profile-edit-dialog__field--stack > small {
+  display: block;
+  width: 100%;
+  text-align: right;
+  justify-self: end;
+}
+
+.profile-edit-dialog__field--full {
+  max-width: 100% !important;
+  width: 100%;
+}
+
+.profile-edit-dialog__field--row-width {
+  max-width: 34rem;
+  width: 100%;
+}
+
+.profile-edit-dialog__login-message {
+  margin: 0;
+  font-size: var(--font-size-xs, 0.75rem);
+  color: var(--red-600, #E7000B);
+}
+
+.profile-edit-dialog__section + .profile-edit-dialog__login-message {
+  margin-top: var(--spacing-sm, 0.938rem);
+}
+
+.profile__edit-form--projects .profile-edit-dialog__login-message {
+  margin-top: var(--spacing-sm, 0.938rem);
+}
+
+.profile-edit-dialog__actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex: 0 0 auto;
+}
+
+.profile-edit-dialog__actions--edge {
+  margin-left: auto;
+}
+
+.profile-edit-dialog__add-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.profile-edit-dialog__input-wrap {
+  position: relative;
+  width: 100%;
+}
+
+.profile-edit-dialog__input--with-action {
+  width: 100%;
+  box-sizing: border-box;
+  padding-right: 7.5rem;
+}
+
+.profile-edit-dialog__delete-icon {
+  width: var(--icon-xxs, 1rem);
+  height: var(--icon-xxs, 1rem);
+  fill: currentColor;
+}
+
+.profile-edit-dialog__delete-icon svg {
+  width: var(--icon-xxs, 1rem);
+  height: var(--icon-xxs, 1rem);
+}
+
+solid-ui-button.profile-edit-dialog__delete-button {
+  min-height: var(--min-touch-target, 44px);
+  min-width: var(--min-touch-target, 44px);
+  color: inherit;
+  --button-background: transparent;
+  --button-height-md: var(--min-touch-target, 44px);
+  --button-padding-md: 0;
+  --button-padding-x-sm: 0;
+  --button-border-width: 0;
+  --button-border-radius: var(--border-radius-base, 0.3125rem);
+  --button-text: currentColor;
+  --button-box-shadow: none;
+  --button-hover-background: var(--profile-edit-dialog-action-hover-background);
+  --button-hover-border: transparent;
+  --button-hover-text: var(--color-primary, #7C4DFF);
+  --button-hover-box-shadow: none;
+  --button-active-box-shadow: none;
+  --button-active-transform: none;
+  --button-icon-size-md: var(--icon-xxs, 1rem);
+  --button-icon-size-lg: var(--icon-xxs, 1rem);
+}
+
+solid-ui-button.profile-edit-dialog__delete-button:hover,
+solid-ui-button.profile-edit-dialog__delete-button:focus-within {
+  color: inherit;
+}
+
+.profile-edit-dialog__image-preview {
+  display: grid;
+  gap: var(--spacing-xs);
+}
+
+.profile-edit-dialog__image-preview-header {
+  margin-bottom: var(--spacing-md, 1.25rem);
+}
+
+.profile-edit-dialog__image-preview-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs, 0.75rem);
+}
+
+.profile-edit-dialog__image-preview-label,
+.profile-edit-dialog__image-preview-description {
+  margin: 0;
+}
+
+.profile-edit-dialog__image-frame {
+  position: relative;
+  display: inline-block;
+  line-height: 0;
+}
+
+.profile-edit-dialog__image-camera-button {
+  display: none;
+  position: absolute;
+  align-items: center;
+  justify-content: center;
+  right: var(--spacing-2xs, 0.625rem);
+  bottom: var(--spacing-2xs, 0.625rem);
+  z-index: 1;
+}
+
+solid-ui-button.profile-edit-dialog__image-camera-button {
+  width: 1.25rem;
+  height: 1.25rem;
+  min-width: 1.25rem;
+  min-height: 1.25rem;
+  --button-height-md: 1.25rem;
+  --button-padding-md: 0.1875rem;
+  --button-icon-size-md: 0.875rem;
+  --button-background: var(--color-card-bg, var(--white, #FFF));
+  --button-border-width: 0;
+  --button-border-radius: 0.2083rem;
+  --button-box-shadow: 0 0 0.2778rem 0 rgba(0, 0, 0, 0.25);
+  --button-hover-background: var(--color-card-bg, var(--white, #FFF));
+  --button-hover-border: transparent;
+  --button-hover-text: currentColor;
+  --button-hover-box-shadow: 0 0 0.2778rem 0 rgba(0, 0, 0, 0.25);
+  --button-active-box-shadow: 0 0 0.2778rem 0 rgba(0, 0, 0, 0.25);
+  --button-active-transform: none;
+}
+
+.profile-edit-dialog__image-camera-button svg {
+  width: 0.875rem !important;
+  height: 0.875rem !important;
+  display: block;
+  flex-shrink: 0;
+}
+
+.profile-edit-dialog__image-camera-capture-row {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+.profile-edit-dialog__image-camera-capture-frame {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: fit-content;
+  max-width: 100%;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: calc(var(--spacing-xs, 0.625rem) / 2);
+  margin-bottom: var(--spacing-xs, 0.625rem);
+  padding: var(--spacing-2xs, 0.625rem);
+  box-sizing: border-box;
+  border: 1px solid var(--color-border, var(--gray-200, #E5E7EB));
+  border-radius: var(--border-radius-md, 0.5rem);
+}
+
+.profile-edit-dialog__image-camera-capture-frame[hidden] {
+  display: none;
+}
+
+.profile-edit-dialog__photo-capture {
+  display: block;
+  width: 100%;
+  --photo-capture-gap: var(--spacing-2xs, 0.625rem);
+  --photo-capture-frame-max-width: 260px;
+  --photo-capture-surface: transparent;
+  --photo-capture-text: var(--color-text-subheading, var(--gray-900, #101828));
+  --photo-capture-muted-text: var(--profile-edit-dialog-muted-text);
+  --photo-capture-border: var(--color-border-button, var(--gray-300, #D1D5DC));
+  --photo-capture-hover: var(--color-surface-tertiary-hover, var(--gray-100, #F3F4F6));
+  --photo-capture-shadow: none;
+  --photo-capture-trigger-background: var(--color-card-bg, var(--white, #FFF));
+  --photo-capture-trigger-text: var(--color-text-subheading, var(--gray-900, #101828));
+}
+
+.profile-edit-dialog__photo-capture::part(panel) {
+  width: auto;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.profile-edit-dialog__photo-capture::part(header) {
+  justify-content: flex-end;
+}
+
+.profile-edit-dialog__photo-capture::part(heading),
+.profile-edit-dialog__photo-capture::part(status-message),
+.profile-edit-dialog__photo-capture::part(cancel-button) {
+  display: none;
+}
+
+.profile-edit-dialog__photo-capture::part(close-button) {
+  width: auto;
+  height: auto;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--profile-edit-dialog-muted-text);
+  font-size: 1.25rem;
+}
+
+.profile-edit-dialog__photo-capture::part(close-button):hover,
+.profile-edit-dialog__photo-capture::part(close-button):focus-visible {
+  background: transparent;
+  color: var(--color-text-subheading, var(--gray-900, #101828));
+}
+
+.profile-edit-dialog__photo-capture::part(actions) {
+  justify-content: center;
+  gap: var(--spacing-2xs, 0.625rem);
+}
+
+.profile-edit-dialog__photo-capture::part(capture-button),
+.profile-edit-dialog__photo-capture::part(retake-button),
+.profile-edit-dialog__photo-capture::part(confirm-button) {
+  min-height: auto;
+  padding: 0.4125rem 0.6922rem 0.4375rem 0.8rem;
+  border-radius: var(--border-radius-base, 0.3125rem);
+  border: 0.8px solid var(--color-border-button, var(--gray-300, #D1D5DC));
+  background: var(--color-card-bg, var(--white, #FFF));
+  color: var(--color-text-subheading, var(--gray-900, #101828));
+  font-size: var(--font-size-xxs, 0.75rem);
+  font-weight: var(--font-weight-xbold, 700);
+  line-height: var(--line-height-base, 1.5);
+}
+
+.profile-edit-dialog__photo-capture::part(capture-button):hover,
+.profile-edit-dialog__photo-capture::part(capture-button):focus-visible,
+.profile-edit-dialog__photo-capture::part(retake-button):hover,
+.profile-edit-dialog__photo-capture::part(retake-button):focus-visible,
+.profile-edit-dialog__photo-capture::part(confirm-button):hover,
+.profile-edit-dialog__photo-capture::part(confirm-button):focus-visible {
+  background: var(--color-surface-tertiary-hover, var(--gray-100, #F3F4F6));
+  border-color: var(--color-border-button-hover, var(--gray-400, #99A1AF));
+}
+
+.profile-edit-dialog__image-upload-button::part(button),
+.profile-edit-dialog__image-remove-button::part(button) {
+  min-height: var(--min-touch-target, 44px);
+}
+
+.profile-edit-dialog__image-button::part(button) {
+  font-size: var(--font-size-xxs, 0.75rem);
+  font-weight: var(--font-weight-xbold, 700);
+  line-height: var(--line-height-base, 1.5);
+  border-radius: var(--border-radius-base, 0.3125rem);
+  transform: none;
+}
+
+.profile-edit-dialog__image-upload-button::part(button) {
+  color: var(--color-text-subheading, var(--gray-900, #101828));
+  border: 0.8px solid var(--color-border-button, var(--gray-300, #D1D5DC));
+  background: var(--color-card-bg, var(--white, #FFF));
+  padding: 0.4125rem 0.6922rem 0.4375rem 0.8rem;
+}
+
+.profile-edit-dialog__image-remove-button::part(button) {
+  color: var(--red-600, #E7000B);
+  padding: 0.4125rem 0.8148rem 0.4375rem 0.8625rem;
+  border: 0.8px solid transparent;
+  background: var(--color-surface-tertiary-hover, var(--gray-100, #F3F4F6));
+}
+
+#profile-modal .modal .profile-edit-dialog__image-upload-button:hover::part(button),
+#profile-modal .modal .profile-edit-dialog__image-upload-button:focus-within::part(button),
+#profile-modal .modal .profile-edit-dialog__image-remove-button:hover::part(button),
+#profile-modal .modal .profile-edit-dialog__image-remove-button:focus-within::part(button) {
+  background: var(--color-surface-tertiary-hover, var(--gray-100, #F3F4F6)) !important;
+  border-color: var(--color-border-button-hover, var(--gray-400, #99A1AF)) !important;
+}
+
+.profile-edit-dialog__paste-button {
+  position: absolute;
+  white-space: nowrap;
+  right: var(--spacing-2xs, 0.625rem);
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 1;
+  color: var(--profile-edit-dialog-muted-text);
+  min-width: 0;
+  --button-height-md: 0;
+  --button-padding-md: 0.25rem 0.375rem;
+  --button-font-size-md: var(--font-size-xxs, 0.75rem);
+  --button-font-weight: var(--font-weight-normal, 400);
+  --button-background: var(--color-surface-tertiary-hover, var(--gray-100, #F3F4F6));
+  --button-border-width: 0;
+  --button-border-radius: var(--border-radius-base, 0.3125rem);
+  --button-text: var(--profile-edit-dialog-muted-text);
+  --button-box-shadow: none;
+  --button-hover-background: var(--color-surface-tertiary-hover, var(--gray-100, #F3F4F6));
+  --button-hover-text: var(--profile-edit-dialog-quiet-text);
+  --button-hover-box-shadow: none;
+  --button-active-box-shadow: none;
+  --button-active-transform: none;
+  --button-icon-size-md: 0.813rem;
+  --spacing-xxs: var(--spacing-xxs, 0.3125rem);
+}
+
+.profile-edit-dialog__paste-button:hover,
+.profile-edit-dialog__paste-button:focus-within {
+  color: var(--profile-edit-dialog-quiet-text);
+}
+
+.profile-edit-dialog__paste-icon {
+  width: 0.694rem;
+  height: 0.813rem;
+  fill: currentColor;
+}
+
+solid-ui-button.profile-edit-dialog__drag-handle {
+  min-width: 1.75rem;
+  min-height: 1.75rem;
+  --button-background: transparent;
+  --button-height-md: 1.75rem;
+  --button-padding-md: 0;
+  --button-border-width: 0;
+  --button-border-radius: var(--border-radius-base, 0.3125rem);
+  --button-icon-size-md: 0.813rem;
+  --button-box-shadow: none;
+  --button-hover-background: var(--profile-edit-dialog-action-hover-background);
+  --button-hover-border: transparent;
+  --button-hover-text: var(--color-primary, #7C4DFF);
+  --button-hover-box-shadow: none;
+  --button-active-box-shadow: none;
+}
+
+.profile-edit-dialog__row--drop-target {
+  outline: 1px dashed var(--color-border-button-hover, var(--gray-400, #99A1AF));
+  outline-offset: 2px;
+}
+
+.profile-edit-dialog__field input,
+.profile-edit-dialog__field select,
+.profile-edit-dialog__field-type input,
+.profile-edit-dialog__field-type select {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  min-height: var(--min-touch-target, 44px);
+  height: var(--min-touch-target, 44px);
+  border-radius: var(--border-radius-base, 0.3125rem);
+  border: 1px solid var(--color-border-button-hover, var(--gray-400, #99A1AF));
+  background: var(--color-card-bg, var(--white, #FFF));
+  color: var(--color-text-subheading, var(--gray-900, #101828));
+  font-size: var(--font-size-sm, 0.875rem);
+  font-weight: var(--font-weight-medium, 500);
+  padding: var(--spacing-2xs, 0.625rem);
+}
+
+.profile-edit-dialog__field input[type='date'],
+.profile-edit-dialog__field-type input[type='date'] {
+  min-width: 0;
+}
+
+.profile-edit-dialog__field > solid-ui-combobox,
+.profile-edit-dialog__field-type > solid-ui-combobox {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
+  align-self: stretch;
+}
+
+.profile-edit-dialog__field textarea,
+.profile-edit-dialog__field-type textarea {
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  min-height: var(--min-touch-target, 44px);
+}
+
+.profile-edit-dialog__textarea {
+  color: var(--color-text-subheading, var(--gray-900, #101828));
+  font-size: var(--font-size-sm, 0.875rem);
+  font-weight: var(--font-weight-md, 500);
+  line-height: var(--line-height-loose, 1.6);
+  border-radius: var(--border-radius-base, 0.3125rem);
+  border: var(--border-width-sm, 0.1rem) solid var(--color-border-button-hover, var(--gray-400, #99A1AF));
+  background: var(--color-card-bg, var(--white, #FFF));
+  min-height: 10rem !important;
+  height: auto;
+  resize: vertical;
+}
 
 .profile__edit-form--heading {
   display: flex;
