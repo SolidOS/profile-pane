@@ -8,10 +8,9 @@ import { formatDisplayError } from '../utils/errorDisplay'
 /* Copied from issue-pane, minor typescript adjustments */
 /* Changed modal from div to dialog element */
 let modalDialog: HTMLDialogElement | null = null
-let previousFocus: Element | null = null
 
 function getDialogMountTarget(dom: Document): HTMLElement {
-  return (dom.querySelector('.profile-pane-root') as HTMLElement | null) || dom.body
+  return dom.body
 }
 
 type DialogButtonValue = boolean | 'save' | null
@@ -53,20 +52,6 @@ type DialogActionControl = HTMLElement & {
 
 function isSolidUiButton(control: Element | null): control is DialogActionControl {
   return control?.tagName === 'SOLID-UI-BUTTON'
-}
-
-function focusDialogAction(control: Element | null): void {
-  if (!control) return
-
-  if (isSolidUiButton(control)) {
-    const innerButton = control.shadowRoot?.querySelector('button') as HTMLButtonElement | null
-    innerButton?.focus()
-    return
-  }
-
-  if (control instanceof HTMLElement) {
-    control.focus()
-  }
 }
 
 function setDialogActionDisabled(control: DialogActionControl | null, disabled: boolean): void {
@@ -155,9 +140,6 @@ function setModalError(elements: DialogElements, error: unknown, fallbackMessage
   elements.error.textContent = formatDisplayError(error, fallbackMessage)
   elements.error.setAttribute('aria-hidden', 'false')
   elements.error.hidden = false
-  if (elements.error instanceof HTMLElement) {
-    elements.error.focus()
-  }
 }
 
 function openDialogElement (dialog: HTMLDialogElement): void {
@@ -180,55 +162,6 @@ function closeDialogElement (dialog: HTMLDialogElement): void {
   }
 
   dialog.removeAttribute('open')
-}
-
-function getInitialFocusTarget(element: HTMLElement): HTMLElement {
-  if (element.tagName === 'SOLID-UI-COMBOBOX') {
-    const input = element.shadowRoot?.querySelector('input') as HTMLInputElement | null
-    if (input) return input
-  }
-
-  if (element.tagName === 'SOLID-UI-SELECT') {
-    const button = element.shadowRoot?.querySelector('button') as HTMLButtonElement | null
-    if (button) return button
-  }
-
-  return element
-}
-
-function findInitialContentFocusTarget(container: ParentNode): HTMLElement | null {
-  const focusable = Array.from(
-    container.querySelectorAll('input, select, textarea, solid-ui-select, solid-ui-combobox, [contenteditable="true"], [tabindex]:not([tabindex="-1"])')
-  ) as HTMLElement[]
-
-  for (const el of focusable) {
-    const isDisabled = el.hasAttribute('disabled') || el.getAttribute('aria-disabled') === 'true'
-    const hiddenByAttr = el.hasAttribute('hidden') || el.getAttribute('aria-hidden') === 'true'
-    if (!isDisabled && !hiddenByAttr) return el
-  }
-
-  return null
-}
-
-function focusInitialDialogTarget (description: HTMLDivElement, buttons: HTMLDivElement): void {
-  const initialInput = findInitialContentFocusTarget(description)
-  if (initialInput) {
-    const focusTarget = getInitialFocusTarget(initialInput)
-    focusTarget.focus()
-    if (focusTarget instanceof HTMLInputElement || focusTarget instanceof HTMLTextAreaElement) {
-      focusTarget.setSelectionRange(0, 0)
-      focusTarget.scrollLeft = 0
-      focusTarget.scrollTop = 0
-      requestAnimationFrame(() => {
-        focusTarget.scrollLeft = 0
-        focusTarget.scrollTop = 0
-      })
-    }
-    return
-  }
-
-  const firstButton = buttons.querySelector('solid-ui-button, button') as HTMLElement | null
-  focusDialogAction(firstButton)
 }
 
 function collectFormValues (form: HTMLFormElement): InputDialogValues {
@@ -256,7 +189,6 @@ function openModal ({
   const dialog = ensureModalDialog(dom)
   const elements = getDialogElements(dialog)
 
-  previousFocus = dom.activeElement
   openDialogElement(dialog)
 
   elements.title.textContent = title || ''
@@ -344,8 +276,6 @@ function openModal ({
       })
       elements.buttons.appendChild(b)
     })
-
-    focusInitialDialogTarget(elements.description, elements.buttons)
   })
 }
 
@@ -355,7 +285,6 @@ function closeModal (_result: DialogButtonValue): void {
     modalDialog.oncancel = null
     const headerActionButton = modalDialog.querySelector('#modal-header-action button') as HTMLButtonElement | null
     if (headerActionButton) headerActionButton.onclick = null
-    if (previousFocus && 'focus' in previousFocus) (previousFocus as HTMLElement).focus()
   }
 }
 
