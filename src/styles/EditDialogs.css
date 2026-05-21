@@ -430,6 +430,36 @@ solid-ui-button.profile-edit-dialog__drag-handle {
   --button-hover-text: var(--color-primary, #7C4DFF);
   --button-hover-box-shadow: none;
   --button-active-box-shadow: none;
+  --button-active-transform: none;
+  cursor: grab;
+  touch-action: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+solid-ui-button.profile-edit-dialog__drag-handle::part(button) {
+  min-width: 1.75rem;
+  min-height: 1.75rem;
+}
+
+solid-ui-button.profile-edit-dialog__drag-handle:focus-visible::part(button) {
+  outline: none;
+}
+
+solid-ui-button.profile-edit-dialog__drag-handle:active {
+  cursor: grabbing;
+}
+
+.profile-edit-dialog__drag-handle-icon {
+  display: inline-flex;
+  width: 0.813rem;
+  height: 0.813rem;
+}
+
+.profile-edit-dialog__drag-handle-icon svg {
+  width: 100%;
+  height: 100%;
+  fill: currentColor;
 }
 
 .profile-edit-dialog__row--drop-target {
