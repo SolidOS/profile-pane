@@ -9,6 +9,57 @@ import { formatDisplayError } from '../utils/errorDisplay'
 /* Changed modal from div to dialog element */
 let modalDialog: HTMLDialogElement | null = null
 
+let scrollLockCount = 0
+let previousHtmlOverflow = ''
+let previousBodyOverflow = ''
+let previousBodyPosition = ''
+let previousBodyTop = ''
+let previousBodyLeft = ''
+let previousBodyRight = ''
+let previousBodyWidth = ''
+let lockedScrollY = 0
+
+function lockDocumentScroll(dom: Document): void {
+  if (scrollLockCount === 0) {
+    const win = dom.defaultView
+    previousHtmlOverflow = dom.documentElement.style.overflow
+    previousBodyOverflow = dom.body.style.overflow
+    previousBodyPosition = dom.body.style.position
+    previousBodyTop = dom.body.style.top
+    previousBodyLeft = dom.body.style.left
+    previousBodyRight = dom.body.style.right
+    previousBodyWidth = dom.body.style.width
+    lockedScrollY = win?.scrollY || 0
+
+    dom.documentElement.style.overflow = 'hidden'
+    dom.body.style.overflow = 'hidden'
+    dom.body.style.position = 'fixed'
+    dom.body.style.top = `-${lockedScrollY}px`
+    dom.body.style.left = '0'
+    dom.body.style.right = '0'
+    dom.body.style.width = '100%'
+  }
+
+  scrollLockCount += 1
+}
+
+function unlockDocumentScroll(dom: Document): void {
+  if (scrollLockCount === 0) return
+
+  scrollLockCount -= 1
+  if (scrollLockCount > 0) return
+
+  const win = dom.defaultView
+  dom.documentElement.style.overflow = previousHtmlOverflow
+  dom.body.style.overflow = previousBodyOverflow
+  dom.body.style.position = previousBodyPosition
+  dom.body.style.top = previousBodyTop
+  dom.body.style.left = previousBodyLeft
+  dom.body.style.right = previousBodyRight
+  dom.body.style.width = previousBodyWidth
+  win?.scrollTo(0, lockedScrollY)
+}
+
 function getDialogMountTarget(dom: Document): HTMLElement {
   return dom.body
 }
@@ -143,6 +194,8 @@ function setModalError(elements: DialogElements, error: unknown, fallbackMessage
 }
 
 function openDialogElement (dialog: HTMLDialogElement): void {
+  lockDocumentScroll(dialog.ownerDocument)
+
   if (typeof dialog.showModal === 'function') {
     try {
       if (!dialog.open) dialog.showModal()
@@ -156,12 +209,16 @@ function openDialogElement (dialog: HTMLDialogElement): void {
 }
 
 function closeDialogElement (dialog: HTMLDialogElement): void {
-  if (typeof dialog.close === 'function' && dialog.open) {
-    dialog.close()
-    return
-  }
+  try {
+    if (typeof dialog.close === 'function' && dialog.open) {
+      dialog.close()
+      return
+    }
 
-  dialog.removeAttribute('open')
+    dialog.removeAttribute('open')
+  } finally {
+    unlockDocumentScroll(dialog.ownerDocument)
+  }
 }
 
 function collectFormValues (form: HTMLFormElement): InputDialogValues {
