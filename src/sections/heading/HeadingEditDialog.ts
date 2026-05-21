@@ -737,7 +737,7 @@ function renderHeadingInfoInput(
       photoCapture.showCancelButton = true
       photoCapture.autoCloseOnCapture = false
       photoCapture.fileNamePrefix = 'camera'
-      photoCapture.facingMode = 'environment'
+      photoCapture.facingMode = 'user'
       photoCapture.open = true
 
       photoCapture.addEventListener('cancel', (event) => {
