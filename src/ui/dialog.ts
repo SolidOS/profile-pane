@@ -20,8 +20,27 @@ function getEventTargetElement(target: EventTarget | null): HTMLElement | null {
   return null
 }
 
-function isDialogScrollRegionTarget(target: EventTarget | null): boolean {
-  const targetElement = getEventTargetElement(target)
+function getEventPath(event: Event): EventTarget[] {
+  if (typeof event.composedPath === 'function') {
+    return event.composedPath()
+  }
+
+  return event.target ? [event.target] : []
+}
+
+function isDialogScrollRegionTarget(event: Event): boolean {
+  const path = getEventPath(event)
+  const description = modalDialog?.querySelector('#modal-desc')
+
+  if (description && path.includes(description)) {
+    return true
+  }
+
+  if (modalDialog && path.includes(modalDialog)) {
+    return true
+  }
+
+  const targetElement = getEventTargetElement(event.target)
   if (!targetElement || !modalDialog || !modalDialog.contains(targetElement)) {
     return false
   }
@@ -33,7 +52,7 @@ function installDocumentScrollGuard(dom: Document): void {
   if (removeDocumentScrollGuard) return
 
   const preventBackgroundScroll = (event: Event) => {
-    if (!isDialogScrollRegionTarget(event.target)) {
+    if (!isDialogScrollRegionTarget(event)) {
       event.preventDefault()
     }
   }
