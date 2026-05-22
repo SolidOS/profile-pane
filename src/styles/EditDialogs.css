@@ -107,6 +107,21 @@
   margin-top: var(--spacing-sm, 0.938rem);
 }
 
+#profile-modal .modal .profile__section-header .profile__action-button,
+#profile-modal .modal .profile__section-header solid-ui-button.profile__action-button::part(button) {
+  min-height: auto;
+  padding: var(--spacing-xxs);
+  border: none;
+  background: none;
+  color: var(--color-primary);
+  font-weight: var(--font-weight-md, 500);
+}
+
+#profile-modal .modal .profile__section-header .profile__action-button:hover,
+#profile-modal .modal .profile__section-header solid-ui-button.profile__action-button:hover::part(button) {
+  text-decoration: underline;
+}
+
 .profile-edit-dialog__actions {
   display: flex;
   align-items: center;
