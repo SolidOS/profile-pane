@@ -370,7 +370,7 @@ html[data-layout='mobile'] .profile-edit-dialog__row--address-header .profile-ed
     line-height: var(--line-height-tight, 1.4);
   }
 
-  #profile-modal .modal .profile__section-header {
+  #profile-modal .modal .profile__section-header:not(.profile-edit-dialog__contact-section-header) {
     padding: var(--spacing-sm, 0.938rem);
     gap: var(--spacing-lg, 1.5625rem);
   }
@@ -650,7 +650,7 @@ html[data-layout='mobile'] .profile-edit-dialog__row--address-header .profile-ed
     line-height: var(--line-height-tight, 1.4);
   }
 
-  #profile-modal .modal .profile__section-header {
+  #profile-modal .modal .profile__section-header:not(.profile-edit-dialog__contact-section-header) {
     padding: var(--spacing-sm, 0.938rem);
     gap: var(--spacing-lg, 1.5625rem);
   }
