@@ -120,6 +120,15 @@ function focusSocialField(form: HTMLFormElement, selector: string): void {
   if (typeof nextField.scrollIntoView === 'function') {
     nextField.scrollIntoView({ block: 'start', behavior: 'auto' })
   }
+
+  const view = form.ownerDocument.defaultView
+  const shouldAvoidFocus = Boolean(
+    view?.matchMedia &&
+    (view.matchMedia('(pointer: coarse)').matches || view.matchMedia('(max-width: 640px)').matches)
+  )
+
+  if (shouldAvoidFocus) return
+
   if (nextField.tagName === 'SOLID-UI-SELECT') {
     const triggerButton = nextField.shadowRoot?.querySelector('button') as HTMLButtonElement | null
     triggerButton?.focus()
