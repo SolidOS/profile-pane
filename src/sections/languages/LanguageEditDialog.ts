@@ -488,7 +488,8 @@ function renderLanguageSection(
   }
 
   const updateTouchDropTarget = (event: PointerEvent) => {
-    const target = (document.elementFromPoint(event.clientX, event.clientY) as HTMLElement | null)
+    const dom = (event.currentTarget as HTMLElement | null)?.ownerDocument || document
+    const target = (dom.elementFromPoint(event.clientX, event.clientY) as HTMLElement | null)
       ?.closest('[data-language-reorder-index]') as HTMLElement | null
     if (!target) return
 
