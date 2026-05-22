@@ -26,6 +26,7 @@
   z-index: 9999;
   display: grid;
   place-items: center;
+  overscroll-behavior: contain;
   padding-top: env(safe-area-inset-top);
   padding-right: 0;
   padding-bottom: max(var(--spacing-lg, 1.5625rem), env(safe-area-inset-bottom));
@@ -70,6 +71,7 @@
 #profile-modal .modal #modal-desc {
   min-height: 0;
   overflow: auto;
+  overscroll-behavior: contain;
   width: 100%;
   min-width: 0;
   padding: var(--profile-modal-panel-inline-padding);
