@@ -221,6 +221,62 @@ function closeDialogElement (dialog: HTMLDialogElement): void {
   }
 }
 
+function isMobileDialogLayout(dom: Document): boolean {
+  return Boolean(dom.querySelector("[data-layout='mobile']"))
+}
+
+function isFocusableElement(element: HTMLElement): boolean {
+  if (element.hasAttribute('disabled')) return false
+  if (element.getAttribute('aria-hidden') === 'true') return false
+  if (element.getAttribute('hidden') !== null) return false
+  if (element.tabIndex < 0) return false
+  return true
+}
+
+function findPreferredInitialFocusTarget(container: ParentNode): HTMLElement | null {
+  const focusableControls = container.querySelectorAll([
+    'input:not([type="hidden"]):not([disabled])',
+    'textarea:not([disabled])',
+    'select:not([disabled])',
+    'solid-ui-select:not([disabled])',
+    'solid-ui-combobox:not([disabled])',
+    '[contenteditable="true"]',
+    'button:not([disabled])',
+    'solid-ui-button:not([disabled])',
+    '[tabindex]:not([tabindex="-1"])'
+  ].join(','))
+
+  for (const match of focusableControls) {
+    if (match instanceof HTMLElement && isFocusableElement(match)) return match
+  }
+
+  return null
+}
+
+function focusInitialDialogTarget(dialog: HTMLDialogElement, description: HTMLDivElement, buttons: HTMLDivElement): void {
+  if (isMobileDialogLayout(dialog.ownerDocument)) {
+    const activeElement = dialog.ownerDocument.activeElement as HTMLElement | null
+    if (activeElement && dialog.contains(activeElement)) {
+      activeElement.blur()
+    }
+    return
+  }
+
+  const initialTarget = findPreferredInitialFocusTarget(description)
+  if (initialTarget) {
+    initialTarget.focus()
+    if (initialTarget instanceof HTMLInputElement || initialTarget instanceof HTMLTextAreaElement) {
+      initialTarget.select()
+    }
+    return
+  }
+
+  const firstButton = findPreferredInitialFocusTarget(buttons)
+  if (firstButton) {
+    firstButton.focus()
+  }
+}
+
 function collectFormValues (form: HTMLFormElement): InputDialogValues {
   const data = new FormData(form)
   const values: InputDialogValues = {}
@@ -332,6 +388,14 @@ function openModal ({
         finish(btn.value)
       })
       elements.buttons.appendChild(b)
+    })
+
+    const scheduleInitialFocus = dom.defaultView?.requestAnimationFrame
+      ? (callback: () => void) => dom.defaultView?.requestAnimationFrame(() => callback())
+      : (callback: () => void) => setTimeout(callback, 0)
+
+    scheduleInitialFocus(() => {
+      focusInitialDialogTarget(dialog, elements.description, elements.buttons)
     })
   })
 }

@@ -1060,6 +1060,17 @@ function focusResumeFieldElement(element: HTMLElement | null): void {
   const focusTarget = getResumeFocusableTarget(element)
   if (!focusTarget || typeof focusTarget.focus !== 'function') return
 
+  const view = focusTarget.ownerDocument.defaultView
+  const shouldAvoidFocus = Boolean(
+    view?.matchMedia &&
+    (view.matchMedia('(pointer: coarse)').matches || view.matchMedia('(max-width: 640px)').matches)
+  )
+
+  if (shouldAvoidFocus) {
+    focusTarget.scrollIntoView({ block: 'nearest', behavior: 'auto' })
+    return
+  }
+
   focusTarget.focus({ preventScroll: true })
   if (focusTarget instanceof HTMLInputElement || focusTarget instanceof HTMLTextAreaElement) {
     const caretPosition = 0
