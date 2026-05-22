@@ -259,7 +259,7 @@ describe('Dialog accessibility', () => {
     expect(document.activeElement).toBe(trigger)
   })
 
-  it('locks document scrolling while the shared dialog is open and restores it on close', async () => {
+  it('locks document scrolling while the shared dialog is open without changing body positioning', async () => {
     document.documentElement.style.overflow = 'auto'
     document.body.style.overflow = 'scroll'
     document.body.style.position = 'relative'
@@ -267,11 +267,6 @@ describe('Dialog accessibility', () => {
     document.body.style.left = '4px'
     document.body.style.right = '5px'
     document.body.style.width = '80%'
-
-    Object.defineProperty(window, 'scrollY', {
-      configurable: true,
-      value: 240
-    })
 
     const scrollTo = jest.fn()
     Object.defineProperty(window, 'scrollTo', {
@@ -293,11 +288,11 @@ describe('Dialog accessibility', () => {
 
     expect(document.documentElement.style.overflow).toBe('hidden')
     expect(document.body.style.overflow).toBe('hidden')
-    expect(document.body.style.position).toBe('fixed')
-    expect(document.body.style.top).toBe('-240px')
-    expect(document.body.style.left).toBe('0px')
-    expect(document.body.style.right).toBe('0px')
-    expect(document.body.style.width).toBe('100%')
+    expect(document.body.style.position).toBe('relative')
+    expect(document.body.style.top).toBe('3px')
+    expect(document.body.style.left).toBe('4px')
+    expect(document.body.style.right).toBe('5px')
+    expect(document.body.style.width).toBe('80%')
 
     getSharedDialogCancelButton(document)?.click()
     await expect(resultPromise).resolves.toBeNull()
@@ -309,7 +304,7 @@ describe('Dialog accessibility', () => {
     expect(document.body.style.left).toBe('4px')
     expect(document.body.style.right).toBe('5px')
     expect(document.body.style.width).toBe('80%')
-    expect(scrollTo).toHaveBeenCalledWith(0, 240)
+    expect(scrollTo).not.toHaveBeenCalled()
   })
 
   it('opens social, skills, and language dialogs with focus on the first field while keeping popups closed', async () => {
