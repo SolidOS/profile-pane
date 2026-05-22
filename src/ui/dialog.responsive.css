@@ -5,22 +5,6 @@
   padding-bottom: calc(var(--profile-modal-panel-inline-padding) + 1.875rem);
 }
 
-/* Keep text-style actions in section headers while preserving footer button styling. */
-#profile-modal .modal .profile__section-header .profile__action-button,
-#profile-modal .modal .profile__section-header solid-ui-button.profile__action-button::part(button) {
-  min-height: auto;
-  padding: var(--spacing-xxs);
-  border: none;
-  background: none;
-  color: var(--color-primary);
-  font-weight: var(--font-weight-md, 500);
-}
-
-#profile-modal .modal .profile__section-header .profile__action-button:hover,
-#profile-modal .modal .profile__section-header solid-ui-button.profile__action-button:hover::part(button) {
-  text-decoration: underline;
-}
-
 @media (max-width: 576px) {
   #profile-modal {
     --profile-modal-panel-max-height: calc(100dvh - 4 * var(--spacing-sm));
@@ -28,17 +12,19 @@
     padding-right: 0;
     padding-bottom: max(var(--spacing-sm), env(safe-area-inset-bottom));
     padding-left: 0;
-    place-items: start center;
+    place-items: center;
   }
 
   #profile-modal .modal {
+    width: var(--profile-modal-panel-width);
+    max-width: var(--profile-modal-panel-max-width);
     min-width: 0;
     padding: 0;
-    border-radius: calc(var(--border-radius-base) * 0.75);
+    border-radius: var(--border-radius-base);
     overscroll-behavior: contain;
     justify-self: center;
-    align-self: start;
-    margin: 0 auto;
+    align-self: center;
+    margin: 0;
   }
 
   #profile-modal .modal .modal-header {
@@ -88,20 +74,21 @@ html[data-layout='mobile'] #profile-modal {
   padding-right: 0;
   padding-bottom: max(var(--spacing-sm), env(safe-area-inset-bottom));
   padding-left: 0;
-  place-items: start center;
+  place-items: center;
 }
 
 html[data-layout='mobile'] #profile-modal .modal {
-  width: 100%;
+  width: var(--profile-modal-panel-width);
   height: auto;
   max-height: var(--profile-modal-panel-max-height);
+  max-width: var(--profile-modal-panel-max-width);
   min-width: 0;
   padding: 0;
-  border-radius: 0;
+  border-radius: var(--border-radius-base);
   overscroll-behavior: contain;
   justify-self: center;
-  align-self: start;
-  margin: 0 auto;
+  align-self: center;
+  margin: 0;
 }
 
 html[data-layout='mobile'] #profile-modal .modal .modal-header {
@@ -151,17 +138,19 @@ html[data-layout='mobile'] #profile-modal #modal-buttons > solid-ui-button {
     padding-right: 0;
     padding-bottom: max(var(--spacing-sm), env(safe-area-inset-bottom));
     padding-left: 0;
-    place-items: start center;
+    place-items: center;
   }
 
   #profile-modal .modal {
+    width: var(--profile-modal-panel-width);
+    max-width: var(--profile-modal-panel-max-width);
     min-width: 0;
     padding: 0;
-    border-radius: calc(var(--border-radius-base) * 0.75);
+    border-radius: var(--border-radius-base);
     overscroll-behavior: contain;
     justify-self: center;
-    align-self: start;
-    margin: 0 auto;
+    align-self: center;
+    margin: 0;
   }
 
   #profile-modal .modal .modal-header {

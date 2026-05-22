@@ -737,7 +737,7 @@ function renderHeadingInfoInput(
       photoCapture.showCancelButton = true
       photoCapture.autoCloseOnCapture = false
       photoCapture.fileNamePrefix = 'camera'
-      photoCapture.facingMode = 'environment'
+      photoCapture.facingMode = 'user'
       photoCapture.open = true
 
       photoCapture.addEventListener('cancel', (event) => {
@@ -865,7 +865,7 @@ function renderHeadingInfoInput(
           />
         </label>
       </div>
-      <div class="profile-edit-dialog__row profile-edit-dialog__row--equal">
+      <div class="profile-edit-dialog__row profile-edit-dialog__row--equal profile-edit-dialog__row--heading-dob">
         <label aria-label=${pronounsLabel} class="label profile-edit-dialog__field-type profile-edit-dialog__field--stack">
           ${pronounsLabel}
           <solid-ui-select
@@ -880,10 +880,10 @@ function renderHeadingInfoInput(
             @change=${handlePronounsInput}
           ></solid-ui-select>
         </label>
-        <label aria-label=${dateOfBirthLabel} class="label profile-edit-dialog__field">
+        <label aria-label=${dateOfBirthLabel} class="label profile-edit-dialog__field profile-edit-dialog__field--dob">
           ${dateOfBirthLabel}
           <input
-            class="input"
+            class="input profile-edit-dialog__input--dob"
             type="date"
             name="profile-date-of-birth"
             .value=${toStorageDateISO(basicInfo?.dateOfBirth)}

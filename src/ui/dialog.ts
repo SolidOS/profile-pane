@@ -8,10 +8,90 @@ import { formatDisplayError } from '../utils/errorDisplay'
 /* Copied from issue-pane, minor typescript adjustments */
 /* Changed modal from div to dialog element */
 let modalDialog: HTMLDialogElement | null = null
-let previousFocus: Element | null = null
+
+let scrollLockCount = 0
+let previousHtmlOverflow = ''
+let previousBodyOverflow = ''
+let removeDocumentScrollGuard: (() => void) | null = null
+
+function getEventTargetElement(target: EventTarget | null): HTMLElement | null {
+  if (target instanceof HTMLElement) return target
+  if (target instanceof Node) return target.parentElement
+  return null
+}
+
+function getEventPath(event: Event): EventTarget[] {
+  if (typeof event.composedPath === 'function') {
+    return event.composedPath()
+  }
+
+  return event.target ? [event.target] : []
+}
+
+function isDialogScrollRegionTarget(event: Event): boolean {
+  const path = getEventPath(event)
+  const description = modalDialog?.querySelector('#modal-desc')
+
+  if (description && path.includes(description)) {
+    return true
+  }
+
+  if (modalDialog && path.includes(modalDialog)) {
+    return true
+  }
+
+  const targetElement = getEventTargetElement(event.target)
+  if (!targetElement || !modalDialog || !modalDialog.contains(targetElement)) {
+    return false
+  }
+
+  return Boolean(targetElement.closest('#modal-desc'))
+}
+
+function installDocumentScrollGuard(dom: Document): void {
+  if (removeDocumentScrollGuard) return
+
+  const preventBackgroundScroll = (event: Event) => {
+    if (!isDialogScrollRegionTarget(event)) {
+      event.preventDefault()
+    }
+  }
+
+  dom.addEventListener('wheel', preventBackgroundScroll, { capture: true, passive: false })
+  dom.addEventListener('touchmove', preventBackgroundScroll, { capture: true, passive: false })
+  removeDocumentScrollGuard = () => {
+    dom.removeEventListener('wheel', preventBackgroundScroll, true)
+    dom.removeEventListener('touchmove', preventBackgroundScroll, true)
+    removeDocumentScrollGuard = null
+  }
+}
+
+function lockDocumentScroll(dom: Document): void {
+  if (scrollLockCount === 0) {
+    previousHtmlOverflow = dom.documentElement.style.overflow
+    previousBodyOverflow = dom.body.style.overflow
+
+    dom.documentElement.style.overflow = 'hidden'
+    dom.body.style.overflow = 'hidden'
+    installDocumentScrollGuard(dom)
+  }
+
+  scrollLockCount += 1
+}
+
+function unlockDocumentScroll(dom: Document): void {
+  if (scrollLockCount === 0) return
+
+  scrollLockCount -= 1
+  if (scrollLockCount > 0) return
+
+  dom.documentElement.style.overflow = previousHtmlOverflow
+  dom.body.style.overflow = previousBodyOverflow
+  removeDocumentScrollGuard?.()
+}
 
 function getDialogMountTarget(dom: Document): HTMLElement {
-  return (dom.querySelector('.profile-pane-root') as HTMLElement | null) || dom.body
+  return dom.body
 }
 
 type DialogButtonValue = boolean | 'save' | null
@@ -53,20 +133,6 @@ type DialogActionControl = HTMLElement & {
 
 function isSolidUiButton(control: Element | null): control is DialogActionControl {
   return control?.tagName === 'SOLID-UI-BUTTON'
-}
-
-function focusDialogAction(control: Element | null): void {
-  if (!control) return
-
-  if (isSolidUiButton(control)) {
-    const innerButton = control.shadowRoot?.querySelector('button') as HTMLButtonElement | null
-    innerButton?.focus()
-    return
-  }
-
-  if (control instanceof HTMLElement) {
-    control.focus()
-  }
 }
 
 function setDialogActionDisabled(control: DialogActionControl | null, disabled: boolean): void {
@@ -155,12 +221,11 @@ function setModalError(elements: DialogElements, error: unknown, fallbackMessage
   elements.error.textContent = formatDisplayError(error, fallbackMessage)
   elements.error.setAttribute('aria-hidden', 'false')
   elements.error.hidden = false
-  if (elements.error instanceof HTMLElement) {
-    elements.error.focus()
-  }
 }
 
 function openDialogElement (dialog: HTMLDialogElement): void {
+  lockDocumentScroll(dialog.ownerDocument)
+
   if (typeof dialog.showModal === 'function') {
     try {
       if (!dialog.open) dialog.showModal()
@@ -174,61 +239,72 @@ function openDialogElement (dialog: HTMLDialogElement): void {
 }
 
 function closeDialogElement (dialog: HTMLDialogElement): void {
-  if (typeof dialog.close === 'function' && dialog.open) {
-    dialog.close()
-    return
-  }
+  try {
+    if (typeof dialog.close === 'function' && dialog.open) {
+      dialog.close()
+      return
+    }
 
-  dialog.removeAttribute('open')
+    dialog.removeAttribute('open')
+  } finally {
+    unlockDocumentScroll(dialog.ownerDocument)
+  }
 }
 
-function getInitialFocusTarget(element: HTMLElement): HTMLElement {
-  if (element.tagName === 'SOLID-UI-COMBOBOX') {
-    const input = element.shadowRoot?.querySelector('input') as HTMLInputElement | null
-    if (input) return input
-  }
-
-  if (element.tagName === 'SOLID-UI-SELECT') {
-    const button = element.shadowRoot?.querySelector('button') as HTMLButtonElement | null
-    if (button) return button
-  }
-
-  return element
+function isMobileDialogLayout(dom: Document): boolean {
+  return Boolean(dom.querySelector('[data-layout=\'mobile\']'))
 }
 
-function findInitialContentFocusTarget(container: ParentNode): HTMLElement | null {
-  const focusable = Array.from(
-    container.querySelectorAll('input, select, textarea, solid-ui-select, solid-ui-combobox, [contenteditable="true"], [tabindex]:not([tabindex="-1"])')
-  ) as HTMLElement[]
+function isFocusableElement(element: HTMLElement): boolean {
+  if (element.hasAttribute('disabled')) return false
+  if (element.getAttribute('aria-hidden') === 'true') return false
+  if (element.getAttribute('hidden') !== null) return false
+  if (element.tabIndex < 0) return false
+  return true
+}
 
-  for (const el of focusable) {
-    const isDisabled = el.hasAttribute('disabled') || el.getAttribute('aria-disabled') === 'true'
-    const hiddenByAttr = el.hasAttribute('hidden') || el.getAttribute('aria-hidden') === 'true'
-    if (!isDisabled && !hiddenByAttr) return el
+function findPreferredInitialFocusTarget(container: ParentNode): HTMLElement | null {
+  const focusableControls = container.querySelectorAll([
+    'input:not([type="hidden"]):not([disabled])',
+    'textarea:not([disabled])',
+    'select:not([disabled])',
+    'solid-ui-select:not([disabled])',
+    'solid-ui-combobox:not([disabled])',
+    '[contenteditable="true"]',
+    'button:not([disabled])',
+    'solid-ui-button:not([disabled])',
+    '[tabindex]:not([tabindex="-1"])'
+  ].join(','))
+
+  for (const match of focusableControls) {
+    if (match instanceof HTMLElement && isFocusableElement(match)) return match
   }
 
   return null
 }
 
-function focusInitialDialogTarget (description: HTMLDivElement, buttons: HTMLDivElement): void {
-  const initialInput = findInitialContentFocusTarget(description)
-  if (initialInput) {
-    const focusTarget = getInitialFocusTarget(initialInput)
-    focusTarget.focus()
-    if (focusTarget instanceof HTMLInputElement || focusTarget instanceof HTMLTextAreaElement) {
-      focusTarget.setSelectionRange(0, 0)
-      focusTarget.scrollLeft = 0
-      focusTarget.scrollTop = 0
-      requestAnimationFrame(() => {
-        focusTarget.scrollLeft = 0
-        focusTarget.scrollTop = 0
-      })
+function focusInitialDialogTarget(dialog: HTMLDialogElement, description: HTMLDivElement, buttons: HTMLDivElement): void {
+  if (isMobileDialogLayout(dialog.ownerDocument)) {
+    const activeElement = dialog.ownerDocument.activeElement as HTMLElement | null
+    if (activeElement && dialog.contains(activeElement)) {
+      activeElement.blur()
     }
     return
   }
 
-  const firstButton = buttons.querySelector('solid-ui-button, button') as HTMLElement | null
-  focusDialogAction(firstButton)
+  const initialTarget = findPreferredInitialFocusTarget(description)
+  if (initialTarget) {
+    initialTarget.focus()
+    if (initialTarget instanceof HTMLInputElement || initialTarget instanceof HTMLTextAreaElement) {
+      initialTarget.select()
+    }
+    return
+  }
+
+  const firstButton = findPreferredInitialFocusTarget(buttons)
+  if (firstButton) {
+    firstButton.focus()
+  }
 }
 
 function collectFormValues (form: HTMLFormElement): InputDialogValues {
@@ -256,7 +332,6 @@ function openModal ({
   const dialog = ensureModalDialog(dom)
   const elements = getDialogElements(dialog)
 
-  previousFocus = dom.activeElement
   openDialogElement(dialog)
 
   elements.title.textContent = title || ''
@@ -345,7 +420,13 @@ function openModal ({
       elements.buttons.appendChild(b)
     })
 
-    focusInitialDialogTarget(elements.description, elements.buttons)
+    const scheduleInitialFocus = dom.defaultView?.requestAnimationFrame
+      ? (callback: () => void) => dom.defaultView?.requestAnimationFrame(() => callback())
+      : (callback: () => void) => setTimeout(callback, 0)
+
+    scheduleInitialFocus(() => {
+      focusInitialDialogTarget(dialog, elements.description, elements.buttons)
+    })
   })
 }
 
@@ -355,7 +436,6 @@ function closeModal (_result: DialogButtonValue): void {
     modalDialog.oncancel = null
     const headerActionButton = modalDialog.querySelector('#modal-header-action button') as HTMLButtonElement | null
     if (headerActionButton) headerActionButton.onclick = null
-    if (previousFocus && 'focus' in previousFocus) (previousFocus as HTMLElement).focus()
   }
 }
 
