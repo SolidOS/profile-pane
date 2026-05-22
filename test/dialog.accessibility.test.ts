@@ -261,38 +261,41 @@ describe('Dialog accessibility', () => {
     const mobileLayout = document.createElement('div')
     mobileLayout.setAttribute('data-layout', 'mobile')
     document.body.appendChild(mobileLayout)
+    try {
+      const trigger = document.createElement('button')
+      trigger.textContent = 'Open dialog'
+      document.body.appendChild(trigger)
+      trigger.focus()
 
-    const trigger = document.createElement('button')
-    trigger.textContent = 'Open dialog'
-    document.body.appendChild(trigger)
-    trigger.focus()
+      const form = document.createElement('form')
+      const label = document.createElement('label')
+      label.textContent = 'Display name'
+      const input = document.createElement('input')
+      input.name = 'displayName'
+      label.appendChild(input)
+      form.appendChild(label)
 
-    const form = document.createElement('form')
-    const label = document.createElement('label')
-    label.textContent = 'Display name'
-    const input = document.createElement('input')
-    input.name = 'displayName'
-    label.appendChild(input)
-    form.appendChild(label)
+      const resultPromise = openInputDialog({
+        title: 'Edit display name',
+        dom: document,
+        form,
+        headerAction: { type: 'none' }
+      })
 
-    const resultPromise = openInputDialog({
-      title: 'Edit display name',
-      dom: document,
-      form,
-      headerAction: { type: 'none' }
-    })
+      const dialog = document.querySelector('#profile-modal') as HTMLDialogElement | null
+      expect(dialog).not.toBeNull()
 
-    const dialog = document.querySelector('#profile-modal') as HTMLDialogElement | null
-    expect(dialog).not.toBeNull()
+      await waitForDialogFocus()
+      expect(document.activeElement).toBe(trigger)
 
-    await waitForDialogFocus()
-    expect(document.activeElement).toBe(trigger)
+      const cancelEvent = new Event('cancel', { bubbles: false, cancelable: true })
+      dialog?.dispatchEvent(cancelEvent)
 
-    const cancelEvent = new Event('cancel', { bubbles: false, cancelable: true })
-    dialog?.dispatchEvent(cancelEvent)
-
-    await expect(resultPromise).resolves.toBeNull()
-    expect(document.activeElement).toBe(trigger)
+      await expect(resultPromise).resolves.toBeNull()
+      expect(document.activeElement).toBe(trigger)
+    } finally {
+      mobileLayout.remove()
+    }
   })
 
   it('locks document scrolling while the shared dialog is open without changing body positioning', async () => {
@@ -341,6 +344,36 @@ describe('Dialog accessibility', () => {
     expect(document.body.style.right).toBe('5px')
     expect(document.body.style.width).toBe('80%')
     expect(scrollTo).not.toHaveBeenCalled()
+  })
+
+  it('allows wheel events from dialog content rendered inside shadow DOM', async () => {
+    const form = document.createElement('form')
+    const host = document.createElement('div')
+    const shadowRoot = host.attachShadow({ mode: 'open' })
+    const shadowScroller = document.createElement('div')
+    shadowScroller.textContent = 'Scrollable dialog content'
+    shadowRoot.appendChild(shadowScroller)
+    form.appendChild(host)
+
+    const resultPromise = openInputDialog({
+      title: 'Edit display name',
+      dom: document,
+      form,
+      headerAction: { type: 'none' }
+    })
+
+    const wheelEvent = new Event('wheel', {
+      bubbles: true,
+      cancelable: true,
+      composed: true
+    })
+
+    shadowScroller.dispatchEvent(wheelEvent)
+
+    expect(wheelEvent.defaultPrevented).toBe(false)
+
+    getSharedDialogCancelButton(document)?.click()
+    await expect(resultPromise).resolves.toBeNull()
   })
 
   it('opens social, skills, and language dialogs with focus on the first field while keeping popups closed', async () => {
