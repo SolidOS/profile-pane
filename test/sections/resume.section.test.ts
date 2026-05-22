@@ -49,8 +49,7 @@ describe('Resume section', () => {
     render(renderCVSection(context.session.store, subject, roles as any, 'owner'), container)
 
     const results = await runAxe(container)
-    expect(results.violations).toHaveLength(1)
-    expect(results.violations[0]?.id).toBe('heading-order')
+    expect(results.violations).toHaveLength(0)
 
     container.remove()
   })
