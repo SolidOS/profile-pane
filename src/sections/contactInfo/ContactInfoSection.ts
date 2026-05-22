@@ -149,7 +149,7 @@ function renderContactInfoSectionDefault(
       data-expanded="false"
     >
       <header class="profile__section-header profile-section-collapsible__header">
-        <h2 id="contact-details-heading" tabindex="-1">${contactInfoHeadingText}</h2>
+        <h3 id="contact-details-heading" tabindex="-1">${contactInfoHeadingText}</h3>
         <div class="profile-section-collapsible__actions">
           ${isOwner ? html`
             <solid-ui-button
@@ -254,7 +254,7 @@ function renderOwnerEmptyContactInfoSection(
       data-expanded="false"
     >
       <header class="profile__section-header profile-section-collapsible__header">
-        <h2 id="contact-details-heading" tabindex="-1">${contactInfoEmptyHeadingText}</h2>
+        <h3 id="contact-details-heading" tabindex="-1">${contactInfoEmptyHeadingText}</h3>
         <div class="profile-section-collapsible__actions">
           <solid-ui-button
             type="button"
