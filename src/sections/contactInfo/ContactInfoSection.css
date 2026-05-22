@@ -108,16 +108,6 @@
   flex: 1 0 0;
 }
 
-:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .contact-info__icon-wrapper {
-  --contact-info-icon-padding-inline: 0;
-}
-
-:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile__section[data-profile-section='contact-info'],
-:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile__section--empty[data-profile-section='contact-info'] {
-  --contact-info-icon-padding-inline: 0;
-  --contact-info-icon-size: 0.8295rem;
-}
-
 @media (max-width: 576px) {
   .profile__section[data-profile-section='contact-info'],
   .profile__section--empty[data-profile-section='contact-info'] {
