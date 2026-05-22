@@ -40,7 +40,7 @@ function renderSidebar(
     <div
       class="profile__sidebar"
     >
-      <aside class="profile__sidebar-content">
+      <aside class="profile__sidebar-content" aria-labelledby="profile-sidebar-heading">
         <h2 id="profile-sidebar-heading" class="sr-only">Profile sidebar</h2>
         ${renderSocialSection(store, subject, accounts, viewerMode, onSaved)}
         ${renderSkillsSection(store, subject, skills, viewerMode, onSaved)}
