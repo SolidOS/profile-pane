@@ -32,10 +32,11 @@ console.info('[profile-pane/dev] target webid', { webIdToShow })
 
 
 async function finishLogin() {
-  await authSession.handleIncomingRedirect()
+  await authn.checkUser()
   const session = authSession
+  const isLoggedIn = session?.info?.isLoggedIn ?? session?.isActive ?? Boolean(session?.webId)
   if (webId) {
-    if (session.info.isLoggedIn) {
+    if (isLoggedIn) {
       const currentUser = authn.currentUser()
       webId.textContent = currentUser ? `Logged in as: ${currentUser.uri}` : ''
     } else {
