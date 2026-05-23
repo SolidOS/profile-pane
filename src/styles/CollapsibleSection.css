@@ -161,9 +161,9 @@
   min-width: var(--min-touch-target, 44px);
 }
 
-:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] button.profile-action-text.profile-section-collapsible__edit-button:hover,
-:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] button.profile-action-text.profile-section-collapsible__edit-button:focus,
-:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] button.profile-action-text.profile-section-collapsible__edit-button:focus-visible {
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] solid-ui-button.profile-action-text.profile-section-collapsible__edit-button::part(button):hover,
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] solid-ui-button.profile-action-text.profile-section-collapsible__edit-button::part(button):focus,
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] solid-ui-button.profile-action-text.profile-section-collapsible__edit-button::part(button):focus-visible {
   background: var(--profile-section-collapsible-action-button-hover-background);
   text-decoration: none;
 }
