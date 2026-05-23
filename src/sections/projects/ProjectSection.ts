@@ -147,8 +147,8 @@ function renderProject(
           </div>
           <div class="project-card__content">
             <div class="project-card__heading-group">
-              <p class="project-card__title">${project.title || project.url}</p>
-              <p class="project-card__organization">${project.orgName || 'Organization unknown'}</p>
+              <h3 class="project-card__title">${project.title || project.url}</h3>
+              <h4 class="project-card__organization">${project.orgName || 'Organization unknown'}</h4>
             </div>
             <p class="project-card__category project-card__category--${categoryModifier}">${categoryLabel}</p>
           </div>
