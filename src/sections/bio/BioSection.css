@@ -252,11 +252,21 @@ solid-ui-button.bio-card__description-toggle {
 		--button-border-width: 0;
 		--button-border: transparent;
 		--button-text: var(--profile-section-collapsible-action-button-text, var(--color-primary, #7C4DFF));
+		--button-hover-background: var(--profile-section-collapsible-action-button-hover-background, var(--color-surface-accent-subtle, var(--lavender-300, #e6dcff)));
+		--button-hover-border: transparent;
+		--button-hover-text: var(--profile-section-collapsible-action-button-text, var(--color-primary, #7C4DFF));
 	}
 
 	solid-ui-button.bio-section__edit-button.profile-section-collapsible__edit-button::part(button) {
 		width: var(--min-touch-target, 44px);
 		min-width: var(--min-touch-target, 44px);
+	}
+
+	solid-ui-button.bio-section__edit-button.profile-section-collapsible__edit-button::part(button):hover,
+	solid-ui-button.bio-section__edit-button.profile-section-collapsible__edit-button::part(button):focus,
+	solid-ui-button.bio-section__edit-button.profile-section-collapsible__edit-button::part(button):focus-visible {
+		background: var(--profile-section-collapsible-action-button-hover-background, var(--color-surface-accent-subtle, var(--lavender-300, #e6dcff)));
+		text-decoration: none;
 	}
 }
 
@@ -271,10 +281,20 @@ solid-ui-button.bio-card__description-toggle {
 		--button-border-width: 0;
 		--button-border: transparent;
 		--button-text: var(--profile-section-collapsible-action-button-text, var(--color-primary, #7C4DFF));
+		--button-hover-background: var(--profile-section-collapsible-action-button-hover-background, var(--color-surface-accent-subtle, var(--lavender-300, #e6dcff)));
+		--button-hover-border: transparent;
+		--button-hover-text: var(--profile-section-collapsible-action-button-text, var(--color-primary, #7C4DFF));
 	}
 
 	solid-ui-button.bio-section__edit-button.profile-section-collapsible__edit-button::part(button) {
 		width: var(--min-touch-target, 44px);
 		min-width: var(--min-touch-target, 44px);
+	}
+
+	solid-ui-button.bio-section__edit-button.profile-section-collapsible__edit-button::part(button):hover,
+	solid-ui-button.bio-section__edit-button.profile-section-collapsible__edit-button::part(button):focus,
+	solid-ui-button.bio-section__edit-button.profile-section-collapsible__edit-button::part(button):focus-visible {
+		background: var(--profile-section-collapsible-action-button-hover-background, var(--color-surface-accent-subtle, var(--lavender-300, #e6dcff)));
+		text-decoration: none;
 	}
 }

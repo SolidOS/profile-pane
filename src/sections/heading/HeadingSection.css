@@ -453,6 +453,16 @@
     --button-border-width: 0;
     --button-border: transparent;
     --button-text: var(--profile-section-collapsible-action-button-text, var(--color-primary, #7C4DFF));
+    --button-hover-background: var(--profile-section-collapsible-action-button-hover-background, var(--color-surface-accent-subtle, var(--lavender-300, #e6dcff)));
+    --button-hover-border: transparent;
+    --button-hover-text: var(--profile-section-collapsible-action-button-text, var(--color-primary, #7C4DFF));
+  }
+
+  .profile__heading-edit-action > solid-ui-button.profile__heading-action-button::part(button):hover,
+  .profile__heading-edit-action > solid-ui-button.profile__heading-action-button::part(button):focus,
+  .profile__heading-edit-action > solid-ui-button.profile__heading-action-button::part(button):focus-visible {
+    background: var(--profile-section-collapsible-action-button-hover-background, var(--color-surface-accent-subtle, var(--lavender-300, #e6dcff)));
+    text-decoration: none;
   }
 
 }
@@ -489,6 +499,16 @@
     --button-border-width: 0;
     --button-border: transparent;
     --button-text: var(--profile-section-collapsible-action-button-text, var(--color-primary, #7C4DFF));
+    --button-hover-background: var(--profile-section-collapsible-action-button-hover-background, var(--color-surface-accent-subtle, var(--lavender-300, #e6dcff)));
+    --button-hover-border: transparent;
+    --button-hover-text: var(--profile-section-collapsible-action-button-text, var(--color-primary, #7C4DFF));
+  }
+
+  .profile__heading-edit-action > solid-ui-button.profile__heading-action-button::part(button):hover,
+  .profile__heading-edit-action > solid-ui-button.profile__heading-action-button::part(button):focus,
+  .profile__heading-edit-action > solid-ui-button.profile__heading-action-button::part(button):focus-visible {
+    background: var(--profile-section-collapsible-action-button-hover-background, var(--color-surface-accent-subtle, var(--lavender-300, #e6dcff)));
+    text-decoration: none;
   }
 
 }
