@@ -59,6 +59,13 @@ solid-ui-button.bio-section__edit-button {
 	min-height: var(--min-touch-target, 44px);
 	--button-width-sm: var(--min-touch-target, 44px);
 	--button-height-sm: var(--min-touch-target, 44px);
+	--button-background: transparent;
+	--button-border-width: 0;
+	--button-border: transparent;
+	--button-text: var(--profile-section-collapsible-action-button-text, var(--color-primary, #7C4DFF));
+	--button-hover-background: var(--profile-section-collapsible-action-button-hover-background, var(--color-surface-accent-subtle, var(--lavender-300, #e6dcff)));
+	--button-hover-border: transparent;
+	--button-hover-text: var(--profile-section-collapsible-action-button-text, var(--color-primary, #7C4DFF));
 }
 
 :is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] solid-ui-button.bio-section__edit-button.profile-section-collapsible__edit-button::part(button) {
@@ -225,17 +232,6 @@ solid-ui-button.bio-card__description-toggle {
 		--bio-description-toggle-top: calc(100% - 1.5em);
 		--bio-description-toggle-transform: none;
 	}
-}
-
-:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .bio-section__edit-button.profile-section-collapsible__edit-button,
-:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] solid-ui-button.bio-section__edit-button.profile-section-collapsible__edit-button {
-	--button-background: transparent;
-	--button-border-width: 0;
-	--button-border: transparent;
-	--button-text: var(--profile-section-collapsible-action-button-text, var(--color-primary, #7C4DFF));
-	--button-hover-background: var(--profile-section-collapsible-action-button-hover-background, var(--color-surface-accent-subtle, var(--lavender-300, #e6dcff)));
-	--button-hover-border: transparent;
-	--button-hover-text: var(--profile-section-collapsible-action-button-text, var(--color-primary, #7C4DFF));
 }
 
 @media (max-width: 768px) {
