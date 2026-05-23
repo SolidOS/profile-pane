@@ -501,6 +501,11 @@ solid-ui-button.profile-action-text:focus-visible::part(button) {
   background: var(--color-card-bg, var(--white, #FFF));
 }
 
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid [data-profile-section='social'].profile__section,
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid [data-profile-section='social'].profile__section--empty {
+  border: none;
+}
+
 :is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__sidebar {
   padding: 0 !important;
   min-width: 0;
@@ -696,6 +701,11 @@ solid-ui-button.profile-action-text:focus-visible::part(button) {
     background: var(--color-card-bg, var(--white, #FFF));
   }
 
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid [data-profile-section='social'].profile__section,
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid [data-profile-section='social'].profile__section--empty {
+    border: none;
+  }
+
   :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid [data-profile-section='bio'].profile__section--empty .profile-section-collapsible__actions {
     --profile-section-collapsible-action-button-text: var(--color-text-primary, #314158);
   }
@@ -822,6 +832,11 @@ solid-ui-button.profile-action-text:focus-visible::part(button) {
     border-radius: var(--border-radius-base, 0.3125rem);
     border: var(--border-width-thin, 0.1rem) solid var(--color-border-subtle, var(--gray-100, #F3F4F6));
     background: var(--color-card-bg, var(--white, #FFF));
+  }
+
+  .profile-grid [data-profile-section='social'].profile__section,
+  .profile-grid [data-profile-section='social'].profile__section--empty {
+    border: none;
   }
 
   .profile-grid [data-profile-section='bio'].profile__section--empty .profile-section-collapsible__actions {
