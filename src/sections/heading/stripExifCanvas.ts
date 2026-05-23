@@ -4,29 +4,29 @@
  */
 
 export async function stripExifCanvas(file: File): Promise<File> {
-  const type = file.type.toLowerCase();
+  const type = file.type.toLowerCase()
 
   // Only JPEG and WebP may contain EXIF metadata
   const needsExifRemoval =
     type === "image/jpeg" ||
     type === "image/jpg" ||
-    type === "image/webp";
+    type === "image/webp"
 
   // If the format does not contain EXIF, return the original file unchanged
   if (!needsExifRemoval) {
-    return file;
+    return file
   }
 
-  const bitmap: ImageBitmap = await createImageBitmap(file);
+  const bitmap: ImageBitmap = await createImageBitmap(file)
 
-  const canvas: HTMLCanvasElement = document.createElement("canvas");
-  canvas.width = bitmap.width;
-  canvas.height = bitmap.height;
+  const canvas: HTMLCanvasElement = document.createElement("canvas")
+  canvas.width = bitmap.width
+  canvas.height = bitmap.height
 
-  const ctx = canvas.getContext("2d");
-  if (!ctx) throw new Error("Canvas 2D context unavailable");
+  const ctx = canvas.getContext("2d")
+  if (!ctx) throw new Error("Canvas 2D context unavailable")
 
-  ctx.drawImage(bitmap, 0, 0);
+  ctx.drawImage(bitmap, 0, 0)
 
   const blob: Blob = await new Promise((resolve, reject) => {
     canvas.toBlob(
@@ -37,5 +37,5 @@ export async function stripExifCanvas(file: File): Promise<File> {
   });
 
   // Keep the original filename and MIME type
-  return new File([blob], file.name, { type });
+  return new File([blob], file.name, { type })
 }
