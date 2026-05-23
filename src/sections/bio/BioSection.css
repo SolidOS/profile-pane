@@ -53,6 +53,19 @@ solid-ui-button.bio-section__edit-button {
 	gap: var(--bio-section-content-gap-mobile);
 }
 
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .bio-section__edit-button.profile-section-collapsible__edit-button,
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] solid-ui-button.bio-section__edit-button.profile-section-collapsible__edit-button {
+	min-width: var(--min-touch-target, 44px);
+	min-height: var(--min-touch-target, 44px);
+	--button-width-sm: var(--min-touch-target, 44px);
+	--button-height-sm: var(--min-touch-target, 44px);
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] solid-ui-button.bio-section__edit-button.profile-section-collapsible__edit-button::part(button) {
+	width: var(--min-touch-target, 44px);
+	min-width: var(--min-touch-target, 44px);
+}
+
 .bio-card__description-text {
 	margin: 0;
 	width: 100%;
@@ -211,5 +224,60 @@ solid-ui-button.bio-card__description-toggle {
 	.bio-card__description-wrap {
 		--bio-description-toggle-top: calc(100% - 1.5em);
 		--bio-description-toggle-transform: none;
+	}
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .bio-section__edit-button.profile-section-collapsible__edit-button,
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] solid-ui-button.bio-section__edit-button.profile-section-collapsible__edit-button {
+	--button-background: transparent;
+	--button-border-width: 0;
+	--button-border: transparent;
+	--button-text: var(--profile-section-collapsible-action-button-text, var(--color-primary, #7C4DFF));
+	--button-hover-background: var(--profile-section-collapsible-action-button-hover-background, var(--color-surface-accent-subtle, var(--lavender-300, #e6dcff)));
+	--button-hover-border: transparent;
+	--button-hover-text: var(--profile-section-collapsible-action-button-text, var(--color-primary, #7C4DFF));
+}
+
+@media (max-width: 768px) {
+	.bio-section__edit-button.profile-section-collapsible__edit-button,
+	solid-ui-button.bio-section__edit-button.profile-section-collapsible__edit-button {
+		min-width: var(--min-touch-target, 44px);
+		min-height: var(--min-touch-target, 44px);
+		--button-width-sm: var(--min-touch-target, 44px);
+		--button-height-sm: var(--min-touch-target, 44px);
+		--button-background: transparent;
+		--button-border-width: 0;
+		--button-border: transparent;
+		--button-text: var(--profile-section-collapsible-action-button-text, var(--color-primary, #7C4DFF));
+		--button-hover-background: var(--profile-section-collapsible-action-button-hover-background, var(--color-surface-accent-subtle, var(--lavender-300, #e6dcff)));
+		--button-hover-border: transparent;
+		--button-hover-text: var(--profile-section-collapsible-action-button-text, var(--color-primary, #7C4DFF));
+	}
+
+	solid-ui-button.bio-section__edit-button.profile-section-collapsible__edit-button::part(button) {
+		width: var(--min-touch-target, 44px);
+		min-width: var(--min-touch-target, 44px);
+	}
+}
+
+@container profile-pane (max-width: 768px) {
+	.bio-section__edit-button.profile-section-collapsible__edit-button,
+	solid-ui-button.bio-section__edit-button.profile-section-collapsible__edit-button {
+		min-width: var(--min-touch-target, 44px);
+		min-height: var(--min-touch-target, 44px);
+		--button-width-sm: var(--min-touch-target, 44px);
+		--button-height-sm: var(--min-touch-target, 44px);
+		--button-background: transparent;
+		--button-border-width: 0;
+		--button-border: transparent;
+		--button-text: var(--profile-section-collapsible-action-button-text, var(--color-primary, #7C4DFF));
+		--button-hover-background: var(--profile-section-collapsible-action-button-hover-background, var(--color-surface-accent-subtle, var(--lavender-300, #e6dcff)));
+		--button-hover-border: transparent;
+		--button-hover-text: var(--profile-section-collapsible-action-button-text, var(--color-primary, #7C4DFF));
+	}
+
+	solid-ui-button.bio-section__edit-button.profile-section-collapsible__edit-button::part(button) {
+		width: var(--min-touch-target, 44px);
+		min-width: var(--min-touch-target, 44px);
 	}
 }

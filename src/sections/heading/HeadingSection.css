@@ -512,13 +512,17 @@
 }
 
 :is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile__heading-edit-action > solid-ui-button.profile__heading-action-button {
+  min-width: var(--min-touch-target, 44px);
+  min-height: var(--min-touch-target, 44px);
+  --button-width-sm: var(--min-touch-target, 44px);
+  --button-height-sm: var(--min-touch-target, 44px);
   --button-background: transparent;
   --button-border-width: 0;
   --button-border: transparent;
-  --button-text: var(--color-text, #1A1A1A);
-  --button-hover-background: var(--color-surface-accent-subtle, var(--lavender-300, #e6dcff));
+  --button-text: var(--profile-section-collapsible-action-button-text, var(--color-primary, #7C4DFF));
+  --button-hover-background: var(--profile-section-collapsible-action-button-hover-background, var(--color-surface-accent-subtle, var(--lavender-300, #e6dcff)));
   --button-hover-border: transparent;
-  --button-hover-text: var(--color-text, #1A1A1A);
+  --button-hover-text: var(--profile-section-collapsible-action-button-text, var(--color-primary, #7C4DFF));
 }
 
 :is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile__heading-actions > .profile-friends-button__section > solid-ui-button.profile__btn-friends,
@@ -644,13 +648,17 @@
   }
 
   .profile__heading-edit-action > solid-ui-button.profile__heading-action-button {
+    min-width: var(--min-touch-target, 44px);
+    min-height: var(--min-touch-target, 44px);
+    --button-width-sm: var(--min-touch-target, 44px);
+    --button-height-sm: var(--min-touch-target, 44px);
     --button-background: transparent;
     --button-border-width: 0;
     --button-border: transparent;
-    --button-text: var(--color-text, #1A1A1A);
-    --button-hover-background: var(--color-surface-accent-subtle, var(--lavender-300, #e6dcff));
+    --button-text: var(--profile-section-collapsible-action-button-text, var(--color-primary, #7C4DFF));
+    --button-hover-background: var(--profile-section-collapsible-action-button-hover-background, var(--color-surface-accent-subtle, var(--lavender-300, #e6dcff)));
     --button-hover-border: transparent;
-    --button-hover-text: var(--color-text, #1A1A1A);
+    --button-hover-text: var(--profile-section-collapsible-action-button-text, var(--color-primary, #7C4DFF));
   }
   .profile__heading-actions > .profile-friends-button__section > solid-ui-button.profile__btn-friends,
   .profile__heading-actions > #add-to-contacts-button-container > solid-ui-button.profile__btn-contacts {
@@ -755,13 +763,17 @@
   }
 
   .profile__heading-edit-action > solid-ui-button.profile__heading-action-button {
+    min-width: var(--min-touch-target, 44px);
+    min-height: var(--min-touch-target, 44px);
+    --button-width-sm: var(--min-touch-target, 44px);
+    --button-height-sm: var(--min-touch-target, 44px);
     --button-background: transparent;
     --button-border-width: 0;
     --button-border: transparent;
-    --button-text: var(--color-text, #1A1A1A);
-    --button-hover-background: var(--color-surface-accent-subtle, var(--lavender-300, #e6dcff));
+    --button-text: var(--profile-section-collapsible-action-button-text, var(--color-primary, #7C4DFF));
+    --button-hover-background: var(--profile-section-collapsible-action-button-hover-background, var(--color-surface-accent-subtle, var(--lavender-300, #e6dcff)));
     --button-hover-border: transparent;
-    --button-hover-text: var(--color-text, #1A1A1A);
+    --button-hover-text: var(--profile-section-collapsible-action-button-text, var(--color-primary, #7C4DFF));
   }
   .profile__heading-actions > .profile-friends-button__section > solid-ui-button.profile__btn-friends,
   .profile__heading-actions > #add-to-contacts-button-container > solid-ui-button.profile__btn-contacts {
@@ -822,5 +834,51 @@
   .profile__contact-row {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     column-gap: var(--profile-heading-compact-detail-column-gap, 0.25rem);
+  }
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile__heading-edit-action > solid-ui-button.profile__heading-action-button {
+  min-width: var(--min-touch-target, 44px);
+  min-height: var(--min-touch-target, 44px);
+  --button-width-sm: var(--min-touch-target, 44px);
+  --button-height-sm: var(--min-touch-target, 44px);
+  --button-background: transparent;
+  --button-border-width: 0;
+  --button-border: transparent;
+  --button-text: var(--profile-section-collapsible-action-button-text, var(--color-primary, #7C4DFF));
+  --button-hover-background: var(--profile-section-collapsible-action-button-hover-background, var(--color-surface-accent-subtle, var(--lavender-300, #e6dcff)));
+  --button-hover-border: transparent;
+  --button-hover-text: var(--profile-section-collapsible-action-button-text, var(--color-primary, #7C4DFF));
+}
+
+@media (max-width: 768px) {
+  .profile__heading-edit-action > solid-ui-button.profile__heading-action-button {
+    min-width: var(--min-touch-target, 44px);
+    min-height: var(--min-touch-target, 44px);
+    --button-width-sm: var(--min-touch-target, 44px);
+    --button-height-sm: var(--min-touch-target, 44px);
+    --button-background: transparent;
+    --button-border-width: 0;
+    --button-border: transparent;
+    --button-text: var(--profile-section-collapsible-action-button-text, var(--color-primary, #7C4DFF));
+    --button-hover-background: var(--profile-section-collapsible-action-button-hover-background, var(--color-surface-accent-subtle, var(--lavender-300, #e6dcff)));
+    --button-hover-border: transparent;
+    --button-hover-text: var(--profile-section-collapsible-action-button-text, var(--color-primary, #7C4DFF));
+  }
+}
+
+@container profile-pane (max-width: 768px) {
+  .profile__heading-edit-action > solid-ui-button.profile__heading-action-button {
+    min-width: var(--min-touch-target, 44px);
+    min-height: var(--min-touch-target, 44px);
+    --button-width-sm: var(--min-touch-target, 44px);
+    --button-height-sm: var(--min-touch-target, 44px);
+    --button-background: transparent;
+    --button-border-width: 0;
+    --button-border: transparent;
+    --button-text: var(--profile-section-collapsible-action-button-text, var(--color-primary, #7C4DFF));
+    --button-hover-background: var(--profile-section-collapsible-action-button-hover-background, var(--color-surface-accent-subtle, var(--lavender-300, #e6dcff)));
+    --button-hover-border: transparent;
+    --button-hover-text: var(--profile-section-collapsible-action-button-text, var(--color-primary, #7C4DFF));
   }
 }
