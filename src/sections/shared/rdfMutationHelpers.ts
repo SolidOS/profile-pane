@@ -18,6 +18,13 @@ const STANDARD_MUTATION_PREFIXES: Record<string, string> = {
 
 const STANDARD_MUTATION_NAMESPACE_URIS = Object.values(STANDARD_MUTATION_PREFIXES)
 
+export type MutationDocumentTextCache = Map<string, string>
+
+type ForceDocumentPutCheckOptions = {
+  documentText?: string
+  documentTextCache?: MutationDocumentTextCache
+}
+
 function normalizeNodeId(value: string): string {
   return value.startsWith('_:') ? value.slice(2) : value
 }
@@ -160,7 +167,8 @@ export async function shouldForceDocumentPutForStatements(
   store: LiveStore,
   doc: NamedNode,
   statements: RdfStatement[],
-  candidateNamespaceUris = STANDARD_MUTATION_NAMESPACE_URIS
+  candidateNamespaceUris = STANDARD_MUTATION_NAMESPACE_URIS,
+  options: ForceDocumentPutCheckOptions = {}
 ): Promise<boolean> {
   const updater = getStoreUpdater(store)
   const fetcher = getStoreFetcher(store)
@@ -177,6 +185,17 @@ export async function shouldForceDocumentPutForStatements(
     return false
   }
 
+  const cachedDocumentText = options.documentTextCache?.get(doc.value)
+  const existingDocumentText = typeof options.documentText === 'string'
+    ? options.documentText
+    : cachedDocumentText
+
+  if (typeof existingDocumentText === 'string') {
+    return neededNamespaceUris.some((namespaceUri) => {
+      return !documentDeclaresNamespacePrefix(existingDocumentText, namespaceUri)
+    })
+  }
+
   try {
     const response = await fetcher.webOperation('GET', doc.value, {
       noMeta: true,
@@ -186,6 +205,8 @@ export async function shouldForceDocumentPutForStatements(
     if (!response?.ok || typeof response.responseText !== 'string') {
       return false
     }
+
+    options.documentTextCache?.set(doc.value, response.responseText)
 
     return neededNamespaceUris.some((namespaceUri) => {
       return !documentDeclaresNamespacePrefix(response.responseText || '', namespaceUri)
@@ -258,7 +279,8 @@ export async function putResourceWithStatements(
   doc: NamedNode,
   deletions: RdfStatement[],
   insertions: RdfStatement[],
-  unsupportedMessage: string
+  unsupportedMessage: string,
+  documentTextCache?: MutationDocumentTextCache
 ) {
   ensureStandardMutationPrefixes(store)
 
@@ -293,6 +315,8 @@ export async function putResourceWithStatements(
     throw new Error(`Web error: ${status} on PUT of <${doc.value}>`)
   }
 
+  documentTextCache?.set(doc.value, body)
+
   applyStatementsToStore(store, deletions, insertions)
 }
 
@@ -301,6 +325,7 @@ type UpdateTransportOptions = {
   failureMessage?: string
   requireStoredDelete?: boolean
   forcePut?: boolean
+  documentTextCache?: MutationDocumentTextCache
   useDavFallback?: boolean
   usePutFallback?: boolean
   patchFailureMatcher?: (message: string) => boolean
@@ -338,7 +363,7 @@ export async function runUpdateTransport(
     if (!doc) {
       throw new Error(options.unsupportedMessage)
     }
-    await putResourceWithStatements(store, doc, safeDeletions, safeInsertions, options.unsupportedMessage)
+    await putResourceWithStatements(store, doc, safeDeletions, safeInsertions, options.unsupportedMessage, options.documentTextCache)
     return
   }
 

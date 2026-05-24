@@ -1,4 +1,4 @@
-import { describe, expect, it } from "@jest/globals"
+import { describe, expect, it, jest } from "@jest/globals"
 import { graph, st, sym } from 'rdflib'
 import { ns } from 'solid-ui'
 import { presentProfile, pronounsAsText } from '../../src/sections/heading/selectors'
@@ -135,8 +135,8 @@ describe('Intro selectors and mutations', () => {
     expect(store.any(subject, ns.vcard('fn'), null, doc)?.value).toBe('Jane Doe')
     expect(store.any(subject, ns.foaf('nick'), null, doc)?.value).toBe('janey')
     expect(store.any(subject, ns.vcard('nickname'), null, doc)?.value).toBe('janey')
-  expect(store.any(subject, ns.solid('preferredSubjectPronoun'), null, doc)?.value).toBe('She')
-  expect(store.any(subject, ns.solid('preferredObjectPronoun'), null, doc)?.value).toBe('Her')
+    expect(store.any(subject, ns.solid('preferredSubjectPronoun'), null, doc)?.value).toBe('She')
+    expect(store.any(subject, ns.solid('preferredObjectPronoun'), null, doc)?.value).toBe('Her')
     expect(store.any(subject, ns.vcard('role'), null, doc)?.value).toBe('Engineer')
     expect(store.any(subject, ns.vcard('organization-name'), null, doc)?.value).toBe('Inrupt')
     expect(store.any(subject, ns.vcard('hasPhoto'), null, doc)?.termType).toBe('NamedNode')
@@ -167,5 +167,80 @@ describe('Intro selectors and mutations', () => {
     expect(store.any(subject, ns.solid('preferredSubjectPronoun'), null, doc)).toBeNull()
     expect(store.any(subject, ns.solid('preferredObjectPronoun'), null, doc)).toBeNull()
     expect(store.any(subject, ns.vcard('hasPhoto'), null, doc)).toBeNull()
+  })
+
+  it('reuses one prefix-check GET across sequential heading mutations in one save cycle', async () => {
+    const store = graph() as any
+    const subject = sym('https://example.com/profile/card#me')
+    const doc = subject.doc()
+    const serialize = jest.fn(() => [
+      '@prefix foaf: <http://xmlns.com/foaf/0.1/>.',
+      '@prefix vcard: <http://www.w3.org/2006/vcard/ns#>.',
+      '@prefix solid: <http://www.w3.org/ns/solid/terms#>.',
+      '<> foaf:primaryTopic <#me>.'
+    ].join('\n'))
+    const webOperation = jest.fn(async (method: string) => {
+      if (method === 'GET') {
+        return {
+          ok: true,
+          status: 200,
+          responseText: '@prefix foaf: <http://xmlns.com/foaf/0.1/>.\n<> foaf:primaryTopic <#me>.'
+        }
+      }
+
+      return { ok: true, status: 200 }
+    })
+
+    store.updater = {
+      update: (deletions: any[], insertions: any[], callback: Function) => {
+        deletions.forEach((statement) => store.remove(st(statement.subject, statement.predicate, statement.object, statement.why)))
+        insertions.forEach((statement) => store.add(statement.subject, statement.predicate, statement.object, statement.why))
+        callback('', true)
+      },
+      serialize,
+      store: {}
+    }
+    store.fetcher = { webOperation }
+
+    await processHeadingMutations(store, subject, {
+      basicOps: {
+        create: [{
+          entryNode: subject.value,
+          name: 'Jane Doe',
+          nickname: 'janey',
+          pronouns: 'She/Her',
+          dateOfBirth: '2000-01-01',
+          jobTitle: 'Engineer',
+          orgName: 'Inrupt',
+          imageSrc: 'https://example.com/jane.png',
+          status: 'new'
+        }],
+        update: [],
+        remove: []
+      },
+      phoneOps: {
+        create: [{ value: '+1-111-222-3333', type: 'Voice', entryNode: '', status: 'new' }],
+        update: [],
+        remove: []
+      },
+      emailOps: {
+        create: [{ value: 'jane@example.com', type: 'Internet', entryNode: '', status: 'new' }],
+        update: [],
+        remove: []
+      },
+      addressOps: {
+        create: [{ streetAddress: 'Main St', locality: 'Boston', region: 'MA', postalCode: '02101', countryName: 'US', type: 'Home', entryNode: '', status: 'new' }],
+        update: [],
+        remove: []
+      }
+    } as any)
+
+    const getCalls = webOperation.mock.calls.filter(([method]) => method === 'GET')
+    const putCalls = webOperation.mock.calls.filter(([method]) => method === 'PUT')
+
+    expect(getCalls).toHaveLength(1)
+    expect(putCalls.length).toBeGreaterThanOrEqual(1)
+    expect(store.any(subject, ns.vcard('fn'), null, doc)?.value).toBe('Jane Doe')
+    expect(store.any(subject, ns.vcard('hasEmail'), null, doc)).not.toBeNull()
   })
 })

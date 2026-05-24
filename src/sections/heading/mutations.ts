@@ -2,7 +2,7 @@ import { LiveStore, NamedNode, Node, st, literal, sym } from 'rdflib'
 import { ns } from 'solid-ui'
 import { ProfileBasicRow, HeadingMutationPlan } from './types'
 import { MutationOps } from '../shared/types'
-import { collectLinkedNodeStatements, collectNodeStatements, findExistingNode, replacePredicateStatements, runUpdateTransport, shouldForceDocumentPutForStatements } from '../shared/rdfMutationHelpers'
+import { MutationDocumentTextCache, collectLinkedNodeStatements, collectNodeStatements, findExistingNode, replacePredicateStatements, runUpdateTransport, shouldForceDocumentPutForStatements } from '../shared/rdfMutationHelpers'
 import { createIdNode } from '../shared/idNodeFactory'
 import { ContactAddressRow, ContactPointRow } from '../contactInfo/types'
 import { headingMutationSaveFailedDebugText, saveHeadingUpdatesFailedMessageText, updaterUnsupportedStoreErrorMessageText } from '../../texts'
@@ -70,7 +70,7 @@ function findCreateOp<T extends { entryNode: string }>(ops: T[]): T | undefined 
   return ops.find((op) => !op.entryNode)
 }
 
-async function mutatePhoneEntry(store: LiveStore, subject: NamedNode, phoneOps: MutationOps<ContactPointRow>) {
+async function mutatePhoneEntry(store: LiveStore, subject: NamedNode, phoneOps: MutationOps<ContactPointRow>, documentTextCache?: MutationDocumentTextCache) {
   const doc = subject.doc()
   const existingPhoneNodes = store.each(subject, ns.vcard('hasTelephone'), null, doc) as Node[]
   const deletions: any[] = []
@@ -104,18 +104,19 @@ async function mutatePhoneEntry(store: LiveStore, subject: NamedNode, phoneOps: 
     insertions.push(...buildPhoneStatements(subject, doc, createIdNode(doc), createPhone))
   }
 
-  const shouldSerializeDocument = await shouldForceDocumentPutForStatements(store, doc, insertions)
+  const shouldSerializeDocument = await shouldForceDocumentPutForStatements(store, doc, insertions, undefined, { documentTextCache })
 
   await runUpdateTransport(store, doc, deletions, insertions, {
     unsupportedMessage: updaterUnsupportedStoreErrorMessageText,
     failureMessage: 'Failed to save heading updates',
+    documentTextCache,
     useDavFallback: false,
     usePutFallback: shouldSerializeDocument,
     forcePut: shouldSerializeDocument
   })
 }
 
-async function mutateEmailEntry(store: LiveStore, subject: NamedNode, emailOps: MutationOps<ContactPointRow>) {
+async function mutateEmailEntry(store: LiveStore, subject: NamedNode, emailOps: MutationOps<ContactPointRow>, documentTextCache?: MutationDocumentTextCache) {
   const doc = subject.doc()
   const existingEmailNodes = store.each(subject, ns.vcard('hasEmail'), null, doc) as Node[]
   const deletions: any[] = []
@@ -149,18 +150,19 @@ async function mutateEmailEntry(store: LiveStore, subject: NamedNode, emailOps: 
     insertions.push(...buildEmailStatements(subject, doc, createIdNode(doc), createEmail))
   }
 
-  const shouldSerializeDocument = await shouldForceDocumentPutForStatements(store, doc, insertions)
+  const shouldSerializeDocument = await shouldForceDocumentPutForStatements(store, doc, insertions, undefined, { documentTextCache })
 
   await runUpdateTransport(store, doc, deletions, insertions, {
     unsupportedMessage: updaterUnsupportedStoreErrorMessageText,
     failureMessage: 'Failed to save heading updates',
+    documentTextCache,
     useDavFallback: false,
     usePutFallback: shouldSerializeDocument,
     forcePut: shouldSerializeDocument
   })
 }
 
-async function mutateAddressEntry(store: LiveStore, subject: NamedNode, addressOps: MutationOps<ContactAddressRow>) {
+async function mutateAddressEntry(store: LiveStore, subject: NamedNode, addressOps: MutationOps<ContactAddressRow>, documentTextCache?: MutationDocumentTextCache) {
   const doc = subject.doc()
   const existingAddressNodes = store.each(subject, ns.vcard('hasAddress'), null, doc) as Node[]
   const deletions: any[] = []
@@ -194,18 +196,19 @@ async function mutateAddressEntry(store: LiveStore, subject: NamedNode, addressO
     insertions.push(...buildAddressStatements(subject, doc, createIdNode(doc), createAddress))
   }
 
-  const shouldSerializeDocument = await shouldForceDocumentPutForStatements(store, doc, insertions)
+  const shouldSerializeDocument = await shouldForceDocumentPutForStatements(store, doc, insertions, undefined, { documentTextCache })
 
   await runUpdateTransport(store, doc, deletions, insertions, {
     unsupportedMessage: updaterUnsupportedStoreErrorMessageText,
     failureMessage: 'Failed to save heading updates',
+    documentTextCache,
     useDavFallback: false,
     usePutFallback: shouldSerializeDocument,
     forcePut: shouldSerializeDocument
   })
 }
 
-async function mutateBasicProfileEntry(store: LiveStore, subject: NamedNode, basicOps: MutationOps<ProfileBasicRow>) {
+async function mutateBasicProfileEntry(store: LiveStore, subject: NamedNode, basicOps: MutationOps<ProfileBasicRow>, documentTextCache?: MutationDocumentTextCache) {
   const doc = subject.doc()
   const deletions: any[] = []
   const insertions: any[] = []
@@ -291,11 +294,12 @@ async function mutateBasicProfileEntry(store: LiveStore, subject: NamedNode, bas
     applyBasics(selectedBasic, Boolean(removeBasic && !updateBasic && !createBasic))
   }
 
-  const shouldSerializeDocument = await shouldForceDocumentPutForStatements(store, doc, insertions)
+  const shouldSerializeDocument = await shouldForceDocumentPutForStatements(store, doc, insertions, undefined, { documentTextCache })
 
   await runUpdateTransport(store, doc, deletions, insertions, {
     unsupportedMessage: updaterUnsupportedStoreErrorMessageText,
     failureMessage: 'Failed to save heading updates',
+    documentTextCache,
     useDavFallback: false,
     usePutFallback: shouldSerializeDocument,
     forcePut: shouldSerializeDocument
@@ -304,10 +308,11 @@ async function mutateBasicProfileEntry(store: LiveStore, subject: NamedNode, bas
 
 export async function processHeadingMutations(store: LiveStore, subject: NamedNode, mutationPlan: HeadingMutationPlan) {
   try {
-    await mutateBasicProfileEntry(store, subject, mutationPlan.basicOps)
-    await mutatePhoneEntry(store, subject, mutationPlan.phoneOps)
-    await mutateEmailEntry(store, subject, mutationPlan.emailOps)
-    await mutateAddressEntry(store, subject, mutationPlan.addressOps)
+    const documentTextCache: MutationDocumentTextCache = new Map()
+    await mutateBasicProfileEntry(store, subject, mutationPlan.basicOps, documentTextCache)
+    await mutatePhoneEntry(store, subject, mutationPlan.phoneOps, documentTextCache)
+    await mutateEmailEntry(store, subject, mutationPlan.emailOps, documentTextCache)
+    await mutateAddressEntry(store, subject, mutationPlan.addressOps, documentTextCache)
   } catch (error) {
     const rootError = error instanceof Error ? error : new Error(String(error))
     debugError(headingMutationSaveFailedDebugText, rootError)
