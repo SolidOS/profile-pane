@@ -309,7 +309,6 @@ describe('shared helper utilities', () => {
       expect(webOperation).toHaveBeenCalledTimes(1)
       expect(store.statementsMatching(subject, ns.schema('name'), null, doc)).toHaveLength(0)
     })
-
     it('replaces predicate statements and finds linked statements by normalized node ids', () => {
       const store = graph() as any
       const subject = sym('https://example.com/profile#me')

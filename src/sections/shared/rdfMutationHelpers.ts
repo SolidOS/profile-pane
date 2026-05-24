@@ -16,6 +16,8 @@ const STANDARD_MUTATION_PREFIXES: Record<string, string> = {
   dc: 'http://purl.org/dc/elements/1.1/'
 }
 
+const STANDARD_MUTATION_NAMESPACE_URIS = Object.values(STANDARD_MUTATION_PREFIXES)
+
 function normalizeNodeId(value: string): string {
   return value.startsWith('_:') ? value.slice(2) : value
 }
@@ -114,6 +116,82 @@ async function bestEffortLoadDocIfStoreEmpty(store: LiveStore, doc: NamedNode | 
     await fetcher.load(doc)
   } catch {
     // Continue with current in-memory statements if the pre-load fails.
+  }
+}
+
+function escapeRegex(text: string): string {
+  return text.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+}
+
+function statementNamespaceUris(statement: RdfStatement, candidateNamespaceUris: string[]): string[] {
+  const uris = new Set<string>()
+  const terms = [statement.subject, statement.predicate, statement.object]
+
+  terms.forEach((term: any) => {
+    if (!term) return
+
+    if (typeof term.value === 'string') {
+      candidateNamespaceUris.forEach((namespaceUri) => {
+        if (term.value.startsWith(namespaceUri)) {
+          uris.add(namespaceUri)
+        }
+      })
+    }
+
+    if (term.termType === 'Literal' && typeof term.datatype?.value === 'string') {
+      candidateNamespaceUris.forEach((namespaceUri) => {
+        if (term.datatype.value.startsWith(namespaceUri)) {
+          uris.add(namespaceUri)
+        }
+      })
+    }
+  })
+
+  return [...uris]
+}
+
+function documentDeclaresNamespacePrefix(documentText: string, namespaceUri: string): boolean {
+  const escapedNamespaceUri = escapeRegex(namespaceUri)
+  const prefixPattern = new RegExp(`(^|\\n)\\s*(?:@prefix|PREFIX)\\s+[A-Za-z][\\w-]*:\\s*<${escapedNamespaceUri}>`, 'i')
+  return prefixPattern.test(documentText)
+}
+
+export async function shouldForceDocumentPutForStatements(
+  store: LiveStore,
+  doc: NamedNode,
+  statements: RdfStatement[],
+  candidateNamespaceUris = STANDARD_MUTATION_NAMESPACE_URIS
+): Promise<boolean> {
+  const updater = getStoreUpdater(store)
+  const fetcher = getStoreFetcher(store)
+
+  if (typeof updater?.serialize !== 'function' || typeof fetcher?.webOperation !== 'function') {
+    return false
+  }
+
+  const neededNamespaceUris = Array.from(new Set(
+    (statements || []).flatMap((statement) => statementNamespaceUris(statement, candidateNamespaceUris))
+  ))
+
+  if (neededNamespaceUris.length === 0) {
+    return false
+  }
+
+  try {
+    const response = await fetcher.webOperation('GET', doc.value, {
+      noMeta: true,
+      headers: { accept: 'text/turtle' }
+    })
+
+    if (!response?.ok || typeof response.responseText !== 'string') {
+      return true
+    }
+
+    return neededNamespaceUris.some((namespaceUri) => {
+      return !documentDeclaresNamespacePrefix(response.responseText || '', namespaceUri)
+    })
+  } catch {
+    return true
   }
 }
 
