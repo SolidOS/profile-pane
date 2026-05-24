@@ -1039,6 +1039,17 @@ type ResumeDialogRenderState = {
   descriptionScrollTop: number
   activeId: string
   activeName: string
+  selectionStart: number | null
+  selectionEnd: number | null
+  fieldScrollLeft: number
+  fieldScrollTop: number
+}
+
+type ResumeFocusOptions = {
+  selectionStart?: number | null
+  selectionEnd?: number | null
+  scrollLeft?: number
+  scrollTop?: number
 }
 
 type ResumeRerenderOptions = {
@@ -1050,12 +1061,19 @@ function captureResumeDialogRenderState(form: HTMLFormElement): ResumeDialogRend
   const dialog = form.closest('dialog') as HTMLDialogElement | null
   const description = dialog?.querySelector('#modal-desc') as HTMLDivElement | null
   const activeElement = form.ownerDocument.activeElement as HTMLElement | null
+  const activeTextField = activeElement instanceof HTMLInputElement || activeElement instanceof HTMLTextAreaElement
+    ? activeElement
+    : null
 
   return {
     dialogScrollTop: dialog?.scrollTop || 0,
     descriptionScrollTop: description?.scrollTop || 0,
     activeId: activeElement?.id || '',
-    activeName: activeElement?.getAttribute('name') || ''
+    activeName: activeElement?.getAttribute('name') || '',
+    selectionStart: activeTextField?.selectionStart ?? null,
+    selectionEnd: activeTextField?.selectionEnd ?? null,
+    fieldScrollLeft: activeTextField?.scrollLeft || 0,
+    fieldScrollTop: activeTextField?.scrollTop || 0
   }
 }
 
@@ -1081,7 +1099,12 @@ function restoreResumeDialogRenderState(form: HTMLFormElement, state: ResumeDial
     nextActive = form.querySelector(`[name="${escapedName}"]`) as HTMLElement | null
   }
 
-  focusResumeFieldElement(nextActive)
+  focusResumeFieldElement(nextActive, {
+    selectionStart: state.selectionStart,
+    selectionEnd: state.selectionEnd,
+    scrollLeft: state.fieldScrollLeft,
+    scrollTop: state.fieldScrollTop
+  })
 }
 
 function getResumeFocusableTarget(element: HTMLElement | null): HTMLElement | null {
@@ -1095,7 +1118,7 @@ function getResumeFocusableTarget(element: HTMLElement | null): HTMLElement | nu
   return element
 }
 
-function focusResumeFieldElement(element: HTMLElement | null): void {
+function focusResumeFieldElement(element: HTMLElement | null, options: ResumeFocusOptions = {}): void {
   const focusTarget = getResumeFocusableTarget(element)
   if (!focusTarget || typeof focusTarget.focus !== 'function') return
 
@@ -1112,13 +1135,15 @@ function focusResumeFieldElement(element: HTMLElement | null): void {
 
   focusTarget.focus({ preventScroll: true })
   if (focusTarget instanceof HTMLInputElement || focusTarget instanceof HTMLTextAreaElement) {
-    const caretPosition = 0
-    focusTarget.setSelectionRange(caretPosition, caretPosition)
-    focusTarget.scrollLeft = 0
-    focusTarget.scrollTop = 0
+    const selectionStart = options.selectionStart ?? focusTarget.value.length
+    const selectionEnd = options.selectionEnd ?? selectionStart
+
+    focusTarget.setSelectionRange(selectionStart, selectionEnd)
+    focusTarget.scrollLeft = options.scrollLeft ?? focusTarget.scrollLeft
+    focusTarget.scrollTop = options.scrollTop ?? focusTarget.scrollTop
     requestAnimationFrame(() => {
-      focusTarget.scrollLeft = 0
-      focusTarget.scrollTop = 0
+      focusTarget.scrollLeft = options.scrollLeft ?? focusTarget.scrollLeft
+      focusTarget.scrollTop = options.scrollTop ?? focusTarget.scrollTop
     })
   }
 
