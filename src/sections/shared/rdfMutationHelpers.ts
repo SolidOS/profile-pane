@@ -184,14 +184,14 @@ export async function shouldForceDocumentPutForStatements(
     })
 
     if (!response?.ok || typeof response.responseText !== 'string') {
-      return true
+      return false
     }
 
     return neededNamespaceUris.some((namespaceUri) => {
       return !documentDeclaresNamespacePrefix(response.responseText || '', namespaceUri)
     })
   } catch {
-    return true
+    return false
   }
 }
 
