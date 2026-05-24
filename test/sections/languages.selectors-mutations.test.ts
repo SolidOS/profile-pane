@@ -412,7 +412,6 @@ describe('Languages selectors and mutations', () => {
   it('uses full-document PUT for the first language save on a remote-capable store', async () => {
     const store = graph() as any
     const subject = sym('https://example.com/profile/card#me')
-    const doc = subject.doc()
     let putCalled = false
     let serializedStatements: any[] = []
 
