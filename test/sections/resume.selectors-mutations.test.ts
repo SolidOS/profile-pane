@@ -1,11 +1,17 @@
-import { describe, expect, it } from "@jest/globals"
+import { beforeEach, describe, expect, it } from "@jest/globals"
+import fetchMock from 'jest-fetch-mock'
 import { graph, literal, sym } from 'rdflib'
 import { ns } from 'solid-ui'
 import { presentCV } from '../../src/sections/resume/selectors'
 import { processResumeMutations } from '../../src/sections/resume/mutations'
+import { fetchWikidataOrganizationSuggestions } from '../../src/sections/resume/ResumeEditDialog'
 import { saveResumeUpdatesFailedMessageText, updaterUnsupportedStoreErrorMessageText } from '../../src/texts'
 
 describe('Resume selectors and mutations', () => {
+  beforeEach(() => {
+    fetchMock.resetMocks()
+  })
+
   it('selector returns empty roles from empty store', () => {
     const store = graph() as any
     const subject = sym('https://example.com/profile/card#me')
@@ -363,5 +369,86 @@ describe('Resume selectors and mutations', () => {
     expect(deletionKeys.has(`${membership.value} ${ns.org('organization').value} ${organization.value}`)).toBe(true)
     expect(deletionKeys.has(`${organization.value} ${ns.schema('name').value} Google`)).toBe(true)
     expect(deletionKeys.has(`${organization.value} ${ns.org('location').value} San Diego`)).toBe(true)
+  })
+
+  it('filters Wikidata organization suggestions by the selected organization type', async () => {
+    const searchPayload = {
+      search: [
+        {
+          id: 'Q100001',
+          label: 'SolidOS Inc',
+          concepturi: 'http://www.wikidata.org/entity/Q100001'
+        },
+        {
+          id: 'Q100002',
+          label: 'SolidOS University',
+          concepturi: 'http://www.wikidata.org/entity/Q100002'
+        }
+      ]
+    }
+
+    const entityPayload = {
+      entities: {
+        Q100001: {
+          claims: {
+            P31: [
+              {
+                mainsnak: {
+                  snaktype: 'value',
+                  datavalue: {
+                    value: { id: 'Q6881511' }
+                  }
+                }
+              }
+            ]
+          }
+        },
+        Q100002: {
+          claims: {
+            P31: [
+              {
+                mainsnak: {
+                  snaktype: 'value',
+                  datavalue: {
+                    value: { id: 'Q178706' }
+                  }
+                }
+              }
+            ]
+          }
+        }
+      }
+    }
+
+    fetchMock.mockResponses(
+      [JSON.stringify(searchPayload), { status: 200 }],
+      [JSON.stringify(entityPayload), { status: 200 }],
+      [JSON.stringify({ entities: {} }), { status: 200 }]
+    )
+
+    const corporationSuggestions = await fetchWikidataOrganizationSuggestions('solid', 'Corporation')
+
+    expect(corporationSuggestions).toEqual([
+      {
+        label: 'SolidOS Inc',
+        publicId: 'http://www.wikidata.org/entity/Q100001'
+      }
+    ])
+
+    fetchMock.resetMocks()
+    fetchMock.mockResponses(
+      [JSON.stringify(searchPayload), { status: 200 }],
+      [JSON.stringify(entityPayload), { status: 200 }],
+      [JSON.stringify({ entities: {} }), { status: 200 }]
+    )
+
+    const educationalSuggestions = await fetchWikidataOrganizationSuggestions('solid', 'EducationalOrganization')
+
+    expect(educationalSuggestions).toEqual([
+      {
+        label: 'SolidOS University',
+        publicId: 'http://www.wikidata.org/entity/Q100002'
+      }
+    ])
   })
 })

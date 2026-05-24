@@ -260,7 +260,7 @@ function dedupeResumeOrganizationSuggestions(
   })
 }
 
-async function fetchWikidataOrganizationSuggestions(
+export async function fetchWikidataOrganizationSuggestions(
   name: string,
   selectedType: string
 ): Promise<ResumeOrganizationSuggestion[]> {
