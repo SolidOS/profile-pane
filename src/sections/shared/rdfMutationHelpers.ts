@@ -103,6 +103,20 @@ function getStoreFetcher(store: LiveStore): RdfFetcher | undefined {
   return store.fetcher as RdfFetcher | undefined
 }
 
+async function bestEffortLoadDocIfStoreEmpty(store: LiveStore, doc: NamedNode | null): Promise<void> {
+  if (!doc) return
+
+  const fetcher = getStoreFetcher(store)
+  if (typeof fetcher?.load !== 'function') return
+  if (store.statementsMatching(undefined, undefined, undefined, doc).length > 0) return
+
+  try {
+    await fetcher.load(doc)
+  } catch {
+    // Continue with current in-memory statements if the pre-load fails.
+  }
+}
+
 export function isPatchFailureMessage(message: string): boolean {
   const text = (message || '').toLowerCase()
   return (
@@ -177,16 +191,9 @@ export async function putResourceWithStatements(
     throw new Error(unsupportedMessage)
   }
 
-  let currentStatements = store.statementsMatching(undefined, undefined, undefined, doc).slice()
+  await bestEffortLoadDocIfStoreEmpty(store, doc)
 
-  if (currentStatements.length === 0 && typeof fetcher.load === 'function') {
-    try {
-      await fetcher.load(doc)
-      currentStatements = store.statementsMatching(undefined, undefined, undefined, doc).slice()
-    } catch {
-      // Continue with current in-memory statements if the pre-load fails.
-    }
-  }
+  const currentStatements = store.statementsMatching(undefined, undefined, undefined, doc).slice()
 
   const deletionKeys = new Set((deletions || []).map((statement) => statementKey(statement)))
   const nextStatements = currentStatements.filter((statement) => !deletionKeys.has(statementKey(statement))).concat(insertions || [])
@@ -234,6 +241,10 @@ export async function runUpdateTransport(
   const updater = getStoreUpdater(store)
   if (!updater) {
     throw new Error(options.unsupportedMessage)
+  }
+
+  if (options.forcePut) {
+    await bestEffortLoadDocIfStoreEmpty(store, doc)
   }
 
   const {
