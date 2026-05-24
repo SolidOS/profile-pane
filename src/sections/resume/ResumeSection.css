@@ -151,7 +151,7 @@ solid-ui-button.resume__edit-button:focus-visible::part(button) {
 /* Description toggle */
 .resume-card__description-wrap {
   grid-area: description;
-  --resume-card-description-offset: calc(var(--spacing-sm, 0.938rem) - var(--spacing-2xs, 0.625rem));
+  --resume-card-description-offset: var(--spacing-sm, 0.938rem);
   --resume-description-toggle-inline-offset: 0;
   --resume-description-toggle-line-top: calc(100% - 1.5em + 0.28em - 11px);
   --resume-description-toggle-line-translate-y: 7px;

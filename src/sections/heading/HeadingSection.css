@@ -444,6 +444,27 @@
     flex-wrap: nowrap;
   }
 
+  .profile__heading-edit-action > solid-ui-button.profile__heading-action-button {
+    min-width: var(--min-touch-target, 44px);
+    min-height: var(--min-touch-target, 44px);
+    --button-width-sm: var(--min-touch-target, 44px);
+    --button-height-sm: var(--min-touch-target, 44px);
+    --button-background: transparent;
+    --button-border-width: 0;
+    --button-border: transparent;
+    --button-text: var(--profile-section-collapsible-action-button-text, var(--color-primary, #7C4DFF));
+    --button-hover-background: var(--profile-section-collapsible-action-button-hover-background, var(--color-surface-accent-subtle, var(--lavender-300, #e6dcff)));
+    --button-hover-border: transparent;
+    --button-hover-text: var(--profile-section-collapsible-action-button-text, var(--color-primary, #7C4DFF));
+  }
+
+  .profile__heading-edit-action > solid-ui-button.profile__heading-action-button::part(button):hover,
+  .profile__heading-edit-action > solid-ui-button.profile__heading-action-button::part(button):focus,
+  .profile__heading-edit-action > solid-ui-button.profile__heading-action-button::part(button):focus-visible {
+    background: var(--profile-section-collapsible-action-button-hover-background, var(--color-surface-accent-subtle, var(--lavender-300, #e6dcff)));
+    text-decoration: none;
+  }
+
 }
 
 @container profile-pane (max-width: 768px) {
@@ -467,6 +488,27 @@
     align-content: center;
     gap: var(--profile-heading-narrow-action-gap, 0.25rem);
     flex-wrap: nowrap;
+  }
+
+  .profile__heading-edit-action > solid-ui-button.profile__heading-action-button {
+    min-width: var(--min-touch-target, 44px);
+    min-height: var(--min-touch-target, 44px);
+    --button-width-sm: var(--min-touch-target, 44px);
+    --button-height-sm: var(--min-touch-target, 44px);
+    --button-background: transparent;
+    --button-border-width: 0;
+    --button-border: transparent;
+    --button-text: var(--profile-section-collapsible-action-button-text, var(--color-primary, #7C4DFF));
+    --button-hover-background: var(--profile-section-collapsible-action-button-hover-background, var(--color-surface-accent-subtle, var(--lavender-300, #e6dcff)));
+    --button-hover-border: transparent;
+    --button-hover-text: var(--profile-section-collapsible-action-button-text, var(--color-primary, #7C4DFF));
+  }
+
+  .profile__heading-edit-action > solid-ui-button.profile__heading-action-button::part(button):hover,
+  .profile__heading-edit-action > solid-ui-button.profile__heading-action-button::part(button):focus,
+  .profile__heading-edit-action > solid-ui-button.profile__heading-action-button::part(button):focus-visible {
+    background: var(--profile-section-collapsible-action-button-hover-background, var(--color-surface-accent-subtle, var(--lavender-300, #e6dcff)));
+    text-decoration: none;
   }
 
 }
@@ -512,13 +554,24 @@
 }
 
 :is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile__heading-edit-action > solid-ui-button.profile__heading-action-button {
+  min-width: var(--min-touch-target, 44px);
+  min-height: var(--min-touch-target, 44px);
+  --button-width-sm: var(--min-touch-target, 44px);
+  --button-height-sm: var(--min-touch-target, 44px);
   --button-background: transparent;
   --button-border-width: 0;
   --button-border: transparent;
-  --button-text: var(--color-text, #1A1A1A);
-  --button-hover-background: var(--color-surface-accent-subtle, var(--lavender-300, #e6dcff));
+  --button-text: var(--profile-section-collapsible-action-button-text, var(--color-primary, #7C4DFF));
+  --button-hover-background: var(--profile-section-collapsible-action-button-hover-background, var(--color-surface-accent-subtle, var(--lavender-300, #e6dcff)));
   --button-hover-border: transparent;
-  --button-hover-text: var(--color-text, #1A1A1A);
+  --button-hover-text: var(--profile-section-collapsible-action-button-text, var(--color-primary, #7C4DFF));
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile__heading-edit-action > solid-ui-button.profile__heading-action-button::part(button):hover,
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile__heading-edit-action > solid-ui-button.profile__heading-action-button::part(button):focus,
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile__heading-edit-action > solid-ui-button.profile__heading-action-button::part(button):focus-visible {
+  background: var(--profile-section-collapsible-action-button-hover-background, var(--color-surface-accent-subtle, var(--lavender-300, #e6dcff)));
+  text-decoration: none;
 }
 
 :is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile__heading-actions > .profile-friends-button__section > solid-ui-button.profile__btn-friends,
@@ -643,15 +696,6 @@
     flex-wrap: nowrap;
   }
 
-  .profile__heading-edit-action > solid-ui-button.profile__heading-action-button {
-    --button-background: transparent;
-    --button-border-width: 0;
-    --button-border: transparent;
-    --button-text: var(--color-text, #1A1A1A);
-    --button-hover-background: var(--color-surface-accent-subtle, var(--lavender-300, #e6dcff));
-    --button-hover-border: transparent;
-    --button-hover-text: var(--color-text, #1A1A1A);
-  }
   .profile__heading-actions > .profile-friends-button__section > solid-ui-button.profile__btn-friends,
   .profile__heading-actions > #add-to-contacts-button-container > solid-ui-button.profile__btn-contacts {
     min-width: 0;
@@ -754,15 +798,6 @@
     flex-wrap: nowrap;
   }
 
-  .profile__heading-edit-action > solid-ui-button.profile__heading-action-button {
-    --button-background: transparent;
-    --button-border-width: 0;
-    --button-border: transparent;
-    --button-text: var(--color-text, #1A1A1A);
-    --button-hover-background: var(--color-surface-accent-subtle, var(--lavender-300, #e6dcff));
-    --button-hover-border: transparent;
-    --button-hover-text: var(--color-text, #1A1A1A);
-  }
   .profile__heading-actions > .profile-friends-button__section > solid-ui-button.profile__btn-friends,
   .profile__heading-actions > #add-to-contacts-button-container > solid-ui-button.profile__btn-contacts {
     min-width: 0;
@@ -824,3 +859,4 @@
     column-gap: var(--profile-heading-compact-detail-column-gap, 0.25rem);
   }
 }
+
