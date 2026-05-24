@@ -203,13 +203,14 @@ describe('shared helper utilities', () => {
       const update = jest.fn()
       const serialize = jest.fn(() => '@prefix schema: <http://schema.org/> .')
       const webOperation = jest.fn(async () => ({ ok: true, status: 200 }))
+      const load = jest.fn(async () => undefined)
 
       store.updater = {
         update,
         serialize,
         store: {}
       }
-      store.fetcher = { webOperation }
+      store.fetcher = { webOperation, load }
 
       await runUpdateTransport(
         store,
