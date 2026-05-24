@@ -1,7 +1,7 @@
 import { BlankNode, Collection, LiveStore, NamedNode, Node, st, sym, literal } from 'rdflib'
 import { ns } from 'solid-ui'
 import { LanguageRow } from './types'
-import { MutationOps, PrefixCapable, RdfStatement, RdfUpdater } from '../shared/types'
+import { MutationOps, PrefixCapable, RdfFetcher, RdfStatement, RdfUpdater } from '../shared/types'
 import { presentLanguages } from './selectors'
 import { expandRdfList } from '../shared/rdfList'
 import { createIdNode } from '../shared/idNodeFactory'
@@ -58,6 +58,7 @@ function isLanguageEntryNode(node: Node | null | undefined): node is LanguageEnt
 }
 
 function buildLanguageStatements(
+  store: LiveStore,
   subject: NamedNode,
   doc: NamedNode,
   rows: LanguageRow[],
@@ -93,7 +94,8 @@ function buildLanguageStatements(
   entryNodes.forEach((entryNode, index) => {
     const publicIdNode = sym(`${LANGUAGE_IANA_NS}${languageRows[index].publicId}`)
     statements.push(st(entryNode, ns.solid('publicId'), publicIdNode, doc))
-    if (languageRows[index].name) {
+    const existingNameStatement = store.holds(publicIdNode, ns.schema('name'), literal(languageRows[index].name, 'en'), doc)
+    if (languageRows[index].name && !existingNameStatement) {
       statements.push(st(publicIdNode, ns.schema('name'), literal(languageRows[index].name, 'en'), doc))
     }
   })
@@ -185,6 +187,11 @@ async function mutateLanguageEntries(
 
   const listObjects = store.each(subject, ns.schema('knowsLanguage'), null, doc)
   const existingListHeads = listObjects.filter((node): node is NamedNode => node.termType === 'BlankNode' || node.termType === 'NamedNode')
+  const canForcePut = Boolean(
+    (store.updater as RdfUpdater | undefined)?.serialize &&
+    (store.fetcher as RdfFetcher | undefined)?.webOperation
+  )
+  const shouldForcePut = canForcePut
 
   const existingListNodes = Array.from(new Map(
     existingListHeads
@@ -203,24 +210,17 @@ async function mutateLanguageEntries(
     return termType === 'BlankNode' ? store.bnode(value) : store.sym(value)
   })
 
-  const existingPublicIdNodes = Array.from(new Map(
-    existingLanguageNodes
-      .map((node) => store.any(node as NamedNode, ns.solid('publicId'), null, doc))
-      .filter((node): node is NamedNode => Boolean(node && node.termType === 'NamedNode'))
-      .map((node) => [`${node.termType}:${node.value}`, node])
-  ).values())
-
   const {
     statements: insertions,
     entryNodes: nextEntryNodes
-  } = buildLanguageStatements(subject, doc, nextRows, existingLanguageNodes)
+  } = buildLanguageStatements(store, subject, doc, nextRows, existingLanguageNodes)
 
   const retainedEntryNodeKeys = new Set(nextEntryNodes.map((node) => nodeKey(node)))
   const retainedLanguageNodes = existingLanguageNodes.filter((node) => retainedEntryNodeKeys.has(nodeKey(node)))
   const removedLanguageNodes = existingLanguageNodes.filter((node) => !retainedEntryNodeKeys.has(nodeKey(node)))
 
-  const retainedPublicIdNodes = Array.from(new Map(
-    retainedLanguageNodes
+  const removedPublicIdNodes = Array.from(new Map(
+    removedLanguageNodes
       .map((node) => store.any(node as NamedNode, ns.solid('publicId'), null, doc))
       .filter((node): node is NamedNode => Boolean(node && node.termType === 'NamedNode'))
       .map((node) => [nodeKey(node), node])
@@ -236,17 +236,15 @@ async function mutateLanguageEntries(
   retainedLanguageNodes.forEach((node) => {
     deletions.push(...store.statementsMatching(node as NamedNode, ns.solid('publicId'), null, doc))
   })
-  existingPublicIdNodes.forEach((node) => {
-    deletions.push(...store.statementsMatching(node as NamedNode, ns.schema('name'), null, doc))
-  })
-  retainedPublicIdNodes.forEach((node) => {
+  removedPublicIdNodes.forEach((node) => {
     deletions.push(...store.statementsMatching(node as NamedNode, ns.schema('name'), null, doc))
   })
 
   await runUpdateTransport(store, doc, deletions, insertions, {
     unsupportedMessage: 'Language updates are not supported by this store updater.',
     failureMessage: 'Failed to save languages',
-    useDavFallback: true,
+    forcePut: shouldForcePut,
+    useDavFallback: false,
     usePutFallback: true
   })
 }

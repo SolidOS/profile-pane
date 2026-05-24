@@ -196,6 +196,78 @@ describe('shared helper utilities', () => {
       expect(webOperation).toHaveBeenCalledTimes(1)
     })
 
+    it('supports forced PUT transport without attempting PATCH first', async () => {
+      const store = graph() as any
+      const subject = sym('https://example.com/profile#me')
+      const doc = subject.doc()
+      const update = jest.fn()
+      const serialize = jest.fn(() => '@prefix schema: <http://schema.org/> .')
+      const webOperation = jest.fn(async () => ({ ok: true, status: 200 }))
+
+      store.updater = {
+        update,
+        serialize,
+        store: {}
+      }
+      store.fetcher = { webOperation }
+
+      await runUpdateTransport(
+        store,
+        doc,
+        [],
+        [st(subject, ns.schema('name'), literal('Jane'), doc)],
+        {
+          unsupportedMessage: updaterUnsupportedStoreErrorMessageText,
+          failureMessage: fallbackSaveUpdatesErrorMessageText,
+          forcePut: true,
+          usePutFallback: true
+        }
+      )
+
+      expect(update).not.toHaveBeenCalled()
+      expect(serialize).toHaveBeenCalledTimes(1)
+      expect(webOperation).toHaveBeenCalledTimes(1)
+    })
+
+    it('does not reload a non-empty document before forced PUT serialization', async () => {
+      const store = graph() as any
+      const subject = sym('https://example.com/profile#me')
+      const doc = subject.doc()
+      const update = jest.fn()
+      const serialize = jest.fn(() => '@prefix schema: <http://schema.org/> .')
+      const webOperation = jest.fn(async () => ({ ok: true, status: 200 }))
+      const load = jest.fn(async () => {
+        store.add(subject, ns.schema('name'), literal('Loaded copy'), doc)
+      })
+
+      store.add(subject, ns.schema('name'), literal('Existing copy'), doc)
+      store.updater = {
+        update,
+        serialize,
+        store: {}
+      }
+      store.fetcher = { webOperation, load }
+
+      await runUpdateTransport(
+        store,
+        doc,
+        [],
+        [st(subject, ns.schema('nickname'), literal('Jane'), doc)],
+        {
+          unsupportedMessage: updaterUnsupportedStoreErrorMessageText,
+          failureMessage: fallbackSaveUpdatesErrorMessageText,
+          forcePut: true,
+          usePutFallback: true
+        }
+      )
+
+      expect(load).not.toHaveBeenCalled()
+      expect(update).not.toHaveBeenCalled()
+      expect(serialize).toHaveBeenCalledTimes(1)
+      expect(webOperation).toHaveBeenCalledTimes(1)
+      expect(store.any(subject, ns.schema('name'), null, doc)?.value).toBe('Existing copy')
+    })
+
     it('replaces predicate statements and finds linked statements by normalized node ids', () => {
       const store = graph() as any
       const subject = sym('https://example.com/profile#me')

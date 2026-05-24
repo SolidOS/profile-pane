@@ -369,4 +369,48 @@ describe('Social selectors and mutations', () => {
       body: 'serialized-body'
     }))
   })
+
+  it('uses full-document PUT for social list writes without attempting PATCH', async () => {
+    const store = graph() as any
+    const subject = sym('https://example.com/profile/card#me')
+    const doc = subject.doc()
+    const facebookNode = sym('https://example.com/profile/card#id1111111111111')
+    let putCalled = false
+    let serializedStatements: any[] = []
+
+    store.add(subject, ns.foaf('account'), new Collection([facebookNode]), doc)
+    store.add(facebookNode, ns.rdf('type'), sym('https://solidos.github.io/profile-pane/src/ontology/socialMedia.ttl#FacebookAccount'), doc)
+    store.add(facebookNode, ns.foaf('accountName'), literal('sharon-facebook'), doc)
+
+    store.fetcher = {
+      webOperation: (method: string, _uri: string, _options: any) => {
+        if (method === 'PUT') {
+          putCalled = true
+          return Promise.resolve({ ok: true, status: 200 })
+        }
+
+        return Promise.resolve({ ok: false, status: 500 })
+      }
+    }
+    store.updater = {
+      update: jest.fn((_deletions: any[], _insertions: any[], callback: Function) => callback('', true)),
+      serialize: (_docValue: string, statements: any[]) => {
+        serializedStatements = statements
+        return '@prefix foaf: <http://xmlns.com/foaf/0.1/> .\n'
+      }
+    }
+
+    await processSocialMutations(
+      store,
+      subject,
+      { create: [], update: [], remove: [] } as any,
+      [
+        { name: 'Facebook', icon: '', homepage: 'https://www.facebook.com/sharon-facebook', entryNode: facebookNode.value, status: 'existing' }
+      ] as any
+    )
+
+    expect(store.updater.update).not.toHaveBeenCalled()
+    expect(putCalled).toBe(true)
+    expect(serializedStatements.some((statement) => statement.object?.termType === 'Collection')).toBe(true)
+  })
 })
