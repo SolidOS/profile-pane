@@ -177,6 +177,21 @@ function getWikidataClaimIds(entity: WikidataEntity | undefined, property: 'P31'
     .filter((id): id is string => typeof id === 'string' && id.length > 0)
 }
 
+function getAllowedOrganizationTypeIds(selectedType: string): string[] {
+  const normalizedType = normalizeResumeOrganizationTypeValue(selectedType)
+  const typeUris = RESUME_ORGANIZATION_TYPE_WIKIDATA_CLASS_URIS[normalizedType]
+
+  if (!typeUris?.length) {
+    return RESUME_ORGANIZATION_SEARCH_CLASS_URIS
+      .map((uri) => getWikidataIdFromUri(uri))
+      .filter(Boolean)
+  }
+
+  return typeUris
+    .map((uri) => getWikidataIdFromUri(uri))
+    .filter(Boolean)
+}
+
 async function fetchWikidataEntities(ids: string[]): Promise<Record<string, WikidataEntity>> {
   const uniqueIds = Array.from(new Set(ids.filter(Boolean)))
   if (!uniqueIds.length || typeof fetch !== 'function') return {}
@@ -188,10 +203,12 @@ async function fetchWikidataEntities(ids: string[]): Promise<Record<string, Wiki
   return payload?.entities || {}
 }
 
-function entityMatchesAllowedOrganizationTypes(entityId: string, entityMap: Record<string, WikidataEntity>): boolean {
-  const allowedIds = new Set(
-    RESUME_ORGANIZATION_SEARCH_CLASS_URIS.map((uri) => getWikidataIdFromUri(uri))
-  )
+function entityMatchesAllowedOrganizationTypes(
+  entityId: string,
+  entityMap: Record<string, WikidataEntity>,
+  selectedType: string
+): boolean {
+  const allowedIds = new Set(getAllowedOrganizationTypeIds(selectedType))
   const visited = new Set<string>()
   const agenda = [entityId]
 
@@ -243,7 +260,10 @@ function dedupeResumeOrganizationSuggestions(
   })
 }
 
-async function fetchWikidataOrganizationSuggestions(name: string): Promise<ResumeOrganizationSuggestion[]> {
+async function fetchWikidataOrganizationSuggestions(
+  name: string,
+  selectedType: string
+): Promise<ResumeOrganizationSuggestion[]> {
   const query = sanitizeResumeFieldValue(name)
   if (query.length < 2 || typeof fetch !== 'function') return []
 
@@ -283,11 +303,10 @@ async function fetchWikidataOrganizationSuggestions(name: string): Promise<Resum
 
     const filteredSuggestions = suggestions.filter((suggestion) => {
       const entityId = getWikidataIdFromUri(suggestion.publicId)
-      return entityMatchesAllowedOrganizationTypes(entityId, entityMap)
+      return entityMatchesAllowedOrganizationTypes(entityId, entityMap, selectedType)
     })
 
-    return (filteredSuggestions.length > 0 ? filteredSuggestions : suggestions)
-      .slice(0, WIKIDATA_ORGANIZATION_SEARCH_LIMIT)
+    return filteredSuggestions.slice(0, WIKIDATA_ORGANIZATION_SEARCH_LIMIT)
   } catch {
     return []
   }
@@ -325,9 +344,11 @@ function readResumeOrganizationComboboxChange(event: Event): ResumeOrganizationC
   return null
 }
 
-function createResumeOrganizationSuggestionProvider(): (query: string) => Promise<ResumeOrganizationComboboxOption[]> {
+function createResumeOrganizationSuggestionProvider(
+  getSelectedType: () => string
+): (query: string) => Promise<ResumeOrganizationComboboxOption[]> {
   return async (query: string) => {
-    const suggestions = await fetchWikidataOrganizationSuggestions(query)
+    const suggestions = await fetchWikidataOrganizationSuggestions(query, getSelectedType())
     return suggestions.map(toResumeOrganizationComboboxOption)
   }
 }
@@ -562,7 +583,9 @@ function initializeResumeOrganizationComboboxes(form: HTMLFormElement, resumeDat
       ? [{ label: resumeRow.orgName, value: resumeRow.orgPublicId, publicId: resumeRow.orgPublicId }]
       : []
 
-    comboboxElement.suggestionProvider = createResumeOrganizationSuggestionProvider()
+    comboboxElement.suggestionProvider = createResumeOrganizationSuggestionProvider(
+      () => normalizeResumeOrganizationTypeValue(resumeRow.orgType || '')
+    )
     comboboxElement.options = options
     comboboxElement.value = resumeRow.orgPublicId || ''
     comboboxElement.inputValue = resumeRow.orgName || ''
@@ -742,6 +765,7 @@ function renderResumeInputRow({
     const nextType = normalizeResumeOrganizationTypeValue(readResumeOrganizationTypeChange(e))
     if (resumeRow) {
       applyRowSelectChange(resumeRow, 'orgType', nextType)
+      resumeRow.orgPublicId = ''
       onChange()
     }
   }
@@ -796,16 +820,6 @@ function renderResumeInputRow({
       />
     </label>
     <div class="profile-edit-dialog__row">
-      <label aria-label=${`${label} Organization Name`} class="label profile-edit-dialog__field">
-        Company or Organization 
-        <solid-ui-combobox
-          name=${organizationName}
-          data-resume-organization-index=${String(index)}
-          required
-          @input=${handleOrganizationNameInput}
-          @change=${handleOrganizationNameChange}
-        ></solid-ui-combobox>
-      </label>
       <label aria-label=${`${label} Organization Type`} class="label profile-edit-dialog__field">
         Organization Type
         <solid-ui-select
@@ -818,6 +832,16 @@ function renderResumeInputRow({
           .label=${''}
           @change=${handleOrganizationTypeInput}
         ></solid-ui-select>
+      </label>
+      <label aria-label=${`${label} Organization Name`} class="label profile-edit-dialog__field">
+        Company or Organization 
+        <solid-ui-combobox
+          name=${organizationName}
+          data-resume-organization-index=${String(index)}
+          required
+          @input=${handleOrganizationNameInput}
+          @change=${handleOrganizationNameChange}
+        ></solid-ui-combobox>
       </label>
     </div>  
     <div class="profile-edit-dialog__row">
