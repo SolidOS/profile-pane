@@ -4,6 +4,8 @@ import { NamedNode, Node, LiveStore } from 'rdflib'
 import { utils, ns, widgets } from 'solid-ui'
 import type { AddressDetails, PointDetails } from '../contactInfo/types'
 import type { ProfileDetails } from './types'
+import { presentCV } from '../resume/selectors'
+import type { RoleDetails } from '../resume/types'
 
 function termValue(term: unknown): string {
   if (!term) return ''
@@ -139,6 +141,17 @@ function formatLocation(countryName: string | void, locality: string | void) {
     : countryName || locality || null
 }
 
+function normalizeRoleType(value: string | undefined): string {
+  return (value || '').replace(/\s+/g, '').toLowerCase()
+}
+
+function selectHeadingRole(roles: RoleDetails[]): RoleDetails | undefined {
+  const currentRole = roles.find((role) => role.isCurrentRole || normalizeRoleType(role.roleType) === 'currentrole')
+  if (currentRole) return currentRole
+
+  return roles.find((role) => normalizeRoleType(role.roleType) === 'pastrole')
+}
+
 export const presentProfile = (
   subject: NamedNode,
   store: LiveStore
@@ -148,8 +161,8 @@ export const presentProfile = (
   const nickname = store.anyValue(subject, ns.vcard('nickname')) || store.anyValue(subject, ns.foaf('nick')) || undefined
   const dateOfBirth = store.anyValue(subject, ns.vcard('bday')) || undefined
   const imageSrc = widgets.findImage(subject)
-  const jobTitle = store.anyValue(subject, ns.vcard('role')) || undefined
-  const orgName = store.anyValue(subject, ns.vcard('organization-name')) || undefined // @@ Search whole store
+  const headingRole = selectHeadingRole(presentCV(subject, store))
+  const jobTitle = headingRole?.title || undefined
   const doc = subject.doc()
 
   // Contact info - we will only show one of each type here
@@ -209,7 +222,6 @@ export const presentProfile = (
     imageSrc,
     dateOfBirth,
     jobTitle,
-    orgName,
     primaryPhone,
     primaryEmail,
     primaryAddress,

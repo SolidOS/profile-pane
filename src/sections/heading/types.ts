@@ -11,7 +11,6 @@ export interface ProfilePresentation {
   pronouns?: string;
   dateOfBirth?: string;
   jobTitle?: string;
-  orgName?: string;
   primaryPhone?: PointDetails;
   primaryEmail?: PointDetails;
   primaryAddress?: AddressDetails;

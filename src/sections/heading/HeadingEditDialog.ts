@@ -204,8 +204,7 @@ function rowHasContent(row: Row): boolean {
       row.location,
       row.pronouns,
       row.dateOfBirth,
-      row.jobTitle,
-      row.orgName
+      row.jobTitle
     ].some(hasNonEmptyText)
   }
   return false
@@ -229,7 +228,6 @@ function toFormState(profileData: ProfileDetails): HeadingFormState {
     pronouns: normalizePronounsValue(toText(profileData.pronouns || '')),
     dateOfBirth: sanitizeTextValue(toText(profileData.dateOfBirth || '')),
     jobTitle: sanitizeTextValue(toText(profileData.jobTitle || '')),
-    orgName: sanitizeTextValue(toText(profileData.orgName || '')),
     entryNode: toText(profileData.entryNode),
     status: toText(profileData.entryNode) ? 'existing' as const : 'new' as const
   }
@@ -268,7 +266,7 @@ function toFormState(profileData: ProfileDetails): HeadingFormState {
   }
 
   return {
-      basicInfo: (basicInfo) ? basicInfo : { name: '', nickname: '', imageSrc: '', location: '', pronouns: '', dateOfBirth: '', jobTitle: '', orgName: '', entryNode: '', status: 'new' },
+      basicInfo: (basicInfo) ? basicInfo : { name: '', nickname: '', imageSrc: '', location: '', pronouns: '', dateOfBirth: '', jobTitle: '', entryNode: '', status: 'new' },
       email: (email) ? email : { value: '', type: '', entryNode: '', status: 'new' },
       phone: (phone) ? phone : { value: '', type: '', entryNode: '', status: 'new' },
       address: (address) ? address : { streetAddress: '', locality: '', region: '', postalCode: '', countryName: '', type: '', entryNode: '', status: 'new' },
@@ -328,7 +326,6 @@ type ProfileBasicEditableField =
   | 'pronouns'
   | 'dateOfBirth'
   | 'jobTitle'
-  | 'orgName'
 
 type ContactAddressEditableField =
   | 'streetAddress'
@@ -650,8 +647,6 @@ function renderHeadingInfoInput(
   const nicknameLabel = 'Nickname'
   const pronounsLabel = 'Pronouns'
   const dateOfBirthLabel = 'DOB'
-  const jobTitleLabel = 'Job Title'
-  const orgNameLabel = 'Organization Name'
 
   const handleBasicInfoInput = (field: ProfileBasicEditableField) => (e: Event) => {
     const target = e.target as HTMLInputElement
