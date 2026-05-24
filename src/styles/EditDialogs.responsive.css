@@ -62,7 +62,7 @@ html[data-layout='mobile'] #profile-modal .modal .profile-edit-dialog--heading .
 }
 
 @media (hover: none) and (pointer: coarse) {
-  /* Mobile Safari date inputs can ignore the shared 44px field sizing and let the native picker chrome spill past the dialog field. */
+  /* Mobile date inputs can ignore the shared 44px field sizing and let the native picker chrome spill past the dialog field. */
   html[data-layout='mobile'] #profile-modal .modal .profile-edit-dialog--heading .profile-edit-dialog__input--dob {
     height: var(--min-touch-target, 44px);
     min-height: var(--min-touch-target, 44px);
