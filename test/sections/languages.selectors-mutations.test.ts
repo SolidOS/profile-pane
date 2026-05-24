@@ -494,6 +494,43 @@ describe('Languages selectors and mutations', () => {
     expect(store.statementsMatching(subject, ns.schema('knowsLanguage'), null, doc)).toHaveLength(0)
   })
 
+  it('uses DAV fallback when forcePut is unavailable and updateDav is supported', async () => {
+    const store = graph() as any
+    const subject = sym('https://example.com/profile/card#me')
+    const doc = subject.doc()
+    const englishEntry = sym('https://example.com/profile/card#id-en')
+    const frenchEntry = sym('https://example.com/profile/card#id-fr')
+
+    store.add(subject, ns.schema('knowsLanguage'), new Collection([englishEntry, frenchEntry]), doc)
+    store.add(englishEntry, ns.solid('publicId'), sym('https://www.w3.org/ns/iana/language-code/en'), doc)
+    store.add(frenchEntry, ns.solid('publicId'), sym('https://www.w3.org/ns/iana/language-code/fr'), doc)
+
+    store.updater = {
+      update: (_deletions: any[], _insertions: any[], callback: Function) => callback('', false, 'Web error: 501 on PATCH'),
+      updateDav: jest.fn((_doc: any, deletions: any[], insertions: any[], callback: Function) => {
+        deletions.forEach((statement) => store.remove(st(statement.subject, statement.predicate, statement.object, statement.why)))
+        insertions.forEach((statement) => store.add(statement.subject, statement.predicate, statement.object, statement.why))
+        callback('', true)
+      })
+    }
+
+    await processLanguageMutations(
+      store,
+      subject,
+      { create: [], update: [], remove: [] } as any,
+      [
+        { name: 'French', publicId: 'https://www.w3.org/ns/iana/language-code/fr', proficiency: '', entryNode: frenchEntry.value, status: 'existing' },
+        { name: 'English', publicId: 'https://www.w3.org/ns/iana/language-code/en', proficiency: '', entryNode: englishEntry.value, status: 'existing' }
+      ] as any
+    )
+
+    expect(store.updater.updateDav).toHaveBeenCalledTimes(1)
+    expect(presentLanguages(subject, store).map((item) => item.entryNode.value)).toEqual([
+      frenchEntry.value,
+      englishEntry.value
+    ])
+  })
+
   it('removes schema:name on publicId node when language row is deleted', async () => {
     const store = graph() as any
     const subject = sym('https://example.com/profile/card#me')

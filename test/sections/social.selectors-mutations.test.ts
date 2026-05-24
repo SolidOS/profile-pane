@@ -370,6 +370,47 @@ describe('Social selectors and mutations', () => {
     }))
   })
 
+  it('uses DAV fallback when forcePut is unavailable and updateDav is supported', async () => {
+    const store = graph() as any
+    const subject = sym('https://example.com/profile/card#me')
+    const doc = subject.doc()
+    const facebookNode = sym('https://example.com/profile/card#id1111111111111')
+    const instagramNode = sym('https://example.com/profile/card#id2222222222222')
+    const facebookClass = sym('https://solidos.github.io/profile-pane/src/ontology/socialMedia.ttl#FacebookAccount')
+    const instagramClass = sym('https://solidos.github.io/profile-pane/src/ontology/socialMedia.ttl#InstagramAccount')
+
+    store.add(subject, ns.foaf('account'), new Collection([facebookNode, instagramNode]), doc)
+    store.add(facebookNode, ns.rdf('type'), facebookClass, doc)
+    store.add(facebookNode, ns.foaf('accountName'), literal('sharon-facebook'), doc)
+    store.add(instagramNode, ns.rdf('type'), instagramClass, doc)
+    store.add(instagramNode, ns.foaf('accountName'), literal('sharon-instagram'), doc)
+
+    store.updater = {
+      update: (_deletions: any[], _insertions: any[], callback: Function) => callback('', false, 'Web error: 405 on patch'),
+      updateDav: jest.fn((_doc: any, deletions: any[], insertions: any[], callback: Function) => {
+        deletions.forEach((statement) => store.remove(st(statement.subject, statement.predicate, statement.object, statement.why)))
+        insertions.forEach((statement) => store.add(statement.subject, statement.predicate, statement.object, statement.why))
+        callback('', true)
+      })
+    }
+
+    await processSocialMutations(
+      store,
+      subject,
+      { create: [], update: [], remove: [] } as any,
+      [
+        { name: 'Instagram', icon: '', homepage: 'https://www.instagram.com/sharon-instagram', entryNode: instagramNode.value, status: 'existing' },
+        { name: 'Facebook', icon: '', homepage: 'https://www.facebook.com/sharon-facebook', entryNode: facebookNode.value, status: 'existing' }
+      ] as any
+    )
+
+    expect(store.updater.updateDav).toHaveBeenCalledTimes(1)
+    expect(presentSocial(subject, store).accounts.map((account) => account.entryNode.value)).toEqual([
+      instagramNode.value,
+      facebookNode.value
+    ])
+  })
+
   it('uses full-document PUT for social list writes without attempting PATCH', async () => {
     const store = graph() as any
     const subject = sym('https://example.com/profile/card#me')

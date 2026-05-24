@@ -244,7 +244,7 @@ async function mutateLanguageEntries(
     unsupportedMessage: 'Language updates are not supported by this store updater.',
     failureMessage: 'Failed to save languages',
     forcePut: shouldForcePut,
-    useDavFallback: false,
+    useDavFallback: !shouldForcePut,
     usePutFallback: true
   })
 }

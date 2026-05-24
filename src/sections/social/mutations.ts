@@ -259,7 +259,7 @@ async function mutateSocialEntries(
 		unsupportedMessage: 'Social updates are not supported by this store updater.',
 		failureMessage: 'Failed to save updates',
 		forcePut: canForcePut,
-		useDavFallback: false,
+		useDavFallback: !canForcePut,
 		usePutFallback: true
 	})
 }
