@@ -899,40 +899,6 @@ function renderHeadingInfoInput(
         </label>
       </div>
       <div class="profile-edit-dialog__row profile-edit-dialog__row--equal">
-        <label aria-label=${jobTitleLabel} class="label profile-edit-dialog__field">
-          ${jobTitleLabel}
-          <input
-            class="input"
-            type="text"
-            name="jobTitle"
-            .value=${basicInfo?.jobTitle || ''}
-            data-contact-field="jobTitle"
-            data-entry-node=${basicInfo?.entryNode || ''}
-            data-row-status=${basicInfo?.status || 'n/a'}
-            placeholder="Job Title"
-            autocomplete="organization-title"
-            inputmode="text"
-            @change=${handleBasicInfoInput('jobTitle')}
-          />
-        </label>
-        <label aria-label=${orgNameLabel} class="label profile-edit-dialog__field">
-          ${orgNameLabel}
-          <input
-            class="input"
-            type="text"
-            name="orgName"
-            .value=${basicInfo?.orgName || ''}
-            data-contact-field="orgName"
-            data-entry-node=${basicInfo?.entryNode || ''}
-            data-row-status=${basicInfo?.status || 'n/a'}
-            placeholder="Organization Name"
-            autocomplete="organization-name"
-            inputmode="text"
-            @change=${handleBasicInfoInput('orgName')}
-          />
-        </label>
-      </div>
-      <div class="profile-edit-dialog__row profile-edit-dialog__row--equal">
         <div class="profile-edit-dialog__field profile-edit-dialog__field--full">
           ${renderContactPhoneInput({ phone })}
         </div>
