@@ -98,6 +98,65 @@ describe('Intro selectors and mutations', () => {
     expect(profile.primaryPhone?.entryNode.value).toBe(firstPhone.value)
   })
 
+  it('uses the first current resume role for heading job title', () => {
+    const store = graph() as any
+    const subject = sym('https://example.com/profile/card#me')
+    const doc = subject.doc()
+    const currentRole = sym('https://example.com/profile/card#role-current')
+    const pastRole = sym('https://example.com/profile/card#role-past')
+    const currentOrg = sym('https://example.com/profile/card#org-current')
+    const pastOrg = sym('https://example.com/profile/card#org-past')
+
+    store.add(st(currentRole, ns.org('member'), subject, doc))
+    store.add(st(currentRole, ns.rdf('type'), ns.solid('CurrentRole'), doc))
+    store.add(st(currentRole, ns.vcard('role'), 'Staff Engineer', doc))
+    store.add(st(currentRole, ns.org('organization'), currentOrg, doc))
+    store.add(st(currentOrg, ns.schema('name'), 'Inrupt', doc))
+    store.add(st(currentRole, ns.schema('startDate'), '2024-01-01', doc))
+
+    store.add(st(pastRole, ns.org('member'), subject, doc))
+    store.add(st(pastRole, ns.rdf('type'), ns.solid('PastRole'), doc))
+    store.add(st(pastRole, ns.vcard('role'), 'Developer', doc))
+    store.add(st(pastRole, ns.org('organization'), pastOrg, doc))
+    store.add(st(pastOrg, ns.schema('name'), 'Old Co', doc))
+    store.add(st(pastRole, ns.schema('startDate'), '2020-01-01', doc))
+    store.add(st(pastRole, ns.schema('endDate'), '2023-12-01', doc))
+
+    const profile = presentProfile(subject, store)
+
+    expect(profile.jobTitle).toBe('Staff Engineer')
+  })
+
+  it('falls back to the latest past resume role when no current role exists', () => {
+    const store = graph() as any
+    const subject = sym('https://example.com/profile/card#me')
+    const doc = subject.doc()
+    const olderPastRole = sym('https://example.com/profile/card#role-past-older')
+    const latestPastRole = sym('https://example.com/profile/card#role-past-latest')
+    const olderOrg = sym('https://example.com/profile/card#org-older')
+    const latestOrg = sym('https://example.com/profile/card#org-latest')
+
+    store.add(st(olderPastRole, ns.org('member'), subject, doc))
+    store.add(st(olderPastRole, ns.rdf('type'), ns.solid('PastRole'), doc))
+    store.add(st(olderPastRole, ns.vcard('role'), 'Developer', doc))
+    store.add(st(olderPastRole, ns.org('organization'), olderOrg, doc))
+    store.add(st(olderOrg, ns.schema('name'), 'Older Co', doc))
+    store.add(st(olderPastRole, ns.schema('startDate'), '2019-01-01', doc))
+    store.add(st(olderPastRole, ns.schema('endDate'), '2021-02-01', doc))
+
+    store.add(st(latestPastRole, ns.org('member'), subject, doc))
+    store.add(st(latestPastRole, ns.rdf('type'), ns.solid('PastRole'), doc))
+    store.add(st(latestPastRole, ns.vcard('role'), 'Senior Developer', doc))
+    store.add(st(latestPastRole, ns.org('organization'), latestOrg, doc))
+    store.add(st(latestOrg, ns.schema('name'), 'Latest Co', doc))
+    store.add(st(latestPastRole, ns.schema('startDate'), '2021-03-01', doc))
+    store.add(st(latestPastRole, ns.schema('endDate'), '2024-02-01', doc))
+
+    const profile = presentProfile(subject, store)
+
+    expect(profile.jobTitle).toBe('Senior Developer')
+  })
+
   it('writes trimmed basic heading fields and keeps nicknames in sync', async () => {
     const store = graph() as any
     const subject = sym('https://example.com/profile/card#me')
