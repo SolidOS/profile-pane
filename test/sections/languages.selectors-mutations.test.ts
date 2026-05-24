@@ -318,7 +318,7 @@ describe('Languages selectors and mutations', () => {
     expect(store.statementsMatching(frenchPublicId, ns.schema('name'), null, doc)).toHaveLength(1)
   })
 
-  it('falls back directly to PUT when update fails with PATCH error for rdf lists', async () => {
+  it('uses full-document PUT for rdf list writes without attempting PATCH or DAV fallback', async () => {
     const store = graph() as any
     const subject = sym('https://example.com/profile/card#me')
     const doc = subject.doc()
