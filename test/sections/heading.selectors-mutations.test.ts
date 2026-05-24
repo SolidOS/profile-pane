@@ -1,5 +1,5 @@
 import { describe, expect, it } from "@jest/globals"
-import { graph, st, sym } from 'rdflib'
+import { graph, literal, st, sym } from 'rdflib'
 import { ns } from 'solid-ui'
 import { presentProfile, pronounsAsText } from '../../src/sections/heading/selectors'
 import { processHeadingMutations } from '../../src/sections/heading/mutations'
@@ -109,18 +109,18 @@ describe('Intro selectors and mutations', () => {
 
     store.add(st(currentRole, ns.org('member'), subject, doc))
     store.add(st(currentRole, ns.rdf('type'), ns.solid('CurrentRole'), doc))
-    store.add(st(currentRole, ns.vcard('role'), 'Staff Engineer', doc))
+    store.add(st(currentRole, ns.vcard('role'), literal('Staff Engineer'), doc))
     store.add(st(currentRole, ns.org('organization'), currentOrg, doc))
-    store.add(st(currentOrg, ns.schema('name'), 'Inrupt', doc))
-    store.add(st(currentRole, ns.schema('startDate'), '2024-01-01', doc))
+    store.add(st(currentOrg, ns.schema('name'), literal('Inrupt'), doc))
+    store.add(st(currentRole, ns.schema('startDate'), literal('2024-01-01'), doc))
 
     store.add(st(pastRole, ns.org('member'), subject, doc))
     store.add(st(pastRole, ns.rdf('type'), ns.solid('PastRole'), doc))
-    store.add(st(pastRole, ns.vcard('role'), 'Developer', doc))
+    store.add(st(pastRole, ns.vcard('role'), literal('Developer'), doc))
     store.add(st(pastRole, ns.org('organization'), pastOrg, doc))
-    store.add(st(pastOrg, ns.schema('name'), 'Old Co', doc))
-    store.add(st(pastRole, ns.schema('startDate'), '2020-01-01', doc))
-    store.add(st(pastRole, ns.schema('endDate'), '2023-12-01', doc))
+    store.add(st(pastOrg, ns.schema('name'), literal('Old Co'), doc))
+    store.add(st(pastRole, ns.schema('startDate'), literal('2020-01-01'), doc))
+    store.add(st(pastRole, ns.schema('endDate'), literal('2023-12-01'), doc))
 
     const profile = presentProfile(subject, store)
 
@@ -138,19 +138,19 @@ describe('Intro selectors and mutations', () => {
 
     store.add(st(olderPastRole, ns.org('member'), subject, doc))
     store.add(st(olderPastRole, ns.rdf('type'), ns.solid('PastRole'), doc))
-    store.add(st(olderPastRole, ns.vcard('role'), 'Developer', doc))
+    store.add(st(olderPastRole, ns.vcard('role'), literal('Developer'), doc))
     store.add(st(olderPastRole, ns.org('organization'), olderOrg, doc))
-    store.add(st(olderOrg, ns.schema('name'), 'Older Co', doc))
-    store.add(st(olderPastRole, ns.schema('startDate'), '2019-01-01', doc))
-    store.add(st(olderPastRole, ns.schema('endDate'), '2021-02-01', doc))
+    store.add(st(olderOrg, ns.schema('name'), literal('Older Co'), doc))
+    store.add(st(olderPastRole, ns.schema('startDate'), literal('2019-01-01'), doc))
+    store.add(st(olderPastRole, ns.schema('endDate'), literal('2021-02-01'), doc))
 
     store.add(st(latestPastRole, ns.org('member'), subject, doc))
     store.add(st(latestPastRole, ns.rdf('type'), ns.solid('PastRole'), doc))
-    store.add(st(latestPastRole, ns.vcard('role'), 'Senior Developer', doc))
+    store.add(st(latestPastRole, ns.vcard('role'), literal('Senior Developer'), doc))
     store.add(st(latestPastRole, ns.org('organization'), latestOrg, doc))
-    store.add(st(latestOrg, ns.schema('name'), 'Latest Co', doc))
-    store.add(st(latestPastRole, ns.schema('startDate'), '2021-03-01', doc))
-    store.add(st(latestPastRole, ns.schema('endDate'), '2024-02-01', doc))
+    store.add(st(latestOrg, ns.schema('name'), literal('Latest Co'), doc))
+    store.add(st(latestPastRole, ns.schema('startDate'), literal('2021-03-01'), doc))
+    store.add(st(latestPastRole, ns.schema('endDate'), literal('2024-02-01'), doc))
 
     const profile = presentProfile(subject, store)
 
