@@ -192,6 +192,21 @@ function getAllowedOrganizationTypeIds(selectedType: string): string[] {
     .filter(Boolean)
 }
 
+const allowedOrganizationTypeIdSetCache = new Map<string, Set<string>>()
+
+function getAllowedOrganizationTypeIdSet(selectedType: string): Set<string> {
+  const normalizedType = normalizeResumeOrganizationTypeValue(selectedType)
+  const cachedIds = allowedOrganizationTypeIdSetCache.get(normalizedType)
+
+  if (cachedIds) {
+    return cachedIds
+  }
+
+  const allowedIds = new Set(getAllowedOrganizationTypeIds(normalizedType))
+  allowedOrganizationTypeIdSetCache.set(normalizedType, allowedIds)
+  return allowedIds
+}
+
 async function fetchWikidataEntities(ids: string[]): Promise<Record<string, WikidataEntity>> {
   const uniqueIds = Array.from(new Set(ids.filter(Boolean)))
   if (!uniqueIds.length || typeof fetch !== 'function') return {}
@@ -208,7 +223,7 @@ function entityMatchesAllowedOrganizationTypes(
   entityMap: Record<string, WikidataEntity>,
   selectedType: string
 ): boolean {
-  const allowedIds = new Set(getAllowedOrganizationTypeIds(selectedType))
+  const allowedIds = getAllowedOrganizationTypeIdSet(selectedType)
   const visited = new Set<string>()
   const agenda = [entityId]
 
