@@ -241,7 +241,6 @@ async function mutateBasicProfileEntry(store: LiveStore, subject: NamedNode, bas
           nickname: '',
           pronouns: '',
           dateOfBirth: '',
-          jobTitle: '',
           imageSrc: ''
         }
       : basic
@@ -251,7 +250,6 @@ async function mutateBasicProfileEntry(store: LiveStore, subject: NamedNode, bas
     replaceLiteralField(ns.foaf('nick'), data.nickname)
     replaceLiteralField(ns.vcard('nickname'), data.nickname)
     replaceLiteralField(ns.vcard('bday'), data.dateOfBirth)
-    replaceLiteralField(ns.vcard('role'), data.jobTitle)
     replacePronounFields(data.pronouns)
     replacePhotoField(data.imageSrc)
   }

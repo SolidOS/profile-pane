@@ -27,7 +27,7 @@ export interface ProfileRow extends ProfilePresentation {
 
 export type ProfileBasicFields = Omit<
   ProfilePresentation,
-  'primaryPhone' | 'primaryEmail' | 'primaryAddress'
+  'jobTitle' | 'primaryPhone' | 'primaryEmail' | 'primaryAddress'
 >
 
 export type ProfileBasicRow = ProfileBasicFields & {

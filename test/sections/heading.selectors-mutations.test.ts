@@ -178,7 +178,6 @@ describe('Intro selectors and mutations', () => {
           nickname: '  janey  ',
           pronouns: '  She/Her  ',
           dateOfBirth: '2000-01-01',
-          jobTitle: '  Engineer  ',
           imageSrc: 'https://example.com/jane.png',
           status: 'new'
         }],
@@ -195,7 +194,7 @@ describe('Intro selectors and mutations', () => {
     expect(store.any(subject, ns.vcard('nickname'), null, doc)?.value).toBe('janey')
   expect(store.any(subject, ns.solid('preferredSubjectPronoun'), null, doc)?.value).toBe('She')
   expect(store.any(subject, ns.solid('preferredObjectPronoun'), null, doc)?.value).toBe('Her')
-    expect(store.any(subject, ns.vcard('role'), null, doc)?.value).toBe('Engineer')
+      expect(store.any(subject, ns.vcard('role'), null, doc)).toBeNull()
     expect(store.any(subject, ns.vcard('hasPhoto'), null, doc)?.termType).toBe('NamedNode')
 
     await processHeadingMutations(store, subject, {
@@ -208,7 +207,6 @@ describe('Intro selectors and mutations', () => {
           nickname: '',
           pronouns: '',
           dateOfBirth: '',
-          jobTitle: '',
           imageSrc: '',
           status: 'deleted'
         }]
