@@ -149,7 +149,10 @@ function selectHeadingRole(roles: RoleDetails[]): RoleDetails | undefined {
   const currentRole = roles.find((role) => role.isCurrentRole || normalizeRoleType(role.roleType) === 'currentrole')
   if (currentRole) return currentRole
 
-  return roles.find((role) => normalizeRoleType(role.roleType) === 'pastrole')
+  return roles.find((role) => {
+    const normalizedRoleType = normalizeRoleType(role.roleType)
+    return normalizedRoleType !== 'currentrole' && normalizedRoleType !== 'futurerole'
+  })
 }
 
 export const presentProfile = (
