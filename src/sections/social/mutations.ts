@@ -1,7 +1,7 @@
 import { Collection, LiveStore, NamedNode, Node, st, literal, sym } from 'rdflib'
 import { ns } from 'solid-ui'
 import { SocialMutationPlan, SocialRow } from './types'
-import { MutationOps, RdfStatement } from '../shared/types'
+import { MutationOps, RdfFetcher, RdfStatement, RdfUpdater } from '../shared/types'
 import { createIdNode } from '../shared/idNodeFactory'
 import {
 	collectNodeStatements,
@@ -201,6 +201,10 @@ async function mutateSocialEntries(
 	const nextRows = orderedRows && orderedRows.length
 		? rowsFromOrderedInput(orderedRows)
 		: mergeSocialOps(existingRows, socialOps)
+	const canForcePut = Boolean(
+		(store.updater as RdfUpdater | undefined)?.serialize &&
+		(store.fetcher as RdfFetcher | undefined)?.webOperation
+	)
 
 	const accountObjects = store.each(subject, ns.foaf('account'), null, doc)
 	const existingListNodes = uniqueStatements(
@@ -254,7 +258,8 @@ async function mutateSocialEntries(
 	await runUpdateTransport(store, doc, deletions, uniqueStatements(insertions), {
 		unsupportedMessage: 'Social updates are not supported by this store updater.',
 		failureMessage: 'Failed to save updates',
-		useDavFallback: false,
+		forcePut: canForcePut,
+		useDavFallback: !canForcePut,
 		usePutFallback: true
 	})
 }
