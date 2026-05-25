@@ -203,9 +203,7 @@ function rowHasContent(row: Row): boolean {
       row.imageSrc,
       row.location,
       row.pronouns,
-      row.dateOfBirth,
-      row.jobTitle,
-      row.orgName
+      row.dateOfBirth
     ].some(hasNonEmptyText)
   }
   return false
@@ -228,8 +226,6 @@ function toFormState(profileData: ProfileDetails): HeadingFormState {
     location: sanitizeTextValue(toText(profileData.location || '')),
     pronouns: normalizePronounsValue(toText(profileData.pronouns || '')),
     dateOfBirth: sanitizeTextValue(toText(profileData.dateOfBirth || '')),
-    jobTitle: sanitizeTextValue(toText(profileData.jobTitle || '')),
-    orgName: sanitizeTextValue(toText(profileData.orgName || '')),
     entryNode: toText(profileData.entryNode),
     status: toText(profileData.entryNode) ? 'existing' as const : 'new' as const
   }
@@ -268,7 +264,7 @@ function toFormState(profileData: ProfileDetails): HeadingFormState {
   }
 
   return {
-      basicInfo: (basicInfo) ? basicInfo : { name: '', nickname: '', imageSrc: '', location: '', pronouns: '', dateOfBirth: '', jobTitle: '', orgName: '', entryNode: '', status: 'new' },
+      basicInfo: (basicInfo) ? basicInfo : { name: '', nickname: '', imageSrc: '', location: '', pronouns: '', dateOfBirth: '', entryNode: '', status: 'new' },
       email: (email) ? email : { value: '', type: '', entryNode: '', status: 'new' },
       phone: (phone) ? phone : { value: '', type: '', entryNode: '', status: 'new' },
       address: (address) ? address : { streetAddress: '', locality: '', region: '', postalCode: '', countryName: '', type: '', entryNode: '', status: 'new' },
@@ -327,8 +323,6 @@ type ProfileBasicEditableField =
   | 'imageSrc'
   | 'pronouns'
   | 'dateOfBirth'
-  | 'jobTitle'
-  | 'orgName'
 
 type ContactAddressEditableField =
   | 'streetAddress'
@@ -650,8 +644,6 @@ function renderHeadingInfoInput(
   const nicknameLabel = 'Nickname'
   const pronounsLabel = 'Pronouns'
   const dateOfBirthLabel = 'DOB'
-  const jobTitleLabel = 'Job Title'
-  const orgNameLabel = 'Organization Name'
 
   const handleBasicInfoInput = (field: ProfileBasicEditableField) => (e: Event) => {
     const target = e.target as HTMLInputElement
@@ -895,40 +887,6 @@ function renderHeadingInfoInput(
             data-1p-ignore="true"
             data-bwignore="true"
             @change=${handleDateOfBirthInput}
-          />
-        </label>
-      </div>
-      <div class="profile-edit-dialog__row profile-edit-dialog__row--equal">
-        <label aria-label=${jobTitleLabel} class="label profile-edit-dialog__field">
-          ${jobTitleLabel}
-          <input
-            class="input"
-            type="text"
-            name="jobTitle"
-            .value=${basicInfo?.jobTitle || ''}
-            data-contact-field="jobTitle"
-            data-entry-node=${basicInfo?.entryNode || ''}
-            data-row-status=${basicInfo?.status || 'n/a'}
-            placeholder="Job Title"
-            autocomplete="organization-title"
-            inputmode="text"
-            @change=${handleBasicInfoInput('jobTitle')}
-          />
-        </label>
-        <label aria-label=${orgNameLabel} class="label profile-edit-dialog__field">
-          ${orgNameLabel}
-          <input
-            class="input"
-            type="text"
-            name="orgName"
-            .value=${basicInfo?.orgName || ''}
-            data-contact-field="orgName"
-            data-entry-node=${basicInfo?.entryNode || ''}
-            data-row-status=${basicInfo?.status || 'n/a'}
-            placeholder="Organization Name"
-            autocomplete="organization-name"
-            inputmode="text"
-            @change=${handleBasicInfoInput('orgName')}
           />
         </label>
       </div>

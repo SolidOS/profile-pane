@@ -11,7 +11,6 @@ export interface ProfilePresentation {
   pronouns?: string;
   dateOfBirth?: string;
   jobTitle?: string;
-  orgName?: string;
   primaryPhone?: PointDetails;
   primaryEmail?: PointDetails;
   primaryAddress?: AddressDetails;
@@ -28,7 +27,7 @@ export interface ProfileRow extends ProfilePresentation {
 
 export type ProfileBasicFields = Omit<
   ProfilePresentation,
-  'primaryPhone' | 'primaryEmail' | 'primaryAddress'
+  'jobTitle' | 'primaryPhone' | 'primaryEmail' | 'primaryAddress'
 >
 
 export type ProfileBasicRow = ProfileBasicFields & {
