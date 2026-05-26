@@ -413,7 +413,7 @@ export async function runUpdateTransport(
       if (!doc) {
         throw new Error(options.unsupportedMessage)
       }
-      await putResourceWithStatements(store, doc, safeDeletions, safeInsertions, options.unsupportedMessage)
+      await putResourceWithStatements(store, doc, safeDeletions, safeInsertions, options.unsupportedMessage, options.documentTextCache)
       return
     }
 
