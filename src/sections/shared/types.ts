@@ -29,6 +29,7 @@ export type RdfUpdater = PrefixCapable & {
 export type WebOperationResponse = {
   ok?: boolean
   status?: number
+  responseText?: string
 }
 
 export type RdfFetcher = {

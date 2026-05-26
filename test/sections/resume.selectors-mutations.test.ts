@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it } from "@jest/globals"
+import { beforeEach, describe, expect, it, jest } from "@jest/globals"
 import fetchMock from 'jest-fetch-mock'
 import { graph, literal, sym } from 'rdflib'
 import { ns } from 'solid-ui'
@@ -24,10 +24,18 @@ describe('Resume selectors and mutations', () => {
     const subject = sym('https://example.com/profile/card#me')
 
     const plan = { create: [], update: [], remove: [] }
-    await expect(processResumeMutations(store, subject, plan as any)).rejects.toMatchObject({
-      message: saveResumeUpdatesFailedMessageText,
-      cause: expect.objectContaining({ message: updaterUnsupportedStoreErrorMessageText })
-    })
+    let thrownError: any
+
+    try {
+      await processResumeMutations(store, subject, plan as any)
+    } catch (error) {
+      thrownError = error
+    }
+
+    expect(thrownError).toBeInstanceOf(Error)
+    expect(thrownError?.message).toBe(saveResumeUpdatesFailedMessageText)
+    expect(thrownError?.cause).toBeInstanceOf(Error)
+    expect(thrownError?.cause?.message).toBe(updaterUnsupportedStoreErrorMessageText)
   })
 
   it('creates resume membership and organization nodes with #id + 13 digits', async () => {
@@ -287,6 +295,126 @@ describe('Resume selectors and mutations', () => {
     )
 
     expect(publicIdStatement?.object.value).toBe('https://example.com/catalog/org/nasa')
+  })
+
+  it('serializes resume saves so missing prefixes can be materialized in the document', async () => {
+    const store = graph() as any
+    const subject = sym('https://example.com/profile/card#me')
+    const doc = subject.doc()
+    const membership = sym('https://example.com/profile/card#id123')
+    const organization = sym('https://example.com/profile/card#id456')
+    const update = jest.fn((_deletions: any[], _insertions: any[], callback: Function) => callback('', true))
+    const serialize = jest.fn(() => [
+      '@prefix vcard: <http://www.w3.org/2006/vcard/ns#>.',
+      '@prefix schema: <http://schema.org/>.',
+      '@prefix org: <http://www.w3.org/ns/org#>.'
+    ].join('\n'))
+    const webOperation: any = jest.fn(async () => ({ ok: true, status: 200 }))
+
+    store.add(membership, ns.org('member'), subject, doc)
+    store.add(membership, ns.rdf('type'), ns.solid('PastRole'), doc)
+    store.add(membership, ns.vcard('role'), literal('Engineer'), doc)
+    store.add(membership, ns.org('organization'), organization, doc)
+    store.add(organization, ns.rdf('type'), ns.vcard('Organization'), doc)
+    store.add(organization, ns.schema('name'), literal('Old Org'), doc)
+
+    store.updater = {
+      update,
+      serialize,
+      store: {}
+    }
+    webOperation
+      .mockResolvedValueOnce({ ok: true, status: 200, responseText: '<#me> <http://www.w3.org/2006/vcard/ns#role> "Engineer".' })
+      .mockResolvedValueOnce({ ok: true, status: 200 })
+    store.fetcher = { webOperation }
+
+    await processResumeMutations(store, subject, {
+      create: [],
+      update: [{
+        title: 'Senior Engineer',
+        startDate: literal('2020-01-01'),
+        endDate: literal('2021-01-01'),
+        isCurrentRole: false,
+        orgName: 'New Org',
+        orgType: 'Corporation',
+        orgLocation: 'Remote',
+        orgHomePage: 'https://example.com',
+        description: 'Updated role',
+        entryNode: membership.value,
+        status: 'modified'
+      }],
+      remove: []
+    } as any)
+
+    expect(update).not.toHaveBeenCalled()
+    expect(serialize).toHaveBeenCalledTimes(1)
+    expect(webOperation).toHaveBeenCalledTimes(2)
+    const [method, url, request] = webOperation.mock.calls[1] as unknown as [string, string, { body: string }]
+
+    expect(method).toBe('PUT')
+    expect(url).toBe(doc.value)
+    expect(request.body).toContain('@prefix vcard:')
+    expect(request.body).toContain('@prefix schema:')
+    expect(request.body).toContain('@prefix org:')
+  })
+
+  it('keeps resume saves on patch updates when the document already declares the needed prefixes', async () => {
+    const store = graph() as any
+    const subject = sym('https://example.com/profile/card#me')
+    const doc = subject.doc()
+    const membership = sym('https://example.com/profile/card#id123')
+    const organization = sym('https://example.com/profile/card#id456')
+    const update = jest.fn((_deletions: any[], _insertions: any[], callback: Function) => callback('', true))
+    const serialize = jest.fn(() => '@prefix vcard: <http://www.w3.org/2006/vcard/ns#>.')
+    const webOperation: any = jest.fn(async () => ({ ok: true, status: 200 }))
+
+    store.add(membership, ns.org('member'), subject, doc)
+    store.add(membership, ns.rdf('type'), ns.solid('PastRole'), doc)
+    store.add(membership, ns.vcard('role'), literal('Engineer'), doc)
+    store.add(membership, ns.org('organization'), organization, doc)
+    store.add(organization, ns.rdf('type'), ns.vcard('Organization'), doc)
+    store.add(organization, ns.schema('name'), literal('Old Org'), doc)
+
+    store.updater = {
+      update,
+      serialize,
+      store: {}
+    }
+    webOperation.mockResolvedValueOnce({
+      ok: true,
+      status: 200,
+      responseText: [
+        '@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>.',
+        '@prefix vcard: <http://www.w3.org/2006/vcard/ns#>.',
+        '@prefix schema: <http://schema.org/>.',
+        '@prefix org: <http://www.w3.org/ns/org#>.',
+        '@prefix solid: <http://www.w3.org/ns/solid/terms#>.'
+      ].join('\n')
+    })
+    store.fetcher = { webOperation }
+
+    await processResumeMutations(store, subject, {
+      create: [],
+      update: [{
+        title: 'Senior Engineer',
+        startDate: literal('2020-01-01'),
+        endDate: literal('2021-01-01'),
+        isCurrentRole: false,
+        orgName: 'New Org',
+        orgType: 'Corporation',
+        orgLocation: 'Remote',
+        orgHomePage: 'https://example.com',
+        description: 'Updated role',
+        entryNode: membership.value,
+        status: 'modified'
+      }],
+      remove: []
+    } as any)
+
+    expect(update).toHaveBeenCalledTimes(1)
+    expect(serialize).not.toHaveBeenCalled()
+    expect(webOperation).toHaveBeenCalledTimes(1)
+    expect((webOperation.mock.calls[0] as unknown[])[0]).toBe('GET')
   })
 
   it('uses explicit roleType when persisting membership type', async () => {

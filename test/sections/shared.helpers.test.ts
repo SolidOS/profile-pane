@@ -203,13 +203,14 @@ describe('shared helper utilities', () => {
       const update = jest.fn()
       const serialize = jest.fn(() => '@prefix schema: <http://schema.org/> .')
       const webOperation = jest.fn(async () => ({ ok: true, status: 200 }))
+      const load = jest.fn(async () => undefined)
 
       store.updater = {
         update,
         serialize,
         store: {}
       }
-      store.fetcher = { webOperation }
+      store.fetcher = { webOperation, load }
 
       await runUpdateTransport(
         store,
@@ -309,7 +310,6 @@ describe('shared helper utilities', () => {
       expect(webOperation).toHaveBeenCalledTimes(1)
       expect(store.statementsMatching(subject, ns.schema('name'), null, doc)).toHaveLength(0)
     })
-
     it('replaces predicate statements and finds linked statements by normalized node ids', () => {
       const store = graph() as any
       const subject = sym('https://example.com/profile#me')

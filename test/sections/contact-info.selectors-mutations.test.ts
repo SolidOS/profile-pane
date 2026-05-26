@@ -1,4 +1,4 @@
-import { describe, expect, it } from "@jest/globals"
+import { describe, expect, it, jest } from "@jest/globals"
 import { graph, literal, st, sym } from 'rdflib'
 import { ns } from 'solid-ui'
 import { presentContactInfo } from '../../src/sections/contactInfo/selectors'
@@ -136,5 +136,60 @@ describe('Contact info selectors and mutations', () => {
     expect(result.emails[0].valueNode.value).toBe('mailto:external@example.com')
     expect(result.phones).toHaveLength(1)
     expect(result.phones[0].valueNode.value).toBe('tel:+19998887777')
+  })
+
+  it('reuses one prefix-check GET across sequential contact mutations in one save cycle', async () => {
+    const store = graph() as any
+    const subject = sym('https://example.com/profile/card#me')
+    const serialize = jest.fn(() => [
+      '@prefix vcard: <http://www.w3.org/2006/vcard/ns#>.',
+      '<> <http://xmlns.com/foaf/0.1/primaryTopic> <#me>.'
+    ].join('\n'))
+    const webOperation = jest.fn(async (method: string) => {
+      if (method === 'GET') {
+        return {
+          ok: true,
+          status: 200,
+          responseText: '<> <http://xmlns.com/foaf/0.1/primaryTopic> <#me>.'
+        }
+      }
+
+      return { ok: true, status: 200 }
+    })
+
+    store.updater = {
+      update: (deletions: any[], insertions: any[], callback: Function) => {
+        deletions.forEach((statement) => store.remove(st(statement.subject, statement.predicate, statement.object, statement.why)))
+        insertions.forEach((statement) => store.add(statement.subject, statement.predicate, statement.object, statement.why))
+        callback('', true)
+      },
+      serialize,
+      store: {}
+    }
+    store.fetcher = { webOperation }
+
+    await processContactInfoMutations(store, subject, {
+      phoneOps: {
+        create: [{ value: '+1-111-222-3333', type: 'Voice', entryNode: '', status: 'new' }],
+        update: [],
+        remove: []
+      },
+      emailOps: {
+        create: [{ value: 'jane@example.com', type: 'Internet', entryNode: '', status: 'new' }],
+        update: [],
+        remove: []
+      },
+      addressOps: {
+        create: [{ streetAddress: 'Main St', locality: 'Boston', region: 'MA', postalCode: '02101', countryName: 'US', type: 'Home', entryNode: '', status: 'new' }],
+        update: [],
+        remove: []
+      }
+    } as any)
+
+    const getCalls = webOperation.mock.calls.filter(([method]) => method === 'GET')
+
+    expect(getCalls).toHaveLength(1)
+    expect(store.any(subject, ns.vcard('hasEmail'), null, subject.doc())).not.toBeNull()
+    expect(store.any(subject, ns.vcard('hasTelephone'), null, subject.doc())).not.toBeNull()
   })
 })

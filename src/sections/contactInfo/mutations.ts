@@ -2,9 +2,9 @@ import { LiveStore, NamedNode, Node, literal, st, sym } from 'rdflib'
 import { ns } from 'solid-ui'
 import { ContactAddressRow, ContactMutationPlan, ContactPointRow } from './types'
 import { MutationOps } from '../shared/types'
-import { applyUpdaterPatch, collectLinkedNodeStatements, collectNodeStatements, findExistingNode } from '../shared/rdfMutationHelpers'
+import { MutationDocumentTextCache, collectLinkedNodeStatements, collectNodeStatements, findExistingNode, runUpdateTransport, shouldForceDocumentPutForStatements } from '../shared/rdfMutationHelpers'
 import { createIdNode } from '../shared/idNodeFactory'
-import { contactInfoMutationSaveFailedDebugText, saveContactUpdatesFailedMessageText } from '../../texts'
+import { contactInfoMutationSaveFailedDebugText, saveContactUpdatesFailedMessageText, updaterUnsupportedStoreErrorMessageText } from '../../texts'
 import { error as debugError } from '../../utils/debug'
 
 function buildPhoneStatements(subject: NamedNode, doc: NamedNode, node: Node, phone: ContactPointRow) {
@@ -50,7 +50,7 @@ function buildAddressStatements(subject: NamedNode, doc: NamedNode, node: Node, 
   return inserts
 }
 
-async function mutatePhoneEntries(store: LiveStore, subject: NamedNode, phoneOps: MutationOps<ContactPointRow>) {
+async function mutatePhoneEntries(store: LiveStore, subject: NamedNode, phoneOps: MutationOps<ContactPointRow>, documentTextCache?: MutationDocumentTextCache) {
   const doc = subject.doc()
   const existingPhoneNodes = store.each(subject, ns.vcard('hasTelephone'), null, doc) as Node[]
   const deletions: any[] = []
@@ -89,10 +89,19 @@ async function mutatePhoneEntries(store: LiveStore, subject: NamedNode, phoneOps
     insertions.push(...buildPhoneStatements(subject, doc, createIdNode(doc), phone))
   })
 
-  await applyUpdaterPatch(store, deletions, insertions)
+  const shouldSerializeDocument = await shouldForceDocumentPutForStatements(store, doc, insertions, undefined, { documentTextCache })
+
+  await runUpdateTransport(store, doc, deletions, insertions, {
+    unsupportedMessage: updaterUnsupportedStoreErrorMessageText,
+    failureMessage: 'Failed to save contact info updates',
+    documentTextCache,
+    useDavFallback: false,
+    usePutFallback: shouldSerializeDocument,
+    forcePut: shouldSerializeDocument
+  })
 }
 
-async function mutateEmailEntries(store: LiveStore, subject: NamedNode, emailOps: MutationOps<ContactPointRow>) {
+async function mutateEmailEntries(store: LiveStore, subject: NamedNode, emailOps: MutationOps<ContactPointRow>, documentTextCache?: MutationDocumentTextCache) {
   const doc = subject.doc()
   const existingEmailNodes = store.each(subject, ns.vcard('hasEmail'), null, doc) as Node[]
   const deletions: any[] = []
@@ -126,10 +135,19 @@ async function mutateEmailEntries(store: LiveStore, subject: NamedNode, emailOps
     insertions.push(...buildEmailStatements(subject, doc, createIdNode(doc), email))
   })
 
-  await applyUpdaterPatch(store, deletions, insertions)
+  const shouldSerializeDocument = await shouldForceDocumentPutForStatements(store, doc, insertions, undefined, { documentTextCache })
+
+  await runUpdateTransport(store, doc, deletions, insertions, {
+    unsupportedMessage: updaterUnsupportedStoreErrorMessageText,
+    failureMessage: 'Failed to save contact info updates',
+    documentTextCache,
+    useDavFallback: false,
+    usePutFallback: shouldSerializeDocument,
+    forcePut: shouldSerializeDocument
+  })
 }
 
-async function mutateAddressEntries(store: LiveStore, subject: NamedNode, addressOps: MutationOps<ContactAddressRow>) {
+async function mutateAddressEntries(store: LiveStore, subject: NamedNode, addressOps: MutationOps<ContactAddressRow>, documentTextCache?: MutationDocumentTextCache) {
   const doc = subject.doc()
   const existingAddressNodes = store.each(subject, ns.vcard('hasAddress'), null, doc) as Node[]
   const deletions: any[] = []
@@ -163,14 +181,24 @@ async function mutateAddressEntries(store: LiveStore, subject: NamedNode, addres
     insertions.push(...buildAddressStatements(subject, doc, createIdNode(doc), address))
   })
 
-  await applyUpdaterPatch(store, deletions, insertions)
+  const shouldSerializeDocument = await shouldForceDocumentPutForStatements(store, doc, insertions, undefined, { documentTextCache })
+
+  await runUpdateTransport(store, doc, deletions, insertions, {
+    unsupportedMessage: updaterUnsupportedStoreErrorMessageText,
+    failureMessage: 'Failed to save contact info updates',
+    documentTextCache,
+    useDavFallback: false,
+    usePutFallback: shouldSerializeDocument,
+    forcePut: shouldSerializeDocument
+  })
 }
 
 export async function processContactInfoMutations(store: LiveStore, subject: NamedNode, mutationPlan: ContactMutationPlan) {
   try {
-    await mutatePhoneEntries(store, subject, mutationPlan.phoneOps)
-    await mutateEmailEntries(store, subject, mutationPlan.emailOps)
-    await mutateAddressEntries(store, subject, mutationPlan.addressOps)
+    const documentTextCache: MutationDocumentTextCache = new Map()
+    await mutatePhoneEntries(store, subject, mutationPlan.phoneOps, documentTextCache)
+    await mutateEmailEntries(store, subject, mutationPlan.emailOps, documentTextCache)
+    await mutateAddressEntries(store, subject, mutationPlan.addressOps, documentTextCache)
   } catch (error) {
     const rootError = error instanceof Error ? error : new Error(String(error))
     debugError(contactInfoMutationSaveFailedDebugText, rootError)

@@ -2,12 +2,13 @@ import { LiveStore, NamedNode, Node, st, literal, sym } from 'rdflib'
 import { ns } from 'solid-ui'
 import { ResumeRow } from './types'
 import { MutationOps } from '../shared/types'
-import { applyUpdaterPatch, collectLinkedNodeStatements, collectNodeStatements, findExistingNode, replacePredicateStatements } from '../shared/rdfMutationHelpers'
+import { collectLinkedNodeStatements, collectNodeStatements, findExistingNode, replacePredicateStatements, runUpdateTransport, shouldForceDocumentPutForStatements } from '../shared/rdfMutationHelpers'
 import { createIdNode } from '../shared/idNodeFactory'
 import {
   resumeMutationSaveFailedDebugText,
   resumeUpdateEntryNotFoundErrorMessageText,
-  saveResumeUpdatesFailedMessageText
+  saveResumeUpdatesFailedMessageText,
+  updaterUnsupportedStoreErrorMessageText
 } from '../../texts'
 import { error as debugError } from '../../utils/debug'
 
@@ -200,7 +201,15 @@ async function mutateResumeEntries(store: LiveStore, subject: NamedNode, resumeO
     insertions.push(...buildResumeStatements(subject, doc, createIdNode(doc), resume))
   })
 
-  await applyUpdaterPatch(store, deletions, insertions)
+  const shouldSerializeDocument = await shouldForceDocumentPutForStatements(store, doc, insertions)
+
+  await runUpdateTransport(store, doc, deletions, insertions, {
+    unsupportedMessage: updaterUnsupportedStoreErrorMessageText,
+    failureMessage: 'Failed to save resume updates',
+    useDavFallback: false,
+    usePutFallback: shouldSerializeDocument,
+    forcePut: shouldSerializeDocument
+  })
 }
 
 export type ResumeMutationPlan = MutationOps<ResumeRow>
