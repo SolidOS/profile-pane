@@ -194,8 +194,7 @@ describe('Intro selectors and mutations', () => {
     expect(store.any(subject, ns.vcard('nickname'), null, doc)?.value).toBe('janey')
     expect(store.any(subject, ns.solid('preferredSubjectPronoun'), null, doc)?.value).toBe('She')
     expect(store.any(subject, ns.solid('preferredObjectPronoun'), null, doc)?.value).toBe('Her')
-    expect(store.any(subject, ns.vcard('role'), null, doc)?.value).toBe('Engineer')
-    expect(store.any(subject, ns.vcard('organization-name'), null, doc)?.value).toBe('Inrupt')
+    expect(store.any(subject, ns.vcard('role'), null, doc)).toBeNull()
     expect(store.any(subject, ns.vcard('hasPhoto'), null, doc)?.termType).toBe('NamedNode')
 
     await processHeadingMutations(store, subject, {
