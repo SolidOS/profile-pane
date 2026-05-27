@@ -6,24 +6,14 @@ import { DataBrowserContext } from 'pane-registry'
 import { NamedNode } from 'rdflib'
 import { ViewerMode } from '../../types'
 import { createHeadingEditDialog } from './HeadingEditDialog'
+import { Image } from './Image'
 import { toText } from '../../textUtils'
 import { toDisplayDateDMY } from './dateHelpers'
-import { birthdayIcon, editIcon, locationIcon, personInCircleIcon } from '../../icons-svg/profileIcons'
+import { birthdayIcon, editIcon, locationIcon } from '../../icons-svg/profileIcons'
 import { emailIcon, phoneIcon } from '../../icons-svg/contactIcons'
 import { addMeToYourFriendsDiv } from '../../specialButtons/addMeToYourFriends'
 import { addMeToYourContactsDiv } from '../../specialButtons/addContact/addMeToYourContacts'
 import { resolvePhotoDisplaySrc } from './imageHelpers'
-
-const showHeadingImageFallback = (event: Event) => {
-  const image = event.currentTarget as HTMLImageElement | null
-  const frame = image?.parentElement
-  if (!image || !frame) {
-    return
-  }
-
-  image.hidden = true
-  frame.classList.add('profile__image-frame--fallback')
-}
 
 export const renderHeadingSection = async (
   context: DataBrowserContext,
@@ -115,24 +105,3 @@ const Line = (value, prefix: TemplateResult | symbol | string = nothing, label: 
       </span>
     </div>
   ` : nothing
-
-export const Image = (src, alt) => html`
-  <div class=${src ? 'profile__image-frame' : 'profile__image-frame profile__image-frame--fallback'}>
-    ${src
-      ? html`
-          <img
-            class="profile__hero"
-            src=${src}
-            alt="${alt}"
-            width="140"
-            height="140"
-            loading="eager"
-            @error=${showHeadingImageFallback}
-          />
-        `
-      : nothing}
-    <div class="profile__hero-alt" role="img" aria-label="${alt}">
-      <span class="profile__hero-icon">${personInCircleIcon}</span>
-    </div>
-  </div>
-`
