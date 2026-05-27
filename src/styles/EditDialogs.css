@@ -392,6 +392,140 @@ solid-ui-button.profile-edit-dialog__image-camera-button {
   border-color: var(--color-border-button-hover, var(--gray-400, #99A1AF)) !important;
 }
 
+.profile-edit-dialog__source-picker {
+  display: grid;
+  width: min(15rem, 100%);
+  margin-top: var(--spacing-2xs, 0.625rem);
+}
+
+.profile-edit-dialog__source-options {
+  display: grid;
+  gap: var(--spacing-2xs, 0.625rem);
+}
+
+.profile-edit-dialog__source-option {
+  display: grid;
+  gap: 0.25rem;
+  width: 100%;
+  padding: 0.625rem 0.75rem;
+  border: 1px solid var(--color-border-button, var(--gray-300, #D1D5DC));
+  border-radius: var(--border-radius-base, 0.3125rem);
+  background: var(--color-card-bg, var(--white, #FFF));
+  color: var(--color-text-subheading, var(--gray-900, #101828));
+  text-align: left;
+  cursor: pointer;
+}
+
+.profile-edit-dialog__source-option:hover,
+.profile-edit-dialog__source-option:focus-visible {
+  border-color: var(--color-border-button-hover, var(--gray-400, #99A1AF));
+  background: var(--color-surface-tertiary-hover, var(--gray-100, #F3F4F6));
+}
+
+.profile-edit-dialog__source-option-title,
+.profile-edit-dialog__source-option-description {
+  display: block;
+}
+
+.profile-edit-dialog__source-option-title {
+  font-size: var(--font-size-xs, 0.75rem);
+  font-weight: var(--font-weight-xbold, 700);
+  line-height: var(--line-height-base, 1.5);
+}
+
+.profile-edit-dialog__source-option-description {
+  color: var(--profile-edit-dialog-muted-text);
+  font-size: 0.6875rem;
+  line-height: var(--line-height-base, 1.5);
+}
+
+.profile-edit-dialog__pod-photo-picker {
+  display: grid;
+  gap: var(--spacing-xs, 0.75rem);
+  margin-top: var(--spacing-xs, 0.75rem);
+}
+
+.profile-edit-dialog__pod-photo-picker-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-xs, 0.75rem);
+}
+
+.profile-edit-dialog__pod-photo-close {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--profile-edit-dialog-muted-text);
+  font-size: var(--font-size-xs, 0.75rem);
+  font-weight: var(--font-weight-medium, 500);
+  cursor: pointer;
+}
+
+.profile-edit-dialog__pod-photo-close:hover,
+.profile-edit-dialog__pod-photo-close:focus-visible {
+  color: var(--color-text-subheading, var(--gray-900, #101828));
+}
+
+.profile-edit-dialog__pod-photo-status {
+  margin: 0;
+  color: var(--profile-edit-dialog-muted-text);
+  font-size: var(--font-size-xs, 0.75rem);
+}
+
+.profile-edit-dialog__pod-photo-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(7.5rem, 1fr));
+  gap: var(--spacing-xs, 0.75rem);
+}
+
+.profile-edit-dialog__pod-photo-option {
+  display: grid;
+  gap: var(--spacing-2xs, 0.625rem);
+  justify-items: start;
+  padding: var(--spacing-xs, 0.75rem);
+  border: 1px solid var(--color-border-button, var(--gray-300, #D1D5DC));
+  border-radius: var(--border-radius-base, 0.3125rem);
+  background: var(--color-card-bg, var(--white, #FFF));
+  color: var(--color-text-subheading, var(--gray-900, #101828));
+  text-align: left;
+  cursor: pointer;
+}
+
+.profile-edit-dialog__pod-photo-option:hover,
+.profile-edit-dialog__pod-photo-option:focus-visible,
+.profile-edit-dialog__pod-photo-option[data-selected] {
+  border-color: var(--color-border-button-hover, var(--gray-400, #99A1AF));
+  background: var(--color-surface-tertiary-hover, var(--gray-100, #F3F4F6));
+}
+
+.profile-edit-dialog__pod-photo-thumb {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+  border-radius: var(--border-radius-base, 0.3125rem);
+  background: var(--color-surface-accent-subtle, var(--gray-100, #F3F4F6));
+}
+
+.profile-edit-dialog__pod-photo-name,
+.profile-edit-dialog__pod-photo-meta {
+  display: block;
+}
+
+.profile-edit-dialog__pod-photo-name {
+  font-size: var(--font-size-xs, 0.75rem);
+  font-weight: var(--font-weight-xbold, 700);
+  line-height: var(--line-height-base, 1.5);
+  word-break: break-word;
+}
+
+.profile-edit-dialog__pod-photo-meta {
+  color: var(--profile-edit-dialog-muted-text);
+  font-size: var(--font-size-xxs, 0.75rem);
+  line-height: var(--line-height-base, 1.5);
+}
+
 .profile-edit-dialog__paste-button {
   position: absolute;
   white-space: nowrap;

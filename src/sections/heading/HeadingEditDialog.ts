@@ -33,7 +33,7 @@ import { cameraIcon } from '../../icons-svg/profileIcons'
 import { ContactAddressRow, ContactPointRow } from '../contactInfo/types'
 import { sanitizeAddressFieldValue, sanitizeBasicInputFieldValue, sanitizeEmailValue, sanitizePhoneLocalValue } from '../shared/sanitizeUtils'
 import { toStorageDateISO } from './dateHelpers'
-import { copyPhotoToProfileContainer, moveProfileImagesToPhotoContainer, resolvePhotoDisplaySrc, shouldStorePhotoInProfileContainer, uploadPhotoFile } from './imageHelpers'
+import { copyPhotoToProfileContainer, listPodPhotoOptions, moveProfileImagesToPhotoContainer, PodPhotoOption, resolvePhotoDisplaySrc, shouldStorePhotoInProfileContainer, uploadPhotoFile } from './imageHelpers'
 /* Note: new design - has address type in More Edit Contacts for now we will leave
          out Address Type, but a ticket will be created to add type later
          so I will keep the code and just comment it out for now. 
@@ -67,6 +67,11 @@ type HeadingFormState = {
   phoneTypeWasMissing: boolean
   imagePreviewSrc: string
   pendingPhotoFile: File | null
+  sourcePickerOpen: boolean
+  podPhotoOptions: Array<PodPhotoOption & { previewSrc: string }>
+  podPhotoPickerOpen: boolean
+  podPhotoPickerLoading: boolean
+  podPhotoPickerError: string
   clearImagePreview: () => void
 }
 
@@ -273,6 +278,11 @@ function toFormState(profileData: ProfileDetails): HeadingFormState {
       phoneTypeWasMissing,
       imagePreviewSrc: '',
       pendingPhotoFile: null,
+      sourcePickerOpen: false,
+      podPhotoOptions: [],
+      podPhotoPickerOpen: false,
+      podPhotoPickerLoading: false,
+      podPhotoPickerError: '',
       clearImagePreview: () => undefined
     }
 }
@@ -308,6 +318,56 @@ function setResolvedHeadingPreview(formState: HeadingFormState, resolvedImageSrc
     formState.imagePreviewSrc = ''
     formState.clearImagePreview = () => undefined
   }
+}
+
+async function applySelectedPodPhoto(
+  store: LiveStore,
+  formState: HeadingFormState,
+  photoUri: string,
+  rerender: () => void
+): Promise<void> {
+  formState.pendingPhotoFile = null
+  formState.sourcePickerOpen = false
+  formState.podPhotoPickerOpen = false
+  formState.podPhotoPickerError = ''
+  applyRowFieldChange(formState.basicInfo, 'imageSrc', photoUri, rowHasContent)
+
+  const resolvedPreview = await resolvePhotoDisplaySrc(store, photoUri)
+  if (resolvedPreview && resolvedPreview !== photoUri) {
+    setResolvedHeadingPreview(formState, resolvedPreview)
+  } else {
+    formState.clearImagePreview()
+  }
+
+  rerender()
+}
+
+async function openPodPhotoPicker(
+  store: LiveStore,
+  subject: NamedNode,
+  formState: HeadingFormState,
+  rerender: () => void
+): Promise<void> {
+  formState.sourcePickerOpen = false
+  formState.podPhotoPickerOpen = true
+  formState.podPhotoPickerLoading = true
+  formState.podPhotoPickerError = ''
+  rerender()
+
+  const podPhotoOptions = await listPodPhotoOptions(store, subject)
+  formState.podPhotoOptions = await Promise.all(
+    podPhotoOptions.map(async (option) => ({
+      ...option,
+      previewSrc: (await resolvePhotoDisplaySrc(store, option.uri)) || option.uri
+    }))
+  )
+
+  if (formState.podPhotoOptions.length === 0) {
+    formState.podPhotoPickerError = 'No stored pod photos are available yet.'
+  }
+
+  formState.podPhotoPickerLoading = false
+  rerender()
 }
 
 type ProfileBasicEditableField =
@@ -626,9 +686,21 @@ function renderContactAddressInput({
 
 function renderHeadingInfoInput(
   formState: HeadingFormState,
+  store: LiveStore,
+  subject: NamedNode,
   rerender: () => void
 ): TemplateResult {
-  const { basicInfo, phone, email, imagePreviewSrc } = formState
+  const {
+    basicInfo,
+    phone,
+    email,
+    imagePreviewSrc,
+    sourcePickerOpen,
+    podPhotoOptions,
+    podPhotoPickerOpen,
+    podPhotoPickerLoading,
+    podPhotoPickerError
+  } = formState
   const imageSrcLabel = 'Profile Photo'
   const recommendedImageToLoad = 'Recommended: Square JPG, PNG. Max 2MB.'
   const nameLabel = 'Full Name'
@@ -658,9 +730,8 @@ function renderHeadingInfoInput(
     }
   }
 
-  const handleUpload = async (e: Event) => {
-    const button = e.currentTarget as HTMLButtonElement | null
-    const dom = button?.ownerDocument || document
+  const openDevicePicker = async (dom: Document) => {
+    if (!basicInfo) return
     const fileInput = dom.createElement('input')
     fileInput.type = 'file'
     fileInput.accept = 'image/*'
@@ -673,9 +744,12 @@ function renderHeadingInfoInput(
     fileInput.addEventListener('change', async () => {
       const file = fileInput.files?.[0]
       cleanupFileInput()
-      if (!file || !basicInfo) return
+      if (!file) return
 
       try {
+        formState.sourcePickerOpen = false
+        formState.podPhotoPickerOpen = false
+        formState.podPhotoPickerError = ''
         formState.pendingPhotoFile = file
         setHeadingImagePreview(formState, file)
         applyRowFieldChange(
@@ -692,6 +766,13 @@ function renderHeadingInfoInput(
 
     dom.body.appendChild(fileInput)
     fileInput.click()
+  }
+
+  const handleUpload = async (_e: Event) => {
+    formState.sourcePickerOpen = !formState.sourcePickerOpen
+    formState.podPhotoPickerOpen = false
+    formState.podPhotoPickerError = ''
+    rerender()
   }
 
   const handleCameraClick = async (e: Event) => {
@@ -739,6 +820,9 @@ function renderHeadingInfoInput(
         if (!detail?.file || !basicInfo) return
 
         try {
+          formState.sourcePickerOpen = false
+          formState.podPhotoPickerOpen = false
+          formState.podPhotoPickerError = ''
           formState.pendingPhotoFile = detail.file
           closeCameraFrame()
           setHeadingImagePreview(formState, detail.file)
@@ -764,10 +848,48 @@ function renderHeadingInfoInput(
   const handleDelete = async (_e: Event) => {
     if (!basicInfo) return
     formState.pendingPhotoFile = null
+    formState.sourcePickerOpen = false
+    formState.podPhotoPickerOpen = false
+    formState.podPhotoPickerError = ''
     formState.clearImagePreview()
     applyRowFieldChange(basicInfo, 'imageSrc', '', rowHasContent)
     rerender()
   }
+
+  const handleChooseFromDevice = async (e: Event) => {
+    const button = e.currentTarget as HTMLButtonElement | null
+    const dom = button?.ownerDocument || document
+    await openDevicePicker(dom)
+  }
+
+  const handleChooseFromPod = async (_e: Event) => {
+    try {
+      await openPodPhotoPicker(store, subject, formState, rerender)
+    } catch (error) {
+      formState.podPhotoOptions = []
+      formState.podPhotoPickerLoading = false
+      formState.podPhotoPickerOpen = true
+      formState.podPhotoPickerError = 'Could not load pod photos right now.'
+      rerender()
+      debugError('Opening pod photo picker failed', error)
+    }
+  }
+
+  const handleClosePodPicker = async (_e: Event) => {
+    formState.podPhotoPickerOpen = false
+    formState.podPhotoPickerError = ''
+    rerender()
+  }
+
+  const handlePodPhotoSelection = async (photoUri: string) => {
+    try {
+      await applySelectedPodPhoto(store, formState, photoUri, rerender)
+    } catch (error) {
+      debugError('Selecting pod photo failed', error)
+    }
+  }
+
+  const currentImageSrc = sanitizeTextValue(basicInfo.imageSrc || '')
 
   return html`
     <div class="profile-edit-dialog__row profile-edit-dialog__row--heading-photo">
@@ -818,6 +940,81 @@ function renderHeadingInfoInput(
             Remove
           </solid-ui-button>
         </div>
+
+        ${sourcePickerOpen
+          ? html`
+              <div class="profile-edit-dialog__source-picker" aria-label="Choose photo source">
+                <div class="profile-edit-dialog__source-options">
+                  <button
+                    type="button"
+                    class="profile-edit-dialog__source-option"
+                    @click=${handleChooseFromPod}
+                  >
+                    <span class="profile-edit-dialog__source-option-title">From Pod</span>
+                    <span class="profile-edit-dialog__source-option-description">Choose from photos already stored in your profile folder.</span>
+                  </button>
+                  <button
+                    type="button"
+                    class="profile-edit-dialog__source-option"
+                    @click=${handleChooseFromDevice}
+                  >
+                    <span class="profile-edit-dialog__source-option-title">From Device</span>
+                    <span class="profile-edit-dialog__source-option-description">Upload a new photo from this device.</span>
+                  </button>
+                </div>
+              </div>
+            `
+          : null}
+
+        ${podPhotoPickerOpen
+          ? html`
+              <div class="profile-edit-dialog__pod-photo-picker" aria-label="Stored pod photos">
+                <div class="profile-edit-dialog__pod-photo-picker-header">
+                  <p class="profile-edit-dialog__pod-photo-status"><strong>Choose From Pod</strong></p>
+                  <button
+                    type="button"
+                    class="profile-edit-dialog__pod-photo-close"
+                    @click=${handleClosePodPicker}
+                  >
+                    Close
+                  </button>
+                </div>
+                ${podPhotoPickerLoading
+                  ? html`<p class="profile-edit-dialog__pod-photo-status">Loading pod photos...</p>`
+                  : null}
+                ${!podPhotoPickerLoading && podPhotoPickerError
+                  ? html`<p class="profile-edit-dialog__pod-photo-status">${podPhotoPickerError}</p>`
+                  : null}
+                ${!podPhotoPickerLoading && podPhotoOptions.length > 0
+                  ? html`
+                      <div class="profile-edit-dialog__pod-photo-grid">
+                        ${podPhotoOptions.map((option) => {
+                          const isSelected = currentImageSrc === option.uri
+                          return html`
+                            <button
+                              type="button"
+                              class="profile-edit-dialog__pod-photo-option"
+                              ?data-selected=${isSelected}
+                              aria-pressed=${isSelected ? 'true' : 'false'}
+                              @click=${() => { void handlePodPhotoSelection(option.uri) }}
+                            >
+                              <img
+                                class="profile-edit-dialog__pod-photo-thumb"
+                                src=${option.previewSrc}
+                                alt=${option.label}
+                                loading="lazy"
+                              />
+                              <span class="profile-edit-dialog__pod-photo-name">${option.label}</span>
+                              <span class="profile-edit-dialog__pod-photo-meta">${isSelected ? 'Current selection' : 'Use this photo'}</span>
+                            </button>
+                          `
+                        })}
+                      </div>
+                    `
+                  : null}
+              </div>
+            `
+          : null}
       </div>
     </div>
     <div class="profile-edit-dialog__image-camera-capture-row">
@@ -914,7 +1111,7 @@ function renderHeadingEditTemplate(
   const rerender = () => renderHeadingEditTemplate(form, formState, store, subject, viewerMode)
  
   render(html`
-    ${renderHeadingInfoInput(formState, rerender)}
+    ${renderHeadingInfoInput(formState, store, subject, rerender)}
     ${renderContactAddressInput({ address: formState.address })}
     ${viewerMode !== 'owner'
       ? html`<p class="profile-edit-dialog__login-message">${ownerLoginRequiredDialogMessageText}</p>`

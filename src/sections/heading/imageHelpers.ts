@@ -11,6 +11,11 @@ export type PreparedPhotoMigration = {
   migratedPhotoUris: Map<string, string>
   finalize: () => Promise<void>
 }
+
+export type PodPhotoOption = {
+  uri: string
+  label: string
+}
 /* Code copied from contact-pane/src/mugshotGallery and modified to fit the needs of the new design */
 const mimeMap: Record<string, string> = {
   'image/png': 'png',
@@ -108,6 +113,28 @@ function fileExtension(resourceUri: string): string {
   }
 
   return filename.slice(lastDot + 1).toLowerCase()
+}
+
+function decodeFilename(resourceUri: string): string {
+  const pathname = new URL(resourceUri).pathname
+  const filename = pathname.split('/').pop() || resourceUri
+  try {
+    return decodeURIComponent(filename)
+  } catch {
+    return filename
+  }
+}
+
+function isPodPhotoResource(resourceUri: string): boolean {
+  if (resourceUri.endsWith('/')) {
+    return false
+  }
+
+  if (resourceUri.endsWith('.acl')) {
+    return false
+  }
+
+  return ROOT_PROFILE_IMAGE_EXTENSIONS.has(fileExtension(resourceUri))
 }
 
 function isRootProfileImageResource(subject: NamedNode, resourceUri: string): boolean {
@@ -420,6 +447,43 @@ export async function resolvePhotoDisplaySrc(store: LiveStore, imageSrc?: string
 
 export async function uploadPhotoFile(store: LiveStore, subject: NamedNode, file: File): Promise<string> {
   return uploadPhotoBlob(store, subject, file, file.name || 'image')
+}
+
+export async function listPodPhotoOptions(store: LiveStore, subject: NamedNode): Promise<PodPhotoOption[]> {
+  const fetcher = store.fetcher as { load?: (resource: NamedNode) => Promise<any> } | undefined
+  if (!fetcher?.load || typeof (store as any).each !== 'function') {
+    return []
+  }
+
+  const subjectContainerNode = sym(subjectContainerUri(subject))
+  const photosContainerNode = sym(photoContainerUri(subject))
+
+  await fetcher.load(subjectContainerNode)
+  try {
+    await fetcher.load(photosContainerNode)
+  } catch {
+    // Profiles without a dedicated photo container should still be able to pick legacy images.
+  }
+
+  const uniquePhotos = new Map<string, PodPhotoOption>()
+  const containerNodes = [subjectContainerNode, photosContainerNode]
+
+  for (const containerNode of containerNodes) {
+    const containedResources = ((store as any).each(containerNode, ldp('contains')) as NamedNode[])
+      .map((resource) => resource.uri)
+      .filter((resourceUri) => isPodPhotoResource(resourceUri))
+
+    for (const resourceUri of containedResources) {
+      if (!uniquePhotos.has(resourceUri)) {
+        uniquePhotos.set(resourceUri, {
+          uri: resourceUri,
+          label: decodeFilename(resourceUri)
+        })
+      }
+    }
+  }
+
+  return Array.from(uniquePhotos.values()).sort((left, right) => left.label.localeCompare(right.label, undefined, { sensitivity: 'base' }))
 }
 
 export async function copyPhotoToProfileContainer(store: LiveStore, subject: NamedNode, photoUri: string): Promise<PreparedPhotoMigration> {

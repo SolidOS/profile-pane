@@ -117,6 +117,13 @@ describe('heading edit dialog', () => {
     uploadButton?.click()
     await flushUi()
 
+    const fromDeviceButton = Array.from(document.querySelectorAll('.profile-edit-dialog__source-option'))
+      .find((element) => element.textContent?.includes('From Device')) as HTMLButtonElement | undefined
+    expect(fromDeviceButton).toBeDefined()
+
+    fromDeviceButton?.click()
+    await flushUi()
+
     const fileInput = document.querySelector('input[type="file"]') as HTMLInputElement | null
     expect(fileInput).not.toBeNull()
 
@@ -338,6 +345,13 @@ describe('heading edit dialog', () => {
     expect(uploadButton).not.toBeNull()
 
     uploadButton?.click()
+    await flushUi()
+
+    const fromDeviceButton = Array.from(document.querySelectorAll('.profile-edit-dialog__source-option'))
+      .find((element) => element.textContent?.includes('From Device')) as HTMLButtonElement | undefined
+    expect(fromDeviceButton).toBeDefined()
+
+    fromDeviceButton?.click()
     await flushUi()
 
     const fileInput = document.querySelector('input[type="file"]') as HTMLInputElement | null
