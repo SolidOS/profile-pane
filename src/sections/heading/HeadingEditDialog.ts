@@ -4,7 +4,7 @@ import 'solid-ui/components/actions/button'
 import 'solid-ui/components/forms/select'
 import 'solid-ui/components/media/photo-capture'
 import { ProfileDetails, HeadingMutationPlan, ProfileBasicRow } from './types'
-import { Image } from './HeadingSection'
+import { Image } from './Image'
 import '../../styles/EditDialogs.css'
 import { LiveStore, NamedNode } from 'rdflib'
 import { processHeadingMutations } from './mutations'
@@ -28,12 +28,12 @@ import {
   ownerLoginRequiredDialogMessageText,
   saveHeadingUpdatesFailedMessageText
 } from '../../texts'
-import { error as debugError, warn as debugWarn } from '../../utils/debug'
+import { error as debugError } from '../../utils/debug'
 import { cameraIcon } from '../../icons-svg/profileIcons'
 import { ContactAddressRow, ContactPointRow } from '../contactInfo/types'
 import { sanitizeAddressFieldValue, sanitizeBasicInputFieldValue, sanitizeEmailValue, sanitizePhoneLocalValue } from '../shared/sanitizeUtils'
 import { toStorageDateISO } from './dateHelpers'
-import { deletePhotoFile, resolvePhotoDisplaySrc, uploadPhotoFile } from './imageHelpers'
+import { copyPhotoToProfileContainer, moveProfileImagesToPhotoContainer, resolvePhotoDisplaySrc, shouldStorePhotoInProfileContainer, uploadPhotoFile } from './imageHelpers'
 /* Note: new design - has address type in More Edit Contacts for now we will leave
          out Address Type, but a ticket will be created to add type later
          so I will keep the code and just comment it out for now. 
@@ -66,6 +66,7 @@ type HeadingFormState = {
   emailTypeWasMissing: boolean
   phoneTypeWasMissing: boolean
   imagePreviewSrc: string
+  pendingPhotoFile: File | null
   clearImagePreview: () => void
 }
 
@@ -271,6 +272,7 @@ function toFormState(profileData: ProfileDetails): HeadingFormState {
       emailTypeWasMissing,
       phoneTypeWasMissing,
       imagePreviewSrc: '',
+      pendingPhotoFile: null,
       clearImagePreview: () => undefined
     }
 }
@@ -301,15 +303,6 @@ function setResolvedHeadingPreview(formState: HeadingFormState, resolvedImageSrc
   }
 
   formState.imagePreviewSrc = resolvedImageSrc
-
-  if (resolvedImageSrc.startsWith('blob:') && typeof URL.revokeObjectURL === 'function') {
-    formState.clearImagePreview = () => {
-      URL.revokeObjectURL(resolvedImageSrc)
-      formState.imagePreviewSrc = ''
-      formState.clearImagePreview = () => undefined
-    }
-    return
-  }
 
   formState.clearImagePreview = () => {
     formState.imagePreviewSrc = ''
@@ -685,9 +678,14 @@ function renderHeadingInfoInput(
       if (!file || !basicInfo) return
 
       try {
-        const uploadedUri = await uploadPhotoFile(store, subject, file)
+        formState.pendingPhotoFile = file
         setHeadingImagePreview(formState, file)
-        applyRowFieldChange(basicInfo, 'imageSrc', uploadedUri, rowHasContent)
+        applyRowFieldChange(
+          basicInfo,
+          'imageSrc',
+          `pending-photo://${encodeURIComponent(file.name || 'image')}`,
+          rowHasContent
+        )
         rerender()
       } catch (error) {
         debugError('Profile image upload failed', error)
@@ -743,10 +741,15 @@ function renderHeadingInfoInput(
         if (!detail?.file || !basicInfo) return
 
         try {
-          const uploadedUri = await uploadPhotoFile(store, subject, detail.file)
+          formState.pendingPhotoFile = detail.file
           closeCameraFrame()
           setHeadingImagePreview(formState, detail.file)
-          applyRowFieldChange(basicInfo, 'imageSrc', uploadedUri, rowHasContent)
+          applyRowFieldChange(
+            basicInfo,
+            'imageSrc',
+            `pending-photo://${encodeURIComponent(detail.file.name || 'camera-image')}`,
+            rowHasContent
+          )
           rerender()
         } catch (error) {
           debugError('Profile camera upload failed', error)
@@ -762,6 +765,7 @@ function renderHeadingInfoInput(
 
   const handleDelete = async (_e: Event) => {
     if (!basicInfo) return
+    formState.pendingPhotoFile = null
     formState.clearImagePreview()
     applyRowFieldChange(basicInfo, 'imageSrc', '', rowHasContent)
     rerender()
@@ -973,7 +977,6 @@ export async function createHeadingEditDialog(
   onSaved?: () => Promise<void> | void
 ) {
   const dom = document
-  const originalPhotoUri = sanitizeTextValue(toText(profileData.imageSrc || ''))
   const { form, formState } = createHeadingEditForm(store, subject, profileData, viewerMode)
 
   if (formState.basicInfo.imageSrc) {
@@ -984,60 +987,94 @@ export async function createHeadingEditDialog(
     }
   }
 
-  const result = await openInputDialog({
-    title: editHeadingDialogTitleText,
-    dom,
-    form,
-    headerAction: { type: 'none' },
-    submitLabel: dialogSubmitLabelText,
-    cancelLabel: dialogCancelLabelText,
-    shouldCloseWithoutSave: () => {
-      const basicInfoOps = summarizeRowOps([formState.basicInfo], rowHasContent)
-      const phoneOps = summarizeHeadingContactOps(formState.phone, 'phone', formState.phoneTypeWasMissing)
-      const emailOps = summarizeHeadingContactOps(formState.email, 'email', formState.emailTypeWasMissing)
-      const addressOps = summarizeRowOps([formState.address], rowHasContent)
+  const hasPendingPhotoMigration = () => {
+    const currentPhotoUri = sanitizeTextValue(formState.basicInfo.imageSrc || '')
+    return shouldStorePhotoInProfileContainer(subject, currentPhotoUri)
+  }
 
-      return (
-        basicInfoOps.create.length === 0 && basicInfoOps.update.length === 0 && basicInfoOps.remove.length === 0 &&
-        phoneOps.create.length === 0 && phoneOps.update.length === 0 && phoneOps.remove.length === 0 &&
-        emailOps.create.length === 0 && emailOps.update.length === 0 && emailOps.remove.length === 0 &&
-        addressOps.create.length === 0 && addressOps.update.length === 0 && addressOps.remove.length === 0
-      )
-    },
-    validate: () => {
-      if (viewerMode !== 'owner') {
-        return ownerLoginRequiredDialogMessageText
-      }
-      return validateHeadingDataBeforeSave(formState)
-    },
-    onSave: async () => {
-      const phoneOps = summarizeHeadingContactOps(formState.phone, 'phone', formState.phoneTypeWasMissing)
-      const emailOps = summarizeHeadingContactOps(formState.email, 'email', formState.emailTypeWasMissing)
-      const plan: HeadingMutationPlan = {
-        basicOps: summarizeRowOps([formState.basicInfo], rowHasContent),
-        phoneOps: mapPhoneOpsForSave(phoneOps),
-        emailOps: mapEmailOpsForSave(emailOps),
-        addressOps: summarizeRowOps([formState.address], rowHasContent)
-      }
-      await processHeadingMutations(store, subject, plan)
+  const preparePhotoSave = async () => {
+    const currentPhotoUriBeforeMigration = sanitizeTextValue(formState.basicInfo.imageSrc || '')
 
-      const nextPhotoUri = sanitizeTextValue(formState.basicInfo.imageSrc || '')
-      if (originalPhotoUri && originalPhotoUri !== nextPhotoUri) {
-        try {
-          await deletePhotoFile(store, subject, originalPhotoUri)
-        } catch (error) {
-          debugWarn('Profile image file delete failed', error)
-        }
-      }
-    },
-    formatSaveError: (error: unknown) => {
-      return error instanceof Error ? error.message : saveHeadingUpdatesFailedMessageText
+    if (!currentPhotoUriBeforeMigration && !formState.pendingPhotoFile) {
+      return
     }
-  })
 
-  if (!result) return
+    const migratedPhotoUris = await moveProfileImagesToPhotoContainer(store, subject)
+    const migratedCurrentPhotoUri = migratedPhotoUris.get(currentPhotoUriBeforeMigration)
 
-  if (onSaved) {
-    await onSaved()
+    if (migratedCurrentPhotoUri) {
+      applyRowFieldChange(formState.basicInfo, 'imageSrc', migratedCurrentPhotoUri, rowHasContent)
+    }
+
+    if (formState.pendingPhotoFile) {
+      const uploadedUri = await uploadPhotoFile(store, subject, formState.pendingPhotoFile)
+      formState.pendingPhotoFile = null
+      applyRowFieldChange(formState.basicInfo, 'imageSrc', uploadedUri, rowHasContent)
+      return
+    }
+
+    const currentPhotoUri = sanitizeTextValue(formState.basicInfo.imageSrc || '')
+    if (!shouldStorePhotoInProfileContainer(subject, currentPhotoUri)) {
+      return
+    }
+
+    const copiedUri = await copyPhotoToProfileContainer(store, subject, currentPhotoUri)
+    applyRowFieldChange(formState.basicInfo, 'imageSrc', copiedUri, rowHasContent)
+  }
+
+  try {
+    const result = await openInputDialog({
+      title: editHeadingDialogTitleText,
+      dom,
+      form,
+      headerAction: { type: 'none' },
+      submitLabel: dialogSubmitLabelText,
+      cancelLabel: dialogCancelLabelText,
+      shouldCloseWithoutSave: () => {
+        const basicInfoOps = summarizeRowOps([formState.basicInfo], rowHasContent)
+        const phoneOps = summarizeHeadingContactOps(formState.phone, 'phone', formState.phoneTypeWasMissing)
+        const emailOps = summarizeHeadingContactOps(formState.email, 'email', formState.emailTypeWasMissing)
+        const addressOps = summarizeRowOps([formState.address], rowHasContent)
+
+        return (
+          basicInfoOps.create.length === 0 && basicInfoOps.update.length === 0 && basicInfoOps.remove.length === 0 &&
+          phoneOps.create.length === 0 && phoneOps.update.length === 0 && phoneOps.remove.length === 0 &&
+          emailOps.create.length === 0 && emailOps.update.length === 0 && emailOps.remove.length === 0 &&
+          addressOps.create.length === 0 && addressOps.update.length === 0 && addressOps.remove.length === 0 &&
+          !hasPendingPhotoMigration()
+        )
+      },
+      validate: () => {
+        if (viewerMode !== 'owner') {
+          return ownerLoginRequiredDialogMessageText
+        }
+        return validateHeadingDataBeforeSave(formState)
+      },
+      onSave: async () => {
+        await preparePhotoSave()
+
+        const phoneOps = summarizeHeadingContactOps(formState.phone, 'phone', formState.phoneTypeWasMissing)
+        const emailOps = summarizeHeadingContactOps(formState.email, 'email', formState.emailTypeWasMissing)
+        const plan: HeadingMutationPlan = {
+          basicOps: summarizeRowOps([formState.basicInfo], rowHasContent),
+          phoneOps: mapPhoneOpsForSave(phoneOps),
+          emailOps: mapEmailOpsForSave(emailOps),
+          addressOps: summarizeRowOps([formState.address], rowHasContent)
+        }
+        await processHeadingMutations(store, subject, plan)
+      },
+      formatSaveError: (error: unknown) => {
+        return error instanceof Error ? error.message : saveHeadingUpdatesFailedMessageText
+      }
+    })
+
+    if (!result) return
+
+    if (onSaved) {
+      await onSaved()
+    }
+  } finally {
+    formState.pendingPhotoFile = null
+    formState.clearImagePreview()
   }
 }
