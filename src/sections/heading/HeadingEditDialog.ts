@@ -625,8 +625,6 @@ function renderContactAddressInput({
 }
 
 function renderHeadingInfoInput(
-  store: LiveStore,
-  subject: NamedNode,
   formState: HeadingFormState,
   rerender: () => void
 ): TemplateResult {
@@ -916,7 +914,7 @@ function renderHeadingEditTemplate(
   const rerender = () => renderHeadingEditTemplate(form, formState, store, subject, viewerMode)
  
   render(html`
-    ${renderHeadingInfoInput(store, subject, formState, rerender)}
+    ${renderHeadingInfoInput(formState, rerender)}
     ${renderContactAddressInput({ address: formState.address })}
     ${viewerMode !== 'owner'
       ? html`<p class="profile-edit-dialog__login-message">${ownerLoginRequiredDialogMessageText}</p>`
