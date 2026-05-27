@@ -2,14 +2,22 @@ import { afterEach, beforeEach, describe, expect, it, jest } from '@jest/globals
 import { graph, sym } from 'rdflib'
 import { createHeadingEditDialog } from '../src/sections/heading/HeadingEditDialog'
 import type { HeadingMutationPlan, ProfileDetails } from '../src/sections/heading/types'
+import type { PreparedPhotoMigration } from '../src/sections/heading/imageHelpers'
 import { getSharedDialogCancelButton, getSharedDialogSaveButton } from '../src/ui/dialog'
 
 const mockProcessHeadingMutations = jest.fn<(_: unknown, __: unknown, plan: HeadingMutationPlan) => Promise<void>>()
 const mockUploadPhotoFile = jest.fn<(_: unknown, __: unknown, ___: File) => Promise<string>>()
-const mockCopyPhotoToProfileContainer = jest.fn<(_: unknown, __: unknown, photoUri: string) => Promise<string>>()
-const mockMoveProfileImagesToPhotoContainer = jest.fn<(_: unknown, __: unknown) => Promise<Map<string, string>>>()
+const mockCopyPhotoToProfileContainer = jest.fn<(_: unknown, __: unknown, photoUri: string) => Promise<PreparedPhotoMigration>>()
+const mockMoveProfileImagesToPhotoContainer = jest.fn<(_: unknown, __: unknown) => Promise<PreparedPhotoMigration>>()
 const mockShouldStorePhotoInProfileContainer = jest.fn<(_: unknown, __?: string) => boolean>()
 const mockResolvePhotoDisplaySrc = jest.fn<(_: unknown, __?: string) => Promise<string | undefined>>()
+
+function createPreparedPhotoMigration(entries: Array<[string, string]> = []): PreparedPhotoMigration {
+  return {
+    migratedPhotoUris: new Map(entries),
+    finalize: async () => undefined
+  }
+}
 
 jest.mock('../src/sections/heading/mutations', () => ({
   processHeadingMutations: (...args: Parameters<typeof mockProcessHeadingMutations>) => mockProcessHeadingMutations(...args)
@@ -44,8 +52,8 @@ describe('heading edit dialog', () => {
     mockResolvePhotoDisplaySrc.mockReset()
     mockProcessHeadingMutations.mockResolvedValue(undefined)
     mockUploadPhotoFile.mockResolvedValue('https://example.com/profile/avatar.png')
-    mockCopyPhotoToProfileContainer.mockImplementation(async (_store, _subject, photoUri) => photoUri)
-    mockMoveProfileImagesToPhotoContainer.mockResolvedValue(new Map())
+    mockCopyPhotoToProfileContainer.mockImplementation(async (_store, _subject, photoUri) => createPreparedPhotoMigration([[photoUri, photoUri]]))
+    mockMoveProfileImagesToPhotoContainer.mockResolvedValue(createPreparedPhotoMigration())
     mockShouldStorePhotoInProfileContainer.mockReturnValue(false)
     mockResolvePhotoDisplaySrc.mockImplementation(async (_store, imageSrc) => imageSrc)
 
@@ -232,6 +240,127 @@ describe('heading edit dialog', () => {
     expect(plan.basicOps.update).toHaveLength(1)
     expect(plan.basicOps.update[0]?.imageSrc).toBe('')
     expect(onSaved).toHaveBeenCalledTimes(1)
+  })
+
+  it('defers migrated photo cleanup until after heading mutations succeed', async () => {
+    const store = graph() as any
+    const subject = sym('https://example.com/profile/card#me')
+    const profileData: ProfileDetails = {
+      entryNode: subject,
+      name: 'Jane Doe',
+      imageSrc: 'https://example.com/profile/original.png'
+    }
+    const finalizeLegacyMigration = jest.fn(async () => undefined)
+    const finalizeCurrentPhotoMigration = jest.fn(async () => undefined)
+
+    mockMoveProfileImagesToPhotoContainer.mockResolvedValueOnce({
+      migratedPhotoUris: new Map(),
+      finalize: finalizeLegacyMigration
+    })
+    mockShouldStorePhotoInProfileContainer.mockReturnValue(true)
+    mockCopyPhotoToProfileContainer.mockResolvedValueOnce({
+      migratedPhotoUris: new Map([['https://example.com/profile/original.png', 'https://example.com/profile/profileFotos/original.png']]),
+      finalize: finalizeCurrentPhotoMigration
+    })
+
+    const resultPromise = createHeadingEditDialog(createDialogEvent(), store, subject, profileData, 'owner')
+    await flushUi()
+
+    getSharedDialogSaveButton(document)?.click()
+    await resultPromise
+
+    expect(mockProcessHeadingMutations).toHaveBeenCalledTimes(1)
+    expect(finalizeLegacyMigration).toHaveBeenCalledTimes(1)
+    expect(finalizeCurrentPhotoMigration).toHaveBeenCalledTimes(1)
+    expect(mockProcessHeadingMutations.mock.invocationCallOrder[0]).toBeLessThan(finalizeLegacyMigration.mock.invocationCallOrder[0] || Infinity)
+    expect(mockProcessHeadingMutations.mock.invocationCallOrder[0]).toBeLessThan(finalizeCurrentPhotoMigration.mock.invocationCallOrder[0] || Infinity)
+    const plan = mockProcessHeadingMutations.mock.calls[0][2]
+    expect(plan.basicOps.update[0]?.imageSrc).toBe('https://example.com/profile/profileFotos/original.png')
+  })
+
+  it('does not clean up migrated photos when heading mutations fail', async () => {
+    const store = graph() as any
+    const subject = sym('https://example.com/profile/card#me')
+    const profileData: ProfileDetails = {
+      entryNode: subject,
+      name: 'Jane Doe',
+      imageSrc: 'https://example.com/profile/original.png'
+    }
+    const finalizeLegacyMigration = jest.fn(async () => undefined)
+    const finalizeCurrentPhotoMigration = jest.fn(async () => undefined)
+
+    mockMoveProfileImagesToPhotoContainer.mockResolvedValueOnce({
+      migratedPhotoUris: new Map(),
+      finalize: finalizeLegacyMigration
+    })
+    mockShouldStorePhotoInProfileContainer.mockReturnValue(true)
+    mockCopyPhotoToProfileContainer.mockResolvedValueOnce({
+      migratedPhotoUris: new Map([['https://example.com/profile/original.png', 'https://example.com/profile/profileFotos/original.png']]),
+      finalize: finalizeCurrentPhotoMigration
+    })
+    mockProcessHeadingMutations.mockRejectedValueOnce(new Error('mutation failed'))
+
+    const resultPromise = createHeadingEditDialog(createDialogEvent(), store, subject, profileData, 'owner')
+    await flushUi()
+
+    getSharedDialogSaveButton(document)?.click()
+    await flushUi()
+
+    const errorBox = document.querySelector('#modal-error') as HTMLElement | null
+    expect(errorBox?.textContent).toBe('mutation failed')
+    expect(finalizeLegacyMigration).not.toHaveBeenCalled()
+    expect(finalizeCurrentPhotoMigration).not.toHaveBeenCalled()
+
+    getSharedDialogCancelButton(document)?.click()
+    await resultPromise
+  })
+
+  it('cleans up migrated legacy photos after saving a newly uploaded heading photo', async () => {
+    const store = graph() as any
+    const subject = sym('https://example.com/profile/card#me')
+    const profileData: ProfileDetails = {
+      entryNode: subject,
+      name: 'Jane Doe',
+      imageSrc: 'https://example.com/profile/original.png'
+    }
+    const finalizeLegacyMigration = jest.fn(async () => undefined)
+
+    mockMoveProfileImagesToPhotoContainer.mockResolvedValueOnce({
+      migratedPhotoUris: new Map([['https://example.com/profile/original.png', 'https://example.com/profile/profileFotos/original.png']]),
+      finalize: finalizeLegacyMigration
+    })
+    mockUploadPhotoFile.mockResolvedValueOnce('https://example.com/profile/profileFotos/new-avatar.png')
+
+    const resultPromise = createHeadingEditDialog(createDialogEvent(), store, subject, profileData, 'owner')
+    await flushUi()
+
+    const uploadButton = document.querySelector('.profile-edit-dialog__image-upload-button') as HTMLElement | null
+    expect(uploadButton).not.toBeNull()
+
+    uploadButton?.click()
+    await flushUi()
+
+    const fileInput = document.querySelector('input[type="file"]') as HTMLInputElement | null
+    expect(fileInput).not.toBeNull()
+
+    const file = new File(['image-bytes'], 'avatar.png', { type: 'image/png' })
+    Object.defineProperty(fileInput as HTMLInputElement, 'files', {
+      configurable: true,
+      value: [file]
+    })
+
+    fileInput?.dispatchEvent(new Event('change', { bubbles: true }))
+    await flushUi()
+
+    getSharedDialogSaveButton(document)?.click()
+    await resultPromise
+
+    expect(mockProcessHeadingMutations).toHaveBeenCalledTimes(1)
+    expect(mockUploadPhotoFile).toHaveBeenCalledTimes(1)
+    expect(finalizeLegacyMigration).toHaveBeenCalledTimes(1)
+    expect(mockProcessHeadingMutations.mock.invocationCallOrder[0]).toBeLessThan(finalizeLegacyMigration.mock.invocationCallOrder[0] || Infinity)
+    const plan = mockProcessHeadingMutations.mock.calls[0][2]
+    expect(plan.basicOps.update[0]?.imageSrc).toBe('https://example.com/profile/profileFotos/new-avatar.png')
   })
 
   it('persists default heading phone and email types when existing values have no stored type', async () => {

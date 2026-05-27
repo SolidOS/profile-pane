@@ -991,14 +991,16 @@ export async function createHeadingEditDialog(
   }
 
   const preparePhotoSave = async () => {
+    const finalizeOperations: Array<() => Promise<void>> = []
     const currentPhotoUriBeforeMigration = sanitizeTextValue(formState.basicInfo.imageSrc || '')
 
     if (!currentPhotoUriBeforeMigration && !formState.pendingPhotoFile) {
-      return
+      return async () => undefined
     }
 
-    const migratedPhotoUris = await moveProfileImagesToPhotoContainer(store, subject)
-    const migratedCurrentPhotoUri = migratedPhotoUris.get(currentPhotoUriBeforeMigration)
+    const preparedLegacyMigration = await moveProfileImagesToPhotoContainer(store, subject)
+    finalizeOperations.push(preparedLegacyMigration.finalize)
+    const migratedCurrentPhotoUri = preparedLegacyMigration.migratedPhotoUris.get(currentPhotoUriBeforeMigration)
 
     if (migratedCurrentPhotoUri) {
       applyRowFieldChange(formState.basicInfo, 'imageSrc', migratedCurrentPhotoUri, rowHasContent)
@@ -1008,16 +1010,32 @@ export async function createHeadingEditDialog(
       const uploadedUri = await uploadPhotoFile(store, subject, formState.pendingPhotoFile)
       formState.pendingPhotoFile = null
       applyRowFieldChange(formState.basicInfo, 'imageSrc', uploadedUri, rowHasContent)
-      return
+      return async () => {
+        for (const finalizeOperation of finalizeOperations) {
+          await finalizeOperation()
+        }
+      }
     }
 
     const currentPhotoUri = sanitizeTextValue(formState.basicInfo.imageSrc || '')
     if (!shouldStorePhotoInProfileContainer(subject, currentPhotoUri)) {
-      return
+      return async () => {
+        for (const finalizeOperation of finalizeOperations) {
+          await finalizeOperation()
+        }
+      }
     }
 
-    const copiedUri = await copyPhotoToProfileContainer(store, subject, currentPhotoUri)
+    const preparedCurrentPhotoMigration = await copyPhotoToProfileContainer(store, subject, currentPhotoUri)
+    finalizeOperations.push(preparedCurrentPhotoMigration.finalize)
+    const copiedUri = preparedCurrentPhotoMigration.migratedPhotoUris.get(currentPhotoUri) || currentPhotoUri
     applyRowFieldChange(formState.basicInfo, 'imageSrc', copiedUri, rowHasContent)
+
+    return async () => {
+      for (const finalizeOperation of finalizeOperations) {
+        await finalizeOperation()
+      }
+    }
   }
 
   try {
@@ -1049,7 +1067,7 @@ export async function createHeadingEditDialog(
         return validateHeadingDataBeforeSave(formState)
       },
       onSave: async () => {
-        await preparePhotoSave()
+        const finalizePhotoSave = await preparePhotoSave()
 
         const phoneOps = summarizeHeadingContactOps(formState.phone, 'phone', formState.phoneTypeWasMissing)
         const emailOps = summarizeHeadingContactOps(formState.email, 'email', formState.emailTypeWasMissing)
@@ -1060,6 +1078,11 @@ export async function createHeadingEditDialog(
           addressOps: summarizeRowOps([formState.address], rowHasContent)
         }
         await processHeadingMutations(store, subject, plan)
+        try {
+          await finalizePhotoSave()
+        } catch (error) {
+          debugError(`Error cleaning up migrated heading photos: ${error}`)
+        }
       },
       formatSaveError: (error: unknown) => {
         return error instanceof Error ? error.message : saveHeadingUpdatesFailedMessageText
