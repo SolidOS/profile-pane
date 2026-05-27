@@ -141,7 +141,7 @@ describe('heading image helpers', () => {
       .mockResolvedValueOnce({ ok: false, status: 404, statusText: 'Not Found' })
       .mockResolvedValueOnce({ ok: true, status: 201, statusText: 'Created' })
       .mockResolvedValueOnce({ ok: true, status: 200, statusText: 'OK' })
-      .mockResolvedValueOnce({ ok: true, status: 200, statusText: 'Deleted' })
+    const deleteResource = jest.fn(async () => ({ ok: true, status: 200, statusText: 'Deleted' })) as any
 
     const fetcher = {
       _fetch: jest.fn(async (uri: string) => {
@@ -155,11 +155,13 @@ describe('heading image helpers', () => {
         })
       }) as any,
       createContainer,
+      delete: deleteResource,
       webOperation
     }
 
     const store = { fetcher } as any
-    const copiedUri = await copyPhotoToProfileContainer(store, subject, 'https://pod.example/profile/avatar.png')
+    const preparedMigration = await copyPhotoToProfileContainer(store, subject, 'https://pod.example/profile/avatar.png')
+    const copiedUri = preparedMigration.migratedPhotoUris.get('https://pod.example/profile/avatar.png')
 
     expect(copiedUri).toBe('https://pod.example/profile/profileFotos/avatar.png')
     expect(fetcher._fetch).toHaveBeenCalledWith('https://pod.example/profile/avatar.png')
@@ -173,8 +175,9 @@ describe('heading image helpers', () => {
       expect.objectContaining({ contentType: 'image/png' })
     )
     expect(webOperation).toHaveBeenNthCalledWith(4, 'HEAD', 'https://pod.example/profile/profileFotos/avatar.png')
-    expect(webOperation).toHaveBeenNthCalledWith(5, 'DELETE', 'https://pod.example/profile/avatar.png')
-    expect(webOperation).toHaveBeenCalledTimes(5)
+    expect(webOperation).toHaveBeenCalledTimes(4)
+    await preparedMigration.finalize()
+    expect(deleteResource).toHaveBeenCalledWith('https://pod.example/profile/avatar.png')
   })
 
   it('moves root-level profile images and their sidecar acls into profileFotos and deletes the originals after verifying the copies', async () => {
@@ -185,7 +188,7 @@ describe('heading image helpers', () => {
       .mockResolvedValueOnce({ ok: true, status: 201, statusText: 'Created' })
       .mockResolvedValueOnce({ ok: true, status: 201, statusText: 'Created' })
       .mockResolvedValueOnce({ ok: true, status: 200, statusText: 'OK' })
-      .mockResolvedValueOnce({ ok: true, status: 200, statusText: 'Deleted' })
+    const deleteResource = jest.fn(async () => ({ ok: true, status: 200, statusText: 'Deleted' })) as any
 
     const store = {
       each: jest.fn(() => [sym('https://pod.example/profile/avatar.png'), sym('https://pod.example/profile/card')]),
@@ -205,11 +208,13 @@ describe('heading image helpers', () => {
           })
         }) as any,
         createContainer,
+        delete: deleteResource,
         webOperation
       }
     } as any
 
-    const migratedUris = await moveProfileImagesToPhotoContainer(store, subject)
+    const preparedMigration = await moveProfileImagesToPhotoContainer(store, subject)
+    const migratedUris = preparedMigration.migratedPhotoUris
 
     expect(migratedUris.get('https://pod.example/profile/avatar.png')).toBe('https://pod.example/profile/profileFotos/avatar.png')
     expect(store.fetcher.load).toHaveBeenCalledWith(sym('https://pod.example/profile/'))
@@ -232,8 +237,9 @@ describe('heading image helpers', () => {
       })
     )
     expect(webOperation).toHaveBeenNthCalledWith(5, 'HEAD', 'https://pod.example/profile/profileFotos/avatar.png')
-    expect(webOperation).toHaveBeenNthCalledWith(6, 'DELETE', 'https://pod.example/profile/avatar.png')
-    expect(webOperation).toHaveBeenCalledTimes(6)
+    expect(webOperation).toHaveBeenCalledTimes(5)
+    await preparedMigration.finalize()
+    expect(deleteResource).toHaveBeenCalledWith('https://pod.example/profile/avatar.png')
   })
 
   it('marks profile-contained photos for profileFotos storage unless they are already there', () => {
@@ -250,7 +256,6 @@ describe('heading image helpers', () => {
       .mockResolvedValueOnce({ ok: false, status: 404, statusText: 'Not Found' })
       .mockResolvedValueOnce({ ok: true, status: 201, statusText: 'Created' })
       .mockResolvedValueOnce({ ok: true, status: 200, statusText: 'OK' })
-      .mockResolvedValueOnce({ ok: true, status: 200, statusText: 'Deleted' })
 
     const store = {
       each: jest.fn(() => [
@@ -275,7 +280,8 @@ describe('heading image helpers', () => {
       }
     } as any
 
-    const migratedUris = await moveProfileImagesToPhotoContainer(store, subject)
+    const preparedMigration = await moveProfileImagesToPhotoContainer(store, subject)
+    const migratedUris = preparedMigration.migratedPhotoUris
 
     expect(migratedUris.size).toBe(1)
     expect(migratedUris.get('https://pod.example/profile/avatar.png')).toBe('https://pod.example/profile/profileFotos/avatar.png')

@@ -6,6 +6,11 @@ const resolvedHeadingImageCache = new Map<string, string>()
 const PROFILE_PHOTOS_CONTAINER_NAME = 'profileFotos'
 const ldp = Namespace('http://www.w3.org/ns/ldp#')
 const ROOT_PROFILE_IMAGE_EXTENSIONS = new Set(['png', 'jpg', 'jpeg', 'gif', 'webp', 'bmp', 'svg', 'tiff'])
+
+export type PreparedPhotoMigration = {
+  migratedPhotoUris: Map<string, string>
+  finalize: () => Promise<void>
+}
 /* Code copied from contact-pane/src/mugshotGallery and modified to fit the needs of the new design */
 const mimeMap: Record<string, string> = {
   'image/png': 'png',
@@ -146,6 +151,29 @@ async function resourceExists(
     return Boolean(response?.ok)
   } catch {
     return false
+  }
+}
+
+async function deleteResource(
+  fetcher: { delete?: (uri: string) => Promise<any>, webOperation?: any },
+  resourceUri: string
+): Promise<void> {
+  if (fetcher.delete) {
+    const response = await fetcher.delete(resourceUri)
+    if (response?.ok) {
+      return
+    }
+
+    throw new Error(`Error deleting original picture: ${response?.status} ${response?.statusText}`)
+  }
+
+  if (!fetcher.webOperation) {
+    throw new Error('Store fetcher does not support deleting the original photo.')
+  }
+
+  const response = await fetcher.webOperation('DELETE', resourceUri)
+  if (!response?.ok) {
+    throw new Error(`Error deleting original picture: ${response?.status} ${response?.statusText}`)
   }
 }
 
@@ -317,8 +345,8 @@ async function moveRootProfileImageToPhotoContainer(
   store: LiveStore,
   subject: NamedNode,
   photoUri: string
-): Promise<string> {
-  const fetcher = store.fetcher as { _fetch?: (url: string) => Promise<Response>, webOperation?: any } | undefined
+): Promise<{ destinationUri: string, finalize: () => Promise<void> }> {
+  const fetcher = store.fetcher as { _fetch?: (url: string) => Promise<Response>, delete?: (uri: string) => Promise<any>, webOperation?: any } | undefined
   if (!fetcher?._fetch || !fetcher.webOperation) {
     throw new Error('Store fetcher does not support moving the existing photo.')
   }
@@ -340,12 +368,12 @@ async function moveRootProfileImageToPhotoContainer(
     throw new Error(`Error verifying migrated picture: ${destinationUri}`)
   }
 
-  const deletePhotoResponse = await fetcher.webOperation('DELETE', photoUri)
-  if (!deletePhotoResponse?.ok) {
-    throw new Error(`Error deleting original picture: ${deletePhotoResponse?.status} ${deletePhotoResponse?.statusText}`)
+  return {
+    destinationUri,
+    finalize: async () => {
+      await deleteResource(fetcher, photoUri)
+    }
   }
-
-  return destinationUri
 }
 
 export function shouldStorePhotoInProfileContainer(subject: NamedNode, photoUri?: string): boolean {
@@ -394,12 +422,20 @@ export async function uploadPhotoFile(store: LiveStore, subject: NamedNode, file
   return uploadPhotoBlob(store, subject, file, file.name || 'image')
 }
 
-export async function copyPhotoToProfileContainer(store: LiveStore, subject: NamedNode, photoUri: string): Promise<string> {
+export async function copyPhotoToProfileContainer(store: LiveStore, subject: NamedNode, photoUri: string): Promise<PreparedPhotoMigration> {
   if (!shouldStorePhotoInProfileContainer(subject, photoUri)) {
-    return photoUri
+    return {
+      migratedPhotoUris: new Map([[photoUri, photoUri]]),
+      finalize: async () => undefined
+    }
   }
 
-  return moveRootProfileImageToPhotoContainer(store, subject, photoUri)
+  const preparedMigration = await moveRootProfileImageToPhotoContainer(store, subject, photoUri)
+
+  return {
+    migratedPhotoUris: new Map([[photoUri, preparedMigration.destinationUri]]),
+    finalize: preparedMigration.finalize
+  }
 }
 
 // This runs once for older profiles so their root-level image files conform to the
@@ -408,21 +444,33 @@ async function migrateLegacyProfileImagesToPhotoContainer(
   store: LiveStore,
   subject: NamedNode,
   legacyPhotoUris: string[]
-): Promise<Map<string, string>> {
+): Promise<PreparedPhotoMigration> {
   const migratedPhotos = new Map<string, string>()
+  const finalizeOperations: Array<() => Promise<void>> = []
 
   for (const resourceUri of legacyPhotoUris) {
-    const destinationUri = await moveRootProfileImageToPhotoContainer(store, subject, resourceUri)
-    migratedPhotos.set(resourceUri, destinationUri)
+    const preparedMigration = await moveRootProfileImageToPhotoContainer(store, subject, resourceUri)
+    migratedPhotos.set(resourceUri, preparedMigration.destinationUri)
+    finalizeOperations.push(preparedMigration.finalize)
   }
 
-  return migratedPhotos
+  return {
+    migratedPhotoUris: migratedPhotos,
+    finalize: async () => {
+      for (const finalizeOperation of finalizeOperations) {
+        await finalizeOperation()
+      }
+    }
+  }
 }
 
-export async function moveProfileImagesToPhotoContainer(store: LiveStore, subject: NamedNode): Promise<Map<string, string>> {
+export async function moveProfileImagesToPhotoContainer(store: LiveStore, subject: NamedNode): Promise<PreparedPhotoMigration> {
   const fetcher = store.fetcher as { load?: (resource: NamedNode) => Promise<any> } | undefined
   if (!fetcher?.load || typeof (store as any).each !== 'function') {
-    return new Map<string, string>()
+    return {
+      migratedPhotoUris: new Map<string, string>(),
+      finalize: async () => undefined
+    }
   }
 
   const containerNode = sym(subjectContainerUri(subject))
