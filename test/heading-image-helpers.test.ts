@@ -42,6 +42,7 @@ describe('heading image helpers', () => {
 
   it('sets public read ACLs on a newly created profile photo container and uploaded image', async () => {
     const currentUser = sym('https://pod.example/profile/card#me')
+    const createContainer = jest.fn(async (_parentUri: string, _folderName: string, _data: string) => ({ status: 201, statusText: 'Created' })) as any
     ;(authn.currentUser as jest.Mock).mockReturnValue(currentUser)
 
     const webOperation = (jest.fn() as any)
@@ -51,6 +52,7 @@ describe('heading image helpers', () => {
 
     const store = {
       fetcher: {
+        createContainer,
         webOperation
       }
     } as any
@@ -59,6 +61,7 @@ describe('heading image helpers', () => {
     const uploadedUri = await uploadPhotoFile(store, subject, file)
 
     expect(uploadedUri).toBe('https://pod.example/profile/profileFotos/avatar.png')
+    expect(createContainer).toHaveBeenCalledWith('https://pod.example/profile/', 'profileFotos', '')
     expect(solidLogicSingleton.acl.setACLUserPublic).toHaveBeenNthCalledWith(
       1,
       'https://pod.example/profile/profileFotos/',
@@ -75,6 +78,7 @@ describe('heading image helpers', () => {
 
   it('keeps uploaded heading images when setting public ACLs fails', async () => {
     const currentUser = sym('https://pod.example/profile/card#me')
+    const createContainer = jest.fn(async (_parentUri: string, _folderName: string, _data: string) => ({ status: 201, statusText: 'Created' })) as any
     ;(authn.currentUser as jest.Mock).mockReturnValue(currentUser)
     setACLUserPublicMock
       .mockImplementationOnce(async () => { throw new Error('ACL write failed') })
@@ -87,6 +91,7 @@ describe('heading image helpers', () => {
 
     const store = {
       fetcher: {
+        createContainer,
         webOperation
       }
     } as any
@@ -95,10 +100,12 @@ describe('heading image helpers', () => {
     const uploadedUri = await uploadPhotoFile(store, subject, file)
 
     expect(uploadedUri).toBe('https://pod.example/profile/profileFotos/avatar.png')
+    expect(createContainer).toHaveBeenCalledWith('https://pod.example/profile/', 'profileFotos', '')
     expect(solidLogicSingleton.acl.setACLUserPublic).toHaveBeenCalledTimes(2)
   })
 
-  it('stores uploaded photos inside profileFotos and creates the folder when needed', async () => {
+  it('stores uploaded photos inside profileFotos and creates the container when needed', async () => {
+    const createContainer = jest.fn(async (_parentUri: string, _folderName: string, _data: string) => ({ status: 201, statusText: 'Created' })) as any
     const webOperation = (jest.fn() as any)
       .mockResolvedValueOnce({ ok: false, status: 404, statusText: 'Not Found' })
       .mockResolvedValueOnce({ ok: false, status: 404, statusText: 'Not Found' })
@@ -106,6 +113,7 @@ describe('heading image helpers', () => {
 
     const store = {
       fetcher: {
+        createContainer,
         webOperation
       }
     } as any
@@ -114,6 +122,7 @@ describe('heading image helpers', () => {
     const uploadedUri = await uploadPhotoFile(store, subject, file)
 
     expect(uploadedUri).toBe('https://pod.example/profile/profileFotos/avatar.png')
+    expect(createContainer).toHaveBeenCalledWith('https://pod.example/profile/', 'profileFotos', '')
     expect(webOperation).toHaveBeenNthCalledWith(1, 'HEAD', 'https://pod.example/profile/profileFotos/')
     expect(webOperation).toHaveBeenNthCalledWith(2, 'HEAD', 'https://pod.example/profile/profileFotos/avatar.png')
     expect(webOperation).toHaveBeenCalledTimes(3)
@@ -125,11 +134,13 @@ describe('heading image helpers', () => {
     )
   })
 
-  it('moves an existing root-level profile photo into profileFotos and removes the original file', async () => {
+  it('moves an existing root-level profile photo into profileFotos and deletes the original after verifying the copy', async () => {
+    const createContainer = jest.fn(async (_parentUri: string, _folderName: string, _data: string) => ({ status: 201, statusText: 'Created' })) as any
     const webOperation = (jest.fn() as any)
       .mockResolvedValueOnce({ ok: false, status: 404, statusText: 'Not Found' })
       .mockResolvedValueOnce({ ok: false, status: 404, statusText: 'Not Found' })
       .mockResolvedValueOnce({ ok: true, status: 201, statusText: 'Created' })
+      .mockResolvedValueOnce({ ok: true, status: 200, statusText: 'OK' })
       .mockResolvedValueOnce({ ok: true, status: 200, statusText: 'Deleted' })
 
     const fetcher = {
@@ -143,6 +154,7 @@ describe('heading image helpers', () => {
           headers: { 'Content-Type': 'image/png' }
         })
       }) as any,
+      createContainer,
       webOperation
     }
 
@@ -151,27 +163,28 @@ describe('heading image helpers', () => {
 
     expect(copiedUri).toBe('https://pod.example/profile/profileFotos/avatar.png')
     expect(fetcher._fetch).toHaveBeenCalledWith('https://pod.example/profile/avatar.png')
+    expect(createContainer).toHaveBeenCalledWith('https://pod.example/profile/', 'profileFotos', '')
     expect(webOperation).toHaveBeenNthCalledWith(1, 'HEAD', 'https://pod.example/profile/profileFotos/')
-    expect(webOperation).toHaveBeenNthCalledWith(
-      2,
-      'HEAD',
-      'https://pod.example/profile/profileFotos/avatar.png'
-    )
+    expect(webOperation).toHaveBeenNthCalledWith(2, 'HEAD', 'https://pod.example/profile/profileFotos/avatar.png')
     expect(webOperation).toHaveBeenNthCalledWith(
       3,
       'PUT',
       'https://pod.example/profile/profileFotos/avatar.png',
       expect.objectContaining({ contentType: 'image/png' })
     )
-    expect(webOperation).toHaveBeenNthCalledWith(4, 'DELETE', 'https://pod.example/profile/avatar.png')
+    expect(webOperation).toHaveBeenNthCalledWith(4, 'HEAD', 'https://pod.example/profile/profileFotos/avatar.png')
+    expect(webOperation).toHaveBeenNthCalledWith(5, 'DELETE', 'https://pod.example/profile/avatar.png')
+    expect(webOperation).toHaveBeenCalledTimes(5)
   })
 
-  it('moves root-level profile images and their sidecar acls into profileFotos', async () => {
+  it('moves root-level profile images and their sidecar acls into profileFotos and deletes the originals after verifying the copies', async () => {
+    const createContainer = jest.fn(async (_parentUri: string, _folderName: string, _data: string) => ({ status: 201, statusText: 'Created' })) as any
     const webOperation = (jest.fn() as any)
       .mockResolvedValueOnce({ ok: false, status: 404, statusText: 'Not Found' })
       .mockResolvedValueOnce({ ok: false, status: 404, statusText: 'Not Found' })
       .mockResolvedValueOnce({ ok: true, status: 201, statusText: 'Created' })
       .mockResolvedValueOnce({ ok: true, status: 201, statusText: 'Created' })
+      .mockResolvedValueOnce({ ok: true, status: 200, statusText: 'OK' })
       .mockResolvedValueOnce({ ok: true, status: 200, statusText: 'Deleted' })
 
     const store = {
@@ -191,6 +204,7 @@ describe('heading image helpers', () => {
             headers: { 'Content-Type': 'image/png' }
           })
         }) as any,
+        createContainer,
         webOperation
       }
     } as any
@@ -199,12 +213,9 @@ describe('heading image helpers', () => {
 
     expect(migratedUris.get('https://pod.example/profile/avatar.png')).toBe('https://pod.example/profile/profileFotos/avatar.png')
     expect(store.fetcher.load).toHaveBeenCalledWith(sym('https://pod.example/profile/'))
+    expect(createContainer).toHaveBeenCalledWith('https://pod.example/profile/', 'profileFotos', '')
     expect(webOperation).toHaveBeenNthCalledWith(1, 'HEAD', 'https://pod.example/profile/profileFotos/')
-    expect(webOperation).toHaveBeenNthCalledWith(
-      2,
-      'HEAD',
-      'https://pod.example/profile/profileFotos/avatar.png'
-    )
+    expect(webOperation).toHaveBeenNthCalledWith(2, 'HEAD', 'https://pod.example/profile/profileFotos/avatar.png')
     expect(webOperation).toHaveBeenNthCalledWith(
       3,
       'PUT',
@@ -220,13 +231,57 @@ describe('heading image helpers', () => {
         data: expect.stringContaining('https://pod.example/profile/profileFotos/avatar.png')
       })
     )
-    expect(webOperation).toHaveBeenNthCalledWith(5, 'DELETE', 'https://pod.example/profile/avatar.png')
+    expect(webOperation).toHaveBeenNthCalledWith(5, 'HEAD', 'https://pod.example/profile/profileFotos/avatar.png')
+    expect(webOperation).toHaveBeenNthCalledWith(6, 'DELETE', 'https://pod.example/profile/avatar.png')
+    expect(webOperation).toHaveBeenCalledTimes(6)
   })
 
-  it('only marks root-level profile photos for migration into profileFotos', () => {
+  it('marks profile-contained photos for profileFotos storage unless they are already there', () => {
     expect(shouldStorePhotoInProfileContainer(subject, 'https://pod.example/profile/avatar.png')).toBe(true)
     expect(shouldStorePhotoInProfileContainer(subject, 'https://pod.example/profile/profileFotos/avatar.png')).toBe(false)
+    expect(shouldStorePhotoInProfileContainer(subject, 'https://pod.example/profile/nested/avatar.png')).toBe(true)
     expect(shouldStorePhotoInProfileContainer(subject, 'https://cdn.example/avatar.png')).toBe(false)
+  })
+
+  it('only migrates direct child images from the profile container', async () => {
+    const createContainer = jest.fn(async (_parentUri: string, _folderName: string, _data: string) => ({ status: 201, statusText: 'Created' })) as any
+    const webOperation = (jest.fn() as any)
+      .mockResolvedValueOnce({ ok: false, status: 404, statusText: 'Not Found' })
+      .mockResolvedValueOnce({ ok: false, status: 404, statusText: 'Not Found' })
+      .mockResolvedValueOnce({ ok: true, status: 201, statusText: 'Created' })
+      .mockResolvedValueOnce({ ok: true, status: 200, statusText: 'OK' })
+      .mockResolvedValueOnce({ ok: true, status: 200, statusText: 'Deleted' })
+
+    const store = {
+      each: jest.fn(() => [
+        sym('https://pod.example/profile/avatar.png'),
+        sym('https://pod.example/profile/nested/avatar.png'),
+        sym('https://pod.example/profile/card')
+      ]),
+      fetcher: {
+        load: jest.fn(async () => ({ ok: true })),
+        _fetch: jest.fn(async (uri: string) => {
+          if (uri.endsWith('.acl')) {
+            return new Response('', { status: 404, statusText: 'Not Found' })
+          }
+
+          return new Response(new Blob(['image-bytes'], { type: 'image/png' }), {
+            status: 200,
+            headers: { 'Content-Type': 'image/png' }
+          })
+        }) as any,
+        createContainer,
+        webOperation
+      }
+    } as any
+
+    const migratedUris = await moveProfileImagesToPhotoContainer(store, subject)
+
+    expect(migratedUris.size).toBe(1)
+    expect(migratedUris.get('https://pod.example/profile/avatar.png')).toBe('https://pod.example/profile/profileFotos/avatar.png')
+    expect(migratedUris.has('https://pod.example/profile/nested/avatar.png')).toBe(false)
+    expect(store.fetcher._fetch).toHaveBeenCalledTimes(2)
+    expect(store.fetcher._fetch).toHaveBeenCalledWith('https://pod.example/profile/avatar.png')
   })
 
   it('shows a replacement image after a previous image hit fallback state', () => {

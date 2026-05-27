@@ -44,6 +44,18 @@ function photoContainerUri(subject: NamedNode): string {
   return `${subjectContainerUri(subject)}${PROFILE_PHOTOS_CONTAINER_NAME}/`
 }
 
+function isDirectChildResource(containerUri: string, resourceUri: string): boolean {
+  if (!resourceUri.startsWith(containerUri)) {
+    return false
+  }
+
+  const containerPath = new URL(containerUri).pathname
+  const resourcePath = new URL(resourceUri).pathname
+  const relativePath = resourcePath.slice(containerPath.length)
+
+  return Boolean(relativePath) && !relativePath.includes('/')
+}
+
 async function setPhotoContainerPublicAcl(
   subject: NamedNode,
   currentUser: NamedNode
@@ -98,6 +110,10 @@ function isRootProfileImageResource(subject: NamedNode, resourceUri: string): bo
     return false
   }
 
+  if (!isDirectChildResource(subjectContainerUri(subject), resourceUri)) {
+    return false
+  }
+
   return ROOT_PROFILE_IMAGE_EXTENSIONS.has(fileExtension(resourceUri))
 }
 
@@ -133,6 +149,51 @@ async function resourceExists(
   }
 }
 
+async function ensurePhotoContainerExists(
+  fetcher: { webOperation?: any, createContainer?: (parentURI: string, folderName: string, data: string) => Promise<any>, _fetch?: any },
+  containerUri: string
+): Promise<boolean> {
+  const containerExisted = await resourceExists(fetcher, containerUri)
+  if (containerExisted) {
+    return containerExisted
+  }
+
+  const trimmedContainerUri = containerUri.endsWith('/') ? containerUri.slice(0, -1) : containerUri
+  const lastSlash = trimmedContainerUri.lastIndexOf('/')
+  const parentUri = trimmedContainerUri.slice(0, lastSlash + 1)
+  const folderName = decodeURIComponent(trimmedContainerUri.slice(lastSlash + 1))
+
+  if (fetcher.createContainer) {
+    const response = await fetcher.createContainer(parentUri, folderName, '')
+    if (response?.status?.toString?.()[0] !== '2' && response?.status !== 409) {
+      throw new Error(`Error creating photo container: ${response?.status} ${response?.statusText}`)
+    }
+    return false
+  }
+
+  if (fetcher._fetch) {
+    const response = await fetcher._fetch(containerUri, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'text/turtle',
+        'If-None-Match': '*',
+        Link: '<http://www.w3.org/ns/ldp#BasicContainer>; rel="type"'
+      },
+      body: ' '
+    })
+    if (response?.status?.toString?.()[0] !== '2' && response?.status !== 409) {
+      throw new Error(`Error creating photo container: ${response?.status} ${response?.statusText}`)
+    }
+    return false
+  }
+
+  if (!fetcher.webOperation) {
+    throw new Error('Store fetcher does not support creating the photo container.')
+  }
+
+  throw new Error('Store fetcher does not support creating the photo container.')
+}
+
 async function findAvailablePhotoUri(
   fetcher: { webOperation?: any },
   containerUri: string,
@@ -166,7 +227,7 @@ async function uploadPhotoBlob(
   }
 
   const containerUri = photoContainerUri(subject)
-  const containerExisted = await resourceExists(fetcher, containerUri)
+  const containerExisted = await ensurePhotoContainerExists(fetcher, containerUri)
   const currentUser = authn.currentUser()
 
   if (containerExisted && currentUser) {
@@ -273,6 +334,11 @@ async function moveRootProfileImageToPhotoContainer(
   const contentType = response.headers.get('content-type') || imageBlob.type || mime.lookup(sourceFilename) || 'application/octet-stream'
   const destinationUri = await uploadPhotoBlob(store, subject, imageBlob, sourceFilename, contentType)
   await copyDedicatedAclIfPresent(store, photoUri, destinationUri)
+
+  const destinationExists = await resourceExists(fetcher, destinationUri)
+  if (!destinationExists) {
+    throw new Error(`Error verifying migrated picture: ${destinationUri}`)
+  }
 
   const deletePhotoResponse = await fetcher.webOperation('DELETE', photoUri)
   if (!deletePhotoResponse?.ok) {
