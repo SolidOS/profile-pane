@@ -8,6 +8,7 @@ import {
   uploadPhotoFile
 } from '../src/sections/heading/imageHelpers'
 import { Image } from '../src/sections/heading/Image'
+import { authn, solidLogicSingleton } from 'solid-logic'
 
 jest.mock('solid-logic', () => ({
   __esModule: true,
@@ -33,9 +34,68 @@ jest.mock('../src/specialButtons/addMeToYourFriends', () => ({
 
 describe('heading image helpers', () => {
   const subject = sym('https://pod.example/profile/card#me')
+  const setACLUserPublicMock = solidLogicSingleton.acl.setACLUserPublic as jest.Mock
 
   beforeEach(() => {
     jest.clearAllMocks()
+  })
+
+  it('sets public read ACLs on a newly created profile photo container and uploaded image', async () => {
+    const currentUser = sym('https://pod.example/profile/card#me')
+    ;(authn.currentUser as jest.Mock).mockReturnValue(currentUser)
+
+    const webOperation = (jest.fn() as any)
+      .mockResolvedValueOnce({ ok: false, status: 404, statusText: 'Not Found' })
+      .mockResolvedValueOnce({ ok: false, status: 404, statusText: 'Not Found' })
+      .mockResolvedValueOnce({ ok: true, status: 201, statusText: 'Created' })
+
+    const store = {
+      fetcher: {
+        webOperation
+      }
+    } as any
+
+    const file = new File(['image-bytes'], 'avatar.png', { type: 'image/png' })
+    const uploadedUri = await uploadPhotoFile(store, subject, file)
+
+    expect(uploadedUri).toBe('https://pod.example/profile/profileFotos/avatar.png')
+    expect(solidLogicSingleton.acl.setACLUserPublic).toHaveBeenNthCalledWith(
+      1,
+      'https://pod.example/profile/profileFotos/',
+      currentUser,
+      expect.objectContaining({ defaultForNew: true, public: expect.arrayContaining(['Read']) })
+    )
+    expect(solidLogicSingleton.acl.setACLUserPublic).toHaveBeenNthCalledWith(
+      2,
+      'https://pod.example/profile/profileFotos/avatar.png',
+      currentUser,
+      expect.objectContaining({ public: expect.arrayContaining(['Read']) })
+    )
+  })
+
+  it('keeps uploaded heading images when setting public ACLs fails', async () => {
+    const currentUser = sym('https://pod.example/profile/card#me')
+    ;(authn.currentUser as jest.Mock).mockReturnValue(currentUser)
+    setACLUserPublicMock
+      .mockImplementationOnce(async () => { throw new Error('ACL write failed') })
+      .mockImplementationOnce(async () => { throw new Error('ACL write failed') })
+
+    const webOperation = (jest.fn() as any)
+      .mockResolvedValueOnce({ ok: false, status: 404, statusText: 'Not Found' })
+      .mockResolvedValueOnce({ ok: false, status: 404, statusText: 'Not Found' })
+      .mockResolvedValueOnce({ ok: true, status: 201, statusText: 'Created' })
+
+    const store = {
+      fetcher: {
+        webOperation
+      }
+    } as any
+
+    const file = new File(['image-bytes'], 'avatar.png', { type: 'image/png' })
+    const uploadedUri = await uploadPhotoFile(store, subject, file)
+
+    expect(uploadedUri).toBe('https://pod.example/profile/profileFotos/avatar.png')
+    expect(solidLogicSingleton.acl.setACLUserPublic).toHaveBeenCalledTimes(2)
   })
 
   it('stores uploaded photos inside profileFotos and creates the folder when needed', async () => {
