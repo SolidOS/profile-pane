@@ -354,7 +354,14 @@ async function openPodPhotoPicker(
   formState.podPhotoPickerError = ''
   rerender()
 
-  formState.podPhotoOptions = await listPodPhotoOptions(store, subject)
+  const podPhotoOptions = await listPodPhotoOptions(store, subject)
+  const resolvedPodPhotoOptions: Array<PodPhotoOption & { previewSrc: string }> = await Promise.all(
+    podPhotoOptions.map(async (option) => ({
+      ...option,
+      previewSrc: (await resolvePhotoDisplaySrc(store, option.uri)) || option.uri
+    }))
+  )
+  formState.podPhotoOptions = resolvedPodPhotoOptions
 
   if (formState.podPhotoOptions.length === 0) {
     formState.podPhotoPickerError = 'No stored pod photos are available yet.'

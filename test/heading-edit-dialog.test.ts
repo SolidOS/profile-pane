@@ -2,7 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, jest } from '@jest/globals
 import { graph, sym } from 'rdflib'
 import { createHeadingEditDialog } from '../src/sections/heading/HeadingEditDialog'
 import type { HeadingMutationPlan, ProfileDetails } from '../src/sections/heading/types'
-import type { PreparedPhotoMigration } from '../src/sections/heading/imageHelpers'
+import type { PodPhotoOption, PreparedPhotoMigration } from '../src/sections/heading/imageHelpers'
 import { getSharedDialogCancelButton, getSharedDialogSaveButton } from '../src/ui/dialog'
 
 const mockProcessHeadingMutations = jest.fn<(_: unknown, __: unknown, plan: HeadingMutationPlan) => Promise<void>>()
@@ -10,6 +10,7 @@ const mockUploadPhotoFile = jest.fn<(_: unknown, __: unknown, ___: File) => Prom
 const mockCopyPhotoToProfileContainer = jest.fn<(_: unknown, __: unknown, photoUri: string) => Promise<PreparedPhotoMigration>>()
 const mockMoveProfileImagesToPhotoContainer = jest.fn<(_: unknown, __: unknown) => Promise<PreparedPhotoMigration>>()
 const mockShouldStorePhotoInProfileContainer = jest.fn<(_: unknown, __?: string) => boolean>()
+const mockListPodPhotoOptions = jest.fn<(_: unknown, __: unknown) => Promise<PodPhotoOption[]>>()
 const mockResolvePhotoDisplaySrc = jest.fn<(_: unknown, __?: string) => Promise<string | undefined>>()
 
 function createPreparedPhotoMigration(entries: Array<[string, string]> = []): PreparedPhotoMigration {
@@ -28,8 +29,37 @@ jest.mock('../src/sections/heading/imageHelpers', () => ({
   copyPhotoToProfileContainer: (...args: Parameters<typeof mockCopyPhotoToProfileContainer>) => mockCopyPhotoToProfileContainer(...args),
   moveProfileImagesToPhotoContainer: (...args: Parameters<typeof mockMoveProfileImagesToPhotoContainer>) => mockMoveProfileImagesToPhotoContainer(...args),
   shouldStorePhotoInProfileContainer: (...args: Parameters<typeof mockShouldStorePhotoInProfileContainer>) => mockShouldStorePhotoInProfileContainer(...args),
+  listPodPhotoOptions: (...args: Parameters<typeof mockListPodPhotoOptions>) => mockListPodPhotoOptions(...args),
   resolvePhotoDisplaySrc: (...args: Parameters<typeof mockResolvePhotoDisplaySrc>) => mockResolvePhotoDisplaySrc(...args)
 }))
+
+function createDeferred<T>() {
+  let resolve!: (value: T | PromiseLike<T>) => void
+  let reject!: (reason?: unknown) => void
+  const promise = new Promise<T>((res, rej) => {
+    resolve = res
+    reject = rej
+  })
+
+  return { promise, resolve, reject }
+}
+
+async function openPhotoSourcePicker() {
+  const uploadButton = document.querySelector('.profile-edit-dialog__image-upload-button') as HTMLElement | null
+  expect(uploadButton).not.toBeNull()
+
+  uploadButton?.click()
+  await flushUi()
+}
+
+async function choosePhotoSource(label: 'From Pod' | 'From Device') {
+  const sourceButton = Array.from(document.querySelectorAll('.profile-edit-dialog__source-option'))
+    .find((element) => element.textContent?.includes(label)) as HTMLButtonElement | undefined
+  expect(sourceButton).toBeDefined()
+
+  sourceButton?.click()
+  await flushUi()
+}
 
 async function flushUi() {
   await new Promise(resolve => setTimeout(resolve, 0))
@@ -49,12 +79,14 @@ describe('heading edit dialog', () => {
     mockCopyPhotoToProfileContainer.mockReset()
     mockMoveProfileImagesToPhotoContainer.mockReset()
     mockShouldStorePhotoInProfileContainer.mockReset()
+    mockListPodPhotoOptions.mockReset()
     mockResolvePhotoDisplaySrc.mockReset()
     mockProcessHeadingMutations.mockResolvedValue(undefined)
     mockUploadPhotoFile.mockResolvedValue('https://example.com/profile/avatar.png')
     mockCopyPhotoToProfileContainer.mockImplementation(async (_store, _subject, photoUri) => createPreparedPhotoMigration([[photoUri, photoUri]]))
     mockMoveProfileImagesToPhotoContainer.mockResolvedValue(createPreparedPhotoMigration())
     mockShouldStorePhotoInProfileContainer.mockReturnValue(false)
+    mockListPodPhotoOptions.mockResolvedValue([])
     mockResolvePhotoDisplaySrc.mockImplementation(async (_store, imageSrc) => imageSrc)
 
     Object.defineProperty(URL, 'createObjectURL', {
@@ -111,18 +143,8 @@ describe('heading edit dialog', () => {
     const resultPromise = createHeadingEditDialog(createDialogEvent(), store, subject, profileData, 'owner')
     await flushUi()
 
-    const uploadButton = document.querySelector('.profile-edit-dialog__image-upload-button') as HTMLElement | null
-    expect(uploadButton).not.toBeNull()
-
-    uploadButton?.click()
-    await flushUi()
-
-    const fromDeviceButton = Array.from(document.querySelectorAll('.profile-edit-dialog__source-option'))
-      .find((element) => element.textContent?.includes('From Device')) as HTMLButtonElement | undefined
-    expect(fromDeviceButton).toBeDefined()
-
-    fromDeviceButton?.click()
-    await flushUi()
+    await openPhotoSourcePicker()
+    await choosePhotoSource('From Device')
 
     const fileInput = document.querySelector('input[type="file"]') as HTMLInputElement | null
     expect(fileInput).not.toBeNull()
@@ -341,18 +363,8 @@ describe('heading edit dialog', () => {
     const resultPromise = createHeadingEditDialog(createDialogEvent(), store, subject, profileData, 'owner')
     await flushUi()
 
-    const uploadButton = document.querySelector('.profile-edit-dialog__image-upload-button') as HTMLElement | null
-    expect(uploadButton).not.toBeNull()
-
-    uploadButton?.click()
-    await flushUi()
-
-    const fromDeviceButton = Array.from(document.querySelectorAll('.profile-edit-dialog__source-option'))
-      .find((element) => element.textContent?.includes('From Device')) as HTMLButtonElement | undefined
-    expect(fromDeviceButton).toBeDefined()
-
-    fromDeviceButton?.click()
-    await flushUi()
+    await openPhotoSourcePicker()
+    await choosePhotoSource('From Device')
 
     const fileInput = document.querySelector('input[type="file"]') as HTMLInputElement | null
     expect(fileInput).not.toBeNull()
@@ -407,5 +419,128 @@ describe('heading edit dialog', () => {
     expect(plan.phoneOps.update[0]?.type).toBe('Cell')
     expect(plan.emailOps.update).toHaveLength(1)
     expect(plan.emailOps.update[0]?.type).toBe('Home')
+  })
+
+  it('opens the pod photo picker, shows loading state, and renders resolved pod photo options', async () => {
+    const store = graph() as any
+    const subject = sym('https://example.com/profile/card#me')
+    const profileData: ProfileDetails = {
+      entryNode: subject,
+      name: 'Jane Doe',
+      imageSrc: 'https://example.com/profile/original.png'
+    }
+    const deferredOptions = createDeferred<PodPhotoOption[]>()
+    mockListPodPhotoOptions.mockReturnValueOnce(deferredOptions.promise)
+    mockResolvePhotoDisplaySrc.mockImplementation(async (_store, imageSrc) => {
+      if (imageSrc === 'https://example.com/profile/profileFotos/avatar-1.png') {
+        return 'blob:pod-preview-1'
+      }
+      return imageSrc
+    })
+
+    const resultPromise = createHeadingEditDialog(createDialogEvent(), store, subject, profileData, 'owner')
+    await flushUi()
+
+    await openPhotoSourcePicker()
+    await choosePhotoSource('From Pod')
+
+    expect(document.querySelector('.profile-edit-dialog__source-picker')).toBeNull()
+    expect(document.querySelector('.profile-edit-dialog__pod-photo-picker')).not.toBeNull()
+    expect(document.body.textContent).toContain('Loading pod photos...')
+    expect(mockListPodPhotoOptions).toHaveBeenCalledWith(store, subject)
+
+    deferredOptions.resolve([
+      {
+        uri: 'https://example.com/profile/profileFotos/avatar-1.png',
+        label: 'avatar-1.png'
+      }
+    ])
+    await flushUi()
+    await flushUi()
+
+    expect(document.body.textContent).not.toContain('Loading pod photos...')
+    expect(document.body.textContent).toContain('avatar-1.png')
+    expect(document.querySelectorAll('.profile-edit-dialog__pod-photo-option')).toHaveLength(1)
+
+    const closeButton = document.querySelector('.profile-edit-dialog__pod-photo-close') as HTMLButtonElement | null
+    expect(closeButton).not.toBeNull()
+    closeButton?.click()
+    await flushUi()
+
+    expect(document.querySelector('.profile-edit-dialog__pod-photo-picker')).toBeNull()
+
+    getSharedDialogCancelButton(document)?.click()
+    await resultPromise
+  })
+
+  it('shows an error state when loading pod photo options fails', async () => {
+    const store = graph() as any
+    const subject = sym('https://example.com/profile/card#me')
+    const profileData: ProfileDetails = {
+      entryNode: subject,
+      name: 'Jane Doe',
+      imageSrc: 'https://example.com/profile/original.png'
+    }
+    mockListPodPhotoOptions.mockRejectedValueOnce(new Error('load failed'))
+
+    const resultPromise = createHeadingEditDialog(createDialogEvent(), store, subject, profileData, 'owner')
+    await flushUi()
+
+    await openPhotoSourcePicker()
+    await choosePhotoSource('From Pod')
+
+    expect(document.querySelector('.profile-edit-dialog__pod-photo-picker')).not.toBeNull()
+    expect(document.body.textContent).toContain('Could not load pod photos right now.')
+    expect(document.querySelectorAll('.profile-edit-dialog__pod-photo-option')).toHaveLength(0)
+
+    getSharedDialogCancelButton(document)?.click()
+    await resultPromise
+  })
+
+  it('selects a stored pod photo, closes the picker, updates the preview, and saves the selected imageSrc', async () => {
+    const store = graph() as any
+    const subject = sym('https://example.com/profile/card#me')
+    const profileData: ProfileDetails = {
+      entryNode: subject,
+      name: 'Jane Doe',
+      imageSrc: 'https://example.com/profile/original.png'
+    }
+    mockListPodPhotoOptions.mockResolvedValueOnce([
+      {
+        uri: 'https://example.com/profile/profileFotos/pod-avatar.png',
+        label: 'pod-avatar.png'
+      }
+    ])
+    mockResolvePhotoDisplaySrc.mockImplementation(async (_store, imageSrc) => {
+      if (imageSrc === 'https://example.com/profile/profileFotos/pod-avatar.png') {
+        return 'blob:selected-pod-preview'
+      }
+      return imageSrc
+    })
+
+    const resultPromise = createHeadingEditDialog(createDialogEvent(), store, subject, profileData, 'owner')
+    await flushUi()
+
+    await openPhotoSourcePicker()
+    await choosePhotoSource('From Pod')
+
+    const podPhotoOption = document.querySelector('.profile-edit-dialog__pod-photo-option') as HTMLButtonElement | null
+    expect(podPhotoOption).not.toBeNull()
+
+    podPhotoOption?.click()
+    await flushUi()
+
+    expect(document.querySelector('.profile-edit-dialog__pod-photo-picker')).toBeNull()
+    expect(mockUploadPhotoFile).not.toHaveBeenCalled()
+
+    const heroImage = document.querySelector('.profile-edit-dialog__image-frame .profile__hero') as HTMLImageElement | null
+    expect(heroImage?.getAttribute('src')).toBe('blob:selected-pod-preview')
+
+    getSharedDialogSaveButton(document)?.click()
+    await resultPromise
+
+    expect(mockProcessHeadingMutations).toHaveBeenCalledTimes(1)
+    const plan = mockProcessHeadingMutations.mock.calls[0][2]
+    expect(plan.basicOps.update[0]?.imageSrc).toBe('https://example.com/profile/profileFotos/pod-avatar.png')
   })
 })
