@@ -1,9 +1,11 @@
-import { LiveStore, NamedNode, sym } from 'rdflib'
-import { ns } from 'solid-ui'
+import { LiveStore, NamedNode, Namespace, sym } from 'rdflib'
 import { authn, solidLogicSingleton } from 'solid-logic'
 import { error as debugError } from '../../utils/debug'
 
 const resolvedHeadingImageCache = new Map<string, string>()
+const PROFILE_PHOTOS_CONTAINER_NAME = 'profileFotos'
+const ldp = Namespace('http://www.w3.org/ns/ldp#')
+const ROOT_PROFILE_IMAGE_EXTENSIONS = new Set(['png', 'jpg', 'jpeg', 'gif', 'webp', 'bmp', 'svg', 'tiff'])
 /* Code copied from contact-pane/src/mugshotGallery and modified to fit the needs of the new design */
 const mimeMap: Record<string, string> = {
   'image/png': 'png',
@@ -32,10 +34,264 @@ const mime = {
   }
 }
 
-function subjectDirectoryUri(subject: NamedNode): string {
+function subjectContainerUri(subject: NamedNode): string {
   const docUri = subject.doc().uri
   const lastSlash = docUri.lastIndexOf('/')
   return lastSlash >= 0 ? docUri.slice(0, lastSlash + 1) : docUri
+}
+
+function photoContainerUri(subject: NamedNode): string {
+  return `${subjectContainerUri(subject)}${PROFILE_PHOTOS_CONTAINER_NAME}/`
+}
+
+async function setPhotoContainerPublicAcl(
+  subject: NamedNode,
+  currentUser: NamedNode
+): Promise<void> {
+  try {
+    await solidLogicSingleton.acl.setACLUserPublic(photoContainerUri(subject), currentUser, {
+      defaultForNew: true,
+      public: ['Read'] as unknown as []
+    })
+  } catch (error) {
+    debugError(`Error setting photo container permissions: ${error}`)
+  }
+}
+
+function candidateFilename(filenameHint: string, contentType: string): string {
+  const extension = mime.extension(contentType) || 'bin'
+  const normalizedFilename = filenameHint.trim() || `image.${extension}`
+  let filename = encodeURIComponent(normalizedFilename)
+
+  if (contentType !== mime.lookup(normalizedFilename)) {
+    filename += `_.${extension}`
+  }
+
+  return filename
+}
+
+function splitFilename(filename: string): { basename: string, extension: string } {
+  const lastDot = filename.lastIndexOf('.')
+  if (lastDot <= 0 || lastDot === filename.length - 1) {
+    return { basename: filename, extension: '' }
+  }
+
+  return {
+    basename: filename.slice(0, lastDot),
+    extension: filename.slice(lastDot)
+  }
+}
+
+function fileExtension(resourceUri: string): string {
+  const pathname = new URL(resourceUri).pathname
+  const filename = pathname.split('/').pop() || ''
+  const lastDot = filename.lastIndexOf('.')
+  if (lastDot < 0 || lastDot === filename.length - 1) {
+    return ''
+  }
+
+  return filename.slice(lastDot + 1).toLowerCase()
+}
+
+function isRootProfileImageResource(subject: NamedNode, resourceUri: string): boolean {
+  if (!shouldStorePhotoInProfileContainer(subject, resourceUri)) {
+    return false
+  }
+
+  return ROOT_PROFILE_IMAGE_EXTENSIONS.has(fileExtension(resourceUri))
+}
+
+function dedicatedAclUri(resourceUri: string): string {
+  return `${resourceUri}.acl`
+}
+
+function rewriteAclDocument(
+  aclText: string,
+  sourceResourceUri: string,
+  destinationResourceUri: string,
+  sourceAclUri: string,
+  destinationAclUri: string
+): string {
+  return aclText
+    .split(sourceAclUri).join(destinationAclUri)
+    .split(sourceResourceUri).join(destinationResourceUri)
+}
+
+async function resourceExists(
+  fetcher: { webOperation?: any },
+  resourceUri: string
+): Promise<boolean> {
+  if (!fetcher.webOperation) {
+    return false
+  }
+
+  try {
+    const response = await fetcher.webOperation('HEAD', resourceUri)
+    return Boolean(response?.ok)
+  } catch {
+    return false
+  }
+}
+
+async function findAvailablePhotoUri(
+  fetcher: { webOperation?: any },
+  containerUri: string,
+  filename: string
+): Promise<string> {
+  const { basename, extension } = splitFilename(filename)
+  let candidateUri = `${containerUri}${filename}`
+
+  for (let index = 1; await resourceExists(fetcher, candidateUri); index += 1) {
+    candidateUri = `${containerUri}${basename}_${index}${extension}`
+  }
+
+  return candidateUri
+}
+
+async function uploadPhotoBlob(
+  store: LiveStore,
+  subject: NamedNode,
+  imageBlob: Blob,
+  filenameHint: string,
+  contentTypeHint?: string
+): Promise<string> {
+  const fetcher = store.fetcher as { webOperation?: any } | undefined
+  if (!fetcher?.webOperation) {
+    throw new Error('Store has no fetcher.')
+  }
+
+  const detectedContentType = contentTypeHint || imageBlob.type || mime.lookup(filenameHint) || 'application/octet-stream'
+  if (!detectedContentType.startsWith('image/')) {
+    throw new Error('Selected file is not an image.')
+  }
+
+  const containerUri = photoContainerUri(subject)
+  const containerExisted = await resourceExists(fetcher, containerUri)
+  const currentUser = authn.currentUser()
+
+  if (containerExisted && currentUser) {
+    await setPhotoContainerPublicAcl(subject, currentUser)
+  }
+
+  const filename = candidateFilename(filenameHint, detectedContentType)
+  const candidateUri = await findAvailablePhotoUri(fetcher, containerUri, filename)
+
+  try {
+    const data = typeof imageBlob.arrayBuffer === 'function'
+      ? await imageBlob.arrayBuffer()
+      : await new Response(imageBlob).arrayBuffer()
+    const response = await fetcher.webOperation('PUT', candidateUri, {
+      data: data as unknown as string,
+      contentType: detectedContentType
+    } as any)
+
+    if (!response.ok) {
+      throw new Error(`Error uploading picture: ${response.status} ${response.statusText}`)
+    }
+  } catch (error) {
+    throw new Error(`Error uploading picture: ${error}`)
+  }
+
+  if (currentUser) {
+    if (!containerExisted) {
+      await setPhotoContainerPublicAcl(subject, currentUser)
+
+      try {
+        await solidLogicSingleton.acl.setACLUserPublic(candidateUri, currentUser, {
+          public: ['Read'] as unknown as []
+        })
+      } catch (error) {
+        debugError(`Error setting uploaded picture permissions: ${error}`)
+      }
+    }
+  }
+
+  return candidateUri
+}
+
+async function copyDedicatedAclIfPresent(
+  store: LiveStore,
+  sourceResourceUri: string,
+  destinationResourceUri: string
+): Promise<boolean> {
+  const fetcher = store.fetcher as { _fetch?: (url: string) => Promise<Response>, webOperation?: any } | undefined
+  if (!fetcher?._fetch || !fetcher.webOperation) {
+    return false
+  }
+
+  const sourceAcl = dedicatedAclUri(sourceResourceUri)
+  const destinationAcl = dedicatedAclUri(destinationResourceUri)
+
+  try {
+    const aclResponse = await fetcher._fetch(sourceAcl)
+    if (!aclResponse.ok) {
+      return false
+    }
+
+    const aclText = await aclResponse.text()
+    const rewrittenAclText = rewriteAclDocument(
+      aclText,
+      sourceResourceUri,
+      destinationResourceUri,
+      sourceAcl,
+      destinationAcl
+    )
+    const writeResponse = await fetcher.webOperation('PUT', destinationAcl, {
+      data: rewrittenAclText,
+      contentType: 'text/turtle'
+    } as any)
+
+    if (!writeResponse?.ok) {
+      throw new Error(`Error writing ACL text: ${writeResponse?.status} ${writeResponse?.statusText}`)
+    }
+
+    return true
+  } catch (error) {
+    debugError(`Error copying picture ACL: ${error}`)
+    return false
+  }
+}
+
+async function moveRootProfileImageToPhotoContainer(
+  store: LiveStore,
+  subject: NamedNode,
+  photoUri: string
+): Promise<string> {
+  const fetcher = store.fetcher as { _fetch?: (url: string) => Promise<Response>, webOperation?: any } | undefined
+  if (!fetcher?._fetch || !fetcher.webOperation) {
+    throw new Error('Store fetcher does not support moving the existing photo.')
+  }
+
+  const response = await fetcher._fetch(photoUri)
+  if (!response.ok) {
+    throw new Error(`Error reading existing picture: ${response.status} ${response.statusText}`)
+  }
+
+  const imageBlob = await response.blob()
+  const url = new URL(photoUri)
+  const sourceFilename = decodeURIComponent(url.pathname.split('/').pop() || 'image')
+  const contentType = response.headers.get('content-type') || imageBlob.type || mime.lookup(sourceFilename) || 'application/octet-stream'
+  const destinationUri = await uploadPhotoBlob(store, subject, imageBlob, sourceFilename, contentType)
+  await copyDedicatedAclIfPresent(store, photoUri, destinationUri)
+
+  const deletePhotoResponse = await fetcher.webOperation('DELETE', photoUri)
+  if (!deletePhotoResponse?.ok) {
+    throw new Error(`Error deleting original picture: ${deletePhotoResponse?.status} ${deletePhotoResponse?.statusText}`)
+  }
+
+  return destinationUri
+}
+
+export function shouldStorePhotoInProfileContainer(subject: NamedNode, photoUri?: string): boolean {
+  const normalizedPhotoUri = (photoUri || '').trim()
+  if (!normalizedPhotoUri || normalizedPhotoUri.startsWith('blob:') || normalizedPhotoUri.startsWith('data:')) {
+    return false
+  }
+
+  const subjectContainer = subjectContainerUri(subject)
+  const photosContainer = photoContainerUri(subject)
+
+  return normalizedPhotoUri.startsWith(subjectContainer) && !normalizedPhotoUri.startsWith(photosContainer)
 }
 
 export async function resolvePhotoDisplaySrc(store: LiveStore, imageSrc?: string): Promise<string | undefined> {
@@ -69,67 +325,46 @@ export async function resolvePhotoDisplaySrc(store: LiveStore, imageSrc?: string
 }
 
 export async function uploadPhotoFile(store: LiveStore, subject: NamedNode, file: File): Promise<string> {
-  if (!store.fetcher) {
-    throw new Error('Store has no fetcher.')
-  }
-
-  const detectedContentType = file.type || mime.lookup(file.name) || 'application/octet-stream'
-  if (!detectedContentType.startsWith('image/')) {
-    throw new Error('Selected file is not an image.')
-  }
-
-  const extension = mime.extension(detectedContentType) || 'bin'
-  let filename = encodeURIComponent(file.name || `image.${extension}`)
-
-  if (detectedContentType !== mime.lookup(file.name || '')) {
-    filename += `_.${extension}`
-  }
-
-  const directoryUri = subjectDirectoryUri(subject)
-  let candidateUri = `${directoryUri}${filename}`
-
-  for (let index = 0; store.holds(subject, ns.vcard('hasPhoto'), sym(candidateUri)); index++) {
-    const fallbackName = `image_${index}.${extension}`
-    candidateUri = `${directoryUri}${fallbackName}`
-  }
-  try {
-    const data = await file.arrayBuffer()
-    const response = await store.fetcher.webOperation('PUT', candidateUri, {
-      data: data as unknown as string,
-      contentType: detectedContentType
-    } as any)
-    if (!response.ok) {
-      throw new Error(`Error uploading picture: ${response.status} ${response.statusText}`)
-    }
-  } catch (error) {
-    throw new Error(`Error uploading picture: ${error}`)
-  }
-
-  const currentUser = authn.currentUser()
-  if (currentUser) {
-    try {
-      await solidLogicSingleton.acl.setACLUserPublic(candidateUri, currentUser, {
-        public: ['Read'] as unknown as []
-      })
-    } catch (error) {
-      debugError(`Error setting uploaded picture permissions: ${error}`)
-    }
-  }
-  
-  return candidateUri
+  return uploadPhotoBlob(store, subject, file, file.name || 'image')
 }
 
-export async function deletePhotoFile(store: LiveStore, subject: NamedNode, photoUri: string): Promise<void> {
-  void subject
-  if (!photoUri) return
-
-  if (store.fetcher) {
-    try {
-      await store.fetcher.webOperation('DELETE', photoUri)
-    } catch (error) {
-      debugError(`Error deleting picture: ${error}`)
-    }
-    
+export async function copyPhotoToProfileContainer(store: LiveStore, subject: NamedNode, photoUri: string): Promise<string> {
+  if (!shouldStorePhotoInProfileContainer(subject, photoUri)) {
+    return photoUri
   }
+
+  return moveRootProfileImageToPhotoContainer(store, subject, photoUri)
 }
 
+// This runs once for older profiles so their root-level image files conform to the
+// newer dedicated profile image container: profile/profileFotos/.
+async function migrateLegacyProfileImagesToPhotoContainer(
+  store: LiveStore,
+  subject: NamedNode,
+  legacyPhotoUris: string[]
+): Promise<Map<string, string>> {
+  const migratedPhotos = new Map<string, string>()
+
+  for (const resourceUri of legacyPhotoUris) {
+    const destinationUri = await moveRootProfileImageToPhotoContainer(store, subject, resourceUri)
+    migratedPhotos.set(resourceUri, destinationUri)
+  }
+
+  return migratedPhotos
+}
+
+export async function moveProfileImagesToPhotoContainer(store: LiveStore, subject: NamedNode): Promise<Map<string, string>> {
+  const fetcher = store.fetcher as { load?: (resource: NamedNode) => Promise<any> } | undefined
+  if (!fetcher?.load || typeof (store as any).each !== 'function') {
+    return new Map<string, string>()
+  }
+
+  const containerNode = sym(subjectContainerUri(subject))
+  await fetcher.load(containerNode)
+
+  const legacyPhotoUris = ((store as any).each(containerNode, ldp('contains')) as NamedNode[])
+    .map((resource) => resource.uri)
+    .filter((resourceUri) => isRootProfileImageResource(subject, resourceUri))
+
+  return migrateLegacyProfileImagesToPhotoContainer(store, subject, legacyPhotoUris)
+}
