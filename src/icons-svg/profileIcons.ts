@@ -79,19 +79,6 @@ export const plusIcon = html`
     </defs>
   </svg>
 `
-export const searchIcon = html`
-  <svg xmlns="http://www.w3.org/2000/svg" 
-    width="13" 
-    height="13" 
-    viewBox="0 0 13 13" 
-    fill="none"
-    aria-hidden="true"
-    focusable="false"
-  >
-    <circle cx="5.5" cy="5.5" r="4.5" stroke="#99A1AF" stroke-width="1.2" fill="none"/>
-    <path d="M9.1 9.1L12 12" stroke="#99A1AF" stroke-width="1.2" stroke-linecap="round"/>
-  </svg>
-`
 export const trashIcon = html`
   <svg xmlns="http://www.w3.org/2000/svg" 
     width="20" 
@@ -155,6 +142,12 @@ export const addIcon = html`
     <rect width="12" height="12" fill="white"/>
     </clipPath>
     </defs>
+  </svg>
+`
+
+export const chevronDownIcon = html`
+  <svg xmlns="http://www.w3.org/2000/svg" width="12" height="7" viewBox="0 0 12 7" fill="none" aria-hidden="true" focusable="false">
+    <path d="M10.1831 0.183058C10.4271 -0.061018 10.8228 -0.061015 11.0668 0.183058C11.3109 0.427136 11.3109 0.82277 11.0668 1.06685L6.06685 6.06685C5.82277 6.31093 5.42714 6.31093 5.18306 6.06685L0.183058 1.06685C-0.0610194 0.82277 -0.0610194 0.427136 0.183058 0.183058C0.427136 -0.0610194 0.82277 -0.0610194 1.06685 0.183058L5.62495 4.74116L10.1831 0.183058Z" fill="#6A7282"/>
   </svg>
 `
 export const personInCircleIcon = html`
@@ -256,9 +249,9 @@ export const closeIcon = html`
 
 export const editIcon = html`
   <svg xmlns="http://www.w3.org/2000/svg" 
-    width="20" 
-    height="20" 
-    viewBox="0 0 20 20" 
+    width="14" 
+    height="14" 
+    viewBox="3 3 14 14" 
     fill="none"
     aria-hidden="true" 
     focusable="false"

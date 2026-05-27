@@ -1,0 +1,1090 @@
+/* Profile layout styles. */
+
+/* Shell */
+:root {
+  --profile-image-size: 3rem;
+  --profile-interactive-cursor: pointer;
+}
+
+.profile-pane-host {
+  display: block;
+  width: 100%;
+  min-width: 100%;
+  max-width: none;
+  box-sizing: border-box;
+}
+
+.profile-pane-root {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  container-name: profile-pane;
+  container-type: inline-size;
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-input-mode='touch'] {
+  --profile-interactive-cursor: auto;
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-input-mode='pointer'] {
+  --profile-interactive-cursor: pointer;
+}
+
+td.obj .profile-pane-root {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+}
+
+/* Shared controls */
+.profile__section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--spacing-xs, 0.75rem);
+  width: 100%;
+}
+
+.profile__section-header:not(.profile-edit-dialog__contact-section-header) h2,
+.profile__section-header:not(.profile-edit-dialog__contact-section-header) h3,
+.profile__section-header:not(.profile-edit-dialog__contact-section-header) h4 {
+  margin: 0;
+  font-size: var(--font-size-xl, 1.375rem);
+  font-weight: var(--font-weight-md, 500);
+}
+
+.profile__action-button,
+solid-ui-button.profile__action-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-width: 11.25rem;
+  max-width: 20rem;
+  box-sizing: border-box;
+}
+
+.profile__add-more-content,
+.profile__action-icon {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-xxs, 0.3125rem);
+}
+
+.profile__add-more-icon {
+  display: inline-block;
+  width: var(--icon-xxxs, 0.75rem);
+  height: var(--icon-xxxs, 0.75rem);
+  margin-right: 0;
+  line-height: 0;
+  position: relative;
+  top: 0;
+  transform: translateY(0);
+}
+
+.profile__add-more-icon svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.profile__btn-friends,
+.profile__btn-contacts,
+solid-ui-button.profile__btn-friends,
+solid-ui-button.profile__btn-contacts {
+  width: auto;
+  min-width: 0;
+  max-width: none;
+}
+
+.profile__btn-friends,
+.profile__btn-contacts {
+  gap: var(--spacing-xxs, 0.3125rem);
+}
+
+solid-ui-button.profile__btn-friends,
+solid-ui-button.profile__btn-contacts {
+  width: auto;
+  --button-padding-sm: 0.375rem var(--spacing-xs, 0.75rem);
+  --button-border-radius: var(--border-radius-md, 0.5rem);
+  --button-padding-x-sm: var(--spacing-xs, 0.75rem);
+}
+
+solid-ui-button.profile__btn-friends {
+  --button-background: transparent;
+  --button-text: var(--color-primary, #7C4DFF);
+  --button-border: var(--color-primary, #7C4DFF);
+  --button-hover-background: rgba(124, 77, 255, 0.08);
+  --button-hover-border: var(--color-primary, #7C4DFF);
+  --button-hover-text: var(--color-primary, #7C4DFF);
+}
+
+solid-ui-button.profile__btn-contacts {
+  --button-background: var(--profile-contacts-button-background, transparent);
+  --button-text: var(--profile-contacts-button-color, var(--color-primary, #7C4DFF));
+  --button-border: var(--profile-contacts-button-border, var(--color-primary, #7C4DFF));
+  --button-hover-background: rgba(124, 77, 255, 0.08);
+  --button-hover-border: var(--profile-contacts-button-border, var(--color-primary, #7C4DFF));
+  --button-hover-text: var(--profile-contacts-button-color, var(--color-primary, #7C4DFF));
+}
+
+.profile-action-text {
+  width: auto;
+  min-width: 0;
+  max-width: none;
+  padding: var(--spacing-xxs, 0.3125rem);
+  border: none;
+  background: none;
+  color: var(--color-primary, #7C4DFF);
+  cursor: var(--profile-interactive-cursor, pointer);
+  font-size: var(--font-size-sm, 0.875rem);
+}
+
+solid-ui-button.profile-action-text {
+  width: auto;
+  min-width: 0;
+  max-width: none;
+  --button-height-sm: 0;
+  --button-padding-sm: var(--spacing-xxs, 0.3125rem);
+  --button-font-size-sm: var(--font-size-sm, 0.875rem);
+  --button-font-weight: var(--font-weight-regular, 400);
+  --button-background: transparent;
+  --button-border-width: 0;
+  --button-border: transparent;
+  --button-text: var(--color-primary, #7C4DFF);
+  --button-hover-background: transparent;
+  --button-hover-border: transparent;
+  --button-hover-text: var(--color-primary, #7C4DFF);
+}
+
+.profile-action-text:hover {
+  text-decoration: underline;
+}
+
+solid-ui-button.profile-action-text:hover::part(button),
+solid-ui-button.profile-action-text:focus-visible::part(button) {
+  text-decoration: underline;
+}
+
+/* Base grid layout */
+.profile-grid {
+  --profile-main-section-min-width: 37.5rem;
+  --profile-sidebar-min-width: 18.75rem;
+  --profile-sidebar-width: clamp(var(--profile-sidebar-min-width), 33.333%, 21.875rem);
+  --profile-sidebar-section-padding: var(--spacing-lg, 1.5625rem);
+  --profile-mobile-section-padding: var(--spacing-sm, 0.9375rem);
+  --profile-stacked-section-gap: var(--spacing-sm, 0.9375rem);
+  font-size: inherit;
+  display: grid;
+  grid-template-columns:
+    minmax(var(--profile-main-section-min-width), 1fr)
+    minmax(var(--profile-sidebar-min-width), var(--profile-sidebar-width));
+  align-items: start;
+  column-gap: var(--spacing-xxs, 0.3125rem);
+  row-gap: var(--spacing-md, 1.25rem);
+}
+
+/* Grid columns and wrappers */
+.profile-grid .profile__main,
+.profile-grid .profile__intro-main,
+.profile-grid .profile__intro-sidebar,
+.profile-grid .profile__sidebar,
+.profile-grid .profile__section,
+.profile-grid .profile__section--empty {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+.profile-grid .profile__main {
+  grid-column: 1;
+  grid-row: 2;
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md, 1.25rem);
+  margin-bottom: 0;
+  overflow-wrap: anywhere;
+  align-items: flex-start;
+}
+
+.profile-grid .profile__intro-main,
+.profile-grid .profile__intro-sidebar {
+  display: flex;
+  flex-direction: column;
+}
+
+.profile-grid .profile__intro-main {
+  grid-column: 1;
+  grid-row: 1;
+  align-self: stretch;
+}
+
+.profile-grid .profile__intro-sidebar {
+  grid-column: 2;
+  grid-row: 1;
+  align-self: stretch;
+  min-width: var(--profile-sidebar-min-width);
+  padding-block: 0;
+  padding-inline: var(--spacing-sm, 0.938rem);
+  background: transparent;
+  border-radius: 0;
+}
+
+.profile-grid > .profile__sidebar:not(.profile__intro-sidebar) {
+  grid-row: 2;
+}
+
+.profile-grid .profile__intro-sidebar > .profile__section,
+.profile-grid .profile__intro-sidebar > .profile__section--empty {
+  flex: 1 1 auto;
+  height: 100%;
+}
+
+.profile-grid .profile__intro-sidebar > [data-profile-section='social'] {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+  box-sizing: border-box;
+}
+
+.profile-grid .profile__intro-sidebar > [data-profile-section='social'] > .profile-section-collapsible__content {
+  flex: 1 1 auto;
+}
+
+.profile-grid .profile__sidebar:not(.profile__intro-sidebar) {
+  grid-column: 2;
+  display: flex;
+  flex-direction: column;
+  min-width: var(--profile-sidebar-min-width);
+  padding: var(--spacing-sm, 0.938rem);
+  align-items: stretch;
+  text-align: left;
+  border-radius: var(--border-radius-base);
+  background: var(--color-background, #F8F9FB);
+  overflow-x: clip;
+}
+
+.profile-grid .profile__sidebar-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md, 1.25rem);
+  min-width: var(--profile-sidebar-min-width);
+}
+
+.profile-grid .profile__intro-sidebar > .profile__section,
+.profile-grid .profile__intro-sidebar > .profile__section--empty,
+.profile-grid .profile__sidebar-content > .profile__section,
+.profile-grid .profile__sidebar-content > .profile__section--empty {
+  min-width: var(--profile-sidebar-min-width);
+}
+
+.profile-grid .profile__intro-main > .profile__section,
+.profile-grid .profile__intro-main > .profile__section--empty,
+.profile-grid .profile__main > .profile__section,
+.profile-grid .profile__main > .profile__section--empty {
+  min-width: var(--profile-main-section-min-width);
+}
+
+.profile-grid > .profile__sidebar:not(.profile__intro-sidebar) {
+  padding-top: 0;
+}
+
+/* Section cards */
+.profile-grid .profile__section,
+.profile-grid .profile__section--empty {
+  background: var(--color-card-bg, #FFF);
+  border: var(--border-width-thin, 0.1rem) solid var(--color-border-lighter, #E2E8F0);
+  overflow-x: clip;
+}
+
+.profile-grid .profile__section {
+  padding: var(--spacing-lg, 1.5625rem);
+  border-radius: var(--border-radius-base);
+}
+
+.profile-grid .profile__section.profile-section-collapsible {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg, 1.5625rem);
+}
+
+.profile-grid .profile__section--empty {
+  padding: var(--spacing-1xl, 2.5rem) var(--spacing-lg, 1.5625rem);
+}
+
+.profile-grid .profile__sidebar-content > [data-profile-section='social'].profile__section,
+.profile-grid .profile__sidebar-content > [data-profile-section='social'].profile__section--empty,
+.profile-grid .profile__sidebar-content > [data-profile-section='skills'].profile__section,
+.profile-grid .profile__sidebar-content > [data-profile-section='skills'].profile__section--empty,
+.profile-grid .profile__sidebar-content > [data-profile-section='languages'].profile__section,
+.profile-grid .profile__sidebar-content > [data-profile-section='languages'].profile__section--empty,
+.profile-grid .profile__sidebar-content > [data-profile-section='contact-info'].profile__section,
+.profile-grid .profile__sidebar-content > [data-profile-section='contact-info'].profile__section--empty {
+  padding: var(--profile-sidebar-section-padding);
+}
+
+/* Empty states */
+.profile-grid solid-ui-button.profile__action-button--empty {
+  width: fit-content;
+  min-width: fit-content;
+  max-width: fit-content;
+  --button-font-size-sm: var(--font-size-sm, 0.875rem);
+  --button-font-weight: var(--font-weight-medium, 500);
+  --button-line-height: var(--line-height-tight, 1.4);
+  --button-background: var(--color-card-bg, #FFF);
+  --button-text: var(--color-text-primary, #314158);
+  --button-border: var(--color-border-darker, #4A5565);
+  --button-hover-background: var(--color-primary, #7C4DFF);
+  --button-hover-text: var(--color-text-on-action, var(--white, #FFF));
+  --button-hover-border: var(--color-primary, #7C4DFF);
+}
+
+.profile-grid solid-ui-button.profile__action-button--empty:hover .profile__action-icon svg path,
+.profile-grid solid-ui-button.profile__action-button--empty:focus-visible .profile__action-icon svg path,
+.profile-grid solid-ui-button.profile__action-button--empty:focus-within .profile__action-icon svg path {
+  stroke: var(--color-text-on-action, var(--white, #FFF));
+  fill: var(--color-text-on-action, var(--white, #FFF));
+}
+
+.profile-grid .profile__empty-state-message {
+  color: var(--color-text-empty-state, var(--gray-400, #99A1AF));
+  text-align: center;
+  font-size: var(--font-size-xs, 0.813rem);
+  font-weight: var(--font-weight-normal, 400);
+  line-height: var(--line-height-tight, 1.4);
+  margin-bottom: var(--spacing-md, 1.25rem);
+}
+
+.profile-grid .profile__empty-state-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-2xs, 0.625rem);
+}
+
+.profile-grid .profile__intro-main > .profile__section--empty.profile__section--empty-main,
+.profile-grid .profile__main > .profile__section--empty.profile__section--empty-main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-lg, 1.5625rem);
+}
+
+.profile-grid .profile__intro-sidebar > .profile__section--empty.profile__section--empty-sidebar,
+.profile-grid .profile__sidebar-content > .profile__section--empty.profile__section--empty-sidebar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.profile-grid .profile__empty-state-content > h2,
+.profile-grid .profile__empty-state-content > p {
+  margin: 0;
+}
+
+.profile-grid .profile__empty-state-content > h2 {
+  font-size: var(--font-size-xl, 1.375rem);
+  font-weight: var(--font-weight-md, 500);
+}
+
+.profile-grid .profile__section--empty.profile__section--empty-main .profile__empty-state-message {
+  margin-bottom: 0;
+}
+
+.profile-grid .profile__section--empty .profile-section-collapsible__content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.profile-grid .profile__section--empty.profile__section--empty-main .profile-section-collapsible__content {
+  gap: var(--spacing-lg, 1.5625rem);
+}
+
+.profile-grid [data-profile-section='projects'].profile__section--empty > .profile-section-collapsible__header,
+.profile-grid [data-profile-section='resume'].profile__section--empty > .profile-section-collapsible__header {
+  display: none;
+}
+
+.profile-grid .profile__section--empty.profile__section--empty-main > .profile-section-collapsible__content > .profile__empty-state-content {
+  gap: var(--spacing-2xs, 0.625rem);
+}
+
+.profile-grid [data-profile-section='projects'].profile__section--empty > .profile-section-collapsible__content,
+.profile-grid [data-profile-section='resume'].profile__section--empty > .profile-section-collapsible__content {
+  margin-top: 0;
+}
+
+/* Theme */
+.profile-pane-host[data-theme='dark'] .profile-grid .profile__section,
+.profile-pane-host[data-theme='dark'] .profile-grid .profile__section--empty {
+  border: var(--border-width-thin, 1px) solid var(--color-border, #444);
+}
+
+/* App-driven mobile layout, independent of viewport width. */
+.profile-pane-host[data-layout='mobile'] .profile-grid {
+  font-size: clamp(0.9rem, 1.1vw + 0.65rem, 1rem);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--profile-stacked-section-gap);
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  margin: 0 auto;
+  padding-inline: var(--spacing-xxs, 0.3125rem);
+  overflow-x: clip;
+}
+
+/* App-driven mobile: flatten wrappers */
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__intro-main,
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__intro-sidebar,
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__main,
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__sidebar,
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__sidebar-content {
+  display: contents;
+}
+
+/* App-driven mobile: section ordering */
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid [data-profile-section='heading'] { order: 1; }
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid [data-profile-section='bio'] { order: 2; }
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid [data-profile-section='skills'] { order: 3; }
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid [data-profile-section='languages'] { order: 4; }
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid [data-profile-section='resume'] { order: 5; }
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid [data-profile-section='projects'] { order: 6; }
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid [data-profile-section='social'] { order: 7; }
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid [data-profile-section='contact-info'] { order: 8; }
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid [data-profile-section='qr-code'] { order: 9; }
+
+/* App-driven mobile: interaction and typography */
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__action-button {
+  min-height: calc(var(--min-touch-target, 44px) + 0.5rem) !important;
+  font-size: clamp(0.9rem, 2.1vw, 1rem) !important;
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile__section-header:not(.profile-edit-dialog__contact-section-header) h2,
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile__section-header:not(.profile-edit-dialog__contact-section-header) h3,
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile__section-header:not(.profile-edit-dialog__contact-section-header) h4 {
+  font-size: var(--profile-mobile-section-heading-size, var(--font-size-lg, 1.125rem)) !important;
+  line-height: 1.2 !important;
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .friends-pane__header-name {
+  font-size: 1.5rem !important;
+  line-height: 1.15 !important;
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .friends-pane__header-pronouns,
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .friends-pane__friends-pronouns {
+  font-size: 0.6875rem !important;
+  line-height: 1.1 !important;
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__empty-state-content > h2,
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .resume-card__section h3 {
+  font-size: var(--profile-mobile-section-heading-size, var(--font-size-lg, 1.125rem)) !important;
+  line-height: 1.2 !important;
+}
+
+/* App-driven mobile: cards and sidebar */
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__section,
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__section--empty {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  /* Keep all mobile section cards at 15px padding across layout, media, and container fallbacks. */
+  padding: var(--profile-mobile-section-padding);
+  border-radius: var(--border-radius-base, 0.3125rem);
+  border: var(--border-width-thin, 0.1rem) solid var(--color-border-subtle, var(--gray-100, #F3F4F6));
+  background: var(--color-card-bg, var(--white, #FFF));
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid [data-profile-section='social'].profile__section,
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid [data-profile-section='social'].profile__section--empty {
+  border: none;
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__sidebar {
+  padding: 0 !important;
+  min-width: 0;
+  border-radius: 0;
+  background: transparent;
+  align-self: stretch;
+}
+
+/* App-driven mobile: width and sidebar padding overrides */
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__sidebar-content,
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__intro-sidebar > .profile__section,
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__intro-sidebar > .profile__section--empty,
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__intro-main > .profile__section,
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__intro-main > .profile__section--empty,
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__main > .profile__section,
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__main > .profile__section--empty,
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__sidebar-content > .profile__section,
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__sidebar-content > .profile__section--empty {
+  min-width: 0;
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__intro-sidebar > .profile__section,
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__intro-sidebar > .profile__section--empty,
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__sidebar-content > [data-profile-section='social'].profile__section,
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__sidebar-content > [data-profile-section='social'].profile__section--empty,
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__sidebar-content > [data-profile-section='skills'].profile__section,
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__sidebar-content > [data-profile-section='skills'].profile__section--empty,
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__sidebar-content > [data-profile-section='languages'].profile__section,
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__sidebar-content > [data-profile-section='languages'].profile__section--empty,
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__sidebar-content > [data-profile-section='contact-info'].profile__section,
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__sidebar-content > [data-profile-section='contact-info'].profile__section--empty {
+  padding: var(--profile-mobile-section-padding);
+}
+
+/* App-driven mobile: empty-state presentation */
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__section.profile-section-collapsible {
+  gap: 0;
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__section--empty.profile-section-collapsible {
+  gap: var(--spacing-2xs, 0.625rem);
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid [data-profile-section='projects'].profile__section--empty > .profile-section-collapsible__header,
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid [data-profile-section='resume'].profile__section--empty > .profile-section-collapsible__header {
+  display: flex;
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid [data-profile-section='projects'].profile__section--empty .profile-section-collapsible__content .profile__empty-state-content > h2,
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid [data-profile-section='resume'].profile__section--empty .profile-section-collapsible__content .profile__empty-state-content > h2 {
+  display: none;
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__section--empty .profile__action-button--empty {
+  align-self: center;
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__section--empty .profile__empty-state-content {
+  align-items: center;
+  text-align: center;
+  width: 100%;
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__section--empty .profile__empty-state-content > h2,
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__section--empty .profile__empty-state-content > p {
+  text-align: center;
+  width: 100%;
+}
+
+/* App-driven mobile: profile header and bio actions */
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__name {
+  font-size: var(--profile-mobile-header-name-size, var(--font-size-xl, 1.375rem)) !important;
+  line-height: 1.15 !important;
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__role-org {
+  font-size: var(--profile-mobile-header-job-title-size, var(--font-size-md, 1rem)) !important;
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__details {
+  font-size: var(--profile-mobile-header-detail-size, var(--font-size-xxs, 0.75rem)) !important;
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__pronouns {
+  font-size: var(--profile-mobile-header-pronouns-size, 0.6875rem) !important;
+  line-height: 1.1 !important;
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile__section--empty .profile-section-collapsible__actions > .profile-section-collapsible__edit-button {
+  order: 2;
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile__section--empty .profile-section-collapsible__edit-label {
+  display: none !important;
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] [data-profile-section='bio'].profile__section--empty .profile-section-collapsible__actions {
+  --profile-section-collapsible-action-button-text: var(--color-text-primary, #314158);
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile__section--empty .profile-section-collapsible__edit-icon {
+  display: inline !important;
+}
+
+/* Container width guard for embedded panes */
+@container profile-pane (max-width: 56.5625rem) {
+  #main-content.profile-grid {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    margin-inline: auto !important;
+  }
+}
+
+/* Viewport fallback only when layout state is unavailable. */
+@media (max-width: 56.5625rem) {
+  /* Viewport stacked: layout shell */
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid {
+    font-size: clamp(0.9rem, 1.1vw + 0.65rem, 1rem);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--profile-stacked-section-gap);
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    margin: 0 auto;
+    padding-inline: var(--spacing-xxs, 0.3125rem);
+    overflow-x: clip;
+  }
+
+  /* Viewport stacked: interaction and wrappers */
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid .profile__action-button {
+    min-height: calc(var(--min-touch-target, 44px) + 0.5rem) !important;
+    font-size: clamp(0.9rem, 2.1vw, 1rem) !important;
+  }
+
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid .profile__intro-main,
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid .profile__intro-sidebar,
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid .profile__main,
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid .profile__sidebar,
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid .profile__sidebar-content {
+    display: contents;
+    min-width: 0;
+  }
+
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid .profile__sidebar:not(.profile__intro-sidebar) {
+    padding: 0 !important;
+    display: contents;
+    border-radius: 0;
+    background: transparent;
+    align-self: stretch;
+  }
+
+  /* Viewport stacked: section ordering */
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid [data-profile-section='heading'] { order: 1; }
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid [data-profile-section='bio'] { order: 2; }
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid [data-profile-section='skills'] { order: 3; }
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid [data-profile-section='languages'] { order: 4; }
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid [data-profile-section='resume'] { order: 5; }
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid [data-profile-section='projects'] { order: 6; }
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid [data-profile-section='social'] { order: 7; }
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid [data-profile-section='contact-info'] { order: 8; }
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid [data-profile-section='qr-code'] { order: 9; }
+
+  /* Viewport stacked: typography */
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile__section-header:not(.profile-edit-dialog__contact-section-header) h2,
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile__section-header:not(.profile-edit-dialog__contact-section-header) h3,
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile__section-header:not(.profile-edit-dialog__contact-section-header) h4 {
+    font-size: var(--profile-mobile-section-heading-size, var(--font-size-lg, 1.125rem)) !important;
+    line-height: 1.2 !important;
+  }
+
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid .friends-pane__header-name {
+    font-size: 1.5rem !important;
+    line-height: 1.15 !important;
+  }
+
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid .friends-pane__header-pronouns,
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid .friends-pane__friends-pronouns {
+    font-size: 0.6875rem !important;
+    line-height: 1.1 !important;
+  }
+
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid .profile__section,
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid .profile__section--empty {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: var(--profile-mobile-section-padding);
+    border-radius: var(--border-radius-base, 0.3125rem);
+    border: var(--border-width-thin, 0.1rem) solid var(--color-border-subtle, var(--gray-100, #F3F4F6));
+    background: var(--color-card-bg, var(--white, #FFF));
+  }
+
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid [data-profile-section='social'].profile__section,
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid [data-profile-section='social'].profile__section--empty {
+    border: none;
+  }
+
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid [data-profile-section='bio'].profile__section--empty .profile-section-collapsible__actions {
+    --profile-section-collapsible-action-button-text: var(--color-text-primary, #314158);
+  }
+
+  /* Viewport stacked: width and sidebar padding overrides */
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid .profile__intro-sidebar > .profile__section,
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid .profile__intro-sidebar > .profile__section--empty,
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid .profile__intro-main > .profile__section,
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid .profile__intro-main > .profile__section--empty,
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid .profile__main > .profile__section,
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid .profile__main > .profile__section--empty,
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid .profile__sidebar-content > .profile__section,
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid .profile__sidebar-content > .profile__section--empty {
+    min-width: 0;
+  }
+
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid .profile__intro-sidebar > .profile__section,
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid .profile__intro-sidebar > .profile__section--empty,
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid .profile__sidebar-content > [data-profile-section='social'].profile__section,
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid .profile__sidebar-content > [data-profile-section='social'].profile__section--empty,
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid .profile__sidebar-content > [data-profile-section='skills'].profile__section,
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid .profile__sidebar-content > [data-profile-section='skills'].profile__section--empty,
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid .profile__sidebar-content > [data-profile-section='languages'].profile__section,
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid .profile__sidebar-content > [data-profile-section='languages'].profile__section--empty,
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid .profile__sidebar-content > [data-profile-section='contact-info'].profile__section,
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid .profile__sidebar-content > [data-profile-section='contact-info'].profile__section--empty {
+    padding: var(--profile-mobile-section-padding);
+  }
+
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid .profile__section.profile-section-collapsible {
+    gap: 0;
+  }
+
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid .profile__section--empty.profile-section-collapsible {
+    gap: var(--spacing-2xs, 0.625rem);
+  }
+
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid [data-profile-section='projects'].profile__section--empty > .profile-section-collapsible__header,
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid [data-profile-section='resume'].profile__section--empty > .profile-section-collapsible__header {
+    display: flex;
+  }
+
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid [data-profile-section='projects'].profile__section--empty .profile-section-collapsible__content .profile__empty-state-content > h2,
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid [data-profile-section='resume'].profile__section--empty .profile-section-collapsible__content .profile__empty-state-content > h2 {
+    display: none;
+  }
+}
+
+/* Container-driven stacked layout */
+@container profile-pane (max-width: 56.5625rem) {
+  /* Container stacked: layout shell */
+  .profile-grid {
+    font-size: clamp(0.9rem, 1.1vw + 0.65rem, 1rem);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--profile-stacked-section-gap);
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    margin: 0 auto;
+    overflow-x: clip;
+  }
+
+  /* Container stacked: interaction and wrappers */
+  .profile-grid .profile__action-button {
+    min-height: calc(var(--min-touch-target, 44px) + 0.5rem) !important;
+    font-size: clamp(0.9rem, 2.1vw, 1rem) !important;
+  }
+
+  .profile-grid .profile__intro-main,
+  .profile-grid .profile__intro-sidebar,
+  .profile-grid .profile__main,
+  .profile-grid .profile__sidebar,
+  .profile-grid .profile__sidebar-content {
+    display: contents;
+    min-width: 0;
+  }
+
+  .profile-grid .profile__sidebar:not(.profile__intro-sidebar) {
+    padding: 0 !important;
+    display: contents;
+    border-radius: 0;
+    background: transparent;
+    align-self: stretch;
+  }
+
+  /* Container stacked: section ordering */
+  .profile-grid [data-profile-section='heading'] { order: 1; }
+  .profile-grid [data-profile-section='bio'] { order: 2; }
+  .profile-grid [data-profile-section='skills'] { order: 3; }
+  .profile-grid [data-profile-section='languages'] { order: 4; }
+  .profile-grid [data-profile-section='resume'] { order: 5; }
+  .profile-grid [data-profile-section='projects'] { order: 6; }
+  .profile-grid [data-profile-section='social'] { order: 7; }
+  .profile-grid [data-profile-section='contact-info'] { order: 8; }
+  .profile-grid [data-profile-section='qr-code'] { order: 9; }
+
+  /* Container stacked: typography */
+  .profile__section-header:not(.profile-edit-dialog__contact-section-header) h2,
+  .profile__section-header:not(.profile-edit-dialog__contact-section-header) h3,
+  .profile__section-header:not(.profile-edit-dialog__contact-section-header) h4 {
+    font-size: var(--profile-mobile-section-heading-size, var(--font-size-lg, 1.125rem)) !important;
+    line-height: 1.2 !important;
+  }
+
+  .profile-grid .friends-pane__header-name {
+    font-size: 1.5rem !important;
+    line-height: 1.15 !important;
+  }
+
+  .profile-grid .friends-pane__header-pronouns,
+  .profile-grid .friends-pane__friends-pronouns {
+    font-size: 0.6875rem !important;
+    line-height: 1.1 !important;
+  }
+
+  .profile-grid .profile__section,
+  .profile-grid .profile__section--empty {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: var(--profile-mobile-section-padding);
+    border-radius: var(--border-radius-base, 0.3125rem);
+    border: var(--border-width-thin, 0.1rem) solid var(--color-border-subtle, var(--gray-100, #F3F4F6));
+    background: var(--color-card-bg, var(--white, #FFF));
+  }
+
+  .profile-grid [data-profile-section='social'].profile__section,
+  .profile-grid [data-profile-section='social'].profile__section--empty {
+    border: none;
+  }
+
+  .profile-grid [data-profile-section='bio'].profile__section--empty .profile-section-collapsible__actions {
+    --profile-section-collapsible-action-button-text: var(--color-text-primary, #314158);
+  }
+
+  /* Container stacked: width and sidebar padding overrides */
+  .profile-grid .profile__intro-sidebar > .profile__section,
+  .profile-grid .profile__intro-sidebar > .profile__section--empty,
+  .profile-grid .profile__intro-main > .profile__section,
+  .profile-grid .profile__intro-main > .profile__section--empty,
+  .profile-grid .profile__main > .profile__section,
+  .profile-grid .profile__main > .profile__section--empty,
+  .profile-grid .profile__sidebar-content > .profile__section,
+  .profile-grid .profile__sidebar-content > .profile__section--empty {
+    min-width: 0;
+  }
+
+  .profile-grid .profile__intro-sidebar > .profile__section,
+  .profile-grid .profile__intro-sidebar > .profile__section--empty,
+  .profile-grid .profile__sidebar-content > [data-profile-section='social'].profile__section,
+  .profile-grid .profile__sidebar-content > [data-profile-section='social'].profile__section--empty,
+  .profile-grid .profile__sidebar-content > [data-profile-section='skills'].profile__section,
+  .profile-grid .profile__sidebar-content > [data-profile-section='skills'].profile__section--empty,
+  .profile-grid .profile__sidebar-content > [data-profile-section='languages'].profile__section,
+  .profile-grid .profile__sidebar-content > [data-profile-section='languages'].profile__section--empty,
+  .profile-grid .profile__sidebar-content > [data-profile-section='contact-info'].profile__section,
+  .profile-grid .profile__sidebar-content > [data-profile-section='contact-info'].profile__section--empty {
+    padding: var(--profile-mobile-section-padding);
+  }
+
+  .profile-grid .profile__section.profile-section-collapsible {
+    gap: 0;
+  }
+
+  .profile-grid .profile__section--empty.profile-section-collapsible {
+    gap: var(--spacing-2xs, 0.625rem);
+  }
+
+  .profile-grid [data-profile-section='projects'].profile__section--empty > .profile-section-collapsible__header,
+  .profile-grid [data-profile-section='resume'].profile__section--empty > .profile-section-collapsible__header {
+    display: flex;
+  }
+
+  .profile-grid [data-profile-section='projects'].profile__section--empty .profile-section-collapsible__content .profile__empty-state-content > h2,
+  .profile-grid [data-profile-section='resume'].profile__section--empty .profile-section-collapsible__content .profile__empty-state-content > h2 {
+    display: none;
+  }
+}
+
+/* Narrow-phone fallback once the layout is already stacked. */
+@media (max-width: 576px) {
+  /* Narrow viewport: cards and sidebar */
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid .profile__sidebar:not(.profile__intro-sidebar) {
+    padding: 0 !important;
+    display: contents;
+    border-radius: 0;
+    background: transparent;
+    align-self: stretch;
+  }
+
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid .profile__section,
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid .profile__section--empty {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: var(--profile-mobile-section-padding);
+    border-radius: var(--border-radius-base, 0.3125rem);
+    border: var(--border-width-thin, 0.1rem) solid var(--color-border-subtle, var(--gray-100, #F3F4F6));
+    background: var(--color-card-bg, var(--white, #FFF));
+  }
+
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid .profile__intro-sidebar > .profile__section,
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid .profile__intro-sidebar > .profile__section--empty,
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid .profile__sidebar-content > [data-profile-section='social'].profile__section,
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid .profile__sidebar-content > [data-profile-section='social'].profile__section--empty,
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid .profile__sidebar-content > [data-profile-section='skills'].profile__section,
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid .profile__sidebar-content > [data-profile-section='skills'].profile__section--empty,
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid .profile__sidebar-content > [data-profile-section='languages'].profile__section,
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid .profile__sidebar-content > [data-profile-section='languages'].profile__section--empty,
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid .profile__sidebar-content > [data-profile-section='contact-info'].profile__section,
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid .profile__sidebar-content > [data-profile-section='contact-info'].profile__section--empty {
+    padding: var(--profile-mobile-section-padding);
+  }
+
+  /* Narrow viewport: empty states */
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid [data-profile-section='projects'].profile__section--empty > .profile-section-collapsible__header,
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid [data-profile-section='resume'].profile__section--empty > .profile-section-collapsible__header {
+    display: flex;
+  }
+
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid [data-profile-section='projects'].profile__section--empty .profile-section-collapsible__content .profile__empty-state-content > h2,
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid [data-profile-section='resume'].profile__section--empty .profile-section-collapsible__content .profile__empty-state-content > h2 {
+    display: none;
+  }
+
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid .profile__section--empty .profile__action-button--empty {
+    align-self: center;
+  }
+
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid .profile__section--empty .profile__empty-state-content {
+    align-items: center;
+    text-align: center;
+    width: 100%;
+  }
+
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid .profile__section--empty .profile__empty-state-content > h2,
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid .profile__section--empty .profile__empty-state-content > p {
+    text-align: center;
+    width: 100%;
+  }
+
+  /* Narrow viewport: typography */
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid .profile__empty-state-content > h2,
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid .resume-card__section h3 {
+    font-size: var(--profile-mobile-section-heading-size, var(--font-size-lg, 1.125rem)) !important;
+    line-height: 1.2 !important;
+  }
+
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid .profile__name {
+    font-size: var(--profile-mobile-header-name-size, var(--font-size-xl, 1.375rem)) !important;
+    line-height: 1.15 !important;
+  }
+
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid .profile__role-org {
+    font-size: var(--profile-mobile-header-job-title-size, var(--font-size-md, 1rem)) !important;
+  }
+
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid .profile__details {
+    font-size: var(--profile-mobile-header-detail-size, var(--font-size-xxs, 0.75rem)) !important;
+  }
+
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid .profile__pronouns {
+    font-size: var(--profile-mobile-header-pronouns-size, 0.6875rem) !important;
+    line-height: 1.1 !important;
+  }
+
+  /* Narrow viewport: empty-state edit actions */
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile__section--empty .profile-section-collapsible__actions > .profile-section-collapsible__edit-button {
+    order: 2;
+  }
+
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile__section--empty .profile-section-collapsible__edit-label {
+    display: none !important;
+  }
+
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile__section--empty .profile-section-collapsible__edit-icon {
+    display: inline !important;
+  }
+}
+
+/* Narrow container fallback */
+@container profile-pane (max-width: 576px) {
+  /* Narrow container: cards and sidebar */
+  .profile-grid .profile__sidebar:not(.profile__intro-sidebar) {
+    padding: 0 !important;
+    display: contents;
+    border-radius: 0;
+    background: transparent;
+    align-self: stretch;
+  }
+
+  .profile-grid .profile__section,
+  .profile-grid .profile__section--empty {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: var(--profile-mobile-section-padding);
+    border-radius: var(--border-radius-base, 0.3125rem);
+    border: var(--border-width-thin, 0.1rem) solid var(--color-border-subtle, var(--gray-100, #F3F4F6));
+    background: var(--color-card-bg, var(--white, #FFF));
+  }
+
+  .profile-grid .profile__intro-sidebar > .profile__section,
+  .profile-grid .profile__intro-sidebar > .profile__section--empty,
+  .profile-grid .profile__sidebar-content > [data-profile-section='social'].profile__section,
+  .profile-grid .profile__sidebar-content > [data-profile-section='social'].profile__section--empty,
+  .profile-grid .profile__sidebar-content > [data-profile-section='skills'].profile__section,
+  .profile-grid .profile__sidebar-content > [data-profile-section='skills'].profile__section--empty,
+  .profile-grid .profile__sidebar-content > [data-profile-section='languages'].profile__section,
+  .profile-grid .profile__sidebar-content > [data-profile-section='languages'].profile__section--empty,
+  .profile-grid .profile__sidebar-content > [data-profile-section='contact-info'].profile__section,
+  .profile-grid .profile__sidebar-content > [data-profile-section='contact-info'].profile__section--empty {
+    padding: var(--profile-mobile-section-padding);
+  }
+
+  /* Narrow container: empty states */
+  .profile-grid [data-profile-section='projects'].profile__section--empty > .profile-section-collapsible__header,
+  .profile-grid [data-profile-section='resume'].profile__section--empty > .profile-section-collapsible__header {
+    display: flex;
+  }
+
+  .profile-grid [data-profile-section='projects'].profile__section--empty .profile-section-collapsible__content .profile__empty-state-content > h2,
+  .profile-grid [data-profile-section='resume'].profile__section--empty .profile-section-collapsible__content .profile__empty-state-content > h2 {
+    display: none;
+  }
+
+  .profile-grid .profile__section--empty .profile__action-button--empty {
+    align-self: center;
+  }
+
+  .profile-grid .profile__section--empty .profile__empty-state-content {
+    align-items: center;
+    text-align: center;
+    width: 100%;
+  }
+
+  .profile-grid .profile__section--empty .profile__empty-state-content > h2,
+  .profile-grid .profile__section--empty .profile__empty-state-content > p {
+    text-align: center;
+    width: 100%;
+  }
+
+  /* Narrow container: typography */
+  .profile-grid .profile__empty-state-content > h2,
+  .profile-grid .resume-card__section h3 {
+    font-size: var(--profile-mobile-section-heading-size, var(--font-size-lg, 1.125rem)) !important;
+    line-height: 1.2 !important;
+  }
+
+  .profile-grid .profile__name {
+    font-size: var(--profile-mobile-header-name-size, var(--font-size-xl, 1.375rem)) !important;
+    line-height: 1.15 !important;
+  }
+
+  .profile-grid .profile__role-org {
+    font-size: var(--profile-mobile-header-job-title-size, var(--font-size-md, 1rem)) !important;
+  }
+
+  .profile-grid .profile__details {
+    font-size: var(--profile-mobile-header-detail-size, var(--font-size-xxs, 0.75rem)) !important;
+  }
+
+  .profile-grid .profile__pronouns {
+    font-size: var(--profile-mobile-header-pronouns-size, 0.6875rem) !important;
+    line-height: 1.1 !important;
+  }
+
+  /* Narrow container: empty-state edit actions */
+  .profile__section--empty .profile-section-collapsible__actions > .profile-section-collapsible__edit-button {
+    order: 2;
+  }
+
+  .profile__section--empty .profile-section-collapsible__edit-label {
+    display: none !important;
+  }
+
+  .profile__section--empty .profile-section-collapsible__edit-icon {
+    display: inline !important;
+  }
+}

@@ -16,30 +16,40 @@ export function fakeLogInAs (subject) {
  }
  }
 
+export function resetTestSetup() {
+    store.removeDocument(doc)
+    delete (window as any).$SolidTestEnvironment
+}
+
 export function delay(ms) {
     return new Promise(resolve => setTimeout(resolve, ms))
 }
-export const context = {
-    dom: document,
-    getOutliner: () => null,
-    session: {
-        info: {
-            isLoggedIn: true,  // Added for editProofilepane
-            webId: subject.value,
-        },
-        paneRegistry: {
-            byName: (name: string) => {
-                return {
-                    render: () => {
-                        return document.createElement('div')
-                            .appendChild(
-                                document.createTextNode(`mock ${name} pane`)
-                            )
+
+export function createTestContext() {
+    return {
+        dom: document,
+        getOutliner: () => null,
+        session: {
+            info: {
+                isLoggedIn: true,  // Added for editProofilepane
+                webId: subject.value,
+            },
+            paneRegistry: {
+                byName: (name: string) => {
+                    return {
+                        render: () => {
+                            return document.createElement('div')
+                                .appendChild(
+                                    document.createTextNode(`mock ${name} pane`)
+                                )
+                        }
                     }
                 }
-            }
-        } as PaneRegistry,
-        store: store,
-        logic: {} as SolidLogic,
-    },
-} as unknown as DataBrowserContext
+            } as PaneRegistry,
+            store: store,
+            logic: {} as SolidLogic,
+        },
+    } as unknown as DataBrowserContext
+}
+
+export const context = createTestContext()

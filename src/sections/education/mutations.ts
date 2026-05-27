@@ -2,8 +2,9 @@ import { LiveStore, NamedNode, Node, st, literal } from 'rdflib'
 import { ns } from 'solid-ui'
 import { EducationMutationPlan, EducationRow } from './types'
 import { MutationOps } from '../shared/types'
-import { applyUpdaterPatch, collectNodeStatements, findExistingNode } from '../shared/rdfMutationHelpers'
-import { mutationEducationFailedPrefixText } from '../../texts'
+import { collectNodeStatements, findExistingNode, runUpdateTransport, shouldForceDocumentPutForStatements } from '../shared/rdfMutationHelpers'
+import { educationMutationSaveFailedDebugText, saveEducationUpdatesFailedMessageText, updaterUnsupportedStoreErrorMessageText } from '../../texts'
+import { error as debugError } from '../../utils/debug'
 
 const educationMembershipType = ns.schema('EducationalOccupationalCredential')
 
@@ -61,14 +62,23 @@ async function mutateEducationEntries(store: LiveStore, subject: NamedNode, educ
     insertions.push(...buildEducationStatements(subject, doc, store.bnode(), education))
   })
 
-  await applyUpdaterPatch(store, deletions, insertions)
+  const shouldSerializeDocument = await shouldForceDocumentPutForStatements(store, doc, insertions)
+
+  await runUpdateTransport(store, doc, deletions, insertions, {
+    unsupportedMessage: updaterUnsupportedStoreErrorMessageText,
+    failureMessage: 'Failed to save education updates',
+    useDavFallback: false,
+    usePutFallback: shouldSerializeDocument,
+    forcePut: shouldSerializeDocument
+  })
 }
 
 export async function processEducationMutations(store: LiveStore, subject: NamedNode, mutationPlan: EducationMutationPlan) {
   try {
     await mutateEducationEntries(store, subject, mutationPlan)
   } catch (error) {
-    const message = error instanceof Error ? error.message : String(error)
-    throw new Error(`${mutationEducationFailedPrefixText} ${message}`)
+    const rootError = error instanceof Error ? error : new Error(String(error))
+    debugError(educationMutationSaveFailedDebugText, rootError)
+    throw new Error(saveEducationUpdatesFailedMessageText, { cause: rootError })
   }
 } 

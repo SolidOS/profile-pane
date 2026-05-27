@@ -10,8 +10,9 @@ import { hasNonEmptyText, sanitizeTextValue, toText } from '../../textUtils'
 import {
   dialogCancelLabelText,
   dialogSubmitLabelText,
+  editBioDialogTitleText,
   ownerLoginRequiredDialogMessageText,
-  saveBioUpdatesFailedPrefixText
+  saveBioUpdatesFailedMessageText
 } from '../../texts'
 
 type BioFormState = {
@@ -87,7 +88,7 @@ function renderBioEditTemplate(form: HTMLFormElement, formState: BioFormState, v
 
 function createBioEditForm(bioData: BioDetails, viewerMode: ViewerMode) {
   const form = document.createElement('form')
-  form.classList.add('profile__edit-form')
+  form.classList.add('profile__edit-form', 'profile__edit-form--bio')
 
   const formState = toFormState(bioData)
   renderBioEditTemplate(form, formState, viewerMode)
@@ -107,20 +108,21 @@ export async function createBioEditDialog(
   const { form, formState } = createBioEditForm(bioData, viewerMode)
 
   const result = await openInputDialog({
-    title: 'Edit Bio',
+    title: editBioDialogTitleText,
     dom,
     form,
     headerAction: { type: 'none' },
     submitLabel: dialogSubmitLabelText,
     cancelLabel: dialogCancelLabelText,
+    shouldCloseWithoutSave: () => {
+      const bioOps = summarizeRowOps([formState.bio], rowHasContent)
+      return bioOps.create.length === 0 && bioOps.update.length === 0 && bioOps.remove.length === 0
+    },
     validate: () => {
       if (viewerMode !== 'owner') {
         return ownerLoginRequiredDialogMessageText
       }
 
-      const bioOps = summarizeRowOps([formState.bio], rowHasContent)
-      const hasChanges = bioOps.create.length > 0 || bioOps.update.length > 0 || bioOps.remove.length > 0
-      if (!hasChanges) return 'No bio changes detected.'
       return null
     },
     onSave: async () => {
@@ -128,8 +130,7 @@ export async function createBioEditDialog(
       await processBioMutations(store, subject, bioOps)
     },
     formatSaveError: (error: unknown) => {
-      const message = error instanceof Error ? error.message : String(error)
-      return `${saveBioUpdatesFailedPrefixText} ${message}`
+      return error instanceof Error ? error.message : saveBioUpdatesFailedMessageText
     }
   })
 

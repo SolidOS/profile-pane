@@ -121,6 +121,7 @@ function getRoles(
       endDate,
       isCurrentRole,
       orgName,
+      orgPublicId: publicId?.value || '',
       orgType,
       orgLocation,
       orgHomePage,

@@ -1,10 +1,9 @@
-import { describe, expect, it } from "@jest/globals"
-import { Collection, graph, literal, st, sym } from 'rdflib'
+import { describe, expect, it, jest } from "@jest/globals"
+import { Collection, graph, literal, NamedNode, st, sym } from 'rdflib'
 import { ns } from 'solid-ui'
 import { presentLanguages } from '../../src/sections/languages/selectors'
 import { processLanguageMutations } from '../../src/sections/languages/mutations'
-import { mutationSaveLanguagesFailedPrefixText } from '../../src/texts'
-
+import { saveLanguageUpdatesFailedMessageText } from '../../src/texts'
 describe('Languages selectors and mutations', () => {
   it('selector returns empty list from empty store', () => {
     const store = graph() as any
@@ -13,7 +12,7 @@ describe('Languages selectors and mutations', () => {
     expect(presentLanguages(subject, store)).toEqual([])
   })
 
-  it('mutation wraps updater errors with language prefix', async () => {
+  it('mutation surfaces updater callback failures', async () => {
     const store = graph() as any
     const subject = sym('https://example.com/profile/card#me')
     store.updater = {
@@ -25,9 +24,10 @@ describe('Languages selectors and mutations', () => {
       update: [],
       remove: []
     }
-    await expect(processLanguageMutations(store, subject, plan as any)).rejects.toThrow(
-      mutationSaveLanguagesFailedPrefixText
-    )
+    await expect(processLanguageMutations(store, subject, plan as any)).rejects.toMatchObject({
+      message: saveLanguageUpdatesFailedMessageText,
+      cause: expect.objectContaining({ message: 'boom' })
+    })
   })
 
   it('reads canonical id-node list with solid publicId URI and schema name', () => {
@@ -87,7 +87,7 @@ describe('Languages selectors and mutations', () => {
     expect(languages.map((item) => item.publicId)).toEqual(['fr', 'de'])
   })
 
-  it('reads cumulative legacy list snapshots and keeps longest ordered list', () => {
+  it('reads cumulative legacy list snapshots and keeps merged ordered languages', () => {
     const store = graph() as any
     const subject = sym('https://example.com/profile/card#me')
     const doc = subject.doc()
@@ -112,7 +112,32 @@ describe('Languages selectors and mutations', () => {
     ])
   })
 
-  it('writes canonical id-node rdf:list model and removes legacy entry-node model statements', async () => {
+  it('merges fragmented knowsLanguage rdf lists before deduping', () => {
+    const store = graph() as any
+    const subject = sym('https://example.com/profile/card#me')
+    const doc = subject.doc()
+    const id1 = sym('https://example.com/profile/card#id1')
+    const id2 = sym('https://example.com/profile/card#id2')
+    const id3 = sym('https://example.com/profile/card#id3')
+
+    store.add(subject, ns.schema('knowsLanguage'), new Collection([id1, id2]), doc)
+    store.add(subject, ns.schema('knowsLanguage'), new Collection([id2, id3]), doc)
+
+    store.add(id1, ns.solid('publicId'), sym('https://www.w3.org/ns/iana/language-code/en'), doc)
+    store.add(id2, ns.solid('publicId'), sym('https://www.w3.org/ns/iana/language-code/fr'), doc)
+    store.add(id3, ns.solid('publicId'), sym('https://www.w3.org/ns/iana/language-code/de'), doc)
+
+    const languages = presentLanguages(subject, store)
+
+    expect(languages).toHaveLength(3)
+    expect(languages.map((item) => item.publicId)).toEqual([
+      'https://www.w3.org/ns/iana/language-code/en',
+      'https://www.w3.org/ns/iana/language-code/fr',
+      'https://www.w3.org/ns/iana/language-code/de'
+    ])
+  })
+
+  it('writes canonical id-node Collection model and removes legacy entry-node model statements', async () => {
     const store = graph() as any
     const subject = sym('https://example.com/profile/card#me')
     const doc = subject.doc()
@@ -147,19 +172,10 @@ describe('Languages selectors and mutations', () => {
 
     const knowsLanguageValues = store.statementsMatching(subject, ns.schema('knowsLanguage'), null, doc)
     expect(knowsLanguageValues).toHaveLength(1)
-    const listHead = knowsLanguageValues[0].object
-    expect(listHead.termType).toBe('BlankNode')
+    const listValue = knowsLanguageValues[0].object as Collection<NamedNode>
+    expect(listValue.termType).toBe('Collection')
 
-    const firstEntry = store.any(listHead as any, ns.rdf('first'), null, doc)
-    expect(firstEntry?.termType).toBe('NamedNode')
-    const secondListNode = store.any(listHead as any, ns.rdf('rest'), null, doc)
-    expect(secondListNode?.termType).toBe('BlankNode')
-    const secondEntry = store.any(secondListNode as any, ns.rdf('first'), null, doc)
-    expect(secondEntry?.termType).toBe('NamedNode')
-    const tail = store.any(secondListNode as any, ns.rdf('rest'), null, doc)
-    expect(tail?.value).toBe(ns.rdf('nil').value)
-
-    const listElements = [firstEntry, secondEntry]
+    const listElements = listValue.elements
     expect(listElements.every((node: any) => node?.termType === 'NamedNode')).toBe(true)
     expect(listElements.every((node: any) => node?.value.includes('#id'))).toBe(true)
 
@@ -184,24 +200,147 @@ describe('Languages selectors and mutations', () => {
     expect(store.statementsMatching(legacyEntry1, ns.rdf('type'), ns.schema('Language'), doc)).toHaveLength(0)
   })
 
-  it('falls back to updateDav when update fails with PATCH error', async () => {
+  it('returns reordered languages from the selector after saving orderedRows', async () => {
+    const store = graph() as any
+    const subject = sym('https://example.com/profile/card#me')
+    const doc = subject.doc()
+    const englishEntry = sym('https://example.com/profile/card#id-en')
+    const frenchEntry = sym('https://example.com/profile/card#id-fr')
+
+    store.add(subject, ns.schema('knowsLanguage'), new Collection([englishEntry, frenchEntry]), doc)
+    store.add(englishEntry, ns.solid('publicId'), sym('https://www.w3.org/ns/iana/language-code/en'), doc)
+    store.add(sym('https://www.w3.org/ns/iana/language-code/en'), ns.schema('name'), literal('English', 'en'), doc)
+    store.add(frenchEntry, ns.solid('publicId'), sym('https://www.w3.org/ns/iana/language-code/fr'), doc)
+    store.add(sym('https://www.w3.org/ns/iana/language-code/fr'), ns.schema('name'), literal('French', 'en'), doc)
+
+    store.updater = {
+      update: (deletions: any[], insertions: any[], callback: Function) => {
+        deletions.forEach((statement) => store.remove(st(statement.subject, statement.predicate, statement.object, statement.why)))
+        insertions.forEach((statement) => store.add(statement.subject, statement.predicate, statement.object, statement.why))
+        callback('', true)
+      }
+    }
+
+    await processLanguageMutations(
+      store,
+      subject,
+      { create: [], update: [], remove: [] } as any,
+      [
+        { name: 'French', publicId: 'https://www.w3.org/ns/iana/language-code/fr', proficiency: '', entryNode: frenchEntry.value, status: 'existing' },
+        { name: 'English', publicId: 'https://www.w3.org/ns/iana/language-code/en', proficiency: '', entryNode: englishEntry.value, status: 'existing' }
+      ] as any
+    )
+
+    const languages = presentLanguages(subject, store)
+
+    expect(languages.map((item) => item.publicId)).toEqual([
+      'https://www.w3.org/ns/iana/language-code/fr',
+      'https://www.w3.org/ns/iana/language-code/en'
+    ])
+    expect(languages.map((item) => item.name)).toEqual(['French', 'English'])
+  })
+
+  it('preserves existing language entry nodes and unrelated statements on reorder', async () => {
+    const store = graph() as any
+    const subject = sym('https://example.com/profile/card#me')
+    const doc = subject.doc()
+    const englishEntry = sym('https://example.com/profile/card#id-en')
+    const frenchEntry = sym('https://example.com/profile/card#id-fr')
+
+    store.add(subject, ns.schema('knowsLanguage'), new Collection([englishEntry, frenchEntry]), doc)
+    store.add(englishEntry, ns.solid('publicId'), sym('https://www.w3.org/ns/iana/language-code/en'), doc)
+    store.add(sym('https://www.w3.org/ns/iana/language-code/en'), ns.schema('name'), literal('English', 'en'), doc)
+    store.add(frenchEntry, ns.solid('publicId'), sym('https://www.w3.org/ns/iana/language-code/fr'), doc)
+    store.add(sym('https://www.w3.org/ns/iana/language-code/fr'), ns.schema('name'), literal('French', 'en'), doc)
+    store.add(englishEntry, ns.rdf('type'), ns.schema('Language'), doc)
+
+    store.updater = {
+      update: (deletions: any[], insertions: any[], callback: Function) => {
+        deletions.forEach((statement) => store.remove(st(statement.subject, statement.predicate, statement.object, statement.why)))
+        insertions.forEach((statement) => store.add(statement.subject, statement.predicate, statement.object, statement.why))
+        callback('', true)
+      }
+    }
+
+    await processLanguageMutations(
+      store,
+      subject,
+      { create: [], update: [], remove: [] } as any,
+      [
+        { name: 'French', publicId: 'https://www.w3.org/ns/iana/language-code/fr', proficiency: '', entryNode: frenchEntry.value, status: 'existing' },
+        { name: 'English', publicId: 'https://www.w3.org/ns/iana/language-code/en', proficiency: '', entryNode: englishEntry.value, status: 'existing' }
+      ] as any
+    )
+
+    const languages = presentLanguages(subject, store)
+
+    expect(languages.map((item) => item.entryNode.value)).toEqual([
+      frenchEntry.value,
+      englishEntry.value
+    ])
+    expect(store.statementsMatching(englishEntry, ns.rdf('type'), ns.schema('Language'), doc)).toHaveLength(1)
+  })
+
+  it('preserves stored schema:name triples on publicId nodes on reorder', async () => {
+    const store = graph() as any
+    const subject = sym('https://example.com/profile/card#me')
+    const doc = subject.doc()
+    const englishEntry = sym('https://example.com/profile/card#id-en')
+    const frenchEntry = sym('https://example.com/profile/card#id-fr')
+    const englishPublicId = sym('https://www.w3.org/ns/iana/language-code/en')
+    const frenchPublicId = sym('https://www.w3.org/ns/iana/language-code/fr')
+
+    store.add(subject, ns.schema('knowsLanguage'), new Collection([englishEntry, frenchEntry]), doc)
+    store.add(englishEntry, ns.solid('publicId'), englishPublicId, doc)
+    store.add(englishPublicId, ns.schema('name'), literal('English', 'en'), doc)
+    store.add(frenchEntry, ns.solid('publicId'), frenchPublicId, doc)
+    store.add(frenchPublicId, ns.schema('name'), literal('French', 'en'), doc)
+
+    store.updater = {
+      update: (deletions: any[], insertions: any[], callback: Function) => {
+        deletions.forEach((statement) => store.remove(st(statement.subject, statement.predicate, statement.object, statement.why)))
+        insertions.forEach((statement) => store.add(statement.subject, statement.predicate, statement.object, statement.why))
+        callback('', true)
+      }
+    }
+
+    await processLanguageMutations(
+      store,
+      subject,
+      { create: [], update: [], remove: [] } as any,
+      [
+        { name: 'French', publicId: 'https://www.w3.org/ns/iana/language-code/fr', proficiency: '', entryNode: frenchEntry.value, status: 'existing' },
+        { name: 'English', publicId: 'https://www.w3.org/ns/iana/language-code/en', proficiency: '', entryNode: englishEntry.value, status: 'existing' }
+      ] as any
+    )
+
+    expect(store.statementsMatching(englishPublicId, ns.schema('name'), null, doc)).toHaveLength(1)
+    expect(store.statementsMatching(frenchPublicId, ns.schema('name'), null, doc)).toHaveLength(1)
+  })
+
+  it('uses full-document PUT for rdf list writes without attempting PATCH or DAV fallback', async () => {
     const store = graph() as any
     const subject = sym('https://example.com/profile/card#me')
     const doc = subject.doc()
 
     store.add(subject, ns.schema('knowsLanguage'), literal('French'), doc)
 
-    let updateDavCalled = false
+    let putCalled = false
     store.fetcher = {
-      load: () => Promise.resolve()
+      load: () => Promise.resolve(),
+      webOperation: (method: string, _uri: string, _options: any) => {
+        if (method === 'PUT') {
+          putCalled = true
+          return Promise.resolve({ ok: true, status: 200 })
+        }
+
+        return Promise.resolve({ ok: false, status: 500 })
+      }
     }
     store.updater = {
       update: (_deletions: any[], _insertions: any[], callback: Function) => callback('', false, 'Web error: 501 on PATCH'),
-      updateDav: (_doc: any, deletions: any[], _insertions: any[], callback: Function) => {
-        updateDavCalled = true
-        deletions.forEach((statement) => store.remove(st(statement.subject, statement.predicate, statement.object, statement.why)))
-        callback('', true)
-      }
+      updateDav: jest.fn(),
+      serialize: () => '@prefix schema: <http://schema.org/> .\n'
     }
 
     const plan = {
@@ -212,8 +351,109 @@ describe('Languages selectors and mutations', () => {
 
     await processLanguageMutations(store, subject, plan as any)
 
-    expect(updateDavCalled).toBe(true)
+    expect(store.updater.updateDav).not.toHaveBeenCalled()
+    expect(putCalled).toBe(true)
     expect(store.statementsMatching(subject, ns.schema('knowsLanguage'), null, doc)).toHaveLength(0)
+  })
+
+  it('uses full-document PUT for language list writes without attempting PATCH', async () => {
+    const store = graph() as any
+    const subject = sym('https://example.com/profile/card#me')
+    const doc = subject.doc()
+    const englishEntry = sym('https://example.com/profile/card#id-en')
+    let putCalled = false
+    let serializedStatements: any[] = []
+
+    store.add(subject, ns.schema('knowsLanguage'), new Collection([englishEntry]), doc)
+    store.add(englishEntry, ns.solid('publicId'), sym('https://www.w3.org/ns/iana/language-code/en'), doc)
+    store.add(sym('https://www.w3.org/ns/iana/language-code/en'), ns.schema('name'), literal('English', 'en'), doc)
+
+    store.fetcher = {
+      load: () => Promise.resolve(),
+      webOperation: (method: string, _uri: string, _options: any) => {
+        if (method === 'PUT') {
+          putCalled = true
+          return Promise.resolve({ ok: true, status: 200 })
+        }
+
+        return Promise.resolve({ ok: false, status: 500 })
+      }
+    }
+    store.updater = {
+      update: jest.fn((_deletions: any[], _insertions: any[], callback: Function) => callback('', true)),
+      updateDav: jest.fn(),
+      serialize: (_docValue: string, statements: any[]) => {
+        serializedStatements = statements
+        return '@prefix schema: <http://schema.org/> .\n'
+      }
+    }
+
+    await processLanguageMutations(
+      store,
+      subject,
+      {
+        create: [],
+        update: [],
+        remove: []
+      } as any,
+      [
+        { name: 'French', publicId: 'https://www.w3.org/ns/iana/language-code/fr', proficiency: '', entryNode: '', status: 'new' },
+        { name: 'English', publicId: 'https://www.w3.org/ns/iana/language-code/en', proficiency: '', entryNode: englishEntry.value, status: 'existing' }
+      ] as any
+    )
+
+    expect(store.updater.update).not.toHaveBeenCalled()
+    expect(store.updater.updateDav).not.toHaveBeenCalled()
+    expect(putCalled).toBe(true)
+    expect(serializedStatements.some((statement) => statement.object?.termType === 'Collection')).toBe(true)
+    expect(serializedStatements.some((statement) => statement.predicate?.value === ns.schema('name').value)).toBe(true)
+  })
+
+  it('uses full-document PUT for the first language save on a remote-capable store', async () => {
+    const store = graph() as any
+    const subject = sym('https://example.com/profile/card#me')
+    let putCalled = false
+    let serializedStatements: any[] = []
+
+    store.fetcher = {
+      load: () => Promise.resolve(),
+      webOperation: (method: string, _uri: string, _options: any) => {
+        if (method === 'PUT') {
+          putCalled = true
+          return Promise.resolve({ ok: true, status: 200 })
+        }
+
+        return Promise.resolve({ ok: false, status: 500 })
+      }
+    }
+    store.updater = {
+      update: jest.fn((_deletions: any[], _insertions: any[], callback: Function) => callback('', true)),
+      updateDav: jest.fn(),
+      serialize: (_docValue: string, statements: any[]) => {
+        serializedStatements = statements
+        return '@prefix schema: <http://schema.org/> .\n'
+      }
+    }
+
+    await processLanguageMutations(
+      store,
+      subject,
+      {
+        create: [
+          { name: 'Modern Greek', publicId: 'https://www.w3.org/ns/iana/language-code/el', proficiency: '', entryNode: '', status: 'new' },
+          { name: 'French', publicId: 'https://www.w3.org/ns/iana/language-code/fr', proficiency: '', entryNode: '', status: 'new' },
+          { name: 'English', publicId: 'https://www.w3.org/ns/iana/language-code/en', proficiency: '', entryNode: '', status: 'new' }
+        ],
+        update: [],
+        remove: []
+      } as any
+    )
+
+    expect(store.updater.update).not.toHaveBeenCalled()
+    expect(store.updater.updateDav).not.toHaveBeenCalled()
+    expect(putCalled).toBe(true)
+    expect(serializedStatements.some((statement) => statement.object?.termType === 'Collection')).toBe(true)
+    expect(serializedStatements.filter((statement) => statement.predicate?.value === ns.schema('name').value)).toHaveLength(3)
   })
 
   it('falls back to PUT when updateDav fails with missing GET request metadata', async () => {
@@ -252,6 +492,43 @@ describe('Languages selectors and mutations', () => {
 
     expect(putCalled).toBe(true)
     expect(store.statementsMatching(subject, ns.schema('knowsLanguage'), null, doc)).toHaveLength(0)
+  })
+
+  it('uses DAV fallback when forcePut is unavailable and updateDav is supported', async () => {
+    const store = graph() as any
+    const subject = sym('https://example.com/profile/card#me')
+    const doc = subject.doc()
+    const englishEntry = sym('https://example.com/profile/card#id-en')
+    const frenchEntry = sym('https://example.com/profile/card#id-fr')
+
+    store.add(subject, ns.schema('knowsLanguage'), new Collection([englishEntry, frenchEntry]), doc)
+    store.add(englishEntry, ns.solid('publicId'), sym('https://www.w3.org/ns/iana/language-code/en'), doc)
+    store.add(frenchEntry, ns.solid('publicId'), sym('https://www.w3.org/ns/iana/language-code/fr'), doc)
+
+    store.updater = {
+      update: (_deletions: any[], _insertions: any[], callback: Function) => callback('', false, 'Web error: 501 on PATCH'),
+      updateDav: jest.fn((_doc: any, deletions: any[], insertions: any[], callback: Function) => {
+        deletions.forEach((statement) => store.remove(st(statement.subject, statement.predicate, statement.object, statement.why)))
+        insertions.forEach((statement) => store.add(statement.subject, statement.predicate, statement.object, statement.why))
+        callback('', true)
+      })
+    }
+
+    await processLanguageMutations(
+      store,
+      subject,
+      { create: [], update: [], remove: [] } as any,
+      [
+        { name: 'French', publicId: 'https://www.w3.org/ns/iana/language-code/fr', proficiency: '', entryNode: frenchEntry.value, status: 'existing' },
+        { name: 'English', publicId: 'https://www.w3.org/ns/iana/language-code/en', proficiency: '', entryNode: englishEntry.value, status: 'existing' }
+      ] as any
+    )
+
+    expect(store.updater.updateDav).toHaveBeenCalledTimes(1)
+    expect(presentLanguages(subject, store).map((item) => item.entryNode.value)).toEqual([
+      frenchEntry.value,
+      englishEntry.value
+    ])
   })
 
   it('removes schema:name on publicId node when language row is deleted', async () => {

@@ -1,6 +1,6 @@
 {
   "name": "profile-pane",
-  "version": "3.2.1",
+  "version": "3.2.2",
   "description": "A SolidOS compatible pane to display a personal profile page",
   "sideEffects": [
     "*.css"
@@ -20,9 +20,14 @@
   "scripts": {
     "clean": "rm -rf lib",
     "build": "npm run clean && npm run typecheck && npm run build-dist && npm run build-js",
-    "build-js": "babel src --out-dir lib --extensions '.ts' && tsc --emitDeclarationOnly",
+    "build-js": "babel src --out-dir lib --extensions '.ts' --copy-files && tsc --emitDeclarationOnly",
     "build-dist": "webpack --progress",
-    "watch-js": "babel src --out-dir lib --extensions '.ts' --watch",
+    "dev": "sh -c 'npm run watch & npm run start'",
+    "watch": "sh -c 'npm run watch:solid-ui & npm run watch-js & npm run watch-styles & npm run watch-dist & wait'",
+    "watch:workspace": "sh -c 'npm run watch-js & npm run watch-styles & npm run watch-dist & wait'",
+    "watch:solid-ui": "sh -c 'cd ../solid-ui && npm run watch'",
+    "watch-js": "babel src --out-dir lib --extensions '.ts' --copy-files --watch",
+    "watch-styles": "node scripts/watch-styles.mjs",
     "watch-dist": "webpack --watch",
     "lint": "eslint",
     "lint-fix": "eslint --fix",
@@ -30,6 +35,7 @@
     "test-coverage": "jest --coverage",
     "typecheck": "tsc --noEmit",
     "typecheck-test": "tsc --noEmit -p tsconfig.test.json",
+    "prepush": "npm test && npm run lint-fix && npm run typecheck && npm run typecheck-test",
     "prepublishOnly": "npm run test && npm run build",
     "preversion": "npm run lint && npm run typecheck && npm test",
     "postpublish": "git push origin main --follow-tags",
@@ -49,6 +55,7 @@
   },
   "license": "MIT",
   "dependencies": {
+    "@solid-data-modules/contacts-rdflib": "^0.7.1",
     "lit-html": "^3.3.3",
     "pane-registry": "^3.1.1",
     "qrcode": "^1.5.4",
@@ -57,7 +64,7 @@
   "peerDependencies": {
     "rdflib": "^2.3.6",
     "solid-logic": "^4.0.6",
-    "solid-ui": "^3.1.0"
+    "solid-ui": "^3.1.1"
   },
   "overrides": {
     "solid-ui": "$solid-ui"
@@ -89,7 +96,7 @@
     "node-polyfill-webpack-plugin": "^4.1.0",
     "rdflib": "^2.3.8",
     "solid-logic": "^4.0.7",
-    "solid-ui": "^3.1.0",
+    "solid-ui": "^3.1.1",
     "style-loader": "^4.0.0",
     "terser-webpack-plugin": "^5.6.0",
     "ts-loader": "^9.5.7",

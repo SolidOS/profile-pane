@@ -1,7 +1,9 @@
 import { openInputDialog } from '../../ui/dialog'
 import { html, render } from 'lit-html'
+import 'solid-ui/components/actions/button'
+import 'solid-ui/components/forms/select'
 import type { Account, SocialRow } from './types'
-import '../../styles/ContactInfoEditDialog.css'
+import '../contactInfo/ContactInfoEditDialog.css'
 import '../../styles/EditDialogs.css'
 import { LiveStore, NamedNode } from 'rdflib'
 import { ViewerMode } from '../../types'
@@ -16,7 +18,7 @@ import {
   dialogSubmitLabelText,
   editSocialDialogTitleText,
   ownerLoginRequiredDialogMessageText,
-  saveSocialUpdatesFailedPrefixText
+  saveSocialUpdatesFailedMessageText
 } from '../../texts'
 import { DEFAULT_ICON_URI } from './constants'
 import { findSocialAccountOption, getSocialAccountOptions, type SocialAccountOption } from './helpers'
@@ -38,6 +40,17 @@ type SocialRerenderOptions = {
   focusSelector?: string
 }
 
+type SocialAccountSelectOption = {
+  label: string
+  value: string
+}
+
+type SocialAccountSelectElement = HTMLElement & {
+  options?: SocialAccountSelectOption[]
+  value?: string
+  label?: string
+}
+
 type SocialRowInputProps = {
   rows: SocialRow[]
   index: number
@@ -45,11 +58,86 @@ type SocialRowInputProps = {
   onDelete: () => void
   onChange: () => void
   options: SocialAccountOption[]
-  onDragStart: (index: number) => void
-  onDragOver: (event: DragEvent) => void
-  onDrop: (index: number) => void
+  onDragStart: (event: DragEvent, index: number) => void
+  onDragEnter: (index: number) => void
+  onDragOver: (event: DragEvent, index: number) => void
+  onDrop: (event: DragEvent, index: number) => void
   onDragEnd: () => void
+  onPointerDown: (event: PointerEvent, index: number) => void
+  onPointerMove: (event: PointerEvent) => void
+  onPointerUp: (event: PointerEvent) => void
+  onPointerCancel: (event: PointerEvent) => void
   isDropTarget: boolean
+}
+
+function toSocialAccountSelectOptions(options: SocialAccountOption[]): SocialAccountSelectOption[] {
+  return options.map((option) => ({
+    label: option.label,
+    value: option.label
+  }))
+}
+
+function getSocialAccountSelectValue(row: SocialRow, options: SocialAccountOption[]): string {
+  const selected = findSocialAccountOption(options, row?.name || '')
+  return selected?.label || ''
+}
+
+function readSocialAccountTypeChange(event: Event): string {
+  const customEvent = event as CustomEvent<{ value?: string }>
+  if (typeof customEvent.detail?.value === 'string') {
+    return customEvent.detail.value
+  }
+
+  const target = event.target as HTMLSelectElement | HTMLInputElement | null
+  return typeof target?.value === 'string' ? target.value : ''
+}
+
+function initializeSocialAccountSelects(
+  form: HTMLFormElement,
+  rows: SocialRow[],
+  options: SocialAccountOption[]
+): void {
+  const selectOptions = toSocialAccountSelectOptions(options)
+  const selectElements = form.querySelectorAll('solid-ui-select[data-social-account-row-index]') as NodeListOf<SocialAccountSelectElement>
+
+  selectElements.forEach((selectElement) => {
+    const rowIndex = Number(selectElement.dataset.socialAccountRowIndex)
+    if (Number.isNaN(rowIndex)) return
+
+    const row = rows[rowIndex]
+    if (!row) return
+
+    selectElement.options = selectOptions
+    selectElement.value = getSocialAccountSelectValue(row, options)
+    selectElement.label = ''
+  })
+}
+
+function focusSocialField(form: HTMLFormElement, selector: string): void {
+  const nextField = form.querySelector(selector) as HTMLElement | null
+  if (!nextField) return
+
+  if (typeof nextField.scrollIntoView === 'function') {
+    nextField.scrollIntoView({ block: 'start', behavior: 'auto' })
+  }
+
+  const view = form.ownerDocument.defaultView
+  const shouldAvoidFocus = Boolean(
+    view?.matchMedia &&
+    (view.matchMedia('(pointer: coarse)').matches || view.matchMedia('(max-width: 640px)').matches)
+  )
+
+  if (shouldAvoidFocus) return
+
+  if (nextField.tagName === 'SOLID-UI-SELECT') {
+    const triggerButton = nextField.shadowRoot?.querySelector('button') as HTMLButtonElement | null
+    triggerButton?.focus()
+    return
+  }
+
+  if (typeof nextField.focus === 'function') {
+    nextField.focus()
+  }
 }
 
 function sanitizeSocialFieldValue(value: string): string {
@@ -58,17 +146,6 @@ function sanitizeSocialFieldValue(value: string): string {
 
 function sanitizeUrlFieldValue(value: string): string {
   return sanitizeTextValue(value).replace(/\s+/g, '')
-}
-
-function isValidProfileUrl(value: string): boolean {
-  const normalized = (value || '').trim()
-  if (!normalized) return false
-  try {
-    const parsed = new URL(normalized)
-    return parsed.protocol === 'http:' || parsed.protocol === 'https:'
-  } catch {
-    return false
-  }
 }
 
 function rowHasContent(row: SocialRow): boolean {
@@ -109,12 +186,7 @@ function hasOrderChanged(rows: SocialRow[], initialExistingOrder: string[]): boo
   return false
 }
 
-function validateSocialBeforeSave(rows: SocialRow[], initialExistingOrder: string[]): string | null {
-  const ops = summarizeRowOps(rows, rowHasContent)
-  const hasChanges = ops.create.length > 0 || ops.update.length > 0 || ops.remove.length > 0
-  const orderChanged = hasOrderChanged(rows, initialExistingOrder)
-  if (!hasChanges && !orderChanged) return 'No social changes detected.'
-
+function validateSocialBeforeSave(rows: SocialRow[]): string | null {
   for (let i = 0; i < rows.length; i++) {
     const row = rows[i]
     if (!row || row.status === 'deleted') continue
@@ -129,10 +201,6 @@ function validateSocialBeforeSave(rows: SocialRow[], initialExistingOrder: strin
     if (!hasNonEmptyText(row.homepage)) {
       return `Social account ${i + 1}: please enter your personal profile link.`
     }
-
-    if (!isValidProfileUrl(row.homepage || '')) {
-      return `Social account ${i + 1}: profile link must be a valid http(s) URL.`
-    }
   }
 
   return null
@@ -144,22 +212,19 @@ function renderSocialAccountInputSelect(
   options: SocialAccountOption[],
   onChange: (event: Event) => void
 ) {
-  const selected = findSocialAccountOption(options, row?.name || '')
-  const selectedLabel = selected?.label || ''
+  const selectedLabel = getSocialAccountSelectValue(row, options)
 
   return html`
-    <select
+    <solid-ui-select
       class="profile-edit-dialog__social-account-select"
       name=${`social-account-type-${rowIndex}`}
-      data-row-index=${String(rowIndex)}
+      data-social-account-row-index=${String(rowIndex)}
       autocomplete="off"
+      .options=${toSocialAccountSelectOptions(options)}
+      .value=${selectedLabel}
+      .label=${''}
       @change=${onChange}
-    >
-      <option value="">Select</option>
-      ${options.map((option) => html`
-        <option value=${option.label} ?selected=${option.label === selectedLabel}>${option.label}</option>
-      `)}
-    </select>
+    ></solid-ui-select>
   `
 }
 
@@ -171,9 +236,14 @@ function renderSocialInputRow({
   onChange,
   options,
   onDragStart,
+  onDragEnter,
   onDragOver,
   onDrop,
   onDragEnd,
+  onPointerDown,
+  onPointerMove,
+  onPointerUp,
+  onPointerCancel,
   isDropTarget
 }: SocialRowInputProps) {
   const row = rows[index]
@@ -192,8 +262,7 @@ function renderSocialInputRow({
   }
 
   const handleAccountTypeInput = (event: Event) => {
-    const target = event.target as HTMLSelectElement
-    const selected = findSocialAccountOption(options, target.value)
+    const selected = findSocialAccountOption(options, readSocialAccountTypeChange(event))
     if (!rows[index]) return
 
     if (!selected) {
@@ -217,20 +286,28 @@ function renderSocialInputRow({
   return html`
     <div
       class="profile-edit-dialog__row profile-edit-dialog__row--social ${isDropTarget ? 'profile-edit-dialog__row--drop-target' : ''}"
-      @dragover=${(event: DragEvent) => onDragOver(event)}
-      @drop=${() => onDrop(index)}
+      data-social-reorder-index=${String(index)}
+      @dragenter=${() => onDragEnter(index)}
+      @dragover=${(event: DragEvent) => onDragOver(event, index)}
+      @drop=${(event: DragEvent) => onDrop(event, index)}
     >
-      <button
+      <solid-ui-button
         type="button"
         class="profile-edit-dialog__drag-handle"
+        variant="icon"
+        size="md"
         aria-label=${`Reorder social account ${displayIndex + 1}`}
         title="Drag to reorder"
         draggable="true"
-        @dragstart=${() => onDragStart(index)}
+        @dragstart=${(event: DragEvent) => onDragStart(event, index)}
         @dragend=${() => onDragEnd()}
+        @pointerdown=${(event: PointerEvent) => onPointerDown(event, index)}
+        @pointermove=${(event: PointerEvent) => onPointerMove(event)}
+        @pointerup=${(event: PointerEvent) => onPointerUp(event)}
+        @pointercancel=${(event: PointerEvent) => onPointerCancel(event)}
       >
-        ${bentoIcon}
-      </button>
+        <span slot="icon" class="profile-edit-dialog__drag-handle-icon" aria-hidden="true">${bentoIcon}</span>
+      </solid-ui-button>
       <img 
         class="profile-edit-dialog__social-icon" 
         src="${row?.icon || DEFAULT_ICON_URI}" 
@@ -245,30 +322,32 @@ function renderSocialInputRow({
       <label aria-label=${homepageLabel} class="label profile-edit-dialog__field profile-edit-dialog__field--social-url">
         <input
           class="input"
-          type="url"
+          type="text"
           name=${`social-homepage-${index}`}
           .value=${row?.homepage || ''}
           data-contact-field="homepage"
           data-entry-node=${row?.entryNode || ''}
           data-row-status=${row?.status || 'n/a'}
-          placeholder="Profile URL"
-          autocomplete="url"
-          inputmode="url"
+          placeholder="Profile link or handle"
+          autocomplete="off"
+          inputmode="text"
           required
           @input=${handleTextInput('homepage')}
         />
-          <small class="profile-edit-dialog__input-help-text">Paste your full profile URL (for example: https://example.com/username)</small>
+          <small class="profile-edit-dialog__input-help-text">Enter your profile link, handle, or username.</small>
       </label>
       <div class="profile-edit-dialog__actions profile-edit-dialog__actions--edge">
-        <button
+        <solid-ui-button
           type="button"
+          variant="icon"
+          size="md"
           class="profile-edit-dialog__delete-button"
           aria-label=${`Delete social account ${displayIndex + 1}`}
           title=${deleteEntryButtonTitleText}
           @click=${handleDelete}
         >
-          <span class="profile-edit-dialog__delete-icon" aria-hidden="true">${trashIcon}</span>
-        </button>
+          <span slot="icon" class="profile-edit-dialog__delete-icon" aria-hidden="true">${trashIcon}</span>
+        </solid-ui-button>
       </div>
     </div>
   `
@@ -277,6 +356,7 @@ function renderSocialInputRow({
 function renderSocialSection(rows: SocialRow[], options: SocialAccountOption[], onRerender: (options?: SocialRerenderOptions) => void) {
   let dragSourceIndex: number | null = null
   let dropTargetIndex: number | null = null
+  let touchPointerId: number | null = null
 
   const reorderRows = (from: number, to: number) => {
     if (from === to) return
@@ -286,27 +366,99 @@ function renderSocialSection(rows: SocialRow[], options: SocialAccountOption[], 
     rows.splice(to, 0, row)
   }
 
-  const handleDragStart = (index: number) => {
+  const handleDragStart = (event: DragEvent, index: number) => {
     dragSourceIndex = index
+    dropTargetIndex = index
+
+    if (event.dataTransfer) {
+      event.dataTransfer.effectAllowed = 'move'
+      event.dataTransfer.setData('text/plain', String(index))
+    }
+  }
+
+  const handleDragEnter = (index: number) => {
+    if (dragSourceIndex === null) return
     dropTargetIndex = index
   }
 
-  const handleDragOver = (event: DragEvent) => {
+  const handleDragOver = (event: DragEvent, index: number) => {
     event.preventDefault()
+    if (dragSourceIndex !== null) {
+      dropTargetIndex = index
+    }
     if (event.dataTransfer) {
       event.dataTransfer.dropEffect = 'move'
     }
   }
 
-  const handleDrop = (index: number) => {
-    if (dragSourceIndex === null) return
-    reorderRows(dragSourceIndex, index)
+  const handleDrop = (event: DragEvent, index: number) => {
+    event.preventDefault()
+    const transferIndex = event.dataTransfer?.getData('text/plain')
+    const sourceIndex = dragSourceIndex ?? (transferIndex ? Number(transferIndex) : null)
+    if (sourceIndex === null || Number.isNaN(sourceIndex)) return
+    reorderRows(sourceIndex, index)
     dragSourceIndex = null
     dropTargetIndex = null
     onRerender()
   }
 
   const handleDragEnd = () => {
+    dragSourceIndex = null
+    dropTargetIndex = null
+  }
+
+  const updateTouchDropTarget = (event: PointerEvent) => {
+    const dom = (event.currentTarget as HTMLElement | null)?.ownerDocument || document
+    const target = (dom.elementFromPoint(event.clientX, event.clientY) as HTMLElement | null)
+      ?.closest('[data-social-reorder-index]') as HTMLElement | null
+    if (!target) return
+
+    const nextIndex = Number(target.dataset.socialReorderIndex)
+    if (!Number.isNaN(nextIndex)) {
+      dropTargetIndex = nextIndex
+    }
+  }
+
+  const handlePointerDown = (event: PointerEvent, index: number) => {
+    if (event.pointerType !== 'touch') return
+
+    event.preventDefault()
+    dragSourceIndex = index
+    dropTargetIndex = index
+    touchPointerId = event.pointerId
+    ;(event.currentTarget as HTMLElement | null)?.setPointerCapture?.(event.pointerId)
+  }
+
+  const handlePointerMove = (event: PointerEvent) => {
+    if (event.pointerType !== 'touch' || touchPointerId !== event.pointerId || dragSourceIndex === null) return
+
+    event.preventDefault()
+    updateTouchDropTarget(event)
+  }
+
+  const handlePointerUp = (event: PointerEvent) => {
+    if (event.pointerType !== 'touch' || touchPointerId !== event.pointerId) return
+
+    event.preventDefault()
+    updateTouchDropTarget(event)
+    const sourceIndex = dragSourceIndex
+    const targetIndex = dropTargetIndex
+    ;(event.currentTarget as HTMLElement | null)?.releasePointerCapture?.(event.pointerId)
+    touchPointerId = null
+    dragSourceIndex = null
+    dropTargetIndex = null
+
+    if (sourceIndex === null || targetIndex === null || sourceIndex === targetIndex) return
+
+    reorderRows(sourceIndex, targetIndex)
+    onRerender()
+  }
+
+  const handlePointerCancel = (event: PointerEvent) => {
+    if (event.pointerType !== 'touch' || touchPointerId !== event.pointerId) return
+
+    ;(event.currentTarget as HTMLElement | null)?.releasePointerCapture?.(event.pointerId)
+    touchPointerId = null
     dragSourceIndex = null
     dropTargetIndex = null
   }
@@ -331,23 +483,20 @@ function renderSocialSection(rows: SocialRow[], options: SocialAccountOption[], 
             onChange: onRerender,
             options,
             onDragStart: handleDragStart,
+            onDragEnter: handleDragEnter,
             onDragOver: handleDragOver,
             onDrop: handleDrop,
             onDragEnd: handleDragEnd,
+            onPointerDown: handlePointerDown,
+            onPointerMove: handlePointerMove,
+            onPointerUp: handlePointerUp,
+            onPointerCancel: handlePointerCancel,
             isDropTarget: dropTargetIndex === index
           })
         )}
       </fieldset>
     </section>
   `
-}
-
-function focusSocialField(form: HTMLFormElement, selector: string): void {
-  const nextField = form.querySelector(selector) as HTMLElement | null
-  if (!nextField || typeof nextField.focus !== 'function') return
-
-  nextField.scrollIntoView({ block: 'start', behavior: 'auto' })
-  nextField.focus()
 }
 
 function renderSocialEditTemplate(
@@ -365,6 +514,8 @@ function renderSocialEditTemplate(
       ? html`<p class="profile-edit-dialog__login-message">${ownerLoginRequiredDialogMessageText}</p>`
       : null}
   `, form)
+
+  initializeSocialAccountSelects(form, formState.socialAccounts, socialOptions)
 
   if (rerenderOptions.focusSelector) {
     focusSocialField(form, rerenderOptions.focusSelector)
@@ -410,6 +561,12 @@ export async function createSocialEditDialog(
     title: editSocialDialogTitleText,
     dom,
     form,
+    onOpen: () => focusSocialField(form, '[name="social-account-type-0"]'),
+    shouldCloseWithoutSave: () => {
+      const ops = summarizeRowOps(formState.socialAccounts, rowHasContent)
+      const orderChanged = hasOrderChanged(formState.socialAccounts, formState.initialExistingOrder)
+      return ops.create.length === 0 && ops.update.length === 0 && ops.remove.length === 0 && !orderChanged
+    },
     headerAction: {
       type: 'button',
       label: '+ Add More',
@@ -422,7 +579,7 @@ export async function createSocialEditDialog(
       if (viewerMode !== 'owner') {
         return ownerLoginRequiredDialogMessageText
       }
-      return validateSocialBeforeSave(formState.socialAccounts, formState.initialExistingOrder)
+      return validateSocialBeforeSave(formState.socialAccounts)
     },
     onSave: async () => {
       const socialOps = summarizeRowOps(formState.socialAccounts, rowHasContent)
@@ -434,10 +591,7 @@ export async function createSocialEditDialog(
       await processSocialMutations(store, subject, plan, formState.socialAccounts)
     },
     formatSaveError: (error: unknown) => {
-      const message = error instanceof Error ? error.message : String(error)
-      return message.startsWith(saveSocialUpdatesFailedPrefixText)
-        ? message
-        : `${saveSocialUpdatesFailedPrefixText} ${message}`
+      return error instanceof Error ? error.message : saveSocialUpdatesFailedMessageText
     }
   })
 
