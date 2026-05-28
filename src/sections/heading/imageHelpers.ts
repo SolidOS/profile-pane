@@ -4,6 +4,18 @@ import { authn, solidLogicSingleton } from 'solid-logic'
 import { error as debugError } from '../../utils/debug'
 
 const resolvedHeadingImageCache = new Map<string, string>()
+
+export function invalidateResolvedPhotoDisplaySrc(imageSrc?: string): void {
+  if (!imageSrc) return
+
+  const cachedImageSrc = resolvedHeadingImageCache.get(imageSrc)
+  if (!cachedImageSrc) return
+
+  resolvedHeadingImageCache.delete(imageSrc)
+  if (cachedImageSrc.startsWith('blob:') && typeof URL.revokeObjectURL === 'function') {
+    URL.revokeObjectURL(cachedImageSrc)
+  }
+}
 /* Code copied from contact-pane/src/mugshotGallery and modified to fit the needs of the new design */
 const mimeMap: Record<string, string> = {
   'image/png': 'png',
@@ -132,4 +144,3 @@ export async function deletePhotoFile(store: LiveStore, subject: NamedNode, phot
     
   }
 }
-
