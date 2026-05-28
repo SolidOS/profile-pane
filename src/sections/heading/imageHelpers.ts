@@ -130,17 +130,3 @@ export async function uploadPhotoFile(store: LiveStore, subject: NamedNode, file
   
   return candidateUri
 }
-
-export async function deletePhotoFile(store: LiveStore, subject: NamedNode, photoUri: string): Promise<void> {
-  void subject
-  if (!photoUri) return
-
-  if (store.fetcher) {
-    try {
-      await store.fetcher.webOperation('DELETE', photoUri)
-    } catch (error) {
-      debugError(`Error deleting picture: ${error}`)
-    }
-    
-  }
-}

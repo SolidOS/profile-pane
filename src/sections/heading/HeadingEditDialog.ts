@@ -33,7 +33,7 @@ import { cameraIcon } from '../../icons-svg/profileIcons'
 import { ContactAddressRow, ContactPointRow } from '../contactInfo/types'
 import { sanitizeAddressFieldValue, sanitizeBasicInputFieldValue, sanitizeEmailValue, sanitizePhoneLocalValue } from '../shared/sanitizeUtils'
 import { toStorageDateISO } from './dateHelpers'
-import { deletePhotoFile, invalidateResolvedPhotoDisplaySrc, resolvePhotoDisplaySrc, uploadPhotoFile } from './imageHelpers'
+import { invalidateResolvedPhotoDisplaySrc, resolvePhotoDisplaySrc, uploadPhotoFile } from './imageHelpers'
 /* Note: new design - has address type in More Edit Contacts for now we will leave
          out Address Type, but a ticket will be created to add type later
          so I will keep the code and just comment it out for now. 
@@ -1016,7 +1016,6 @@ export async function createHeadingEditDialog(
       const nextPhotoUri = sanitizeTextValue(formState.basicInfo.imageSrc || '')
       if (originalPhotoUri && originalPhotoUri !== nextPhotoUri) {
         try {
-          await deletePhotoFile(store, subject, originalPhotoUri)
           invalidateResolvedPhotoDisplaySrc(originalPhotoUri)
         } catch (error) {
           debugWarn('Profile image file delete failed', error)
