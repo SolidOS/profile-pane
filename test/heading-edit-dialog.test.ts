@@ -147,6 +147,77 @@ describe('Heading edit dialog', () => {
     expect(mockUploadPhotoFile).toHaveBeenCalledWith(store, subject, file)
   })
 
+  it('keeps the captured camera photo visible in the preview frame before save', async () => {
+    const store = graph() as any
+    const subject = sym('https://example.com/profile/card#me')
+    const profileData: ProfileDetails = {
+      entryNode: subject,
+      name: 'Jane Doe',
+      imageSrc: 'https://example.com/profile/original.png'
+    }
+
+    const resultPromise = createHeadingEditDialog(createDialogEvent(), store, subject, profileData, 'owner')
+    await flushUi()
+
+    const cameraButton = document.querySelector('.profile-edit-dialog__image-camera-button') as HTMLElement | null
+    expect(cameraButton).not.toBeNull()
+
+    cameraButton?.click()
+    await flushUi()
+
+    const photoCapture = document.querySelector('solid-ui-photo-capture') as HTMLElement | null
+    expect(photoCapture).not.toBeNull()
+
+    const file = new File(['camera-image-bytes'], 'camera.png', { type: 'image/png' })
+    photoCapture?.dispatchEvent(new CustomEvent('photo-captured', {
+      detail: { file },
+      bubbles: true
+    }))
+    await flushUi()
+
+    const heroImage = document.querySelector('.profile-edit-dialog__image-frame .profile__hero') as HTMLImageElement | null
+    expect(mockUploadPhotoFile).not.toHaveBeenCalled()
+    expect(URL.createObjectURL).toHaveBeenCalledWith(file)
+    expect(heroImage?.getAttribute('src')).toBe('blob:heading-preview')
+
+    getSharedDialogSaveButton(document)?.click()
+    await resultPromise
+
+    expect(mockUploadPhotoFile).toHaveBeenCalledTimes(1)
+    expect(mockUploadPhotoFile).toHaveBeenCalledWith(store, subject, file)
+  })
+
+  it('only persists removing the heading photo when save is pressed', async () => {
+    const store = graph() as any
+    const subject = sym('https://example.com/profile/card#me')
+    const profileData: ProfileDetails = {
+      entryNode: subject,
+      name: 'Jane Doe',
+      imageSrc: 'https://example.com/profile/original.png'
+    }
+
+    const resultPromise = createHeadingEditDialog(createDialogEvent(), store, subject, profileData, 'owner')
+    await flushUi()
+
+    const removeButton = document.querySelector('.profile-edit-dialog__image-remove-button') as HTMLElement | null
+    expect(removeButton).not.toBeNull()
+
+    removeButton?.click()
+    await flushUi()
+
+    expect(mockProcessHeadingMutations).not.toHaveBeenCalled()
+    expect(mockInvalidateResolvedPhotoDisplaySrc).not.toHaveBeenCalled()
+
+    getSharedDialogSaveButton(document)?.click()
+    await resultPromise
+
+    expect(mockProcessHeadingMutations).toHaveBeenCalledTimes(1)
+    const plan = mockProcessHeadingMutations.mock.calls[0][2]
+    expect(plan.basicOps.update).toHaveLength(1)
+    expect(plan.basicOps.update[0]?.imageSrc).toBe('')
+    expect(mockInvalidateResolvedPhotoDisplaySrc).toHaveBeenCalledWith('https://example.com/profile/original.png')
+  })
+
   it('shows an existing heading photo in the edit dialog when the display source resolves', async () => {
     const store = graph() as any
     const subject = sym('https://example.com/profile/card#me')
