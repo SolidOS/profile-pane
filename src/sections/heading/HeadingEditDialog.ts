@@ -1018,7 +1018,7 @@ export async function createHeadingEditDialog(
         try {
           invalidateResolvedPhotoDisplaySrc(originalPhotoUri)
         } catch (error) {
-          debugWarn('Profile image file delete failed', error)
+          debugWarn('Failed to invalidate resolved photo cache', error)
         }
       }
     },

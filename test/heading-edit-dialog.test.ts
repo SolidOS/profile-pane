@@ -8,7 +8,6 @@ import type { LiveStore, NamedNode } from 'rdflib'
 
 const mockProcessHeadingMutations = jest.fn<(_: unknown, __: unknown, plan: HeadingMutationPlan) => Promise<void>>()
 const mockUploadPhotoFile = jest.fn<(store: LiveStore, subject: NamedNode, file: File) => Promise<string>>()
-const mockDeletePhotoFile = jest.fn<(store: LiveStore, subject: NamedNode, photoUri: string) => Promise<void>>()
 const mockResolvePhotoDisplaySrc = jest.fn<(store: LiveStore, imageSrc?: string) => Promise<string | undefined>>()
 const mockInvalidateResolvedPhotoDisplaySrc = jest.fn<(imageSrc?: string) => void>()
 
@@ -22,7 +21,6 @@ jest.mock('../src/sections/heading/imageHelpers', () => {
   return {
     ...actual,
     uploadPhotoFile: (...args: Parameters<typeof mockUploadPhotoFile>) => mockUploadPhotoFile(...args),
-    deletePhotoFile: (...args: Parameters<typeof mockDeletePhotoFile>) => mockDeletePhotoFile(...args),
     resolvePhotoDisplaySrc: (...args: Parameters<typeof mockResolvePhotoDisplaySrc>) => mockResolvePhotoDisplaySrc(...args),
     invalidateResolvedPhotoDisplaySrc: (...args: Parameters<typeof mockInvalidateResolvedPhotoDisplaySrc>) => mockInvalidateResolvedPhotoDisplaySrc(...args)
   }
@@ -65,13 +63,11 @@ describe('Heading edit dialog', () => {
   beforeEach(() => {
     mockProcessHeadingMutations.mockReset()
     mockUploadPhotoFile.mockReset()
-    mockDeletePhotoFile.mockReset()
     mockResolvePhotoDisplaySrc.mockReset()
     mockInvalidateResolvedPhotoDisplaySrc.mockReset()
 
     mockProcessHeadingMutations.mockResolvedValue(undefined)
     mockUploadPhotoFile.mockResolvedValue('https://example.com/profile/avatar.png')
-    mockDeletePhotoFile.mockResolvedValue(undefined)
     mockResolvePhotoDisplaySrc.mockImplementation(actualImageHelpers.resolvePhotoDisplaySrc)
     mockInvalidateResolvedPhotoDisplaySrc.mockImplementation(actualImageHelpers.invalidateResolvedPhotoDisplaySrc)
 
