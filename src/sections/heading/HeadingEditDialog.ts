@@ -33,7 +33,7 @@ import { cameraIcon } from '../../icons-svg/profileIcons'
 import { ContactAddressRow, ContactPointRow } from '../contactInfo/types'
 import { sanitizeAddressFieldValue, sanitizeBasicInputFieldValue, sanitizeEmailValue, sanitizePhoneLocalValue } from '../shared/sanitizeUtils'
 import { toStorageDateISO } from './dateHelpers'
-import { deletePhotoFile, resolvePhotoDisplaySrc, uploadPhotoFile } from './imageHelpers'
+import { invalidateResolvedPhotoDisplaySrc, resolvePhotoDisplaySrc, uploadPhotoFile } from './imageHelpers'
 /* Note: new design - has address type in More Edit Contacts for now we will leave
          out Address Type, but a ticket will be created to add type later
          so I will keep the code and just comment it out for now. 
@@ -65,6 +65,7 @@ type HeadingFormState = {
   address: ContactAddressRow
   emailTypeWasMissing: boolean
   phoneTypeWasMissing: boolean
+  pendingImageFile?: File | null
   imagePreviewSrc: string
   clearImagePreview: () => void
 }
@@ -301,15 +302,6 @@ function setResolvedHeadingPreview(formState: HeadingFormState, resolvedImageSrc
   }
 
   formState.imagePreviewSrc = resolvedImageSrc
-
-  if (resolvedImageSrc.startsWith('blob:') && typeof URL.revokeObjectURL === 'function') {
-    formState.clearImagePreview = () => {
-      URL.revokeObjectURL(resolvedImageSrc)
-      formState.imagePreviewSrc = ''
-      formState.clearImagePreview = () => undefined
-    }
-    return
-  }
 
   formState.clearImagePreview = () => {
     formState.imagePreviewSrc = ''
@@ -632,8 +624,6 @@ function renderContactAddressInput({
 }
 
 function renderHeadingInfoInput(
-  store: LiveStore,
-  subject: NamedNode,
   formState: HeadingFormState,
   rerender: () => void
 ): TemplateResult {
@@ -685,9 +675,9 @@ function renderHeadingInfoInput(
       if (!file || !basicInfo) return
 
       try {
-        const uploadedUri = await uploadPhotoFile(store, subject, file)
+        formState.pendingImageFile = file
         setHeadingImagePreview(formState, file)
-        applyRowFieldChange(basicInfo, 'imageSrc', uploadedUri, rowHasContent)
+        basicInfo.status = basicInfo.entryNode ? 'modified' : 'new'
         rerender()
       } catch (error) {
         debugError('Profile image upload failed', error)
@@ -743,10 +733,10 @@ function renderHeadingInfoInput(
         if (!detail?.file || !basicInfo) return
 
         try {
-          const uploadedUri = await uploadPhotoFile(store, subject, detail.file)
+          formState.pendingImageFile = detail.file
           closeCameraFrame()
           setHeadingImagePreview(formState, detail.file)
-          applyRowFieldChange(basicInfo, 'imageSrc', uploadedUri, rowHasContent)
+          basicInfo.status = basicInfo.entryNode ? 'modified' : 'new'
           rerender()
         } catch (error) {
           debugError('Profile camera upload failed', error)
@@ -760,8 +750,9 @@ function renderHeadingInfoInput(
     }
   }
 
-  const handleDelete = async (_e: Event) => {
+  const handleDelete = async () => {
     if (!basicInfo) return
+    formState.pendingImageFile = null
     formState.clearImagePreview()
     applyRowFieldChange(basicInfo, 'imageSrc', '', rowHasContent)
     rerender()
@@ -905,14 +896,12 @@ function renderHeadingInfoInput(
 function renderHeadingEditTemplate(
   form: HTMLFormElement,
   formState: HeadingFormState,
-  store: LiveStore,
-  subject: NamedNode,
   viewerMode: ViewerMode
 ) {
-  const rerender = () => renderHeadingEditTemplate(form, formState, store, subject, viewerMode)
+  const rerender = () => renderHeadingEditTemplate(form, formState, viewerMode)
  
   render(html`
-    ${renderHeadingInfoInput(store, subject, formState, rerender)}
+    ${renderHeadingInfoInput(formState, rerender)}
     ${renderContactAddressInput({ address: formState.address })}
     ${viewerMode !== 'owner'
       ? html`<p class="profile-edit-dialog__login-message">${ownerLoginRequiredDialogMessageText}</p>`
@@ -924,8 +913,6 @@ function renderHeadingEditTemplate(
 }
 
 function createHeadingEditForm(
-  store: LiveStore,
-  subject: NamedNode,
   profileData: ProfileDetails,
   viewerMode: ViewerMode
 ) {
@@ -937,7 +924,7 @@ function createHeadingEditForm(
   form.setAttribute('data-bwignore', 'true')
 
   const formState = toFormState(profileData)
-  renderHeadingEditTemplate(form, formState, store, subject, viewerMode)
+  renderHeadingEditTemplate(form, formState, viewerMode)
 
   return { form, formState }
 }
@@ -974,13 +961,13 @@ export async function createHeadingEditDialog(
 ) {
   const dom = document
   const originalPhotoUri = sanitizeTextValue(toText(profileData.imageSrc || ''))
-  const { form, formState } = createHeadingEditForm(store, subject, profileData, viewerMode)
+  const { form, formState } = createHeadingEditForm(profileData, viewerMode)
 
   if (formState.basicInfo.imageSrc) {
     const resolvedImageSrc = await resolvePhotoDisplaySrc(store, formState.basicInfo.imageSrc)
     if (resolvedImageSrc && resolvedImageSrc !== formState.basicInfo.imageSrc) {
       setResolvedHeadingPreview(formState, resolvedImageSrc)
-      renderHeadingEditTemplate(form, formState, store, subject, viewerMode)
+      renderHeadingEditTemplate(form, formState, viewerMode)
     }
   }
 
@@ -1011,6 +998,11 @@ export async function createHeadingEditDialog(
       return validateHeadingDataBeforeSave(formState)
     },
     onSave: async () => {
+      if (formState.pendingImageFile) {
+        const uploadedUri = await uploadPhotoFile(store, subject, formState.pendingImageFile)
+        applyRowFieldChange(formState.basicInfo, 'imageSrc', uploadedUri, rowHasContent)
+      }
+
       const phoneOps = summarizeHeadingContactOps(formState.phone, 'phone', formState.phoneTypeWasMissing)
       const emailOps = summarizeHeadingContactOps(formState.email, 'email', formState.emailTypeWasMissing)
       const plan: HeadingMutationPlan = {
@@ -1024,9 +1016,9 @@ export async function createHeadingEditDialog(
       const nextPhotoUri = sanitizeTextValue(formState.basicInfo.imageSrc || '')
       if (originalPhotoUri && originalPhotoUri !== nextPhotoUri) {
         try {
-          await deletePhotoFile(store, subject, originalPhotoUri)
+          invalidateResolvedPhotoDisplaySrc(originalPhotoUri)
         } catch (error) {
-          debugWarn('Profile image file delete failed', error)
+          debugWarn('Failed to invalidate resolved photo cache', error)
         }
       }
     },
@@ -1035,7 +1027,9 @@ export async function createHeadingEditDialog(
     }
   })
 
-  if (!result) return
+  if (!result) {
+    return
+  }
 
   if (onSaved) {
     await onSaved()
