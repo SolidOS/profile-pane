@@ -73,10 +73,6 @@
     padding: var(--qrcode-section-padding-compact);
     gap: var(--qrcode-section-gap-compact);
   }
-
-  .qrcode-card__image svg {
-      max-width: 120px;
-  }
 }
 
 :is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .qrcode-card__caption {
@@ -91,10 +87,6 @@
     align-self: stretch;
     padding: var(--qrcode-section-padding-compact);
     gap: var(--qrcode-section-gap-compact);
-  }
-
-  .qrcode-card__image svg {
-    max-width: 120px;
   }
 
   .qrcode-card__caption {
