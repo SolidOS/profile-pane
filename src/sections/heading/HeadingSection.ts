@@ -1,5 +1,5 @@
 import { html, nothing, TemplateResult } from 'lit-html'
-import 'solid-ui/components/actions/button'
+import 'solid-ui/components/button'
 import './HeadingSection.css'
 import { ProfileDetails } from './types'
 import { DataBrowserContext } from 'pane-registry'

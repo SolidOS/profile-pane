@@ -1,5 +1,5 @@
 import { html, TemplateResult } from 'lit-html'
-import 'solid-ui/components/actions/button'
+import 'solid-ui/components/button'
 import { Account, SocialPresentation } from './types'
 import { ViewerMode } from '../../types'
 import './SocialSection.css'
