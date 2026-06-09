@@ -1,5 +1,5 @@
 import { html } from 'lit-html'
-import 'solid-ui/components/actions/button'
+import 'solid-ui/components/button'
 import { LiveStore, NamedNode } from 'rdflib'
 import { ns } from 'solid-ui'
 import { ViewerMode } from '../../types'
