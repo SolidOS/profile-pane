@@ -54,6 +54,7 @@ td.obj .profile-pane-root {
   font-weight: var(--font-weight-md, 500);
 }
 
+/* SAM I think I can delete this */
 .profile__action-button,
 solid-ui-button.profile__action-button {
   display: inline-flex;
@@ -129,6 +130,7 @@ solid-ui-button.profile__btn-contacts {
   --button-hover-text: var(--profile-contacts-button-color, var(--color-primary, #7C4DFF));
 }
 
+/* SAM not sure i need below either */
 .profile-action-text {
   width: auto;
   min-width: 0;

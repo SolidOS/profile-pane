@@ -129,6 +129,7 @@
   flex: 0 0 auto;
 }
 
+/* SAM I think these can be removed */
 :is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-section-collapsible__edit-button,
 :is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-section-collapsible--inline-mobile-actions .profile-section-collapsible__edit-button {
   --button-background: transparent;

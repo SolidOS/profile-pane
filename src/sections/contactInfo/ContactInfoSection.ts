@@ -153,9 +153,7 @@ function renderContactInfoSectionDefault(
         <div class="profile-section-collapsible__actions">
           ${isOwner ? html`
             <solid-ui-button
-              type="button"
-              variant="secondary"
-              size="sm"
+              variant="tertiary"
               class="profile__action-button profile-action-text profile-section-collapsible__edit-button"
               aria-label="Edit contact information"
               @click=${(event: Event) => {
@@ -177,9 +175,7 @@ function renderContactInfoSectionDefault(
             </solid-ui-button>
           ` : html``}
           <solid-ui-button
-            type="button"
-            variant="icon"
-            size="sm"
+            variant="ghost"
             class="profile-section-collapsible__toggle-button"
             aria-label="Toggle contact information section"
             aria-controls="contact-details-panel"
@@ -257,9 +253,7 @@ function renderOwnerEmptyContactInfoSection(
         <h3 id="contact-details-heading" tabindex="-1">${contactInfoEmptyHeadingText}</h3>
         <div class="profile-section-collapsible__actions">
           <solid-ui-button
-            type="button"
-            variant="secondary"
-            size="sm"
+            variant="tertiary"
             class="profile__action-button profile-action-text profile-section-collapsible__edit-button"
             aria-label="Add contact information"
             @click=${(event: Event) => {
@@ -277,9 +271,7 @@ function renderOwnerEmptyContactInfoSection(
             <span class="profile-section-collapsible__edit-icon" aria-hidden="true">${editIcon}</span>
           </solid-ui-button>
           <solid-ui-button
-            type="button"
-            variant="icon"
-            size="sm"
+            variant="ghost"
             class="profile-section-collapsible__toggle-button"
             aria-label="Toggle contact information section"
             aria-controls="contact-details-panel"

@@ -16,13 +16,13 @@
 .profile-edit-dialog__section--education {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-xs, 0.75rem);
+  gap: 12px;
 }
 
 .profile-edit {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-lg, 1.25rem);
+  gap: 25px;
 }
 
 .profile-edit-dialog__section h4 {
@@ -33,7 +33,7 @@
   width: 100%;
   margin: 0;
   display: grid;
-  gap: var(--spacing-sm);
+  gap: 15px;
   border: 0;
   padding: 0;
   min-inline-size: 0;
@@ -43,13 +43,13 @@
   color: var(--profile-edit-dialog-muted-text);
   font-size: var(--font-size-sm, 0.875rem);
   font-weight: var(--font-weight-normal, normal);
-  line-height: var(--line-height-base, 1.5);
+  line-height: 1.5;
 }
 
 .profile-edit-dialog__row {
   display: flex;
   align-items: flex-start;
-  gap: var(--spacing-sm);
+  gap: 15px;
   max-width: var(--profile-edit-dialog-row-max-width);
 }
 
@@ -89,7 +89,7 @@
 }
 
 .profile-edit-dialog__field--row-width {
-  max-width: 34rem;
+  max-width: 544px;
   width: 100%;
 }
 
@@ -100,17 +100,17 @@
 }
 
 .profile-edit-dialog__section + .profile-edit-dialog__login-message {
-  margin-top: var(--spacing-sm, 0.938rem);
+  margin-top: 15px;
 }
 
 .profile__edit-form--projects .profile-edit-dialog__login-message {
-  margin-top: var(--spacing-sm, 0.938rem);
+  margin-top: 15px;
 }
 
 #profile-modal .modal .profile__section-header .profile__action-button,
 #profile-modal .modal .profile__section-header solid-ui-button.profile__action-button::part(button) {
   min-height: auto;
-  padding: var(--spacing-xxs);
+  padding: 5px;
   border: none;
   background: none;
   color: var(--color-primary);
@@ -133,12 +133,6 @@
   margin-left: auto;
 }
 
-.profile-edit-dialog__add-button {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
-
 .profile-edit-dialog__input-wrap {
   position: relative;
   width: 100%;
@@ -147,60 +141,22 @@
 .profile-edit-dialog__input--with-action {
   width: 100%;
   box-sizing: border-box;
-  padding-right: 7.5rem;
-}
-
-.profile-edit-dialog__delete-icon {
-  width: var(--icon-xxs, 1rem);
-  height: var(--icon-xxs, 1rem);
-  fill: currentColor;
-}
-
-.profile-edit-dialog__delete-icon svg {
-  width: var(--icon-xxs, 1rem);
-  height: var(--icon-xxs, 1rem);
-}
-
-solid-ui-button.profile-edit-dialog__delete-button {
-  min-height: var(--min-touch-target, 44px);
-  min-width: var(--min-touch-target, 44px);
-  color: inherit;
-  --button-background: transparent;
-  --button-height-md: var(--min-touch-target, 44px);
-  --button-padding-md: 0;
-  --button-padding-x-sm: 0;
-  --button-border-width: 0;
-  --button-border-radius: var(--border-radius-base, 0.3125rem);
-  --button-text: currentColor;
-  --button-box-shadow: none;
-  --button-hover-background: var(--profile-edit-dialog-action-hover-background);
-  --button-hover-border: transparent;
-  --button-hover-text: var(--color-primary, #7C4DFF);
-  --button-hover-box-shadow: none;
-  --button-active-box-shadow: none;
-  --button-active-transform: none;
-  --button-icon-size-md: var(--icon-xxs, 1rem);
-  --button-icon-size-lg: var(--icon-xxs, 1rem);
-}
-
-solid-ui-button.profile-edit-dialog__delete-button:hover,
-solid-ui-button.profile-edit-dialog__delete-button:focus-within {
-  color: inherit;
+  padding-right: 120px;
 }
 
 .profile-edit-dialog__image-preview {
   display: grid;
-  gap: var(--spacing-xs);
+  gap: 12px;
 }
 
 .profile-edit-dialog__image-preview-header {
-  margin-bottom: var(--spacing-md, 1.25rem);
+  margin-bottom: 20px;
 }
 
 .profile-edit-dialog__image-preview-actions {
   display: flex;
   align-items: center;
-  gap: var(--spacing-xs, 0.75rem);
+  gap: 12px;
 }
 
 .profile-edit-dialog__image-preview-label,
@@ -219,8 +175,8 @@ solid-ui-button.profile-edit-dialog__delete-button:focus-within {
   position: absolute;
   align-items: center;
   justify-content: center;
-  right: var(--spacing-2xs, 0.625rem);
-  bottom: var(--spacing-2xs, 0.625rem);
+  right: 10px;
+  bottom: 10px;
   z-index: 1;
 }
 
@@ -235,12 +191,8 @@ solid-ui-button.profile-edit-dialog__image-camera-button {
   --button-background: var(--color-card-bg, var(--white, #FFF));
   --button-border-width: 0;
   --button-border-radius: 0.2083rem;
-  --button-box-shadow: 0 0 0.2778rem 0 rgba(0, 0, 0, 0.25);
   --button-hover-background: var(--color-card-bg, var(--white, #FFF));
-  --button-hover-border: transparent;
   --button-hover-text: currentColor;
-  --button-hover-box-shadow: 0 0 0.2778rem 0 rgba(0, 0, 0, 0.25);
-  --button-active-box-shadow: 0 0 0.2778rem 0 rgba(0, 0, 0, 0.25);
   --button-active-transform: none;
 }
 
