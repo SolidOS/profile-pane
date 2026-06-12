@@ -1,5 +1,5 @@
 import { html } from 'lit-html'
-import 'solid-ui/components/actions/button'
+import 'solid-ui/components/button'
 import { BioDetails } from './types'
 import { ViewerMode } from '../../types'
 import './BioSection.css'
@@ -22,10 +22,7 @@ function renderBio(bioData: BioDetails) {
         <div class="bio-card__description-wrap">
           <p class="bio-card__description-text" id=${bioDescriptionId}>${bioData.description}</p>
           <solid-ui-button
-            type="button"
-            variant="secondary"
-            size="sm"
-            label="...more"
+            variant="tertiary"
             class="bio-card__description-toggle"
             aria-controls=${bioDescriptionId}
             aria-expanded="false"
@@ -70,28 +67,28 @@ function renderBioSectionContent(
   return html`
     <header class="profile__section-header profile-section-collapsible__header">
       <h2 id="bio-heading" tabindex="-1">${bioHeadingText}</h2>
-      ${isOwner ? html`
-        <solid-ui-button
-          type="button"
-          variant="secondary"
-          size="sm"
-          class="profile__action-button profile-action-text bio-section__edit-button profile-section-collapsible__edit-button"
-          aria-label="Edit bio details"
-          @click=${(event: Event) => {
-            return createBioEditDialog(
-              event,
-              store,
-              subject,
-              bioDetails,
-              viewerMode,
-              onSaved
-            )
-          }}
-        >
-          <span class="profile-section-collapsible__edit-label profile__action-icon">${editIcon} Edit</span>
-          <span class="profile-section-collapsible__edit-icon profile__action-icon" aria-hidden="true">${editIcon}</span>
-        </solid-ui-button>
-      ` : html``}
+      ${isOwner
+        ? html`
+            <solid-ui-button
+              variant="tertiary"
+              class="profile-section-collapsible__edit-button"
+              @click=${(event: Event) => {
+                return createBioEditDialog(
+                  event,
+                  store,
+                  subject,
+                  bioDetails,
+                  viewerMode,
+                  onSaved
+                )
+              }}
+            >
+              <span slot="icon" class="profile-section-collapsible__edit-icon profile__action-icon" aria-hidden="true">${editIcon}</span>
+              <span slot="left-icon" class="profile-section-collapsible__edit-label profile__action-icon">${editIcon}</span>
+              <span class="profile-section-collapsible__edit-label  profile__action-icon">Edit</span>
+            </solid-ui-button>
+          `
+        : html``}
     </header>
     <div class="profile-section-collapsible__content">
       ${bio}
@@ -136,11 +133,7 @@ function renderOwnerEmptyBioContent(
       </p>
     </div>
     <solid-ui-button
-      type="button"
       variant="secondary"
-      size="sm"
-      class="profile__action-button--empty"
-      aria-label="Add bio details"
       @click=${(event: Event) => {
         return createBioEditDialog(
           event,
@@ -152,9 +145,9 @@ function renderOwnerEmptyBioContent(
         )
       }}
     >
-      <span class="profile__action-icon" aria-hidden="true">${plusDarkIcon} Add Bio</span>
+      <span slot="icon" class="profile__action-icon" aria-hidden="true">${plusDarkIcon}</span>
+      <span class="profile__action-icon">Add Bio</span>
     </solid-ui-button>
-
   `
 }
 
@@ -191,7 +184,6 @@ export function renderBioSection(
   const showOwnerEmptyBio = !hasBio && viewerMode === 'owner'
   const showSection = true
   
-
   return showSection ? html`
     ${showOwnerEmptyBio
       ? renderOwnerEmptyBioSection(store, subject, bioData, viewerMode, onSaved)
