@@ -1,6 +1,6 @@
 import { openInputDialog } from '../../ui/dialog'
 import { html, render } from 'lit-html'
-import 'solid-ui/components/actions/button'
+import 'solid-ui/components/button'
 import 'solid-ui/components/forms/select'
 import { ContactAddressRow, ContactInfo, ContactMutationPlan, ContactPointRow } from './types'
 import '../../styles/EditDialogs.css'
@@ -273,15 +273,12 @@ function renderContactPhoneInputRow({
       </label>
       <div class="profile-edit-dialog__actions">
         <solid-ui-button
-          type="button"
-          variant="icon"
-          size="md"
-          class="profile-edit-dialog__delete-button"
+          variant="ghost"
           aria-label=${`Delete phone number ${displayIndex + 1}`}
           title=${deleteEntryButtonTitleText}
           @click=${handleDelete}
         >
-          <span slot="icon" class="profile-edit-dialog__delete-icon" aria-hidden="true">${trashIcon}</span>
+          <span slot="icon" aria-hidden="true">${trashIcon}</span>
         </solid-ui-button>
       </div>
     </div>
@@ -309,17 +306,12 @@ function renderContactInfoPhoneSection(phones: ContactPointRow[], onAddRow: (opt
           Phone Numbers
         </h3>
         <solid-ui-button
-          type="button"
-          variant="secondary"
-          size="sm"
-          class="profile__action-button profile-action-text profile-edit-dialog__add-button"
+          variant="tertiary"
           aria-label="Add another phone number"
           @click=${createNewRow}
         >
-          <span class="profile__add-more-content">
-            <span class="profile__add-more-icon" aria-hidden="true">${addIcon}</span>
-            <span>Add More</span>
-          </span>
+          <span slot="left-icon" class="profile__add-more-icon" aria-hidden="true">${addIcon}</span>
+          Add More
         </solid-ui-button>
       </header>
       <fieldset>
@@ -402,15 +394,12 @@ function renderContactEmailInputRow({
       </label>
       <div class="profile-edit-dialog__actions">
         <solid-ui-button
-          type="button"
-          variant="icon"
-          size="md"
-          class="profile-edit-dialog__delete-button"
+          variant="ghost"
           aria-label=${`Delete email address ${displayIndex + 1}`}
           title=${deleteEntryButtonTitleText}
           @click=${handleDelete}
         >
-          <span slot="icon" class="profile-edit-dialog__delete-icon" aria-hidden="true">${trashIcon}</span>
+          <span slot="icon" aria-hidden="true">${trashIcon}</span>
         </solid-ui-button>
       </div>
     </div>
@@ -438,17 +427,12 @@ function renderContactInfoEmailSection(emails: ContactPointRow[], onAddRow: (opt
           Email Addresses
         </h3>
         <solid-ui-button
-          type="button"
-          variant="secondary"
-          size="sm"
-          class="profile__action-button profile-action-text profile-edit-dialog__add-button"
+          variant="tertiary"
           aria-label="Add another email address"
           @click=${createNewRow}
         >
-          <span class="profile__add-more-content">
-            <span class="profile__add-more-icon" aria-hidden="true">${addIcon}</span>
-            <span>Add More</span>
-          </span>
+          <span slot="left-icon" class="profile__add-more-icon" aria-hidden="true">${addIcon}</span>
+          Add More
         </solid-ui-button>
       </header>
       <fieldset>
@@ -517,15 +501,12 @@ function renderContactAddressInputRow({
       </label>
       <div class="profile-edit-dialog__actions profile-edit-dialog__actions--edge">
         <solid-ui-button
-          type="button"
-          variant="icon"
-          size="md"
-          class="profile-edit-dialog__delete-button"
+          variant="ghost"
           aria-label=${`Delete address ${displayIndex + 1}`}
           title=${deleteEntryButtonTitleText}
           @click=${handleDelete}
         >
-          <span slot="icon" class="profile-edit-dialog__delete-icon" aria-hidden="true">${trashIcon}</span>
+          <span slot="icon" aria-hidden="true">${trashIcon}</span>
         </solid-ui-button>
       </div>
     </div>
@@ -650,17 +631,12 @@ function renderContactInfoAddressSection(addresses: ContactAddressRow[], onAddRo
           Addresses
         </h3>
         <solid-ui-button
-          type="button"
-          variant="secondary"
-          size="sm"
-          class="profile__action-button profile-action-text profile-edit-dialog__add-button"
+          variant="tertiary"
           aria-label="Add another address"
           @click=${createNewRow}
         >
-          <span class="profile__add-more-content">
-            <span class="profile__add-more-icon" aria-hidden="true">${addIcon}</span>
-            <span>Add More</span>
-          </span>
+          <span slot="left-icon" class="profile__add-more-icon" aria-hidden="true">${addIcon}</span>
+          Add More
         </solid-ui-button>
       </header>
       <fieldset>
