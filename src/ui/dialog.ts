@@ -1,5 +1,5 @@
 import './dialog.css'
-import 'solid-ui/components/actions/button'
+import 'solid-ui/components/button'
 import { html, render } from 'lit-html'
 import { closeIcon } from '../icons-svg/profileIcons'
 import { createSpinner } from './spinner'
@@ -370,9 +370,7 @@ function openModal ({
     const resolvedHeaderAction = headerAction || { type: 'close' as const }
     if (resolvedHeaderAction.type === 'close') {
       const closeButton = dom.createElement('solid-ui-button') as DialogActionControl
-      closeButton.setAttribute('type', 'button')
-      closeButton.setAttribute('variant', 'icon')
-      closeButton.setAttribute('size', 'sm')
+      closeButton.setAttribute('variant', 'ghost')
       closeButton.setAttribute('aria-label', 'Close dialog')
       const iconSlot = dom.createElement('span')
       iconSlot.setAttribute('slot', 'icon')
@@ -382,10 +380,8 @@ function openModal ({
       elements.headerAction.appendChild(closeButton)
     } else if (resolvedHeaderAction.type === 'button') {
       const actionButton = dom.createElement('solid-ui-button') as DialogActionControl
-      actionButton.setAttribute('type', 'button')
-      actionButton.setAttribute('variant', 'secondary')
-      actionButton.setAttribute('size', 'sm')
-      actionButton.className = resolvedHeaderAction.className || 'modal__header-action-button profile__action-button profile-action-text flex-center'
+      actionButton.setAttribute('variant', 'tertiary')
+      actionButton.className = resolvedHeaderAction.className || ''
       actionButton.textContent = resolvedHeaderAction.label
       actionButton.setAttribute('label', resolvedHeaderAction.label)
       actionButton.setAttribute('aria-label', resolvedHeaderAction.ariaLabel || resolvedHeaderAction.label)
@@ -399,9 +395,7 @@ function openModal ({
 
     buttons.forEach((btn) => {
       const b = dom.createElement('solid-ui-button') as DialogActionControl
-      b.setAttribute('type', 'button')
       b.setAttribute('label', btn.label)
-      b.setAttribute('size', 'md')
       b.setAttribute('variant', btn.primary ? 'primary' : 'secondary')
       b.textContent = btn.label
       if (btn.primary) {
