@@ -10,14 +10,14 @@
   margin: 0;
   padding: 0;
   align-items: flex-start;
-  gap: var(--spacing-sm, 0.9375rem);
+  gap: 15px;
   align-self: stretch;
 }
 
 .languages__item-label {
   color: var(--color-text-subheading, var(--gray-900, #101828));
-  font-size: var(--font-size-md, 1rem);
-  font-weight: var(--font-weight-md, 500);
+  font-size: var(--solid-ui-font-size-md, 1rem);
+  font-weight: 500;
 }
 
 /* Empty state */
@@ -37,17 +37,17 @@
 }
 
 :is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .languages__item-label {
-  font-size: var(--font-size-sm, 0.875rem);
+  font-size: var(--solid-ui-font-size-sm, 0.875rem);
 }
 
 @media (max-width: 576px) {
   .languages__item-label {
-    font-size: var(--font-size-sm, 0.875rem);
+    font-size: var(--solid-ui-font-size-sm, 0.875rem);
   }
 }
 
 @container profile-pane (max-width: 576px) {
   .languages__item-label {
-    font-size: var(--font-size-sm, 0.875rem);
+    font-size: var(--solid-ui-font-size-sm, 0.875rem);
   }
 }

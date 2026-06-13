@@ -74,9 +74,6 @@ solid-ui-button.profile__action-button {
 }
 
 .profile__add-more-icon {
-  display: inline-block;
-  width: var(--icon-xxxs, 0.75rem);
-  height: var(--icon-xxxs, 0.75rem);
   margin-right: 0;
   line-height: 0;
   position: relative;
