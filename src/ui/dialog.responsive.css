@@ -2,15 +2,15 @@
 
 #profile-modal .modal:has(.profile-edit-dialog__social-account-select[popup-open]) #modal-desc,
 #profile-modal .modal:has(#modal-desc > .profile__edit-form solid-ui-combobox:focus-within) #modal-desc {
-  padding-bottom: calc(var(--profile-modal-panel-inline-padding) + 1.875rem);
+  padding-bottom: calc(var(--profile-modal-panel-inline-padding) + 30px);
 }
 
 @media (max-width: 576px) {
   #profile-modal {
-    --profile-modal-panel-max-height: calc(100dvh - 4 * var(--spacing-sm));
+    --profile-modal-panel-max-height: calc(100dvh - 4 * 15px);
     padding-top: env(safe-area-inset-top);
     padding-right: 0;
-    padding-bottom: max(var(--spacing-sm), env(safe-area-inset-bottom));
+    padding-bottom: max(15px, env(safe-area-inset-bottom));
     padding-left: 0;
     place-items: center;
   }
@@ -20,7 +20,7 @@
     max-width: var(--profile-modal-panel-max-width);
     min-width: 0;
     padding: 0;
-    border-radius: var(--border-radius-base);
+    border-radius: 5px;
     overscroll-behavior: contain;
     justify-self: center;
     align-self: center;
@@ -28,27 +28,27 @@
   }
 
   #profile-modal .modal .modal-header {
-    gap: var(--spacing-lg, 1.5625rem);
-    padding: var(--spacing-sm, 0.938rem);
+    gap: 25px;
+    padding: 15px;
   }
 
   #profile-modal .modal #modal-title {
-    font-size: var(--font-size-lg, 1.125rem);
-    line-height: var(--line-height-tight, 1.4);
+    font-size: var(--solid-ui-font-size-lg, 1.125rem);
+    line-height: 1.4;
   }
 
   #profile-modal .modal #modal-desc {
-    padding: var(--spacing-sm, 0.938rem) var(--spacing-sm, 0.938rem) var(--spacing-lg, 1.5625rem);
+    padding: 15px 15px 25px;
   }
 
   #profile-modal .modal #modal-desc:has(> .profile__edit-form--projects) {
-    padding: var(--spacing-sm, 0.938rem) var(--spacing-sm, 0.938rem) var(--spacing-lg, 1.5625rem);
+    padding: 15px 15px 25px;
   }
 
   #profile-modal #modal-desc > .profile__edit-form--bio {
     display: flex;
     flex-direction: column;
-    gap: var(--spacing-md, 1.25rem);
+    gap: 20px;
   }
 
   #profile-modal #modal-buttons {
@@ -64,15 +64,14 @@
     flex: 1 0 0;
     width: auto;
     min-width: 0;
-    --button-font-size-md: var(--font-size-md, 1rem);
   }
 }
 
 html[data-layout='mobile'] #profile-modal {
-  --profile-modal-panel-max-height: calc(100dvh - 4 * var(--spacing-sm));
+  --profile-modal-panel-max-height: calc(100dvh - 4 * 15px);
   padding-top: env(safe-area-inset-top);
   padding-right: 0;
-  padding-bottom: max(var(--spacing-sm), env(safe-area-inset-bottom));
+  padding-bottom: max(15px, env(safe-area-inset-bottom));
   padding-left: 0;
   place-items: center;
 }
@@ -84,7 +83,7 @@ html[data-layout='mobile'] #profile-modal .modal {
   max-width: var(--profile-modal-panel-max-width);
   min-width: 0;
   padding: 0;
-  border-radius: var(--border-radius-base);
+  border-radius: 5px;
   overscroll-behavior: contain;
   justify-self: center;
   align-self: center;
@@ -92,27 +91,27 @@ html[data-layout='mobile'] #profile-modal .modal {
 }
 
 html[data-layout='mobile'] #profile-modal .modal .modal-header {
-  gap: var(--spacing-lg, 1.5625rem);
-  padding: var(--spacing-sm, 0.938rem);
+  gap: 25px;
+  padding: 15px;
 }
 
 html[data-layout='mobile'] #profile-modal .modal #modal-title {
-  font-size: var(--font-size-lg, 1.125rem);
-  line-height: var(--line-height-tight, 1.4);
+  font-size: var(--solid-ui-font-size-lg, 1.125rem);
+  line-height: 1.4;
 }
 
 html[data-layout='mobile'] #profile-modal .modal #modal-desc {
-  padding: var(--spacing-sm, 0.938rem) var(--spacing-sm, 0.938rem) var(--spacing-lg, 1.5625rem);
+  padding: 15px 15px 25px;
 }
 
 html[data-layout='mobile'] #profile-modal .modal #modal-desc:has(> .profile__edit-form--projects) {
-  padding: var(--spacing-sm, 0.938rem) var(--spacing-sm, 0.938rem) var(--spacing-lg, 1.5625rem);
+  padding: 10px 15px 25px;
 }
 
 html[data-layout='mobile'] #profile-modal #modal-desc > .profile__edit-form--bio {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-md, 1.25rem);
+  gap: 20px;
 }
 
 html[data-layout='mobile'] #profile-modal #modal-buttons {
@@ -128,15 +127,14 @@ html[data-layout='mobile'] #profile-modal #modal-buttons > solid-ui-button {
   flex: 1 0 0;
   width: auto;
   min-width: 0;
-  --button-font-size-md: var(--font-size-md, 1rem);
 }
 
 @container profile-pane (max-width: 576px) {
   #profile-modal {
-    --profile-modal-panel-max-height: calc(100dvh - 4 * var(--spacing-sm));
+    --profile-modal-panel-max-height: calc(100dvh - 4 * 15px);
     padding-top: env(safe-area-inset-top);
     padding-right: 0;
-    padding-bottom: max(var(--spacing-sm), env(safe-area-inset-bottom));
+    padding-bottom: max(15px, env(safe-area-inset-bottom));
     padding-left: 0;
     place-items: center;
   }
@@ -146,7 +144,7 @@ html[data-layout='mobile'] #profile-modal #modal-buttons > solid-ui-button {
     max-width: var(--profile-modal-panel-max-width);
     min-width: 0;
     padding: 0;
-    border-radius: var(--border-radius-base);
+    border-radius: 5px;
     overscroll-behavior: contain;
     justify-self: center;
     align-self: center;
@@ -154,27 +152,27 @@ html[data-layout='mobile'] #profile-modal #modal-buttons > solid-ui-button {
   }
 
   #profile-modal .modal .modal-header {
-    gap: var(--spacing-lg, 1.5625rem);
-    padding: var(--spacing-sm, 0.938rem);
+    gap: 25px;
+    padding: 15px;
   }
 
   #profile-modal .modal #modal-title {
-    font-size: var(--font-size-lg, 1.125rem);
-    line-height: var(--line-height-tight, 1.4);
+    font-size: var(--solid-ui-font-size-lg, 1.125rem);
+    line-height: 1.4;
   }
 
   #profile-modal .modal #modal-desc {
-    padding: var(--spacing-sm, 0.938rem) var(--spacing-sm, 0.938rem) var(--spacing-lg, 1.5625rem);
+    padding: 15px 15px 25px;
   }
 
   #profile-modal .modal #modal-desc:has(> .profile__edit-form--projects) {
-    padding: var(--spacing-sm, 0.938rem) var(--spacing-sm, 0.938rem) var(--spacing-lg, 1.5625rem);
+    padding: 10px 15px 25px;
   }
 
   #profile-modal #modal-desc > .profile__edit-form--bio {
     display: flex;
     flex-direction: column;
-    gap: var(--spacing-md, 1.25rem);
+    gap: 20px;
   }
 
   #profile-modal #modal-buttons {
@@ -190,6 +188,5 @@ html[data-layout='mobile'] #profile-modal #modal-buttons > solid-ui-button {
     flex: 1 0 0;
     width: auto;
     min-width: 0;
-    --button-font-size-md: var(--font-size-md, 1rem);
   }
 }

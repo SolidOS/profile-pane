@@ -4,14 +4,14 @@
 /* dialog host */
 #profile-modal {
   --profile-modal-backdrop: var(--overlay-bg-muted, rgba(0, 0, 0, 0.5));
-  --profile-modal-panel-inline-padding: var(--spacing-lg, 1.5625rem);
-  --profile-modal-panel-block-padding: var(--spacing-md, 1.25rem);
-  --profile-modal-compact-padding: var(--spacing-sm, 0.9375rem);
-  --profile-modal-button-gap: var(--spacing-sm, 0.938rem);
-  --profile-modal-error-padding: var(--spacing-xs, 0.75rem);
-  --profile-modal-panel-width: min(37.5rem, calc(100vw - 2rem));
-  --profile-modal-panel-max-width: 37.5rem;
-  --profile-modal-panel-max-height: calc(100dvh - 2rem);
+  --profile-modal-panel-inline-padding: 25px;
+  --profile-modal-panel-block-padding: 20px;
+  --profile-modal-compact-padding: 15px;
+  --profile-modal-button-gap: 15px;
+  --profile-modal-error-padding: 12px;
+  --profile-modal-panel-width: min(600px, calc(100vw - 32px));
+  --profile-modal-panel-max-width: 600px;
+  --profile-modal-panel-max-height: calc(100dvh - 32px);
   margin: 0;
   padding: 0;
   border: none;
@@ -29,7 +29,7 @@
   overscroll-behavior: contain;
   padding-top: env(safe-area-inset-top);
   padding-right: 0;
-  padding-bottom: max(var(--spacing-lg, 1.5625rem), env(safe-area-inset-bottom));
+  padding-bottom: max(25px, env(safe-area-inset-bottom));
   padding-left: 0;
 }
 
@@ -48,7 +48,7 @@
   grid-template-rows: auto minmax(0, 1fr) auto auto;
   margin: 0;
   background: var(--color-background);
-  border-radius: var(--border-radius-base);
+  border-radius: 5px;
   max-width: var(--profile-modal-panel-max-width);
   width: var(--profile-modal-panel-width);
   max-height: var(--profile-modal-panel-max-height);
@@ -63,9 +63,9 @@
   min-width: 0;
   padding: var(--profile-modal-panel-block-padding) var(--profile-modal-panel-inline-padding); 
   box-sizing: border-box;
-  border-radius: var(--border-radius-base, 0.3125rem) var(--border-radius-base, 0.3125rem) 0 0;
-  border-bottom: var(--border-width-sm, 0.1rem) solid var(--color-border-lighter, var(--slate-200, #E2E8F0));
-  background: var(--color-surface-overlay-header, var(--slate-50, #F8FAFC));
+  border-radius: 5px 5px 0 0;
+  border-bottom: 1px solid var(--solid-ui-color-slate-200, #E2E8F0);
+  background: var(--solid-ui-color-slate-50, #F8FAFC);
 }
 
 #profile-modal .modal #modal-desc {
@@ -79,7 +79,7 @@
 }
 
 #profile-modal .modal #modal-desc:has(> .profile__edit-form--projects) {
-  padding: var(--spacing-2xs, 0.625rem) var(--profile-modal-panel-inline-padding);
+  padding: 10px var(--profile-modal-panel-inline-padding);
 }
 
 #profile-modal .modal #modal-desc:has(> #contacts-addressbook-picker-dialog) {
@@ -89,7 +89,7 @@
 #profile-modal #modal-desc > .profile__edit-form--projects {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-2xs, 0.625rem);
+  gap: 10px;
 }
 
 #profile-modal .modal #modal-title {
@@ -97,57 +97,9 @@
   color: var(--color-text-subheading, var(--gray-900, #101828));
 }
 
-#profile-modal .modal #modal-header-action > solid-ui-button[aria-label="Close dialog"] {
-  --button-height-sm: var(--icon-base, 2rem);
-  --button-width-sm: var(--icon-base, 2rem);
-  --button-padding-sm: 0;
-  --button-background: transparent;
-  --button-border-width: 0;
-  --button-border: transparent;
-  --button-text: var(--color-text);
-  --button-border-radius: 999px;
-  --button-box-shadow: none;
-  --button-hover-background: rgba(0, 0, 0, 0.04);
-  --button-hover-border: transparent;
-  --button-hover-text: var(--color-primary);
-  --button-hover-box-shadow: none;
-  --button-active-box-shadow: none;
-  --button-active-transform: none;
-  --button-icon-size-sm: var(--icon-xxs, 1rem);
-}
-
-#profile-modal .modal #modal-header-action > solid-ui-button[aria-label="Close dialog"]:hover {
-  --button-hover-background: rgba(0, 0, 0, 0.04);
-  --button-hover-border: transparent;
-  --button-hover-text: var(--color-primary);
-}
-
-#profile-modal .modal #modal-header-action > solid-ui-button[aria-label="Close dialog"]:focus-visible::part(button) {
-  outline: var(--focus-indicator-width) solid var(--color-primary);
-  outline-offset: var(--outline-offset-sm);
-  box-shadow: var(--box-shadow-focus-accessible, 0 0 0 var(--focus-ring-width) var(--color-background), 0 0 0 calc(var(--focus-ring-width) + var(--focus-indicator-width)) var(--color-primary-alpha));
-}
-
 #profile-modal .modal:has(#modal-desc > .profile__edit-form--projects) #modal-header-action,
 #profile-modal .modal:has(#modal-desc > .profile__edit-form--contact-info) #modal-header-action {
   display: none;
-}
-
-#profile-modal .modal solid-ui-button.modal__header-action-button {
-  --button-height-sm: 0;
-  --button-padding-sm: var(--spacing-xxs);
-  --button-background: transparent;
-  --button-border-width: 0;
-  --button-border: transparent;
-  --button-font-weight: var(--font-weight-md, 500);
-  --button-text: var(--color-primary);
-  --button-hover-background: transparent;
-  --button-hover-border: transparent;
-  --button-hover-text: var(--color-primary);
-}
-
-#profile-modal .modal solid-ui-button.modal__header-action-button:hover::part(button) {
-  text-decoration: underline;
 }
 
 /* button container: center buttons horizontally (uses id in markup) */
@@ -158,7 +110,7 @@
   gap: var(--profile-modal-button-gap);
   align-self: stretch;
   box-sizing: border-box;
-  border-top: var(--border-width-sm, 0.1rem) solid var(--color-border-lighter, var(--slate-200, #E2E8F0));
+  border-top: 1px solid var(--solid-ui-color-slate-200, #E2E8F0);
   background: var(--color-surface-tertiary, var(--gray-50, #F9FAFB));
 }
 
@@ -170,37 +122,14 @@
   width: 10.8rem;
 }
 
-#profile-modal #modal-buttons solid-ui-button[data-dialog-primary='true'] {
-  --button-font-size-md: var(--font-size-md, 1rem);
-}
-
-#profile-modal #modal-buttons solid-ui-button[data-cancel='true'] {
-  --button-font-weight: var(--font-weight-normal, normal);
-  --button-text: var(--dialog-cancel-button-text, var(--gray-800, #1E2939));
-  --button-border: var(--dialog-cancel-button-border, var(--gray-300, #D1D5DC));
-  --button-background: var(--dialog-cancel-button-background, transparent);
-  --button-hover-background: var(--dialog-cancel-button-hover-background, var(--blue-900, #083575));
-  --button-hover-border: var(--dialog-cancel-button-hover-border, var(--blue-900, #083575));
-  --button-hover-text: var(--dialog-cancel-button-hover-text, var(--color-text-on-action, var(--white, #FFF)));
-  --button-font-size-md: var(--font-size-md, 1rem);
-}
-
-#profile-modal #modal-buttons solid-ui-button[data-cancel='true']:hover::part(button),
-#profile-modal #modal-buttons solid-ui-button[data-cancel='true']:focus-visible::part(button),
-#profile-modal #modal-buttons solid-ui-button[data-cancel='true']:focus-within::part(button) {
-  background: var(--dialog-cancel-button-hover-background, var(--blue-900, #083575));
-  border-color: var(--dialog-cancel-button-hover-border, var(--blue-900, #083575));
-  color: var(--dialog-cancel-button-hover-text, var(--color-text-on-action, var(--white, #FFF)));
-}
-
 #profile-modal .modal__error-section {
   margin-top: var(--spacing-sm);
   margin-bottom: 0;
   padding: var(--profile-modal-error-padding);
   border: 1px solid var(--dialog-error-border, var(--pink-700, #ff98b3));
-  border-radius: var(--border-radius-base);
+  border-radius: 5px;
   background: var(--dialog-error-background, var(--pink-500, #ffdde6));
-  color: var(--dialog-error-text, var(--red-600, #B00020));
+  color: var(--solid-ui-color-error, #B00020);
   text-align: center;
   white-space: pre-wrap;
   overflow-wrap: anywhere;
