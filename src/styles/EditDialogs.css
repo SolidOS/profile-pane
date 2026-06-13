@@ -555,12 +555,6 @@ solid-ui-button.profile-edit-dialog__drag-handle:active {
   font-weight: var(--font-weight-md, 500);
 }
 
-.profile-edit-dialog__row--resume-entry-header .profile-edit-dialog__delete-button,
-solid-ui-button.profile-edit-dialog__delete-button.profile-edit-dialog__delete-button {
-  min-height: var(--icon-sm, 1.8rem);
-  min-width: var(--icon-sm, 1.8rem);
-}
-
 /* Force two direct children to split the row into equal columns. */
 .profile-edit-dialog__row--equal > .profile-edit-dialog__field,
 .profile-edit-dialog__row--equal > .profile-edit-dialog__field-type {
