@@ -41,10 +41,8 @@ function renderLanguagesSectionDefault(store: LiveStore, subject: NamedNode, lan
         <div class="profile-section-collapsible__actions">
           ${isOwner ? html`
             <solid-ui-button
-              type="button"
-              variant="secondary"
-              size="sm"
-              class="profile__action-button profile-action-text profile-section-collapsible__edit-button"
+              variant="tertiary"
+              class="profile-section-collapsible__edit-button"
               aria-label="Add or edit languages"
               @click=${(event: Event) => createLanguageEditDialog(event, store, subject, languages, viewerMode, onSaved)}
             >
@@ -56,9 +54,7 @@ function renderLanguagesSectionDefault(store: LiveStore, subject: NamedNode, lan
             </solid-ui-button>
           ` : html``}
           <solid-ui-button
-            type="button"
-            variant="icon"
-            size="sm"
+            variant="ghost"
             class="profile-section-collapsible__toggle-button"
             aria-label="Toggle languages section"
             aria-controls="languages-panel"
@@ -123,10 +119,8 @@ function renderOwnerEmptyLanguagesSection(
         <h3 id="languages-heading" tabindex="-1">${languagesHeadingText}</h3>
         <div class="profile-section-collapsible__actions">
           <solid-ui-button
-            type="button"
-            variant="secondary"
-            size="sm"
-            class="profile__action-button profile-action-text profile-section-collapsible__edit-button"
+            variant="tertiary"
+            class="profile-section-collapsible__edit-button"
             aria-label="Add languages"
             @click=${(event: Event) => {
               return createLanguageEditDialog(
@@ -146,9 +140,7 @@ function renderOwnerEmptyLanguagesSection(
             <span class="profile-section-collapsible__edit-icon" aria-hidden="true">${editIcon}</span>
           </solid-ui-button>
           <solid-ui-button
-            type="button"
-            variant="icon"
-            size="sm"
+            variant="ghost"
             class="profile-section-collapsible__toggle-button"
             aria-label="Toggle languages section"
             aria-controls="languages-panel"
