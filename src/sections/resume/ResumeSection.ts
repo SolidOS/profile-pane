@@ -45,20 +45,17 @@ function renderRole(role: RoleDetails, index: number) {
       <div class="resume-card__description-wrap">
         <p class="resume-card__description-text" id=${roleDescriptionId}>${role.description}</p>
         <solid-ui-button
-          type="button"
-          variant="secondary"
-          size="sm"
-          label="...more"
+          variant="tertiary"
           class="resume-card__description-toggle"
           aria-controls=${roleDescriptionId}
-          aria-expanded="false"
+          aria-expanded=${'false'}
           hidden
           @click=${toggleDescription}
         >
           ...more
         </solid-ui-button>
       </div>
-    ` : ''}
+    ` : html``}
     </li>
   `
 }
@@ -113,21 +110,18 @@ function renderResumeSectionDefault(
         <div class="profile-section-collapsible__actions">
           ${isOwner ? html`
             <solid-ui-button
-              type="button"
-              variant="secondary"
-              size="sm"
-              class="profile__action-button resume__edit-button profile-section-collapsible__edit-button"
+              variant="tertiary"
+              class="profile-section-collapsible__edit-button"
               aria-label="Edit resume details"
               @click=${(event: Event) => createResumeEditDialog(event, store, subject, resumeDetails, viewerMode, onSaved)}
             >
-              <span class="profile-section-collapsible__edit-label">${editIcon} Edit</span>
-              <span class="profile-section-collapsible__edit-icon" aria-hidden="true">${editIcon}</span>
+              <span slot="left-icon" class="profile-section-collapsible__edit-label">${editIcon}</span>
+              <span class="profile-section-collapsible__edit-label">Edit</span>
+              <span slot="icon" class="profile-section-collapsible__edit-icon" aria-hidden="true">${editIcon}</span>
             </solid-ui-button>
           ` : html``}
           <solid-ui-button
-            type="button"
-            variant="icon"
-            size="sm"
+            variant="ghost"
             class="profile-section-collapsible__toggle-button"
             aria-label="Toggle resume section"
             aria-controls="cv-panel"
@@ -161,9 +155,7 @@ function renderOwnerEmptyResumeContent(
       </p>
     </div>
     <solid-ui-button
-      type="button"
       variant="secondary"
-      size="sm"
       class="profile__action-button--empty"
       @click=${(event: Event) => {
         return createResumeEditDialog(
@@ -176,7 +168,8 @@ function renderOwnerEmptyResumeContent(
         )
       }}
     >
-      <span class="profile__action-icon" aria-hidden="true">${plusDarkIcon} Add Resume</span>
+      <span slot="left-icon" class="profile__action-icon" aria-hidden="true">${plusDarkIcon}</span>
+       Add Resume
     </solid-ui-button>
 
   `
@@ -202,9 +195,7 @@ function renderOwnerEmptyResumeSection(
         <h2 id="resume-heading" tabindex="-1">${resumeHeadingText}</h2>
         <div class="profile-section-collapsible__actions">
           <solid-ui-button
-            type="button"
-            variant="icon"
-            size="sm"
+            variant="ghost"
             class="profile-section-collapsible__toggle-button"
             aria-label="Toggle resume section"
             aria-controls="cv-panel"
