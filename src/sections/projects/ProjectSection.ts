@@ -10,7 +10,6 @@ import { addIcon, checkMarkIcon, chevronDownIcon, editIcon, plusDarkIcon, twoDow
 import { MutationOps } from '../shared/types'
 import './ProjectSection.css'
 import { toggleCollapsibleSection } from '../shared/collapsibleSection'
-import { createSpinner } from '../../ui/spinner'
 import { formatDisplayError } from '../../utils/errorDisplay'
 
 const MAX_VISIBLE_PROJECTS_MOBILE = 2
@@ -102,7 +101,7 @@ function renderProject(
 
     try {
       unfollowButton?.setAttribute('disabled', '')
-      unfollowButton?.setAttribute('data-loading', 'true')
+      unfollowButton?.setAttribute('loading', '')
       unfollowButton?.setAttribute('aria-busy', 'true')
       await processProjectsMutations(store, subject, removePlan)
       if (section) {
@@ -117,7 +116,7 @@ function renderProject(
       }
     } finally {
       unfollowButton?.removeAttribute('disabled')
-      unfollowButton?.removeAttribute('data-loading')
+      unfollowButton?.removeAttribute('loading')
       unfollowButton?.setAttribute('aria-busy', 'false')
     }
   }
@@ -157,17 +156,15 @@ function renderProject(
       ${viewerMode === 'owner' ? html`
         <div class="project-card__footer">
           <solid-ui-button
-            type="button"
             variant="secondary"
-            size="sm"
-            label="Following"
             class="project-card__follow-button"
             aria-label="Unfollow project"
             @click=${handleUnfollow}
           >
-            <span class="project-card__follow-label project-card__follow-label--default">${checkMarkIcon} Following</span>
+            <span slot="left-icon" class="project-card__follow-label project-card__follow-label--default">${checkMarkIcon}</span>
+            <span class="project-card__follow-label project-card__follow-label--default">Following</span>
             <span class="project-card__follow-label project-card__follow-label--hover">Unfollow</span>
-            <span class="project-card__follow-label project-card__follow-label--loading">${createSpinner()}<span>Unfollowing...</span></span>
+            <span class="project-card__follow-label project-card__follow-label--loading">Unfollowing...</span>
           </solid-ui-button>
         </div>
       ` : html``}
@@ -192,9 +189,7 @@ function renderOwnerEmptyProjectsContent(
       </p>
     </div>
     <solid-ui-button
-      type="button"
       variant="secondary"
-      size="sm"
       class="profile__action-button--empty"
       aria-label="Add project details"
       @click=${(event: Event) => {
@@ -208,9 +203,9 @@ function renderOwnerEmptyProjectsContent(
         )
       }}
     >
-      <span class="profile__action-icon" aria-hidden="true">${plusDarkIcon} Add Project</span>
+      <span slot="left-icon" class="profile__action-icon" aria-hidden="true">${plusDarkIcon}</span>
+       Add Project
     </solid-ui-button>
-
   `
 }
 
@@ -234,9 +229,7 @@ function renderOwnerEmptyProjectSection(
         <h2 id="projects-heading" tabindex="-1">${projectsHeadingText}</h2>
         <div class="profile-section-collapsible__actions">
           <solid-ui-button
-            type="button"
-            variant="icon"
-            size="sm"
+            variant="ghost"
             class="profile-section-collapsible__toggle-button"
             aria-label="Toggle projects section"
             aria-controls="projects-panel"
@@ -291,9 +284,7 @@ function renderProjectSectionDefault(
           <div class="profile-section-collapsible__actions">
             ${isOwner ? html`
               <solid-ui-button
-                type="button"
-                variant="secondary"
-                size="sm"
+                variant="tertiary"
                 class="profile__action-button profile-action-text profile-section-collapsible__edit-button"
                 aria-label="Add or edit projects"
                 @click=${(event: Event) => {
@@ -301,16 +292,14 @@ function renderProjectSectionDefault(
                 }}
               >
                 <span class="profile-section-collapsible__edit-label profile__add-more-content">
-                  <span class="profile__add-more-icon" aria-hidden="true">${addIcon}</span>
+                  <span slot="left-icon" class="profile__add-more-icon" aria-hidden="true">${addIcon}</span>
                   <span>Add More</span>
                 </span>
                 <span class="profile-section-collapsible__edit-icon" aria-hidden="true">${editIcon}</span>
               </solid-ui-button>
             ` : html``}
             <solid-ui-button
-              type="button"
-              variant="icon"
-              size="sm"
+              variant="ghost"
               class="profile-section-collapsible__toggle-button"
               aria-label="Toggle projects section"
               aria-controls="projects-panel"
@@ -336,17 +325,14 @@ function renderProjectSectionDefault(
                 ${hiddenProjectsCount > 0
                   ? html`
                       <solid-ui-button
-                        type="button"
-                        variant="secondary"
-                        size="sm"
-                        label="View More"
+                        variant="tertiary"
                         class="project-card__more-button"
                         aria-controls="projects-rail"
                         aria-expanded="false"
                         data-mobile-expanded="false"
                         @click=${toggleProjectsMobileList}
                       >
-                        <span class="project-card__more-icon" aria-hidden="true">${twoDownArrowsIcon}</span>
+                        <span slot="left-icon" class="project-card__more-icon" aria-hidden="true">${twoDownArrowsIcon}</span>
                         <span class="project-card__more-label">View More</span>
                       </solid-ui-button>
                     `
