@@ -68,10 +68,8 @@ export const renderHeadingSection = async (
                 ${isOwner ? html`
                   <div class="profile__actions profile__heading-edit-action">
                     <solid-ui-button
-                      type="button"
-                      variant="secondary"
-                      size="sm"
-                      class="profile__action-button profile__heading-action-button profile-action-text profile-section-collapsible__edit-button"
+                      variant="tertiary"
+                      class="profile__heading-action-button profile-section-collapsible__edit-button"
                       aria-label="Add or edit heading information"
                       @click=${(event: Event) => {
                         return createHeadingEditDialog(

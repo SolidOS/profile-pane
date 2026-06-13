@@ -764,10 +764,8 @@ function renderHeadingInfoInput(
         <div class="profile-edit-dialog__image-frame">
           ${Image(imagePreviewSrc || basicInfo.imageSrc, basicInfo.name)}
           <solid-ui-button
-            type="button"
             class="profile-edit-dialog__image-camera-button"
-            variant="icon"
-            size="md"
+            variant="ghost"
             aria-label="Take a photo"
             title="Take a photo"
             @click=${handleCameraClick}
@@ -783,10 +781,7 @@ function renderHeadingInfoInput(
 
         <div class="profile-edit-dialog__image-preview-actions">
           <solid-ui-button
-            type="button"
             variant="secondary"
-            size="md"
-            label="Upload New"
             class="profile-edit-dialog__image-button profile-edit-dialog__image-upload-button"
             aria-label="Upload new profile photo"
             title="Upload New"
@@ -795,10 +790,7 @@ function renderHeadingInfoInput(
             Upload New
           </solid-ui-button>
           <solid-ui-button
-            type="button"
             variant="secondary"
-            size="md"
-            label="Remove"
             class="profile-edit-dialog__image-button profile-edit-dialog__image-remove-button"
             aria-label="Delete profile photo"
             title="Remove"
