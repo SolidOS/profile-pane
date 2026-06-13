@@ -66,13 +66,6 @@ solid-ui-button.profile__action-button {
   box-sizing: border-box;
 }
 
-.profile__add-more-content,
-.profile__action-icon {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--spacing-xxs, 0.3125rem);
-}
-
 .profile__add-more-icon {
   margin-right: 0;
   line-height: 0;

@@ -1,6 +1,6 @@
 import { getSharedDialogSaveButton, openInputDialog } from '../../ui/dialog'
 import { html, render } from 'lit-html'
-import 'solid-ui/components/actions/button'
+import 'solid-ui/components/button'
 import 'solid-ui/components/forms/combobox'
 import { SkillDetails, SkillRow } from './types'
 import '../../styles/EditDialogs.css'
@@ -315,9 +315,7 @@ function renderSkillInputRow({
       </label>
       <div class="profile-edit-dialog__actions profile-edit-dialog__actions--edge">
         <solid-ui-button
-          type="button"
-          variant="icon"
-          size="md"
+          variant="ghost"
           class="profile-edit-dialog__delete-button"
           aria-label=${`Delete skill ${displayIndex + 1}`}
           title=${deleteEntryButtonTitleText}
