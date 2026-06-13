@@ -344,6 +344,7 @@ solid-ui-button.profile-edit-dialog__image-camera-button {
   border-color: var(--color-border-button-hover, var(--gray-400, #99A1AF)) !important;
 }
 
+/* leaving all the details because may need to use a regular button */
 .profile-edit-dialog__paste-button {
   position: absolute;
   white-space: nowrap;
@@ -415,18 +416,6 @@ solid-ui-button.profile-edit-dialog__drag-handle:focus-visible::part(button) {
 
 solid-ui-button.profile-edit-dialog__drag-handle:active {
   cursor: grabbing;
-}
-
-.profile-edit-dialog__drag-handle-icon {
-  display: inline-flex;
-  width: 0.813rem;
-  height: 0.813rem;
-}
-
-.profile-edit-dialog__drag-handle-icon svg {
-  width: 100%;
-  height: 100%;
-  fill: currentColor;
 }
 
 .profile-edit-dialog__row--drop-target {
