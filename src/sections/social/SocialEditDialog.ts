@@ -1,6 +1,6 @@
 import { openInputDialog } from '../../ui/dialog'
 import { html, render } from 'lit-html'
-import 'solid-ui/components/actions/button'
+import 'solid-ui/components/button'
 import 'solid-ui/components/forms/select'
 import type { Account, SocialRow } from './types'
 import '../contactInfo/ContactInfoEditDialog.css'
@@ -292,10 +292,8 @@ function renderSocialInputRow({
       @drop=${(event: DragEvent) => onDrop(event, index)}
     >
       <solid-ui-button
-        type="button"
         class="profile-edit-dialog__drag-handle"
-        variant="icon"
-        size="md"
+        variant="ghost"
         aria-label=${`Reorder social account ${displayIndex + 1}`}
         title="Drag to reorder"
         draggable="true"
@@ -306,7 +304,7 @@ function renderSocialInputRow({
         @pointerup=${(event: PointerEvent) => onPointerUp(event)}
         @pointercancel=${(event: PointerEvent) => onPointerCancel(event)}
       >
-        <span slot="icon" class="profile-edit-dialog__drag-handle-icon" aria-hidden="true">${bentoIcon}</span>
+        <span slot="icon" aria-hidden="true">${bentoIcon}</span>
       </solid-ui-button>
       <img 
         class="profile-edit-dialog__social-icon" 
@@ -338,15 +336,12 @@ function renderSocialInputRow({
       </label>
       <div class="profile-edit-dialog__actions profile-edit-dialog__actions--edge">
         <solid-ui-button
-          type="button"
-          variant="icon"
-          size="md"
-          class="profile-edit-dialog__delete-button"
+          variant="ghost"
           aria-label=${`Delete social account ${displayIndex + 1}`}
           title=${deleteEntryButtonTitleText}
           @click=${handleDelete}
         >
-          <span slot="icon" class="profile-edit-dialog__delete-icon" aria-hidden="true">${trashIcon}</span>
+          <span slot="icon" aria-hidden="true">${trashIcon}</span>
         </solid-ui-button>
       </div>
     </div>
