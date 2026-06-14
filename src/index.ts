@@ -4,12 +4,19 @@ import { render } from 'lit-html'
 import { ProfileView } from './ProfileView'
 import { icons, ns } from 'solid-ui'
 import { hydrateQRCodes } from './sections/qrcode/QRCodeCard'
+import { createResizeDrivenSync } from './utils/resize'
 export {
   addMeToYourFriendsDiv,
   createAddMeToYourFriendsButton,
   saveNewThing,
   checkIfThingExists
 } from './specialButtons/addMeToYourFriends'
+
+type Layout = 'mobile' | 'desktop'
+
+const MOBILE_LAYOUT_MAX_WIDTH = 768
+const HEADING_SECTION_SELECTOR = '[data-profile-section="heading"]'
+const SOCIAL_SECTION_SELECTOR = '[data-profile-section="social"]'
 
 async function loadExtendedProfile(store: LiveStore, subject: NamedNode) {
   const otherProfiles = store.each(
@@ -23,15 +30,37 @@ async function loadExtendedProfile(store: LiveStore, subject: NamedNode) {
   }
 }
 
-const HEADING_SECTION_SELECTOR = '[data-profile-section="heading"]'
-const SOCIAL_SECTION_SELECTOR = '[data-profile-section="social"]'
+function measureLayout(context: DataBrowserContext, root?: HTMLElement | null): Layout {
+  if (context.environment?.layout === 'mobile') {
+    return 'mobile'
+  }
+
+  if (typeof window === 'undefined') {
+    return 'desktop'
+  }
+
+  const measuredWidth = root?.getBoundingClientRect().width || window.innerWidth
+  return measuredWidth <= MOBILE_LAYOUT_MAX_WIDTH ? 'mobile' : 'desktop'
+}
+
+function syncRenderedLayout(
+  root: HTMLElement,
+  context: DataBrowserContext,
+  onLayoutChange: (layout: Layout) => void
+): () => void {
+  const updateLayout = () => {
+    const nextLayout = measureLayout(context, root)
+    if (nextLayout !== root.dataset.layout) {
+      onLayoutChange(nextLayout)
+    }
+  }
+
+  const grid = root.querySelector('.profile-grid') as HTMLElement | null
+  return createResizeDrivenSync(updateLayout, [root, grid])
+}
 
 function syncSocialSectionHeight(root: HTMLElement): () => void {
-  let animationFrameId = 0
-
   const updateHeight = () => {
-    animationFrameId = 0
-
     const grid = root.querySelector('.profile-grid') as HTMLElement | null
     const headingSection = root.querySelector(HEADING_SECTION_SELECTOR) as HTMLElement | null
     const socialSection = root.querySelector(SOCIAL_SECTION_SELECTOR) as HTMLElement | null
@@ -51,50 +80,10 @@ function syncSocialSectionHeight(root: HTMLElement): () => void {
       socialSection.style.minHeight = nextMinHeight
     }
   }
-
-  const scheduleUpdate = () => {
-    if (animationFrameId !== 0) {
-      return
-    }
-
-    animationFrameId = window.requestAnimationFrame(updateHeight)
-  }
-
-  updateHeight()
-
-  if (typeof ResizeObserver === 'undefined') {
-    window.addEventListener('resize', scheduleUpdate)
-
-    return () => {
-      if (animationFrameId !== 0) {
-        window.cancelAnimationFrame(animationFrameId)
-      }
-
-      window.removeEventListener('resize', scheduleUpdate)
-    }
-  }
-
-  const resizeObserver = new ResizeObserver(scheduleUpdate)
-  resizeObserver.observe(root)
-
   const headingSection = root.querySelector(HEADING_SECTION_SELECTOR) as HTMLElement | null
   const socialSection = root.querySelector(SOCIAL_SECTION_SELECTOR) as HTMLElement | null
 
-  if (headingSection) {
-    resizeObserver.observe(headingSection)
-  }
-
-  if (socialSection) {
-    resizeObserver.observe(socialSection)
-  }
-
-  return () => {
-    if (animationFrameId !== 0) {
-      window.cancelAnimationFrame(animationFrameId)
-    }
-
-    resizeObserver.disconnect()
-  }
+  return createResizeDrivenSync(updateHeight, [root, headingSection, socialSection])
 }
 
 function applyEnvironmentAttributes(
@@ -133,14 +122,23 @@ const Pane = {
     const target = context.dom.createElement('div')
     const store = context.session.store
     let cleanupSocialSectionHeightSync: (() => void) | null = null
+    let cleanupLayoutSync: (() => void) | null = null
+    let currentLayout: Layout = measureLayout(context, target)
 
     applyEnvironmentAttributes(target, context)
+    target.dataset.layout = currentLayout
 
     const renderWithData = async () => {
       applyEnvironmentAttributes(target, context)
-      render(await ProfileView(subject, context, renderWithData), target)
+      target.dataset.layout = currentLayout
+      render(await ProfileView(subject, context, currentLayout, renderWithData), target)
       cleanupSocialSectionHeightSync?.()
       cleanupSocialSectionHeightSync = syncSocialSectionHeight(target)
+      cleanupLayoutSync?.()
+      cleanupLayoutSync = syncRenderedLayout(target, context, (nextLayout) => {
+        currentLayout = nextLayout
+        void renderWithData()
+      })
       await hydrateQRCodes(target)
     }
 
