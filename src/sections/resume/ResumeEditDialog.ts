@@ -1,11 +1,10 @@
 import { alertDialog, openInputDialog } from '../../ui/dialog'
 import { html, render } from 'lit-html'
-import 'solid-ui/components/actions/button'
-import 'solid-ui/components/forms/combobox'
+import 'solid-ui/components/button'
+import 'solid-ui/components/combobox'
 import 'solid-ui/components/forms/select'
 import { RoleDetails, ResumeRow } from './types'
 import '../../styles/EditDialogs.css'
-import '../contactInfo/ContactInfoEditDialog.css'
 import { LiveStore, NamedNode, literal } from 'rdflib'
 import { processResumeMutations } from './mutations'
 import { ViewerMode } from '../../types'
@@ -123,14 +122,6 @@ const RESUME_ORGANIZATION_SEARCH_CLASS_URIS = Array.from(
 
 const RESUME_PRESENT_MONTH_VALUE = '__present__'
 
-function sanitizeResumeFieldValue(value: string): string {
-  return sanitizeTextValue(value)
-}
-
-function normalizeResumeOrganizationPublicId(value: string): string {
-  return sanitizeResumeFieldValue(value)
-}
-
 type WikidataSearchResult = {
   id?: string
   label?: string
@@ -162,7 +153,7 @@ function buildWikidataEntityLookupUrl(ids: string[]): string {
 }
 
 function getWikidataIdFromUri(value: string): string {
-  const trimmed = sanitizeResumeFieldValue(value)
+  const trimmed = sanitizeTextValue(value)
   const match = trimmed.match(/Q\d+/)
   return match ? match[0] : ''
 }
@@ -249,8 +240,8 @@ function toResumeOrganizationLabel(result: any): string {
 }
 
 function toResumeOrganizationSuggestion(result: WikidataSearchResult): ResumeOrganizationSuggestion {
-  const label = sanitizeResumeFieldValue(toResumeOrganizationLabel(result))
-  const publicId = normalizeResumeOrganizationPublicId(
+  const label = sanitizeTextValue(toResumeOrganizationLabel(result))
+  const publicId = sanitizeTextValue(
     typeof result?.concepturi === 'string'
       ? result.concepturi
       : typeof result?.url === 'string'
@@ -279,7 +270,7 @@ export async function fetchWikidataOrganizationSuggestions(
   name: string,
   selectedType: string
 ): Promise<ResumeOrganizationSuggestion[]> {
-  const query = sanitizeResumeFieldValue(name)
+  const query = sanitizeTextValue(name)
   if (query.length < 2 || typeof fetch !== 'function') return []
 
   try {
@@ -494,17 +485,17 @@ function toFormState(resumeData: RoleDetails[]): ResumeFormState {
 
   const roles = (resumeData || [])
     .map((role) => ({
-      title: sanitizeResumeFieldValue(toText(role.title)),
-      roleType: sanitizeResumeFieldValue(toText(role.roleType)),
+      title: sanitizeTextValue(toText(role.title)),
+      roleType: sanitizeTextValue(toText(role.roleType)),
       startDate: role.startDate,
       endDate: role.endDate,
       isCurrentRole: role.isCurrentRole ?? !role.endDate,
-      orgName: sanitizeResumeFieldValue(toText(role.orgName)),
-      orgPublicId: normalizeResumeOrganizationPublicId(sanitizeResumeFieldValue(toText(role.orgPublicId))),
-      orgType: normalizeResumeOrganizationTypeValue(sanitizeResumeFieldValue(toText(role.orgType))),
-      orgLocation: sanitizeResumeFieldValue(toText(role.orgLocation)),
-      orgHomePage: sanitizeResumeFieldValue(toText(role.orgHomePage)),
-      description: sanitizeResumeFieldValue(toText(role.description)),
+      orgName: sanitizeTextValue(toText(role.orgName)),
+      orgPublicId: sanitizeTextValue(toText(role.orgPublicId)),
+      orgType: normalizeResumeOrganizationTypeValue(sanitizeTextValue(toText(role.orgType))),
+      orgLocation: sanitizeTextValue(toText(role.orgLocation)),
+      orgHomePage: sanitizeTextValue(toText(role.orgHomePage)),
+      description: sanitizeTextValue(toText(role.description)),
       entryNode: toText(role.entryNode),
       status: toText(role.entryNode) ? 'existing' as const : 'new' as const
     }))
@@ -617,8 +608,8 @@ function syncResumeOrganizationRowsFromComboboxes(form: HTMLFormElement, resumeD
     if (Number.isNaN(rowIndex) || !resumeData[rowIndex]) return
 
     const comboboxInput = comboboxElement.shadowRoot?.querySelector('input') as HTMLInputElement | null
-    const nextName = sanitizeResumeFieldValue(comboboxInput?.value || comboboxElement.inputValue || '')
-    const nextPublicId = normalizeResumeOrganizationPublicId(comboboxElement.value || '')
+    const nextName = sanitizeTextValue(comboboxInput?.value || comboboxElement.inputValue || '')
+    const nextPublicId = sanitizeTextValue(comboboxElement.value || '')
 
     applyRowFieldChange(resumeData[rowIndex], 'orgName', nextName, rowHasContent)
     resumeData[rowIndex].orgPublicId = nextPublicId
@@ -694,7 +685,7 @@ function renderResumeInputRow({
 
   const handleResumeInput = (field: ResumeEditableField) => (e: Event) => {
     const target = e.target as HTMLInputElement
-    const nextValue = sanitizeResumeFieldValue(target.value)
+    const nextValue = sanitizeTextValue(target.value)
     if (resumeRow) {
       applyRowFieldChange(resumeRow, field, nextValue, rowHasContent)
       onChange()
@@ -757,7 +748,7 @@ function renderResumeInputRow({
 
   const handleDescriptionInput = (event: Event) => {
     const target = event.target as HTMLTextAreaElement
-    const nextValue = sanitizeResumeFieldValue(target.value.slice(0, descriptionMaxLength))
+    const nextValue = sanitizeTextValue(target.value.slice(0, descriptionMaxLength))
     if (resumeData[index]) {
       applyRowFieldChange(resumeData[index], 'description', nextValue, rowHasContent)
       onChange()
@@ -786,7 +777,7 @@ function renderResumeInputRow({
   }
 
   const handleOrganizationNameInput = (e: Event) => {
-    const nextValue = sanitizeResumeFieldValue(readResumeOrganizationComboboxInputValue(e))
+    const nextValue = sanitizeTextValue(readResumeOrganizationComboboxInputValue(e))
     if (resumeRow) {
       applyRowFieldChange(resumeRow, 'orgName', nextValue, rowHasContent)
       resumeRow.orgPublicId = ''
@@ -797,7 +788,7 @@ function renderResumeInputRow({
     const selectedOption = readResumeOrganizationComboboxChange(e)
     if (!resumeRow || !selectedOption?.publicId) return
 
-    applyRowFieldChange(resumeRow, 'orgName', sanitizeResumeFieldValue(selectedOption.label), rowHasContent)
+    applyRowFieldChange(resumeRow, 'orgName', sanitizeTextValue(selectedOption.label), rowHasContent)
     resumeRow.orgPublicId = selectedOption.publicId
   }
 
@@ -806,15 +797,12 @@ function renderResumeInputRow({
       <h3 id=${experienceHeadingId} class="profile-edit-dialog__entry-heading">${label}</h3>
       <div class="profile-edit-dialog__actions profile-edit-dialog__actions--edge">
         <solid-ui-button
-          type="button"
-          variant="icon"
-          size="md"
-          class="profile-edit-dialog__delete-button"
+          variant="ghost"
           aria-label=${`Delete resume ${displayIndex + 1}`}
           title=${deleteEntryButtonTitleText}
           @click=${handleDelete}
         >
-          <span slot="icon" class="profile-edit-dialog__delete-icon" aria-hidden="true">${trashIcon}</span>
+          <span slot="icon" aria-hidden="true">${trashIcon}</span>
         </solid-ui-button>
       </div>
     </div>

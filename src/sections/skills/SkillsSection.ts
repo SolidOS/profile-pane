@@ -1,5 +1,5 @@
 import { html } from 'lit-html'
-import 'solid-ui/components/actions/button'
+import 'solid-ui/components/button'
 import { strToUpperCase } from '../../textUtils'
 import { LiveStore, NamedNode } from 'rdflib'
 import { ViewerMode } from '../../types'
@@ -45,7 +45,7 @@ function renderSkillItem(
     if (viewerMode !== 'owner') return
     const removeButton = event.currentTarget as HTMLElement | null
     const skillRow = removeButton?.closest('.skills__item') as HTMLElement | null
-    const section = (event.currentTarget as HTMLElement | null)?.closest('[data-profile-section="skills"]') as HTMLElement | null
+    const section = removeButton?.closest('[data-profile-section="skills"]') as HTMLElement | null
 
     const removeRow: SkillRow = {
       name: detail.name,
@@ -90,10 +90,7 @@ function renderSkillItem(
         ? html`
             <span class="skills__item-tail">
               <solid-ui-button
-                type="button"
-                variant="icon"
-                size="sm"
-                class="skills__remove-button"
+                variant="ghost"
                 aria-label=${`Remove ${detail.name} skill`}
                 @click=${handleRemove}
               >
@@ -124,24 +121,20 @@ function renderSkillsSectionDefault(store: LiveStore, subject: NamedNode, skills
         <div class="profile-section-collapsible__actions">
           ${isOwner ? html`
             <solid-ui-button
-              type="button"
-              variant="secondary"
-              size="sm"
-              class="profile__action-button profile-action-text profile-section-collapsible__edit-button"
+              variant="tertiary"
+              class="profile-section-collapsible__edit-button"
               aria-label="Add or edit skills"
               @click=${(event: Event) => createSkillsEditDialog(event, store, subject, skills, viewerMode, onSaved)}
             >
               <span class="profile-section-collapsible__edit-label profile__add-more-content">
-                <span class="profile__add-more-icon" aria-hidden="true">${addIcon}</span>
-                <span>Add More</span>
+                <span slot="left-icon" class="profile__add-more-icon" aria-hidden="true">${addIcon}</span>
+                Add More
               </span>
               <span class="profile-section-collapsible__edit-icon" aria-hidden="true">${editIcon}</span>
             </solid-ui-button>
           ` : html``}
           <solid-ui-button
-            type="button"
-            variant="icon"
-            size="sm"
+            variant="ghost"
             class="profile-section-collapsible__toggle-button"
             aria-label="Toggle skills section"
             aria-controls="skills-panel"
@@ -215,10 +208,8 @@ function renderOwnerEmptySkillsSection(
         <h3 id="skills-heading" tabindex="-1">${skillsHeadingText}</h3>
         <div class="profile-section-collapsible__actions">
           <solid-ui-button
-            type="button"
-            variant="secondary"
-            size="sm"
-            class="profile__action-button profile-action-text profile-section-collapsible__edit-button"
+            variant="tertiary"
+            class="profile-section-collapsible__edit-button"
             aria-label="Add skills"
             @click=${(event: Event) => {
               return createSkillsEditDialog(
@@ -231,16 +222,14 @@ function renderOwnerEmptySkillsSection(
               )
             }}
           >
-            <span class="profile-section-collapsible__edit-label profile__add-more-content">
+            <span class="profile-section-collapsible__edit-label">
               <span class="profile__add-more-icon" aria-hidden="true">${addIcon}</span>
-              <span>Add More</span>
+              Add More
             </span>
             <span class="profile-section-collapsible__edit-icon" aria-hidden="true">${editIcon}</span>
           </solid-ui-button>
           <solid-ui-button
-            type="button"
-            variant="icon"
-            size="sm"
+            variant="ghost"
             class="profile-section-collapsible__toggle-button"
             aria-label="Toggle skills section"
             aria-controls="skills-panel"

@@ -1,6 +1,3 @@
-/* Profile layout styles. */
-
-/* Shell */
 :root {
   --profile-image-size: 3rem;
   --profile-interactive-cursor: pointer;
@@ -42,7 +39,7 @@ td.obj .profile-pane-root {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: var(--spacing-xs, 0.75rem);
+  gap: 12px;
   width: 100%;
 }
 
@@ -50,32 +47,11 @@ td.obj .profile-pane-root {
 .profile__section-header:not(.profile-edit-dialog__contact-section-header) h3,
 .profile__section-header:not(.profile-edit-dialog__contact-section-header) h4 {
   margin: 0;
-  font-size: var(--font-size-xl, 1.375rem);
-  font-weight: var(--font-weight-md, 500);
-}
-
-.profile__action-button,
-solid-ui-button.profile__action-button {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  min-width: 11.25rem;
-  max-width: 20rem;
-  box-sizing: border-box;
-}
-
-.profile__add-more-content,
-.profile__action-icon {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--spacing-xxs, 0.3125rem);
+  font-size: 1.375rem;
+  font-weight: 500;
 }
 
 .profile__add-more-icon {
-  display: inline-block;
-  width: var(--icon-xxxs, 0.75rem);
-  height: var(--icon-xxxs, 0.75rem);
   margin-right: 0;
   line-height: 0;
   position: relative;
@@ -89,100 +65,29 @@ solid-ui-button.profile__action-button {
   display: block;
 }
 
-.profile__btn-friends,
-.profile__btn-contacts,
 solid-ui-button.profile__btn-friends,
 solid-ui-button.profile__btn-contacts {
   width: auto;
   min-width: 0;
   max-width: none;
-}
-
-.profile__btn-friends,
-.profile__btn-contacts {
-  gap: var(--spacing-xxs, 0.3125rem);
-}
-
-solid-ui-button.profile__btn-friends,
-solid-ui-button.profile__btn-contacts {
-  width: auto;
-  --button-padding-sm: 0.375rem var(--spacing-xs, 0.75rem);
-  --button-border-radius: var(--border-radius-md, 0.5rem);
-  --button-padding-x-sm: var(--spacing-xs, 0.75rem);
-}
-
-solid-ui-button.profile__btn-friends {
-  --button-background: transparent;
-  --button-text: var(--color-primary, #7C4DFF);
-  --button-border: var(--color-primary, #7C4DFF);
-  --button-hover-background: rgba(124, 77, 255, 0.08);
-  --button-hover-border: var(--color-primary, #7C4DFF);
-  --button-hover-text: var(--color-primary, #7C4DFF);
-}
-
-solid-ui-button.profile__btn-contacts {
-  --button-background: var(--profile-contacts-button-background, transparent);
-  --button-text: var(--profile-contacts-button-color, var(--color-primary, #7C4DFF));
-  --button-border: var(--profile-contacts-button-border, var(--color-primary, #7C4DFF));
-  --button-hover-background: rgba(124, 77, 255, 0.08);
-  --button-hover-border: var(--profile-contacts-button-border, var(--color-primary, #7C4DFF));
-  --button-hover-text: var(--profile-contacts-button-color, var(--color-primary, #7C4DFF));
-}
-
-.profile-action-text {
-  width: auto;
-  min-width: 0;
-  max-width: none;
-  padding: var(--spacing-xxs, 0.3125rem);
-  border: none;
-  background: none;
-  color: var(--color-primary, #7C4DFF);
-  cursor: var(--profile-interactive-cursor, pointer);
-  font-size: var(--font-size-sm, 0.875rem);
-}
-
-solid-ui-button.profile-action-text {
-  width: auto;
-  min-width: 0;
-  max-width: none;
-  --button-height-sm: 0;
-  --button-padding-sm: var(--spacing-xxs, 0.3125rem);
-  --button-font-size-sm: var(--font-size-sm, 0.875rem);
-  --button-font-weight: var(--font-weight-regular, 400);
-  --button-background: transparent;
-  --button-border-width: 0;
-  --button-border: transparent;
-  --button-text: var(--color-primary, #7C4DFF);
-  --button-hover-background: transparent;
-  --button-hover-border: transparent;
-  --button-hover-text: var(--color-primary, #7C4DFF);
-}
-
-.profile-action-text:hover {
-  text-decoration: underline;
-}
-
-solid-ui-button.profile-action-text:hover::part(button),
-solid-ui-button.profile-action-text:focus-visible::part(button) {
-  text-decoration: underline;
 }
 
 /* Base grid layout */
 .profile-grid {
-  --profile-main-section-min-width: 37.5rem;
-  --profile-sidebar-min-width: 18.75rem;
-  --profile-sidebar-width: clamp(var(--profile-sidebar-min-width), 33.333%, 21.875rem);
-  --profile-sidebar-section-padding: var(--spacing-lg, 1.5625rem);
-  --profile-mobile-section-padding: var(--spacing-sm, 0.9375rem);
-  --profile-stacked-section-gap: var(--spacing-sm, 0.9375rem);
+  --profile-main-section-min-width: 600px;
+  --profile-sidebar-min-width: 300px;
+  --profile-sidebar-width: clamp(var(--profile-sidebar-min-width), 33.333%, 350px);
+  --profile-sidebar-section-padding: 25px;
+  --profile-mobile-section-padding: 15px;
+  --profile-stacked-section-gap: 15px;
   font-size: inherit;
   display: grid;
   grid-template-columns:
     minmax(var(--profile-main-section-min-width), 1fr)
     minmax(var(--profile-sidebar-min-width), var(--profile-sidebar-width));
   align-items: start;
-  column-gap: var(--spacing-xxs, 0.3125rem);
-  row-gap: var(--spacing-md, 1.25rem);
+  column-gap: 5px;
+  row-gap: 20px;
 }
 
 /* Grid columns and wrappers */
@@ -203,7 +108,7 @@ solid-ui-button.profile-action-text:focus-visible::part(button) {
   grid-row: 2;
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-md, 1.25rem);
+  gap: 20px;
   margin-bottom: 0;
   overflow-wrap: anywhere;
   align-items: flex-start;
@@ -227,7 +132,7 @@ solid-ui-button.profile-action-text:focus-visible::part(button) {
   align-self: stretch;
   min-width: var(--profile-sidebar-min-width);
   padding-block: 0;
-  padding-inline: var(--spacing-sm, 0.938rem);
+  padding-inline: 15px;
   background: transparent;
   border-radius: 0;
 }
@@ -258,10 +163,10 @@ solid-ui-button.profile-action-text:focus-visible::part(button) {
   display: flex;
   flex-direction: column;
   min-width: var(--profile-sidebar-min-width);
-  padding: var(--spacing-sm, 0.938rem);
+  padding: 15px;
   align-items: stretch;
   text-align: left;
-  border-radius: var(--border-radius-base);
+  border-radius: 5px;
   background: var(--color-background, #F8F9FB);
   overflow-x: clip;
 }
@@ -269,7 +174,7 @@ solid-ui-button.profile-action-text:focus-visible::part(button) {
 .profile-grid .profile__sidebar-content {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-md, 1.25rem);
+  gap: 20px;
   min-width: var(--profile-sidebar-min-width);
 }
 
@@ -294,24 +199,24 @@ solid-ui-button.profile-action-text:focus-visible::part(button) {
 /* Section cards */
 .profile-grid .profile__section,
 .profile-grid .profile__section--empty {
-  background: var(--color-card-bg, #FFF);
-  border: var(--border-width-thin, 0.1rem) solid var(--color-border-lighter, #E2E8F0);
+  background: var(--solid-ui-color-white, #FFFFFF);
+  border: 1px solid var(--solid-ui-color-slate-200, #E2E8F0);
   overflow-x: clip;
 }
 
 .profile-grid .profile__section {
-  padding: var(--spacing-lg, 1.5625rem);
-  border-radius: var(--border-radius-base);
+  padding: 25px;
+  border-radius: 5px;
 }
 
 .profile-grid .profile__section.profile-section-collapsible {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-lg, 1.5625rem);
+  gap: 25px;
 }
 
 .profile-grid .profile__section--empty {
-  padding: var(--spacing-1xl, 2.5rem) var(--spacing-lg, 1.5625rem);
+  padding: 40px 25px;
 }
 
 .profile-grid .profile__sidebar-content > [data-profile-section='social'].profile__section,
@@ -328,40 +233,29 @@ solid-ui-button.profile-action-text:focus-visible::part(button) {
 /* Empty states */
 .profile-grid solid-ui-button.profile__action-button--empty {
   width: fit-content;
-  min-width: fit-content;
-  max-width: fit-content;
-  --button-font-size-sm: var(--font-size-sm, 0.875rem);
-  --button-font-weight: var(--font-weight-medium, 500);
-  --button-line-height: var(--line-height-tight, 1.4);
-  --button-background: var(--color-card-bg, #FFF);
-  --button-text: var(--color-text-primary, #314158);
-  --button-border: var(--color-border-darker, #4A5565);
-  --button-hover-background: var(--color-primary, #7C4DFF);
-  --button-hover-text: var(--color-text-on-action, var(--white, #FFF));
-  --button-hover-border: var(--color-primary, #7C4DFF);
 }
 
 .profile-grid solid-ui-button.profile__action-button--empty:hover .profile__action-icon svg path,
 .profile-grid solid-ui-button.profile__action-button--empty:focus-visible .profile__action-icon svg path,
 .profile-grid solid-ui-button.profile__action-button--empty:focus-within .profile__action-icon svg path {
-  stroke: var(--color-text-on-action, var(--white, #FFF));
-  fill: var(--color-text-on-action, var(--white, #FFF));
+  stroke: var(--solid-ui-color-white, #FFFFFF);
+  fill: var(--solid-ui-color-white, #FFFFFF);
 }
 
 .profile-grid .profile__empty-state-message {
-  color: var(--color-text-empty-state, var(--gray-400, #99A1AF));
+  color: var(--solid-ui-color-gray-400, #99A1AF);
   text-align: center;
-  font-size: var(--font-size-xs, 0.813rem);
-  font-weight: var(--font-weight-normal, 400);
-  line-height: var(--line-height-tight, 1.4);
-  margin-bottom: var(--spacing-md, 1.25rem);
+  font-size: 0.813rem;
+  font-weight: 400;
+  line-height: 1.4;
+  margin-bottom: 20px;
 }
 
 .profile-grid .profile__empty-state-content {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--spacing-2xs, 0.625rem);
+  gap: 10px;
 }
 
 .profile-grid .profile__intro-main > .profile__section--empty.profile__section--empty-main,
@@ -369,7 +263,7 @@ solid-ui-button.profile-action-text:focus-visible::part(button) {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--spacing-lg, 1.5625rem);
+  gap: 25px;
 }
 
 .profile-grid .profile__intro-sidebar > .profile__section--empty.profile__section--empty-sidebar,
@@ -385,8 +279,8 @@ solid-ui-button.profile-action-text:focus-visible::part(button) {
 }
 
 .profile-grid .profile__empty-state-content > h2 {
-  font-size: var(--font-size-xl, 1.375rem);
-  font-weight: var(--font-weight-md, 500);
+  font-size: 1.375rem;
+  font-weight: 500;
 }
 
 .profile-grid .profile__section--empty.profile__section--empty-main .profile__empty-state-message {
@@ -400,7 +294,7 @@ solid-ui-button.profile-action-text:focus-visible::part(button) {
 }
 
 .profile-grid .profile__section--empty.profile__section--empty-main .profile-section-collapsible__content {
-  gap: var(--spacing-lg, 1.5625rem);
+  gap: 25px;
 }
 
 .profile-grid [data-profile-section='projects'].profile__section--empty > .profile-section-collapsible__header,
@@ -409,7 +303,7 @@ solid-ui-button.profile-action-text:focus-visible::part(button) {
 }
 
 .profile-grid .profile__section--empty.profile__section--empty-main > .profile-section-collapsible__content > .profile__empty-state-content {
-  gap: var(--spacing-2xs, 0.625rem);
+  gap: 10px;
 }
 
 .profile-grid [data-profile-section='projects'].profile__section--empty > .profile-section-collapsible__content,
@@ -420,7 +314,7 @@ solid-ui-button.profile-action-text:focus-visible::part(button) {
 /* Theme */
 .profile-pane-host[data-theme='dark'] .profile-grid .profile__section,
 .profile-pane-host[data-theme='dark'] .profile-grid .profile__section--empty {
-  border: var(--border-width-thin, 1px) solid var(--color-border, #444);
+  border: 1px solid var(--color-border, #444);
 }
 
 /* App-driven mobile layout, independent of viewport width. */
@@ -434,7 +328,7 @@ solid-ui-button.profile-action-text:focus-visible::part(button) {
   max-width: 100%;
   box-sizing: border-box;
   margin: 0 auto;
-  padding-inline: var(--spacing-xxs, 0.3125rem);
+  padding-inline: 5px;
   overflow-x: clip;
 }
 
@@ -460,14 +354,14 @@ solid-ui-button.profile-action-text:focus-visible::part(button) {
 
 /* App-driven mobile: interaction and typography */
 :is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__action-button {
-  min-height: calc(var(--min-touch-target, 44px) + 0.5rem) !important;
+  min-height: calc(var(--solid-ui-clickable-area, 42px) + 8px) !important;
   font-size: clamp(0.9rem, 2.1vw, 1rem) !important;
 }
 
 :is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile__section-header:not(.profile-edit-dialog__contact-section-header) h2,
 :is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile__section-header:not(.profile-edit-dialog__contact-section-header) h3,
 :is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile__section-header:not(.profile-edit-dialog__contact-section-header) h4 {
-  font-size: var(--profile-mobile-section-heading-size, var(--font-size-lg, 1.125rem)) !important;
+  font-size: var(--profile-mobile-section-heading-size) !important;
   line-height: 1.2 !important;
 }
 
@@ -484,7 +378,7 @@ solid-ui-button.profile-action-text:focus-visible::part(button) {
 
 :is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__empty-state-content > h2,
 :is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .resume-card__section h3 {
-  font-size: var(--profile-mobile-section-heading-size, var(--font-size-lg, 1.125rem)) !important;
+  font-size: var(--profile-mobile-section-heading-size) !important;
   line-height: 1.2 !important;
 }
 
@@ -496,9 +390,9 @@ solid-ui-button.profile-action-text:focus-visible::part(button) {
   align-items: flex-start;
   /* Keep all mobile section cards at 15px padding across layout, media, and container fallbacks. */
   padding: var(--profile-mobile-section-padding);
-  border-radius: var(--border-radius-base, 0.3125rem);
-  border: var(--border-width-thin, 0.1rem) solid var(--color-border-subtle, var(--gray-100, #F3F4F6));
-  background: var(--color-card-bg, var(--white, #FFF));
+  border-radius: 5px;
+  border: 1px solid var(--solid-ui-color-gray-100, #F3F4F6);
+  background: var(--solid-ui-color-white, #FFFFFF);
 }
 
 :is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid [data-profile-section='social'].profile__section,
@@ -546,7 +440,7 @@ solid-ui-button.profile-action-text:focus-visible::part(button) {
 }
 
 :is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__section--empty.profile-section-collapsible {
-  gap: var(--spacing-2xs, 0.625rem);
+  gap: 10px;
 }
 
 :is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid [data-profile-section='projects'].profile__section--empty > .profile-section-collapsible__header,
@@ -577,20 +471,20 @@ solid-ui-button.profile-action-text:focus-visible::part(button) {
 
 /* App-driven mobile: profile header and bio actions */
 :is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__name {
-  font-size: var(--profile-mobile-header-name-size, var(--font-size-xl, 1.375rem)) !important;
+  font-size: var(--profile-mobile-header-name-size) !important;
   line-height: 1.15 !important;
 }
 
 :is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__role-org {
-  font-size: var(--profile-mobile-header-job-title-size, var(--font-size-md, 1rem)) !important;
+  font-size: var(--profile-mobile-header-job-title-size) !important;
 }
 
 :is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__details {
-  font-size: var(--profile-mobile-header-detail-size, var(--font-size-xxs, 0.75rem)) !important;
+  font-size: var(--profile-mobile-header-detail-size) !important;
 }
 
 :is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__pronouns {
-  font-size: var(--profile-mobile-header-pronouns-size, 0.6875rem) !important;
+  font-size: var(--profile-mobile-header-pronouns-size) !important;
   line-height: 1.1 !important;
 }
 
@@ -633,13 +527,13 @@ solid-ui-button.profile-action-text:focus-visible::part(button) {
     max-width: 100%;
     box-sizing: border-box;
     margin: 0 auto;
-    padding-inline: var(--spacing-xxs, 0.3125rem);
+    padding-inline: 5px;
     overflow-x: clip;
   }
 
   /* Viewport stacked: interaction and wrappers */
   :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid .profile__action-button {
-    min-height: calc(var(--min-touch-target, 44px) + 0.5rem) !important;
+    min-height: calc(var(--solid-ui-clickable-area, 42px) + 8px) !important;
     font-size: clamp(0.9rem, 2.1vw, 1rem) !important;
   }
 
@@ -675,7 +569,7 @@ solid-ui-button.profile-action-text:focus-visible::part(button) {
   :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile__section-header:not(.profile-edit-dialog__contact-section-header) h2,
   :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile__section-header:not(.profile-edit-dialog__contact-section-header) h3,
   :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile__section-header:not(.profile-edit-dialog__contact-section-header) h4 {
-    font-size: var(--profile-mobile-section-heading-size, var(--font-size-lg, 1.125rem)) !important;
+    font-size: var(--profile-mobile-section-heading-size) !important;
     line-height: 1.2 !important;
   }
 
@@ -696,9 +590,9 @@ solid-ui-button.profile-action-text:focus-visible::part(button) {
     flex-direction: column;
     align-items: flex-start;
     padding: var(--profile-mobile-section-padding);
-    border-radius: var(--border-radius-base, 0.3125rem);
-    border: var(--border-width-thin, 0.1rem) solid var(--color-border-subtle, var(--gray-100, #F3F4F6));
-    background: var(--color-card-bg, var(--white, #FFF));
+    border-radius: 5px;
+    border: 1px solid var(--color-border-subtle, var(--gray-100, #F3F4F6));
+    background: var(--solid-ui-color-white, #FFFFFF);
   }
 
   :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid [data-profile-section='social'].profile__section,
@@ -740,7 +634,7 @@ solid-ui-button.profile-action-text:focus-visible::part(button) {
   }
 
   :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid .profile__section--empty.profile-section-collapsible {
-    gap: var(--spacing-2xs, 0.625rem);
+    gap: 10px;
   }
 
   :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid [data-profile-section='projects'].profile__section--empty > .profile-section-collapsible__header,
@@ -772,7 +666,7 @@ solid-ui-button.profile-action-text:focus-visible::part(button) {
 
   /* Container stacked: interaction and wrappers */
   .profile-grid .profile__action-button {
-    min-height: calc(var(--min-touch-target, 44px) + 0.5rem) !important;
+    min-height: calc(var(--solid-ui-clickable-area, 42px) + 0.5rem) !important;
     font-size: clamp(0.9rem, 2.1vw, 1rem) !important;
   }
 
@@ -808,7 +702,7 @@ solid-ui-button.profile-action-text:focus-visible::part(button) {
   .profile__section-header:not(.profile-edit-dialog__contact-section-header) h2,
   .profile__section-header:not(.profile-edit-dialog__contact-section-header) h3,
   .profile__section-header:not(.profile-edit-dialog__contact-section-header) h4 {
-    font-size: var(--profile-mobile-section-heading-size, var(--font-size-lg, 1.125rem)) !important;
+    font-size: var(--profile-mobile-section-heading-size) !important;
     line-height: 1.2 !important;
   }
 
@@ -829,9 +723,9 @@ solid-ui-button.profile-action-text:focus-visible::part(button) {
     flex-direction: column;
     align-items: flex-start;
     padding: var(--profile-mobile-section-padding);
-    border-radius: var(--border-radius-base, 0.3125rem);
-    border: var(--border-width-thin, 0.1rem) solid var(--color-border-subtle, var(--gray-100, #F3F4F6));
-    background: var(--color-card-bg, var(--white, #FFF));
+    border-radius: 5px;
+    border: 1px solid var(--solid-ui-color-gray-100, #F3F4F6);
+    background: var(--solid-ui-color-white, #FFF);
   }
 
   .profile-grid [data-profile-section='social'].profile__section,
@@ -873,7 +767,7 @@ solid-ui-button.profile-action-text:focus-visible::part(button) {
   }
 
   .profile-grid .profile__section--empty.profile-section-collapsible {
-    gap: var(--spacing-2xs, 0.625rem);
+    gap: 10px;
   }
 
   .profile-grid [data-profile-section='projects'].profile__section--empty > .profile-section-collapsible__header,
@@ -904,9 +798,9 @@ solid-ui-button.profile-action-text:focus-visible::part(button) {
     flex-direction: column;
     align-items: flex-start;
     padding: var(--profile-mobile-section-padding);
-    border-radius: var(--border-radius-base, 0.3125rem);
-    border: var(--border-width-thin, 0.1rem) solid var(--color-border-subtle, var(--gray-100, #F3F4F6));
-    background: var(--color-card-bg, var(--white, #FFF));
+    border-radius: 5px;
+    border: 1px solid var(--solid-ui-color-gray-100, #F3F4F6);
+    background: var(--solid-ui-color-white, #FFFFFF);
   }
 
   :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid .profile__intro-sidebar > .profile__section,
@@ -952,25 +846,25 @@ solid-ui-button.profile-action-text:focus-visible::part(button) {
   /* Narrow viewport: typography */
   :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid .profile__empty-state-content > h2,
   :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid .resume-card__section h3 {
-    font-size: var(--profile-mobile-section-heading-size, var(--font-size-lg, 1.125rem)) !important;
+    font-size: var(--profile-mobile-section-heading-size) !important;
     line-height: 1.2 !important;
   }
 
   :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid .profile__name {
-    font-size: var(--profile-mobile-header-name-size, var(--font-size-xl, 1.375rem)) !important;
+    font-size: var(--profile-mobile-header-name-size) !important;
     line-height: 1.15 !important;
   }
 
   :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid .profile__role-org {
-    font-size: var(--profile-mobile-header-job-title-size, var(--font-size-md, 1rem)) !important;
+    font-size: var(--profile-mobile-header-job-title-size) !important;
   }
 
   :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid .profile__details {
-    font-size: var(--profile-mobile-header-detail-size, var(--font-size-xxs, 0.75rem)) !important;
+    font-size: var(--profile-mobile-header-detail-size) !important;
   }
 
   :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid .profile__pronouns {
-    font-size: var(--profile-mobile-header-pronouns-size, 0.6875rem) !important;
+    font-size: var(--profile-mobile-header-pronouns-size) !important;
     line-height: 1.1 !important;
   }
 
@@ -1005,9 +899,9 @@ solid-ui-button.profile-action-text:focus-visible::part(button) {
     flex-direction: column;
     align-items: flex-start;
     padding: var(--profile-mobile-section-padding);
-    border-radius: var(--border-radius-base, 0.3125rem);
-    border: var(--border-width-thin, 0.1rem) solid var(--color-border-subtle, var(--gray-100, #F3F4F6));
-    background: var(--color-card-bg, var(--white, #FFF));
+    border-radius: 5px;
+    border: 1px solid var(--solid-ui-color-gray-100, #F3F4F6);
+    background: var(--solid-ui-color-white, #FFFFFF);
   }
 
   .profile-grid .profile__intro-sidebar > .profile__section,
@@ -1053,25 +947,25 @@ solid-ui-button.profile-action-text:focus-visible::part(button) {
   /* Narrow container: typography */
   .profile-grid .profile__empty-state-content > h2,
   .profile-grid .resume-card__section h3 {
-    font-size: var(--profile-mobile-section-heading-size, var(--font-size-lg, 1.125rem)) !important;
+    font-size: var(--profile-mobile-section-heading-size) !important;
     line-height: 1.2 !important;
   }
 
   .profile-grid .profile__name {
-    font-size: var(--profile-mobile-header-name-size, var(--font-size-xl, 1.375rem)) !important;
+    font-size: var(--profile-mobile-header-name-size) !important;
     line-height: 1.15 !important;
   }
 
   .profile-grid .profile__role-org {
-    font-size: var(--profile-mobile-header-job-title-size, var(--font-size-md, 1rem)) !important;
+    font-size: var(--profile-mobile-header-job-title-size) !important;
   }
 
   .profile-grid .profile__details {
-    font-size: var(--profile-mobile-header-detail-size, var(--font-size-xxs, 0.75rem)) !important;
+    font-size: var(--profile-mobile-header-detail-size) !important;
   }
 
   .profile-grid .profile__pronouns {
-    font-size: var(--profile-mobile-header-pronouns-size, 0.6875rem) !important;
+    font-size: var(--profile-mobile-header-pronouns-size) !important;
     line-height: 1.1 !important;
   }
 
