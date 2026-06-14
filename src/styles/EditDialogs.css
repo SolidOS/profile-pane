@@ -107,21 +107,6 @@
   margin-top: 15px;
 }
 
-#profile-modal .modal .profile__section-header .profile__action-button,
-#profile-modal .modal .profile__section-header solid-ui-button.profile__action-button::part(button) {
-  min-height: auto;
-  padding: 5px;
-  border: none;
-  background: none;
-  color: var(--color-primary);
-  font-weight: var(--font-weight-md, 500);
-}
-
-#profile-modal .modal .profile__section-header .profile__action-button:hover,
-#profile-modal .modal .profile__section-header solid-ui-button.profile__action-button:hover::part(button) {
-  text-decoration: underline;
-}
-
 .profile-edit-dialog__actions {
   display: flex;
   align-items: center;
@@ -178,22 +163,6 @@
   right: 10px;
   bottom: 10px;
   z-index: 1;
-}
-
-solid-ui-button.profile-edit-dialog__image-camera-button {
-  width: 1.25rem;
-  height: 1.25rem;
-  min-width: 1.25rem;
-  min-height: 1.25rem;
-  --button-height-md: 1.25rem;
-  --button-padding-md: 0.1875rem;
-  --button-icon-size-md: 0.875rem;
-  --button-background: var(--color-card-bg, var(--white, #FFF));
-  --button-border-width: 0;
-  --button-border-radius: 0.2083rem;
-  --button-hover-background: var(--color-card-bg, var(--white, #FFF));
-  --button-hover-text: currentColor;
-  --button-active-transform: none;
 }
 
 .profile-edit-dialog__image-camera-button svg {
@@ -264,86 +233,6 @@ solid-ui-button.profile-edit-dialog__image-camera-button {
   display: none;
 }
 
-.profile-edit-dialog__photo-capture::part(close-button) {
-  width: auto;
-  height: auto;
-  padding: 0;
-  border: 0;
-  background: transparent;
-  color: var(--profile-edit-dialog-muted-text);
-  font-size: 1.25rem;
-}
-
-.profile-edit-dialog__photo-capture::part(close-button):hover,
-.profile-edit-dialog__photo-capture::part(close-button):focus-visible {
-  background: transparent;
-  color: var(--color-text-subheading, var(--gray-900, #101828));
-}
-
-.profile-edit-dialog__photo-capture::part(actions) {
-  justify-content: center;
-  gap: var(--spacing-2xs, 0.625rem);
-}
-
-.profile-edit-dialog__photo-capture::part(capture-button),
-.profile-edit-dialog__photo-capture::part(retake-button),
-.profile-edit-dialog__photo-capture::part(confirm-button) {
-  min-height: auto;
-  padding: 0.4125rem 0.6922rem 0.4375rem 0.8rem;
-  border-radius: var(--border-radius-base, 0.3125rem);
-  border: 0.8px solid var(--color-border-button, var(--gray-300, #D1D5DC));
-  background: var(--color-card-bg, var(--white, #FFF));
-  color: var(--color-text-subheading, var(--gray-900, #101828));
-  font-size: var(--font-size-xxs, 0.75rem);
-  font-weight: var(--font-weight-xbold, 700);
-  line-height: var(--line-height-base, 1.5);
-}
-
-.profile-edit-dialog__photo-capture::part(capture-button):hover,
-.profile-edit-dialog__photo-capture::part(capture-button):focus-visible,
-.profile-edit-dialog__photo-capture::part(retake-button):hover,
-.profile-edit-dialog__photo-capture::part(retake-button):focus-visible,
-.profile-edit-dialog__photo-capture::part(confirm-button):hover,
-.profile-edit-dialog__photo-capture::part(confirm-button):focus-visible {
-  background: var(--color-surface-tertiary-hover, var(--gray-100, #F3F4F6));
-  border-color: var(--color-border-button-hover, var(--gray-400, #99A1AF));
-}
-
-.profile-edit-dialog__image-upload-button::part(button),
-.profile-edit-dialog__image-remove-button::part(button) {
-  min-height: var(--min-touch-target, 44px);
-}
-
-.profile-edit-dialog__image-button::part(button) {
-  font-size: var(--font-size-xxs, 0.75rem);
-  font-weight: var(--font-weight-xbold, 700);
-  line-height: var(--line-height-base, 1.5);
-  border-radius: var(--border-radius-base, 0.3125rem);
-  transform: none;
-}
-
-.profile-edit-dialog__image-upload-button::part(button) {
-  color: var(--color-text-subheading, var(--gray-900, #101828));
-  border: 0.8px solid var(--color-border-button, var(--gray-300, #D1D5DC));
-  background: var(--color-card-bg, var(--white, #FFF));
-  padding: 0.4125rem 0.6922rem 0.4375rem 0.8rem;
-}
-
-.profile-edit-dialog__image-remove-button::part(button) {
-  color: var(--red-600, #E7000B);
-  padding: 0.4125rem 0.8148rem 0.4375rem 0.8625rem;
-  border: 0.8px solid transparent;
-  background: var(--color-surface-tertiary-hover, var(--gray-100, #F3F4F6));
-}
-
-#profile-modal .modal .profile-edit-dialog__image-upload-button:hover::part(button),
-#profile-modal .modal .profile-edit-dialog__image-upload-button:focus-within::part(button),
-#profile-modal .modal .profile-edit-dialog__image-remove-button:hover::part(button),
-#profile-modal .modal .profile-edit-dialog__image-remove-button:focus-within::part(button) {
-  background: var(--color-surface-tertiary-hover, var(--gray-100, #F3F4F6)) !important;
-  border-color: var(--color-border-button-hover, var(--gray-400, #99A1AF)) !important;
-}
-
 /* leaving all the details because may need to use a regular button */
 .profile-edit-dialog__paste-button {
   position: absolute;
@@ -384,34 +273,10 @@ solid-ui-button.profile-edit-dialog__image-camera-button {
 }
 
 solid-ui-button.profile-edit-dialog__drag-handle {
-  min-width: 1.75rem;
-  min-height: 1.75rem;
-  --button-background: transparent;
-  --button-height-md: 1.75rem;
-  --button-padding-md: 0;
-  --button-border-width: 0;
-  --button-border-radius: var(--border-radius-base, 0.3125rem);
-  --button-icon-size-md: 0.813rem;
-  --button-box-shadow: none;
-  --button-hover-background: var(--profile-edit-dialog-action-hover-background);
-  --button-hover-border: transparent;
-  --button-hover-text: var(--color-primary, #7C4DFF);
-  --button-hover-box-shadow: none;
-  --button-active-box-shadow: none;
-  --button-active-transform: none;
   cursor: grab;
   touch-action: none;
   -webkit-user-select: none;
   user-select: none;
-}
-
-solid-ui-button.profile-edit-dialog__drag-handle::part(button) {
-  min-width: 1.75rem;
-  min-height: 1.75rem;
-}
-
-solid-ui-button.profile-edit-dialog__drag-handle:focus-visible::part(button) {
-  outline: none;
 }
 
 solid-ui-button.profile-edit-dialog__drag-handle:active {

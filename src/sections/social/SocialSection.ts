@@ -49,10 +49,7 @@ export const SocialCard = (
         ${hiddenAccountsCount > 0
           ? html`
               <solid-ui-button
-                type="button"
-                variant="secondary"
-                size="sm"
-                label=${`${hiddenAccountsCount} more`}
+                variant="tertiary"
                 class="social-card__more-button"
                 aria-controls="social-media"
                 aria-expanded="false"
@@ -138,24 +135,20 @@ function renderSocialSectionDefault(
             <div class="profile-section-collapsible__actions">
               ${isOwner ? html`
                 <solid-ui-button
-                  type="button"
-                  variant="secondary"
-                  size="sm"
-                  class="profile__action-button profile-action-text profile-section-collapsible__edit-button"
+                  variant="tertiary"
+                  class="profile-section-collapsible__edit-button"
                   aria-label="Edit social accounts"
                   @click=${handleEdit}
                 >
-                  <span class="profile-section-collapsible__edit-label profile__add-more-content">
-                    <span class="profile__add-more-icon" aria-hidden="true">${addIcon}</span>
-                    <span>Add More</span>
+                  <span class="profile-section-collapsible__edit-label">
+                    <span slot="left-icon" class="profile__add-more-icon" aria-hidden="true">${addIcon}</span>
+                    Add More
                   </span>
                   <span class="profile-section-collapsible__edit-icon" aria-hidden="true">${editIcon}</span>
                 </solid-ui-button>
               ` : html``}
               <solid-ui-button
-                type="button"
-                variant="icon"
-                size="sm"
+                variant="ghost"
                 class="profile-section-collapsible__toggle-button"
                 aria-label="Toggle social accounts section"
                 aria-controls="social-panel"
@@ -212,10 +205,8 @@ function renderOwnerEmptySocialSection(
         <h3 id="social-heading" tabindex="-1">${socialAccountsHeadingText}</h3>
         <div class="profile-section-collapsible__actions">
           <solid-ui-button
-            type="button"
-            variant="secondary"
-            size="sm"
-            class="profile__action-button profile-action-text profile-section-collapsible__edit-button"
+            variant="tertiary"
+            class="profile-section-collapsible__edit-button"
             aria-label="Add social accounts"
             @click=${(event: Event) => {
               return createSocialEditDialog(
@@ -228,16 +219,14 @@ function renderOwnerEmptySocialSection(
               )
             }}
           >
-            <span class="profile-section-collapsible__edit-label profile__add-more-content">
+            <span class="profile-section-collapsible__edit-label">
               <span class="profile__add-more-icon" aria-hidden="true">${addIcon}</span>
-              <span>Add More</span>
+              Add More
             </span>
             <span class="profile-section-collapsible__edit-icon" aria-hidden="true">${editIcon}</span>
           </solid-ui-button>
           <solid-ui-button
-            type="button"
-            variant="icon"
-            size="sm"
+            variant="ghost"
             class="profile-section-collapsible__toggle-button"
             aria-label="Toggle social accounts section"
             aria-controls="social-panel"
