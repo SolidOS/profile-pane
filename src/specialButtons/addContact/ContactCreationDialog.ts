@@ -1,6 +1,6 @@
 import { DataBrowserContext } from 'pane-registry'
-import 'solid-ui/components/actions/button'
-import type { Button as SolidUIButtonElement } from 'solid-ui/components/actions/button'
+import 'solid-ui/components/button'
+import type { Button as SolidUIButtonElement } from 'solid-ui/components/button'
 import { addAddressBookToAddressBooksData, addGroupToAddressBookData, refreshButton } from './helpers'
 import { checkIfContactExistsByName, checkIfContactExistsByWebID } from './selectors'
 import { addANewAddressBookUriToAddressBooks, addWebIDToExistingContact, createContactInAddressBook, handleAddressBookCreation } from './mutations'

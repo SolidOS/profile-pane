@@ -1,6 +1,6 @@
 import { html, render, TemplateResult } from 'lit-html'
-import 'solid-ui/components/actions/button'
-import type { Button as SolidUIButtonElement } from 'solid-ui/components/actions/button'
+import 'solid-ui/components/button'
+import type { Button as SolidUIButtonElement } from 'solid-ui/components/button'
 import { DataBrowserContext } from 'pane-registry'
 import { authn } from 'solid-logic'
 import { LiveStore, NamedNode } from 'rdflib'
