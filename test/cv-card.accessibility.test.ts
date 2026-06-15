@@ -31,7 +31,7 @@ describe('CVCard accessibility', () => {
     ]
     const container = document.createElement('div')
     document.body.appendChild(container)
-    render(CVCard(cvData as any, 'anonymous'), container)
+    render(CVCard(cvData as any), container)
 
     const results = await runAxe(container)
     expect(results.violations.length).toBe(0)

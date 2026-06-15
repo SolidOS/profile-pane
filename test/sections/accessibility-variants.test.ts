@@ -18,15 +18,15 @@ describe('Section accessibility variants', () => {
     document.body.appendChild(container)
 
     render(
-      renderBioSection(context.session.store, subject, { description: '', entryNode: '' } as any, 'owner'),
+      renderBioSection(context.session.store, subject, { description: '', entryNode: '' } as any, 'owner', 'desktop'),
       container
     )
-    render(renderProjectSection(context.session.store, subject, [], 'owner'), container)
-    render(renderSkillsSection(context.session.store, subject, [], 'owner'), container)
-    render(renderContactInfoSection(context.session.store, subject, { phones: [], emails: [], addresses: [] } as any, 'owner'), container)
-    render(renderCVSection(context.session.store, subject, [], 'owner'), container)
-    render(renderLanguageSection(context.session.store, subject, [], 'owner'), container)
-    render(renderSocialSection(context.session.store as any, subject, { accounts: [] }, 'owner'), container)
+    render(renderProjectSection(context.session.store, subject, [], 'owner', 'desktop'), container)
+    render(renderSkillsSection(context.session.store, subject, [], 'owner', 'desktop'), container)
+    render(renderContactInfoSection(context.session.store, subject, { phones: [], emails: [], addresses: [] } as any, 'owner', 'desktop'), container)
+    render(renderCVSection(context.session.store, subject, [], 'owner', 'desktop'), container)
+    render(renderLanguageSection(context.session.store, subject, [], 'owner', 'desktop'), container)
+    render(renderSocialSection(context.session.store as any, subject, { accounts: [] }, 'owner', 'desktop'), container)
 
     const results = await runAxe(container)
     expect(results.violations.length).toBe(0)
@@ -51,14 +51,14 @@ describe('Section accessibility variants', () => {
     const languages = [{ name: 'English', proficiency: 'Fluent', entryNode: sym('https://example.com/profile#lang1') }]
     const social = { accounts: [{ entryNode: sym('https://example.com/profile/card#github'), homepage: 'https://github.com/example', name: 'GitHub', icon: 'https://example.com/github-icon.svg' }] }
 
-    render(renderBioSection(context.session.store, subject, bio as any, 'anonymous'), container)
-    render(renderProjectSection(context.session.store, subject, projects as any, 'anonymous'), container)
-    render(renderSkillsSection(context.session.store, subject, skills as any, 'anonymous'), container)
-    render(renderContactInfoSection(context.session.store, subject, contactInfo as any, 'anonymous'), container)
+    render(renderBioSection(context.session.store, subject, bio as any, 'anonymous', 'desktop'), container)
+    render(renderProjectSection(context.session.store, subject, projects as any, 'anonymous', 'desktop'), container)
+    render(renderSkillsSection(context.session.store, subject, skills as any, 'anonymous', 'desktop'), container)
+    render(renderContactInfoSection(context.session.store, subject, contactInfo as any, 'anonymous', 'desktop'), container)
     render(renderEducationSection(context.session.store, subject, educationData as any, 'anonymous'), container)
-    render(renderCVSection(context.session.store, subject, roles as any, 'anonymous'), container)
-    render(renderLanguageSection(context.session.store, subject, languages as any, 'anonymous'), container)
-    render(renderSocialSection(context.session.store as any, subject, social as any, 'anonymous'), container)
+    render(renderCVSection(context.session.store, subject, roles as any, 'anonymous', 'desktop'), container)
+    render(renderLanguageSection(context.session.store, subject, languages as any, 'anonymous', 'desktop'), container)
+    render(renderSocialSection(context.session.store as any, subject, social as any, 'anonymous', 'desktop'), container)
 
     const results = await runAxe(container)
     expect(results.violations.length).toBe(0)

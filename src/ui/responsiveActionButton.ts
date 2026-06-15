@@ -3,7 +3,7 @@ import 'solid-ui/components/button'
 import { Layout } from '../types'
 
 type ResponsiveActionButtonOptions = {
-  layout: Layout
+  layout?: Layout
   className: string
   ariaLabel: string
   variant?: {
@@ -17,7 +17,7 @@ type ResponsiveActionButtonOptions = {
 }
 
 export function renderResponsiveActionButton({
-  layout,
+  layout = 'desktop',
   className,
   ariaLabel,
   variant = {

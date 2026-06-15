@@ -1,14 +1,15 @@
-import { html } from 'lit-html'
+import { html, nothing } from 'lit-html'
 import 'solid-ui/components/button'
 import { LiveStore, NamedNode } from 'rdflib'
 import { ns } from 'solid-ui'
-import { ViewerMode } from '../../types'
+import { Layout, ViewerMode } from '../../types'
 import './LanguageSection.css'
 import { createLanguageEditDialog } from './LanguageEditDialog'
 import { LanguageDetails } from './types'
 import { addIcon, chevronDownIcon, commentIcon, editIcon } from '../../icons-svg/profileIcons'
 import { languagesHeadingText } from '../../texts'
 import { toggleCollapsibleSection } from '../shared/collapsibleSection'
+import { renderResponsiveActionButton } from '../../ui/responsiveActionButton'
 
 function renderLan(language: LanguageDetails, asList = false) {
   if (!language) return html``
@@ -22,7 +23,13 @@ function renderLanguages(languages: LanguageDetails[], asList = false) {
   return html`${renderLan(languages[0], asList)}${languages.length > 1 ? renderLanguages(languages.slice(1), asList) : html``}`
 }
 
-function renderLanguagesSectionDefault(store: LiveStore, subject: NamedNode, languages: LanguageDetails[], viewerMode: ViewerMode, onSaved?: () => Promise<void> | void) {
+function renderLanguagesSectionDefault(
+  store: LiveStore, 
+  subject: NamedNode, 
+  languages: LanguageDetails[], 
+  viewerMode: ViewerMode, 
+  layout: Layout, 
+  onSaved?: () => Promise<void> | void) {
   
   const hasLanguages = Array.isArray(languages) && languages.length > 0
   const hasLanguageLinks = store.each(subject, ns.schema('knowsLanguage')).length > 0
@@ -40,19 +47,16 @@ function renderLanguagesSectionDefault(store: LiveStore, subject: NamedNode, lan
         <h3 id="languages-heading">${languagesHeadingText}</h3>
         <div class="profile-section-collapsible__actions">
           ${isOwner ? html`
-            <solid-ui-button
-              variant="tertiary"
-              class="profile-section-collapsible__edit-button"
-              aria-label="Add or edit languages"
-              @click=${(event: Event) => createLanguageEditDialog(event, store, subject, languages, viewerMode, onSaved)}
-            >
-              <span class="profile-section-collapsible__edit-label profile__add-more-content">
-                <span class="profile__add-more-icon" aria-hidden="true">${addIcon}</span>
-                <span>Add More</span>
-              </span>
-              <span class="profile-section-collapsible__edit-icon" aria-hidden="true">${editIcon}</span>
-            </solid-ui-button>
-          ` : html``}
+              ${renderResponsiveActionButton({
+                layout,
+                className: 'profile-section-collapsible__edit-button',
+                ariaLabel: 'Add or edit languages',
+                onClick: (event: Event) => createLanguageEditDialog(event, store, subject, languages, viewerMode, onSaved),
+                desktopIcon: html`<span slot="left-icon" class="profile-section-collapsible__action-label profile__add-more-icon" aria-hidden="true">${addIcon}</span>`,
+                desktopLabel: 'Add More',
+                mobileIcon: html`<span slot="icon" class="profile-section-collapsible__edit-icon" aria-hidden="true">${editIcon}</span>`
+              })}
+            ` : nothing}
           <solid-ui-button
             variant="ghost"
             class="profile-section-collapsible__toggle-button"
@@ -80,21 +84,12 @@ function renderLanguagesSectionDefault(store: LiveStore, subject: NamedNode, lan
   `
 }
 
-function renderOwnerEmptyLanguagesContent(
-  _store: LiveStore,
-  _subject: NamedNode,
-  _languages: LanguageDetails[],
-  _viewerMode: ViewerMode,
-  _onSaved?: () => Promise<void> | void
-) {
+function renderOwnerEmptyLanguagesContent() {
   return html`
       <div class="profile__empty-state-content" role="group" aria-label="Empty languages section">    
         <div class="languages__empty-icon-wrapper">
           <span class="languages__empty-icon">${commentIcon}</span>
         </div>
-        <p class="profile__empty-state-message languages__empty-message">
-            No languages added yet.
-        </p>
       </div>
   `
 }
@@ -104,6 +99,7 @@ function renderOwnerEmptyLanguagesSection(
   subject: NamedNode,
   languages: LanguageDetails[],
   viewerMode: ViewerMode,
+  layout: Layout,
   onSaved?: () => Promise<void> | void
 ) {
   return html`
@@ -118,11 +114,11 @@ function renderOwnerEmptyLanguagesSection(
       <header class="profile__section-header profile-section-collapsible__header">
         <h3 id="languages-heading" tabindex="-1">${languagesHeadingText}</h3>
         <div class="profile-section-collapsible__actions">
-          <solid-ui-button
-            variant="tertiary"
-            class="profile-section-collapsible__edit-button"
-            aria-label="Add languages"
-            @click=${(event: Event) => {
+          ${renderResponsiveActionButton({
+            layout,
+            className: 'profile-section-collapsible__edit-button',
+            ariaLabel: 'Add languages',
+            onClick: (event: Event) => {
               return createLanguageEditDialog(
                 event,
                 store,
@@ -131,14 +127,11 @@ function renderOwnerEmptyLanguagesSection(
                 viewerMode,
                 onSaved
               )
-            }}
-          >
-            <span class="profile-section-collapsible__edit-label profile__add-more-content">
-              <span class="profile__add-more-icon" aria-hidden="true">${addIcon}</span>
-              <span>Add More</span>
-            </span>
-            <span class="profile-section-collapsible__edit-icon" aria-hidden="true">${editIcon}</span>
-          </solid-ui-button>
+            },
+            desktopIcon: html`<span slot="left-icon" class="profile-section-collapsible__action-label profile__add-more-icon" aria-hidden="true">${addIcon}</span>`,
+            desktopLabel: 'Add More',
+            mobileIcon: html`<span slot="icon" class="profile-section-collapsible__edit-icon" aria-hidden="true">${editIcon}</span>`
+          })}
           <solid-ui-button
             variant="ghost"
             class="profile-section-collapsible__toggle-button"
@@ -152,7 +145,7 @@ function renderOwnerEmptyLanguagesSection(
         </div>
       </header>
       <div id="languages-panel" class="profile-section-collapsible__content">
-        ${renderOwnerEmptyLanguagesContent(store, subject, languages, viewerMode, onSaved)}
+        ${renderOwnerEmptyLanguagesContent()}
       </div>
     </section>
   `
@@ -163,18 +156,18 @@ export function renderLanguageSection(
   subject: NamedNode,
   languages: LanguageDetails[],
   viewerMode: ViewerMode,
+  layout: Layout,
   onSaved?: () => Promise<void> | void
 ) {
+  const currentLayout = layout || 'desktop'
   const safeLanguages = languages || []
   const hasLanguages = Array.isArray(safeLanguages) && safeLanguages.length > 0
 
   const showOwnerEmptyLanguages = !hasLanguages && viewerMode === 'owner'
-  const showSection = true
-    
-  return showSection ? html`
-    ${showOwnerEmptyLanguages
-      ? renderOwnerEmptyLanguagesSection(store, subject, safeLanguages, viewerMode, onSaved)
-      : renderLanguagesSectionDefault(store, subject, safeLanguages, viewerMode, onSaved)}
-  ` : ''
   
+  return html`
+    ${showOwnerEmptyLanguages
+      ? renderOwnerEmptyLanguagesSection(store, subject, safeLanguages, viewerMode, currentLayout, onSaved)
+      : renderLanguagesSectionDefault(store, subject, safeLanguages, viewerMode, currentLayout, onSaved)}
+      `
 }

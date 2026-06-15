@@ -163,7 +163,7 @@ describe('Profile view composition', () => {
     const container = document.createElement('div')
     document.body.appendChild(container)
 
-    const result = await ProfileView(subject, context)
+    const result = await ProfileView(subject, context, 'desktop')
     render(result, container)
 
     expect(container.querySelector('#profile-name')?.textContent).toBe('Jane Doe')

@@ -66,7 +66,7 @@ describe('Heading viewer actions integration', () => {
     const container = document.createElement('div')
     document.body.appendChild(container)
 
-    render(await renderHeadingSection(context, ownerSubject, profile as any, 'authenticated'), container)
+    render(await renderHeadingSection(context, ownerSubject, profile as any, 'authenticated', 'desktop'), container)
 
     const contactsButtonSection = container.querySelector('.profile-contacts-button__section') as HTMLElement | null
 
@@ -105,7 +105,7 @@ describe('Heading viewer actions integration', () => {
     const container = document.createElement('div')
     document.body.appendChild(container)
 
-    render(await renderHeadingSection(context, ownerSubject, profile as any, 'owner'), container)
+    render(await renderHeadingSection(context, ownerSubject, profile as any, 'owner', 'desktop'), container)
 
     expect(container.querySelector('.profile__heading-edit-action')).not.toBeNull()
     expect(container.querySelector('.profile-contacts-button__section')).toBeNull()
@@ -120,7 +120,7 @@ describe('Heading viewer actions integration', () => {
     const container = document.createElement('div')
     document.body.appendChild(container)
 
-    render(await renderHeadingSection(context, ownerSubject, profile as any, 'anonymous'), container)
+    render(await renderHeadingSection(context, ownerSubject, profile as any, 'anonymous', 'desktop'), container)
 
     expect(container.querySelector('.profile__heading-edit-action')).toBeNull()
     expect(container.querySelector('.profile-contacts-button__section')).toBeNull()

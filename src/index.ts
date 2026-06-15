@@ -5,14 +5,13 @@ import { ProfileView } from './ProfileView'
 import { icons, ns } from 'solid-ui'
 import { hydrateQRCodes } from './sections/qrcode/QRCodeCard'
 import { createResizeDrivenSync } from './utils/resize'
+import { Layout } from './types'
 export {
   addMeToYourFriendsDiv,
   createAddMeToYourFriendsButton,
   saveNewThing,
   checkIfThingExists
 } from './specialButtons/addMeToYourFriends'
-
-type Layout = 'mobile' | 'desktop'
 
 const MOBILE_LAYOUT_MAX_WIDTH = 768
 const HEADING_SECTION_SELECTOR = '[data-profile-section="heading"]'

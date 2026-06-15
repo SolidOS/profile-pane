@@ -1,7 +1,7 @@
-import { html } from 'lit-html'
+import { html, nothing } from 'lit-html'
 import 'solid-ui/components/button'
 import { LiveStore, NamedNode } from 'rdflib'
-import { ViewerMode } from '../../types'
+import { Layout, ViewerMode } from '../../types'
 import { ProjectDetails, ProjectRow } from './types'
 import { projectsHeadingText, unfollowProjectFailedMessageText } from '../../texts'
 import { createProjectsEditDialog } from './ProjectEditDialog'
@@ -11,6 +11,7 @@ import { MutationOps } from '../shared/types'
 import './ProjectSection.css'
 import { toggleCollapsibleSection } from '../shared/collapsibleSection'
 import { formatDisplayError } from '../../utils/errorDisplay'
+import { renderResponsiveActionButton } from '../../ui/responsiveActionButton'
 
 const MAX_VISIBLE_PROJECTS_MOBILE = 2
 
@@ -184,9 +185,6 @@ function renderOwnerEmptyProjectsContent(
   return html`
     <div class="profile__empty-state-content" role="group" aria-label="Empty projects section">
       <h2 id="projects-heading" tabindex="-1">${projectsHeadingText}</h2>
-      <p class="profile__empty-state-message">
-        You haven't added any projects yet. Consider adding a project to boost your profile.
-      </p>
     </div>
     <solid-ui-button
       variant="secondary"
@@ -264,6 +262,7 @@ function renderProjectSectionDefault(
   subject: NamedNode, 
   projects: ProjectDetails[], 
   viewerMode: ViewerMode, 
+  layout: Layout,
   onSaved?: () => Promise<void> | void) {
   const hasProjects = Array.isArray(projects) && projects.length > 0
   const hiddenProjectsCount = Math.max(0, projects.length - MAX_VISIBLE_PROJECTS_MOBILE)
@@ -283,21 +282,16 @@ function renderProjectSectionDefault(
           <h2 id="projects-heading">${projectsHeadingText}</h2>
           <div class="profile-section-collapsible__actions">
             ${isOwner ? html`
-              <solid-ui-button
-                variant="tertiary"
-                class="profile__action-button profile-action-text profile-section-collapsible__edit-button"
-                aria-label="Add or edit projects"
-                @click=${(event: Event) => {
-                  return createProjectsEditDialog(event, store, subject, projects, viewerMode, onSaved)
-                }}
-              >
-                <span class="profile-section-collapsible__edit-label profile__add-more-content">
-                  <span slot="left-icon" class="profile__add-more-icon" aria-hidden="true">${addIcon}</span>
-                  <span>Add More</span>
-                </span>
-                <span class="profile-section-collapsible__edit-icon" aria-hidden="true">${editIcon}</span>
-              </solid-ui-button>
-            ` : html``}
+              ${renderResponsiveActionButton({
+                layout,
+                className: 'profile-section-collapsible__edit-button',
+                ariaLabel: 'Add or edit projects',
+                onClick: (event: Event) => createProjectsEditDialog(event, store, subject, projects, viewerMode, onSaved),
+                desktopIcon: html`<span slot="left-icon" class="profile-section-collapsible__action-label profile__add-more-icon" aria-hidden="true">${addIcon}</span>`,
+                desktopLabel: 'Add More',
+                mobileIcon: html`<span slot="icon" class="profile-section-collapsible__edit-icon" aria-hidden="true">${editIcon}</span>`
+              })}
+            ` : nothing}
             <solid-ui-button
               variant="ghost"
               class="profile-section-collapsible__toggle-button"
@@ -358,16 +352,16 @@ export function renderProjectSection(
   subject: NamedNode,
   projects: ProjectDetails[],
   viewerMode: ViewerMode,
+  layout: Layout,
   onSaved?: () => Promise<void> | void
 ) {
+  const currentLayout = layout || 'desktop'
   const hasProjects = Array.isArray(projects) && projects.length > 0
   const showOwnerEmptyProject = !hasProjects && viewerMode === 'owner'
-  
-  const showSection = true
-  
-  return showSection ? html`
+
+  return html`
     ${showOwnerEmptyProject
       ? renderOwnerEmptyProjectSection(store, subject, projects, viewerMode, onSaved)
-      : renderProjectSectionDefault(store, subject, projects, viewerMode, onSaved)}
-  ` : ''
+      : renderProjectSectionDefault(store, subject, projects, viewerMode, currentLayout, onSaved)}
+  `
 }

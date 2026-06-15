@@ -23,7 +23,7 @@ describe('Skills section', () => {
       }
     ]
 
-    render(renderSkillsSection(context.session.store, subject, skills, 'owner'), container)
+    render(renderSkillsSection(context.session.store, subject, skills, 'owner', 'desktop'), container)
     const content = (container.textContent || '').toLowerCase()
 
     expect(container.querySelector('#skills-heading')).toBeTruthy()
@@ -50,7 +50,7 @@ describe('Skills section', () => {
       }
     ]
 
-    render(renderSkillsSection(context.session.store, subject, skills, 'owner'), container)
+    render(renderSkillsSection(context.session.store, subject, skills, 'owner', 'desktop'), container)
 
     const results = await runAxe(container)
     expect(results.violations.length).toBe(0)

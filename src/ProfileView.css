@@ -434,9 +434,8 @@ solid-ui-button.profile__btn-contacts {
   padding: var(--profile-mobile-section-padding);
 }
 
-/* App-driven mobile: empty-state presentation */
 :is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__section.profile-section-collapsible {
-  gap: 0;
+  gap: 20px;
 }
 
 :is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__section--empty.profile-section-collapsible {
@@ -630,7 +629,7 @@ solid-ui-button.profile__btn-contacts {
   }
 
   :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid .profile__section.profile-section-collapsible {
-    gap: 0;
+    gap: 20px;
   }
 
   :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid .profile__section--empty.profile-section-collapsible {
@@ -763,7 +762,7 @@ solid-ui-button.profile__btn-contacts {
   }
 
   .profile-grid .profile__section.profile-section-collapsible {
-    gap: 0;
+    gap: 20px;
   }
 
   .profile-grid .profile__section--empty.profile-section-collapsible {

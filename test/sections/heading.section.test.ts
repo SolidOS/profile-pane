@@ -57,7 +57,7 @@ describe('Intro section', () => {
       }
     }
 
-    render(await renderHeadingSection(context, subject, profile as any, 'owner'), container)
+    render(await renderHeadingSection(context, subject, profile as any, 'owner', 'desktop'), container)
 
     expect(container.querySelector('.profile__section')).toBeTruthy()
     expect(container.textContent).toContain('Jane Doe')
@@ -96,7 +96,7 @@ describe('Intro section', () => {
       orgName: 'SolidOS'
     }
 
-    render(await renderHeadingSection(context, subject, profile as any, 'owner'), container)
+    render(await renderHeadingSection(context, subject, profile as any, 'owner', 'desktop'), container)
 
     const image = container.querySelector('img.profile__hero') as HTMLImageElement | null
     expect(fetchSpy).toHaveBeenCalledWith('https://example.com/private/avatar.png')
@@ -126,7 +126,7 @@ describe('Intro section', () => {
       orgName: 'SolidOS'
     }
 
-    render(await renderHeadingSection(context, subject, profile as any, 'owner'), container)
+    render(await renderHeadingSection(context, subject, profile as any, 'owner', 'desktop'), container)
 
     const image = container.querySelector('img.profile__hero') as HTMLImageElement | null
     const fallback = container.querySelector('.profile__hero-alt') as HTMLElement | null
@@ -174,7 +174,7 @@ describe('Intro section', () => {
       }
     }
 
-    render(await renderHeadingSection(context, subject, profile as any, 'authenticated'), container)
+    render(await renderHeadingSection(context, subject, profile as any, 'authenticated', 'desktop'), container)
 
     expect(container.querySelector('.profile__heading-actions')).toBeTruthy()
     expect(container.textContent).toContain(addMeToYourContactsButtonText)
@@ -213,7 +213,7 @@ describe('Intro section', () => {
       }
     }
 
-    render(await renderHeadingSection(context, subject, profile as any, 'owner'), container)
+    render(await renderHeadingSection(context, subject, profile as any, 'owner', 'desktop'), container)
 
     const results = await runAxe(container)
     expect(results.violations.length).toBe(0)
@@ -249,7 +249,7 @@ describe('Intro section', () => {
       }
     }
 
-    render(await renderHeadingSection(context, subject, profile as any, 'anonymous'), container)
+    render(await renderHeadingSection(context, subject, profile as any, 'anonymous', 'desktop'), container)
 
     expect(container.querySelector('solid-ui-button[aria-label="Add or edit heading information"], button[aria-label="Add or edit heading information"]')).toBeNull()
     expect(container.querySelector('.profile__heading-actions')).toBeNull()

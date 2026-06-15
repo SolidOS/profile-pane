@@ -1,6 +1,6 @@
-import { html } from 'lit-html'
+import { html, nothing } from 'lit-html'
 import 'solid-ui/components/button'
-import { ViewerMode } from '../../types'
+import { Layout, ViewerMode } from '../../types'
 import { createContactInfoEditDialog } from './ContactInfoEditDialog'
 import { LiveStore, NamedNode } from 'rdflib'
 import { ns } from 'solid-ui'
@@ -12,6 +12,7 @@ import { splitPhoneValue } from '../shared/phoneCountries'
 import { normalizeEmailTypeForEdit, normalizePhoneTypeForEdit } from '../shared/contactTypeUtils'
 import { addIcon, chevronDownIcon, editIcon, envelopeIcon, locationIcon } from '../../icons-svg/profileIcons'
 import { emailIcon, phoneIcon } from '../../icons-svg/contactIcons'
+import { renderResponsiveActionButton } from '../../ui/responsiveActionButton'
 
 function toText(value: unknown): string {
   if (!value) return ''
@@ -132,6 +133,7 @@ function renderContactInfoSectionDefault(
   subject: NamedNode, 
   contactInfo: ContactInfo,
   viewerMode: ViewerMode, 
+  layout: Layout,
   onSaved?: () => Promise<void> | void) {
     const hasAnyContactInfo =
     contactInfo?.emails.length > 0 ||
@@ -152,28 +154,16 @@ function renderContactInfoSectionDefault(
         <h3 id="contact-details-heading" tabindex="-1">${contactInfoHeadingText}</h3>
         <div class="profile-section-collapsible__actions">
           ${isOwner ? html`
-            <solid-ui-button
-              variant="tertiary"
-              class="profile__action-button profile-action-text profile-section-collapsible__edit-button"
-              aria-label="Edit contact information"
-              @click=${(event: Event) => {
-                return createContactInfoEditDialog(
-                  event,
-                  store,
-                  subject,
-                  contactInfo,
-                  viewerMode,
-                  onSaved
-                )
-              }}
-            >
-              <span class="profile-section-collapsible__edit-label profile__add-more-content">
-                <span class="profile__add-more-icon" aria-hidden="true">${addIcon}</span>
-                <span>Add More</span>
-              </span>
-              <span class="profile-section-collapsible__edit-icon" aria-hidden="true">${editIcon}</span>
-            </solid-ui-button>
-          ` : html``}
+              ${renderResponsiveActionButton({
+                layout,
+                className: 'profile-section-collapsible__edit-button',
+                ariaLabel: 'Edit contact information',
+                onClick: (event: Event) => createContactInfoEditDialog(event, store, subject, contactInfo, viewerMode, onSaved),
+                desktopIcon: html`<span slot="left-icon" class="profile-section-collapsible__action-label profile__add-more-icon" aria-hidden="true">${addIcon}</span>`,
+                desktopLabel: 'Add More',
+                mobileIcon: html`<span slot="icon" class="profile-section-collapsible__edit-icon" aria-hidden="true">${editIcon}</span>`
+              })}
+            ` : nothing}
           <solid-ui-button
             variant="ghost"
             class="profile-section-collapsible__toggle-button"
@@ -208,27 +198,18 @@ function renderContactInfoSectionDefault(
               </ul>
             `
           : html``}
-        ${hasAnyContactInfo ? html`` : html`<p>No contact details added yet.</p>`}
+        ${hasAnyContactInfo ? nothing : html`<p>No contact details added yet.</p>`}
       </div>
     </section>
   `
 }
 
-function renderOwnerEmptyContactInfoContent(
-  _store: LiveStore,
-  _subject: NamedNode,
-  _contactInfo: ContactInfo,
-  _viewerMode: ViewerMode,
-  _onSaved?: () => Promise<void> | void
-) {
+function renderOwnerEmptyContactInfoContent() {
   return html`
       <div class="profile__empty-state-content" role="group" aria-label="Empty contact information section">    
         <div class="contact-info__empty-icon-wrapper">
           <span class="contact-info__empty-icon">${envelopeIcon}</span>
         </div>
-        <p class="profile__empty-state-message contact-info__empty-message">
-            No additional contact info added yet.
-        </p>
       </div>
   `
 }
@@ -238,6 +219,7 @@ function renderOwnerEmptyContactInfoSection(
   subject: NamedNode,
   contactInfo: ContactInfo,
   viewerMode: ViewerMode,
+  layout: Layout,
   onSaved?: () => Promise<void> | void
 ) {
   return html`
@@ -252,24 +234,24 @@ function renderOwnerEmptyContactInfoSection(
       <header class="profile__section-header profile-section-collapsible__header">
         <h3 id="contact-details-heading" tabindex="-1">${contactInfoEmptyHeadingText}</h3>
         <div class="profile-section-collapsible__actions">
-          <solid-ui-button
-            variant="tertiary"
-            class="profile__action-button profile-action-text profile-section-collapsible__edit-button"
-            aria-label="Add contact information"
-            @click=${(event: Event) => {
-              return createContactInfoEditDialog(
-                event,
-                store,
-                subject,
-                contactInfo,
-                viewerMode,
-                onSaved
-              )
-            }}
-          >
-            <span class="profile-section-collapsible__edit-label">${addIcon} Add More</span>
-            <span class="profile-section-collapsible__edit-icon" aria-hidden="true">${editIcon}</span>
-          </solid-ui-button>
+         ${renderResponsiveActionButton({
+                    layout,
+                    className: 'profile-section-collapsible__edit-button',
+                    ariaLabel: 'Add contact information',
+                    onClick: (event: Event) => {
+                      return createContactInfoEditDialog(
+                        event,
+                        store,
+                        subject,
+                        contactInfo,
+                        viewerMode,
+                        onSaved
+                      )
+                    },
+                    desktopIcon: html`<span slot="left-icon" class="profile-section-collapsible__action-label profile__add-more-icon" aria-hidden="true">${addIcon}</span>`,
+                    desktopLabel: 'Add More',
+                    mobileIcon: html`<span slot="icon" class="profile-section-collapsible__edit-icon" aria-hidden="true">${editIcon}</span>`
+                  })}
           <solid-ui-button
             variant="ghost"
             class="profile-section-collapsible__toggle-button"
@@ -283,7 +265,7 @@ function renderOwnerEmptyContactInfoSection(
         </div>
       </header>
       <div id="contact-details-panel" class="profile-section-collapsible__content">
-        ${renderOwnerEmptyContactInfoContent(store, subject, contactInfo, viewerMode, onSaved)}
+        ${renderOwnerEmptyContactInfoContent()}
       </div>
     </section>
   `
@@ -294,8 +276,10 @@ export function renderContactInfoSection(
   subject: NamedNode,
   contactInfo: ContactInfo,
   viewerMode: ViewerMode,
+  layout: Layout,
   onSaved?: () => Promise<void> | void
 ) {
+  const currentLayout = layout || 'desktop'
   const safeContactInfo = {
     emails: contactInfo?.emails || [],
     phones: contactInfo?.phones || [],
@@ -306,12 +290,10 @@ export function renderContactInfoSection(
     safeContactInfo.phones.length > 0 ||
     safeContactInfo.addresses.length > 0
   const showOwnerEmptyContactInfo = !hasAnyContactInfo && viewerMode === 'owner'
-  const showSection = true
-  
-  return showSection ? html`
+
+  return html`
     ${showOwnerEmptyContactInfo
-      ? renderOwnerEmptyContactInfoSection(store, subject, safeContactInfo, viewerMode, onSaved)
-      : renderContactInfoSectionDefault(store, subject, safeContactInfo, viewerMode, onSaved)}
-  ` : ''
-  
+      ? renderOwnerEmptyContactInfoSection(store, subject, safeContactInfo, viewerMode, currentLayout, onSaved)
+      : renderContactInfoSectionDefault(store, subject, safeContactInfo, viewerMode, currentLayout, onSaved)}
+  `
 }

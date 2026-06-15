@@ -6,10 +6,6 @@
   --social-card-list-columns: none;
   --social-card-hidden-item-display: flex;
   --social-card-more-button-display: none;
-  --social-card-list-display: flex;
-  --social-card-list-columns: none;
-  --social-card-hidden-item-display: flex;
-  --social-card-more-button-display: none;
   border: 1px solid var(--color-border-lighter, #D1D5DB);
 }
 
@@ -116,13 +112,6 @@
 
 :is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .social-card .social-card__list {
   justify-content: flex-start;
-}
-
-:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile__section[data-profile-section='social'] .profile-section-collapsible__toggle-button,
-:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile__section--empty[data-profile-section='social'] .profile-section-collapsible__toggle-button {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
 }
 
 @media (max-width: 768px) {

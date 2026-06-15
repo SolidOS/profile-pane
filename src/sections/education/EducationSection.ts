@@ -109,10 +109,9 @@ export function renderEducationSection(
   const educationCard = EducationCard(educationData)
   const educationDetails: EducationDetails[] = educationData || []
   const hasEducation = educationDetails && educationDetails.length > 0
-  const showSection = true
   const isOwner = viewerMode === 'owner'
 
-  return showSection ? html`
+  return html`
     <section 
       aria-labelledby="education-heading" 
       class="profile__section profile-section-collapsible profile-section-collapsible--inline-mobile-actions"
@@ -154,5 +153,5 @@ export function renderEducationSection(
         ${hasEducation ? educationCard : html`<p>No education details added yet.</p>`}
       </div>
     </section>
-  ` : ''
+  `
 }

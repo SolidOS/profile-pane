@@ -4,7 +4,7 @@ import { NamedNode, LiveStore } from 'rdflib'
 import { authn } from 'solid-logic'
 import './ProfileView.css'
 import './styles/CollapsibleSection.css'
-import { ViewerMode } from './types'
+import { Layout, ViewerMode } from './types'
 import { presentProfileViewModel } from './ProfileViewModelPresenter'
 import { renderContactInfoSection } from './sections/contactInfo/ContactInfoSection'
 import { renderLanguageSection } from './sections/languages/LanguageSection'
@@ -19,6 +19,7 @@ import { renderBioSection } from './sections/bio/BioSection'
 import { renderSocialSection } from './sections/social/SocialSection'
 import { renderQRCodeSection } from './sections/qrcode/QRCodeSection'
 
+
 function getViewerMode(subject: NamedNode): ViewerMode {
   let mode: ViewerMode = 'anonymous'
   if (authn.currentUser() && authn.currentUser().sameTerm(subject)) mode = 'owner'
@@ -32,8 +33,9 @@ function renderSidebar(
   accounts,
   skills: SkillDetails[],
   languages: LanguageDetails[],
-  contactInfo: ContactInfo,
+  contactInfo: ContactInfo, 
   viewerMode: ViewerMode,
+  layout: Layout,
   onSaved?: () => Promise<void> | void
 ) {
   return html`
@@ -42,10 +44,10 @@ function renderSidebar(
     >
       <aside class="profile__sidebar-content" aria-labelledby="profile-sidebar-heading">
         <h2 id="profile-sidebar-heading" class="sr-only">Profile sidebar</h2>
-        ${renderSocialSection(store, subject, accounts, viewerMode, onSaved)}
-        ${renderSkillsSection(store, subject, skills, viewerMode, onSaved)}
-        ${renderLanguageSection(store, subject, languages, viewerMode, onSaved)}
-        ${renderContactInfoSection(store, subject, contactInfo, viewerMode, onSaved)}
+        ${renderSocialSection(store, subject, accounts, viewerMode, layout, onSaved)}
+        ${renderSkillsSection(store, subject, skills, viewerMode, layout, onSaved)}
+        ${renderLanguageSection(store, subject, languages, viewerMode, layout, onSaved)}
+        ${renderContactInfoSection(store, subject, contactInfo, viewerMode, layout, onSaved)}
         ${renderQRCodeSection(subject, store)}
       </aside>
     </div>
@@ -55,11 +57,11 @@ function renderSidebar(
 export async function ProfileView (
   subject: NamedNode,
   context: DataBrowserContext,
+  layout: Layout,
   onSaved?: () => Promise<void> | void
 ): Promise <TemplateResult> {
   const store = context.session.store as LiveStore
   const viewerMode = getViewerMode(subject)
-  const layout = context.environment?.layout ?? 'desktop'
   const theme = context.environment?.theme ?? 'light'
   const inputMode = context.environment?.inputMode ?? 'pointer'
 
@@ -73,14 +75,14 @@ export async function ProfileView (
   const accounts = viewModel.social
   const contactInfo = viewModel.contactInfo
 
-  const headingSection = await renderHeadingSection(context, subject, profileDetails, viewerMode, onSaved)
-  const bioSection = renderBioSection(store, subject, bioDetails, viewerMode, onSaved)
-  const skillsSection = renderSkillsSection(store, subject, skills, viewerMode, onSaved)
-  const languageSection = renderLanguageSection(store, subject, languages, viewerMode, onSaved)
-  const cvSection = renderCVSection(store, subject, rolesByType, viewerMode, onSaved)
-  const projectSection = renderProjectSection(store, subject, projects, viewerMode, onSaved)
-  const socialSection = renderSocialSection(store, subject, accounts, viewerMode, onSaved)
-  const contactInfoSection = renderContactInfoSection(store, subject, contactInfo, viewerMode, onSaved)
+  const headingSection = await renderHeadingSection(context, subject, profileDetails, viewerMode, layout,onSaved)
+  const bioSection = renderBioSection(store, subject, bioDetails, viewerMode, layout, onSaved)
+  const skillsSection = renderSkillsSection(store, subject, skills, viewerMode, layout, onSaved)
+  const languageSection = renderLanguageSection(store, subject, languages, viewerMode, layout, onSaved)
+  const cvSection = renderCVSection(store, subject, rolesByType, viewerMode, layout, onSaved)
+  const projectSection = renderProjectSection(store, subject, projects, viewerMode, layout, onSaved)
+  const socialSection = renderSocialSection(store, subject, accounts, viewerMode, layout, onSaved)
+  const contactInfoSection = renderContactInfoSection(store, subject, contactInfo, viewerMode, layout, onSaved)
   const qrCodeSection = renderQRCodeSection(subject, store)
 
   if (layout === 'mobile') {
@@ -130,7 +132,7 @@ export async function ProfileView (
           ${projectSection}
 
         </section>
-        ${renderSidebar(store, subject, accounts, skills, languages, contactInfo, viewerMode, onSaved)}
+        ${renderSidebar(store, subject, accounts, skills, languages, contactInfo, viewerMode, layout, onSaved)}
       </div>
     </div>
   `
