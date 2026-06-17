@@ -1,21 +1,45 @@
 import { describe, expect, it, jest, beforeEach } from '@jest/globals'
-import { sym } from 'rdflib'
+import { graph, sym } from 'rdflib'
 import { uploadPhotoFile } from '../../src/sections/heading/imageHelpers'
 
 const mockCurrentUser = jest.fn()
 const mockSetACLUserPublic = jest.fn()
 const mockDebugError = jest.fn()
 
-jest.mock('solid-logic', () => ({
-  authn: {
-    currentUser: () => mockCurrentUser()
-  },
-  solidLogicSingleton: {
-    acl: {
-      setACLUserPublic: (...args: unknown[]) => mockSetACLUserPublic(...args)
-    }
+jest.mock('solid-logic', () => {
+  const store = require('rdflib').graph()
+  return {
+    store,
+    authn: {
+      currentUser: () => mockCurrentUser(),
+      checkUser: jest.fn().mockResolvedValue(null),
+      login: jest.fn(),
+    },
+    authSession: {
+      webId: null,
+      isActive: false,
+      info: { isLoggedIn: false, webId: null },
+      login: jest.fn(),
+      logout: jest.fn(),
+      events: { on: jest.fn(), off: jest.fn() },
+    },
+    solidLogicSingleton: {
+      store,
+      acl: {
+        setACLUserPublic: (...args: unknown[]) => mockSetACLUserPublic(...args)
+      },
+      profile: { loadPreferences: jest.fn(), loadProfile: jest.fn() },
+      typeIndex: {
+        getScopedAppInstances: jest.fn(),
+        getRegistrations: jest.fn(),
+        loadAllTypeIndexes: jest.fn(),
+        getScopedAppsFromIndex: jest.fn(),
+      },
+    },
+    SolidLogic: class {},
+    AppDetails: {},
   }
-}))
+})
 
 jest.mock('../../src/utils/debug', () => ({
   error: (...args: unknown[]) => mockDebugError(...args)

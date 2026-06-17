@@ -6,7 +6,6 @@ import { TextEncoder, TextDecoder } from 'util'
 
 global.TextEncoder = TextEncoder as any
 global.TextDecoder = TextDecoder as any
-
 // Load modules that depend on TextEncoder/TextDecoder only after globals are ready.
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const $rdf = require('rdflib');
