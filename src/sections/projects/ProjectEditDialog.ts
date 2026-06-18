@@ -1,6 +1,6 @@
 import { getSharedDialogSaveButton, openInputDialog } from '../../ui/dialog'
 import { html, render } from 'lit-html'
-import 'solid-ui/components/actions/button'
+import 'solid-ui/components/button'
 import { ProjectDetails, ProjectRow } from './types'
 import '../../styles/EditDialogs.css'
 import '../contactInfo/ContactInfoEditDialog.css'

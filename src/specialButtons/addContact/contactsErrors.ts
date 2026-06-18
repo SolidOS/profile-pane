@@ -1,4 +1,4 @@
-import type { Button as SolidUIButtonElement } from 'solid-ui/components/actions/button'
+import type { Button as SolidUIButtonElement } from 'solid-ui/components/button'
 import { DataBrowserContext } from  'pane-registry'
 import { complain } from  '../../buttonsHelper'
 
