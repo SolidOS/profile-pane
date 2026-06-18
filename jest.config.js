@@ -10,7 +10,7 @@ module.exports = {
     '^.+\\.(ts|js)$': ['babel-jest'],
   },
   setupFilesAfterEnv: ["./test/helpers/jest.setup.ts"],
-  transformIgnorePatterns: ['/node_modules/(?!lit-html|lit|@lit|@uvdsl/solid-oidc-client-browser|uuid|@noble)'],
+  transformIgnorePatterns: ['/node_modules/(?!lit-html|lit|@lit|@uvdsl/solid-oidc-client-browser|uuid|@noble|solid-logic|solid-ui)'],
   testPathIgnorePatterns: ['/node_modules/', '/lib/'],
   roots: ['<rootDir>/src', '<rootDir>/test', '<rootDir>/__mocks__'],
   moduleNameMapper: {
@@ -18,7 +18,6 @@ module.exports = {
     '\\.module\\.css$': 'identity-obj-proxy',
     '\\.css$': '<rootDir>/__mocks__/fileMock.js',
     '^SolidLogic$': 'solid-logic',
-    '^solid-logic$': '<rootDir>/__mocks__/solid-logic.js',
     '^\\$rdf$': 'rdflib'
   }
 }

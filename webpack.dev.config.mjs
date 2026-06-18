@@ -1,11 +1,6 @@
 import HtmlWebpackPlugin from "html-webpack-plugin";
 import NodePolyfillPlugin from "node-polyfill-webpack-plugin";
 import webpack from "webpack";
-import { resolve } from 'node:path';
-import { fileURLToPath } from 'node:url';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = resolve(__filename, '..');
 
 export default [
   {
@@ -18,7 +13,9 @@ export default [
       }),
       new NodePolyfillPlugin(),
       new webpack.ProvidePlugin({
-        $rdf: 'rdflib'
+        $rdf: 'rdflib',
+        SolidLogic: 'solid-logic',
+        UI: 'solid-ui'
       }),
       new webpack.DefinePlugin({
         'global': 'globalThis',
@@ -70,10 +67,10 @@ export default [
       alias: {
         $rdf: 'rdflib',
         rdflib: 'rdflib',
-        'solid-logic': resolve(__dirname, '../solid-logic/dist'),
-        'solid-logic/': resolve(__dirname, '../solid-logic/dist/'),
-        'solid-ui': resolve(__dirname, '../solid-ui/dist'),
-        'solid-ui/': resolve(__dirname, '../solid-ui/dist/')
+        SolidLogic: 'solid-logic',
+        'solid-logic': 'solid-logic',
+        UI: 'solid-ui',
+        'solid-ui': 'solid-ui'
       }
     },
     output: {
