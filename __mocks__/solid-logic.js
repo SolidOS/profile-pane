@@ -21,7 +21,8 @@ const instance = createAutoMock()
 instance.store = store
 
 function currentUser() {
-  const username = globalThis.$SolidTestEnvironment && globalThis.$SolidTestEnvironment.username
+  const env = globalThis.$SolidTestEnvironment ?? globalThis.window?.$SolidTestEnvironment
+  const username = env?.username
   return username ? rdf.sym(username) : null
 }
 
