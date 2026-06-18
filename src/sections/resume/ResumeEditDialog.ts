@@ -128,7 +128,18 @@ function sanitizeResumeFieldValue(value: string): string {
 }
 
 function normalizeResumeOrganizationPublicId(value: string): string {
-  return sanitizeResumeFieldValue(value)
+  const cleaned = sanitizeResumeFieldValue(value)
+  return isAbsoluteUri(cleaned) ? cleaned : ''
+}
+
+function isAbsoluteUri(value: string): boolean {
+  if (!value) return false
+  try {
+    new URL(value)
+    return true
+  } catch {
+    return false
+  }
 }
 
 type WikidataSearchResult = {

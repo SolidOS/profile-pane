@@ -46,6 +46,23 @@ if (typeof HTMLCanvasElement !== 'undefined') {
   })
 }
 
+// Jest/jsdom polyfill for custom element form internals methods not implemented by jsdom.
+// In jsdom, attachInternals() exists for custom elements, but ElementInternals.prototype
+// may lack setFormValue and other form-associated methods used by solid-ui components.
+if (typeof (globalThis as any).ElementInternals !== 'undefined') {
+  const internalsPrototype = (globalThis as any).ElementInternals.prototype
+  if (internalsPrototype && typeof internalsPrototype.setFormValue !== 'function') {
+    internalsPrototype.setFormValue = function (_value: unknown) {
+      // noop: jsdom does not fully support form-associated custom elements.
+    }
+  }
+  if (internalsPrototype && typeof internalsPrototype.setValidity !== 'function') {
+    internalsPrototype.setValidity = function (_flags: unknown, _message?: string) {
+      // noop: provide minimal compatibility for custom element validation handling.
+    }
+  }
+}
+
 // Added 2024-09
 global.Buffer = Buffer
 

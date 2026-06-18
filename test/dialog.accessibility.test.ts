@@ -411,10 +411,10 @@ describe('Dialog accessibility', () => {
 
     await waitForDialogFocus()
 
-    const skillsCombobox = document.querySelector('solid-ui-combobox[data-skill-row-index="0"]') as (HTMLElement & { _popupOpen?: boolean }) | null
+    const skillsCombobox = document.querySelector('solid-ui-combobox[data-skill-row-index="0"]') as HTMLElement | null
     expect(skillsCombobox).not.toBeNull()
     expect(skillsCombobox?.shadowRoot?.activeElement?.tagName).toBe('INPUT')
-    expect(skillsCombobox?._popupOpen).toBe(false)
+    expect(skillsCombobox?.hasAttribute('popup-open')).toBe(false)
 
     getSharedDialogCancelButton(document)?.click()
     await expect(skillsPromise).resolves.toBeUndefined()
@@ -429,10 +429,10 @@ describe('Dialog accessibility', () => {
 
     await waitForDialogFocus()
 
-    const languageCombobox = document.querySelector('solid-ui-combobox[data-language-row-index="0"]') as (HTMLElement & { _popupOpen?: boolean }) | null
+    const languageCombobox = document.querySelector('solid-ui-combobox[data-language-row-index="0"]') as HTMLElement | null
     expect(languageCombobox).not.toBeNull()
     expect(languageCombobox?.shadowRoot?.activeElement?.tagName).toBe('INPUT')
-    expect(languageCombobox?._popupOpen).toBe(false)
+    expect(languageCombobox?.hasAttribute('popup-open')).toBe(false)
 
     getSharedDialogCancelButton(document)?.click()
     await expect(languagePromise).resolves.toBeUndefined()
