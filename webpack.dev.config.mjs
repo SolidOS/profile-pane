@@ -63,6 +63,7 @@ export default [
     },
     resolve: {
       extensions: [".js", ".ts"],
+      mainFiles: ['index.esm', 'index'],
       alias: {
         $rdf: 'rdflib',
         rdflib: 'rdflib',
