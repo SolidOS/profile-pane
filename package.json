@@ -38,7 +38,6 @@
     "prepush": "npm test && npm run lint-fix && npm run typecheck && npm run typecheck-test",
     "prepublishOnly": "npm run test && npm run build",
     "preversion": "npm run lint && npm run typecheck && npm test",
-    "postpublish": "git push origin main --follow-tags",
     "start": "webpack serve --config webpack.dev.config.mjs --open"
   },
   "keywords": [
@@ -57,15 +56,10 @@
   "dependencies": {
     "@solid-data-modules/contacts-rdflib": "^0.7.1",
     "lit-html": "^3.3.3",
-    "pane-registry": "^3.1.2-test.0",
+    "pane-registry": "^3.1.2-0",
     "patch-package": "^8.0.1",
     "qrcode": "^1.5.4",
     "validate-color": "^2.2.4"
-  },
-  "peerDependencies": {
-    "rdflib": "^2.3.9",
-    "solid-logic": "^4.0.8-test.0",
-    "solid-ui": "^3.1.3-0"
   },
   "overrides": {
     "rdflib": "$rdflib",
@@ -87,8 +81,8 @@
     "babel-loader": "^10.1.1",
     "babel-plugin-inline-import": "^3.0.0",
     "babel-plugin-transform-import-meta": "^2.3.3",
-    "chat-pane": "^3.0.4-0",
-    "contacts-pane": "^3.2.1-1",
+    "chat-pane": "^3.0.4-1",
+    "contacts-pane": "^3.2.1-2",
     "copy-webpack-plugin": "^14.0.0",
     "css-loader": "^7.1.4",
     "eslint": "^9.39.4",
@@ -99,8 +93,8 @@
     "jsdom": "^29.1.1",
     "node-polyfill-webpack-plugin": "^4.1.0",
     "rdflib": "^2.3.9",
-    "solid-logic": "^4.0.8-test.0",
-    "solid-ui": "^3.1.3-0",
+    "solid-logic": "^4.0.8-0",
+    "solid-ui": "file:../solid-ui",
     "style-loader": "^4.0.0",
     "terser-webpack-plugin": "^5.6.0",
     "ts-loader": "^9.5.7",
@@ -108,5 +102,13 @@
     "webpack": "^5.106.2",
     "webpack-cli": "^7.0.2",
     "webpack-dev-server": "^5.2.4"
-  }
+  },
+  "solidosDependencies": [
+    "rdflib",
+    "solid-logic",
+    "solid-ui",
+    "pane-registry",
+    "chat-pane",
+    "contacts-pane"
+  ]
 }
