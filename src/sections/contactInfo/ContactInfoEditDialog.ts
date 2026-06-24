@@ -1,11 +1,7 @@
 import { openInputDialog } from '../../ui/dialog'
 import { html, render } from 'lit-html'
 import 'solid-ui/components/button'
-<<<<<<< HEAD
 import 'solid-ui/components/select'
-=======
-import 'solid-ui/components/forms/select'
->>>>>>> 1ce1259 (#401 contactinfo section)
 import { ContactAddressRow, ContactInfo, ContactMutationPlan, ContactPointRow } from './types'
 import '../../styles/EditDialogs.css'
 import './ContactInfoEditDialog.css'

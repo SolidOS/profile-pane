@@ -1,11 +1,7 @@
 import { getSharedDialogSaveButton, openInputDialog } from '../../ui/dialog'
 import { html, render } from 'lit-html'
 import 'solid-ui/components/button'
-<<<<<<< HEAD
 import 'solid-ui/components/combobox'
-=======
-import 'solid-ui/components/forms/combobox'
->>>>>>> 92e88a4 (#401 skills)
 import { SkillDetails, SkillRow } from './types'
 import '../../styles/EditDialogs.css'
 import '../contactInfo/ContactInfoEditDialog.css'

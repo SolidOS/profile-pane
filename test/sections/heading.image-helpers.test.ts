@@ -1,5 +1,5 @@
 import { describe, expect, it, jest, beforeEach } from '@jest/globals'
-import { graph, sym } from 'rdflib'
+import { sym } from 'rdflib'
 import { uploadPhotoFile } from '../../src/sections/heading/imageHelpers'
 
 const mockCurrentUser = jest.fn()
@@ -12,7 +12,7 @@ jest.mock('solid-logic', () => {
     store,
     authn: {
       currentUser: () => mockCurrentUser(),
-      checkUser: jest.fn().mockResolvedValue(null),
+        checkUser: jest.fn(() => Promise.resolve(undefined)),
       login: jest.fn(),
     },
     authSession: {

@@ -2,11 +2,7 @@ import { alertDialog, openInputDialog } from '../../ui/dialog'
 import { html, render } from 'lit-html'
 import 'solid-ui/components/button'
 import 'solid-ui/components/combobox'
-<<<<<<< HEAD
 import 'solid-ui/components/select'
-=======
-import 'solid-ui/components/forms/select'
->>>>>>> 2f6dc3c (#401 resume)
 import { RoleDetails, ResumeRow } from './types'
 import '../../styles/EditDialogs.css'
 import { LiveStore, NamedNode, literal } from 'rdflib'
@@ -126,28 +122,6 @@ const RESUME_ORGANIZATION_SEARCH_CLASS_URIS = Array.from(
 
 const RESUME_PRESENT_MONTH_VALUE = '__present__'
 
-<<<<<<< HEAD
-function sanitizeResumeFieldValue(value: string): string {
-  return sanitizeTextValue(value)
-}
-
-function normalizeResumeOrganizationPublicId(value: string): string {
-  const cleaned = sanitizeResumeFieldValue(value)
-  return isAbsoluteUri(cleaned) ? cleaned : ''
-}
-
-function isAbsoluteUri(value: string): boolean {
-  if (!value) return false
-  try {
-    new URL(value)
-    return true
-  } catch {
-    return false
-  }
-}
-
-=======
->>>>>>> 2f6dc3c (#401 resume)
 type WikidataSearchResult = {
   id?: string
   label?: string
