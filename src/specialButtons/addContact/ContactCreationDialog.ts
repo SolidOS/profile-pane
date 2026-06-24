@@ -23,7 +23,7 @@ type ContactsButtonElement = SolidUIButtonElement
 
 function setContactsListButtonSelected(button: Element, isSelected: boolean): void {
   const listButton = button as ContactsButtonElement
-  listButton.selected = isSelected
+  ;(listButton as any).selected = isSelected
   if (isSelected) {
     listButton.setAttribute('selected', '')
   } else {
@@ -35,7 +35,7 @@ function setContactsListButtonSelected(button: Element, isSelected: boolean): vo
 function isContactsListButtonSelected(button: Element | null): boolean {
   if (!(button instanceof HTMLElement)) return false
   const listButton = button as ContactsButtonElement
-  return listButton.selected || button.hasAttribute('selected')
+  return (listButton as any).selected || button.hasAttribute('selected')
 }
 
 function createContactsButtonElement(
