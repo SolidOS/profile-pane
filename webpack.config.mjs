@@ -61,8 +61,11 @@ const normalConfig = {
     new CopyPlugin({
       patterns: [
         {
-          from: path.resolve('src/styles'),
-          to: path.resolve('lib/styles'),
+          from: 'src/**/*.css',
+          to: ({ context, absoluteFilename }) => {
+            const relPath = path.relative(path.resolve('src'), absoluteFilename)
+            return path.resolve('lib', relPath)
+          },
         },
       ],
     }),
@@ -91,8 +94,11 @@ const minConfig = {
     new CopyPlugin({
       patterns: [
         {
-          from: path.resolve('src/styles'),
-          to: path.resolve('lib/styles'),
+          from: 'src/**/*.css',
+          to: ({ context, absoluteFilename }) => {
+            const relPath = path.relative(path.resolve('src'), absoluteFilename)
+            return path.resolve('lib', relPath)
+          },
         },
       ],
     }),
