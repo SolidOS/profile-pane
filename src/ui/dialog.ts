@@ -517,6 +517,8 @@ export function openInputDialog (options: OpenInputDialogCustom): Promise<InputD
   const submitProxy = options.dom.createElement('button')
   submitProxy.type = 'submit'
   submitProxy.hidden = true
+  submitProxy.style.display = 'none'
+  submitProxy.setAttribute('aria-hidden', 'true')
   submitProxy.tabIndex = -1
   options.form.appendChild(submitProxy)
 

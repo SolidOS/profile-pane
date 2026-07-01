@@ -405,7 +405,7 @@ function renderLanguageInputRow({
         ></solid-ui-combobox>
         <small class="profile-edit-dialog__input-help-text">Type to search and select one language suggestion.</small>
       </label>
-      <label aria-label=${proficiencyLabel} class="label" hidden>
+      <label aria-label=${proficiencyLabel} class="label profile-edit-dialog__field-type profile-edit-dialog__field-type--language-proficiency" hidden>
         <select name=${proficiencyInputName} id=${proficiencySelectId} @change=${handleProficiencyInput} .value=${row?.proficiency || ''}>
           <option value="Basic">Basic</option>
           <option value="Intermediate">Intermediate</option>

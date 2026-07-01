@@ -371,6 +371,11 @@ solid-ui-button.profile-edit-dialog__drag-handle:active {
   min-width: 0;
 }
 
+.profile-edit-dialog__field-type--language-proficiency,
+.profile-edit-dialog__field-type--language-proficiency[hidden] {
+  display: none !important;
+}
+
 .profile-edit-dialog__actions--language {
   margin-left: 0;
 }
