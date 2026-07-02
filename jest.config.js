@@ -10,7 +10,7 @@ module.exports = {
     '^.+\\.(ts|js)$': ['babel-jest'],
   },
   setupFilesAfterEnv: ["./test/helpers/jest.setup.ts"],
-  transformIgnorePatterns: ['/node_modules/(?!lit-html|lit|@lit|@uvdsl/solid-oidc-client-browser|uuid|@noble|solid-logic|solid-ui)'],
+  transformIgnorePatterns: ['/node_modules/(?!lit-html|lit|@lit|@uvdsl/solid-oidc-client-browser|uuid|@noble|solid-logic|solid-ui|@awesome.me|@shoelace-style)'],
   testPathIgnorePatterns: ['/node_modules/', '/lib/'],
   roots: ['<rootDir>/src', '<rootDir>/test', '<rootDir>/__mocks__'],
   moduleNameMapper: {
