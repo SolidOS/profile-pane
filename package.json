@@ -19,7 +19,7 @@
   ],
   "scripts": {
     "clean": "rm -rf lib",
-    "build": "npm run clean && npm run typecheck && npm run build-dist && npm run build-js",
+    "build": "npm run clean && npm run typecheck && npm run build-js && npm run build-dist",
     "build-js": "babel src --out-dir lib --extensions '.ts' --copy-files && tsc --emitDeclarationOnly",
     "build-dist": "webpack --progress",
     "dev": "sh -c 'npm run watch & npm run start'",

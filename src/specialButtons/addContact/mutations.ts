@@ -394,17 +394,17 @@ async function handleAddressBookCreation(
       .replace(/^-+|-+$/g, '') || 'address-book'
 
     const newBase = `${normalizedContainer}${addressBookSlug}/`
-    const mintResult = await contacts.mintNew(dataBrowserContext, {
+     const mintResult = await contacts.mintNew(dataBrowserContext, {
       me,
       dom: dataBrowserContext.dom,
       div,
       newBase,
       instanceClass: ns.vcard('AddressBook'),
       instanceName: sanitizedAddressName
-    })
+    }) 
 
     addressBookUri = mintResult?.newInstance?.uri || `${newBase}index.ttl#this`
-    await updateAddressBookName(dataBrowserContext, addressBookUri, sanitizedAddressName)
+    await updateAddressBookName(dataBrowserContext, addressBookUri, sanitizedAddressName) 
   } catch (error) {
     throw error instanceof Error ? error : new Error(String(error))
   }

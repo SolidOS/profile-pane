@@ -66,7 +66,7 @@
 .profile__details {
   grid-area: details;
   color: var(--color-text-secondary, #4A5565);
-  font-size: var(--solid-ui-font-size-sm, 0.875rem); /* 14px */
+  font-size: var(--font-size-sm, 0.875rem); /* 14px */
   display: flex;
   width: 100%;
   align-content: flex-start;
@@ -392,11 +392,11 @@
 :is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile__info {
   grid-column: 2 / -1;
   align-self: stretch;
-  justify-content: flex-end;
+  justify-content: flex-start;
 }
 
 :is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile__avatar {
-  align-self: flex-end;
+  align-self: flex-start;
 }
 
 :is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile__heading-actions {
@@ -425,17 +425,8 @@
   display: inline;
   font-size: 1.375rem;
   line-height: 1.15;
-}
-
-:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile__identity {
-  display: flow-root;
-}
-
-:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile__identity::before {
-  content: '';
-  float: right;
-  width: calc(2.75rem + 0.3125rem);
-  height: 2rem;
+  white-space: nowrap;
+  overflow-wrap: normal;
 }
 
 :is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile__pronouns {
@@ -446,7 +437,7 @@
 }
 
 :is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile__role-org {
-  font-size: var(--solid-ui-font-size-md, 1rem);
+  font-size: var(--solid-ui-font-size-sm, 0.875rem);
 }
 
 :is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile__hero,
@@ -474,7 +465,7 @@
 }
 
 :is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile__details {
-  font-size: var(--solid-ui-font-size-sm, 0.75rem);
+  font-size: var(--profile-heading-compact-detail-size, 0.75rem);
   gap: var(--profile-heading-compact-details-gap);
 }
 
@@ -498,11 +489,11 @@
   .profile__info {
     grid-column: 2 / -1;
     align-self: stretch;
-    justify-content: flex-end;
+    justify-content: flex-start;
   }
 
   .profile__avatar {
-    align-self: flex-end;
+    align-self: flex-start;
   }
 
   .profile__heading-actions {
@@ -531,14 +522,12 @@
     display: inline;
     font-size: 1.375rem;
     line-height: 1.15;
-  }
-
-  .profile__identity {
-    display: flow-root;
+    white-space: nowrap;
+    overflow-wrap: normal;
   }
 
   .profile__role-org {
-    font-size: var(--solid-ui-font-size-md, 1rem);
+    font-size: var(--solid-ui-font-size-sm, 0.875rem);
   }
 
   .profile__hero-alt {
@@ -559,7 +548,7 @@
   }
 
   .profile__details {
-    font-size: var(--solid-ui-font-size-sm, 0.75rem);
+    font-size: var(--profile-heading-compact-detail-size, 0.75rem);
     gap: var(--profile-heading-compact-details-gap);
   }
 
@@ -584,11 +573,11 @@
   .profile__info {
     grid-column: 2 / -1;
     align-self: stretch;
-    justify-content: flex-end;
+    justify-content: flex-start;
   }
 
   .profile__avatar {
-    align-self: flex-end;
+    align-self: flex-start;
   }
 
   .profile__heading-actions {
@@ -617,14 +606,12 @@
     display: inline;
     font-size:  1.375rem;
     line-height: 1.15;
-  }
-
-  .profile__identity {
-    display: flow-root;
+    white-space: nowrap;
+    overflow-wrap: normal;
   }
 
   .profile__role-org {
-    font-size: var(--solid-ui-font-size-md, 1rem);
+    font-size: var(--solid-ui-font-size-sm, 0.875rem);
   }
 
   .profile__hero-alt {
@@ -645,7 +632,7 @@
   }
 
   .profile__details {
-    font-size: var(--solid-ui-font-size-sm, 0.75rem);
+    font-size: var(--profile-heading-compact-detail-size, 0.75rem);
     gap: var(--profile-heading-compact-details-gap);
   }
 

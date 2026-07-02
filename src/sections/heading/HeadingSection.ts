@@ -78,10 +78,9 @@ export const renderHeadingSection = async (
                       desktopLabel: 'Edit',
                       mobileIcon: html`<span slot="icon" class="profile-section-collapsible__edit-icon" aria-hidden="true">${editIcon}</span>`
                     })}
-              ` : nothing}
+                  </div>
+                ` : nothing}
             ` : nothing}
-        </div>
-        <div class="profile__heading-bottom">
           <div class="profile__details">
             <div class="profile__meta-row" role="group" aria-label="Additional profile information">
               ${Line(dateOfBirthDisplay, birthdayIcon, '')}

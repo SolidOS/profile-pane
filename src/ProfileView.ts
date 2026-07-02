@@ -22,8 +22,11 @@ import { renderQRCodeSection } from './sections/qrcode/QRCodeSection'
 
 function getViewerMode(subject: NamedNode): ViewerMode {
   let mode: ViewerMode = 'anonymous'
-  if (authn.currentUser() && authn.currentUser().sameTerm(subject)) mode = 'owner'
-  if (authn.currentUser() && !authn.currentUser().sameTerm(subject)) mode = 'authenticated'
+  const currentUser = authn.currentUser()
+  const sameTerm = currentUser ? currentUser.sameTerm(subject) : false
+
+  if (currentUser && sameTerm) mode = 'owner'
+  if (currentUser && !sameTerm) mode = 'authenticated'
   return mode
 }
 

@@ -126,6 +126,7 @@ function renderOwnerEmptyBioContent(
     </div>
     <solid-ui-button
       variant="secondary"
+      class="profile__action-button--empty"
       @click=${(event: Event) => {
         return createBioEditDialog(
           event,

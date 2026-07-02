@@ -292,6 +292,7 @@ solid-ui-button.profile-edit-dialog__drag-handle:active {
 .profile-edit-dialog__field select,
 .profile-edit-dialog__field-type input,
 .profile-edit-dialog__field-type select {
+  margin-block-start: 0;
   width: 100%;
   max-width: 100%;
   box-sizing: border-box;

@@ -235,6 +235,12 @@ solid-ui-button.profile__btn-contacts {
   width: fit-content;
 }
 
+.profile-grid solid-ui-button.profile__action-button--empty .profile__action-icon[slot='left-icon'] {
+  display: inline-flex;
+  align-items: center;
+  transform: translateY(-1px);
+}
+
 .profile-grid solid-ui-button.profile__action-button--empty:hover .profile__action-icon svg path,
 .profile-grid solid-ui-button.profile__action-button--empty:focus-visible .profile__action-icon svg path,
 .profile-grid solid-ui-button.profile__action-button--empty:focus-within .profile__action-icon svg path {
@@ -466,25 +472,6 @@ solid-ui-button.profile__btn-contacts {
 :is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__section--empty .profile__empty-state-content > p {
   text-align: center;
   width: 100%;
-}
-
-/* App-driven mobile: profile header and bio actions */
-:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__name {
-  font-size: var(--profile-mobile-header-name-size) !important;
-  line-height: 1.15 !important;
-}
-
-:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__role-org {
-  font-size: var(--profile-mobile-header-job-title-size) !important;
-}
-
-:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__details {
-  font-size: var(--profile-mobile-header-detail-size) !important;
-}
-
-:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__pronouns {
-  font-size: var(--profile-mobile-header-pronouns-size) !important;
-  line-height: 1.1 !important;
 }
 
 :is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile__section--empty .profile-section-collapsible__actions > .profile-section-collapsible__edit-button {
@@ -849,24 +836,6 @@ solid-ui-button.profile__btn-contacts {
     line-height: 1.2 !important;
   }
 
-  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid .profile__name {
-    font-size: var(--profile-mobile-header-name-size) !important;
-    line-height: 1.15 !important;
-  }
-
-  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid .profile__role-org {
-    font-size: var(--profile-mobile-header-job-title-size) !important;
-  }
-
-  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid .profile__details {
-    font-size: var(--profile-mobile-header-detail-size) !important;
-  }
-
-  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid .profile__pronouns {
-    font-size: var(--profile-mobile-header-pronouns-size) !important;
-    line-height: 1.1 !important;
-  }
-
   /* Narrow viewport: empty-state edit actions */
   :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile__section--empty .profile-section-collapsible__actions > .profile-section-collapsible__edit-button {
     order: 2;
@@ -941,31 +910,6 @@ solid-ui-button.profile__btn-contacts {
   .profile-grid .profile__section--empty .profile__empty-state-content > p {
     text-align: center;
     width: 100%;
-  }
-
-  /* Narrow container: typography */
-  .profile-grid .profile__empty-state-content > h2,
-  .profile-grid .resume-card__section h3 {
-    font-size: var(--profile-mobile-section-heading-size) !important;
-    line-height: 1.2 !important;
-  }
-
-  .profile-grid .profile__name {
-    font-size: var(--profile-mobile-header-name-size) !important;
-    line-height: 1.15 !important;
-  }
-
-  .profile-grid .profile__role-org {
-    font-size: var(--profile-mobile-header-job-title-size) !important;
-  }
-
-  .profile-grid .profile__details {
-    font-size: var(--profile-mobile-header-detail-size) !important;
-  }
-
-  .profile-grid .profile__pronouns {
-    font-size: var(--profile-mobile-header-pronouns-size) !important;
-    line-height: 1.1 !important;
   }
 
   /* Narrow container: empty-state edit actions */
