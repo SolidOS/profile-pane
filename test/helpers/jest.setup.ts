@@ -116,5 +116,5 @@ if (typeof window !== 'undefined' && !(window as any).__nwsapiPatched) {
 jest.mock('@shoelace-style/localize', () => ({
   LocalizeController: class {},
   registerTranslation: () => {},
-}))
+}), { virtual: true })
 
