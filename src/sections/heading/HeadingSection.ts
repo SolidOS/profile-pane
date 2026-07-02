@@ -10,7 +10,6 @@ import { toDisplayDateDMY } from './dateHelpers'
 import { birthdayIcon, editIcon, locationIcon, personInCircleIcon } from '../../icons-svg/profileIcons'
 import { emailIcon, phoneIcon } from '../../icons-svg/contactIcons'
 import { addMeToYourFriendsDiv } from '../../specialButtons/addMeToYourFriends'
-import { addMeToYourContactsDiv } from '../../specialButtons/addContact/addMeToYourContacts'
 import { resolvePhotoDisplaySrc } from './imageHelpers'
 import { renderResponsiveActionButton } from '../../ui/responsiveActionButton'
 
@@ -38,7 +37,6 @@ export const renderHeadingSection = async (
   const resolvedImageSrc = await resolvePhotoDisplaySrc(context.session.store, imageSrc)
   const isOwner = viewerMode === 'owner'
   const isAuthenticatedViewer = viewerMode === 'authenticated'
-  const contactsButton = isAuthenticatedViewer ? await addMeToYourContactsDiv(subject, context) : nothing
   const friendsButton = isAuthenticatedViewer ? addMeToYourFriendsDiv(subject, context, viewerMode) : nothing
   
   const phoneValue = toText(primaryPhone?.valueNode).replace(/^tel:/i, '')
@@ -63,7 +61,6 @@ export const renderHeadingSection = async (
           ${isOwner || isAuthenticatedViewer ? html`
                 ${isAuthenticatedViewer ? html`
                   <div class="profile__actions profile__heading-actions">
-                    ${contactsButton}
                     ${friendsButton}
                   </div>
                 ` : nothing}

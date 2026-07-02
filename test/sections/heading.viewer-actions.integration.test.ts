@@ -13,10 +13,7 @@ import { authn } from 'solid-logic'
 import { sym } from 'rdflib'
 import { renderHeadingSection } from '../../src/sections/heading/HeadingSection'
 import { addMeToYourFriendsDiv } from '../../src/specialButtons/addMeToYourFriends'
-import {
-  addMeToYourContactsButtonText,
-  addMeToYourFriendsButtonText
-} from '../../src/texts/buttonTexts'
+import { addMeToYourFriendsButtonText } from '../../src/texts/buttonTexts'
 import { context } from '../setup'
 
 const ownerSubject = sym('https://janedoe.example/profile/card#me')
@@ -60,7 +57,7 @@ describe('Heading viewer actions integration', () => {
     baseStore.whether = jest.fn().mockReturnValue(0)
   })
 
-  it('renders the real contacts and friends actions for authenticated viewers', async () => {
+  it('renders the real friends action for authenticated viewers', async () => {
     jest.spyOn(authn, 'currentUser').mockReturnValue(authenticatedViewer as any)
 
     const container = document.createElement('div')
@@ -68,13 +65,9 @@ describe('Heading viewer actions integration', () => {
 
     render(await renderHeadingSection(context, ownerSubject, profile as any, 'authenticated', 'desktop'), container)
 
-    const contactsButtonSection = container.querySelector('.profile-contacts-button__section') as HTMLElement | null
-
-    expect(contactsButtonSection).not.toBeNull()
-    expect(contactsButtonSection?.hidden).toBe(true)
     expect(container.querySelector('.profile-friends-button__section')).not.toBeNull()
-    expect(container.textContent).toContain(addMeToYourContactsButtonText)
     expect(container.textContent).toContain(addMeToYourFriendsButtonText)
+    expect(container.querySelector('.profile-contacts-button__section')).toBeNull()
     expect(container.querySelector('.profile__heading-edit-action')).toBeNull()
 
     container.remove()

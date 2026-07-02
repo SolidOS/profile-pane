@@ -131,18 +131,13 @@
 }
 
 .profile__heading-actions > .profile-friends-button__section,
-.profile__heading-actions > #add-to-contacts-button-container {
+.profile__heading-actions > .profile-friends-button__section {
   width: auto;
   min-width: 0;
   flex: var(--profile-heading-action-item-flex);
 }
 
-.profile__heading-actions > #add-to-contacts-button-container {
-  display: none !important;
-}
-
-.profile__heading-actions > .profile-friends-button__section > solid-ui-button.profile__btn-friends,
-.profile__heading-actions > #add-to-contacts-button-container > solid-ui-button.profile__btn-contacts {
+.profile__heading-actions > .profile-friends-button__section > solid-ui-button.profile__btn-friends {
   width: auto;
   max-width: 100%;
 }
@@ -414,8 +409,7 @@
   flex-wrap: nowrap;
 }
 
-:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile__heading-actions > .profile-friends-button__section > solid-ui-button.profile__btn-friends,
-:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile__heading-actions > #add-to-contacts-button-container > solid-ui-button.profile__btn-contacts {
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile__heading-actions > .profile-friends-button__section > solid-ui-button.profile__btn-friends {
   min-width: 0;
   inline-size: auto;
   min-height: var(--button-height-sm, 1.75rem);
@@ -596,7 +590,7 @@
   }
 
   .profile__heading-actions > .profile-friends-button__section > solid-ui-button.profile__btn-friends,
-  .profile__heading-actions > #add-to-contacts-button-container > solid-ui-button.profile__btn-contacts {
+  .profile__heading-actions > .profile-friends-button__section > solid-ui-button.profile__btn-friends {
     min-width: 0;
     inline-size: auto;
     min-height: 1.75rem;

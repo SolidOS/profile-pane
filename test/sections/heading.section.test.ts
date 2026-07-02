@@ -2,20 +2,9 @@ import { describe, expect, it, jest } from "@jest/globals"
 import { render } from 'lit-html'
 import { sym } from 'rdflib'
 import { renderHeadingSection } from '../../src/sections/heading/HeadingSection'
-import { addMeToYourContactsButtonText, addMeToYourFriendsButtonText } from '../../src/texts/buttonTexts'
+import { addMeToYourFriendsButtonText } from '../../src/texts/buttonTexts'
 import { runAxe } from '../helpers/runAxe'
 import { context, fakeLogInAs, subject } from '../setup'
-
-jest.mock('../../src/specialButtons/addContact/addMeToYourContacts', () => ({
-  addMeToYourContactsDiv: jest.fn(async () => {
-    const { html } = require('lit-html')
-    return html`
-      <section class="profile-contacts-button__section">
-        <solid-ui-button type="button">Add as Contact</solid-ui-button>
-      </section>
-    `
-  })
-}))
 
 jest.mock('../../src/specialButtons/addMeToYourFriends', () => ({
   addMeToYourFriendsDiv: jest.fn(() => {
@@ -63,7 +52,6 @@ describe('Intro section', () => {
     expect(container.textContent).toContain('Jane Doe')
     expect(container.querySelector('solid-ui-button[aria-label="Add or edit heading information"], button[aria-label="Add or edit heading information"]')).toBeTruthy()
     expect(container.querySelector('.profile__heading-actions')).toBeNull()
-    expect(container.textContent).not.toContain(addMeToYourContactsButtonText)
     expect(container.textContent).not.toContain(addMeToYourFriendsButtonText)
     expect(container.querySelector('.profile__hero-alt')?.getAttribute('tabindex')).toBeNull()
 
@@ -177,8 +165,8 @@ describe('Intro section', () => {
     render(await renderHeadingSection(context, subject, profile as any, 'authenticated', 'desktop'), container)
 
     expect(container.querySelector('.profile__heading-actions')).toBeTruthy()
-    expect(container.textContent).toContain(addMeToYourContactsButtonText)
     expect(container.textContent).toContain(addMeToYourFriendsButtonText)
+    expect(container.querySelector('.profile-contacts-button__section')).toBeNull()
     expect(container.querySelector('solid-ui-button[aria-label="Add or edit heading information"], button[aria-label="Add or edit heading information"]')).toBeNull()
     expect(container.querySelector('.profile__heading-edit-action')).toBeNull()
 
@@ -253,7 +241,6 @@ describe('Intro section', () => {
 
     expect(container.querySelector('solid-ui-button[aria-label="Add or edit heading information"], button[aria-label="Add or edit heading information"]')).toBeNull()
     expect(container.querySelector('.profile__heading-actions')).toBeNull()
-    expect(container.textContent).not.toContain(addMeToYourContactsButtonText)
     expect(container.textContent).not.toContain(addMeToYourFriendsButtonText)
 
     const results = await runAxe(container)
