@@ -81,7 +81,6 @@
     "babel-plugin-inline-import": "^3.0.0",
     "babel-plugin-transform-import-meta": "^2.3.3",
     "chat-pane": "3.0.4-1",
-    "contacts-pane": "3.2.1-5",
     "copy-webpack-plugin": "^14.0.0",
     "css-loader": "^7.1.4",
     "eslint": "^9.39.4",
@@ -108,7 +107,6 @@
     "solid-logic",
     "solid-ui",
     "pane-registry",
-    "chat-pane",
-    "contacts-pane"
+    "chat-pane"
   ]
 }
