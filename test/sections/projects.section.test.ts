@@ -21,7 +21,7 @@ describe('Projects section', () => {
       }
     ]
 
-    render(renderProjectSection(context.session.store, subject, projects as any, 'owner'), container)
+    render(renderProjectSection(context.session.store, subject, projects as any, 'owner', 'desktop'), container)
 
     expect(container.querySelector('#projects-heading')).toBeTruthy()
     expect(container.textContent).toContain('Profile Pane')
@@ -44,7 +44,7 @@ describe('Projects section', () => {
       }
     ]
 
-    render(renderProjectSection(context.session.store, subject, projects as any, 'owner'), container)
+    render(renderProjectSection(context.session.store, subject, projects as any, 'owner', 'desktop'), container)
 
     const results = await runAxe(container)
     expect(results.violations.length).toBe(0)
@@ -80,7 +80,7 @@ describe('Projects section', () => {
       }
     ]
 
-    render(renderProjectSection(context.session.store, subject, projects as any, 'owner'), container)
+    render(renderProjectSection(context.session.store, subject, projects as any, 'owner', 'desktop'), container)
 
     const moreButton = container.querySelector('.project-card__more-button') as HTMLButtonElement | null
     const section = container.querySelector('.profile-section-collapsible') as HTMLElement | null
@@ -99,7 +99,7 @@ describe('Projects section', () => {
     const container = document.createElement('div')
     document.body.appendChild(container)
 
-    render(renderProjectSection(context.session.store, subject, [], 'owner'), container)
+    render(renderProjectSection(context.session.store, subject, [], 'owner', 'desktop'), container)
 
     const section = container.querySelector('[data-profile-section="projects"]') as HTMLElement | null
     const panel = container.querySelector('#projects-panel') as HTMLElement | null

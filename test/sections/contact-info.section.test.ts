@@ -36,7 +36,7 @@ describe('Contact info section', () => {
     }
 
     render(
-      renderContactInfoSection(context.session.store, subject, contactInfo as any, 'owner'),
+      renderContactInfoSection(context.session.store, subject, contactInfo as any, 'owner', 'desktop'),
       container
     )
 
@@ -78,7 +78,7 @@ describe('Contact info section', () => {
     }
 
     render(
-      renderContactInfoSection(context.session.store, subject, contactInfo as any, 'owner'),
+      renderContactInfoSection(context.session.store, subject, contactInfo as any, 'owner', 'desktop'),
       container
     )
 

@@ -1,7 +1,7 @@
-import { html } from 'lit-html'
+import { html, nothing } from 'lit-html'
 import 'solid-ui/components/button'
 import { RoleDetails } from './types'
-import { ViewerMode } from '../../types'
+import { Layout, ViewerMode } from '../../types'
 import './ResumeSection.css'
 import { resumeHeadingText } from '../../texts'
 import { LiveStore, NamedNode } from 'rdflib'
@@ -14,6 +14,7 @@ import {
 } from '../shared/sectionCardHelpers'
 import { toggleCollapsibleSection } from '../shared/collapsibleSection'
 import { chevronDownIcon, editIcon, plusDarkIcon } from '../../icons-svg/profileIcons'
+import { renderResponsiveActionButton } from '../../ui/responsiveActionButton'
 
 function renderRole(role: RoleDetails, index: number) {
   if (!role) return html``
@@ -45,20 +46,17 @@ function renderRole(role: RoleDetails, index: number) {
       <div class="resume-card__description-wrap">
         <p class="resume-card__description-text" id=${roleDescriptionId}>${role.description}</p>
         <solid-ui-button
-          type="button"
-          variant="secondary"
-          size="sm"
-          label="...more"
+          variant="tertiary"
           class="resume-card__description-toggle"
           aria-controls=${roleDescriptionId}
-          aria-expanded="false"
+          aria-expanded=${'false'}
           hidden
           @click=${toggleDescription}
         >
           ...more
         </solid-ui-button>
       </div>
-    ` : ''}
+    ` : nothing}
     </li>
   `
 }
@@ -69,8 +67,7 @@ function renderRoles(roles: RoleDetails[]) {
 }
 
 export const CVCard = (
-  cvData: RoleDetails[],
-  _viewerMode: ViewerMode
+  cvData: RoleDetails[]
 ) => {
   const hasRoles = Array.isArray(cvData) && cvData.length > 0
   if (!hasRoles) return html``
@@ -91,15 +88,15 @@ function renderResumeSectionDefault(
   subject: NamedNode, 
   resumeDetails: RoleDetails[], 
   viewerMode: ViewerMode, 
+  layout: Layout,
   onSaved?: () => Promise<void> | void) {
   scheduleDescriptionOverflowCheck()
 
   const hasResume = resumeDetails.length > 0
-  const showSection = true
-  const cv = hasResume ? CVCard(resumeDetails, viewerMode) : html``
+  const cv = hasResume ? CVCard(resumeDetails) : nothing
   const isOwner = viewerMode === 'owner'
 
-  return showSection ? html`
+  return html`
     <section 
       aria-labelledby="cv-heading" 
       data-profile-section="resume"
@@ -112,22 +109,18 @@ function renderResumeSectionDefault(
         <h2 id="cv-heading" tabindex="-1">${resumeHeadingText}</h2>
         <div class="profile-section-collapsible__actions">
           ${isOwner ? html`
-            <solid-ui-button
-              type="button"
-              variant="secondary"
-              size="sm"
-              class="profile__action-button resume__edit-button profile-section-collapsible__edit-button"
-              aria-label="Edit resume details"
-              @click=${(event: Event) => createResumeEditDialog(event, store, subject, resumeDetails, viewerMode, onSaved)}
-            >
-              <span class="profile-section-collapsible__edit-label">${editIcon} Edit</span>
-              <span class="profile-section-collapsible__edit-icon" aria-hidden="true">${editIcon}</span>
-            </solid-ui-button>
-          ` : html``}
+            ${renderResponsiveActionButton({
+              layout,
+              className: 'profile-section-collapsible__edit-button',
+              ariaLabel: 'Edit resume details',
+              onClick: (event: Event) => createResumeEditDialog(event, store, subject, resumeDetails, viewerMode, onSaved),
+              desktopIcon: html`<span slot="left-icon" class="profile-section-collapsible__action-label profile__add-more-icon" aria-hidden="true">${editIcon}</span>`,
+              desktopLabel: 'Edit',
+              mobileIcon: html`<span slot="icon" class="profile-section-collapsible__edit-icon" aria-hidden="true">${editIcon}</span>`
+            })}
+          ` : nothing}
           <solid-ui-button
-            type="button"
-            variant="icon"
-            size="sm"
+            variant="ghost"
             class="profile-section-collapsible__toggle-button"
             aria-label="Toggle resume section"
             aria-controls="cv-panel"
@@ -142,7 +135,7 @@ function renderResumeSectionDefault(
         ${hasResume ? cv : html`<p>No resume details added yet.</p>`}
       </div>
     </section>
-  ` : ''
+  `
 }
 
 function renderOwnerEmptyResumeContent(
@@ -156,14 +149,9 @@ function renderOwnerEmptyResumeContent(
   return html`
     <div class="profile__empty-state-content" role="group" aria-label="Empty resume section">
       <h2 id="resume-heading" tabindex="-1">${resumeHeadingText}</h2>
-      <p class="profile__empty-state-message">
-        You haven't included any professional experience yet. Consider adding your work history to enhance your resume.
-      </p>
     </div>
     <solid-ui-button
-      type="button"
       variant="secondary"
-      size="sm"
       class="profile__action-button--empty"
       @click=${(event: Event) => {
         return createResumeEditDialog(
@@ -176,9 +164,9 @@ function renderOwnerEmptyResumeContent(
         )
       }}
     >
-      <span class="profile__action-icon" aria-hidden="true">${plusDarkIcon} Add Resume</span>
+      <span slot="left-icon" class="profile__action-icon" aria-hidden="true">${plusDarkIcon}</span>
+       Add Resume
     </solid-ui-button>
-
   `
 }
 
@@ -202,9 +190,7 @@ function renderOwnerEmptyResumeSection(
         <h2 id="resume-heading" tabindex="-1">${resumeHeadingText}</h2>
         <div class="profile-section-collapsible__actions">
           <solid-ui-button
-            type="button"
-            variant="icon"
-            size="sm"
+            variant="ghost"
             class="profile-section-collapsible__toggle-button"
             aria-label="Toggle resume section"
             aria-controls="cv-panel"
@@ -227,17 +213,17 @@ export function renderCVSection(
   subject: NamedNode,
   roles: RoleDetails[],
   viewerMode: ViewerMode,
+  layout: Layout,
   onSaved?: () => Promise<void> | void
 ) {
-
+  const currentLayout = layout || 'desktop'
   const resumeDetails: RoleDetails[] = roles || []
   const hasResume = resumeDetails.length > 0
   const showOwnerEmptyResume = !hasResume && viewerMode === 'owner'
-  const showSection = true
 
-  return showSection ? html`
+  return html`
     ${showOwnerEmptyResume
       ? renderOwnerEmptyResumeSection(store, subject, resumeDetails, viewerMode, onSaved)
-      : renderResumeSectionDefault(store, subject, resumeDetails, viewerMode, onSaved)}
-  ` : ''
+      : renderResumeSectionDefault(store, subject, resumeDetails, viewerMode, currentLayout, onSaved)}
+  `
 }

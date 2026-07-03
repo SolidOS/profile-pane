@@ -21,7 +21,7 @@ describe('Social section', () => {
       ]
     }
 
-    render(renderSocialSection(context.session.store as any, subject, socialPresentation as any, 'owner'), container)
+    render(renderSocialSection(context.session.store as any, subject, socialPresentation as any, 'owner', 'desktop'), container)
 
     expect(container.querySelector('#social-heading')).toBeTruthy()
     expect(container.querySelector('a[href="https://github.com/janedoe"]')).toBeTruthy()
@@ -50,7 +50,7 @@ describe('Social section', () => {
       ]
     }
 
-    render(renderSocialSection(context.session.store as any, subject, socialPresentation as any, 'owner'), container)
+    render(renderSocialSection(context.session.store as any, subject, socialPresentation as any, 'owner', 'desktop'), container)
 
     const results = await runAxe(container)
     expect(results.violations.length).toBe(0)

@@ -20,7 +20,8 @@ import {
   ownerLoginRequiredDialogMessageText,
   saveLanguageUpdatesFailedMessageText,
 } from '../../texts'
-
+/* combobox isn't working because the design system
+one doesn't work with search data */
 type LanguageFormState = {
   languages: LanguageRow[]
   initialExistingOrder: string[]
@@ -380,10 +381,8 @@ function renderLanguageInputRow({
       @drop=${(event: DragEvent) => onDrop(event, index)}
     >
       <solid-ui-button
-        type="button"
         class="profile-edit-dialog__drag-handle"
-        variant="icon"
-        size="md"
+        variant="ghost"
         aria-label=${`Reorder language ${displayIndex + 1}`}
         title="Drag to reorder"
         draggable="true"
@@ -394,7 +393,7 @@ function renderLanguageInputRow({
         @pointerup=${(event: PointerEvent) => onPointerUp(event)}
         @pointercancel=${(event: PointerEvent) => onPointerCancel(event)}
       >
-        <span slot="icon" class="profile-edit-dialog__drag-handle-icon" aria-hidden="true">${bentoIcon}</span>
+        <span slot="icon" aria-hidden="true">${bentoIcon}</span>
       </solid-ui-button>
       <label aria-label=${`${label} Language`} class="label profile-edit-dialog__field profile-edit-dialog__field--language-name">
         <solid-ui-combobox
@@ -406,7 +405,7 @@ function renderLanguageInputRow({
         ></solid-ui-combobox>
         <small class="profile-edit-dialog__input-help-text">Type to search and select one language suggestion.</small>
       </label>
-      <label aria-label=${proficiencyLabel} class="label" hidden>
+      <label aria-label=${proficiencyLabel} class="label profile-edit-dialog__field-type profile-edit-dialog__field-type--language-proficiency" hidden>
         <select name=${proficiencyInputName} id=${proficiencySelectId} @change=${handleProficiencyInput} .value=${row?.proficiency || ''}>
           <option value="Basic">Basic</option>
           <option value="Intermediate">Intermediate</option>
@@ -415,9 +414,7 @@ function renderLanguageInputRow({
       </label>
       <div class="profile-edit-dialog__actions profile-edit-dialog__actions--edge profile-edit-dialog__actions--language">
         <solid-ui-button
-          type="button"
-          variant="icon"
-          size="md"
+          variant="ghost"
           class="profile-edit-dialog__delete-button"
           aria-label=${`Delete language ${displayIndex + 1}`}
           title=${deleteEntryButtonTitleText}

@@ -1,28 +1,23 @@
-/* Projects section styles. */
-
 .profile__section[data-profile-section='projects'],
 .profile__section--empty[data-profile-section='projects'] {
-  --project-card-rail-gap: var(--spacing-md, 1rem);
   --project-card-rail-wrap: nowrap;
   --project-card-rail-overflow-x: auto;
   --project-card-rail-scroll-snap-type: x proximity;
   --project-card-flex-basis: min(420px, 88vw);
   --project-card-flex: 0 0 var(--project-card-flex-basis);
   --project-card-max-width: none;
-  --project-card-scrollbar-height: 0.5rem;
+  --project-card-scrollbar-height: 8px;
   --project-card-thumb-column-width: 88px;
   --project-card-thumb-size: 4.125rem;
-  --project-card-follow-label-gap: var(--spacing-xxs, 0.3125rem);
-  --project-card-wrapper-gap: var(--spacing-2xs, 0.625rem);
-  --project-card-content-gap: var(--spacing-xxs, 0.3125rem);
-  --project-card-heading-gap: 0.1875rem;
-  --project-card-meta-margin-top: var(--spacing-xs, 0.75rem);
+  --project-card-follow-label-gap: 5px;
+  --project-card-wrapper-gap: 10px;
+  --project-card-content-gap: 5px;
+  --project-card-heading-gap: 3px;
+  --project-card-meta-margin-top: 12px;
   --project-card-meta-font-size: 0.86rem;
-  --project-card-footer-padding: var(--spacing-xs, 0.75rem);
-  --project-card-more-button-gap: var(--spacing-xs, 0.375rem);
   --project-card-more-button-width: auto;
   --project-card-more-button-part-width: auto;
-  --project-card-mobile-more-button-margin-top: var(--spacing-xs, 0.75rem);
+  --project-card-mobile-more-button-margin-top: 12px;
   --project-card-more-button-margin-top: 0;
   --project-card-collapsed-extra-display: flex;
   --project-card-more-icon-transform: rotate(0deg);
@@ -31,31 +26,13 @@
 /* Rail and cards */
 .project-card__rail {
   display: flex;
-  gap: var(--project-card-rail-gap);
+  gap: 20px;
   overflow-x: var(--project-card-rail-overflow-x, auto);
   padding: 0;
   margin: 0;
   list-style: none;
   flex-wrap: var(--project-card-rail-wrap, nowrap);
   scroll-snap-type: var(--project-card-rail-scroll-snap-type, x proximity);
-}
-
-solid-ui-button.project-card__follow-button {
-  width: auto;
-  min-width: 0;
-  max-width: none;
-  gap: var(--project-card-follow-label-gap);
-  --button-border-width: var(--border-width-sm, 0.1rem);
-  --button-font-size-sm: var(--font-size-sm, 0.875rem);
-  --button-font-weight: var(--font-weight-md, 500);
-  --button-padding-sm: var(--spacing-base, 0.5rem) var(--spacing-2xs, 0.625rem);
-  --button-border-radius: var(--border-radius-md, 0.5rem);
-  --button-background: var(--color-card-bg, var(--white, #FFF));
-  --button-text: var(--color-primary, #7C4DFF);
-  --button-border: var(--color-primary, #7C4DFF);
-  --button-hover-background: var(--color-primary, #7C4DFF);
-  --button-hover-text: var(--color-text-on-action, var(--white, #FFF));
-  --button-hover-border: var(--color-primary, #7C4DFF);
 }
 
 .project-card__follow-label {
@@ -86,23 +63,17 @@ solid-ui-button.project-card__follow-button:focus-within .project-card__follow-l
   display: inline-flex;
 }
 
-solid-ui-button.project-card__follow-button[data-loading='true'] {
+solid-ui-button.project-card__follow-button[loading] {
   pointer-events: none;
 }
 
-solid-ui-button.project-card__follow-button[data-loading='true'] .project-card__follow-label--default,
-solid-ui-button.project-card__follow-button[data-loading='true'] .project-card__follow-label--hover {
+solid-ui-button.project-card__follow-button[loading] .project-card__follow-label--default,
+solid-ui-button.project-card__follow-button[loading] .project-card__follow-label--hover {
   display: none;
 }
 
-solid-ui-button.project-card__follow-button[data-loading='true'] .project-card__follow-label--loading {
+solid-ui-button.project-card__follow-button[loading] .project-card__follow-label--loading {
   display: inline-flex;
-}
-
-solid-ui-button.project-card__follow-button[data-loading='true'] .loading-spinner {
-  width: var(--icon-xxs, 1rem);
-  height: var(--icon-xxs, 1rem);
-  border-width: 0.125rem;
 }
 
 .project-card__rail::-webkit-scrollbar {
@@ -119,16 +90,16 @@ solid-ui-button.project-card__follow-button[data-loading='true'] .loading-spinne
   flex-direction: column;
   flex: var(--project-card-flex, 0 0 var(--project-card-flex-basis));
   width: 100%;
-  max-width: var(--project-card-max-width, none);
+  max-width: var(--project-card-max-width);
   min-width: 0;
   box-sizing: border-box;
   scroll-snap-align: start;
-  border-radius: var(--border-radius-md, 0.5rem);
-  border: var(--border-width-sm, 0.1rem) solid var(--color-border, var(--gray-200, #E5E7EB));
-  padding: var(--spacing-md, 1.25rem);
+  border-radius: 8px;
+  border: 1px solid var(--color-border, var(--gray-200, #E5E7EB));
+  padding: 20px;
   justify-content: center;
   align-items: flex-start;
-  gap: var(--spacing-sm, 0.938rem);
+  gap: 15px;
   flex-shrink: 0;
 }
 
@@ -151,7 +122,7 @@ solid-ui-button.project-card__follow-button[data-loading='true'] .loading-spinne
   gap: var(--project-card-wrapper-gap);
   width: 100%;
   align-items: start;
-  border-radius: var(--border-radius-md, 0.5rem);
+  border-radius: 8px;
   border-bottom: 1px solid var(--color-border, var(--gray-200, #E5E7EB));
 }
 
@@ -162,9 +133,9 @@ solid-ui-button.project-card__follow-button[data-loading='true'] .loading-spinne
   width: var(--project-card-thumb-size);
   height: var(--project-card-thumb-size);
   overflow: hidden;
-  border-radius: var(--border-radius-base, 0.3125rem);
+  border-radius: 8px;
   background: var(--color-surface-placeholder, var(--gray-200, #E5E7EB));
-  padding: 0.656rem var(--spacing-2xs, 0.625rem);
+  padding: 10.5px 10px;
   aspect-ratio: 1/1;
 }
 
@@ -213,8 +184,8 @@ solid-ui-button.project-card__follow-button[data-loading='true'] .loading-spinne
   overflow: hidden;
   color: var(--color-text-subheading, var(--gray-900, #101828));
   text-overflow: ellipsis;
-  font-size: var(--font-size-lg, 1.125rem);
-  font-weight: var(--font-weight-bold, 600);
+  font-size: var(--solid-ui-font-size-lg, 1.125rem);
+  font-weight: 600;
   display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 1;
@@ -223,9 +194,9 @@ solid-ui-button.project-card__follow-button[data-loading='true'] .loading-spinne
 }
 
 .project-card__organization {
-  color: var(--color-text-primary, var(--gray-700, #364153));
-  font-size: var(--font-size-sm, 0.875rem);
-  font-weight: var(--font-weight-md, 500);
+  color: var(--solid-ui-color-gray-700, #364153);
+  font-size: var(--solid-ui-font-size-sm, 0.875rem);
+  font-weight: 500;
   overflow: hidden;
   text-overflow: ellipsis;
   display: -webkit-box;
@@ -237,8 +208,8 @@ solid-ui-button.project-card__follow-button[data-loading='true'] .loading-spinne
 }
 
 .project-card__category {
-  font-size: var(--font-size-xxs, 0.75rem);
-  font-weight: var(--font-weight-md, 500);
+  font-size: 0.75rem;
+  font-weight: 500;
 }
 
 .project-card__category--project {
@@ -256,7 +227,7 @@ solid-ui-button.project-card__follow-button[data-loading='true'] .loading-spinne
 .project-card__meta {
   margin-top: var(--project-card-meta-margin-top);
   overflow-wrap: anywhere;
-  font-size: var(--project-card-meta-font-size, 0.86rem);
+  font-size: var(--project-card-meta-font-size);
 }
 
 .project-card__footer {
@@ -264,34 +235,19 @@ solid-ui-button.project-card__follow-button[data-loading='true'] .loading-spinne
   justify-content: flex-start;
   align-self: stretch;
   margin-top: auto;
-  padding: var(--spacing-sm, 0.938rem) 0 0;
+  padding: 15px 0 0;
 }
 
 .profile__section[data-profile-section='projects'] .profile-section-inline-error {
-  margin-top: var(--spacing-sm, 0.938rem);
-  padding: var(--spacing-xs, 0.75rem);
+  margin-top: 15px;
+  padding: 12px;
   border: 1px solid var(--dialog-error-border, var(--pink-700, #ff98b3));
-  border-radius: var(--border-radius-base, 0.3125rem);
+  border-radius: 5px;
   background: var(--dialog-error-background, var(--pink-500, #ffdde6));
-  color: var(--dialog-error-text, var(--red-600, #B00020));
+  color: var(--solid-ui-color-error, #B00020);
   text-align: left;
   white-space: pre-wrap;
   overflow-wrap: anywhere;
-}
-
-/* Action buttons */
-
-solid-ui-button.project-card__more-button {
-  width: var(--project-card-more-button-width, auto);
-  margin-top: var(--project-card-more-button-margin-top, 0);
-  --button-height-sm: 0;
-  --button-padding-x-sm: 0;
-  --button-background: transparent;
-  --button-border: transparent;
-  --button-text: var(--color-primary, #7C4DFF);
-  --button-hover-background: transparent;
-  --button-hover-border: transparent;
-  --button-hover-text: var(--color-primary, #7C4DFF);
 }
 
 .project-card__more-icon {
@@ -300,20 +256,6 @@ solid-ui-button.project-card__more-button {
   justify-content: center;
   transform: var(--project-card-more-icon-transform, rotate(0deg));
   transition: transform var(--animation-duration, 0.2s) ease;
-}
-
-solid-ui-button.project-card__more-button::part(button) {
-  align-items: center;
-  justify-content: center;
-  width: var(--project-card-more-button-part-width, auto);
-  gap: var(--project-card-more-button-gap, 0.375rem);
-  padding: 0;
-  border: 0;
-  background: transparent;
-  color: var(--color-primary, #7C4DFF);
-  font-size: var(--font-size-sm, 0.875rem);
-  font-weight: var(--font-weight-bold, 600);
-  cursor: var(--profile-interactive-cursor, pointer);
 }
 
 /* Compact layout */
@@ -330,7 +272,7 @@ solid-ui-button.project-card__more-button::part(button) {
 }
 
 .profile-section-collapsible[data-mobile-expanded="false"] .project-card:nth-child(n + 3) {
-  display: var(--project-card-collapsed-extra-display, flex);
+  display: var(--project-card-collapsed-extra-display);
 }
 
 solid-ui-button.project-card__more-button[data-mobile-expanded="true"] .project-card__more-icon {
@@ -347,7 +289,7 @@ solid-ui-button.project-card__more-button[data-mobile-expanded="true"] .project-
     --project-card-max-width: 100%;
     --project-card-more-button-width: 100%;
     --project-card-more-button-part-width: 100%;
-    --project-card-more-button-margin-top: var(--project-card-mobile-more-button-margin-top, var(--spacing-xs, 0.75rem));
+    --project-card-more-button-margin-top: var(--project-card-mobile-more-button-margin-top);
     --project-card-collapsed-extra-display: none;
   }
 }
@@ -362,7 +304,7 @@ solid-ui-button.project-card__more-button[data-mobile-expanded="true"] .project-
     --project-card-max-width: 100%;
     --project-card-more-button-width: 100%;
     --project-card-more-button-part-width: 100%;
-    --project-card-more-button-margin-top: var(--project-card-mobile-more-button-margin-top, var(--spacing-xs, 0.75rem));
+    --project-card-more-button-margin-top: var(--project-card-mobile-more-button-margin-top);
     --project-card-collapsed-extra-display: none;
   }
 }

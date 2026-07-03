@@ -1,8 +1,8 @@
-import { html } from 'lit-html'
+import { html, nothing } from 'lit-html'
 import 'solid-ui/components/button'
 import { strToUpperCase } from '../../textUtils'
 import { LiveStore, NamedNode } from 'rdflib'
-import { ViewerMode } from '../../types'
+import { Layout, ViewerMode } from '../../types'
 import './SkillsSection.css'
 import { createSkillsEditDialog } from './SkillsEditDialog'
 import { SkillDetails, SkillRow } from './types'
@@ -11,6 +11,7 @@ import { skillsHeadingText } from '../../texts'
 import { toggleCollapsibleSection } from '../shared/collapsibleSection'
 import { processSkillsMutations } from './mutations'
 import { formatDisplayError } from '../../utils/errorDisplay'
+import { renderResponsiveActionButton } from '../../ui/responsiveActionButton'
 
 const removeSkillFailedMessageText = 'Unable to remove your skill.'
 
@@ -45,7 +46,7 @@ function renderSkillItem(
     if (viewerMode !== 'owner') return
     const removeButton = event.currentTarget as HTMLElement | null
     const skillRow = removeButton?.closest('.skills__item') as HTMLElement | null
-    const section = (event.currentTarget as HTMLElement | null)?.closest('[data-profile-section="skills"]') as HTMLElement | null
+    const section = removeButton?.closest('[data-profile-section="skills"]') as HTMLElement | null
 
     const removeRow: SkillRow = {
       name: detail.name,
@@ -90,10 +91,7 @@ function renderSkillItem(
         ? html`
             <span class="skills__item-tail">
               <solid-ui-button
-                type="button"
-                variant="icon"
-                size="sm"
-                class="skills__remove-button"
+                variant="ghost"
                 aria-label=${`Remove ${detail.name} skill`}
                 @click=${handleRemove}
               >
@@ -101,12 +99,12 @@ function renderSkillItem(
               </solid-ui-button>
             </span>
           `
-        : ''}
+        : nothing}
     </li>
   `
 }
 
-function renderSkillsSectionDefault(store: LiveStore, subject: NamedNode, skills: SkillDetails[], viewerMode: ViewerMode, onSaved?: () => Promise<void> | void) {
+function renderSkillsSectionDefault(store: LiveStore, subject: NamedNode, skills: SkillDetails[], viewerMode: ViewerMode, layout: Layout, onSaved?: () => Promise<void> | void) {
   const hasSkills = Array.isArray(skills) && skills.length > 0
   const isOwner = viewerMode === 'owner'
 
@@ -123,25 +121,18 @@ function renderSkillsSectionDefault(store: LiveStore, subject: NamedNode, skills
         <h3 id="skills-heading">${skillsHeadingText}</h3>
         <div class="profile-section-collapsible__actions">
           ${isOwner ? html`
-            <solid-ui-button
-              type="button"
-              variant="secondary"
-              size="sm"
-              class="profile__action-button profile-action-text profile-section-collapsible__edit-button"
-              aria-label="Add or edit skills"
-              @click=${(event: Event) => createSkillsEditDialog(event, store, subject, skills, viewerMode, onSaved)}
-            >
-              <span class="profile-section-collapsible__edit-label profile__add-more-content">
-                <span class="profile__add-more-icon" aria-hidden="true">${addIcon}</span>
-                <span>Add More</span>
-              </span>
-              <span class="profile-section-collapsible__edit-icon" aria-hidden="true">${editIcon}</span>
-            </solid-ui-button>
-          ` : html``}
+            ${renderResponsiveActionButton({
+              layout,
+              className: 'profile-section-collapsible__edit-button',
+              ariaLabel: 'Add or edit skills',
+              onClick: (event: Event) => createSkillsEditDialog(event, store, subject, skills, viewerMode, onSaved),
+              desktopIcon: html`<span slot="left-icon" class="profile-section-collapsible__action-label profile__add-more-icon" aria-hidden="true">${addIcon}</span>`,
+              desktopLabel: 'Add More',
+              mobileIcon: html`<span slot="icon" class="profile-section-collapsible__edit-icon" aria-hidden="true">${editIcon}</span>`
+            })}
+          ` : nothing}
           <solid-ui-button
-            type="button"
-            variant="icon"
-            size="sm"
+            variant="ghost"
             class="profile-section-collapsible__toggle-button"
             aria-label="Toggle skills section"
             aria-controls="skills-panel"
@@ -176,21 +167,13 @@ function renderSkillsSectionDefault(store: LiveStore, subject: NamedNode, skills
     </section>
   `
 }
-function renderOwnerEmptySkillsContent(
-  _store: LiveStore,
-  _subject: NamedNode,
-  _skills: SkillDetails[],
-  _viewerMode: ViewerMode,
-  _onSaved?: () => Promise<void> | void
-) {
+
+function renderOwnerEmptySkillsContent() {
   return html`
       <div class="profile__empty-state-content" role="group" aria-label="Empty skills section">    
         <div class="skills__empty-icon-wrapper">
           <span class="skills__empty-icon">${lighteningIcon}</span>
         </div>
-        <p class="profile__empty-state-message skills__empty-message">
-            No skills added yet.
-        </p>
       </div>
   `
 }
@@ -200,6 +183,7 @@ function renderOwnerEmptySkillsSection(
   subject: NamedNode,
   skills: SkillDetails[],
   viewerMode: ViewerMode,
+  layout: Layout,
   onSaved?: () => Promise<void> | void
 ) {
   return html`
@@ -214,13 +198,11 @@ function renderOwnerEmptySkillsSection(
       <header class="profile__section-header profile-section-collapsible__header">
         <h3 id="skills-heading" tabindex="-1">${skillsHeadingText}</h3>
         <div class="profile-section-collapsible__actions">
-          <solid-ui-button
-            type="button"
-            variant="secondary"
-            size="sm"
-            class="profile__action-button profile-action-text profile-section-collapsible__edit-button"
-            aria-label="Add skills"
-            @click=${(event: Event) => {
+          ${renderResponsiveActionButton({
+            layout,
+            className: 'profile-section-collapsible__edit-button',
+            ariaLabel: 'Add skills',
+            onClick: (event: Event) => {
               return createSkillsEditDialog(
                 event,
                 store,
@@ -229,18 +211,13 @@ function renderOwnerEmptySkillsSection(
                 viewerMode,
                 onSaved
               )
-            }}
-          >
-            <span class="profile-section-collapsible__edit-label profile__add-more-content">
-              <span class="profile__add-more-icon" aria-hidden="true">${addIcon}</span>
-              <span>Add More</span>
-            </span>
-            <span class="profile-section-collapsible__edit-icon" aria-hidden="true">${editIcon}</span>
-          </solid-ui-button>
+            },
+            desktopIcon: html`<span slot="left-icon" class="profile-section-collapsible__action-label profile__add-more-icon" aria-hidden="true">${addIcon}</span>`,
+            desktopLabel: 'Add More',
+            mobileIcon: html`<span slot="icon" class="profile-section-collapsible__edit-icon" aria-hidden="true">${editIcon}</span>`
+          })}
           <solid-ui-button
-            type="button"
-            variant="icon"
-            size="sm"
+            variant="ghost"
             class="profile-section-collapsible__toggle-button"
             aria-label="Toggle skills section"
             aria-controls="skills-panel"
@@ -252,7 +229,7 @@ function renderOwnerEmptySkillsSection(
         </div>
       </header>
       <div id="skills-panel" class="profile-section-collapsible__content">
-        ${renderOwnerEmptySkillsContent(store, subject, skills, viewerMode, onSaved)}
+        ${renderOwnerEmptySkillsContent()}
       </div>
     </section>
   `
@@ -263,16 +240,17 @@ export function renderSkillsSection(
   subject: NamedNode,
   skills: SkillDetails[],
   viewerMode: ViewerMode,
+  layout: Layout,
   onSaved?: () => Promise<void> | void
 ) {
+  const currentLayout = layout || 'desktop'
   const safeSkills: SkillDetails[] = skills || []
   const hasSkills = Array.isArray(safeSkills) && safeSkills.length > 0
   const showOwnerEmptySkills = !hasSkills && viewerMode === 'owner'
-  const showSection = true
-    
-  return showSection ? html`
+
+  return html`
     ${showOwnerEmptySkills
-      ? renderOwnerEmptySkillsSection(store, subject, safeSkills, viewerMode, onSaved)
-      : renderSkillsSectionDefault(store, subject, safeSkills, viewerMode, onSaved)}
-  ` : ''
+      ? renderOwnerEmptySkillsSection(store, subject, safeSkills, viewerMode, currentLayout, onSaved)
+      : renderSkillsSectionDefault(store, subject, safeSkills, viewerMode, currentLayout, onSaved)}
+  `
 }

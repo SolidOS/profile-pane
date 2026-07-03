@@ -1,7 +1,7 @@
-import { html } from 'lit-html'
+import { html, nothing } from 'lit-html'
 import 'solid-ui/components/button'
 import { LiveStore, NamedNode } from 'rdflib'
-import { ViewerMode } from '../../types'
+import { Layout, ViewerMode } from '../../types'
 import { ProjectDetails, ProjectRow } from './types'
 import { projectsHeadingText, unfollowProjectFailedMessageText } from '../../texts'
 import { createProjectsEditDialog } from './ProjectEditDialog'
@@ -10,8 +10,8 @@ import { addIcon, checkMarkIcon, chevronDownIcon, editIcon, plusDarkIcon, twoDow
 import { MutationOps } from '../shared/types'
 import './ProjectSection.css'
 import { toggleCollapsibleSection } from '../shared/collapsibleSection'
-import { createSpinner } from '../../ui/spinner'
 import { formatDisplayError } from '../../utils/errorDisplay'
+import { renderResponsiveActionButton } from '../../ui/responsiveActionButton'
 
 const MAX_VISIBLE_PROJECTS_MOBILE = 2
 
@@ -102,7 +102,7 @@ function renderProject(
 
     try {
       unfollowButton?.setAttribute('disabled', '')
-      unfollowButton?.setAttribute('data-loading', 'true')
+      unfollowButton?.setAttribute('loading', '')
       unfollowButton?.setAttribute('aria-busy', 'true')
       await processProjectsMutations(store, subject, removePlan)
       if (section) {
@@ -117,7 +117,7 @@ function renderProject(
       }
     } finally {
       unfollowButton?.removeAttribute('disabled')
-      unfollowButton?.removeAttribute('data-loading')
+      unfollowButton?.removeAttribute('loading')
       unfollowButton?.setAttribute('aria-busy', 'false')
     }
   }
@@ -157,17 +157,15 @@ function renderProject(
       ${viewerMode === 'owner' ? html`
         <div class="project-card__footer">
           <solid-ui-button
-            type="button"
             variant="secondary"
-            size="sm"
-            label="Following"
             class="project-card__follow-button"
             aria-label="Unfollow project"
             @click=${handleUnfollow}
           >
-            <span class="project-card__follow-label project-card__follow-label--default">${checkMarkIcon} Following</span>
+            <span slot="left-icon" class="project-card__follow-label project-card__follow-label--default">${checkMarkIcon}</span>
+            <span class="project-card__follow-label project-card__follow-label--default">Following</span>
             <span class="project-card__follow-label project-card__follow-label--hover">Unfollow</span>
-            <span class="project-card__follow-label project-card__follow-label--loading">${createSpinner()}<span>Unfollowing...</span></span>
+            <span class="project-card__follow-label project-card__follow-label--loading">Unfollowing...</span>
           </solid-ui-button>
         </div>
       ` : html``}
@@ -187,14 +185,9 @@ function renderOwnerEmptyProjectsContent(
   return html`
     <div class="profile__empty-state-content" role="group" aria-label="Empty projects section">
       <h2 id="projects-heading" tabindex="-1">${projectsHeadingText}</h2>
-      <p class="profile__empty-state-message">
-        You haven't added any projects yet. Consider adding a project to boost your profile.
-      </p>
     </div>
     <solid-ui-button
-      type="button"
       variant="secondary"
-      size="sm"
       class="profile__action-button--empty"
       aria-label="Add project details"
       @click=${(event: Event) => {
@@ -208,9 +201,9 @@ function renderOwnerEmptyProjectsContent(
         )
       }}
     >
-      <span class="profile__action-icon" aria-hidden="true">${plusDarkIcon} Add Project</span>
+      <span slot="left-icon" class="profile__action-icon" aria-hidden="true">${plusDarkIcon}</span>
+       Add Project
     </solid-ui-button>
-
   `
 }
 
@@ -234,9 +227,7 @@ function renderOwnerEmptyProjectSection(
         <h2 id="projects-heading" tabindex="-1">${projectsHeadingText}</h2>
         <div class="profile-section-collapsible__actions">
           <solid-ui-button
-            type="button"
-            variant="icon"
-            size="sm"
+            variant="ghost"
             class="profile-section-collapsible__toggle-button"
             aria-label="Toggle projects section"
             aria-controls="projects-panel"
@@ -271,6 +262,7 @@ function renderProjectSectionDefault(
   subject: NamedNode, 
   projects: ProjectDetails[], 
   viewerMode: ViewerMode, 
+  layout: Layout,
   onSaved?: () => Promise<void> | void) {
   const hasProjects = Array.isArray(projects) && projects.length > 0
   const hiddenProjectsCount = Math.max(0, projects.length - MAX_VISIBLE_PROJECTS_MOBILE)
@@ -290,27 +282,18 @@ function renderProjectSectionDefault(
           <h2 id="projects-heading">${projectsHeadingText}</h2>
           <div class="profile-section-collapsible__actions">
             ${isOwner ? html`
-              <solid-ui-button
-                type="button"
-                variant="secondary"
-                size="sm"
-                class="profile__action-button profile-action-text profile-section-collapsible__edit-button"
-                aria-label="Add or edit projects"
-                @click=${(event: Event) => {
-                  return createProjectsEditDialog(event, store, subject, projects, viewerMode, onSaved)
-                }}
-              >
-                <span class="profile-section-collapsible__edit-label profile__add-more-content">
-                  <span class="profile__add-more-icon" aria-hidden="true">${addIcon}</span>
-                  <span>Add More</span>
-                </span>
-                <span class="profile-section-collapsible__edit-icon" aria-hidden="true">${editIcon}</span>
-              </solid-ui-button>
-            ` : html``}
+              ${renderResponsiveActionButton({
+                layout,
+                className: 'profile-section-collapsible__edit-button',
+                ariaLabel: 'Add or edit projects',
+                onClick: (event: Event) => createProjectsEditDialog(event, store, subject, projects, viewerMode, onSaved),
+                desktopIcon: html`<span slot="left-icon" class="profile-section-collapsible__action-label profile__add-more-icon" aria-hidden="true">${addIcon}</span>`,
+                desktopLabel: 'Add More',
+                mobileIcon: html`<span slot="icon" class="profile-section-collapsible__edit-icon" aria-hidden="true">${editIcon}</span>`
+              })}
+            ` : nothing}
             <solid-ui-button
-              type="button"
-              variant="icon"
-              size="sm"
+              variant="ghost"
               class="profile-section-collapsible__toggle-button"
               aria-label="Toggle projects section"
               aria-controls="projects-panel"
@@ -336,17 +319,14 @@ function renderProjectSectionDefault(
                 ${hiddenProjectsCount > 0
                   ? html`
                       <solid-ui-button
-                        type="button"
-                        variant="secondary"
-                        size="sm"
-                        label="View More"
+                        variant="tertiary"
                         class="project-card__more-button"
                         aria-controls="projects-rail"
                         aria-expanded="false"
                         data-mobile-expanded="false"
                         @click=${toggleProjectsMobileList}
                       >
-                        <span class="project-card__more-icon" aria-hidden="true">${twoDownArrowsIcon}</span>
+                        <span slot="left-icon" class="project-card__more-icon" aria-hidden="true">${twoDownArrowsIcon}</span>
                         <span class="project-card__more-label">View More</span>
                       </solid-ui-button>
                     `
@@ -372,16 +352,16 @@ export function renderProjectSection(
   subject: NamedNode,
   projects: ProjectDetails[],
   viewerMode: ViewerMode,
+  layout: Layout,
   onSaved?: () => Promise<void> | void
 ) {
+  const currentLayout = layout || 'desktop'
   const hasProjects = Array.isArray(projects) && projects.length > 0
   const showOwnerEmptyProject = !hasProjects && viewerMode === 'owner'
-  
-  const showSection = true
-  
-  return showSection ? html`
+
+  return html`
     ${showOwnerEmptyProject
       ? renderOwnerEmptyProjectSection(store, subject, projects, viewerMode, onSaved)
-      : renderProjectSectionDefault(store, subject, projects, viewerMode, onSaved)}
-  ` : ''
+      : renderProjectSectionDefault(store, subject, projects, viewerMode, currentLayout, onSaved)}
+  `
 }

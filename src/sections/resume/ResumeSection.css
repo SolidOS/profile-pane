@@ -1,72 +1,14 @@
-/* Resume section styles. */
-
-/* Section actions */
-.resume__edit-button {
-  width: auto;
-  min-width: 0;
-  max-width: none;
-  padding: var(--spacing-xxs, 0.3125rem);
-  border: none;
-  background: none;
-  color: var(--color-primary, #7C4DFF);
-  cursor: var(--profile-interactive-cursor, pointer);
-  font-size: var(--font-size-sm, 0.875rem);
-}
-
-solid-ui-button.resume__edit-button {
-  width: auto;
-  min-width: 0;
-  max-width: none;
-  --button-height-sm: 0;
-  --button-padding-sm: var(--spacing-xxs, 0.3125rem);
-  --button-font-size-sm: var(--font-size-sm, 0.875rem);
-  --button-font-weight: var(--font-weight-regular, 400);
-  --button-background: transparent;
-  --button-border-width: 0;
-  --button-border: transparent;
-  --button-text: var(--color-primary, #7C4DFF);
-  --button-hover-background: transparent;
-  --button-hover-border: transparent;
-  --button-hover-text: var(--color-primary, #7C4DFF);
-}
-
-.resume__edit-button:hover {
-  text-decoration: underline;
-}
-
-solid-ui-button.resume__edit-button:hover::part(button),
-solid-ui-button.resume__edit-button:focus-visible::part(button) {
-  text-decoration: underline;
-}
-
 .resume-card {
-  --resume-card-section-gap: var(--spacing-md, 1.25rem);
-  --resume-card-item-gap: var(--spacing-xs, 0.75rem);
-  --resume-card-header-gap: var(--spacing-sm, 0.75rem);
-  --resume-card-column-gap: var(--spacing-md, 1.25rem);
-  --resume-card-row-gap: var(--spacing-2xs, 0.625rem);
-  --resume-card-title-color: var(--color-text-subheading, var(--gray-900, #101828));
-  --resume-card-title-size: var(--font-size-lg, 1.125rem);
-  --resume-card-title-weight: var(--font-weight-bold, 600);
-  --resume-card-organization-color: var(--color-text-secondary, var(--gray-600, #4A5565));
-  --resume-card-organization-size: var(--font-size-md, 1rem);
-  --resume-card-organization-weight: var(--font-weight-md, 500);
-  --resume-card-location-color: var(--color-text-secondary, var(--gray-600, #4A5565));
-  --resume-card-location-size: var(--font-size-sm, 0.875rem);
-  --resume-card-location-weight: var(--font-weight-normal, 400);
-  --resume-card-period-color: var(--color-text-secondary, var(--gray-600, #4A5565));
-  --resume-card-period-size: var(--font-size-sm, 0.875rem);
-  --resume-card-period-weight: var(--font-weight-normal, 400);
-  --resume-card-description-color: var(--color-text-primary, var(--gray-700, #364153));
-  --resume-card-description-size: var(--font-size-sm, 0.875rem);
-  --resume-card-description-weight: var(--font-weight-normal, 400);
-  --resume-card-heading-color: var(--color-text-subheading, #101828);
-  --resume-card-heading-border: var(--color-border-pale, #eee);
+  --resume-card-item-gap: 12px;
+  --resume-card-title-size: var(--solid-ui-font-size-lg, 1.125rem);
+  --resume-card-organization-size: var(--solid-ui-font-size-md, 1rem);
+  --resume-card-location-size: var(--solid-ui-font-size-sm, 0.875rem);
+  --resume-card-period-size: var(--solid-ui-font-size-sm, 0.875rem);
+  --resume-card-description-size: var(--solid-ui-font-size-sm, 0.875rem);
 }
 
-/* Section layout */
 .resume-card__section {
-  margin-bottom: var(--resume-card-section-gap);
+  margin-bottom: 20px;
 }
 
 .resume-card__section > ul {
@@ -82,12 +24,12 @@ solid-ui-button.resume__edit-button:focus-visible::part(button) {
     "title period"
     "organization organization"
     "description description";
-  column-gap: var(--resume-card-column-gap);
-  row-gap: var(--resume-card-row-gap);
+  column-gap: 20px;
+  row-gap: 10px;
   align-items: start;
   margin: 0 0 var(--resume-card-item-gap) 0;
-  font-size: var(--font-size-base, 1rem);
-  line-height: var(--line-height-base, 1.5);
+  font-size: var(--solid-ui-font-size-md, 1rem);
+  line-height: 1.5;
   gap: 0;
 }
 
@@ -99,7 +41,7 @@ solid-ui-button.resume__edit-button:focus-visible::part(button) {
   grid-area: title;
   display: flex;
   align-items: baseline;
-  gap: var(--resume-card-header-gap);
+  gap: 15px;
   min-width: 0;
 }
 
@@ -112,10 +54,10 @@ solid-ui-button.resume__edit-button:focus-visible::part(button) {
 .resume-card__item-header h3,
 .resume-card__item-header h4 {
   min-width: 0;
-  color: var(--resume-card-title-color);
+  color: var(--color-text-subheading, var(--gray-900, #101828));
   font-size: var(--resume-card-title-size);
-  font-weight: var(--resume-card-title-weight);
-  line-height: var(--line-height-tight, 1.4);
+  font-weight: 600;
+  line-height: 1.4;
 }
 
 .resume-card__item-period {
@@ -123,39 +65,35 @@ solid-ui-button.resume__edit-button:focus-visible::part(button) {
   justify-self: end;
   text-align: right;
   margin: 0;
-  color: var(--resume-card-period-color);
+  color: var(--solid-ui-color-gray-600, #4A5565);
   font-size: var(--resume-card-period-size);
-  font-weight: var(--resume-card-period-weight);
-  line-height: var(--line-height-tight, 1.4);
+  font-weight: 400;
+  line-height: 1.4;
 }
 
 .resume-card__organization {
   grid-area: organization;
   margin: 0;
-  line-height: var(--line-height-base, 1.5);
+  line-height: 1.5;
 }
 
 .resume-card__organization-name {
-  color: var(--resume-card-organization-color);
+  color: var(--solid-ui-color-gray-600, #4A5565);
   font-size: var(--resume-card-organization-size);
-  font-weight: var(--resume-card-organization-weight);
+  font-weight: 500;
 }
 
 .resume-card__organization-separator,
 .resume-card__organization-location {
-  color: var(--resume-card-location-color);
+  color: var(--solid-ui-color-gray-600, #4A5565);
   font-size: var(--resume-card-location-size);
-  font-weight: var(--resume-card-location-weight);
+  font-weight: 400;
 }
 
 /* Description toggle */
 .resume-card__description-wrap {
+  --resume-card-description-offset: 15px;
   grid-area: description;
-  --resume-card-description-offset: var(--spacing-sm, 0.938rem);
-  --resume-description-toggle-inline-offset: 0;
-  --resume-description-toggle-line-top: calc(100% - 1.5em + 0.28em - 11px);
-  --resume-description-toggle-line-translate-y: 7px;
-  --resume-description-overflow-padding-inline-end: 4.5rem;
   margin: var(--resume-card-description-offset) 0 0;
   position: relative;
   isolation: isolate;
@@ -169,15 +107,15 @@ solid-ui-button.resume__edit-button:focus-visible::part(button) {
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
   line-clamp: 2;
-  color: var(--resume-card-description-color);
+  color: var(--solid-ui-color-gray-700, #364153);
   font-size: var(--resume-card-description-size);
-  font-weight: var(--resume-card-description-weight);
-  line-height: var(--line-height-base, 1.5);
+  font-weight: 400;
+  line-height: 1.5;
   overflow: hidden;
 }
 
 .resume-card__description-text--overflowing {
-  padding-right: var(--resume-description-overflow-padding-inline-end);
+  padding-right: 72px;
 }
 
 .resume-card__description-text--expanded {
@@ -193,9 +131,9 @@ solid-ui-button.resume-card__description-toggle {
   margin: 0;
   padding: 0;
   position: absolute;
-  right: var(--resume-description-toggle-inline-offset);
+  right: 0;
   bottom: 0;
-  background-color: var(--color-card-bg, #FFF);
+  background-color: var(--solid-ui-color-white, #FFF);
   white-space: nowrap;
   z-index: 0;
 }
@@ -203,36 +141,25 @@ solid-ui-button.resume-card__description-toggle {
 .resume-card__description-toggle {
   border: 0;
   background: transparent;
-  color: var(--color-primary, #7C4DFF);
+  color: var(--solid-ui-color-primary, #7C4DFF);
   cursor: var(--profile-interactive-cursor, pointer);
   font: inherit;
-  font-size: var(--font-size-sm, 0.875rem);
-  line-height: var(--line-height-base, 1.5);
+  font-size: var(--solid-ui-font-size-sm, 0.875rem);
+  line-height: 1.5;
   min-height: auto;
   min-width: auto;
 }
 
-solid-ui-button.resume-card__description-toggle {
-  min-height: 0;
-  min-width: 0;
-  --button-height-sm: 0;
-  --button-padding-sm: 0;
-  --button-font-size-sm: var(--font-size-sm, 0.875rem);
-  --button-line-height: var(--line-height-base, 1.5);
-  --button-background: transparent;
-  --button-border-width: 0;
-  --button-border: transparent;
-  --button-text: var(--color-primary, #7C4DFF);
-  --button-hover-background: transparent;
-  --button-hover-border: transparent;
-  --button-hover-text: var(--color-primary, #7C4DFF);
+solid-ui-button.resume-card__description-toggle[hidden],
+.resume-card__description-toggle[hidden] {
+  display: none !important;
 }
 
 .resume-card__description-wrap .resume-card__description-text:not(.resume-card__description-text--expanded) + .resume-card__description-toggle,
 .resume-card__description-wrap .resume-card__description-text:not(.resume-card__description-text--expanded) + solid-ui-button.resume-card__description-toggle {
-  top: var(--resume-description-toggle-line-top);
+  top: calc(100% - 1.5em + 0.28em - 11px);
   bottom: auto;
-  transform: translateY(var(--resume-description-toggle-line-translate-y));
+  transform: translateY(7px);
 }
 
 .resume-card__description-text--expanded + .resume-card__description-toggle,
@@ -258,27 +185,24 @@ solid-ui-button.resume-card__description-toggle {
 .resume-card__language {
   text-align: left;
   margin: var(--resume-card-item-gap) 0;
-  font-size: var(--font-size-base, 1rem);
-  line-height: var(--line-height-base, 1.5);
+  font-size: var(--solid-ui-font-size-md, 1rem);
+  line-height: 1.5;
 }
 
 .resume-card__section > h3 {
-  color: var(--resume-card-heading-color);
-  font-size: var(--font-size-xl, 1.375rem);
-  font-weight: var(--font-weight-md, 500);
-  line-height: var(--line-height-tight, 1.4);
+  color: var(--solid-ui-color-gray-800, #101828);
+  font-size: 1.375rem;
+  font-weight: 500;
+  line-height: 1.4;
   margin-bottom: var(--resume-card-item-gap);
-  border-bottom: 1px solid var(--resume-card-heading-border);
+  border-bottom: 1px solid var(--color-border-pale, #eee);
   padding-bottom: var(--resume-card-item-gap);
 }
 
 /* Compact layout */
 :is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .resume-card__item {
-  --resume-card-title-size: var(--font-size-lg, 1.125rem);
-  --resume-card-organization-size: var(--font-size-md, 1rem);
-  --resume-card-location-size: var(--font-size-sm, 0.875rem);
-  --resume-card-period-size: var(--font-size-xxs, 0.75rem);
-  --resume-card-description-size: var(--font-size-sm, 0.875rem);
+  --resume-card-location-size: var(--solid-ui-font-size-sm, 0.875rem);
+  --resume-card-period-size: 0.75rem;
   --resume-card-description-offset: 0rem;
   grid-template-columns: minmax(0, 1fr);
   grid-template-areas:
@@ -299,11 +223,8 @@ solid-ui-button.resume-card__description-toggle {
 
 @media (max-width: 576px) {
   .resume-card__item {
-    --resume-card-title-size: var(--font-size-lg, 1.125rem);
-    --resume-card-organization-size: var(--font-size-md, 1rem);
-    --resume-card-location-size: var(--font-size-sm, 0.875rem);
-    --resume-card-period-size: var(--font-size-xxs, 0.75rem);
-    --resume-card-description-size: var(--font-size-sm, 0.875rem);
+    --resume-card-location-size: var(--solid-ui-font-size-sm, 0.875rem);
+    --resume-card-period-size: 0.75rem;
     --resume-card-description-offset: 0rem;
     grid-template-columns: minmax(0, 1fr);
     grid-template-areas:
@@ -325,11 +246,8 @@ solid-ui-button.resume-card__description-toggle {
 
 @container profile-pane (max-width: 576px) {
   .resume-card__item {
-    --resume-card-title-size: var(--font-size-lg, 1.125rem);
-    --resume-card-organization-size: var(--font-size-md, 1rem);
-    --resume-card-location-size: var(--font-size-sm, 0.875rem);
-    --resume-card-period-size: var(--font-size-xxs, 0.75rem);
-    --resume-card-description-size: var(--font-size-sm, 0.875rem);
+    --resume-card-location-size: var(--solid-ui-font-size-sm, 0.875rem);
+    --resume-card-period-size: 0.75rem;
     --resume-card-description-offset: 0rem;
     grid-template-columns: minmax(0, 1fr);
     grid-template-areas:

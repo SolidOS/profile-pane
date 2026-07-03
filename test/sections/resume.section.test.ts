@@ -22,7 +22,7 @@ describe('Resume section', () => {
       }
     ]
 
-    render(renderCVSection(context.session.store, subject, roles as any, 'owner'), container)
+    render(renderCVSection(context.session.store, subject, roles as any, 'owner', 'desktop'), container)
 
     expect(container.querySelector('#cv-heading')).toBeTruthy()
     expect(container.textContent).toContain('Software Engineer')
@@ -46,7 +46,7 @@ describe('Resume section', () => {
       }
     ]
 
-    render(renderCVSection(context.session.store, subject, roles as any, 'owner'), container)
+    render(renderCVSection(context.session.store, subject, roles as any, 'owner', 'desktop'), container)
 
     const results = await runAxe(container)
     expect(results.violations).toHaveLength(0)
@@ -58,7 +58,7 @@ describe('Resume section', () => {
     const container = document.createElement('div')
     document.body.appendChild(container)
 
-    render(renderCVSection(context.session.store, subject, [], 'owner'), container)
+    render(renderCVSection(context.session.store, subject, [], 'owner', 'desktop'), container)
 
     const section = container.querySelector('[data-profile-section="resume"]') as HTMLElement | null
     const panel = container.querySelector('#cv-panel') as HTMLElement | null

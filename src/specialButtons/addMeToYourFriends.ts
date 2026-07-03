@@ -69,9 +69,7 @@ const createAddMeToYourFriendsButton = (
 ): SolidUIButtonElement => {
   let label = addMeToYourFriendsButtonText
   const button = context.dom.createElement('solid-ui-button') as SolidUIButtonElement
-  button.setAttribute('type', 'button')
   button.setAttribute('variant', 'secondary')
-  button.setAttribute('size', 'sm')
   setAddToFriendsButtonLabel(button, label)
   button.addEventListener('click', setButtonHandler)
 

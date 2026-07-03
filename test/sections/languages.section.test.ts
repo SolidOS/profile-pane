@@ -15,7 +15,7 @@ describe('Languages section', () => {
       { name: 'Spanish', proficiency: 'Intermediate', entryNode: sym('https://example.com/profile#lang2') }
     ]
 
-    render(renderLanguageSection(context.session.store, subject, languages as any, 'owner'), container)
+    render(renderLanguageSection(context.session.store, subject, languages as any, 'owner', 'desktop'), container)
 
     expect(container.querySelector('#languages-heading')).toBeTruthy()
     expect(container.textContent).toContain('English')
@@ -33,7 +33,7 @@ describe('Languages section', () => {
       { name: 'Spanish', proficiency: 'Intermediate', entryNode: sym('https://example.com/profile#lang2') }
     ]
 
-    render(renderLanguageSection(context.session.store, subject, languages as any, 'owner'), container)
+    render(renderLanguageSection(context.session.store, subject, languages as any, 'owner', 'desktop'), container)
 
     const results = await runAxe(container)
     expect(results.violations.length).toBe(0)
@@ -49,18 +49,18 @@ describe('Languages section', () => {
       { name: 'English', proficiency: 'Fluent', entryNode: sym('https://example.com/profile#lang1') }
     ]
 
-    render(renderLanguageSection(context.session.store, subject, languages as any, 'owner'), container)
+    render(renderLanguageSection(context.session.store, subject, languages as any, 'owner', 'desktop'), container)
 
     const section = container.querySelector('.profile-section-collapsible') as HTMLElement | null
     const toggleButton = container.querySelector('solid-ui-button[aria-controls="languages-panel"], button[aria-controls="languages-panel"]') as HTMLElement | null
     const panel = container.querySelector('#languages-panel') as HTMLElement | null
-    const addMoreLabel = container.querySelector('.profile-section-collapsible__edit-label')
+    const addMoreButton = container.querySelector('solid-ui-button.profile-section-collapsible__edit-button') as HTMLElement | null
 
     expect(section?.getAttribute('data-expanded')).toBe('false')
     expect(toggleButton?.getAttribute('aria-expanded')).toBe('false')
     expect(panel?.hidden).toBe(false)
     expect(panel?.getAttribute('aria-hidden')).toBeNull()
-    expect(addMoreLabel?.textContent).toContain('Add More')
+    expect(addMoreButton?.textContent).toContain('Add More')
 
     toggleButton?.click()
 

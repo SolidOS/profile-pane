@@ -1,18 +1,17 @@
 import { html, nothing, TemplateResult } from 'lit-html'
-import 'solid-ui/components/button'
 import './HeadingSection.css'
 import { ProfileDetails } from './types'
 import { DataBrowserContext } from 'pane-registry'
 import { NamedNode } from 'rdflib'
-import { ViewerMode } from '../../types'
+import { Layout, ViewerMode } from '../../types'
 import { createHeadingEditDialog } from './HeadingEditDialog'
 import { toText } from '../../textUtils'
 import { toDisplayDateDMY } from './dateHelpers'
 import { birthdayIcon, editIcon, locationIcon, personInCircleIcon } from '../../icons-svg/profileIcons'
 import { emailIcon, phoneIcon } from '../../icons-svg/contactIcons'
 import { addMeToYourFriendsDiv } from '../../specialButtons/addMeToYourFriends'
-import { addMeToYourContactsDiv } from '../../specialButtons/addContact/addMeToYourContacts'
 import { resolvePhotoDisplaySrc } from './imageHelpers'
+import { renderResponsiveActionButton } from '../../ui/responsiveActionButton'
 
 const showHeadingImageFallback = (event: Event) => {
   const image = event.currentTarget as HTMLImageElement | null
@@ -30,13 +29,14 @@ export const renderHeadingSection = async (
   subject: NamedNode,
   profileData: ProfileDetails,
   viewerMode: ViewerMode,
+  layout: Layout,
   onSaved?: () => Promise<void> | void
 ) => {
+  const currentLayout = layout || 'desktop'
   const { name, pronouns, jobTitle, dateOfBirth, location, primaryPhone, primaryEmail, imageSrc } = profileData
   const resolvedImageSrc = await resolvePhotoDisplaySrc(context.session.store, imageSrc)
   const isOwner = viewerMode === 'owner'
   const isAuthenticatedViewer = viewerMode === 'authenticated'
-  const contactsButton = isAuthenticatedViewer ? await addMeToYourContactsDiv(subject, context) : nothing
   const friendsButton = isAuthenticatedViewer ? addMeToYourFriendsDiv(subject, context, viewerMode) : nothing
   
   const phoneValue = toText(primaryPhone?.valueNode).replace(/^tel:/i, '')
@@ -61,33 +61,21 @@ export const renderHeadingSection = async (
           ${isOwner || isAuthenticatedViewer ? html`
                 ${isAuthenticatedViewer ? html`
                   <div class="profile__actions profile__heading-actions">
-                    ${contactsButton}
                     ${friendsButton}
                   </div>
                 ` : nothing}
                 ${isOwner ? html`
                   <div class="profile__actions profile__heading-edit-action">
-                    <solid-ui-button
-                      type="button"
-                      variant="secondary"
-                      size="sm"
-                      class="profile__action-button profile__heading-action-button profile-action-text profile-section-collapsible__edit-button"
-                      aria-label="Add or edit heading information"
-                      @click=${(event: Event) => {
-                        return createHeadingEditDialog(
-                          event,
-                          context.session.store,
-                          subject,
-                          profileData,
-                          viewerMode,
-                          onSaved
-                        )
-                      }}
-                    >
-                    <span class="profile-section-collapsible__edit-label">${editIcon} Edit</span>
-                    <span class="profile-section-collapsible__edit-icon" aria-hidden="true">${editIcon}</span>
-                  </solid-ui-button>
-                </div>
+                    ${renderResponsiveActionButton({
+                      layout: currentLayout,
+                      className: 'profile-section-collapsible__edit-button',
+                      ariaLabel: 'Add or edit heading information',
+                      onClick: (event: Event) => createHeadingEditDialog(event, context.session.store, subject, profileData, viewerMode, onSaved),
+                      desktopIcon: html`<span slot="left-icon" class="profile-section-collapsible__action-label profile__add-more-icon" aria-hidden="true">${editIcon}</span>`,
+                      desktopLabel: 'Edit',
+                      mobileIcon: html`<span slot="icon" class="profile-section-collapsible__edit-icon" aria-hidden="true">${editIcon}</span>`
+                    })}
+                  </div>
                 ` : nothing}
             ` : nothing}
           <div class="profile__details">

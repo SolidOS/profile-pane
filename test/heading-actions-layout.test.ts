@@ -78,7 +78,7 @@ describe('heading action layout', () => {
 
       const editAction = headingSection?.querySelector('.profile__heading-edit-action') as HTMLElement | null
       expect(editAction).not.toBeNull()
-      expect(editAction?.querySelector('solid-ui-button.profile__heading-action-button')).not.toBeNull()
+      expect(editAction?.querySelector('solid-ui-button.profile-section-collapsible__edit-button')).not.toBeNull()
       expect(editAction?.querySelector('[aria-label="Add or edit heading information"]')).not.toBeNull()
 
       const actions = headingSection?.querySelector('.profile__heading-actions')
