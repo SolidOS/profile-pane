@@ -19,6 +19,7 @@ export interface Role {
   endDate?: Literal,
   isCurrentRole?: boolean,
   orgName: string,
+  orgPublicId?: string,
   orgType?: string,
   orgLocation?: string,
   orgHomePage?: string,

@@ -2,8 +2,9 @@ import { LiveStore, NamedNode, literal } from 'rdflib'
 import { ns } from 'solid-ui'
 import { BioMutationPlan, BioRow } from './types'
 import { MutationOps } from '../shared/types'
-import { applyUpdaterPatch, replacePredicateStatements } from '../shared/rdfMutationHelpers'
-import { saveBioUpdatesFailedPrefixText} from '../../texts'
+import { replacePredicateStatements, runUpdateTransport, shouldForceDocumentPutForStatements } from '../shared/rdfMutationHelpers'
+import { bioMutationSaveFailedDebugText, saveBioUpdatesFailedMessageText, updaterUnsupportedStoreErrorMessageText } from '../../texts'
+import { error as debugError } from '../../utils/debug'
 // Need to find out if this is really how we should store the data
 async function mutateBioEntry(store: LiveStore, subject: NamedNode, bioOps: MutationOps<BioRow>) {
   const doc = subject.doc()
@@ -35,14 +36,23 @@ async function mutateBioEntry(store: LiveStore, subject: NamedNode, bioOps: Muta
     applyBasics(selectedBio, Boolean(removeBio && !updateBio && !createBio))
   }
 
-  await applyUpdaterPatch(store, deletions, insertions)
+  const shouldSerializeDocument = await shouldForceDocumentPutForStatements(store, doc, insertions)
+
+  await runUpdateTransport(store, doc, deletions, insertions, {
+    unsupportedMessage: updaterUnsupportedStoreErrorMessageText,
+    failureMessage: 'Failed to save bio updates',
+    useDavFallback: false,
+    usePutFallback: shouldSerializeDocument,
+    forcePut: shouldSerializeDocument
+  })
 }
 
 export async function processBioMutations(store: LiveStore, subject: NamedNode, mutationPlan: BioMutationPlan) {
   try {
     await mutateBioEntry(store, subject, mutationPlan)
   } catch (error) {
-    const message = error instanceof Error ? error.message : String(error)
-    throw new Error(`${saveBioUpdatesFailedPrefixText} ${message}`)
+    const rootError = error instanceof Error ? error : new Error(String(error))
+    debugError(bioMutationSaveFailedDebugText, rootError)
+    throw new Error(saveBioUpdatesFailedMessageText, { cause: rootError })
   }
 } 

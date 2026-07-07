@@ -1,11 +1,98 @@
-import '../styles/dialog.css'
-import { render } from 'lit-html'
+import './dialog.css'
+import 'solid-ui/components/button'
+import { html, render } from 'lit-html'
 import { closeIcon } from '../icons-svg/profileIcons'
+import { createSpinner } from './spinner'
+import { formatDisplayError } from '../utils/errorDisplay'
 
 /* Copied from issue-pane, minor typescript adjustments */
 /* Changed modal from div to dialog element */
 let modalDialog: HTMLDialogElement | null = null
-let previousFocus: Element | null = null
+
+let scrollLockCount = 0
+let previousHtmlOverflow = ''
+let previousBodyOverflow = ''
+let removeDocumentScrollGuard: (() => void) | null = null
+
+function getEventTargetElement(target: EventTarget | null): HTMLElement | null {
+  if (target instanceof HTMLElement) return target
+  if (target instanceof Node) return target.parentElement
+  return null
+}
+
+function getEventPath(event: Event): EventTarget[] {
+  if (typeof event.composedPath === 'function') {
+    return event.composedPath()
+  }
+
+  return event.target ? [event.target] : []
+}
+
+function isDialogScrollRegionTarget(event: Event): boolean {
+  const path = getEventPath(event)
+  const description = modalDialog?.querySelector('#modal-desc')
+
+  if (description && path.includes(description)) {
+    return true
+  }
+
+  if (modalDialog && path.includes(modalDialog)) {
+    return true
+  }
+
+  const targetElement = getEventTargetElement(event.target)
+  if (!targetElement || !modalDialog || !modalDialog.contains(targetElement)) {
+    return false
+  }
+
+  return Boolean(targetElement.closest('#modal-desc'))
+}
+
+function installDocumentScrollGuard(dom: Document): void {
+  if (removeDocumentScrollGuard) return
+
+  const preventBackgroundScroll = (event: Event) => {
+    if (!isDialogScrollRegionTarget(event)) {
+      event.preventDefault()
+    }
+  }
+
+  dom.addEventListener('wheel', preventBackgroundScroll, { capture: true, passive: false })
+  dom.addEventListener('touchmove', preventBackgroundScroll, { capture: true, passive: false })
+  removeDocumentScrollGuard = () => {
+    dom.removeEventListener('wheel', preventBackgroundScroll, true)
+    dom.removeEventListener('touchmove', preventBackgroundScroll, true)
+    removeDocumentScrollGuard = null
+  }
+}
+
+function lockDocumentScroll(dom: Document): void {
+  if (scrollLockCount === 0) {
+    previousHtmlOverflow = dom.documentElement.style.overflow
+    previousBodyOverflow = dom.body.style.overflow
+
+    dom.documentElement.style.overflow = 'hidden'
+    dom.body.style.overflow = 'hidden'
+    installDocumentScrollGuard(dom)
+  }
+
+  scrollLockCount += 1
+}
+
+function unlockDocumentScroll(dom: Document): void {
+  if (scrollLockCount === 0) return
+
+  scrollLockCount -= 1
+  if (scrollLockCount > 0) return
+
+  dom.documentElement.style.overflow = previousHtmlOverflow
+  dom.body.style.overflow = previousBodyOverflow
+  removeDocumentScrollGuard?.()
+}
+
+function getDialogMountTarget(dom: Document): HTMLElement {
+  return dom.body
+}
 
 type DialogButtonValue = boolean | 'save' | null
 type DialogButton = {
@@ -33,14 +120,60 @@ type DialogElements = {
   headerAction: HTMLDivElement,
   description: HTMLDivElement,
   error: HTMLElement,
-  buttons: HTMLDivElement
+  buttons: HTMLDivElement,
+  savingOverlay: HTMLDivElement
+}
+
+type DialogActionControl = HTMLElement & {
+  disabled?: boolean,
+  label?: string,
+  click: () => void,
+  shadowRoot?: ShadowRoot | null
+}
+
+function isSolidUiButton(control: Element | null): control is DialogActionControl {
+  return control?.tagName === 'SOLID-UI-BUTTON'
+}
+
+function setDialogActionDisabled(control: DialogActionControl | null, disabled: boolean): void {
+  if (!control) return
+  control.disabled = disabled
+  control.toggleAttribute('disabled', disabled)
+}
+
+function setDialogActionLabel(control: DialogActionControl | null, label: string): void {
+  if (!control) return
+
+  if (isSolidUiButton(control)) {
+    control.label = label
+    control.setAttribute('label', label)
+    control.textContent = label
+    return
+  }
+
+  ;(control as HTMLElement).textContent = label
+}
+
+export function getSharedDialogSaveButton(root: ParentNode): DialogActionControl | null {
+  return root.querySelector('#modal-buttons [data-dialog-primary="true"]') as DialogActionControl | null
+}
+
+export function getSharedDialogCancelButton(root: ParentNode): DialogActionControl | null {
+  return root.querySelector('#modal-buttons [data-cancel="true"]') as DialogActionControl | null
 }
 
 function ensureModalDialog (dom: Document): HTMLDialogElement {
+  const mountTarget = getDialogMountTarget(dom)
+
   // if we previously created a dialog but it was removed from the document
   // (tests clear body), rebuild it. Checking presence ensures our reference
   // doesn't point at a detached element.
-  if (modalDialog && dom.body.contains(modalDialog)) return modalDialog
+  if (modalDialog && dom.body.contains(modalDialog)) {
+    if (modalDialog.parentElement !== mountTarget) {
+      mountTarget.appendChild(modalDialog)
+    }
+    return modalDialog
+  }
 
   modalDialog = null
   modalDialog = dom.createElement('dialog')
@@ -51,17 +184,18 @@ function ensureModalDialog (dom: Document): HTMLDialogElement {
 
   modalDialog.innerHTML = `
     <div class="modal">
-      <div class="modal-header">
+      <div class="modal-header flex-row align-center justify-between">
         <h2 id="modal-title"></h2>
-        <div id="modal-header-action"></div>
+        <div id="modal-header-action" class="flex-row align-center"></div>
       </div>
       <div id="modal-desc"></div>
-      <section id="modal-error" class="modal__error-section" aria-live="assertive" role="alert" hidden></section>
-      <div id="modal-buttons"></div>
+      <section id="modal-error" class="modal__error-section" aria-live="assertive" aria-atomic="true" aria-hidden="true" role="alert" tabindex="-1" hidden></section>
+      <div id="modal-buttons" class="flex-row align-center justify-end"></div>
+      <div id="modal-saving-overlay" hidden></div>
     </div>
   `
 
-  dom.body.appendChild(modalDialog)
+  mountTarget.appendChild(modalDialog)
   return modalDialog
 }
 
@@ -72,21 +206,26 @@ function getDialogElements (dialog: HTMLDialogElement): DialogElements {
     headerAction: dialog.querySelector('#modal-header-action') as HTMLDivElement,
     description: dialog.querySelector('#modal-desc') as HTMLDivElement,
     error: dialog.querySelector('#modal-error') as HTMLElement,
-    buttons: dialog.querySelector('#modal-buttons') as HTMLDivElement
+    buttons: dialog.querySelector('#modal-buttons') as HTMLDivElement,
+    savingOverlay: dialog.querySelector('#modal-saving-overlay') as HTMLDivElement
   }
 }
 
 function clearModalError(elements: DialogElements): void {
   elements.error.textContent = ''
+  elements.error.setAttribute('aria-hidden', 'true')
   elements.error.hidden = true
 }
 
-function setModalError(elements: DialogElements, message: string): void {
-  elements.error.textContent = message
+function setModalError(elements: DialogElements, error: unknown, fallbackMessage?: string): void {
+  elements.error.textContent = formatDisplayError(error, fallbackMessage)
+  elements.error.setAttribute('aria-hidden', 'false')
   elements.error.hidden = false
 }
 
 function openDialogElement (dialog: HTMLDialogElement): void {
+  lockDocumentScroll(dialog.ownerDocument)
+
   if (typeof dialog.showModal === 'function') {
     try {
       if (!dialog.open) dialog.showModal()
@@ -100,40 +239,72 @@ function openDialogElement (dialog: HTMLDialogElement): void {
 }
 
 function closeDialogElement (dialog: HTMLDialogElement): void {
-  if (typeof dialog.close === 'function' && dialog.open) {
-    dialog.close()
-    return
-  }
+  try {
+    if (typeof dialog.close === 'function' && dialog.open) {
+      dialog.close()
+      return
+    }
 
-  dialog.removeAttribute('open')
+    dialog.removeAttribute('open')
+  } finally {
+    unlockDocumentScroll(dialog.ownerDocument)
+  }
 }
 
-function findInitialContentFocusTarget(container: ParentNode): HTMLElement | null {
-  const focusable = Array.from(
-    container.querySelectorAll('input, select, textarea, [contenteditable="true"], [tabindex]:not([tabindex="-1"])')
-  ) as HTMLElement[]
+function isMobileDialogLayout(dom: Document): boolean {
+  return Boolean(dom.querySelector('[data-layout=\'mobile\']'))
+}
 
-  for (const el of focusable) {
-    const isDisabled = el.hasAttribute('disabled') || el.getAttribute('aria-disabled') === 'true'
-    const hiddenByAttr = el.hasAttribute('hidden') || el.getAttribute('aria-hidden') === 'true'
-    if (!isDisabled && !hiddenByAttr) return el
+function isFocusableElement(element: HTMLElement): boolean {
+  if (element.hasAttribute('disabled')) return false
+  if (element.getAttribute('aria-hidden') === 'true') return false
+  if (element.getAttribute('hidden') !== null) return false
+  if (element.tabIndex < 0) return false
+  return true
+}
+
+function findPreferredInitialFocusTarget(container: ParentNode): HTMLElement | null {
+  const focusableControls = container.querySelectorAll([
+    'input:not([type="hidden"]):not([disabled])',
+    'textarea:not([disabled])',
+    'select:not([disabled])',
+    'solid-ui-select:not([disabled])',
+    'solid-ui-combobox:not([disabled])',
+    '[contenteditable="true"]',
+    'button:not([disabled])',
+    'solid-ui-button:not([disabled])',
+    '[tabindex]:not([tabindex="-1"])'
+  ].join(','))
+
+  for (const match of focusableControls) {
+    if (match instanceof HTMLElement && isFocusableElement(match)) return match
   }
 
   return null
 }
 
-function focusInitialDialogTarget (description: HTMLDivElement, buttons: HTMLDivElement): void {
-  const initialInput = findInitialContentFocusTarget(description)
-  if (initialInput) {
-    initialInput.focus()
-    if (initialInput instanceof HTMLInputElement || initialInput instanceof HTMLTextAreaElement) {
-      initialInput.select()
+function focusInitialDialogTarget(dialog: HTMLDialogElement, description: HTMLDivElement, buttons: HTMLDivElement): void {
+  if (isMobileDialogLayout(dialog.ownerDocument)) {
+    const activeElement = dialog.ownerDocument.activeElement as HTMLElement | null
+    if (activeElement && dialog.contains(activeElement)) {
+      activeElement.blur()
     }
     return
   }
 
-  const firstButton = buttons.querySelector('button') as HTMLButtonElement | null
-  if (firstButton) firstButton.focus()
+  const initialTarget = findPreferredInitialFocusTarget(description)
+  if (initialTarget) {
+    initialTarget.focus()
+    if (initialTarget instanceof HTMLInputElement || initialTarget instanceof HTMLTextAreaElement) {
+      initialTarget.select()
+    }
+    return
+  }
+
+  const firstButton = findPreferredInitialFocusTarget(buttons)
+  if (firstButton) {
+    firstButton.focus()
+  }
 }
 
 function collectFormValues (form: HTMLFormElement): InputDialogValues {
@@ -161,7 +332,6 @@ function openModal ({
   const dialog = ensureModalDialog(dom)
   const elements = getDialogElements(dialog)
 
-  previousFocus = dom.activeElement
   openDialogElement(dialog)
 
   elements.title.textContent = title || ''
@@ -182,7 +352,7 @@ function openModal ({
     }
 
     const requestCancel = () => {
-      const cancelBtn = dialog.querySelector('button[data-cancel]') as HTMLButtonElement | null
+      const cancelBtn = getSharedDialogCancelButton(dialog)
       if (cancelBtn) {
         cancelBtn.click()
         return
@@ -199,17 +369,21 @@ function openModal ({
     elements.headerAction.innerHTML = ''
     const resolvedHeaderAction = headerAction || { type: 'close' as const }
     if (resolvedHeaderAction.type === 'close') {
-      const closeButton = dom.createElement('button')
-      closeButton.setAttribute('type', 'button')
+      const closeButton = dom.createElement('solid-ui-button') as DialogActionControl
+      closeButton.setAttribute('variant', 'ghost')
       closeButton.setAttribute('aria-label', 'Close dialog')
-      render(closeIcon, closeButton)
+      const iconSlot = dom.createElement('span')
+      iconSlot.setAttribute('slot', 'icon')
+      render(closeIcon, iconSlot)
+      closeButton.appendChild(iconSlot)
       closeButton.onclick = () => requestCancel()
       elements.headerAction.appendChild(closeButton)
     } else if (resolvedHeaderAction.type === 'button') {
-      const actionButton = dom.createElement('button')
-      actionButton.setAttribute('type', 'button')
-      actionButton.className = resolvedHeaderAction.className || 'modal__header-action-button profile__action-button profile-action-text flex-center'
+      const actionButton = dom.createElement('solid-ui-button') as DialogActionControl
+      actionButton.setAttribute('variant', 'tertiary')
+      actionButton.className = resolvedHeaderAction.className || ''
       actionButton.textContent = resolvedHeaderAction.label
+      actionButton.setAttribute('label', resolvedHeaderAction.label)
       actionButton.setAttribute('aria-label', resolvedHeaderAction.ariaLabel || resolvedHeaderAction.label)
       actionButton.onclick = async () => {
         if (resolvedHeaderAction.onClick) {
@@ -220,12 +394,14 @@ function openModal ({
     }
 
     buttons.forEach((btn) => {
-      const b = dom.createElement('button')
-      b.setAttribute('type', 'button')
+      const b = dom.createElement('solid-ui-button') as DialogActionControl
+      b.setAttribute('label', btn.label)
+      b.setAttribute('variant', btn.primary ? 'primary' : 'secondary')
       b.textContent = btn.label
-      if (btn.primary) b.classList.add('btn-primary')
+      if (btn.primary) {
+        b.setAttribute('data-dialog-primary', 'true')
+      }
       if (btn.cancel) {
-        b.classList.add('btn-light')
         b.setAttribute('data-cancel', 'true')
       }
       b.addEventListener('click', async () => {
@@ -238,7 +414,13 @@ function openModal ({
       elements.buttons.appendChild(b)
     })
 
-    focusInitialDialogTarget(elements.description, elements.buttons)
+    const scheduleInitialFocus = dom.defaultView?.requestAnimationFrame
+      ? (callback: () => void) => dom.defaultView?.requestAnimationFrame(() => callback())
+      : (callback: () => void) => setTimeout(callback, 0)
+
+    scheduleInitialFocus(() => {
+      focusInitialDialogTarget(dialog, elements.description, elements.buttons)
+    })
   })
 }
 
@@ -248,8 +430,11 @@ function closeModal (_result: DialogButtonValue): void {
     modalDialog.oncancel = null
     const headerActionButton = modalDialog.querySelector('#modal-header-action button') as HTMLButtonElement | null
     if (headerActionButton) headerActionButton.onclick = null
-    if (previousFocus && 'focus' in previousFocus) (previousFocus as HTMLElement).focus()
   }
+}
+
+export function closeSharedDialog(): void {
+  closeModal(null)
 }
 
 export function alertDialog (message: string, title = 'Information', dom: Document) {
@@ -261,6 +446,49 @@ export function alertDialog (message: string, title = 'Information', dom: Docume
   })
 }
 
+function updateSavingUI (dialog: HTMLDialogElement, submitLabel: string, isSaving: boolean) {
+  const elements = getDialogElements(dialog)
+  const saveButton = getSharedDialogSaveButton(dialog)
+  const cancelButton = getSharedDialogCancelButton(dialog)
+
+  dialog.classList.toggle('modal--saving', isSaving)
+  dialog.setAttribute('aria-busy', String(isSaving))
+  elements.description.toggleAttribute('inert', isSaving)
+
+  if (isSaving) {
+    const activeElement = dialog.ownerDocument.activeElement as HTMLElement | null
+    if (activeElement && dialog.contains(activeElement)) {
+      activeElement.blur()
+    }
+  }
+
+  if (saveButton) {
+    setDialogActionDisabled(saveButton, isSaving)
+    saveButton.setAttribute('aria-busy', String(isSaving))
+    setDialogActionLabel(saveButton, submitLabel)
+  }
+
+  if (cancelButton) {
+    setDialogActionDisabled(cancelButton, isSaving)
+  }
+
+  elements.savingOverlay.hidden = !isSaving
+  if (isSaving) {
+    render(html`
+      <div class="modal__saving-indicator inline-flex-row justify-center" aria-live="polite" aria-label="Saving changes">
+        ${createSpinner()}
+      </div>
+    `, elements.savingOverlay)
+  } else {
+    render(html``, elements.savingOverlay)
+  }
+}
+
+export function setSharedDialogSavingState (dom: Document, isSaving: boolean, submitLabel = 'Saving Changes'): void {
+  const dialog = ensureModalDialog(dom)
+  updateSavingUI(dialog, submitLabel, isSaving)
+}
+
 type OpenInputDialogCustom = {
   title: string,
   dom: Document,
@@ -268,6 +496,9 @@ type OpenInputDialogCustom = {
   submitLabel?: string,
   cancelLabel?: string,
   headerAction?: DialogHeaderAction,
+  hideFooterButtons?: boolean,
+  onOpen?: () => void,
+  shouldCloseWithoutSave?: () => Promise<boolean> | boolean,
   validate?: () => Promise<string | null> | string | null,
   onSave?: () => Promise<void> | void,
   formatSaveError?: (error: unknown) => string
@@ -286,18 +517,20 @@ export function openInputDialog (options: OpenInputDialogCustom): Promise<InputD
   const submitProxy = options.dom.createElement('button')
   submitProxy.type = 'submit'
   submitProxy.hidden = true
+  submitProxy.style.display = 'none'
+  submitProxy.setAttribute('aria-hidden', 'true')
   submitProxy.tabIndex = -1
   options.form.appendChild(submitProxy)
 
   const handleSubmit = (event: SubmitEvent) => {
     event.preventDefault()
-    const saveButton = dialog.querySelector('#modal-buttons .btn-primary') as HTMLButtonElement | null
+    const saveButton = getSharedDialogSaveButton(dialog)
     saveButton?.click()
   }
 
   options.form.addEventListener('submit', handleSubmit)
 
-  return openModal({
+  const dialogPromise = openModal({
     title: options.title,
     message: options.form,
     headerAction: options.headerAction,
@@ -310,6 +543,10 @@ export function openInputDialog (options: OpenInputDialogCustom): Promise<InputD
         beforeClose: async () => {
           clearModalError(elements)
 
+          if (options.shouldCloseWithoutSave && await options.shouldCloseWithoutSave()) {
+            return true
+          }
+
           if (options.validate) {
             const validationMessage = await options.validate()
             if (validationMessage) {
@@ -321,12 +558,14 @@ export function openInputDialog (options: OpenInputDialogCustom): Promise<InputD
           if (!options.onSave) return true
 
           try {
+            updateSavingUI(dialog, submitLabel, true)
+
             await options.onSave()
             return true
           } catch (error) {
-            const fallback = error instanceof Error ? error.message : String(error)
-            const message = options.formatSaveError ? options.formatSaveError(error) : fallback
-            setModalError(elements, message)
+            updateSavingUI(dialog, submitLabel, false)
+            const fallback = options.formatSaveError ? options.formatSaveError(error) : undefined
+            setModalError(elements, error, fallback)
             return false
           }
         }
@@ -334,11 +573,25 @@ export function openInputDialog (options: OpenInputDialogCustom): Promise<InputD
     ],
     dom: options.dom
   })
+
+  const scheduleOpenCallback = options.dom.defaultView?.requestAnimationFrame
+    ? (callback: () => void) => options.dom.defaultView?.requestAnimationFrame(() => callback())
+    : (callback: () => void) => setTimeout(callback, 0)
+
+  if (options.onOpen) {
+    scheduleOpenCallback(options.onOpen)
+  }
+
+  elements.buttons.hidden = Boolean(options.hideFooterButtons)
+
+  return dialogPromise
     .then((result) => {
       if (result !== 'save') return null
       return collectFormValues(options.form)
     })
     .finally(() => {
+      elements.buttons.hidden = false
+      updateSavingUI(dialog, submitLabel, false)
       options.form.removeEventListener('submit', handleSubmit)
       submitProxy.remove()
     })

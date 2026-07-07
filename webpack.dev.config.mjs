@@ -63,6 +63,7 @@ export default [
     },
     resolve: {
       extensions: [".js", ".ts"],
+      mainFiles: ['index.esm', 'index'],
       alias: {
         $rdf: 'rdflib',
         rdflib: 'rdflib',
@@ -92,6 +93,10 @@ export default [
           publicPath: '/node_modules'
         }
       ],
+      watchFiles: [
+        './src/**/*',
+        '../solid-ui/dist/**/*'
+      ]
     },
     devtool: "source-map",
   },

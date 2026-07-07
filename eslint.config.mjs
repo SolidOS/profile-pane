@@ -1,4 +1,5 @@
 import tsParser from "@typescript-eslint/parser"
+import tsPlugin from "@typescript-eslint/eslint-plugin"
 import globals from "globals"
 
 export default [
@@ -50,6 +51,9 @@ export default [
     {
         files: ['src/**/*.ts'],
 
+        plugins: {
+            '@typescript-eslint': tsPlugin,
+        },
         languageOptions: {
         globals: {
             ...globals.browser,
@@ -65,9 +69,18 @@ export default [
         rules: {
             semi: ['error', 'never'],
             quotes: ['error', 'single'],
+            'no-console': ['error', { allow: ['warn', 'error'] }],
             // Disable ESLint rules that TypeScript handles better
             'no-unused-vars': 'off', // TypeScript handles this via noUnusedLocals
             'no-undef': 'off', // TypeScript handles undefined variables
+            '@typescript-eslint/no-unused-vars': ['error', {
+                vars: 'all',
+                varsIgnorePattern: '.*',
+                args: 'all',
+                argsIgnorePattern: '^_',
+                caughtErrors: 'all',
+                caughtErrorsIgnorePattern: '^_'
+            }],
         },
     }
 ]

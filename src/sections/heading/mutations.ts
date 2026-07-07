@@ -2,10 +2,22 @@ import { LiveStore, NamedNode, Node, st, literal, sym } from 'rdflib'
 import { ns } from 'solid-ui'
 import { ProfileBasicRow, HeadingMutationPlan } from './types'
 import { MutationOps } from '../shared/types'
-import { applyUpdaterPatch, collectLinkedNodeStatements, collectNodeStatements, findExistingNode, replacePredicateStatements } from '../shared/rdfMutationHelpers'
+import { MutationDocumentTextCache, collectLinkedNodeStatements, collectNodeStatements, findExistingNode, replacePredicateStatements, runUpdateTransport, shouldForceDocumentPutForStatements } from '../shared/rdfMutationHelpers'
 import { createIdNode } from '../shared/idNodeFactory'
-import { saveHeadingUpdatesFailedPrefixText } from '../../texts'
 import { ContactAddressRow, ContactPointRow } from '../contactInfo/types'
+import { headingMutationSaveFailedDebugText, saveHeadingUpdatesFailedMessageText, updaterUnsupportedStoreErrorMessageText } from '../../texts'
+import { error as debugError } from '../../utils/debug'
+
+function splitPronouns(value?: string): { subjectPronoun?: string, objectPronoun?: string } {
+  const normalized = (value || '').trim()
+  if (!normalized) return {}
+
+  const [subjectPronounRaw, objectPronounRaw] = normalized.split('/').map((part) => part.trim())
+  const subjectPronoun = subjectPronounRaw || undefined
+  const objectPronoun = objectPronounRaw || undefined
+
+  return { subjectPronoun, objectPronoun }
+}
 
 function buildPhoneStatements(subject: NamedNode, doc: NamedNode, node: Node, phone: ContactPointRow) {
   const normalizedValue = phone.value.startsWith('tel:') ? phone.value : `tel:${phone.value}`
@@ -41,11 +53,11 @@ function buildAddressStatements(subject: NamedNode, doc: NamedNode, node: Node, 
   const inserts = [st(subject, ns.vcard('hasAddress'), node as any, doc)]
 
   if (address.type) inserts.push(st(node as any, ns.rdf('type'), ns.vcard(address.type), doc))
-  if (address.streetAddress) inserts.push(st(node as any, ns.vcard('street-address'), address.streetAddress as any, doc))
-  if (address.locality) inserts.push(st(node as any, ns.vcard('locality'), address.locality as any, doc))
-  if (address.region) inserts.push(st(node as any, ns.vcard('region'), address.region as any, doc))
-  if (address.postalCode) inserts.push(st(node as any, ns.vcard('postal-code'), address.postalCode as any, doc))
-  if (address.countryName) inserts.push(st(node as any, ns.vcard('country-name'), address.countryName as any, doc))
+  if (address.streetAddress) inserts.push(st(node as any, ns.vcard('street-address'), literal(address.streetAddress), doc))
+  if (address.locality) inserts.push(st(node as any, ns.vcard('locality'), literal(address.locality), doc))
+  if (address.region) inserts.push(st(node as any, ns.vcard('region'), literal(address.region), doc))
+  if (address.postalCode) inserts.push(st(node as any, ns.vcard('postal-code'), literal(address.postalCode), doc))
+  if (address.countryName) inserts.push(st(node as any, ns.vcard('country-name'), literal(address.countryName), doc))
 
   return inserts
 }
@@ -58,7 +70,7 @@ function findCreateOp<T extends { entryNode: string }>(ops: T[]): T | undefined 
   return ops.find((op) => !op.entryNode)
 }
 
-async function mutatePhoneEntry(store: LiveStore, subject: NamedNode, phoneOps: MutationOps<ContactPointRow>) {
+async function mutatePhoneEntry(store: LiveStore, subject: NamedNode, phoneOps: MutationOps<ContactPointRow>, documentTextCache?: MutationDocumentTextCache) {
   const doc = subject.doc()
   const existingPhoneNodes = store.each(subject, ns.vcard('hasTelephone'), null, doc) as Node[]
   const deletions: any[] = []
@@ -92,10 +104,19 @@ async function mutatePhoneEntry(store: LiveStore, subject: NamedNode, phoneOps: 
     insertions.push(...buildPhoneStatements(subject, doc, createIdNode(doc), createPhone))
   }
 
-  await applyUpdaterPatch(store, deletions, insertions)
+  const shouldSerializeDocument = await shouldForceDocumentPutForStatements(store, doc, insertions, undefined, { documentTextCache })
+
+  await runUpdateTransport(store, doc, deletions, insertions, {
+    unsupportedMessage: updaterUnsupportedStoreErrorMessageText,
+    failureMessage: 'Failed to save heading updates',
+    documentTextCache,
+    useDavFallback: false,
+    usePutFallback: shouldSerializeDocument,
+    forcePut: shouldSerializeDocument
+  })
 }
 
-async function mutateEmailEntry(store: LiveStore, subject: NamedNode, emailOps: MutationOps<ContactPointRow>) {
+async function mutateEmailEntry(store: LiveStore, subject: NamedNode, emailOps: MutationOps<ContactPointRow>, documentTextCache?: MutationDocumentTextCache) {
   const doc = subject.doc()
   const existingEmailNodes = store.each(subject, ns.vcard('hasEmail'), null, doc) as Node[]
   const deletions: any[] = []
@@ -129,10 +150,19 @@ async function mutateEmailEntry(store: LiveStore, subject: NamedNode, emailOps: 
     insertions.push(...buildEmailStatements(subject, doc, createIdNode(doc), createEmail))
   }
 
-  await applyUpdaterPatch(store, deletions, insertions)
+  const shouldSerializeDocument = await shouldForceDocumentPutForStatements(store, doc, insertions, undefined, { documentTextCache })
+
+  await runUpdateTransport(store, doc, deletions, insertions, {
+    unsupportedMessage: updaterUnsupportedStoreErrorMessageText,
+    failureMessage: 'Failed to save heading updates',
+    documentTextCache,
+    useDavFallback: false,
+    usePutFallback: shouldSerializeDocument,
+    forcePut: shouldSerializeDocument
+  })
 }
 
-async function mutateAddressEntry(store: LiveStore, subject: NamedNode, addressOps: MutationOps<ContactAddressRow>) {
+async function mutateAddressEntry(store: LiveStore, subject: NamedNode, addressOps: MutationOps<ContactAddressRow>, documentTextCache?: MutationDocumentTextCache) {
   const doc = subject.doc()
   const existingAddressNodes = store.each(subject, ns.vcard('hasAddress'), null, doc) as Node[]
   const deletions: any[] = []
@@ -166,10 +196,19 @@ async function mutateAddressEntry(store: LiveStore, subject: NamedNode, addressO
     insertions.push(...buildAddressStatements(subject, doc, createIdNode(doc), createAddress))
   }
 
-  await applyUpdaterPatch(store, deletions, insertions)
+  const shouldSerializeDocument = await shouldForceDocumentPutForStatements(store, doc, insertions, undefined, { documentTextCache })
+
+  await runUpdateTransport(store, doc, deletions, insertions, {
+    unsupportedMessage: updaterUnsupportedStoreErrorMessageText,
+    failureMessage: 'Failed to save heading updates',
+    documentTextCache,
+    useDavFallback: false,
+    usePutFallback: shouldSerializeDocument,
+    forcePut: shouldSerializeDocument
+  })
 }
 
-async function mutateBasicProfileEntry(store: LiveStore, subject: NamedNode, basicOps: MutationOps<ProfileBasicRow>) {
+async function mutateBasicProfileEntry(store: LiveStore, subject: NamedNode, basicOps: MutationOps<ProfileBasicRow>, documentTextCache?: MutationDocumentTextCache) {
   const doc = subject.doc()
   const deletions: any[] = []
   const insertions: any[] = []
@@ -190,14 +229,45 @@ async function mutateBasicProfileEntry(store: LiveStore, subject: NamedNode, bas
     replacePredicateStatements(store, subject, ns.vcard('hasPhoto'), doc, deletions, insertions, nextObject)
   }
 
+  const replacePronounFields = (value?: string) => {
+    const { subjectPronoun, objectPronoun } = splitPronouns(value)
+
+    replacePredicateStatements(
+      store,
+      subject,
+      ns.solid('preferredSubjectPronoun'),
+      doc,
+      deletions,
+      insertions,
+      subjectPronoun ? literal(subjectPronoun) : null
+    )
+    replacePredicateStatements(
+      store,
+      subject,
+      ns.solid('preferredObjectPronoun'),
+      doc,
+      deletions,
+      insertions,
+      objectPronoun ? literal(objectPronoun) : null
+    )
+    replacePredicateStatements(
+      store,
+      subject,
+      ns.solid('preferredRelativePronoun'),
+      doc,
+      deletions,
+      insertions,
+      null
+    )
+  }
+
   const applyBasics = (basic: ProfileBasicRow, clearAll = false) => {
     const data = clearAll
       ? {
           name: '',
           nickname: '',
+          pronouns: '',
           dateOfBirth: '',
-          jobTitle: '',
-          orgName: '',
           imageSrc: ''
         }
       : basic
@@ -207,8 +277,7 @@ async function mutateBasicProfileEntry(store: LiveStore, subject: NamedNode, bas
     replaceLiteralField(ns.foaf('nick'), data.nickname)
     replaceLiteralField(ns.vcard('nickname'), data.nickname)
     replaceLiteralField(ns.vcard('bday'), data.dateOfBirth)
-    replaceLiteralField(ns.vcard('role'), data.jobTitle)
-    replaceLiteralField(ns.vcard('organization-name'), data.orgName)
+    replacePronounFields(data.pronouns)
     replacePhotoField(data.imageSrc)
   }
 
@@ -221,17 +290,28 @@ async function mutateBasicProfileEntry(store: LiveStore, subject: NamedNode, bas
     applyBasics(selectedBasic, Boolean(removeBasic && !updateBasic && !createBasic))
   }
 
-  await applyUpdaterPatch(store, deletions, insertions)
+  const shouldSerializeDocument = await shouldForceDocumentPutForStatements(store, doc, insertions, undefined, { documentTextCache })
+
+  await runUpdateTransport(store, doc, deletions, insertions, {
+    unsupportedMessage: updaterUnsupportedStoreErrorMessageText,
+    failureMessage: 'Failed to save heading updates',
+    documentTextCache,
+    useDavFallback: false,
+    usePutFallback: shouldSerializeDocument,
+    forcePut: shouldSerializeDocument
+  })
 }
 
 export async function processHeadingMutations(store: LiveStore, subject: NamedNode, mutationPlan: HeadingMutationPlan) {
   try {
-    await mutateBasicProfileEntry(store, subject, mutationPlan.basicOps)
-    await mutatePhoneEntry(store, subject, mutationPlan.phoneOps)
-    await mutateEmailEntry(store, subject, mutationPlan.emailOps)
-    await mutateAddressEntry(store, subject, mutationPlan.addressOps)
+    const documentTextCache: MutationDocumentTextCache = new Map()
+    await mutateBasicProfileEntry(store, subject, mutationPlan.basicOps, documentTextCache)
+    await mutatePhoneEntry(store, subject, mutationPlan.phoneOps, documentTextCache)
+    await mutateEmailEntry(store, subject, mutationPlan.emailOps, documentTextCache)
+    await mutateAddressEntry(store, subject, mutationPlan.addressOps, documentTextCache)
   } catch (error) {
-    const message = error instanceof Error ? error.message : String(error)
-    throw new Error(`${saveHeadingUpdatesFailedPrefixText} ${message}`)
+    const rootError = error instanceof Error ? error : new Error(String(error))
+    debugError(headingMutationSaveFailedDebugText, rootError)
+    throw new Error(saveHeadingUpdatesFailedMessageText, { cause: rootError })
   }
 } 

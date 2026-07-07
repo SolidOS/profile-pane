@@ -1,7 +1,8 @@
-import { html } from 'lit-html'
+import { html, nothing } from 'lit-html'
+import 'solid-ui/components/button'
 import { BioDetails } from './types'
-import { ViewerMode } from '../../types'
-import '../../styles/BioSection.css'
+import { Layout, ViewerMode } from '../../types'
+import './BioSection.css'
 import { bioHeadingText } from '../../texts'
 import { LiveStore, NamedNode } from 'rdflib'
 import {
@@ -10,6 +11,7 @@ import {
 } from '../shared/sectionCardHelpers'
 import { createBioEditDialog } from './BioEditDialog'
 import { editIcon, plusDarkIcon } from '../../icons-svg/profileIcons'
+import { renderResponsiveActionButton } from '../../ui/responsiveActionButton'
 
 function renderBio(bioData: BioDetails) {
   if (!bioData) return html``
@@ -18,18 +20,18 @@ function renderBio(bioData: BioDetails) {
 
   return html`
       ${bioData.description ? html`
-        <div class="bioDescriptionWrap">
-          <p class="bioDescriptionText" id=${bioDescriptionId}>${bioData.description}</p>
-          <button
-            type="button"
-            class="bioDescriptionToggle"
+        <div class="bio-card__description-wrap">
+          <p class="bio-card__description-text" id=${bioDescriptionId}>${bioData.description}</p>
+          <solid-ui-button
+            variant="tertiary"
+            class="bio-card__description-toggle"
             aria-controls=${bioDescriptionId}
             aria-expanded="false"
             hidden
             @click=${toggleDescription}
           >
             ...more
-          </button>
+          </solid-ui-button>
         </div>
       ` : ''}
   `
@@ -41,14 +43,11 @@ function hasBioContent(bioData: BioDetails): boolean {
 
 
 export const BioCard = (
-  bioData: BioDetails,
-  viewerMode: ViewerMode
+  bioData: BioDetails
 ) => {
-  void viewerMode
-
   return html`
-    <article class="bioCard" aria-label="Bio" data-testid="bio-card">
-      <section class="bioSection">
+    <article class="bio-card" aria-label="Bio" data-testid="bio-card">
+      <section class="bio-card__section">
         ${renderBio(bioData)}
       </section>
     </article>
@@ -60,35 +59,27 @@ function renderBioSectionContent(
   subject: NamedNode,
   bioData: BioDetails,
   viewerMode: ViewerMode,
+  layout: Layout,
   onSaved?: () => Promise<void> | void
 ) {
-  const bio = BioCard(bioData, viewerMode)
+  const bio = BioCard(bioData)
   const bioDetails: BioDetails = bioData
   const isOwner = viewerMode === 'owner'
   
   return html`
     <header class="profile__section-header profile-section-collapsible__header">
       <h2 id="bio-heading" tabindex="-1">${bioHeadingText}</h2>
-      ${isOwner ? html`
-        <button
-          type="button"
-          class="profile__action-button profile-action-text flex-center"
-          aria-label="Edit bio details"
-          @click=${(event: Event) => {
-            return createBioEditDialog(
-              event,
-              store,
-              subject,
-              bioDetails,
-              viewerMode,
-              onSaved
-            )
-          }}
-        >
-          <span class="profile-section-collapsible__edit-label profile__action-icon">${editIcon} Edit</span>
-          <span class="profile-section-collapsible__edit-icon profile__action-icon" aria-hidden="true">${editIcon}</span>
-        </button>
-      ` : html``}
+        ${isOwner ? html`
+              ${renderResponsiveActionButton({
+                layout,
+                className: 'profile-section-collapsible__edit-button',
+                ariaLabel: 'Edit bio',
+                onClick: (event: Event) => createBioEditDialog(event, store, subject, bioDetails, viewerMode, onSaved),
+                desktopIcon: html`<span slot="left-icon" class="profile-section-collapsible__action-label profile__add-more-icon" aria-hidden="true">${editIcon}</span>`,
+                desktopLabel: 'Edit',
+                mobileIcon: html`<span slot="icon" class="profile-section-collapsible__edit-icon" aria-hidden="true">${editIcon}</span>`
+              })}
+            ` : nothing}
     </header>
     <div class="profile-section-collapsible__content">
       ${bio}
@@ -101,17 +92,18 @@ function renderBioSectionDefault(
   subject: NamedNode,
   bioData: BioDetails,
   viewerMode: ViewerMode,
+  layout: Layout,
   onSaved?: () => Promise<void> | void
 ) {
   return html`
     <section 
       aria-labelledby="bio-heading" 
       data-profile-section="bio"
-      class="profile__section border-lighter" 
+      class="profile__section" 
       role="region"
       tabindex="-1"
     >
-      ${renderBioSectionContent(store, subject, bioData, viewerMode, onSaved)}
+      ${renderBioSectionContent(store, subject, bioData, viewerMode, layout, onSaved)}
     </section>
   `
 }
@@ -126,16 +118,15 @@ function renderOwnerEmptyBioContent(
   const bioDetails: BioDetails = bioData
 
   return html`
-    <div class="profile__empty-state-content flex-column-center" role="group" aria-label="Empty bio section">
+    <div class="profile__empty-state-content" role="group" aria-label="Empty bio section">
       <h2 id="bio-heading" tabindex="-1">${bioHeadingText}</h2>
       <p class="profile__empty-state-message">
         You haven't added any professional experience yet. Adding work history can boost your Bio.
       </p>
     </div>
-    <button
-      type="button"
+    <solid-ui-button
+      variant="secondary"
       class="profile__action-button--empty"
-      aria-label="Add bio details"
       @click=${(event: Event) => {
         return createBioEditDialog(
           event,
@@ -147,9 +138,9 @@ function renderOwnerEmptyBioContent(
         )
       }}
     >
-      <span class="profile__action-icon" aria-hidden="true">${plusDarkIcon} Add Bio</span>
-    </button>
-
+      <span slot="left-icon" class="profile__action-icon" aria-hidden="true">${plusDarkIcon}</span>
+      <span class="profile__action-icon">Add Bio</span>
+    </solid-ui-button>
   `
 }
 
@@ -164,7 +155,7 @@ function renderOwnerEmptyBioSection(
     <section 
       aria-labelledby="bio-heading" 
       data-profile-section="bio"
-      class="profile__section--empty border-lighter flex-column-center rounded-md gap-lg" 
+      class="profile__section--empty profile__section--empty-main bio-section--empty" 
       role="region"
       tabindex="-1"
     >
@@ -178,18 +169,17 @@ export function renderBioSection(
   subject: NamedNode,
   bioData: BioDetails,
   viewerMode: ViewerMode,
+  layout: Layout,
   onSaved?: () => Promise<void> | void
 ) {
   scheduleDescriptionOverflowCheck()
-
+  const currentLayout = layout || 'desktop'
   const hasBio = hasBioContent(bioData)
   const showOwnerEmptyBio = !hasBio && viewerMode === 'owner'
-  const showSection = true
-  
 
-  return showSection ? html`
+  return html`
     ${showOwnerEmptyBio
       ? renderOwnerEmptyBioSection(store, subject, bioData, viewerMode, onSaved)
-      : renderBioSectionDefault(store, subject, bioData, viewerMode, onSaved)}
-  ` : ''
+      : renderBioSectionDefault(store, subject, bioData, viewerMode, currentLayout, onSaved)}
+  `
 }

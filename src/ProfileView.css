@@ -1,0 +1,927 @@
+:root {
+  --profile-image-size: 3rem;
+  --profile-interactive-cursor: pointer;
+}
+
+.profile-pane-host {
+  display: block;
+  width: 100%;
+  min-width: 100%;
+  max-width: none;
+  box-sizing: border-box;
+}
+
+.profile-pane-root {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  container-name: profile-pane;
+  container-type: inline-size;
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-input-mode='touch'] {
+  --profile-interactive-cursor: auto;
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-input-mode='pointer'] {
+  --profile-interactive-cursor: pointer;
+}
+
+td.obj .profile-pane-root {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+}
+
+/* Shared controls */
+.profile__section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+}
+
+.profile__section-header:not(.profile-edit-dialog__contact-section-header) h2,
+.profile__section-header:not(.profile-edit-dialog__contact-section-header) h3,
+.profile__section-header:not(.profile-edit-dialog__contact-section-header) h4 {
+  margin: 0;
+  font-size: 1.375rem;
+  font-weight: 500;
+}
+
+.profile__add-more-icon {
+  margin-right: 0;
+  line-height: 0;
+  position: relative;
+  top: 0;
+  transform: translateY(0);
+}
+
+.profile__add-more-icon svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+solid-ui-button.profile__btn-friends,
+solid-ui-button.profile__btn-contacts {
+  width: auto;
+  min-width: 0;
+  max-width: none;
+}
+
+/* Base grid layout */
+.profile-grid {
+  --profile-main-section-min-width: 600px;
+  --profile-sidebar-min-width: 300px;
+  --profile-sidebar-width: clamp(var(--profile-sidebar-min-width), 33.333%, 350px);
+  --profile-sidebar-section-padding: 25px;
+  --profile-mobile-section-padding: 15px;
+  --profile-stacked-section-gap: 15px;
+  font-size: inherit;
+  display: grid;
+  grid-template-columns:
+    minmax(var(--profile-main-section-min-width), 1fr)
+    minmax(var(--profile-sidebar-min-width), var(--profile-sidebar-width));
+  align-items: start;
+  column-gap: 5px;
+  row-gap: 20px;
+}
+
+/* Grid columns and wrappers */
+.profile-grid .profile__main,
+.profile-grid .profile__intro-main,
+.profile-grid .profile__intro-sidebar,
+.profile-grid .profile__sidebar,
+.profile-grid .profile__section,
+.profile-grid .profile__section--empty {
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+.profile-grid .profile__main {
+  grid-column: 1;
+  grid-row: 2;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  margin-bottom: 0;
+  overflow-wrap: anywhere;
+  align-items: flex-start;
+}
+
+.profile-grid .profile__intro-main,
+.profile-grid .profile__intro-sidebar {
+  display: flex;
+  flex-direction: column;
+}
+
+.profile-grid .profile__intro-main {
+  grid-column: 1;
+  grid-row: 1;
+  align-self: stretch;
+}
+
+.profile-grid .profile__intro-sidebar {
+  grid-column: 2;
+  grid-row: 1;
+  align-self: stretch;
+  min-width: var(--profile-sidebar-min-width);
+  padding-block: 0;
+  padding-inline: 15px;
+  background: transparent;
+  border-radius: 0;
+}
+
+.profile-grid > .profile__sidebar:not(.profile__intro-sidebar) {
+  grid-row: 2;
+}
+
+.profile-grid .profile__intro-sidebar > .profile__section,
+.profile-grid .profile__intro-sidebar > .profile__section--empty {
+  flex: 1 1 auto;
+  height: 100%;
+}
+
+.profile-grid .profile__intro-sidebar > [data-profile-section='social'] {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+  box-sizing: border-box;
+}
+
+.profile-grid .profile__intro-sidebar > [data-profile-section='social'] > .profile-section-collapsible__content {
+  flex: 1 1 auto;
+}
+
+.profile-grid .profile__sidebar:not(.profile__intro-sidebar) {
+  grid-column: 2;
+  display: flex;
+  flex-direction: column;
+  min-width: var(--profile-sidebar-min-width);
+  padding: 15px;
+  align-items: stretch;
+  text-align: left;
+  border-radius: 5px;
+  background: var(--color-background, #F8F9FB);
+  overflow-x: clip;
+}
+
+.profile-grid .profile__sidebar-content {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  min-width: var(--profile-sidebar-min-width);
+}
+
+.profile-grid .profile__intro-sidebar > .profile__section,
+.profile-grid .profile__intro-sidebar > .profile__section--empty,
+.profile-grid .profile__sidebar-content > .profile__section,
+.profile-grid .profile__sidebar-content > .profile__section--empty {
+  min-width: var(--profile-sidebar-min-width);
+}
+
+.profile-grid .profile__intro-main > .profile__section,
+.profile-grid .profile__intro-main > .profile__section--empty,
+.profile-grid .profile__main > .profile__section,
+.profile-grid .profile__main > .profile__section--empty {
+  min-width: var(--profile-main-section-min-width);
+}
+
+.profile-grid > .profile__sidebar:not(.profile__intro-sidebar) {
+  padding-top: 0;
+}
+
+/* Section cards */
+.profile-grid .profile__section,
+.profile-grid .profile__section--empty {
+  background: var(--solid-ui-color-white, #FFFFFF);
+  border: 1px solid var(--solid-ui-color-slate-200, #E2E8F0);
+  overflow-x: clip;
+}
+
+.profile-grid .profile__section {
+  padding: 25px;
+  border-radius: 5px;
+}
+
+.profile-grid .profile__section.profile-section-collapsible {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+}
+
+.profile-grid .profile__section--empty {
+  padding: 40px 25px;
+}
+
+.profile-grid .profile__sidebar-content > [data-profile-section='social'].profile__section,
+.profile-grid .profile__sidebar-content > [data-profile-section='social'].profile__section--empty,
+.profile-grid .profile__sidebar-content > [data-profile-section='skills'].profile__section,
+.profile-grid .profile__sidebar-content > [data-profile-section='skills'].profile__section--empty,
+.profile-grid .profile__sidebar-content > [data-profile-section='languages'].profile__section,
+.profile-grid .profile__sidebar-content > [data-profile-section='languages'].profile__section--empty,
+.profile-grid .profile__sidebar-content > [data-profile-section='contact-info'].profile__section,
+.profile-grid .profile__sidebar-content > [data-profile-section='contact-info'].profile__section--empty {
+  padding: var(--profile-sidebar-section-padding);
+}
+
+/* Empty states */
+.profile-grid solid-ui-button.profile__action-button--empty {
+  width: fit-content;
+}
+
+.profile-grid solid-ui-button.profile__action-button--empty .profile__action-icon[slot='left-icon'] {
+  display: inline-flex;
+  align-items: center;
+  transform: translateY(-1px);
+}
+
+.profile-grid solid-ui-button.profile__action-button--empty:hover .profile__action-icon svg path,
+.profile-grid solid-ui-button.profile__action-button--empty:focus-visible .profile__action-icon svg path,
+.profile-grid solid-ui-button.profile__action-button--empty:focus-within .profile__action-icon svg path {
+  stroke: var(--solid-ui-color-white, #FFFFFF);
+  fill: var(--solid-ui-color-white, #FFFFFF);
+}
+
+.profile-grid .profile__empty-state-message {
+  color: var(--solid-ui-color-gray-400, #99A1AF);
+  text-align: center;
+  font-size: 0.813rem;
+  font-weight: 400;
+  line-height: 1.4;
+  margin-bottom: 20px;
+}
+
+.profile-grid .profile__empty-state-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+.profile-grid .profile__intro-main > .profile__section--empty.profile__section--empty-main,
+.profile-grid .profile__main > .profile__section--empty.profile__section--empty-main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 25px;
+}
+
+.profile-grid .profile__intro-sidebar > .profile__section--empty.profile__section--empty-sidebar,
+.profile-grid .profile__sidebar-content > .profile__section--empty.profile__section--empty-sidebar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.profile-grid .profile__empty-state-content > h2,
+.profile-grid .profile__empty-state-content > p {
+  margin: 0;
+}
+
+.profile-grid .profile__empty-state-content > h2 {
+  font-size: 1.375rem;
+  font-weight: 500;
+}
+
+.profile-grid .profile__section--empty.profile__section--empty-main .profile__empty-state-message {
+  margin-bottom: 0;
+}
+
+.profile-grid .profile__section--empty .profile-section-collapsible__content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.profile-grid .profile__section--empty.profile__section--empty-main .profile-section-collapsible__content {
+  gap: 25px;
+}
+
+.profile-grid [data-profile-section='projects'].profile__section--empty > .profile-section-collapsible__header,
+.profile-grid [data-profile-section='resume'].profile__section--empty > .profile-section-collapsible__header {
+  display: none;
+}
+
+.profile-grid .profile__section--empty.profile__section--empty-main > .profile-section-collapsible__content > .profile__empty-state-content {
+  gap: 10px;
+}
+
+.profile-grid [data-profile-section='projects'].profile__section--empty > .profile-section-collapsible__content,
+.profile-grid [data-profile-section='resume'].profile__section--empty > .profile-section-collapsible__content {
+  margin-top: 0;
+}
+
+/* Theme */
+.profile-pane-host[data-theme='dark'] .profile-grid .profile__section,
+.profile-pane-host[data-theme='dark'] .profile-grid .profile__section--empty {
+  border: 1px solid var(--color-border, #444);
+}
+
+/* App-driven mobile layout, independent of viewport width. */
+.profile-pane-host[data-layout='mobile'] .profile-grid {
+  font-size: clamp(0.9rem, 1.1vw + 0.65rem, 1rem);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--profile-stacked-section-gap);
+  width: 100%;
+  max-width: 100%;
+  box-sizing: border-box;
+  margin: 0 auto;
+  padding-inline: 5px;
+  overflow-x: clip;
+}
+
+/* App-driven mobile: flatten wrappers */
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__intro-main,
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__intro-sidebar,
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__main,
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__sidebar,
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__sidebar-content {
+  display: contents;
+}
+
+/* App-driven mobile: section ordering */
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid [data-profile-section='heading'] { order: 1; }
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid [data-profile-section='bio'] { order: 2; }
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid [data-profile-section='skills'] { order: 3; }
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid [data-profile-section='languages'] { order: 4; }
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid [data-profile-section='resume'] { order: 5; }
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid [data-profile-section='projects'] { order: 6; }
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid [data-profile-section='social'] { order: 7; }
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid [data-profile-section='contact-info'] { order: 8; }
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid [data-profile-section='qr-code'] { order: 9; }
+
+/* App-driven mobile: interaction and typography */
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__action-button {
+  min-height: calc(var(--solid-ui-clickable-area, 42px) + 8px) !important;
+  font-size: clamp(0.9rem, 2.1vw, 1rem) !important;
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile__section-header:not(.profile-edit-dialog__contact-section-header) h2,
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile__section-header:not(.profile-edit-dialog__contact-section-header) h3,
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile__section-header:not(.profile-edit-dialog__contact-section-header) h4 {
+  font-size: var(--profile-mobile-section-heading-size) !important;
+  line-height: 1.2 !important;
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .friends-pane__header-name {
+  font-size: 1.5rem !important;
+  line-height: 1.15 !important;
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .friends-pane__header-pronouns,
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .friends-pane__friends-pronouns {
+  font-size: 0.6875rem !important;
+  line-height: 1.1 !important;
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__empty-state-content > h2,
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .resume-card__section h3 {
+  font-size: var(--profile-mobile-section-heading-size) !important;
+  line-height: 1.2 !important;
+}
+
+/* App-driven mobile: cards and sidebar */
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__section,
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__section--empty {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  /* Keep all mobile section cards at 15px padding across layout, media, and container fallbacks. */
+  padding: var(--profile-mobile-section-padding);
+  border-radius: 5px;
+  border: 1px solid var(--solid-ui-color-gray-100, #F3F4F6);
+  background: var(--solid-ui-color-white, #FFFFFF);
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid [data-profile-section='social'].profile__section,
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid [data-profile-section='social'].profile__section--empty {
+  border: none;
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__sidebar {
+  padding: 0 !important;
+  min-width: 0;
+  border-radius: 0;
+  background: transparent;
+  align-self: stretch;
+}
+
+/* App-driven mobile: width and sidebar padding overrides */
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__sidebar-content,
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__intro-sidebar > .profile__section,
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__intro-sidebar > .profile__section--empty,
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__intro-main > .profile__section,
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__intro-main > .profile__section--empty,
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__main > .profile__section,
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__main > .profile__section--empty,
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__sidebar-content > .profile__section,
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__sidebar-content > .profile__section--empty {
+  min-width: 0;
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__intro-sidebar > .profile__section,
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__intro-sidebar > .profile__section--empty,
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__sidebar-content > [data-profile-section='social'].profile__section,
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__sidebar-content > [data-profile-section='social'].profile__section--empty,
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__sidebar-content > [data-profile-section='skills'].profile__section,
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__sidebar-content > [data-profile-section='skills'].profile__section--empty,
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__sidebar-content > [data-profile-section='languages'].profile__section,
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__sidebar-content > [data-profile-section='languages'].profile__section--empty,
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__sidebar-content > [data-profile-section='contact-info'].profile__section,
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__sidebar-content > [data-profile-section='contact-info'].profile__section--empty {
+  padding: var(--profile-mobile-section-padding);
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__section.profile-section-collapsible {
+  gap: 20px;
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__section--empty.profile-section-collapsible {
+  gap: 10px;
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid [data-profile-section='projects'].profile__section--empty > .profile-section-collapsible__header,
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid [data-profile-section='resume'].profile__section--empty > .profile-section-collapsible__header {
+  display: flex;
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid [data-profile-section='projects'].profile__section--empty .profile-section-collapsible__content .profile__empty-state-content > h2,
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid [data-profile-section='resume'].profile__section--empty .profile-section-collapsible__content .profile__empty-state-content > h2 {
+  display: none;
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__section--empty .profile__action-button--empty {
+  align-self: center;
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__section--empty .profile__empty-state-content {
+  align-items: center;
+  text-align: center;
+  width: 100%;
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__section--empty .profile__empty-state-content > h2,
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-grid .profile__section--empty .profile__empty-state-content > p {
+  text-align: center;
+  width: 100%;
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile__section--empty .profile-section-collapsible__actions > .profile-section-collapsible__edit-button {
+  order: 2;
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile__section--empty .profile-section-collapsible__edit-label {
+  display: none !important;
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] [data-profile-section='bio'].profile__section--empty .profile-section-collapsible__actions {
+  --profile-section-collapsible-action-button-text: var(--color-text-primary, #314158);
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile__section--empty .profile-section-collapsible__edit-icon {
+  display: inline !important;
+}
+
+/* Container width guard for embedded panes */
+@container profile-pane (max-width: 56.5625rem) {
+  #main-content.profile-grid {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    margin-inline: auto !important;
+  }
+}
+
+/* Viewport fallback only when layout state is unavailable. */
+@media (max-width: 56.5625rem) {
+  /* Viewport stacked: layout shell */
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid {
+    font-size: clamp(0.9rem, 1.1vw + 0.65rem, 1rem);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--profile-stacked-section-gap);
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    margin: 0 auto;
+    padding-inline: 5px;
+    overflow-x: clip;
+  }
+
+  /* Viewport stacked: interaction and wrappers */
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid .profile__action-button {
+    min-height: calc(var(--solid-ui-clickable-area, 42px) + 8px) !important;
+    font-size: clamp(0.9rem, 2.1vw, 1rem) !important;
+  }
+
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid .profile__intro-main,
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid .profile__intro-sidebar,
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid .profile__main,
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid .profile__sidebar,
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid .profile__sidebar-content {
+    display: contents;
+    min-width: 0;
+  }
+
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid .profile__sidebar:not(.profile__intro-sidebar) {
+    padding: 0 !important;
+    display: contents;
+    border-radius: 0;
+    background: transparent;
+    align-self: stretch;
+  }
+
+  /* Viewport stacked: section ordering */
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid [data-profile-section='heading'] { order: 1; }
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid [data-profile-section='bio'] { order: 2; }
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid [data-profile-section='skills'] { order: 3; }
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid [data-profile-section='languages'] { order: 4; }
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid [data-profile-section='resume'] { order: 5; }
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid [data-profile-section='projects'] { order: 6; }
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid [data-profile-section='social'] { order: 7; }
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid [data-profile-section='contact-info'] { order: 8; }
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid [data-profile-section='qr-code'] { order: 9; }
+
+  /* Viewport stacked: typography */
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile__section-header:not(.profile-edit-dialog__contact-section-header) h2,
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile__section-header:not(.profile-edit-dialog__contact-section-header) h3,
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile__section-header:not(.profile-edit-dialog__contact-section-header) h4 {
+    font-size: var(--profile-mobile-section-heading-size) !important;
+    line-height: 1.2 !important;
+  }
+
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid .friends-pane__header-name {
+    font-size: 1.5rem !important;
+    line-height: 1.15 !important;
+  }
+
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid .friends-pane__header-pronouns,
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid .friends-pane__friends-pronouns {
+    font-size: 0.6875rem !important;
+    line-height: 1.1 !important;
+  }
+
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid .profile__section,
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid .profile__section--empty {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: var(--profile-mobile-section-padding);
+    border-radius: 5px;
+    border: 1px solid var(--color-border-subtle, var(--gray-100, #F3F4F6));
+    background: var(--solid-ui-color-white, #FFFFFF);
+  }
+
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid [data-profile-section='social'].profile__section,
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid [data-profile-section='social'].profile__section--empty {
+    border: none;
+  }
+
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid [data-profile-section='bio'].profile__section--empty .profile-section-collapsible__actions {
+    --profile-section-collapsible-action-button-text: var(--color-text-primary, #314158);
+  }
+
+  /* Viewport stacked: width and sidebar padding overrides */
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid .profile__intro-sidebar > .profile__section,
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid .profile__intro-sidebar > .profile__section--empty,
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid .profile__intro-main > .profile__section,
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid .profile__intro-main > .profile__section--empty,
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid .profile__main > .profile__section,
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid .profile__main > .profile__section--empty,
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid .profile__sidebar-content > .profile__section,
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid .profile__sidebar-content > .profile__section--empty {
+    min-width: 0;
+  }
+
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid .profile__intro-sidebar > .profile__section,
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid .profile__intro-sidebar > .profile__section--empty,
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid .profile__sidebar-content > [data-profile-section='social'].profile__section,
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid .profile__sidebar-content > [data-profile-section='social'].profile__section--empty,
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid .profile__sidebar-content > [data-profile-section='skills'].profile__section,
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid .profile__sidebar-content > [data-profile-section='skills'].profile__section--empty,
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid .profile__sidebar-content > [data-profile-section='languages'].profile__section,
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid .profile__sidebar-content > [data-profile-section='languages'].profile__section--empty,
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid .profile__sidebar-content > [data-profile-section='contact-info'].profile__section,
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid .profile__sidebar-content > [data-profile-section='contact-info'].profile__section--empty {
+    padding: var(--profile-mobile-section-padding);
+  }
+
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid .profile__section.profile-section-collapsible {
+    gap: 20px;
+  }
+
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid .profile__section--empty.profile-section-collapsible {
+    gap: 10px;
+  }
+
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid [data-profile-section='projects'].profile__section--empty > .profile-section-collapsible__header,
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid [data-profile-section='resume'].profile__section--empty > .profile-section-collapsible__header {
+    display: flex;
+  }
+
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid [data-profile-section='projects'].profile__section--empty .profile-section-collapsible__content .profile__empty-state-content > h2,
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid [data-profile-section='resume'].profile__section--empty .profile-section-collapsible__content .profile__empty-state-content > h2 {
+    display: none;
+  }
+}
+
+/* Container-driven stacked layout */
+@container profile-pane (max-width: 56.5625rem) {
+  /* Container stacked: layout shell */
+  .profile-grid {
+    font-size: clamp(0.9rem, 1.1vw + 0.65rem, 1rem);
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--profile-stacked-section-gap);
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    margin: 0 auto;
+    overflow-x: clip;
+  }
+
+  /* Container stacked: interaction and wrappers */
+  .profile-grid .profile__action-button {
+    min-height: calc(var(--solid-ui-clickable-area, 42px) + 0.5rem) !important;
+    font-size: clamp(0.9rem, 2.1vw, 1rem) !important;
+  }
+
+  .profile-grid .profile__intro-main,
+  .profile-grid .profile__intro-sidebar,
+  .profile-grid .profile__main,
+  .profile-grid .profile__sidebar,
+  .profile-grid .profile__sidebar-content {
+    display: contents;
+    min-width: 0;
+  }
+
+  .profile-grid .profile__sidebar:not(.profile__intro-sidebar) {
+    padding: 0 !important;
+    display: contents;
+    border-radius: 0;
+    background: transparent;
+    align-self: stretch;
+  }
+
+  /* Container stacked: section ordering */
+  .profile-grid [data-profile-section='heading'] { order: 1; }
+  .profile-grid [data-profile-section='bio'] { order: 2; }
+  .profile-grid [data-profile-section='skills'] { order: 3; }
+  .profile-grid [data-profile-section='languages'] { order: 4; }
+  .profile-grid [data-profile-section='resume'] { order: 5; }
+  .profile-grid [data-profile-section='projects'] { order: 6; }
+  .profile-grid [data-profile-section='social'] { order: 7; }
+  .profile-grid [data-profile-section='contact-info'] { order: 8; }
+  .profile-grid [data-profile-section='qr-code'] { order: 9; }
+
+  /* Container stacked: typography */
+  .profile__section-header:not(.profile-edit-dialog__contact-section-header) h2,
+  .profile__section-header:not(.profile-edit-dialog__contact-section-header) h3,
+  .profile__section-header:not(.profile-edit-dialog__contact-section-header) h4 {
+    font-size: var(--profile-mobile-section-heading-size) !important;
+    line-height: 1.2 !important;
+  }
+
+  .profile-grid .friends-pane__header-name {
+    font-size: 1.5rem !important;
+    line-height: 1.15 !important;
+  }
+
+  .profile-grid .friends-pane__header-pronouns,
+  .profile-grid .friends-pane__friends-pronouns {
+    font-size: 0.6875rem !important;
+    line-height: 1.1 !important;
+  }
+
+  .profile-grid .profile__section,
+  .profile-grid .profile__section--empty {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: var(--profile-mobile-section-padding);
+    border-radius: 5px;
+    border: 1px solid var(--solid-ui-color-gray-100, #F3F4F6);
+    background: var(--solid-ui-color-white, #FFF);
+  }
+
+  .profile-grid [data-profile-section='social'].profile__section,
+  .profile-grid [data-profile-section='social'].profile__section--empty {
+    border: none;
+  }
+
+  .profile-grid [data-profile-section='bio'].profile__section--empty .profile-section-collapsible__actions {
+    --profile-section-collapsible-action-button-text: var(--color-text-primary, #314158);
+  }
+
+  /* Container stacked: width and sidebar padding overrides */
+  .profile-grid .profile__intro-sidebar > .profile__section,
+  .profile-grid .profile__intro-sidebar > .profile__section--empty,
+  .profile-grid .profile__intro-main > .profile__section,
+  .profile-grid .profile__intro-main > .profile__section--empty,
+  .profile-grid .profile__main > .profile__section,
+  .profile-grid .profile__main > .profile__section--empty,
+  .profile-grid .profile__sidebar-content > .profile__section,
+  .profile-grid .profile__sidebar-content > .profile__section--empty {
+    min-width: 0;
+  }
+
+  .profile-grid .profile__intro-sidebar > .profile__section,
+  .profile-grid .profile__intro-sidebar > .profile__section--empty,
+  .profile-grid .profile__sidebar-content > [data-profile-section='social'].profile__section,
+  .profile-grid .profile__sidebar-content > [data-profile-section='social'].profile__section--empty,
+  .profile-grid .profile__sidebar-content > [data-profile-section='skills'].profile__section,
+  .profile-grid .profile__sidebar-content > [data-profile-section='skills'].profile__section--empty,
+  .profile-grid .profile__sidebar-content > [data-profile-section='languages'].profile__section,
+  .profile-grid .profile__sidebar-content > [data-profile-section='languages'].profile__section--empty,
+  .profile-grid .profile__sidebar-content > [data-profile-section='contact-info'].profile__section,
+  .profile-grid .profile__sidebar-content > [data-profile-section='contact-info'].profile__section--empty {
+    padding: var(--profile-mobile-section-padding);
+  }
+
+  .profile-grid .profile__section.profile-section-collapsible {
+    gap: 20px;
+  }
+
+  .profile-grid .profile__section--empty.profile-section-collapsible {
+    gap: 10px;
+  }
+
+  .profile-grid [data-profile-section='projects'].profile__section--empty > .profile-section-collapsible__header,
+  .profile-grid [data-profile-section='resume'].profile__section--empty > .profile-section-collapsible__header {
+    display: flex;
+  }
+
+  .profile-grid [data-profile-section='projects'].profile__section--empty .profile-section-collapsible__content .profile__empty-state-content > h2,
+  .profile-grid [data-profile-section='resume'].profile__section--empty .profile-section-collapsible__content .profile__empty-state-content > h2 {
+    display: none;
+  }
+}
+
+/* Narrow-phone fallback once the layout is already stacked. */
+@media (max-width: 576px) {
+  /* Narrow viewport: cards and sidebar */
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid .profile__sidebar:not(.profile__intro-sidebar) {
+    padding: 0 !important;
+    display: contents;
+    border-radius: 0;
+    background: transparent;
+    align-self: stretch;
+  }
+
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid .profile__section,
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid .profile__section--empty {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: var(--profile-mobile-section-padding);
+    border-radius: 5px;
+    border: 1px solid var(--solid-ui-color-gray-100, #F3F4F6);
+    background: var(--solid-ui-color-white, #FFFFFF);
+  }
+
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid .profile__intro-sidebar > .profile__section,
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid .profile__intro-sidebar > .profile__section--empty,
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid .profile__sidebar-content > [data-profile-section='social'].profile__section,
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid .profile__sidebar-content > [data-profile-section='social'].profile__section--empty,
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid .profile__sidebar-content > [data-profile-section='skills'].profile__section,
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid .profile__sidebar-content > [data-profile-section='skills'].profile__section--empty,
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid .profile__sidebar-content > [data-profile-section='languages'].profile__section,
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid .profile__sidebar-content > [data-profile-section='languages'].profile__section--empty,
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid .profile__sidebar-content > [data-profile-section='contact-info'].profile__section,
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid .profile__sidebar-content > [data-profile-section='contact-info'].profile__section--empty {
+    padding: var(--profile-mobile-section-padding);
+  }
+
+  /* Narrow viewport: empty states */
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid [data-profile-section='projects'].profile__section--empty > .profile-section-collapsible__header,
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid [data-profile-section='resume'].profile__section--empty > .profile-section-collapsible__header {
+    display: flex;
+  }
+
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid [data-profile-section='projects'].profile__section--empty .profile-section-collapsible__content .profile__empty-state-content > h2,
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid [data-profile-section='resume'].profile__section--empty .profile-section-collapsible__content .profile__empty-state-content > h2 {
+    display: none;
+  }
+
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid .profile__section--empty .profile__action-button--empty {
+    align-self: center;
+  }
+
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid .profile__section--empty .profile__empty-state-content {
+    align-items: center;
+    text-align: center;
+    width: 100%;
+  }
+
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid .profile__section--empty .profile__empty-state-content > h2,
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid .profile__section--empty .profile__empty-state-content > p {
+    text-align: center;
+    width: 100%;
+  }
+
+  /* Narrow viewport: typography */
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid .profile__empty-state-content > h2,
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile-grid .resume-card__section h3 {
+    font-size: var(--profile-mobile-section-heading-size) !important;
+    line-height: 1.2 !important;
+  }
+
+  /* Narrow viewport: empty-state edit actions */
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile__section--empty .profile-section-collapsible__actions > .profile-section-collapsible__edit-button {
+    order: 2;
+  }
+
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile__section--empty .profile-section-collapsible__edit-label {
+    display: none !important;
+  }
+
+  :is(.profile-pane-host, .profile-pane-root):not([data-layout]) .profile__section--empty .profile-section-collapsible__edit-icon {
+    display: inline !important;
+  }
+}
+
+/* Narrow container fallback */
+@container profile-pane (max-width: 576px) {
+  /* Narrow container: cards and sidebar */
+  .profile-grid .profile__sidebar:not(.profile__intro-sidebar) {
+    padding: 0 !important;
+    display: contents;
+    border-radius: 0;
+    background: transparent;
+    align-self: stretch;
+  }
+
+  .profile-grid .profile__section,
+  .profile-grid .profile__section--empty {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: var(--profile-mobile-section-padding);
+    border-radius: 5px;
+    border: 1px solid var(--solid-ui-color-gray-100, #F3F4F6);
+    background: var(--solid-ui-color-white, #FFFFFF);
+  }
+
+  .profile-grid .profile__intro-sidebar > .profile__section,
+  .profile-grid .profile__intro-sidebar > .profile__section--empty,
+  .profile-grid .profile__sidebar-content > [data-profile-section='social'].profile__section,
+  .profile-grid .profile__sidebar-content > [data-profile-section='social'].profile__section--empty,
+  .profile-grid .profile__sidebar-content > [data-profile-section='skills'].profile__section,
+  .profile-grid .profile__sidebar-content > [data-profile-section='skills'].profile__section--empty,
+  .profile-grid .profile__sidebar-content > [data-profile-section='languages'].profile__section,
+  .profile-grid .profile__sidebar-content > [data-profile-section='languages'].profile__section--empty,
+  .profile-grid .profile__sidebar-content > [data-profile-section='contact-info'].profile__section,
+  .profile-grid .profile__sidebar-content > [data-profile-section='contact-info'].profile__section--empty {
+    padding: var(--profile-mobile-section-padding);
+  }
+
+  /* Narrow container: empty states */
+  .profile-grid [data-profile-section='projects'].profile__section--empty > .profile-section-collapsible__header,
+  .profile-grid [data-profile-section='resume'].profile__section--empty > .profile-section-collapsible__header {
+    display: flex;
+  }
+
+  .profile-grid [data-profile-section='projects'].profile__section--empty .profile-section-collapsible__content .profile__empty-state-content > h2,
+  .profile-grid [data-profile-section='resume'].profile__section--empty .profile-section-collapsible__content .profile__empty-state-content > h2 {
+    display: none;
+  }
+
+  .profile-grid .profile__section--empty .profile__action-button--empty {
+    align-self: center;
+  }
+
+  .profile-grid .profile__section--empty .profile__empty-state-content {
+    align-items: center;
+    text-align: center;
+    width: 100%;
+  }
+
+  .profile-grid .profile__section--empty .profile__empty-state-content > h2,
+  .profile-grid .profile__section--empty .profile__empty-state-content > p {
+    text-align: center;
+    width: 100%;
+  }
+
+  /* Narrow container: empty-state edit actions */
+  .profile__section--empty .profile-section-collapsible__actions > .profile-section-collapsible__edit-button {
+    order: 2;
+  }
+
+  .profile__section--empty .profile-section-collapsible__edit-label {
+    display: none !important;
+  }
+
+  .profile__section--empty .profile-section-collapsible__edit-icon {
+    display: inline !important;
+  }
+}

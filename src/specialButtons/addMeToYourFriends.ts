@@ -1,4 +1,6 @@
 import { html, TemplateResult } from 'lit-html'
+import 'solid-ui/components/button'
+import type { Button as SolidUIButtonElement } from 'solid-ui/components/button'
 import { DataBrowserContext } from 'pane-registry'
 import { authn } from 'solid-logic'
 import { LiveStore, NamedNode, st } from 'rdflib'
@@ -6,23 +8,45 @@ import { ns } from 'solid-ui'
 import {
   clearPreviousMessage, complain,
   mention
-} from './buttonsHelper'
+} from '../buttonsHelper'
 import {
   addMeToYourFriendsButtonText, friendExistsAlreadyButtonText, friendExistsMessage, friendWasAddedSuccesMessage, logInAddMeToYourFriendsButtonText, userNotLoggedInErrorMessage
-} from './texts'
-import { ViewerMode } from './types'
-import './styles/ProfileCard.css'
+} from '../texts'
+import { ViewerMode } from '../types'
+import { ensureStandardMutationPrefixes } from '../sections/shared/rdfMutationHelpers'
+import './AddMeToYourFriends.css'
 
 let buttonContainer = <HTMLDivElement>document.createElement('section')
+
+function setAddToFriendsButtonLabel(button: SolidUIButtonElement, label: string): void {
+  const labelWrapper = button.ownerDocument.createElement('span')
+  labelWrapper.className = 'profile__btn-friends-label profile__btn-friends-label--full'
+  labelWrapper.textContent = label
+
+  if (label === friendExistsAlreadyButtonText) {
+    const shortLabelWrapper = button.ownerDocument.createElement('span')
+    shortLabelWrapper.className = 'profile__btn-friends-label profile__btn-friends-label--short'
+    shortLabelWrapper.setAttribute('aria-hidden', 'true')
+    shortLabelWrapper.setAttribute('data-short-label-text', 'Friends')
+    button.setAttribute('data-friends-short-label', 'true')
+    button.setAttribute('aria-label', label)
+    button.replaceChildren(labelWrapper, shortLabelWrapper)
+    return
+  }
+
+  button.removeAttribute('data-friends-short-label')
+  button.removeAttribute('aria-label')
+  button.replaceChildren(labelWrapper)
+}
 
 const addMeToYourFriendsDiv = (
   subject: NamedNode,
   context: DataBrowserContext,
-  viewerMode: ViewerMode
+  _viewerMode: ViewerMode
 ): TemplateResult => {
 
   buttonContainer = context.dom.createElement('section') as HTMLDivElement
-  buttonContainer.setAttribute('class', 'buttonSubSection text-truncate text-center section-centered')
+  buttonContainer.setAttribute('class', 'profile-friends-button__section text-truncate text-center section-centered')
   buttonContainer.setAttribute('aria-labelledby', 'add-me-to-your-friends-button-section')
   buttonContainer.setAttribute('data-testid', 'button')
 
@@ -42,11 +66,11 @@ const addMeToYourFriendsDiv = (
 const createAddMeToYourFriendsButton = (
   subject: NamedNode,
   context: DataBrowserContext
-): HTMLButtonElement => {
+): SolidUIButtonElement => {
   let label = addMeToYourFriendsButtonText
-  const button = context.dom.createElement('button')
-  button.type = 'button'
-  button.textContent = label
+  const button = context.dom.createElement('solid-ui-button') as SolidUIButtonElement
+  button.setAttribute('variant', 'secondary')
+  setAddToFriendsButtonLabel(button, label)
   button.addEventListener('click', setButtonHandler)
 
   function setButtonHandler(event: Event) {
@@ -72,19 +96,32 @@ const createAddMeToYourFriendsButton = (
 
     if (checkIfAnyUserLoggedIn(me)) {
       button.disabled = false
+      button.removeAttribute('disabled')
       checkIfThingExists(store, me, subject, ns.foaf('knows')).then((friendExists) => {
+        const isMobileLayout = context.environment?.layout === 'mobile'
+
         if (friendExists) {
           //logged in and friend exists or friend was just added
-          button.textContent = friendExistsAlreadyButtonText
+          setAddToFriendsButtonLabel(button, friendExistsAlreadyButtonText)
+          button.disabled = true
+          button.setAttribute('disabled', 'true')
+          buttonContainer.hidden = isMobileLayout
+          buttonContainer.style.display = isMobileLayout ? 'none' : ''
         } else {
           //logged in and friend does not exist yet
-          button.textContent = addMeToYourFriendsButtonText
+          setAddToFriendsButtonLabel(button, addMeToYourFriendsButtonText)
+          button.disabled = false
+          button.removeAttribute('disabled')
+          buttonContainer.hidden = false
+          buttonContainer.style.display = ''
         }
       })
     } else {
       //not logged in — disable and indicate login is required
-      button.textContent = logInAddMeToYourFriendsButtonText
+      setAddToFriendsButtonLabel(button, logInAddMeToYourFriendsButtonText)
       button.disabled = true
+      button.setAttribute('disabled', 'true')
+      buttonContainer.hidden = false
     }
   }
 
@@ -106,6 +143,7 @@ async function saveNewThing(
       const updater = store.updater
       const toBeInserted = [st(me, predicate, subject, me.doc())]
       try {
+        ensureStandardMutationPrefixes(store)
         await updater.update([], toBeInserted)
       } catch (error) {
         let errorMessage = error

@@ -1,13 +1,36 @@
-import { html } from 'lit-html'
+import { html, nothing } from 'lit-html'
+import 'solid-ui/components/button'
 import { strToUpperCase } from '../../textUtils'
 import { LiveStore, NamedNode } from 'rdflib'
-import { ViewerMode } from '../../types'
+import { Layout, ViewerMode } from '../../types'
+import './SkillsSection.css'
 import { createSkillsEditDialog } from './SkillsEditDialog'
 import { SkillDetails, SkillRow } from './types'
-import { addIcon, deleteIcon, editIcon, lighteningIcon } from '../../icons-svg/profileIcons'
+import { addIcon, chevronDownIcon, deleteIcon, editIcon, lighteningIcon } from '../../icons-svg/profileIcons'
 import { skillsHeadingText } from '../../texts'
 import { toggleCollapsibleSection } from '../shared/collapsibleSection'
 import { processSkillsMutations } from './mutations'
+import { formatDisplayError } from '../../utils/errorDisplay'
+import { renderResponsiveActionButton } from '../../ui/responsiveActionButton'
+
+const removeSkillFailedMessageText = 'Unable to remove your skill.'
+
+function setSkillsSectionError(section: HTMLElement, message: string | null): void {
+  const errorBox = section.querySelector('.profile-section-inline-error') as HTMLElement | null
+  if (!errorBox) return
+
+  if (!message) {
+    errorBox.textContent = ''
+    errorBox.hidden = true
+    errorBox.setAttribute('aria-hidden', 'true')
+    return
+  }
+
+  errorBox.textContent = message
+  errorBox.hidden = false
+  errorBox.setAttribute('aria-hidden', 'false')
+  errorBox.focus()
+}
 
 function renderSkillItem(
   detail: SkillDetails,
@@ -21,6 +44,9 @@ function renderSkillItem(
   const handleRemove = async (event: Event) => {
     event.preventDefault()
     if (viewerMode !== 'owner') return
+    const removeButton = event.currentTarget as HTMLElement | null
+    const skillRow = removeButton?.closest('.skills__item') as HTMLElement | null
+    const section = removeButton?.closest('[data-profile-section="skills"]') as HTMLElement | null
 
     const removeRow: SkillRow = {
       name: detail.name,
@@ -29,87 +55,112 @@ function renderSkillItem(
       status: 'deleted'
     }
 
-    await processSkillsMutations(store, subject, {
-      create: [],
-      update: [],
-      remove: [removeRow]
-    })
+    try {
+      removeButton?.setAttribute('disabled', '')
+      removeButton?.setAttribute('aria-busy', 'true')
+      removeButton?.setAttribute('data-loading', 'true')
+      skillRow?.setAttribute('data-pending', 'true')
+      await processSkillsMutations(store, subject, {
+        create: [],
+        update: [],
+        remove: [removeRow]
+      })
 
-    if (onSaved) {
-      await onSaved()
+      if (section) {
+        setSkillsSectionError(section, null)
+      }
+      if (onSaved) {
+        await onSaved()
+      }
+    } catch (error) {
+      if (section) {
+        setSkillsSectionError(section, formatDisplayError(error, removeSkillFailedMessageText))
+      }
+    } finally {
+      removeButton?.removeAttribute('disabled')
+      removeButton?.setAttribute('aria-busy', 'false')
+      removeButton?.removeAttribute('data-loading')
+      skillRow?.removeAttribute('data-pending')
     }
   }
 
   return html`
-    <li class="skills__item inline-flex-row" role="listitem">
+    <li class="skills__item" role="listitem">
       <span class="skills__item-label">${strToUpperCase(detail.name)}</span>
       ${viewerMode === 'owner'
         ? html`
-            <button
-              type="button"
-              class="skills__remove-button inline-flex-row"
-              aria-label="Remove ${detail.name} skill"
-              @click=${handleRemove}
-            >
-              ${deleteIcon}
-            </button>
+            <span class="skills__item-tail">
+              <solid-ui-button
+                variant="ghost"
+                aria-label=${`Remove ${detail.name} skill`}
+                @click=${handleRemove}
+              >
+                <span slot="icon" aria-hidden="true">${deleteIcon}</span>
+              </solid-ui-button>
+            </span>
           `
-        : ''}
+        : nothing}
     </li>
   `
 }
 
-function renderSkillsSectionDefault(store: LiveStore, subject: NamedNode, skills: SkillDetails[], viewerMode: ViewerMode, onSaved?: () => Promise<void> | void) {
+function renderSkillsSectionDefault(store: LiveStore, subject: NamedNode, skills: SkillDetails[], viewerMode: ViewerMode, layout: Layout, onSaved?: () => Promise<void> | void) {
   const hasSkills = Array.isArray(skills) && skills.length > 0
   const isOwner = viewerMode === 'owner'
 
   return html`
     <section
-      class="profile__section border-lighter profile-section-collapsible profile-section-collapsible--inline-mobile-actions"
+      class="profile__section profile-section-collapsible profile-section-collapsible--inline-mobile-actions"
+      data-profile-section="skills"
       aria-labelledby="skills-heading"
       role="region"
       tabindex="-1"
       data-expanded="false"
     >
       <header class="profile__section-header profile-section-collapsible__header">
-        <h2 id="skills-heading">${skillsHeadingText}</h2>
-        <div class="profile-section-collapsible__actions flex-column">
+        <h3 id="skills-heading">${skillsHeadingText}</h3>
+        <div class="profile-section-collapsible__actions">
           ${isOwner ? html`
-            <button
-              type="button"
-              class="profile__action-button profile-action-text flex-center profile-section-collapsible__edit-button"
-              aria-label="Add or edit skills"
-              @click=${(event: Event) => createSkillsEditDialog(event, store, subject, skills, viewerMode, onSaved)}
-            >
-              <span class="profile-section-collapsible__edit-label profile__add-more-content inline-flex-row">
-                <span class="profile__add-more-icon inline-flex-row" aria-hidden="true">${addIcon}</span>
-                Add More
-              </span>
-              <span class="profile-section-collapsible__edit-icon" aria-hidden="true">${editIcon}</span>
-            </button>
-          ` : html``}
-          <button
-            type="button"
-            class="inline-flex-row"
+            ${renderResponsiveActionButton({
+              layout,
+              className: 'profile-section-collapsible__edit-button',
+              ariaLabel: 'Add or edit skills',
+              onClick: (event: Event) => createSkillsEditDialog(event, store, subject, skills, viewerMode, onSaved),
+              desktopIcon: html`<span slot="left-icon" class="profile-section-collapsible__action-label profile__add-more-icon" aria-hidden="true">${addIcon}</span>`,
+              desktopLabel: 'Add More',
+              mobileIcon: html`<span slot="icon" class="profile-section-collapsible__edit-icon" aria-hidden="true">${editIcon}</span>`
+            })}
+          ` : nothing}
+          <solid-ui-button
+            variant="ghost"
+            class="profile-section-collapsible__toggle-button"
             aria-label="Toggle skills section"
             aria-controls="skills-panel"
             aria-expanded="false"
             @click=${toggleCollapsibleSection}
           >
-            <span class="profile-section-collapsible__chevron" aria-hidden="true">⌄</span>
-          </button>
+            <span slot="icon" class="profile-section-collapsible__chevron" aria-hidden="true">${chevronDownIcon}</span>
+          </solid-ui-button>
         </div>
       </header>
       <div
         id="skills-panel"
         class="profile-section-collapsible__content"
-        aria-hidden="true"
       >
         ${hasSkills
           ? html`
-              <ul class="skills__list flex-column" role="list" aria-label="Professional skills and competencies">
+              <ul class="skills__list" role="list" aria-label="Professional skills and competencies">
                 ${skills.map((detail) => renderSkillItem(detail, store, subject, viewerMode, onSaved))}
               </ul>
+              <div
+                class="profile-section-inline-error"
+                role="alert"
+                aria-live="assertive"
+                aria-atomic="true"
+                aria-hidden="true"
+                tabindex="-1"
+                hidden
+              ></div>
             `
           : html`<p>No skills added yet.</p>`}
       </div>
@@ -117,21 +168,12 @@ function renderSkillsSectionDefault(store: LiveStore, subject: NamedNode, skills
   `
 }
 
-function renderOwnerEmptySkillsContent(
-  _store: LiveStore,
-  _subject: NamedNode,
-  _skills: SkillDetails[],
-  _viewerMode: ViewerMode,
-  _onSaved?: () => Promise<void> | void
-) {
+function renderOwnerEmptySkillsContent() {
   return html`
-      <div class="profile__empty-state-content flex-column-center" role="group" aria-label="Empty skills section">    
+      <div class="profile__empty-state-content" role="group" aria-label="Empty skills section">    
         <div class="skills__empty-icon-wrapper">
-          <span class="skills__empty-icon inline-flex-row">${lighteningIcon}</span>
+          <span class="skills__empty-icon">${lighteningIcon}</span>
         </div>
-        <p class="profile__empty-state-message skills__empty-message">
-            No skills added yet.
-        </p>
       </div>
   `
 }
@@ -141,25 +183,26 @@ function renderOwnerEmptySkillsSection(
   subject: NamedNode,
   skills: SkillDetails[],
   viewerMode: ViewerMode,
+  layout: Layout,
   onSaved?: () => Promise<void> | void
 ) {
   return html`
     <section 
       aria-labelledby="skills-heading" 
       data-profile-section="skills"
-      class="profile__section--empty border-lighter rounded-md gap-lg profile-section-collapsible profile-section-collapsible--inline-mobile-actions" 
+      class="profile__section--empty profile__section--empty-sidebar profile-section-collapsible profile-section-collapsible--inline-mobile-actions" 
       role="region"
       tabindex="-1"
       data-expanded="false"
     >
       <header class="profile__section-header profile-section-collapsible__header">
-        <h2 id="skills-heading" tabindex="-1">${skillsHeadingText}</h2>
-        <div class="profile-section-collapsible__actions flex-column">
-          <button
-            type="button"
-            class="profile__action-button profile-action-text flex-center profile-section-collapsible__edit-button"
-            aria-label="Add skills"
-            @click=${(event: Event) => {
+        <h3 id="skills-heading" tabindex="-1">${skillsHeadingText}</h3>
+        <div class="profile-section-collapsible__actions">
+          ${renderResponsiveActionButton({
+            layout,
+            className: 'profile-section-collapsible__edit-button',
+            ariaLabel: 'Add skills',
+            onClick: (event: Event) => {
               return createSkillsEditDialog(
                 event,
                 store,
@@ -168,28 +211,25 @@ function renderOwnerEmptySkillsSection(
                 viewerMode,
                 onSaved
               )
-            }}
-          >
-            <span class="profile-section-collapsible__edit-label profile__add-more-content inline-flex-row">
-              <span class="profile__add-more-icon inline-flex-row" aria-hidden="true">${addIcon}</span>
-              Add Skills
-            </span>
-            <span class="profile-section-collapsible__edit-icon" aria-hidden="true">${editIcon}</span>
-          </button>
-          <button
-            type="button"
-            class="inline-flex-row"
+            },
+            desktopIcon: html`<span slot="left-icon" class="profile-section-collapsible__action-label profile__add-more-icon" aria-hidden="true">${addIcon}</span>`,
+            desktopLabel: 'Add More',
+            mobileIcon: html`<span slot="icon" class="profile-section-collapsible__edit-icon" aria-hidden="true">${editIcon}</span>`
+          })}
+          <solid-ui-button
+            variant="ghost"
+            class="profile-section-collapsible__toggle-button"
             aria-label="Toggle skills section"
             aria-controls="skills-panel"
             aria-expanded="false"
             @click=${toggleCollapsibleSection}
           >
-            <span class="profile-section-collapsible__chevron" aria-hidden="true">⌄</span>
-          </button>
+            <span slot="icon" class="profile-section-collapsible__chevron" aria-hidden="true">${chevronDownIcon}</span>
+          </solid-ui-button>
         </div>
       </header>
-      <div id="skills-panel" class="profile-section-collapsible__content" aria-hidden="true">
-        ${renderOwnerEmptySkillsContent(store, subject, skills, viewerMode, onSaved)}
+      <div id="skills-panel" class="profile-section-collapsible__content">
+        ${renderOwnerEmptySkillsContent()}
       </div>
     </section>
   `
@@ -200,16 +240,17 @@ export function renderSkillsSection(
   subject: NamedNode,
   skills: SkillDetails[],
   viewerMode: ViewerMode,
+  layout: Layout,
   onSaved?: () => Promise<void> | void
 ) {
+  const currentLayout = layout || 'desktop'
   const safeSkills: SkillDetails[] = skills || []
   const hasSkills = Array.isArray(safeSkills) && safeSkills.length > 0
   const showOwnerEmptySkills = !hasSkills && viewerMode === 'owner'
-  const showSection = true
-    
-  return showSection ? html`
+
+  return html`
     ${showOwnerEmptySkills
-      ? renderOwnerEmptySkillsSection(store, subject, safeSkills, viewerMode, onSaved)
-      : renderSkillsSectionDefault(store, subject, safeSkills, viewerMode, onSaved)}
-  ` : ''
+      ? renderOwnerEmptySkillsSection(store, subject, safeSkills, viewerMode, currentLayout, onSaved)
+      : renderSkillsSectionDefault(store, subject, safeSkills, viewerMode, currentLayout, onSaved)}
+  `
 }

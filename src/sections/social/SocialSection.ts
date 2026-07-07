@@ -1,12 +1,14 @@
-import { html, TemplateResult } from 'lit-html'
+import { html, nothing, TemplateResult } from 'lit-html'
+import 'solid-ui/components/button'
 import { Account, SocialPresentation } from './types'
-import { ViewerMode } from '../../types'
-import '../../styles/SocialCard.css'
+import { Layout, ViewerMode } from '../../types'
+import './SocialSection.css'
 import { socialAccountsHeadingText } from '../../texts'
 import { createSocialEditDialog } from './SocialEditDialog'
 import { LiveStore, NamedNode } from 'rdflib'
 import { toggleCollapsibleSection } from '../shared/collapsibleSection'
-import { addIcon, editIcon, globeIcon } from '../../icons-svg/profileIcons'
+import { addIcon, chevronDownIcon, editIcon, globeIcon } from '../../icons-svg/profileIcons'
+import { renderResponsiveActionButton } from '../../ui/responsiveActionButton'
 
 const MAX_VISIBLE_SOCIAL_ACCOUNTS_MOBILE = 10
 
@@ -16,7 +18,7 @@ function isRenderableAccount(account: Account): boolean {
 
 function expandSocialAccounts(event: Event): void {
   const button = event.currentTarget as HTMLButtonElement | null
-  const socialCard = button?.closest('.socialCard') as HTMLElement | null
+  const socialCard = button?.closest('.social-card') as HTMLElement | null
   if (!button || !socialCard) return
 
   socialCard.setAttribute('data-mobile-expanded', 'true')
@@ -26,10 +28,8 @@ function expandSocialAccounts(event: Event): void {
 
 export const SocialCard = (
   SocialData: SocialPresentation,
-  viewerMode: ViewerMode
+  _viewerMode: ViewerMode
 ): TemplateResult => {
-  void viewerMode
-
   const accounts = (SocialData.accounts || []).filter(isRenderableAccount)
   const hiddenAccountsCount = Math.max(0, accounts.length - MAX_VISIBLE_SOCIAL_ACCOUNTS_MOBILE)
 
@@ -37,27 +37,27 @@ export const SocialCard = (
 
     return html`
       <section
-        class="socialCard"
+        id="social-media"
+        class="social-card"
         aria-label="Social media"
-        data-testid="social-media"
-        data-mobile-expanded="${hiddenAccountsCount > 0 ? 'false' : 'true'}"
+        SocialData: SocialPresentation
       >
         <nav aria-label="Social media profiles">
-          <ul class="socialList list-reset" role="list">
+          <ul class="social-card__list" role="list">
             ${accounts.map(account => renderAccount(account))}
           </ul>
         </nav>
         ${hiddenAccountsCount > 0
           ? html`
-              <button
-                type="button"
-                class="socialCard__more-button"
+              <solid-ui-button
+                variant="tertiary"
+                class="social-card__more-button"
                 aria-controls="social-media"
                 aria-expanded="false"
                 @click=${expandSocialAccounts}
               >
                 ${hiddenAccountsCount} more
-              </button>
+              </solid-ui-button>
             `
           : html``}
       </section>
@@ -68,15 +68,16 @@ export const SocialCard = (
 
   function renderAccount(account: Account) {
     return html`
-      <li class="socialItem" role="listitem">
+      <li class="social-card__item" role="listitem">
         <a 
+          class="social-card__link"
           href="${account.homepage}" 
           target="_blank" 
           rel="noopener noreferrer" 
           aria-label="Visit ${account.name} profile (opens in new tab)"
         >
           <img 
-            class="socialIcon" 
+            class="social-card__icon" 
             src="${account.icon}" 
             alt="${account.name} icon"
             width="40"
@@ -106,77 +107,58 @@ function renderSocialSectionDefault(
   subject: NamedNode, 
   socialData: SocialPresentation, 
   viewerMode: ViewerMode, 
+  layout: Layout,
   onSaved?: () => Promise<void> | void) {
-  // const hasAccounts = socialData.accounts && socialData.accounts.length > 0
-  const showSection = true
   const isOwner = viewerMode === 'owner'
 
-  const handleEdit = (event: Event) => {
-    return createSocialEditDialog(
-      event,
-      store,
-      subject,
-      socialData.accounts,
-      viewerMode,
-      onSaved
-    )
-  }
-  return showSection ? html`
+  return html`
         <section 
           aria-labelledby="social-heading" 
-          class="profile__section border-lighter profile-section-collapsible profile-section-collapsible--inline-mobile-actions" 
+          data-profile-section="social"
+          class="profile__section profile-section-collapsible profile-section-collapsible--inline-mobile-actions" 
           role="region"
           tabindex="-1"
           data-expanded="false"
         >
           <header class="profile__section-header profile-section-collapsible__header">
-            <h2 id="social-heading" tabindex="-1">${socialAccountsHeadingText}</h2>
-            <div class="profile-section-collapsible__actions flex-column">
-              ${isOwner ? html`
-                <button
-                  type="button"
-                  class="profile__action-button profile-action-text flex-center profile-section-collapsible__edit-button"
-                  aria-label="Edit social accounts"
-                  @click=${handleEdit}
-                >
-                  <span class="profile-section-collapsible__edit-label">${editIcon} Edit</span>
-                  <span class="profile-section-collapsible__edit-icon" aria-hidden="true">${editIcon}</span>
-                </button>
-              ` : html``}
-              <button
-                type="button"
-                class="inline-flex-row"
+            <h3 id="social-heading" tabindex="-1">${socialAccountsHeadingText}</h3>
+            <div class="profile-section-collapsible__actions">
+             ${isOwner ? html`
+                ${renderResponsiveActionButton({
+                  layout,
+                  className: 'profile-section-collapsible__edit-button',
+                  ariaLabel: 'Edit social accounts',
+                  onClick: (event: Event) => createSocialEditDialog(event, store, subject, socialData.accounts, viewerMode, onSaved),
+                  desktopIcon: html`<span slot="left-icon" class="profile-section-collapsible__action-label profile__add-more-icon" aria-hidden="true">${addIcon}</span>`,
+                  desktopLabel: 'Add More',
+                  mobileIcon: html`<span slot="icon" class="profile-section-collapsible__edit-icon" aria-hidden="true">${editIcon}</span>`
+                })}
+              ` : nothing}
+              <solid-ui-button
+                variant="ghost"
+                class="profile-section-collapsible__toggle-button"
                 aria-label="Toggle social accounts section"
                 aria-controls="social-panel"
                 aria-expanded="false"
                 @click=${toggleCollapsibleSection}
               >
-                <span class="profile-section-collapsible__chevron" aria-hidden="true">⌄</span>
-              </button>
+                <span slot="icon" class="profile-section-collapsible__chevron" aria-hidden="true">${chevronDownIcon}</span>
+              </solid-ui-button>
             </div>
           </header>
-          <div id="social-panel" class="profile-section-collapsible__content" aria-hidden="true">
+          <div id="social-panel" class="profile-section-collapsible__content">
             ${renderSocialSectionContent(socialData, viewerMode)}
           </div>
         </section>
-      ` : html``
+      `
 }
 
-function renderOwnerEmptySocialContent(
-  _store: LiveStore,
-  _subject: NamedNode,
-  _socialData: SocialPresentation,
-  _viewerMode: ViewerMode,
-  _onSaved?: () => Promise<void> | void
-) {
+function renderOwnerEmptySocialContent() {
   return html`
-      <div class="profile__empty-state-content flex-column-center" role="group" aria-label="Empty social accounts section">
+      <div class="profile__empty-state-content" role="group" aria-label="Empty social accounts section">
         <div class="social__empty-icon-wrapper">
-          <span class="social__empty-icon inline-flex-row">${globeIcon}</span>
+          <span class="social__empty-icon">${globeIcon}</span>
         </div>
-        <p class="profile__empty-state-message social__empty-message">
-            No social media links added yet.
-        </p>
       </div>
   `
 }
@@ -186,25 +168,26 @@ function renderOwnerEmptySocialSection(
   subject: NamedNode,
   socialData: SocialPresentation,
   viewerMode: ViewerMode,
+  layout: Layout,
   onSaved?: () => Promise<void> | void
 ) {
   return html`
     <section 
       aria-labelledby="social-heading" 
       data-profile-section="social"
-      class="profile__section--empty border-lighter flex-column-center rounded-md gap-lg profile-section-collapsible profile-section-collapsible--inline-mobile-actions" 
+      class="profile__section--empty profile-section-collapsible profile-section-collapsible--inline-mobile-actions" 
       role="region"
       tabindex="-1"
       data-expanded="false"
     >
       <header class="profile__section-header profile-section-collapsible__header">
-        <h2 id="social-heading" tabindex="-1">${socialAccountsHeadingText}</h2>
-        <div class="profile-section-collapsible__actions flex-column">
-          <button
-            type="button"
-            class="profile__action-button profile-action-text flex-center profile-section-collapsible__edit-button"
-            aria-label="Add social accounts"
-            @click=${(event: Event) => {
+        <h3 id="social-heading" tabindex="-1">${socialAccountsHeadingText}</h3>
+        <div class="profile-section-collapsible__actions">
+          ${renderResponsiveActionButton({
+            layout,
+            className: 'profile-section-collapsible__edit-button',
+            ariaLabel: 'Add social accounts',
+            onClick: (event: Event) => {
               return createSocialEditDialog(
                 event,
                 store,
@@ -213,48 +196,46 @@ function renderOwnerEmptySocialSection(
                 viewerMode,
                 onSaved
               )
-            }}
-          >
-            <span class="profile-section-collapsible__edit-label profile__add-more-content inline-flex-row">
-              <span class="profile__add-more-icon inline-flex-row" aria-hidden="true">${addIcon}</span>
-              Add Account
-            </span>
-            <span class="profile-section-collapsible__edit-icon" aria-hidden="true">${editIcon}</span>
-          </button>
-          <button
-            type="button"
-            class="inline-flex-row"
+            },
+            desktopIcon: html`<span slot="left-icon" class="profile-section-collapsible__action-label profile__add-more-icon" aria-hidden="true">${addIcon}</span>`,
+            desktopLabel: 'Add More',
+            mobileIcon: html`<span slot="icon" class="profile-section-collapsible__edit-icon" aria-hidden="true">${editIcon}</span>`
+          })}
+          <solid-ui-button
+            variant="ghost"
+            class="profile-section-collapsible__toggle-button"
             aria-label="Toggle social accounts section"
             aria-controls="social-panel"
             aria-expanded="false"
             @click=${toggleCollapsibleSection}
           >
-            <span class="profile-section-collapsible__chevron" aria-hidden="true">⌄</span>
-          </button>
+            <span slot="icon" class="profile-section-collapsible__chevron" aria-hidden="true">${chevronDownIcon}</span>
+          </solid-ui-button>
         </div>
       </header>
-      <div id="social-panel" class="profile-section-collapsible__content" aria-hidden="true">
-        ${renderOwnerEmptySocialContent(store, subject, socialData, viewerMode, onSaved)}
+      <div id="social-panel" class="profile-section-collapsible__content">
+        ${renderOwnerEmptySocialContent()}
       </div>
     </section>
   `
 }
 
-export function renderSocialAccounts(
+export function renderSocialSection(
   store: LiveStore,
   subject: NamedNode,
   socialData: SocialPresentation,
   viewerMode: ViewerMode,
+  layout: Layout,
   onSaved?: () => Promise<void> | void
 ) {
+  const currentLayout = layout || 'desktop'
   const safeSocialData: SocialPresentation = socialData || { accounts: [] }
   const hasAccounts = Array.isArray(safeSocialData.accounts) && safeSocialData.accounts.length > 0
   const showOwnerEmptyAccounts = !hasAccounts && viewerMode === 'owner'
-  const showSection = true
     
-  return showSection ? html`
+  return html`
     ${showOwnerEmptyAccounts
-      ? renderOwnerEmptySocialSection(store, subject, safeSocialData, viewerMode, onSaved)
-      : renderSocialSectionDefault(store, subject, safeSocialData, viewerMode, onSaved)}
-  ` : ''
+      ? renderOwnerEmptySocialSection(store, subject, safeSocialData, viewerMode, currentLayout, onSaved)
+      : renderSocialSectionDefault(store, subject, safeSocialData, viewerMode, currentLayout, onSaved)}
+  `
 }

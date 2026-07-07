@@ -1,0 +1,268 @@
+.resume-card {
+  --resume-card-item-gap: 12px;
+  --resume-card-title-size: var(--solid-ui-font-size-lg, 1.125rem);
+  --resume-card-organization-size: var(--solid-ui-font-size-md, 1rem);
+  --resume-card-location-size: var(--solid-ui-font-size-sm, 0.875rem);
+  --resume-card-period-size: var(--solid-ui-font-size-sm, 0.875rem);
+  --resume-card-description-size: var(--solid-ui-font-size-sm, 0.875rem);
+}
+
+.resume-card__section {
+  margin-bottom: 20px;
+}
+
+.resume-card__section > ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.resume-card__item {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas:
+    "title period"
+    "organization organization"
+    "description description";
+  column-gap: 20px;
+  row-gap: 10px;
+  align-items: start;
+  margin: 0 0 var(--resume-card-item-gap) 0;
+  font-size: var(--solid-ui-font-size-md, 1rem);
+  line-height: 1.5;
+  gap: 0;
+}
+
+.resume-card__item:last-child {
+  margin-bottom: 0;
+}
+
+.resume-card__item-header {
+  grid-area: title;
+  display: flex;
+  align-items: baseline;
+  gap: 15px;
+  min-width: 0;
+}
+
+.resume-card__item-header h3,
+.resume-card__item-header h4,
+.resume-card__item-header time {
+  margin: 0;
+}
+
+.resume-card__item-header h3,
+.resume-card__item-header h4 {
+  min-width: 0;
+  color: var(--color-text-subheading, var(--gray-900, #101828));
+  font-size: var(--resume-card-title-size);
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.resume-card__item-period {
+  grid-area: period;
+  justify-self: end;
+  text-align: right;
+  margin: 0;
+  color: var(--solid-ui-color-gray-600, #4A5565);
+  font-size: var(--resume-card-period-size);
+  font-weight: 400;
+  line-height: 1.4;
+}
+
+.resume-card__organization {
+  grid-area: organization;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.resume-card__organization-name {
+  color: var(--solid-ui-color-gray-600, #4A5565);
+  font-size: var(--resume-card-organization-size);
+  font-weight: 500;
+}
+
+.resume-card__organization-separator,
+.resume-card__organization-location {
+  color: var(--solid-ui-color-gray-600, #4A5565);
+  font-size: var(--resume-card-location-size);
+  font-weight: 400;
+}
+
+/* Description toggle */
+.resume-card__description-wrap {
+  --resume-card-description-offset: 15px;
+  grid-area: description;
+  margin: var(--resume-card-description-offset) 0 0;
+  position: relative;
+  isolation: isolate;
+}
+
+.resume-card__description-text {
+  margin: 0;
+  width: 100%;
+  max-width: none;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  color: var(--solid-ui-color-gray-700, #364153);
+  font-size: var(--resume-card-description-size);
+  font-weight: 400;
+  line-height: 1.5;
+  overflow: hidden;
+}
+
+.resume-card__description-text--overflowing {
+  padding-right: 72px;
+}
+
+.resume-card__description-text--expanded {
+  display: block;
+  -webkit-line-clamp: unset;
+  line-clamp: unset;
+  padding-right: 0;
+  overflow: visible;
+}
+
+.resume-card__description-toggle,
+solid-ui-button.resume-card__description-toggle {
+  margin: 0;
+  padding: 0;
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  background-color: var(--solid-ui-color-white, #FFF);
+  white-space: nowrap;
+  z-index: 0;
+}
+
+.resume-card__description-toggle {
+  border: 0;
+  background: transparent;
+  color: var(--solid-ui-color-primary, #7C4DFF);
+  cursor: var(--profile-interactive-cursor, pointer);
+  font: inherit;
+  font-size: var(--solid-ui-font-size-sm, 0.875rem);
+  line-height: 1.5;
+  min-height: auto;
+  min-width: auto;
+}
+
+solid-ui-button.resume-card__description-toggle[hidden],
+.resume-card__description-toggle[hidden] {
+  display: none !important;
+}
+
+.resume-card__description-wrap .resume-card__description-text:not(.resume-card__description-text--expanded) + .resume-card__description-toggle,
+.resume-card__description-wrap .resume-card__description-text:not(.resume-card__description-text--expanded) + solid-ui-button.resume-card__description-toggle {
+  top: calc(100% - 1.5em + 0.28em - 11px);
+  bottom: auto;
+  transform: translateY(7px);
+}
+
+.resume-card__description-text--expanded + .resume-card__description-toggle,
+.resume-card__description-text--expanded + solid-ui-button.resume-card__description-toggle {
+  position: static;
+  display: block;
+  width: fit-content;
+  margin-left: auto;
+  top: auto;
+  bottom: auto;
+  transform: none;
+}
+
+.resume-card__description-text--expanded + solid-ui-button.resume-card__description-toggle::part(button) {
+  position: static;
+  display: inline-flex;
+  top: auto;
+  bottom: auto;
+  transform: none;
+}
+
+.resume-card__skill,
+.resume-card__language {
+  text-align: left;
+  margin: var(--resume-card-item-gap) 0;
+  font-size: var(--solid-ui-font-size-md, 1rem);
+  line-height: 1.5;
+}
+
+.resume-card__section > h3 {
+  color: var(--solid-ui-color-gray-800, #101828);
+  font-size: 1.375rem;
+  font-weight: 500;
+  line-height: 1.4;
+  margin-bottom: var(--resume-card-item-gap);
+  border-bottom: 1px solid var(--color-border-pale, #eee);
+  padding-bottom: var(--resume-card-item-gap);
+}
+
+/* Compact layout */
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .resume-card__item {
+  --resume-card-location-size: var(--solid-ui-font-size-sm, 0.875rem);
+  --resume-card-period-size: 0.75rem;
+  --resume-card-description-offset: 0rem;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-areas:
+    "title"
+    "organization"
+    "period"
+    "description";
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .resume-card__item-header {
+  align-items: flex-start;
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .resume-card__item-period {
+  justify-self: start;
+  text-align: left;
+}
+
+@media (max-width: 576px) {
+  .resume-card__item {
+    --resume-card-location-size: var(--solid-ui-font-size-sm, 0.875rem);
+    --resume-card-period-size: 0.75rem;
+    --resume-card-description-offset: 0rem;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      "title"
+      "organization"
+      "period"
+      "description";
+  }
+
+  .resume-card__item-header {
+    align-items: flex-start;
+  }
+
+  .resume-card__item-period {
+    justify-self: start;
+    text-align: left;
+  }
+}
+
+@container profile-pane (max-width: 576px) {
+  .resume-card__item {
+    --resume-card-location-size: var(--solid-ui-font-size-sm, 0.875rem);
+    --resume-card-period-size: 0.75rem;
+    --resume-card-description-offset: 0rem;
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-areas:
+      "title"
+      "organization"
+      "period"
+      "description";
+  }
+
+  .resume-card__item-header {
+    align-items: flex-start;
+  }
+
+  .resume-card__item-period {
+    justify-self: start;
+    text-align: left;
+  }
+}

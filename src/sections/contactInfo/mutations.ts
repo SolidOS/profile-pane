@@ -1,10 +1,11 @@
-import { LiveStore, NamedNode, Node, st, sym } from 'rdflib'
+import { LiveStore, NamedNode, Node, literal, st, sym } from 'rdflib'
 import { ns } from 'solid-ui'
 import { ContactAddressRow, ContactMutationPlan, ContactPointRow } from './types'
 import { MutationOps } from '../shared/types'
-import { applyUpdaterPatch, collectLinkedNodeStatements, collectNodeStatements, findExistingNode } from '../shared/rdfMutationHelpers'
+import { MutationDocumentTextCache, collectLinkedNodeStatements, collectNodeStatements, findExistingNode, runUpdateTransport, shouldForceDocumentPutForStatements } from '../shared/rdfMutationHelpers'
 import { createIdNode } from '../shared/idNodeFactory'
-import { mutationSaveContactInfoFailedPrefixText } from '../../texts'
+import { contactInfoMutationSaveFailedDebugText, saveContactUpdatesFailedMessageText, updaterUnsupportedStoreErrorMessageText } from '../../texts'
+import { error as debugError } from '../../utils/debug'
 
 function buildPhoneStatements(subject: NamedNode, doc: NamedNode, node: Node, phone: ContactPointRow) {
   const normalizedValue = phone.value.startsWith('tel:') ? phone.value : `tel:${phone.value}`
@@ -40,16 +41,16 @@ function buildAddressStatements(subject: NamedNode, doc: NamedNode, node: Node, 
   const inserts = [st(subject, ns.vcard('hasAddress'), node as any, doc)]
 
   if (address.type) inserts.push(st(node as any, ns.rdf('type'), ns.vcard(address.type), doc))
-  if (address.streetAddress) inserts.push(st(node as any, ns.vcard('street-address'), address.streetAddress as any, doc))
-  if (address.locality) inserts.push(st(node as any, ns.vcard('locality'), address.locality as any, doc))
-  if (address.region) inserts.push(st(node as any, ns.vcard('region'), address.region as any, doc))
-  if (address.postalCode) inserts.push(st(node as any, ns.vcard('postal-code'), address.postalCode as any, doc))
-  if (address.countryName) inserts.push(st(node as any, ns.vcard('country-name'), address.countryName as any, doc))
+  if (address.streetAddress) inserts.push(st(node as any, ns.vcard('street-address'), literal(address.streetAddress), doc))
+  if (address.locality) inserts.push(st(node as any, ns.vcard('locality'), literal(address.locality), doc))
+  if (address.region) inserts.push(st(node as any, ns.vcard('region'), literal(address.region), doc))
+  if (address.postalCode) inserts.push(st(node as any, ns.vcard('postal-code'), literal(address.postalCode), doc))
+  if (address.countryName) inserts.push(st(node as any, ns.vcard('country-name'), literal(address.countryName), doc))
 
   return inserts
 }
 
-async function mutatePhoneEntries(store: LiveStore, subject: NamedNode, phoneOps: MutationOps<ContactPointRow>) {
+async function mutatePhoneEntries(store: LiveStore, subject: NamedNode, phoneOps: MutationOps<ContactPointRow>, documentTextCache?: MutationDocumentTextCache) {
   const doc = subject.doc()
   const existingPhoneNodes = store.each(subject, ns.vcard('hasTelephone'), null, doc) as Node[]
   const deletions: any[] = []
@@ -88,10 +89,19 @@ async function mutatePhoneEntries(store: LiveStore, subject: NamedNode, phoneOps
     insertions.push(...buildPhoneStatements(subject, doc, createIdNode(doc), phone))
   })
 
-  await applyUpdaterPatch(store, deletions, insertions)
+  const shouldSerializeDocument = await shouldForceDocumentPutForStatements(store, doc, insertions, undefined, { documentTextCache })
+
+  await runUpdateTransport(store, doc, deletions, insertions, {
+    unsupportedMessage: updaterUnsupportedStoreErrorMessageText,
+    failureMessage: 'Failed to save contact info updates',
+    documentTextCache,
+    useDavFallback: false,
+    usePutFallback: shouldSerializeDocument,
+    forcePut: shouldSerializeDocument
+  })
 }
 
-async function mutateEmailEntries(store: LiveStore, subject: NamedNode, emailOps: MutationOps<ContactPointRow>) {
+async function mutateEmailEntries(store: LiveStore, subject: NamedNode, emailOps: MutationOps<ContactPointRow>, documentTextCache?: MutationDocumentTextCache) {
   const doc = subject.doc()
   const existingEmailNodes = store.each(subject, ns.vcard('hasEmail'), null, doc) as Node[]
   const deletions: any[] = []
@@ -125,10 +135,19 @@ async function mutateEmailEntries(store: LiveStore, subject: NamedNode, emailOps
     insertions.push(...buildEmailStatements(subject, doc, createIdNode(doc), email))
   })
 
-  await applyUpdaterPatch(store, deletions, insertions)
+  const shouldSerializeDocument = await shouldForceDocumentPutForStatements(store, doc, insertions, undefined, { documentTextCache })
+
+  await runUpdateTransport(store, doc, deletions, insertions, {
+    unsupportedMessage: updaterUnsupportedStoreErrorMessageText,
+    failureMessage: 'Failed to save contact info updates',
+    documentTextCache,
+    useDavFallback: false,
+    usePutFallback: shouldSerializeDocument,
+    forcePut: shouldSerializeDocument
+  })
 }
 
-async function mutateAddressEntries(store: LiveStore, subject: NamedNode, addressOps: MutationOps<ContactAddressRow>) {
+async function mutateAddressEntries(store: LiveStore, subject: NamedNode, addressOps: MutationOps<ContactAddressRow>, documentTextCache?: MutationDocumentTextCache) {
   const doc = subject.doc()
   const existingAddressNodes = store.each(subject, ns.vcard('hasAddress'), null, doc) as Node[]
   const deletions: any[] = []
@@ -162,16 +181,27 @@ async function mutateAddressEntries(store: LiveStore, subject: NamedNode, addres
     insertions.push(...buildAddressStatements(subject, doc, createIdNode(doc), address))
   })
 
-  await applyUpdaterPatch(store, deletions, insertions)
+  const shouldSerializeDocument = await shouldForceDocumentPutForStatements(store, doc, insertions, undefined, { documentTextCache })
+
+  await runUpdateTransport(store, doc, deletions, insertions, {
+    unsupportedMessage: updaterUnsupportedStoreErrorMessageText,
+    failureMessage: 'Failed to save contact info updates',
+    documentTextCache,
+    useDavFallback: false,
+    usePutFallback: shouldSerializeDocument,
+    forcePut: shouldSerializeDocument
+  })
 }
 
 export async function processContactInfoMutations(store: LiveStore, subject: NamedNode, mutationPlan: ContactMutationPlan) {
   try {
-    await mutatePhoneEntries(store, subject, mutationPlan.phoneOps)
-    await mutateEmailEntries(store, subject, mutationPlan.emailOps)
-    await mutateAddressEntries(store, subject, mutationPlan.addressOps)
+    const documentTextCache: MutationDocumentTextCache = new Map()
+    await mutatePhoneEntries(store, subject, mutationPlan.phoneOps, documentTextCache)
+    await mutateEmailEntries(store, subject, mutationPlan.emailOps, documentTextCache)
+    await mutateAddressEntries(store, subject, mutationPlan.addressOps, documentTextCache)
   } catch (error) {
-    const message = error instanceof Error ? error.message : String(error)
-    throw new Error(`${mutationSaveContactInfoFailedPrefixText} ${message}`)
+    const rootError = error instanceof Error ? error : new Error(String(error))
+    debugError(contactInfoMutationSaveFailedDebugText, rootError)
+    throw new Error(saveContactUpdatesFailedMessageText, { cause: rootError })
   }
 } 

@@ -10,11 +10,8 @@ module.exports = {
     '^.+\\.(ts|js)$': ['babel-jest'],
   },
   setupFilesAfterEnv: ["./test/helpers/jest.setup.ts"],
-  transformIgnorePatterns: ["/node_modules/(?!lit-html).+\\.js"],
+  transformIgnorePatterns: ['/node_modules/(?!lit-html|lit|@lit|@uvdsl/solid-oidc-client-browser|uuid|@noble|solid-logic|solid-ui|@awesome.me|@shoelace-style)'],
   testPathIgnorePatterns: ['/node_modules/', '/lib/'],
-  moduleNameMapper: {
-    '^[./a-zA-Z0-9$_-]+\\.ttl$': '<rootDir>/__mocks__/fileMock.js',    // '\\.ttl$'
-  },
   roots: ['<rootDir>/src', '<rootDir>/test', '<rootDir>/__mocks__'],
   moduleNameMapper: {
     '\\.(png|jpe?g|gif|webp|avif|svg)$': '<rootDir>/__mocks__/fileMock.js',

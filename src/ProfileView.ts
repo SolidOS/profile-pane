@@ -2,9 +2,9 @@ import { html, TemplateResult } from 'lit-html'
 import { DataBrowserContext } from 'pane-registry'
 import { NamedNode, LiveStore } from 'rdflib'
 import { authn } from 'solid-logic'
-import './styles/ProfileView.css'
-import { QRCodeCard } from './QRCodeCard'
-import { ViewerMode } from './types'
+import './ProfileView.css'
+import './styles/CollapsibleSection.css'
+import { Layout, ViewerMode } from './types'
 import { presentProfileViewModel } from './ProfileViewModelPresenter'
 import { renderContactInfoSection } from './sections/contactInfo/ContactInfoSection'
 import { renderLanguageSection } from './sections/languages/LanguageSection'
@@ -16,63 +16,57 @@ import { renderCVSection } from './sections/resume/ResumeSection'
 import { renderProjectSection } from './sections/projects/ProjectSection'
 import { renderHeadingSection } from './sections/heading/HeadingSection'
 import { renderBioSection } from './sections/bio/BioSection'
-import { renderSocialAccounts } from './sections/social/SocialSection'
+import { renderSocialSection } from './sections/social/SocialSection'
+import { renderQRCodeSection } from './sections/qrcode/QRCodeSection'
 
-type ProfileViewModelData = Awaited<ReturnType<typeof presentProfileViewModel>>
-type SocialAccounts = ProfileViewModelData['social']
 
 function getViewerMode(subject: NamedNode): ViewerMode {
   let mode: ViewerMode = 'anonymous'
-  if (authn.currentUser() && authn.currentUser().sameTerm(subject)) mode = 'owner'
-  if (authn.currentUser() && !authn.currentUser().sameTerm(subject)) mode = 'authenticated'
+  const currentUser = authn.currentUser()
+  const sameTerm = currentUser ? currentUser.sameTerm(subject) : false
+
+  if (currentUser && sameTerm) mode = 'owner'
+  if (currentUser && !sameTerm) mode = 'authenticated'
   return mode
 }
 
 function renderSidebar(
   store: LiveStore,
   subject: NamedNode,
-  accounts: SocialAccounts,
+  accounts,
   skills: SkillDetails[],
   languages: LanguageDetails[],
-  contactInfo: ContactInfo,
+  contactInfo: ContactInfo, 
   viewerMode: ViewerMode,
+  layout: Layout,
   onSaved?: () => Promise<void> | void
 ) {
   return html`
-    <aside 
-      aria-labelledby="sidebar-heading" 
-      class="profile__sidebar p-sm" 
+    <div
+      class="profile__sidebar"
     >
-      <h2 id="sidebar-heading" class="sr-only">Sidebar</h2>
-      <div aria-label="Sidebar Content" class="flex-column gap-md">
-        ${renderSocialAccounts(store, subject, accounts, viewerMode, onSaved)}
-        ${renderSkillsSection(store, subject, skills, viewerMode, onSaved)}
-        ${renderLanguageSection(store, subject, languages, viewerMode, onSaved)}
-        ${renderContactInfoSection(store, subject, contactInfo, viewerMode, onSaved)}
-        ${renderQRCode(subject, store)}
-      </div>
-    </aside>
-  `
-}
-
-function renderQRCode(subject: NamedNode, store: LiveStore) {
-  return html`
-      <section class="profile__section border-lighter profile__qr-code" aria-labelledby="qr-heading" tabindex="-1">
-        <h2 id="qr-heading" class="sr-only">QR code</h2>
-        <div class="qrcode-card__frame flex-center">
-          ${QRCodeCard(subject, store)}
-        </div>
-      </section>
+      <aside class="profile__sidebar-content" aria-labelledby="profile-sidebar-heading">
+        <h2 id="profile-sidebar-heading" class="sr-only">Profile sidebar</h2>
+        ${renderSocialSection(store, subject, accounts, viewerMode, layout, onSaved)}
+        ${renderSkillsSection(store, subject, skills, viewerMode, layout, onSaved)}
+        ${renderLanguageSection(store, subject, languages, viewerMode, layout, onSaved)}
+        ${renderContactInfoSection(store, subject, contactInfo, viewerMode, layout, onSaved)}
+        ${renderQRCodeSection(subject, store)}
+      </aside>
+    </div>
   `
 }
 
 export async function ProfileView (
   subject: NamedNode,
   context: DataBrowserContext,
+  layout: Layout,
   onSaved?: () => Promise<void> | void
 ): Promise <TemplateResult> {
   const store = context.session.store as LiveStore
   const viewerMode = getViewerMode(subject)
+  const theme = context.environment?.theme ?? 'light'
+  const inputMode = context.environment?.inputMode ?? 'pointer'
 
   const viewModel = await presentProfileViewModel(subject, store)
   const profileDetails = viewModel.profileDetails
@@ -83,29 +77,66 @@ export async function ProfileView (
   const bioDetails = viewModel.bioDetails
   const accounts = viewModel.social
   const contactInfo = viewModel.contactInfo
-  
-  return html` 
-    <div class="profile-pane-root">
-      <main
+
+  const headingSection = await renderHeadingSection(context, subject, profileDetails, viewerMode, layout,onSaved)
+  const bioSection = renderBioSection(store, subject, bioDetails, viewerMode, layout, onSaved)
+  const skillsSection = renderSkillsSection(store, subject, skills, viewerMode, layout, onSaved)
+  const languageSection = renderLanguageSection(store, subject, languages, viewerMode, layout, onSaved)
+  const cvSection = renderCVSection(store, subject, rolesByType, viewerMode, layout, onSaved)
+  const projectSection = renderProjectSection(store, subject, projects, viewerMode, layout, onSaved)
+  const socialSection = renderSocialSection(store, subject, accounts, viewerMode, layout, onSaved)
+  const contactInfoSection = renderContactInfoSection(store, subject, contactInfo, viewerMode, layout, onSaved)
+  const qrCodeSection = renderQRCodeSection(subject, store)
+
+  if (layout === 'mobile') {
+    return html`
+      <div
+        class="profile-pane-root"
+        data-layout=${layout}
+        data-theme=${theme}
+        data-input-mode=${inputMode}
+      >
+        <main
+          id="main-content"
+          class="profile-grid"
+          tabindex="-1"
+        >
+          ${headingSection}
+          ${bioSection}
+          ${skillsSection}
+          ${languageSection}
+          ${cvSection}
+          ${projectSection}
+          ${socialSection}
+          ${contactInfoSection}
+          ${qrCodeSection}
+        </main>
+      </div>
+    `
+  }
+
+  return html`
+    <div
+      class="profile-pane-root"
+      data-layout=${layout}
+      data-theme=${theme}
+      data-input-mode=${inputMode}
+    >
+      <div
         id="main-content"
         class="profile-grid"
         tabindex="-1"
-      > 
-        <h1 id="profile-content-heading" class="sr-only">Profile for ${profileDetails.name}</h1>
+      >
 
-        <section
-          class="profile__main flex-column gap-md p-sm"
-          >
-          <h2 id="profile-main-heading" class="sr-only">Main Profile Content</h2>
+        <section class="profile__main">
+          ${headingSection}
+          ${bioSection}
+          ${cvSection}
+          ${projectSection}
 
-          ${renderHeadingSection(context, subject, profileDetails, viewerMode, onSaved)}
-          ${renderBioSection(store, subject, bioDetails, viewerMode, onSaved)}
-          ${renderCVSection(store, subject, rolesByType, viewerMode, onSaved)}
-          ${renderProjectSection(store, subject, projects, viewerMode, onSaved)}
-          
         </section>
-        ${renderSidebar(store, subject, accounts, skills, languages, contactInfo, viewerMode, onSaved)}
-      </main>
+        ${renderSidebar(store, subject, accounts, skills, languages, contactInfo, viewerMode, layout, onSaved)}
+      </div>
     </div>
   `
 }

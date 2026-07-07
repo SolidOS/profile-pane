@@ -1,8 +1,8 @@
-import { openInputDialog } from '../../ui/dialog'
+import { getSharedDialogSaveButton, openInputDialog } from '../../ui/dialog'
 import { html, render } from 'lit-html'
+import 'solid-ui/components/button'
 import { ProjectDetails, ProjectRow } from './types'
 import '../../styles/EditDialogs.css'
-import '../../styles/ContactInfoEditDialog.css'
 import { LiveStore, NamedNode } from 'rdflib'
 import { ViewerMode } from '../../types'
 import { applyRowFieldChange, summarizeRowOps } from '../shared/rowState'
@@ -14,7 +14,6 @@ import {
   editProjectsDialogTitleText,
   ownerLoginRequiredDialogMessageText,
   pasteEntryButtonTitleText,
-  saveProjectsUpdatesFailedPrefixText,
 } from '../../texts'
 
 type ProjectFormState = {
@@ -62,9 +61,6 @@ function toFormState(_details: ProjectDetails[]): ProjectFormState {
 }
 
 function validateProjectBeforeSave(row: ProjectRow): string | null {
-  if (!hasNonEmptyText(row.url) && !hasNonEmptyText(row.entryNode)) {
-    return 'Add a project WebID.'
-  }
   if (!hasNonEmptyText(row.url)) {
     return 'WebID is required.'
   }
@@ -93,7 +89,7 @@ function renderProjectInputRow(row: ProjectRow, onChange: () => void) {
       if (!isValidProjectUrl(url)) return
 
       const dom = (event.currentTarget as HTMLElement | null)?.ownerDocument || document
-      const saveButton = dom.querySelector('#profile-modal #modal-buttons .btn-primary') as HTMLButtonElement | null
+      const saveButton = getSharedDialogSaveButton(dom)
       saveButton?.click()
     } catch {
       // Clipboard access may fail due to browser permissions; keep dialog usable.
@@ -103,7 +99,6 @@ function renderProjectInputRow(row: ProjectRow, onChange: () => void) {
   return html`
     <div class="profile-edit-dialog__row profile-edit-dialog__row--project">
       <label aria-label="Project or community WebID" class="label profile-edit-dialog__field profile-edit-dialog__field--full">
-      <p>Type or paste a project or community WebID.</p>  
       <div class="profile-edit-dialog__input-wrap">
           <input
             class="input profile-edit-dialog__input--with-action"
@@ -119,16 +114,16 @@ function renderProjectInputRow(row: ProjectRow, onChange: () => void) {
             inputmode="text"
             @input=${handleUrlInput}
           />
-          <button
-            type="button"
-            class="profile-edit-dialog__paste-button rounded-sm gap-xxs"
+          <solid-ui-button
+            variant="tertiary"
+            class="profile-edit-dialog__paste-button"
             aria-label="Paste project or community URL from clipboard"
             title=${pasteEntryButtonTitleText}
             @click=${handlePaste}
           >
-            <span class="profile-edit-dialog__paste-icon" aria-hidden="true">${pasteIcon}</span>
+            <span slot="left-icon" class="profile-edit-dialog__paste-icon" aria-hidden="true">${pasteIcon}</span>
             Paste
-          </button>
+          </solid-ui-button>
         </div>
       </label>
     </div>
@@ -174,6 +169,7 @@ export async function createProjectsEditDialog(
     dom,
     form,
     headerAction: { type: 'close' },
+    shouldCloseWithoutSave: () => !hasNonEmptyText(formState.project.url) && !hasNonEmptyText(formState.project.entryNode),
     validate: () => {
       if (viewerMode !== 'owner') {
         return ownerLoginRequiredDialogMessageText
@@ -190,25 +186,12 @@ export async function createProjectsEditDialog(
       await processProjectsMutations(store, subject, plan)
     },
     formatSaveError: (error: unknown) => {
-      const message = error instanceof Error ? error.message : String(error)
-      return `${saveProjectsUpdatesFailedPrefixText} ${message}`
+      return error instanceof Error ? error.message : String(error)
     }
   })
 
-  const modalButtons = dom.querySelector('#profile-modal #modal-buttons') as HTMLElement | null
-  const previousButtonsDisplay = modalButtons?.style.display
-  if (modalButtons) {
-    modalButtons.style.display = 'none'
-  }
-
   let result: Record<string, string> | null = null
-  try {
-    result = await dialogPromise
-  } finally {
-    if (modalButtons) {
-      modalButtons.style.display = previousButtonsDisplay || ''
-    }
-  }
+  result = await dialogPromise
 
   if (!result) return
 
