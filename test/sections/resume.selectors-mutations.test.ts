@@ -4,7 +4,7 @@ import { graph, literal, sym } from 'rdflib'
 import { ns } from 'solid-ui'
 import { presentCV } from '../../src/sections/resume/selectors'
 import { processResumeMutations } from '../../src/sections/resume/mutations'
-import { fetchWikidataOrganizationSuggestions } from '../../src/sections/resume/ResumeEditDialog'
+import { createResumeOrganizationOptionsProvider } from '../../src/sections/resume/ResumeEditDialog'
 import { saveResumeUpdatesFailedMessageText, updaterUnsupportedStoreErrorMessageText } from '../../src/texts'
 
 describe('Resume selectors and mutations', () => {
@@ -554,12 +554,13 @@ describe('Resume selectors and mutations', () => {
       [JSON.stringify({ entities: {} }), { status: 200 }]
     )
 
-    const corporationSuggestions = await fetchWikidataOrganizationSuggestions('solid', 'Corporation')
+    const corporationProvider = createResumeOrganizationOptionsProvider(() => 'Corporation')
+    const corporationSuggestions = await corporationProvider('solid')
 
     expect(corporationSuggestions).toEqual([
       {
         label: 'SolidOS Inc',
-        publicId: 'http://www.wikidata.org/entity/Q100001'
+        value: 'http://www.wikidata.org/entity/Q100001'
       }
     ])
 
@@ -570,12 +571,13 @@ describe('Resume selectors and mutations', () => {
       [JSON.stringify({ entities: {} }), { status: 200 }]
     )
 
-    const educationalSuggestions = await fetchWikidataOrganizationSuggestions('solid', 'EducationalOrganization')
+    const educationalProvider = createResumeOrganizationOptionsProvider(() => 'EducationalOrganization')
+    const educationalSuggestions = await educationalProvider('solid')
 
     expect(educationalSuggestions).toEqual([
       {
         label: 'SolidOS University',
-        publicId: 'http://www.wikidata.org/entity/Q100002'
+        value: 'http://www.wikidata.org/entity/Q100002'
       }
     ])
   })
