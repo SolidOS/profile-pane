@@ -2,6 +2,7 @@ import { getSharedDialogSaveButton, openInputDialog } from '../../ui/dialog'
 import { html, render } from 'lit-html'
 import 'solid-ui/components/button'
 import 'solid-ui/components/combobox'
+import { defineAsyncComboboxOptionsProvider, ComboboxChangeEvent, Combobox } from 'solid-ui/components/combobox'
 import { LanguageDetails, LanguageRow } from './types'
 import '../../styles/EditDialogs.css'
 import '../contactInfo/ContactInfoEditDialog.css'
@@ -20,43 +21,68 @@ import {
   ownerLoginRequiredDialogMessageText,
   saveLanguageUpdatesFailedMessageText,
 } from '../../texts'
-/* combobox isn't working because the design system
-one doesn't work with search data */
+
 type LanguageFormState = {
   languages: LanguageRow[]
   initialExistingOrder: string[]
 }
-
-type LanguageSuggestion = {
-  name: string
-  publicId: string
-  code: string
-}
-
-type LanguageComboboxOption = {
-  label: string
-  value: string
-  publicId?: string
-  meta?: Record<string, unknown>
-}
-
-type LanguageComboboxElement = HTMLElement & {
-  suggestionProvider?: (query: string) => Promise<LanguageComboboxOption[]>
-  options?: LanguageComboboxOption[]
-  value?: string
-  inputValue?: string
-  label?: string
-  placeholder?: string
-}
-
-const WIKIDATA_LANGUAGE_ENDPOINT = 'https://query.wikidata.org/sparql'
-const LANGUAGE_OBJECT_URI_BASE = 'https://www.w3.org/ns/iana/language-code/'
 
 type LanguageEditableField = 'name' | 'proficiency'
 
 type LanguageRerenderOptions = {
   focusSelector?: string
 }
+
+const WIKIDATA_LANGUAGE_ENDPOINT = 'https://query.wikidata.org/sparql'
+const LANGUAGE_OBJECT_URI_BASE = 'https://www.w3.org/ns/iana/language-code/'
+
+const languagesProvider = defineAsyncComboboxOptionsProvider(async (rawQuery) => {
+  const query = sanitizeLanguageFieldValue(rawQuery)
+
+  if (query.length < 2) {
+    return [{
+        value: '',
+        label: 'Type at least 2 characters to search',
+        selectable: false
+    }]
+  }
+
+  const params = new URLSearchParams({
+    query: buildLanguageSearchQuery(query),
+    format: 'json'
+  })
+
+  try {
+    const response = await fetch(`${WIKIDATA_LANGUAGE_ENDPOINT}?${params.toString()}`, {
+      headers: { Accept: 'application/sparql-results+json, application/json' }
+    })
+    if (!response.ok) return []
+
+    const payload = await response.json() as any
+    const bindings = Array.isArray(payload?.results?.bindings) ? payload.results.bindings : []
+    const seen = new Set<string>()
+
+    return bindings
+      .map((binding: any) => {
+        const code = normalizeLanguageCode(preferredBindingValue(binding, 'subject'))
+
+        return {
+          code,
+          value: buildLanguagePublicId(code),
+          label: sanitizeLanguageFieldValue(preferredBindingValue(binding, 'name') || code)
+        }
+    })
+    .filter((item) => {
+      if (!item.label || !item.value || item.code.length !== 2) return false
+      const key = item.value.toLowerCase()
+      if (seen.has(key)) return false
+      seen.add(key)
+      return true
+    })
+  } catch {
+    return []
+  }
+})
 
 function sanitizeLanguageFieldValue(value: string): string {
   return sanitizeTextValue(value)
@@ -103,110 +129,20 @@ function preferredBindingValue(binding: any, key: string): string {
   return typeof value === 'string' ? value : ''
 }
 
-async function fetchLanguageSuggestions(term: string): Promise<LanguageSuggestion[]> {
-  const queryTerm = sanitizeLanguageFieldValue(term)
-  if (queryTerm.length < 2 || typeof fetch !== 'function') return []
-
-  const params = new URLSearchParams({
-    query: buildLanguageSearchQuery(queryTerm),
-    format: 'json'
-  })
-
-  try {
-    const response = await fetch(`${WIKIDATA_LANGUAGE_ENDPOINT}?${params.toString()}`, {
-      headers: { Accept: 'application/sparql-results+json, application/json' }
-    })
-    if (!response.ok) return []
-
-    const payload = await response.json() as any
-    const bindings = Array.isArray(payload?.results?.bindings) ? payload.results.bindings : []
-    const seen = new Set<string>()
-
-    return bindings
-      .map((binding: any) => {
-        const code = normalizeLanguageCode(preferredBindingValue(binding, 'subject'))
-        const publicId = buildLanguagePublicId(code)
-        const name = sanitizeLanguageFieldValue(preferredBindingValue(binding, 'name') || code)
-        return { name, publicId, code }
-      })
-      .filter((item: LanguageSuggestion) => {
-        if (!item.name || !item.publicId || item.code.length !== 2) return false
-        const key = item.publicId.toLowerCase()
-        if (seen.has(key)) return false
-        seen.add(key)
-        return true
-      })
-  } catch {
-    return []
-  }
-}
-
-function toLanguageComboboxOption(suggestion: LanguageSuggestion): LanguageComboboxOption {
-  return {
-    label: suggestion.name,
-    value: suggestion.publicId,
-    publicId: suggestion.publicId,
-    meta: { code: suggestion.code }
-  }
-}
-
-function readLanguageComboboxInputValue(event: Event): string {
-  const customEvent = event as CustomEvent<{ value?: string }>
-  if (typeof customEvent.detail?.value === 'string') {
-    return customEvent.detail.value
-  }
-
-  const target = event.target as HTMLInputElement | null
-  return typeof target?.value === 'string' ? target.value : ''
-}
-
-function readLanguageComboboxChange(event: Event): LanguageComboboxOption | null {
-  const customEvent = event as CustomEvent<{
-    value?: string
-    label?: string
-    option?: LanguageComboboxOption
-  }>
-
-  if (customEvent.detail?.option) {
-    return customEvent.detail.option
-  }
-
-  if (typeof customEvent.detail?.value === 'string') {
-    return {
-      label: typeof customEvent.detail?.label === 'string' ? customEvent.detail.label : '',
-      value: customEvent.detail.value,
-      publicId: customEvent.detail.value
-    }
-  }
-
-  return null
-}
-
-function createLanguageSuggestionProvider(): (query: string) => Promise<LanguageComboboxOption[]> {
-  return async (query: string) => {
-    const suggestions = await fetchLanguageSuggestions(query)
-    return suggestions.map(toLanguageComboboxOption)
-  }
-}
-
 function initializeLanguageComboboxes(form: HTMLFormElement, rows: LanguageRow[]): void {
-  const comboboxElements = form.querySelectorAll('solid-ui-combobox[data-language-row-index]') as NodeListOf<LanguageComboboxElement>
+  const comboboxElements = form.querySelectorAll('solid-ui-combobox[data-language-row-index]') as NodeListOf<Combobox>
 
   comboboxElements.forEach((comboboxElement) => {
     const rowIndex = Number(comboboxElement.dataset.languageRowIndex)
     if (Number.isNaN(rowIndex)) return
 
     const row = rows[rowIndex]
-    const options = row?.publicId && row?.name
-      ? [{ label: row.name, value: row.publicId, publicId: row.publicId }]
-      : []
 
-    comboboxElement.suggestionProvider = createLanguageSuggestionProvider()
-    comboboxElement.options = options
+    comboboxElement.optionsFallback = row?.publicId && row?.name
+        ? [{ label: row.name, value: row.publicId }]
+        : []
+    comboboxElement.asyncOptionsProvider = languagesProvider
     comboboxElement.value = row?.publicId || ''
-    comboboxElement.inputValue = row?.name || ''
-    comboboxElement.label = ''
-    comboboxElement.placeholder = 'Language'
   })
 }
 
@@ -221,7 +157,6 @@ function toFormState(details: LanguageDetails[]): LanguageFormState {
     }))
     .filter((row) => Boolean(row.name || row.entryNode || row.proficiency || row.publicId))
 
- 
   return {
     languages: rows.length ? rows : [{ name: '', publicId: '', proficiency: '', entryNode: '', status: 'new' }],
     initialExistingOrder: [],
@@ -338,23 +273,12 @@ function renderLanguageInputRow({
   const proficiencyLabel = `Language Proficiency ${displayIndex + 1}`
   const proficiencyInputName = `proficiency-${index}`
   const proficiencySelectId = `proficiency-${index}`
-  const hasSelectionIssue = Boolean(row && row.status !== 'deleted' && hasNonEmptyText(row.name) && !hasNonEmptyText(row.publicId))
 
-  const handleLanguageInput = (field: LanguageEditableField) => (e: Event) => {
-    const nextValue = sanitizeLanguageFieldValue(readLanguageComboboxInputValue(e))
-    if (rows[index]) {
-      applyRowFieldChange(rows[index], field, nextValue, rowHasContent)
-      rows[index].publicId = ''
-      updateLanguagesSubmitEnabled(rows)
-    }
-  }
+  const handleLanguageChange = (field: LanguageEditableField) => (event: ComboboxChangeEvent) => {
+    if (!rows[index] || !event.detail.option) return
 
-  const handleLanguageChange = (field: LanguageEditableField) => (e: Event) => {
-    const selectedOption = readLanguageComboboxChange(e)
-    if (!rows[index] || !selectedOption) return
-
-    applyRowFieldChange(rows[index], field, sanitizeLanguageFieldValue(selectedOption.label), rowHasContent)
-    rows[index].publicId = selectedOption.publicId || selectedOption.value || ''
+    applyRowFieldChange(rows[index], field, sanitizeLanguageFieldValue(event.detail.option.label), rowHasContent)
+    rows[index].publicId = String(event.detail.option.value)
     updateLanguagesSubmitEnabled(rows)
   }
 
@@ -397,10 +321,10 @@ function renderLanguageInputRow({
       </solid-ui-button>
       <label aria-label=${`${label} Language`} class="label profile-edit-dialog__field profile-edit-dialog__field--language-name">
         <solid-ui-combobox
+          select-only
           aria-label=${`${label} Language`}
           data-language-row-index=${String(index)}
-          aria-invalid=${hasSelectionIssue ? 'true' : 'false'}
-          @input=${handleLanguageInput('name')}
+          placeholder="Language"
           @change=${handleLanguageChange('name')}
         ></solid-ui-combobox>
         <small class="profile-edit-dialog__input-help-text">Type to search and select one language suggestion.</small>
