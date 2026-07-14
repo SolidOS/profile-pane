@@ -1,6 +1,7 @@
 import { describe, expect, it } from '@jest/globals'
 import { graph, sym } from 'rdflib'
 import { ns } from 'solid-ui'
+import type { Combobox } from 'solid-ui/components/combobox'
 import { createLanguageEditDialog } from '../src/sections/languages/LanguageEditDialog'
 import { createResumeEditDialog } from '../src/sections/resume/ResumeEditDialog'
 import { createSkillsEditDialog } from '../src/sections/skills/SkillsEditDialog'
@@ -38,6 +39,15 @@ async function waitForFocusedShadowElement(selector: string, expectedTagName: st
   }
 
   throw new Error(`Timed out waiting for ${selector} to focus ${expectedTagName}`)
+}
+
+function setComboboxInputValue(combobox: Combobox | null, value: string): void {
+  if (!combobox) {
+    return
+  }
+
+  combobox.value = value
+  combobox.dispatchEvent(new InputEvent('input', { bubbles: true, composed: true }))
 }
 
 describe('Dialog accessibility', () => {
@@ -487,12 +497,10 @@ describe('Dialog accessibility', () => {
 
     await waitForDialogFocus()
 
-    const skillsCombobox = document.querySelector('solid-ui-combobox[data-skill-row-index="0"]') as HTMLElement | null
-    const skillsInput = skillsCombobox?.shadowRoot?.querySelector('input') as HTMLInputElement | null
-    expect(skillsInput).not.toBeNull()
+    const skillsCombobox = document.querySelector<Combobox>('solid-ui-combobox[data-skill-row-index="0"]')
+    expect(skillsCombobox).not.toBeNull()
 
-    skillsInput!.value = 'Facilitation'
-    skillsInput!.dispatchEvent(new Event('input', { bubbles: true, composed: true }))
+    setComboboxInputValue(skillsCombobox, 'Facilitation')
 
     await waitForDialogFocus()
 
@@ -539,12 +547,10 @@ describe('Dialog accessibility', () => {
 
     await waitForDialogFocus()
 
-    const firstSkillsCombobox = document.querySelector('solid-ui-combobox[data-skill-row-index="0"]') as HTMLElement | null
-    const firstSkillsInput = firstSkillsCombobox?.shadowRoot?.querySelector('input') as HTMLInputElement | null
-    expect(firstSkillsInput).not.toBeNull()
+    const firstSkillsCombobox = document.querySelector<Combobox>('solid-ui-combobox[data-skill-row-index="0"]')
+    expect(firstSkillsCombobox).not.toBeNull()
 
-    firstSkillsInput!.value = 'Facilitation'
-    firstSkillsInput!.dispatchEvent(new Event('input', { bubbles: true, composed: true }))
+    setComboboxInputValue(firstSkillsCombobox, 'Facilitation')
 
     const addMoreButton = document.querySelector('#modal-header-action solid-ui-button') as HTMLElement | null
     expect(addMoreButton).not.toBeNull()
@@ -552,7 +558,7 @@ describe('Dialog accessibility', () => {
 
     await waitForDialogFocus()
 
-    const preservedCombobox = document.querySelector('solid-ui-combobox[data-skill-row-index="1"]') as HTMLElement | null
+    const preservedCombobox = document.querySelector<Combobox>('solid-ui-combobox[data-skill-row-index="1"]')
     const preservedInput = preservedCombobox?.shadowRoot?.querySelector('input') as HTMLInputElement | null
     expect(preservedInput?.value).toBe('Facilitation')
 
@@ -599,7 +605,7 @@ describe('Dialog accessibility', () => {
     await waitForDialogFocus()
 
     const titleInput = document.querySelector('[name="resume-title-0"]') as HTMLInputElement | null
-    const organizationCombobox = document.querySelector('solid-ui-combobox[data-resume-organization-index="0"]') as HTMLElement | null
+    const organizationCombobox = document.querySelector<Combobox>('solid-ui-combobox[data-resume-organization-index="0"]')
     const organizationInput = organizationCombobox?.shadowRoot?.querySelector('input') as HTMLInputElement | null
     const currentRoleCheckbox = document.querySelector('#resume-current-role-0') as HTMLInputElement | null
     expect(titleInput).not.toBeNull()
@@ -612,30 +618,15 @@ describe('Dialog accessibility', () => {
     currentRoleCheckbox!.checked = true
     currentRoleCheckbox!.dispatchEvent(new Event('change', { bubbles: true }))
 
-    organizationInput!.value = 'N'
-    organizationInput!.dispatchEvent(new Event('input', { bubbles: true, composed: true }))
+    setComboboxInputValue(organizationCombobox, 'N')
 
     await waitForDialogFocus()
 
-    const refreshedOrganizationCombobox = document.querySelector('solid-ui-combobox[data-resume-organization-index="0"]') as HTMLElement & {
-      value?: string
-      inputValue?: string
-      shadowRoot?: ShadowRoot | null
-    } | null
+    const refreshedOrganizationCombobox = document.querySelector<Combobox>('solid-ui-combobox[data-resume-organization-index="0"]')
     const refreshedOrganizationInput = refreshedOrganizationCombobox?.shadowRoot?.querySelector('input') as HTMLInputElement | null
     expect(refreshedOrganizationInput?.value).toBe('N')
 
-    refreshedOrganizationInput!.value = 'NASA'
-    refreshedOrganizationInput!.dispatchEvent(new Event('input', { bubbles: true, composed: true }))
-
-    if (refreshedOrganizationCombobox) {
-      refreshedOrganizationCombobox.value = ''
-      refreshedOrganizationCombobox.inputValue = 'NASA'
-    }
-
-    if (refreshedOrganizationInput) {
-      refreshedOrganizationInput.value = 'NASA'
-    }
+    setComboboxInputValue(refreshedOrganizationCombobox, 'NASA')
 
     getSharedDialogSaveButton(document)?.click()
     await expect(resumePromise).resolves.toBeUndefined()

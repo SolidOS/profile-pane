@@ -5,6 +5,7 @@ import 'solid-ui/components/combobox'
 import { SkillDetails, SkillRow } from './types'
 import '../../styles/EditDialogs.css'
 import '../contactInfo/ContactInfoEditDialog.css'
+import { defineAsyncComboboxOptionsProvider, ComboboxChangeEvent, Combobox, ComboboxOptionData } from 'solid-ui/components/combobox'
 import { LiveStore, NamedNode } from 'rdflib'
 import { ViewerMode } from '../../types'
 import { applyRowFieldChange, deleteRow, summarizeRowOps } from '../shared/rowState'
@@ -25,26 +26,6 @@ type SkillFormState = {
   skills: SkillRow[]
 }
 
-type SkillSuggestion = {
-  label: string
-  publicId: string
-}
-
-type SkillComboboxOption = {
-  label: string
-  value: string
-  publicId?: string
-}
-
-type SkillComboboxElement = HTMLElement & {
-  suggestionProvider?: (query: string) => Promise<SkillComboboxOption[]>
-  options?: SkillComboboxOption[]
-  value?: string
-  inputValue?: string
-  label?: string
-  placeholder?: string
-}
-
 type SkillRerenderOptions = {
   focusSelector?: string
 }
@@ -53,6 +34,46 @@ const ESCO_SKILL_SEARCH_URI = 'https://ec.europa.eu/esco/api/search?language=$(l
 const ESCO_SEARCH_LANGUAGE = 'en'
 const ESCO_SEARCH_LIMIT = 8
 const ESCO_SKILL_BASE_URI = 'http://data.europa.eu/esco/skill/'
+
+const skillsProvider = defineAsyncComboboxOptionsProvider(async (rawQuery) => {
+    const query = sanitizeSkillFieldValue(rawQuery)
+
+    if (query.length < 2) {
+      return [{
+        value: '',
+        label: 'Type at least 2 characters to search',
+        selectable: false
+      }]
+    }
+
+    try {
+      const response = await fetch(buildEscoSkillSearchUrl(query), {
+        headers: { Accept: 'application/json' }
+      })
+      if (!response.ok) return []
+
+      const payload = await response.json() as any
+      const results = Array.isArray(payload?._embedded?.results) ? payload._embedded.results : []
+      const seen = new Set<string>()
+
+      return results
+        .map((result: any) => {
+          const label = sanitizeSkillFieldValue(toSkillLabel(result))
+          const value = normalizeSkillPublicId(typeof result?.uri === 'string' ? result.uri : '')
+          return { label, value }
+        })
+        .filter((option: ComboboxOptionData) => {
+          if (!option.label) return false
+          const key = option.label.toLowerCase()
+          if (seen.has(key)) return false
+          seen.add(key)
+          return true
+        })
+    } catch {
+      return []
+    }
+
+})
 
 function normalizeSkillPublicId(value: string): string {
   const normalized = sanitizeSkillFieldValue(value)
@@ -77,40 +98,6 @@ function toSkillLabel(result: any): string {
   return result?.title || result?.searchHit || result?.preferredLabel?.en || result?.uri || ''
 }
 
-async function fetchEscoSkillSuggestions(name: string): Promise<SkillSuggestion[]> {
-  const query = sanitizeSkillFieldValue(name)
-  if (query.length < 2 || typeof fetch !== 'function') return []
-
-  try {
-    const response = await fetch(buildEscoSkillSearchUrl(query), {
-      headers: { Accept: 'application/json' }
-    })
-    if (!response.ok) return []
-
-    const payload = await response.json() as any
-    const results = Array.isArray(payload?._embedded?.results) ? payload._embedded.results : []
-    const seen = new Set<string>()
-
-    return results
-      .map((result: any) => {
-        const label = sanitizeSkillFieldValue(toSkillLabel(result))
-        const publicId = normalizeSkillPublicId(typeof result?.uri === 'string' ? result.uri : '')
-        return { label, publicId }
-      })
-      .filter((suggestion: SkillSuggestion) => {
-        if (!suggestion.label) return false
-        const key = suggestion.label.toLowerCase()
-        if (seen.has(key)) return false
-        seen.add(key)
-        return true
-      })
-  } catch {
-    return []
-  }
-}
-
-type SkillEditableField = 'name'
-
 function sanitizeSkillFieldValue(value: string): string {
   return sanitizeTextValue(value)
 }
@@ -131,91 +118,27 @@ function toFormState(details: SkillDetails[]): SkillFormState {
     }))
     .filter((row) => Boolean(row.name || row.publicId || row.entryNode))
 
- 
+
   return {
     skills: rows.length ? rows : [{ name: '', publicId: '', entryNode: '', status: 'new' }],
   }
 }
 
-function toSkillComboboxOption(suggestion: SkillSuggestion): SkillComboboxOption {
-  return {
-    label: suggestion.label,
-    value: suggestion.publicId,
-    publicId: suggestion.publicId
-  }
-}
-
-function readSkillComboboxInputValue(event: Event): string {
-  const customEvent = event as CustomEvent<{ value?: string }>
-  if (typeof customEvent.detail?.value === 'string') {
-    return customEvent.detail.value
-  }
-
-  const target = event.target as HTMLInputElement | null
-  return typeof target?.value === 'string' ? target.value : ''
-}
-
-function readSkillComboboxChange(event: Event): SkillComboboxOption | null {
-  const customEvent = event as CustomEvent<{
-    value?: string
-    label?: string
-    option?: SkillComboboxOption
-  }>
-
-  if (customEvent.detail?.option) {
-    return customEvent.detail.option
-  }
-
-  return null
-}
-
-function createSkillSuggestionProvider(): (query: string) => Promise<SkillComboboxOption[]> {
-  return async (query: string) => {
-    const suggestions = await fetchEscoSkillSuggestions(query)
-    return suggestions.map(toSkillComboboxOption)
-  }
-}
-
 function initializeSkillComboboxes(form: HTMLFormElement, rows: SkillRow[]): void {
-  const comboboxElements = form.querySelectorAll('solid-ui-combobox[data-skill-row-index]') as NodeListOf<SkillComboboxElement>
+  const comboboxElements = form.querySelectorAll('solid-ui-combobox[data-skill-row-index]') as NodeListOf<Combobox>
 
   comboboxElements.forEach((comboboxElement) => {
     const rowIndex = Number(comboboxElement.dataset.skillRowIndex)
     if (Number.isNaN(rowIndex)) return
 
     const row = rows[rowIndex]
-    const nextInputValue = row?.name || ''
-    const options = row?.publicId && row?.name
-      ? [{ label: row.name, value: row.publicId, publicId: row.publicId }]
+    if (!row) return
+
+    comboboxElement.optionsFallback = row.name
+      ? [{ label: row.name, value: row.publicId }]
       : []
-
-    comboboxElement.suggestionProvider = createSkillSuggestionProvider()
-    comboboxElement.options = options
-    comboboxElement.value = row?.publicId || ''
-    comboboxElement.inputValue = nextInputValue
-    comboboxElement.label = ''
-    comboboxElement.placeholder = 'Skill'
-
-    const comboboxInput = comboboxElement.shadowRoot?.querySelector('input') as HTMLInputElement | null
-    if (comboboxInput) {
-      comboboxInput.value = nextInputValue
-    }
-  })
-}
-
-function syncSkillRowsFromComboboxes(form: HTMLFormElement, rows: SkillRow[]): void {
-  const comboboxElements = form.querySelectorAll('solid-ui-combobox[data-skill-row-index]') as NodeListOf<SkillComboboxElement>
-
-  comboboxElements.forEach((comboboxElement) => {
-    const rowIndex = Number(comboboxElement.dataset.skillRowIndex)
-    if (Number.isNaN(rowIndex) || !rows[rowIndex]) return
-
-    const comboboxInput = comboboxElement.shadowRoot?.querySelector('input') as HTMLInputElement | null
-    const nextName = sanitizeSkillFieldValue(comboboxInput?.value || comboboxElement.inputValue || '')
-    const nextPublicId = normalizeSkillPublicId(comboboxElement.value || '')
-
-    applyRowFieldChange(rows[rowIndex], 'name', nextName, rowHasContent)
-    rows[rowIndex].publicId = nextPublicId
+    comboboxElement.asyncOptionsProvider = skillsProvider
+    comboboxElement.value = row.publicId || row.name
   })
 }
 
@@ -279,21 +202,19 @@ function renderSkillInputRow({
 }: SkillsInputRowProps) {
   const label = `Skill ${displayIndex + 1}`
 
-  const handleSkillInput = (_field: SkillEditableField) => (e: Event) => {
-    const nextValue = sanitizeSkillFieldValue(readSkillComboboxInputValue(e))
-    if (rows[index]) {
-      applyRowFieldChange(rows[index], 'name', nextValue, rowHasContent)
-      rows[index].publicId = ''
-      updateSkillsSubmitEnabled(rows)
-    }
+  const handleSkillInput = (event: Event) => {
+    const combobox = event.target as Combobox
+
+    applyRowFieldChange(rows[index], 'name', sanitizeSkillFieldValue(combobox.value), rowHasContent)
+    rows[index].publicId = ''
+    updateSkillsSubmitEnabled(rows)
   }
 
-  const handleSkillChange = (e: Event) => {
-    const selectedOption = readSkillComboboxChange(e)
-    if (!rows[index] || !selectedOption?.publicId) return
+  const handleSkillChange = (event: ComboboxChangeEvent) => {
+    if (!rows[index] || !event.detail.option) return
 
-    applyRowFieldChange(rows[index], 'name', sanitizeSkillFieldValue(selectedOption.label), rowHasContent)
-    rows[index].publicId = selectedOption.publicId
+    applyRowFieldChange(rows[index], 'name', sanitizeSkillFieldValue(event.detail.option.label), rowHasContent)
+    rows[index].publicId = String(event.detail.option.value)
     updateSkillsSubmitEnabled(rows)
   }
 
@@ -308,7 +229,8 @@ function renderSkillInputRow({
         <solid-ui-combobox
           aria-label=${`${label} Name`}
           data-skill-row-index=${String(index)}
-          @input=${handleSkillInput('name')}
+          placeholder="Skill"
+          @input=${handleSkillInput}
           @change=${handleSkillChange}
         ></solid-ui-combobox>
         <small class="profile-edit-dialog__input-help-text">Type to search ESCO, or enter your own skill.</small>
@@ -360,10 +282,7 @@ function renderSkillsEditTemplate(
   viewerMode: ViewerMode,
   options: SkillRerenderOptions = {}
 ) {
-  const rerender = (nextOptions: SkillRerenderOptions = {}) => {
-    syncSkillRowsFromComboboxes(form, formState.skills)
-    renderSkillsEditTemplate(form, formState, viewerMode, nextOptions)
-  }
+  const rerender = (nextOptions: SkillRerenderOptions = {}) => renderSkillsEditTemplate(form, formState, viewerMode, nextOptions)
 
   render(html`
     ${renderSkillsSection(formState.skills, rerender)}
@@ -388,7 +307,6 @@ function createSkillsEditForm(details: SkillDetails[], viewerMode: ViewerMode) {
   renderSkillsEditTemplate(form, formState, viewerMode)
 
   const addRow = () => {
-    syncSkillRowsFromComboboxes(form, formState.skills)
     formState.skills.unshift({
       name: '',
       publicId: '',
@@ -419,7 +337,6 @@ export async function createSkillsEditDialog(
     form,
     onOpen: () => focusSkillField(form, '[data-skill-row-index="0"]'),
     shouldCloseWithoutSave: () => {
-      syncSkillRowsFromComboboxes(form, formState.skills)
       const ops = summarizeRowOps(formState.skills, rowHasContent)
       return ops.create.length === 0 && ops.update.length === 0 && ops.remove.length === 0
     },
@@ -432,14 +349,12 @@ export async function createSkillsEditDialog(
     submitLabel: dialogSubmitLabelText,
     cancelLabel: dialogCancelLabelText,
     validate: () => {
-      syncSkillRowsFromComboboxes(form, formState.skills)
       if (viewerMode !== 'owner') {
         return ownerLoginRequiredDialogMessageText
       }
       return validateSkillsBeforeSave(formState.skills)
     },
     onSave: async () => {
-      syncSkillRowsFromComboboxes(form, formState.skills)
       const skillOps = summarizeRowOps(formState.skills, rowHasContent)
       const plan: MutationOps<SkillRow> = {
         create: skillOps.create,

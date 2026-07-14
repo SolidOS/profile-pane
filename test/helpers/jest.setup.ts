@@ -114,7 +114,10 @@ if (typeof window !== 'undefined' && !(window as any).__nwsapiPatched) {
 // Stub @shoelace-style/localize — it imports browser APIs not available in jsdom
 // and is a transitive dependency of @awesome.me/webawesome.
 jest.mock('@shoelace-style/localize', () => ({
-  LocalizeController: class {},
+  LocalizeController: class {
+    dir() {
+        return 'ltr'
+    }
+  },
   registerTranslation: () => {},
 }), { virtual: true })
-
