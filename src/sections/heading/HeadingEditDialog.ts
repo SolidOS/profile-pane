@@ -3,6 +3,7 @@ import { html, render, TemplateResult } from 'lit-html'
 import 'solid-ui/components/button'
 import 'solid-ui/components/select'
 import 'solid-ui/components/photo-capture'
+import type { PhotoCapture } from 'solid-ui/components/photo-capture'
 import { ProfileDetails, HeadingMutationPlan, ProfileBasicRow } from './types'
 import { Image } from './HeadingSection'
 import '../../styles/EditDialogs.css'
@@ -36,27 +37,8 @@ import { toStorageDateISO } from './dateHelpers'
 import { invalidateResolvedPhotoDisplaySrc, resolvePhotoDisplaySrc, uploadPhotoFile } from './imageHelpers'
 /* Note: new design - has address type in More Edit Contacts for now we will leave
          out Address Type, but a ticket will be created to add type later
-         so I will keep the code and just comment it out for now. 
+         so I will keep the code and just comment it out for now.
          new design - has country code, will comment out code for now and create a ticket to add later. */
-
-type HeadingPhotoCaptureElement = HTMLElement & {
-  heading: string
-  captureLabel: string
-  confirmLabel: string
-  retakeLabel: string
-  cancelLabel: string
-  presentation: 'inline' | 'dialog'
-  showTrigger: boolean
-  showCancelButton: boolean
-  autoCloseOnCapture: boolean
-  fileNamePrefix: string
-  facingMode: string
-  open: boolean
-}
-
-type HeadingPhotoCapturedDetail = {
-  file: File
-}
 
 type HeadingFormState = {
   basicInfo: ProfileBasicRow
@@ -530,7 +512,7 @@ function renderContactAddressInput({
     const nextType = target.value
     if (address) {
       applyRowSelectChange(address, 'type', nextType)
-    } 
+    }
   } */
 
   return html`
@@ -688,65 +670,18 @@ function renderHeadingInfoInput(
     fileInput.click()
   }
 
-  const handleCameraClick = async (e: Event) => {
-    e.preventDefault()
-    const button = e.currentTarget as HTMLElement | null
-    const headingPhotoRow = button?.closest('.profile-edit-dialog__row--heading-photo') as HTMLElement | null
-    const hostRow = headingPhotoRow?.nextElementSibling as HTMLElement | null
-    const frame = hostRow?.querySelector('.profile-edit-dialog__image-camera-capture-frame') as HTMLDivElement | null
-    if (!frame || frame.dataset.active === 'true') return
+  const handleCameraInput = async (event: InputEvent) => {
+    const file = (event.target as PhotoCapture).value
 
-    frame.hidden = false
-    frame.dataset.active = 'true'
-    frame.replaceChildren()
-
-    const closeCameraFrame = () => {
-      frame.replaceChildren()
-      frame.hidden = true
-      frame.dataset.active = 'false'
-    }
+    if (!file || !basicInfo) return
 
     try {
-      const photoCapture = document.createElement('solid-ui-photo-capture') as HeadingPhotoCaptureElement
-      photoCapture.classList.add('profile-edit-dialog__photo-capture')
-      photoCapture.heading = ''
-      photoCapture.captureLabel = 'Take Photo'
-      photoCapture.confirmLabel = 'Use Photo'
-      photoCapture.retakeLabel = 'Retake'
-      photoCapture.cancelLabel = 'Close camera'
-      photoCapture.presentation = 'inline'
-      photoCapture.showTrigger = false
-      photoCapture.showCancelButton = true
-      photoCapture.autoCloseOnCapture = false
-      photoCapture.fileNamePrefix = 'camera'
-      photoCapture.facingMode = 'user'
-      photoCapture.open = true
-
-      photoCapture.addEventListener('cancel', (event) => {
-        event.preventDefault()
-        event.stopPropagation()
-        closeCameraFrame()
-      })
-
-      photoCapture.addEventListener('photo-captured', async (event: Event) => {
-        const detail = (event as CustomEvent<HeadingPhotoCapturedDetail>).detail
-        if (!detail?.file || !basicInfo) return
-
-        try {
-          formState.pendingImageFile = detail.file
-          closeCameraFrame()
-          setHeadingImagePreview(formState, detail.file)
-          basicInfo.status = basicInfo.entryNode ? 'modified' : 'new'
-          rerender()
-        } catch (error) {
-          debugError('Profile camera upload failed', error)
-        }
-      })
-
-      frame.appendChild(photoCapture)
+        formState.pendingImageFile = file
+        setHeadingImagePreview(formState, file)
+        basicInfo.status = basicInfo.entryNode ? 'modified' : 'new'
+        rerender()
     } catch (error) {
-      closeCameraFrame()
-      debugError('Camera control failed to initialize', error)
+        debugError('Profile camera upload failed', error)
     }
   }
 
@@ -763,15 +698,25 @@ function renderHeadingInfoInput(
       <header class="profile-edit-dialog__image-preview-header" aria-label="Profile Image">
         <div class="profile-edit-dialog__image-frame">
           ${Image(imagePreviewSrc || basicInfo.imageSrc, basicInfo.name)}
-          <solid-ui-button
-            class="profile-edit-dialog__image-camera-button"
-            variant="ghost"
-            aria-label="Take a photo"
-            title="Take a photo"
-            @click=${handleCameraClick}
+          <solid-ui-photo-capture
+            capture-label="Take Photo"
+            confirm-label="Use Photo"
+            retake-label="Retake"
+            cancel-label="Close camera"
+            file-name-prefix="camera"
+            facing-mode="user"
+            @input=${handleCameraInput}
           >
-            <span slot="icon" aria-hidden="true">${cameraIcon}</span>
-          </solid-ui-button>
+            <solid-ui-button
+                slot="trigger"
+                class="profile-edit-dialog__image-camera-button"
+                variant="ghost"
+                aria-label="Take a photo"
+                title="Take a photo"
+            >
+                <span slot="icon" aria-hidden="true">${cameraIcon}</span>
+            </solid-ui-button>
+          </solid-ui-photo-capture>
         </div>
       </header>
 
@@ -891,7 +836,7 @@ function renderHeadingEditTemplate(
   viewerMode: ViewerMode
 ) {
   const rerender = () => renderHeadingEditTemplate(form, formState, viewerMode)
- 
+
   render(html`
     ${renderHeadingInfoInput(formState, rerender)}
     ${renderContactAddressInput({ address: formState.address })}

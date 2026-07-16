@@ -205,7 +205,7 @@ function renderSkillInputRow({
   const handleSkillInput = (event: Event) => {
     const combobox = event.target as Combobox
 
-    applyRowFieldChange(rows[index], 'name', sanitizeSkillFieldValue(combobox.value), rowHasContent)
+    applyRowFieldChange(rows[index], 'name', sanitizeSkillFieldValue(String(combobox.value)), rowHasContent)
     rows[index].publicId = ''
     updateSkillsSubmitEnabled(rows)
   }

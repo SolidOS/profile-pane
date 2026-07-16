@@ -103,6 +103,12 @@ describe('Intro section', () => {
     const container = document.createElement('div')
     document.body.appendChild(container)
 
+    const fetchSpy = vi.spyOn((context.session.store.fetcher as any), '_fetch').mockResolvedValue({
+      ok: false,
+      status: 404,
+      statusText: 'Not Found'
+    } as Response)
+
     const profile = {
       entryNode: sym('https://example.com/profile#entry'),
       name: 'Jane Doe',
@@ -129,6 +135,7 @@ describe('Intro section', () => {
     expect(frame?.classList.contains('profile__image-frame--fallback')).toBe(true)
     expect(fallback?.getAttribute('aria-label')).toBe('Jane Doe')
 
+    fetchSpy.mockRestore()
     container.remove()
   })
 
