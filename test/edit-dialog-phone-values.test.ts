@@ -1,19 +1,21 @@
-import { afterEach, beforeEach, describe, expect, it, jest } from '@jest/globals'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { graph, sym } from 'rdflib'
 import { createHeadingEditDialog } from '../src/sections/heading/HeadingEditDialog'
 import { createContactInfoEditDialog } from '../src/sections/contactInfo/ContactInfoEditDialog'
 import type { ContactMutationPlan } from '../src/sections/contactInfo/types'
 import type { HeadingMutationPlan, ProfileDetails } from '../src/sections/heading/types'
 import { getSharedDialogCancelButton, getSharedDialogSaveButton } from '../src/ui/dialog'
+import './setup'
+import { flushAsync } from './helpers/dom'
 
-const mockProcessHeadingMutations = jest.fn<(_: unknown, __: unknown, plan: HeadingMutationPlan) => Promise<void>>()
-const mockProcessContactInfoMutations = jest.fn<(_: unknown, __: unknown, plan: ContactMutationPlan) => Promise<void>>()
+const mockProcessHeadingMutations = vi.fn<(_: unknown, __: unknown, plan: HeadingMutationPlan) => Promise<void>>()
+const mockProcessContactInfoMutations = vi.fn<(_: unknown, __: unknown, plan: ContactMutationPlan) => Promise<void>>()
 
-jest.mock('../src/sections/heading/mutations', () => ({
+vi.mock('../src/sections/heading/mutations', () => ({
   processHeadingMutations: (...args: Parameters<typeof mockProcessHeadingMutations>) => mockProcessHeadingMutations(...args)
 }))
 
-jest.mock('../src/sections/contactInfo/mutations', () => ({
+vi.mock('../src/sections/contactInfo/mutations', () => ({
   processContactInfoMutations: (...args: Parameters<typeof mockProcessContactInfoMutations>) => mockProcessContactInfoMutations(...args)
 }))
 
@@ -23,8 +25,8 @@ function dispatchInput(input: HTMLInputElement, value: string) {
 }
 
 async function flushUi() {
-  await new Promise(resolve => setTimeout(resolve, 0))
-  await new Promise(resolve => setTimeout(resolve, 0))
+  await flushAsync()
+  await flushAsync()
 }
 
 function createDialogEvent() {

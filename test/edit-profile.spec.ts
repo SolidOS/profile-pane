@@ -2,7 +2,7 @@
 // These skipped tests still capture the older editor-pane contract and can be adapted
 // once edit-profile rendering is wired back into the current surface.
 
-import { beforeAll, describe, expect, it } from '@jest/globals'
+import { beforeAll, describe, expect, it } from 'vitest'
 import pane from '../src/index'
 import { parse } from 'rdflib'
 import { store } from 'solid-logic'

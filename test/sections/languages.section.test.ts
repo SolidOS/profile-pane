@@ -1,4 +1,4 @@
-import { describe, expect, it } from "@jest/globals"
+import { describe, expect, it } from 'vitest'
 import { render } from 'lit-html'
 import { sym } from 'rdflib'
 import { renderLanguageSection } from '../../src/sections/languages/LanguageSection'

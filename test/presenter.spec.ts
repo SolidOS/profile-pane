@@ -1,3 +1,4 @@
+import { beforeEach, describe, expect, it } from 'vitest'
 import { presentProfile } from '../src/sections/heading/selectors'
 import { blankNode, literal, sym } from 'rdflib'
 import { ns } from 'solid-ui'

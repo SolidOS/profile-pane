@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, it } from '@jest/globals'
+import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import { ProfileView } from '../src/ProfileView'
 import { render } from 'lit-html'
 import { runAxe } from './helpers/runAxe'

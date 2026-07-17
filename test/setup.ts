@@ -2,6 +2,24 @@ import { DataBrowserContext, PaneRegistry } from 'pane-registry'
 import { sym } from 'rdflib'
 import { SolidLogic, store } from 'solid-logic'
 
+if (typeof HTMLElement !== 'undefined') {
+    Object.defineProperty(HTMLElement.prototype, 'attachInternals', {
+        configurable: true,
+        value() {
+            return {
+                setFormValue: () => undefined,
+                setValidity: () => undefined,
+                checkValidity: () => true,
+                reportValidity: () => true,
+                validity: {},
+                validationMessage: '',
+                willValidate: false,
+                states: new Set()
+            }
+        }
+    })
+}
+
 export const subject = sym('https://janedoe.example/profile/card#me')
 export const doc = subject.doc()
 /*

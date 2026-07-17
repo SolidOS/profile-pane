@@ -1,13 +1,13 @@
-jest.mock('@solid-data-modules/contacts-rdflib', () => ({
+vi.mock('@solid-data-modules/contacts-rdflib', () => ({
   __esModule: true,
-  default: jest.fn().mockImplementation(() => ({
-    listAddressBooks: jest.fn(async () => ({ publicUris: [], privateUris: [] })),
-    readAddressBook: jest.fn(async () => null),
-    createNewContact: jest.fn()
+  default: vi.fn().mockImplementation(() => ({
+    listAddressBooks: vi.fn(async () => ({ publicUris: [], privateUris: [] })),
+    readAddressBook: vi.fn(async () => null),
+    createNewContact: vi.fn()
   }))
 }))
 
-import { beforeEach, describe, expect, it, jest } from '@jest/globals'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { render } from 'lit-html'
 import { authn } from 'solid-logic'
 import { sym } from 'rdflib'
@@ -47,18 +47,18 @@ describe('Heading viewer actions integration', () => {
   const baseStore = context.session.store as any
 
   beforeEach(() => {
-    jest.restoreAllMocks()
+    vi.restoreAllMocks()
     baseStore.fetcher = {
-      load: jest.fn(async () => undefined)
+      load: vi.fn(async () => undefined)
     }
     baseStore.updater = {
-      update: jest.fn(async () => undefined)
+      update: vi.fn(async () => undefined)
     }
-    baseStore.whether = jest.fn().mockReturnValue(0)
+    baseStore.whether = vi.fn().mockReturnValue(0)
   })
 
   it('renders the real friends action for authenticated viewers', async () => {
-    jest.spyOn(authn, 'currentUser').mockReturnValue(authenticatedViewer as any)
+    vi.spyOn(authn, 'currentUser').mockReturnValue(authenticatedViewer as any)
 
     const container = document.createElement('div')
     document.body.appendChild(container)
@@ -74,8 +74,8 @@ describe('Heading viewer actions integration', () => {
   })
 
   it('hides the friends button on mobile when the viewer is already a friend', async () => {
-    jest.spyOn(authn, 'currentUser').mockReturnValue(authenticatedViewer as any)
-    baseStore.whether = jest.fn().mockReturnValue(1)
+    vi.spyOn(authn, 'currentUser').mockReturnValue(authenticatedViewer as any)
+    baseStore.whether = vi.fn().mockReturnValue(1)
     context.environment = { layout: 'mobile' } as any
 
     const container = document.createElement('div')
@@ -93,7 +93,7 @@ describe('Heading viewer actions integration', () => {
   })
 
   it('renders only the edit action for owners', async () => {
-    jest.spyOn(authn, 'currentUser').mockReturnValue(ownerSubject as any)
+    vi.spyOn(authn, 'currentUser').mockReturnValue(ownerSubject as any)
 
     const container = document.createElement('div')
     document.body.appendChild(container)
@@ -108,7 +108,7 @@ describe('Heading viewer actions integration', () => {
   })
 
   it('renders no actions for anonymous viewers', async () => {
-    jest.spyOn(authn, 'currentUser').mockReturnValue(null as any)
+    vi.spyOn(authn, 'currentUser').mockReturnValue(null as any)
 
     const container = document.createElement('div')
     document.body.appendChild(container)

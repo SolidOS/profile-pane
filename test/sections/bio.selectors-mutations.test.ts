@@ -1,4 +1,4 @@
-import { describe, expect, it } from "@jest/globals"
+import { describe, expect, it } from 'vitest'
 import { graph, literal, st, sym } from 'rdflib'
 import { ns } from 'solid-ui'
 import { presentBio } from '../../src/sections/bio/selectors'

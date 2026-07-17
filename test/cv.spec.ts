@@ -1,7 +1,6 @@
-import { beforeEach, describe, expect, it } from '@jest/globals'
+import { beforeEach, describe, expect, it } from 'vitest'
 import pane from '../src/index'
 import { parse } from 'rdflib'
-import { waitFor } from '@testing-library/dom'
 import { store } from 'solid-logic'
 import { context, doc, subject } from './setup'
 
@@ -172,6 +171,8 @@ l:du schema:name "Dutch"@en.
 
 `
 describe('profile pane curriculum vitae', () => {
+    const flushAsync = () => new Promise<void>((resolve) => setTimeout(resolve, 0))
+
   beforeEach(() => {
     store.removeDocument(doc)
 })
@@ -180,12 +181,15 @@ describe('profile pane curriculum vitae', () => {
     parse(exampleProfile, store, doc.uri)
     const result = pane.render(subject, context)
 
-    await waitFor(() => {
-      const cv = result.querySelector('[data-testid="curriculum-vitae"]') as HTMLElement | null
-      expect(cv).not.toBeNull()
-      expect(cv?.textContent).toContain('Apple')
-      expect(cv?.textContent).toContain('The Beatles')
-    })
+        let cv = result.querySelector('[data-testid="curriculum-vitae"]') as HTMLElement | null
+        for (let attempt = 0; attempt < 20 && !cv; attempt += 1) {
+            await flushAsync()
+            cv = result.querySelector('[data-testid="curriculum-vitae"]') as HTMLElement | null
+        }
+
+        expect(cv).not.toBeNull()
+        expect(cv?.textContent).toContain('Apple')
+        expect(cv?.textContent).toContain('The Beatles')
 
         const roles = result.querySelectorAll('.resume-card__item')
     expect(roles.length).toBe(4)
