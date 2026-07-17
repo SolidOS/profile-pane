@@ -42,6 +42,7 @@ describe('profile pane heading integration', () => {
 
     parse(turtle, store, doc.uri)
     const result = pane.render(subject, context)
+    document.body.appendChild(result)
 
     await waitForSelector(result, '#profile-name')
     expect(result.querySelector('#profile-name')?.textContent).toBe('Jane Doe')
@@ -51,5 +52,7 @@ describe('profile pane heading integration', () => {
 
     const image = result.querySelector('img.profile__hero') as HTMLImageElement | null
     expect(image?.getAttribute('src')).toBe('https://janedoe.example/profile/me.jpg')
+
+    result.remove()
   })
 })

@@ -3,6 +3,7 @@ import pane from '../src/index'
 import { parse } from 'rdflib'
 import { store } from 'solid-logic'
 import { context, doc, subject } from './setup'
+import { waitForSelector } from './helpers/dom'
 
 
 // This was at testingsolidos.solidcommunity.net
@@ -171,8 +172,6 @@ l:du schema:name "Dutch"@en.
 
 `
 describe('profile pane curriculum vitae', () => {
-    const flushAsync = () => new Promise<void>((resolve) => setTimeout(resolve, 0))
-
   beforeEach(() => {
     store.removeDocument(doc)
 })
@@ -180,18 +179,26 @@ describe('profile pane curriculum vitae', () => {
   it('renders resume roles using the current CV section contract', async () => {
     parse(exampleProfile, store, doc.uri)
     const result = pane.render(subject, context)
+        document.body.appendChild(result)
 
-        let cv = result.querySelector('[data-testid="curriculum-vitae"]') as HTMLElement | null
-        for (let attempt = 0; attempt < 20 && !cv; attempt += 1) {
-            await flushAsync()
-            cv = result.querySelector('[data-testid="curriculum-vitae"]') as HTMLElement | null
-        }
+        await waitForSelector(result, '#profile-name')
+        const cv = await waitForSelector<HTMLElement>(result, '[data-testid="curriculum-vitae"]')
 
-        expect(cv).not.toBeNull()
-        expect(cv?.textContent).toContain('Apple')
-        expect(cv?.textContent).toContain('The Beatles')
+        expect(result.querySelector('#profile-name')?.textContent).toBe('Testing SolidOS Test')
+        expect(cv.textContent).toContain('Apple')
+        expect(cv.textContent).toContain('The Beatles')
+        expect(cv.textContent).toContain('Testeuse des Apps Solid')
+        expect(cv.textContent).toContain('Directed the white album')
+        expect(result.textContent).toContain('Testingville')
+        expect(result.textContent).toContain('Texas')
+        expect(result.textContent).toContain('USA')
 
         const roles = result.querySelectorAll('.resume-card__item')
     expect(roles.length).toBe(4)
+
+        const image = result.querySelector('img.profile__hero') as HTMLImageElement | null
+        expect(image?.getAttribute('src')).toBe('https://janedoe.example/profile/noun_test_2974484.svg')
+
+        result.remove()
   })
 })
