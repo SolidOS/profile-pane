@@ -78,7 +78,7 @@
     "@typescript-eslint/parser": "^8.59.3",
     "@vitest/coverage-v8": "^4.0.18",
     "axe-core": "^4.11.4",
-    "chat-pane": "3.0.4-1",
+    "chat-pane": "3.0.4-2",
     "eslint": "^9.39.4",
     "jsdom": "^29.1.1",
     "rdflib": "2.4.0",
