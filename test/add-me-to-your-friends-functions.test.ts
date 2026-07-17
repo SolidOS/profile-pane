@@ -2,6 +2,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { authn } from 'solid-logic'
 import { sym } from 'rdflib'
 import { context, subject } from './setup'
+import { flushAsync } from './helpers/dom'
 import { addMeToYourFriendsDiv, checkIfThingExists, createAddMeToYourFriendsButton, saveNewThing } from '../src/specialButtons/addMeToYourFriends'
 import {
   addMeToYourFriendsButtonText,
@@ -12,7 +13,6 @@ import {
 describe('add-me-to-your-friends functions', () => {
     const baseStore = context.session.store as any
     const me = sym('https://example.com/profile/card#me')
-  const flushAsync = () => new Promise<void>((resolve) => setTimeout(resolve, 0))
 
     beforeEach(() => {
       vi.restoreAllMocks()

@@ -2,13 +2,13 @@ import { describe, expect, it, vi } from 'vitest'
 import { graph, sym } from 'rdflib'
 import { ns } from 'solid-ui'
 import type { Combobox } from 'solid-ui/components/combobox'
+import './setup'
 import { createLanguageEditDialog } from '../src/sections/languages/LanguageEditDialog'
 import { createResumeEditDialog } from '../src/sections/resume/ResumeEditDialog'
 import { createSkillsEditDialog } from '../src/sections/skills/SkillsEditDialog'
 import { createSocialEditDialog } from '../src/sections/social/SocialEditDialog'
 import { getSharedDialogCancelButton, getSharedDialogSaveButton, openInputDialog } from '../src/ui/dialog'
 import { runAxe } from './helpers/runAxe'
-import './setup'
 
 async function waitForFrame(): Promise<void> {
   await new Promise<void>((resolve) => {

@@ -1,11 +1,11 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { graph, sym } from 'rdflib'
+import './setup'
 import { createHeadingEditDialog } from '../src/sections/heading/HeadingEditDialog'
 import { createContactInfoEditDialog } from '../src/sections/contactInfo/ContactInfoEditDialog'
 import type { ContactMutationPlan } from '../src/sections/contactInfo/types'
 import type { HeadingMutationPlan, ProfileDetails } from '../src/sections/heading/types'
 import { getSharedDialogCancelButton, getSharedDialogSaveButton } from '../src/ui/dialog'
-import './setup'
 import { flushAsync } from './helpers/dom'
 
 const mockProcessHeadingMutations = vi.fn<(_: unknown, __: unknown, plan: HeadingMutationPlan) => Promise<void>>()
@@ -22,11 +22,6 @@ vi.mock('../src/sections/contactInfo/mutations', () => ({
 function dispatchInput(input: HTMLInputElement, value: string) {
   input.value = value
   input.dispatchEvent(new Event('input', { bubbles: true }))
-}
-
-async function flushUi() {
-  await flushAsync()
-  await flushAsync()
 }
 
 function createDialogEvent() {
@@ -57,19 +52,25 @@ describe('Edit dialog phone value regression', () => {
     }
 
     const resultPromise = createHeadingEditDialog(createDialogEvent(), store, subject, profileData, 'owner')
-    await flushUi()
+    await flushAsync()
+    await flushAsync()
 
     const phoneInput = document.querySelector('input[name="phone-value"]') as HTMLInputElement | null
-    expect(phoneInput).not.toBeNull()
+    if (!phoneInput) {
+      throw new Error('Expected heading phone input to exist')
+    }
 
-    dispatchInput(phoneInput as HTMLInputElement, '555 123 4567')
+    dispatchInput(phoneInput, '555 123 4567')
 
     getSharedDialogSaveButton(document)?.click()
-    await flushUi()
+    await flushAsync()
+    await flushAsync()
 
     const errorBox = document.querySelector('#modal-error') as HTMLElement | null
     expect(errorBox?.textContent).toBe('Phone Number 1 should contain only numbers.')
-    expect(mockProcessHeadingMutations).not.toHaveBeenCalled()
+    if (mockProcessHeadingMutations.mock.calls.length !== 0) {
+      throw new Error('Expected heading mutations not to be called')
+    }
 
     getSharedDialogCancelButton(document)?.click()
     await resultPromise
@@ -85,19 +86,25 @@ describe('Edit dialog phone value regression', () => {
       { emails: [], phones: [], addresses: [] },
       'owner'
     )
-    await flushUi()
+    await flushAsync()
+    await flushAsync()
 
     const phoneInput = document.querySelector('input[name="phone-value-0"]') as HTMLInputElement | null
-    expect(phoneInput).not.toBeNull()
+    if (!phoneInput) {
+      throw new Error('Expected contact info phone input to exist')
+    }
 
-    dispatchInput(phoneInput as HTMLInputElement, '555 123 4567')
+    dispatchInput(phoneInput, '555 123 4567')
 
     getSharedDialogSaveButton(document)?.click()
-    await flushUi()
+    await flushAsync()
+    await flushAsync()
 
     const errorBox = document.querySelector('#modal-error') as HTMLElement | null
     expect(errorBox?.textContent).toBe('Phone Number 1 should contain only numbers.')
-    expect(mockProcessContactInfoMutations).not.toHaveBeenCalled()
+    if (mockProcessContactInfoMutations.mock.calls.length !== 0) {
+      throw new Error('Expected contact info mutations not to be called')
+    }
 
     getSharedDialogCancelButton(document)?.click()
     await resultPromise
