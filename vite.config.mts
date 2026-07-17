@@ -35,7 +35,7 @@ export default defineConfig({
   }),
   test: {
     environment: "jsdom",
-    setupFiles: ["test/helpers/setup.ts"],
+    setupFiles: ["test/setup.ts"],
     coverage: {
       include: ["src/**/*.[jt]s"],
     },
