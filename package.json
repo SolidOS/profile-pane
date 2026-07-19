@@ -1,6 +1,6 @@
 {
   "name": "profile-pane",
-  "version": "3.2.3-2",
+  "version": "3.2.3-3",
   "description": "A SolidOS compatible pane to display a personal profile page",
   "sideEffects": [
     "*.css"
@@ -96,8 +96,6 @@
     "chat-pane"
   ],
   "allowScripts": {
-    "fsevents@2.3.3": true,
-    "file:../../solid-ui": true,
-    "solid-ui@3.1.3-4": true
+    "fsevents@2.3.3": true
   }
 }
