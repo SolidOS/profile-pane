@@ -3,7 +3,7 @@ export const flushAsync = () => new Promise<void>((resolve) => setTimeout(resolv
 export async function waitForSelector<T extends Element>(
   root: ParentNode,
   selector: string,
-  attempts = 100
+  attempts = 1000
 ): Promise<T> {
   let element = root.querySelector<T>(selector)
 
