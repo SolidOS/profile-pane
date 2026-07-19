@@ -537,7 +537,7 @@ function syncResumeOrganizationRowsFromComboboxes(form: HTMLFormElement, resumeD
     const rowIndex = Number(comboboxElement.dataset.resumeOrganizationIndex)
     if (Number.isNaN(rowIndex) || !resumeData[rowIndex]) return
 
-    const nextName = comboboxElement.selectedOption ? sanitizeTextValue(comboboxElement.selectedOption.label) : sanitizeTextValue(comboboxElement.value)
+    const nextName = comboboxElement.selectedOption ? sanitizeTextValue(comboboxElement.selectedOption.label) : sanitizeTextValue(String(comboboxElement.value))
     const nextPublicId = comboboxElement.selectedOption ? sanitizeTextValue(String(comboboxElement.selectedOption.value)) : ''
 
     applyRowFieldChange(resumeData[rowIndex], 'orgName', nextName, rowHasContent)
@@ -708,7 +708,7 @@ function renderResumeInputRow({
   const handleOrganizationNameInput = (event: Event) => {
     const combobox = event.target as Combobox
 
-    applyRowFieldChange(resumeRow, 'orgName', sanitizeTextValue(combobox.value), rowHasContent)
+    applyRowFieldChange(resumeRow, 'orgName', sanitizeTextValue(String(combobox.value)), rowHasContent)
     resumeRow.orgPublicId = ''
   }
 

@@ -5,6 +5,7 @@ import type { HeadingMutationPlan, ProfileDetails } from '../src/sections/headin
 import { getSharedDialogCancelButton, getSharedDialogSaveButton } from '../src/ui/dialog'
 import { context, subject as viewedSubject } from './setup'
 import type { LiveStore, NamedNode } from 'rdflib'
+import type PhotoCapture from 'solid-ui/components/photo-capture'
 
 const mockProcessHeadingMutations = vi.fn<(_: unknown, __: unknown, plan: HeadingMutationPlan) => Promise<void>>()
 const mockUploadPhotoFile = vi.fn<(store: LiveStore, subject: NamedNode, file: File) => Promise<string>>()
@@ -155,20 +156,12 @@ describe('Heading edit dialog', () => {
     const resultPromise = createHeadingEditDialog(createDialogEvent(), store, subject, profileData, 'owner')
     await flushUi()
 
-    const cameraButton = document.querySelector('.profile-edit-dialog__image-camera-button') as HTMLElement | null
-    expect(cameraButton).not.toBeNull()
-
-    cameraButton?.click()
-    await flushUi()
-
-    const photoCapture = document.querySelector('solid-ui-photo-capture') as HTMLElement | null
+    const photoCapture = document.querySelector<PhotoCapture>('solid-ui-photo-capture')
     expect(photoCapture).not.toBeNull()
 
     const file = new File(['camera-image-bytes'], 'camera.png', { type: 'image/png' })
-    photoCapture?.dispatchEvent(new CustomEvent('photo-captured', {
-      detail: { file },
-      bubbles: true
-    }))
+    photoCapture!.value = file
+    photoCapture!.dispatchEvent(new Event('input', { bubbles: true }))
     await flushUi()
 
     const heroImage = document.querySelector('.profile-edit-dialog__image-frame .profile__hero') as HTMLImageElement | null
