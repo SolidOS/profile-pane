@@ -1,4 +1,4 @@
-import { describe, expect, it, jest } from "@jest/globals"
+import { describe, expect, it, vi } from 'vitest'
 import { Collection, graph, literal, NamedNode, st, sym } from 'rdflib'
 import { ns } from 'solid-ui'
 import { presentLanguages } from '../../src/sections/languages/selectors'
@@ -339,7 +339,7 @@ describe('Languages selectors and mutations', () => {
     }
     store.updater = {
       update: (_deletions: any[], _insertions: any[], callback: Function) => callback('', false, 'Web error: 501 on PATCH'),
-      updateDav: jest.fn(),
+      updateDav: vi.fn(),
       serialize: () => '@prefix schema: <http://schema.org/> .\n'
     }
 
@@ -380,8 +380,8 @@ describe('Languages selectors and mutations', () => {
       }
     }
     store.updater = {
-      update: jest.fn((_deletions: any[], _insertions: any[], callback: Function) => callback('', true)),
-      updateDav: jest.fn(),
+      update: vi.fn((_deletions: any[], _insertions: any[], callback: Function) => callback('', true)),
+      updateDav: vi.fn(),
       serialize: (_docValue: string, statements: any[]) => {
         serializedStatements = statements
         return '@prefix schema: <http://schema.org/> .\n'
@@ -427,8 +427,8 @@ describe('Languages selectors and mutations', () => {
       }
     }
     store.updater = {
-      update: jest.fn((_deletions: any[], _insertions: any[], callback: Function) => callback('', true)),
-      updateDav: jest.fn(),
+      update: vi.fn((_deletions: any[], _insertions: any[], callback: Function) => callback('', true)),
+      updateDav: vi.fn(),
       serialize: (_docValue: string, statements: any[]) => {
         serializedStatements = statements
         return '@prefix schema: <http://schema.org/> .\n'
@@ -507,7 +507,7 @@ describe('Languages selectors and mutations', () => {
 
     store.updater = {
       update: (_deletions: any[], _insertions: any[], callback: Function) => callback('', false, 'Web error: 501 on PATCH'),
-      updateDav: jest.fn((_doc: any, deletions: any[], insertions: any[], callback: Function) => {
+      updateDav: vi.fn((_doc: any, deletions: any[], insertions: any[], callback: Function) => {
         deletions.forEach((statement) => store.remove(st(statement.subject, statement.predicate, statement.object, statement.why)))
         insertions.forEach((statement) => store.add(statement.subject, statement.predicate, statement.object, statement.why))
         callback('', true)

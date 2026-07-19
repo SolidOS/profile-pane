@@ -1,4 +1,4 @@
-import { describe, expect, it, jest } from "@jest/globals"
+import { describe, expect, it, vi } from 'vitest'
 import { render } from 'lit-html'
 import { sym } from 'rdflib'
 import { renderHeadingSection } from '../../src/sections/heading/HeadingSection'
@@ -6,8 +6,8 @@ import { addMeToYourFriendsButtonText } from '../../src/texts/buttonTexts'
 import { runAxe } from '../helpers/runAxe'
 import { context, fakeLogInAs, subject } from '../setup'
 
-jest.mock('../../src/specialButtons/addMeToYourFriends', () => ({
-  addMeToYourFriendsDiv: jest.fn(() => {
+vi.mock('../../src/specialButtons/addMeToYourFriends', () => ({
+  addMeToYourFriendsDiv: vi.fn(() => {
     const { html } = require('lit-html')
     return html`
       <section class="profile-friends-button__section">
@@ -62,12 +62,12 @@ describe('Intro section', () => {
     const container = document.createElement('div')
     document.body.appendChild(container)
 
-    const fetchSpy = jest.spyOn((context.session.store.fetcher as any), '_fetch').mockResolvedValue({
+    const fetchSpy = vi.spyOn((context.session.store.fetcher as any), '_fetch').mockResolvedValue({
       ok: true,
       blob: async () => new Blob(['image-bytes'], { type: 'image/png' })
     } as Response)
     const originalCreateObjectURL = URL.createObjectURL
-    const createObjectUrlMock = jest.fn(() => 'blob:heading-section-photo')
+    const createObjectUrlMock = vi.fn(() => 'blob:heading-section-photo')
     Object.defineProperty(URL, 'createObjectURL', {
       configurable: true,
       value: createObjectUrlMock

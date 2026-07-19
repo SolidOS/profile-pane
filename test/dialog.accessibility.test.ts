@@ -1,7 +1,8 @@
-import { describe, expect, it } from '@jest/globals'
+import { describe, expect, it, vi } from 'vitest'
 import { graph, sym } from 'rdflib'
 import { ns } from 'solid-ui'
 import type { Combobox } from 'solid-ui/components/combobox'
+import './setup'
 import { createLanguageEditDialog } from '../src/sections/languages/LanguageEditDialog'
 import { createResumeEditDialog } from '../src/sections/resume/ResumeEditDialog'
 import { createSkillsEditDialog } from '../src/sections/skills/SkillsEditDialog'
@@ -332,7 +333,7 @@ describe('Dialog accessibility', () => {
     document.body.style.right = '5px'
     document.body.style.width = '80%'
 
-    const scrollTo = jest.fn()
+    const scrollTo = vi.fn()
     Object.defineProperty(window, 'scrollTo', {
       configurable: true,
       value: scrollTo

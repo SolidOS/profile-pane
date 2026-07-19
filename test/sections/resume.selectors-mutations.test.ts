@@ -1,5 +1,4 @@
-import { beforeEach, describe, expect, it, jest } from "@jest/globals"
-import fetchMock from 'jest-fetch-mock'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { graph, literal, sym } from 'rdflib'
 import { ns } from 'solid-ui'
 import { presentCV } from '../../src/sections/resume/selectors'
@@ -9,7 +8,11 @@ import { saveResumeUpdatesFailedMessageText, updaterUnsupportedStoreErrorMessage
 
 describe('Resume selectors and mutations', () => {
   beforeEach(() => {
-    fetchMock.resetMocks()
+    vi.restoreAllMocks()
+  })
+
+  afterEach(() => {
+    vi.unstubAllGlobals()
   })
 
   it('selector returns empty roles from empty store', () => {
@@ -303,13 +306,13 @@ describe('Resume selectors and mutations', () => {
     const doc = subject.doc()
     const membership = sym('https://example.com/profile/card#id123')
     const organization = sym('https://example.com/profile/card#id456')
-    const update = jest.fn((_deletions: any[], _insertions: any[], callback: Function) => callback('', true))
-    const serialize = jest.fn(() => [
+    const update = vi.fn((_deletions: any[], _insertions: any[], callback: Function) => callback('', true))
+    const serialize = vi.fn(() => [
       '@prefix vcard: <http://www.w3.org/2006/vcard/ns#>.',
       '@prefix schema: <http://schema.org/>.',
       '@prefix org: <http://www.w3.org/ns/org#>.'
     ].join('\n'))
-    const webOperation: any = jest.fn(async () => ({ ok: true, status: 200 }))
+    const webOperation: any = vi.fn(async () => ({ ok: true, status: 200 }))
 
     store.add(membership, ns.org('member'), subject, doc)
     store.add(membership, ns.rdf('type'), ns.solid('PastRole'), doc)
@@ -364,9 +367,9 @@ describe('Resume selectors and mutations', () => {
     const doc = subject.doc()
     const membership = sym('https://example.com/profile/card#id123')
     const organization = sym('https://example.com/profile/card#id456')
-    const update = jest.fn((_deletions: any[], _insertions: any[], callback: Function) => callback('', true))
-    const serialize = jest.fn(() => '@prefix vcard: <http://www.w3.org/2006/vcard/ns#>.')
-    const webOperation: any = jest.fn(async () => ({ ok: true, status: 200 }))
+    const update = vi.fn((_deletions: any[], _insertions: any[], callback: Function) => callback('', true))
+    const serialize = vi.fn(() => '@prefix vcard: <http://www.w3.org/2006/vcard/ns#>.')
+    const webOperation: any = vi.fn(async () => ({ ok: true, status: 200 }))
 
     store.add(membership, ns.org('member'), subject, doc)
     store.add(membership, ns.rdf('type'), ns.solid('PastRole'), doc)
@@ -548,11 +551,12 @@ describe('Resume selectors and mutations', () => {
       }
     }
 
-    fetchMock.mockResponses(
-      [JSON.stringify(searchPayload), { status: 200 }],
-      [JSON.stringify(entityPayload), { status: 200 }],
-      [JSON.stringify({ entities: {} }), { status: 200 }]
-    )
+    const fetchMock = vi.fn()
+    vi.stubGlobal('fetch', fetchMock)
+    fetchMock
+      .mockResolvedValueOnce({ ok: true, json: async () => searchPayload } as Response)
+      .mockResolvedValueOnce({ ok: true, json: async () => entityPayload } as Response)
+      .mockResolvedValueOnce({ ok: true, json: async () => ({ entities: {} }) } as Response)
 
     const corporationProvider = createResumeOrganizationOptionsProvider(() => 'Corporation')
     const corporationSuggestions = await corporationProvider('solid')
@@ -564,12 +568,11 @@ describe('Resume selectors and mutations', () => {
       }
     ])
 
-    fetchMock.resetMocks()
-    fetchMock.mockResponses(
-      [JSON.stringify(searchPayload), { status: 200 }],
-      [JSON.stringify(entityPayload), { status: 200 }],
-      [JSON.stringify({ entities: {} }), { status: 200 }]
-    )
+    fetchMock.mockReset()
+    fetchMock
+      .mockResolvedValueOnce({ ok: true, json: async () => searchPayload } as Response)
+      .mockResolvedValueOnce({ ok: true, json: async () => entityPayload } as Response)
+      .mockResolvedValueOnce({ ok: true, json: async () => ({ entities: {} }) } as Response)
 
     const educationalProvider = createResumeOrganizationOptionsProvider(() => 'EducationalOrganization')
     const educationalSuggestions = await educationalProvider('solid')

@@ -1,3 +1,4 @@
+import { beforeAll, describe, expect, it } from 'vitest'
 import pane from '../src/index'
 import { parse } from 'rdflib'
 import { store } from 'solid-logic'

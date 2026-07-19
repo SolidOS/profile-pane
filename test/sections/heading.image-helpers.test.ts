@@ -1,39 +1,39 @@
-import { describe, expect, it, jest, beforeEach } from '@jest/globals'
+import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { sym } from 'rdflib'
 import { uploadPhotoFile } from '../../src/sections/heading/imageHelpers'
 
-const mockCurrentUser = jest.fn()
-const mockSetACLUserPublic = jest.fn()
-const mockDebugError = jest.fn()
+const mockCurrentUser = vi.fn()
+const mockSetACLUserPublic = vi.fn()
+const mockDebugError = vi.fn()
 
-jest.mock('solid-logic', () => {
+vi.mock('solid-logic', () => {
   const store = require('rdflib').graph()
   return {
     store,
     authn: {
       currentUser: () => mockCurrentUser(),
-        checkUser: jest.fn(() => Promise.resolve(undefined)),
-      login: jest.fn(),
+        checkUser: vi.fn(() => Promise.resolve(undefined)),
+      login: vi.fn(),
     },
     authSession: {
       webId: null,
       isActive: false,
       info: { isLoggedIn: false, webId: null },
-      login: jest.fn(),
-      logout: jest.fn(),
-      events: { on: jest.fn(), off: jest.fn() },
+      login: vi.fn(),
+      logout: vi.fn(),
+      events: { on: vi.fn(), off: vi.fn() },
     },
     solidLogicSingleton: {
       store,
       acl: {
         setACLUserPublic: (...args: unknown[]) => mockSetACLUserPublic(...args)
       },
-      profile: { loadPreferences: jest.fn(), loadProfile: jest.fn() },
+      profile: { loadPreferences: vi.fn(), loadProfile: vi.fn() },
       typeIndex: {
-        getScopedAppInstances: jest.fn(),
-        getRegistrations: jest.fn(),
-        loadAllTypeIndexes: jest.fn(),
-        getScopedAppsFromIndex: jest.fn(),
+        getScopedAppInstances: vi.fn(),
+        getRegistrations: vi.fn(),
+        loadAllTypeIndexes: vi.fn(),
+        getScopedAppsFromIndex: vi.fn(),
       },
     },
     SolidLogic: class {},
@@ -41,7 +41,7 @@ jest.mock('solid-logic', () => {
   }
 })
 
-jest.mock('../../src/utils/debug', () => ({
+vi.mock('../../src/utils/debug', () => ({
   error: (...args: unknown[]) => mockDebugError(...args)
 }))
 
@@ -56,17 +56,17 @@ describe('heading image helper uploads', () => {
     return {
       name: 'avatar.png',
       type: 'image/png',
-      arrayBuffer: jest.fn(async () => new ArrayBuffer(8))
+      arrayBuffer: vi.fn(async () => new ArrayBuffer(8))
     } as unknown as File
   }
 
   it('attempts to make uploaded heading images public-read', async () => {
     const subject = sym('https://example.com/profile/card#me')
     const currentUser = sym('https://example.com/profile/card#me')
-    const webOperation = jest.fn(async (..._args: unknown[]) => ({ ok: true }))
+    const webOperation = vi.fn(async (..._args: unknown[]) => ({ ok: true }))
     const store = {
       fetcher: { webOperation },
-      holds: jest.fn(() => false)
+      holds: vi.fn(() => false)
     } as any
     const file = createImageFile()
 
@@ -88,10 +88,10 @@ describe('heading image helper uploads', () => {
   it('keeps uploaded heading images when the public ACL write fails', async () => {
     const subject = sym('https://example.com/profile/card#me')
     const currentUser = sym('https://example.com/profile/card#me')
-    const webOperation = jest.fn(async (..._args: unknown[]) => ({ ok: true }))
+    const webOperation = vi.fn(async (..._args: unknown[]) => ({ ok: true }))
     const store = {
       fetcher: { webOperation },
-      holds: jest.fn(() => false)
+      holds: vi.fn(() => false)
     } as any
     const file = createImageFile()
 

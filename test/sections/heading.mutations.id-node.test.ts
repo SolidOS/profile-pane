@@ -1,4 +1,4 @@
-import { describe, expect, it } from '@jest/globals'
+import { describe, expect, it } from 'vitest'
 import { graph, sym } from 'rdflib'
 import { ns } from 'solid-ui'
 import { processHeadingMutations } from '../../src/sections/heading/mutations'

@@ -1,9 +1,9 @@
-import { beforeEach, describe, expect, it } from '@jest/globals'
+import { beforeEach, describe, expect, it } from 'vitest'
 import pane from '../src/index'
 import { parse } from 'rdflib'
 import { store } from 'solid-logic'
-import { waitFor } from '@testing-library/dom'
 import { context, doc, subject } from './setup'
+import { waitForSelector } from './helpers/dom'
 
 // This was at testingsolidos.solidcommunity.net
 const exampleProfile = `@prefix : <#>.
@@ -168,12 +168,9 @@ describe('profile pane qrcode integration', () => {
         parse(exampleProfile, store, doc.uri)
         const result = pane.render(subject, context)
 
-        await waitFor(() => {
-            const qrCard = result.querySelector('[data-testid="qrcode-card"]') as HTMLElement | null
-            expect(qrCard).not.toBeNull()
-            expect(qrCard?.getAttribute('data-value')).toContain('BEGIN:VCARD')
-            const qrImageContainer = qrCard?.querySelector('.qrcode-card__image') as HTMLElement | null
-            expect(qrImageContainer?.innerHTML).toContain('<svg')
-        })
+        const qrCard = await waitForSelector<HTMLElement>(result, '[data-testid="qrcode-card"]')
+        expect(qrCard.getAttribute('data-value')).toContain('BEGIN:VCARD')
+        const qrImageContainer = qrCard.querySelector<HTMLElement>('.qrcode-card__image')
+        expect(qrImageContainer?.innerHTML).toContain('<svg')
     })
 })

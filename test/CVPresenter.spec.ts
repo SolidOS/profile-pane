@@ -1,3 +1,4 @@
+import { beforeEach, describe, expect, it } from 'vitest'
 import { presentCV } from '../src/sections/resume/selectors'
 import { blankNode, sym } from 'rdflib'
 import { ns } from 'solid-ui'

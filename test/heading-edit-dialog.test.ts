@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, it, jest } from '@jest/globals'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { graph, sym } from 'rdflib'
 import { createHeadingEditDialog } from '../src/sections/heading/HeadingEditDialog'
 import type { HeadingMutationPlan, ProfileDetails } from '../src/sections/heading/types'
@@ -6,17 +6,17 @@ import { getSharedDialogCancelButton, getSharedDialogSaveButton } from '../src/u
 import { context, subject as viewedSubject } from './setup'
 import type { LiveStore, NamedNode } from 'rdflib'
 
-const mockProcessHeadingMutations = jest.fn<(_: unknown, __: unknown, plan: HeadingMutationPlan) => Promise<void>>()
-const mockUploadPhotoFile = jest.fn<(store: LiveStore, subject: NamedNode, file: File) => Promise<string>>()
-const mockResolvePhotoDisplaySrc = jest.fn<(store: LiveStore, imageSrc?: string) => Promise<string | undefined>>()
-const mockInvalidateResolvedPhotoDisplaySrc = jest.fn<(imageSrc?: string) => void>()
+const mockProcessHeadingMutations = vi.fn<(_: unknown, __: unknown, plan: HeadingMutationPlan) => Promise<void>>()
+const mockUploadPhotoFile = vi.fn<(store: LiveStore, subject: NamedNode, file: File) => Promise<string>>()
+const mockResolvePhotoDisplaySrc = vi.fn<(store: LiveStore, imageSrc?: string) => Promise<string | undefined>>()
+const mockInvalidateResolvedPhotoDisplaySrc = vi.fn<(imageSrc?: string) => void>()
 
-jest.mock('../src/sections/heading/mutations', () => ({
+vi.mock('../src/sections/heading/mutations', () => ({
   processHeadingMutations: (...args: Parameters<typeof mockProcessHeadingMutations>) => mockProcessHeadingMutations(...args)
 }))
 
-jest.mock('../src/sections/heading/imageHelpers', () => {
-  const actual = jest.requireActual('../src/sections/heading/imageHelpers') as typeof import('../src/sections/heading/imageHelpers')
+vi.mock('../src/sections/heading/imageHelpers', async () => {
+  const actual = await vi.importActual<typeof import('../src/sections/heading/imageHelpers')>('../src/sections/heading/imageHelpers')
 
   return {
     ...actual,
@@ -26,7 +26,7 @@ jest.mock('../src/sections/heading/imageHelpers', () => {
   }
 })
 
-const actualImageHelpers = jest.requireActual('../src/sections/heading/imageHelpers') as typeof import('../src/sections/heading/imageHelpers')
+const actualImageHelpers = await vi.importActual<typeof import('../src/sections/heading/imageHelpers')>('../src/sections/heading/imageHelpers')
 
 async function flushUi() {
   await new Promise(resolve => setTimeout(resolve, 0))
@@ -73,11 +73,11 @@ describe('Heading edit dialog', () => {
 
     Object.defineProperty(URL, 'createObjectURL', {
       configurable: true,
-      value: jest.fn(() => 'blob:heading-preview')
+      value: vi.fn(() => 'blob:heading-preview')
     })
     Object.defineProperty(URL, 'revokeObjectURL', {
       configurable: true,
-      value: jest.fn()
+      value: vi.fn()
     })
 
     document.body.innerHTML = ''
@@ -98,7 +98,7 @@ describe('Heading edit dialog', () => {
       value: originalRevokeObjectURL
     })
 
-    jest.restoreAllMocks()
+    vi.restoreAllMocks()
   })
 
   it('keeps the selected heading photo visible in the preview frame before save', async () => {
@@ -268,13 +268,13 @@ describe('Heading edit dialog', () => {
   })
 
   it('does not revoke the resolved original photo blob when remove is cancelled', async () => {
-    const fetchSpy = jest.spyOn((context.session.store.fetcher as any), '_fetch').mockResolvedValue({
+    const fetchSpy = vi.spyOn((context.session.store.fetcher as any), '_fetch').mockResolvedValue({
       ok: true,
       blob: async () => new Blob(['image-bytes'], { type: 'image/png' })
     } as Response)
 
-    const createObjectUrlMock = jest.fn(() => 'blob:resolved-original')
-    const revokeObjectUrlMock = jest.fn()
+    const createObjectUrlMock = vi.fn(() => 'blob:resolved-original')
+    const revokeObjectUrlMock = vi.fn()
 
     Object.defineProperty(URL, 'createObjectURL', {
       configurable: true,
