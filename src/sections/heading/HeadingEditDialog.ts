@@ -708,20 +708,20 @@ function renderHeadingInfoInput(
             @input=${handleCameraInput}
           >
             <solid-ui-button
-                slot="trigger"
-                class="profile-edit-dialog__image-camera-button"
-                variant="ghost"
-                aria-label="Take a photo"
-                title="Take a photo"
+              slot="trigger"
+              class="profile-edit-dialog__image-camera-button"
+              variant="ghost"
+              aria-label="Take a photo"
+              title="Take a photo"
             >
-                <span slot="icon" aria-hidden="true">${cameraIcon}</span>
+              <span slot="icon">${cameraIcon}</span>
             </solid-ui-button>
           </solid-ui-photo-capture>
         </div>
       </header>
 
       <div class="profile-edit-dialog__image-preview" aria-label="Profile Photo Preview">
-        <p class="profile-edit-dialog__image-preview-label"><strong>${imageSrcLabel}</strong></p>
+        <p class="profile-edit-dialog__image-preview-label">${imageSrcLabel}</p>
         <p class="profile-edit-dialog__image-preview-description">${recommendedImageToLoad}</p>
 
         <div class="profile-edit-dialog__image-preview-actions">
@@ -729,10 +729,10 @@ function renderHeadingInfoInput(
             variant="secondary"
             class="profile-edit-dialog__image-button profile-edit-dialog__image-upload-button"
             aria-label="Upload new profile photo"
-            title="Upload New"
+            title="Upload"
             @click=${handleUpload}
           >
-            Upload New
+            Upload
           </solid-ui-button>
           <solid-ui-button
             variant="secondary"

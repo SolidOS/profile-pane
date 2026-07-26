@@ -8,7 +8,7 @@
 @media (max-width: 576px) {
   #profile-modal {
     --profile-modal-panel-max-height: calc(100dvh - 4 * 15px);
-    padding-top: env(safe-area-inset-top);
+    padding-top: max(15px, env(safe-area-inset-top));
     padding-right: 0;
     padding-bottom: max(15px, env(safe-area-inset-bottom));
     padding-left: 0;
@@ -69,7 +69,7 @@
 
 html[data-layout='mobile'] #profile-modal {
   --profile-modal-panel-max-height: calc(100dvh - 4 * 15px);
-  padding-top: env(safe-area-inset-top);
+  padding-top: max(15px, env(safe-area-inset-top));
   padding-right: 0;
   padding-bottom: max(15px, env(safe-area-inset-bottom));
   padding-left: 0;
@@ -132,7 +132,7 @@ html[data-layout='mobile'] #profile-modal #modal-buttons > solid-ui-button {
 @container profile-pane (max-width: 576px) {
   #profile-modal {
     --profile-modal-panel-max-height: calc(100dvh - 4 * 15px);
-    padding-top: env(safe-area-inset-top);
+    padding-top: max(15px, env(safe-area-inset-top));
     padding-right: 0;
     padding-bottom: max(15px, env(safe-area-inset-bottom));
     padding-left: 0;
