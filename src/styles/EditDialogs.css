@@ -223,6 +223,7 @@
   width: 0.875rem;
   height: 0.875rem;
   stroke: var(--solid-ui-color-primary, #7c4dff);
+  fill: var(--solid-ui-color-primary, #7c4dff);
 }
 
 .profile-edit-dialog__paste-icon svg {
