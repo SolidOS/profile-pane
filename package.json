@@ -54,7 +54,7 @@
   "license": "MIT",
   "dependencies": {
     "@solid-data-modules/contacts-rdflib": "^0.7.1",
-    "chat-pane": "3.0.4-2",
+    "chat-pane": "3.0.4-3",
     "lit-html": "^3.3.3",
     "pane-registry": "3.1.2-2",
     "patch-package": "^8.0.1",
