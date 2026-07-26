@@ -163,7 +163,7 @@ solid-ui-button.profile__btn-contacts {
   display: flex;
   flex-direction: column;
   min-width: var(--profile-sidebar-min-width);
-  padding: 15px;
+  padding-left: 15px;
   align-items: stretch;
   text-align: left;
   border-radius: 5px;
