@@ -427,6 +427,16 @@ solid-ui-button.profile-edit-dialog__drag-handle:active {
   align-self: stretch;
 }
 
+.profile-edit-dialog__field > solid-ui-combobox,
+.profile-edit-dialog__field-type > solid-ui-combobox {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
+  align-self: stretch;
+}
+
 .profile-edit-dialog__field--resume-location {
   flex: 1 0 0;
   width: auto;
@@ -574,16 +584,6 @@ solid-ui-button.profile-edit-dialog__drag-handle:active {
   width: auto;
   max-width: none;
   align-self: flex-start;
-}
-
-.profile__edit-form--resume .profile-edit-dialog__field > solid-ui-combobox {
-  min-height: var(--solid-ui-clickable-area, 42px);
-  height: var(--solid-ui-clickable-area, 42px);
-}
-
-.profile__edit-form--resume .profile-edit-dialog__field > solid-ui-combobox::part(input) {
-  min-height: var(--solid-ui-clickable-area, 42px);
-  height: var(--solid-ui-clickable-area, 42px);
 }
 
 /* Dedicated hook for the social account type select in SocialEditDialog. */
