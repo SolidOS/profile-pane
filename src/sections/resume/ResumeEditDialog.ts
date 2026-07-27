@@ -355,20 +355,6 @@ function getResumeDateSelectOptions(
   return getResumeYearOptions(selectedYears)
 }
 
-function getResumeDateSelectLabel(kind: ResumeDateSelectKind, row: ResumeRow): string {
-  switch (kind) {
-    case 'start-month':
-    case 'end-month':
-      return row?.isCurrentRole && kind === 'end-month' ? 'Present' : 'Select Month'
-    case 'start-year':
-      return 'Select Year'
-    case 'end-year':
-      return row?.isCurrentRole ? '' : 'Select Year'
-    default:
-      return ''
-  }
-}
-
 function getResumeDateSelectValue(kind: ResumeDateSelectKind, row: ResumeRow): string {
   const startDateParts = parseYearMonthFromDateText(toText(row?.startDate))
   const endDateParts = parseYearMonthFromDateText(toText(row?.endDate))
@@ -562,7 +548,6 @@ function initializeResumeDateSelects(form: HTMLFormElement, resumeData: ResumeRo
 
     selectElement.options = getResumeDateSelectOptions(kind, selectedYears, Boolean(resumeRow.isCurrentRole))
     selectElement.value = getResumeDateSelectValue(kind, resumeRow)
-    selectElement.label = getResumeDateSelectLabel(kind, resumeRow)
   })
 }
 
@@ -759,7 +744,6 @@ function renderResumeInputRow({
           data-resume-organization-type-index=${String(index)}
           .options=${RESUME_ORGANIZATION_TYPE_OPTIONS}
           .value=${normalizeResumeOrganizationTypeValue(resumeRow?.orgType || '')}
-          .label=${''}
           @change=${handleOrganizationTypeInput}
         ></solid-ui-select>
       </label>
@@ -822,7 +806,6 @@ function renderResumeInputRow({
             data-resume-row-index=${String(index)}
             .options=${getResumeDateSelectOptions('start-month', selectedYears, Boolean(resumeRow?.isCurrentRole))}
             .value=${startMonthValue}
-            .label=${getResumeDateSelectLabel('start-month', resumeRow)}
             @change=${handleStartMonthChange}
           ></solid-ui-select>
           <solid-ui-select
@@ -834,7 +817,6 @@ function renderResumeInputRow({
             data-resume-row-index=${String(index)}
             .options=${getResumeDateSelectOptions('start-year', selectedYears, Boolean(resumeRow?.isCurrentRole))}
             .value=${startYearText}
-            .label=${getResumeDateSelectLabel('start-year', resumeRow)}
             @change=${handleStartYearChange}
           ></solid-ui-select>
         </div>
@@ -853,7 +835,6 @@ function renderResumeInputRow({
             data-resume-row-index=${String(index)}
             .options=${getResumeDateSelectOptions('end-month', selectedYears, Boolean(resumeRow?.isCurrentRole))}
             .value=${resumeRow?.isCurrentRole ? RESUME_PRESENT_MONTH_VALUE : endMonthValue}
-            .label=${getResumeDateSelectLabel('end-month', resumeRow)}
             @change=${handleEndMonthChange}
           ></solid-ui-select>
           <solid-ui-select
@@ -867,7 +848,6 @@ function renderResumeInputRow({
             data-resume-row-index=${String(index)}
             .options=${getResumeDateSelectOptions('end-year', selectedYears, Boolean(resumeRow?.isCurrentRole))}
             .value=${resumeRow?.isCurrentRole ? '' : endYearParsedText}
-            .label=${getResumeDateSelectLabel('end-year', resumeRow)}
             @change=${handleEndYearChange}
           ></solid-ui-select>
         </div>

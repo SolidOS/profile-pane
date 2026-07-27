@@ -222,7 +222,6 @@ function renderSocialAccountInputSelect(
       autocomplete="off"
       .options=${toSocialAccountSelectOptions(options)}
       .value=${selectedLabel}
-      .label=${''}
       @change=${onChange}
     ></solid-ui-select>
   `

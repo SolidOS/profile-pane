@@ -422,7 +422,6 @@ solid-ui-button.profile-edit-dialog__drag-handle:active {
 .profile__edit-form--contact-info .profile-edit-dialog__field > solid-ui-select,
 .profile__edit-form--contact-info .profile-edit-dialog__field > textarea,
 .profile__edit-form--contact-info .profile-edit-dialog__field-type > input,
-.profile__edit-form--contact-info .profile-edit-dialog__field-type > select,
 .profile__edit-form--contact-info .profile-edit-dialog__field-type > solid-ui-select,
 .profile__edit-form--contact-info .profile-edit-dialog__field-type > textarea {
   align-self: stretch;
