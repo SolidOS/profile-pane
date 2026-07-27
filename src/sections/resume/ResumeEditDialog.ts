@@ -565,7 +565,6 @@ function renderResumeInputRow({
   const titleName = `resume-title-${index}`
   const organizationName = `resume-organization-${index}`
   const organizationTypeName = `resume-organization-type-${index}`
-  const organizationTypeSelectId = `resume-organization-type-select-${index}`
   const companyUrlName = `resume-company-url-${index}`
   const orgLocationName = `resume-org-location-${index}`
   const descriptionName = `resume-description-${index}`
@@ -575,21 +574,17 @@ function renderResumeInputRow({
 
   const startMonthLabel = `Start Month ${displayIndex + 1}`
   const startMonthInputName = `resume-start-month-${index}`
-  const startMonthSelectId = `resume-start-month-select-${index}`
   const startYearLabel = `Start Year ${displayIndex + 1}`
   const startYearInputName = `resume-start-year-${index}`
-  const startYearSelectId = `resume-start-year-select-${index}`
   const startDateText = toText(resumeRow?.startDate)
   const startDateParts = parseYearMonthFromDateText(startDateText)
   const startMonthValue = startDateParts.month
   const startYearText = startDateParts.year
   const endMonthLabel = `End Month ${displayIndex + 1}`
   const endMonthInputName = `resume-end-month-${index}`
-  const endMonthSelectId = `resume-end-month-select-${index}`
   const endDateText = toText(resumeRow?.endDate)
   const endYearLabel = `End Year ${displayIndex + 1}`
   const endYearInputName = `resume-end-year-${index}`
-  const endYearSelectId = `resume-end-year-select-${index}`
   const endDateParts = parseYearMonthFromDateText(endDateText)
   const endMonthValue = endDateParts.month
   const endYearParsedText = endDateParts.year
@@ -740,7 +735,6 @@ function renderResumeInputRow({
         <solid-ui-select
           class="profile-edit-dialog__resume-organization-type-select"
           name=${organizationTypeName}
-          id=${organizationTypeSelectId}
           data-resume-organization-type-index=${String(index)}
           .options=${RESUME_ORGANIZATION_TYPE_OPTIONS}
           .value=${normalizeResumeOrganizationTypeValue(resumeRow?.orgType || '')}
@@ -800,7 +794,6 @@ function renderResumeInputRow({
           <solid-ui-select
             class="profile-edit-dialog__resume-date-select"
             name=${startMonthInputName}
-            id=${startMonthSelectId}
             aria-label=${startMonthLabel}
             data-resume-date-kind="start-month"
             data-resume-row-index=${String(index)}
@@ -811,7 +804,6 @@ function renderResumeInputRow({
           <solid-ui-select
             class="profile-edit-dialog__resume-date-select"
             name=${startYearInputName}
-            id=${startYearSelectId}
             aria-label=${startYearLabel}
             data-resume-date-kind="start-year"
             data-resume-row-index=${String(index)}
@@ -827,7 +819,6 @@ function renderResumeInputRow({
           <solid-ui-select
             class=${`profile-edit-dialog__resume-date-select${resumeRow?.isCurrentRole ? ' profile-edit-dialog__resume-date-select--disabled' : ''}`}
             name=${endMonthInputName}
-            id=${endMonthSelectId}
             aria-label=${endMonthLabel}
             aria-disabled=${String(Boolean(resumeRow?.isCurrentRole))}
             tabindex=${resumeRow?.isCurrentRole ? '-1' : '0'}
@@ -840,7 +831,6 @@ function renderResumeInputRow({
           <solid-ui-select
             class=${`profile-edit-dialog__resume-date-select${resumeRow?.isCurrentRole ? ' profile-edit-dialog__resume-date-select--disabled' : ''}`}
             name=${endYearInputName}
-            id=${endYearSelectId}
             aria-label=${endYearLabel}
             aria-disabled=${String(Boolean(resumeRow?.isCurrentRole))}
             tabindex=${resumeRow?.isCurrentRole ? '-1' : '0'}

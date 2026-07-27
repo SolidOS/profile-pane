@@ -788,7 +788,6 @@ function renderHeadingInfoInput(
           ${pronounsLabel}
           <solid-ui-select
             class="profile-edit-dialog__type-select"
-            id="heading-pronouns-select"
             name="pronouns"
             data-heading-basic-field="pronouns"
             aria-label=${pronounsLabel}

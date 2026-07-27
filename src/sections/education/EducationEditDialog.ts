@@ -240,21 +240,17 @@ function renderEducationInputRow({
 
   const startMonthLabel = `Start Month ${displayIndex + 1}`
   const startMonthInputName = `education-start-month-${index}`
-  const startMonthSelectId = `education-start-month-select-${index}`
   const startYearLabel = `Start Year ${displayIndex + 1}`
   const startYearInputName = `education-start-year-${index}`
-  const startYearSelectId = `education-start-year-select-${index}`
   const startDateText = toText(educationRow?.startDate)
   const startDateParts = parseYearMonthFromDateText(startDateText)
   const startMonthValue = startDateParts.month
   const startYearText = startDateParts.year
   const endMonthLabel = `End Month ${displayIndex + 1}`
   const endMonthInputName = `education-end-month-${index}`
-  const endMonthSelectId = `education-end-month-select-${index}`
   const endDateText = toText(educationRow?.endDate)
   const endYearLabel = `End Year ${displayIndex + 1}`
   const endYearInputName = `education-end-year-${index}`
-  const endYearSelectId = `education-end-year-select-${index}`
   const endDateParts = parseYearMonthFromDateText(endDateText)
   const endMonthValue = endDateParts.month
   const endYearParsedText = endDateParts.year
@@ -388,7 +384,6 @@ function renderEducationInputRow({
         <solid-ui-select
           class="profile-edit-dialog__education-date-select"
           name=${startMonthInputName}
-          id=${startMonthSelectId}
           data-education-date-kind="start-month"
           data-education-row-index=${String(index)}
           .options=${getEducationDateSelectOptions('start-month', selectedYears)}
@@ -402,7 +397,6 @@ function renderEducationInputRow({
         <solid-ui-select
           class="profile-edit-dialog__education-date-select"
           name=${startYearInputName}
-          id=${startYearSelectId}
           data-education-date-kind="start-year"
           data-education-row-index=${String(index)}
           .options=${getEducationDateSelectOptions('start-year', selectedYears)}
@@ -416,7 +410,6 @@ function renderEducationInputRow({
         <solid-ui-select
           class="profile-edit-dialog__education-date-select"
           name=${endMonthInputName}
-          id=${endMonthSelectId}
           data-education-date-kind="end-month"
           data-education-row-index=${String(index)}
           .options=${getEducationDateSelectOptions('end-month', selectedYears)}
@@ -430,7 +423,6 @@ function renderEducationInputRow({
         <solid-ui-select
           class="profile-edit-dialog__education-date-select"
           name=${endYearInputName}
-          id=${endYearSelectId}
           data-education-date-kind="end-year"
           data-education-row-index=${String(index)}
           .options=${getEducationDateSelectOptions('end-year', selectedYears)}
