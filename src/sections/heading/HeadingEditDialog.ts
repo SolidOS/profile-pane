@@ -419,7 +419,6 @@ function renderContactPhoneInput({
           id=${`phone-type-select-${inputName}`}
           data-heading-contact-type-kind="phone"
           aria-label=${typeLabel}
-          .label=${''}
           .options=${HEADING_PHONE_TYPE_OPTIONS}
           .value=${normalizeHeadingContactTypeValue(phone?.type || '', HEADING_PHONE_TYPE_OPTIONS)}
           @change=${handleTypeInput}
@@ -475,7 +474,6 @@ function renderContactEmailInputRow({
           id=${`email-type-select-${inputName}`}
           data-heading-contact-type-kind="email"
           aria-label=${typeLabel}
-          .label=${''}
           .options=${HEADING_EMAIL_TYPE_OPTIONS}
           .value=${normalizeHeadingContactTypeValue(email?.type || '', HEADING_EMAIL_TYPE_OPTIONS)}
           @change=${handleTypeInput}
@@ -790,11 +788,9 @@ function renderHeadingInfoInput(
           ${pronounsLabel}
           <solid-ui-select
             class="profile-edit-dialog__type-select"
-            id="heading-pronouns-select"
             name="pronouns"
             data-heading-basic-field="pronouns"
             aria-label=${pronounsLabel}
-            .label=${''}
             .options=${HEADING_PRONOUN_OPTIONS}
             .value=${normalizePronounsValue(basicInfo?.pronouns || '')}
             @change=${handlePronounsInput}

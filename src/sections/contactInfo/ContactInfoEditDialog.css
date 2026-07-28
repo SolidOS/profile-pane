@@ -125,9 +125,7 @@
   max-width: 100%;
 }
 
-.profile__edit-form--contact-info .profile-edit-dialog__field-type.profile-edit-dialog__phone-type-row > select,
 .profile__edit-form--contact-info .profile-edit-dialog__field-type.profile-edit-dialog__phone-type-row > solid-ui-select,
-.profile__edit-form--contact-info .profile-edit-dialog__field-type.emailTypeRow > select,
 .profile__edit-form--contact-info .profile-edit-dialog__field-type.emailTypeRow > solid-ui-select {
   font-size: var(--contact-info-dialog-contact-point-select-font-size);
   line-height: var(--contact-info-dialog-contact-point-select-line-height);

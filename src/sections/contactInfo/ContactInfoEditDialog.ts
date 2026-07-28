@@ -115,7 +115,6 @@ function initializeContactTypeSelects(form: HTMLFormElement, formState: ContactI
 
     selectElement.options = getContactTypeOptions(kind)
     selectElement.value = getContactTypeValue(kind, formState, rowIndex)
-    selectElement.label = ''
   })
 }
 
@@ -261,11 +260,9 @@ function renderContactPhoneInputRow({
       <label aria-label=${typeLabel} class="label profile-edit-dialog__field-type profile-edit-dialog__phone-type-row">
         <solid-ui-select
           class="profile-edit-dialog__type-select"
-          id=${`phone-type-select-${inputName}`}
           data-contact-type-kind="phone"
           data-row-index=${String(index)}
           aria-label=${typeLabel}
-          .label=${''}
           .options=${PHONE_TYPE_OPTIONS}
           .value=${normalizeContactTypeValue(phoneRow?.type || '', PHONE_TYPE_OPTIONS)}
           @change=${handleTypeInput}
@@ -382,11 +379,9 @@ function renderContactEmailInputRow({
       <label aria-label=${typeLabel} class="label profile-edit-dialog__field-type emailTypeRow">
         <solid-ui-select
           class="profile-edit-dialog__type-select"
-          id=${`email-type-select-${inputName}`}
           data-contact-type-kind="email"
           data-row-index=${String(index)}
           aria-label=${typeLabel}
-          .label=${''}
           .options=${EMAIL_TYPE_OPTIONS}
           .value=${normalizeContactTypeValue(emailRow?.type || '', EMAIL_TYPE_OPTIONS)}
           @change=${handleTypeInput}
