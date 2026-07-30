@@ -35,6 +35,7 @@ import { ContactAddressRow, ContactPointRow } from '../contactInfo/types'
 import { sanitizeAddressFieldValue, sanitizeBasicInputFieldValue, sanitizeEmailValue, sanitizePhoneLocalValue } from '../shared/sanitizeUtils'
 import { toStorageDateISO } from './dateHelpers'
 import { invalidateResolvedPhotoDisplaySrc, resolvePhotoDisplaySrc, uploadPhotoFile } from './imageHelpers'
+import { stripExifCanvas } from './stripExifCanvas' 
 /* Note: new design - has address type in More Edit Contacts for now we will leave
          out Address Type, but a ticket will be created to add type later
          so I will keep the code and just comment it out for now.
@@ -638,35 +639,46 @@ function renderHeadingInfoInput(
   }
 
   const handleUpload = async (e: Event) => {
-    const button = e.currentTarget as HTMLButtonElement | null
-    const dom = button?.ownerDocument || document
-    const fileInput = dom.createElement('input')
-    fileInput.type = 'file'
-    fileInput.accept = 'image/*'
-    fileInput.hidden = true
+  const button = e.currentTarget as HTMLButtonElement | null
+  const dom = button?.ownerDocument || document
 
-    const cleanupFileInput = () => {
-      fileInput.remove()
-    }
+  const fileInput = dom.createElement('input')
+  fileInput.type = 'file'
+  fileInput.accept = 'image/*'
+  fileInput.hidden = true
 
-    fileInput.addEventListener('change', async () => {
-      const file = fileInput.files?.[0]
+  const cleanupFileInput = () => {
+    fileInput.remove()
+  }
+
+  fileInput.addEventListener(
+    'change',
+    async () => {
+      const originalFile = fileInput.files?.[0]
       cleanupFileInput()
-      if (!file || !basicInfo) return
+
+      if (!originalFile || !basicInfo) return
 
       try {
-        formState.pendingImageFile = file
-        setHeadingImagePreview(formState, file)
+        // Strip EXIF metadata before using the image.
+        const sanitizedFile = await stripExifCanvas(originalFile)
+
+        formState.pendingImageFile = sanitizedFile
+        setHeadingImagePreview(formState, sanitizedFile)
+
         basicInfo.status = basicInfo.entryNode ? 'modified' : 'new'
+
         rerender()
       } catch (error) {
         debugError('Profile image upload failed', error)
       }
-    }, { once: true })
+    },
+    { once: true }
+  )
 
-    dom.body.appendChild(fileInput)
-    fileInput.click()
-  }
+  dom.body.appendChild(fileInput)
+  fileInput.click()
+}
 
   const handleCameraInput = async (event: InputEvent) => {
     const file = (event.target as PhotoCapture).value
