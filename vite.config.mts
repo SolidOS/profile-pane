@@ -5,7 +5,7 @@ export default defineConfig({
   plugins: solidPane({
     litDecoratorPaths: ["src/components"],
     sandbox: {
-      subject: "https://testingsolidos.solidcommunity.net/profile/card#me",
+      subject: "https://chase.pivot-test.solidproject.org:3000/profile/card#me",
     },
   }),
 
