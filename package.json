@@ -68,9 +68,7 @@
     "vitest-axe": "^0.1.0"
   },
   "overrides": {
-    "rdflib": "$rdflib",
-    "solid-logic": "$solid-logic",
-    "solid-ui": "$solid-ui"
+    "rdflib": "$rdflib"
   },
   "devDependencies": {
     "@types/node": "^24.13.2",
