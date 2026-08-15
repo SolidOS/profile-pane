@@ -1,7 +1,9 @@
 import { openInputDialog } from '../../ui/dialog'
 import { html, render } from 'lit-html'
 import 'solid-ui/components/button'
-import 'solid-ui/components/select'
+import 'solid-ui/components/combobox'
+import 'solid-ui/components/combobox-option'
+import { type ComboboxChangeEvent } from 'solid-ui/components/combobox'
 import { ContactAddressRow, ContactInfo, ContactMutationPlan, ContactPointRow } from './types'
 import '../../styles/EditDialogs.css'
 import './ContactInfoEditDialog.css'
@@ -51,12 +53,6 @@ type ContactTypeSelectOption = {
 
 type ContactTypeSelectKind = 'phone' | 'email'
 
-type ContactTypeSelectElement = HTMLElement & {
-  options?: ContactTypeSelectOption[]
-  value?: string
-  label?: string
-}
-
 const PHONE_TYPE_OPTIONS: ContactTypeSelectOption[] = [
   { label: 'Mobile', value: 'Cell' },
   { label: 'Home', value: 'Home' },
@@ -72,27 +68,8 @@ function normalizeContactTypeValue(value: string, options: ContactTypeSelectOpti
   return options.some((option) => option.value === value) ? value : options[0]?.value || ''
 }
 
-function readContactTypeChange(event: Event): string {
-  const customEvent = event as CustomEvent<{ value?: string }>
-  if (typeof customEvent.detail?.value === 'string') {
-    return customEvent.detail.value
-  }
-
-  const target = event.target as HTMLSelectElement | HTMLInputElement | null
-  return typeof target?.value === 'string' ? target.value : ''
-}
-
 function getContactTypeOptions(kind: ContactTypeSelectKind): ContactTypeSelectOption[] {
   return kind === 'phone' ? PHONE_TYPE_OPTIONS : EMAIL_TYPE_OPTIONS
-}
-
-function getContactTypeValue(
-  kind: ContactTypeSelectKind,
-  formState: ContactInfoFormState,
-  rowIndex: number
-): string {
-  const row = kind === 'phone' ? formState.phones[rowIndex] : formState.emails[rowIndex]
-  return normalizeContactTypeValue(row?.type || '', getContactTypeOptions(kind))
 }
 
 function withDefaultContactType(
@@ -103,19 +80,6 @@ function withDefaultContactType(
     ...row,
     type: normalizeContactTypeValue(row.type || '', getContactTypeOptions(kind))
   }
-}
-
-function initializeContactTypeSelects(form: HTMLFormElement, formState: ContactInfoFormState): void {
-  const selectElements = form.querySelectorAll('solid-ui-select[data-contact-type-kind]') as NodeListOf<ContactTypeSelectElement>
-
-  selectElements.forEach((selectElement) => {
-    const kind = selectElement.dataset.contactTypeKind as ContactTypeSelectKind | undefined
-    const rowIndex = Number(selectElement.dataset.rowIndex)
-    if (!kind || Number.isNaN(rowIndex)) return
-
-    selectElement.options = getContactTypeOptions(kind)
-    selectElement.value = getContactTypeValue(kind, formState, rowIndex)
-  })
 }
 
 function isContactPointRow(row: ContactPointRow | ContactAddressRow): row is ContactPointRow {
@@ -226,7 +190,9 @@ function renderContactPhoneInputRow({
   }
 
   const handleTypeInput = (e: Event) => {
-    const nextType = readContactTypeChange(e)
+    const event = e as ComboboxChangeEvent
+    if (!event.detail.option) return
+    const nextType = String(event.detail.option.value)
     if (phones[index]) {
       applyRowSelectChange(phones[index], 'type', nextType)
     }
@@ -258,15 +224,15 @@ function renderContactPhoneInputRow({
         </label>
       </div>
       <label aria-label=${typeLabel} class="label profile-edit-dialog__field-type profile-edit-dialog__phone-type-row">
-        <solid-ui-select
+        <solid-ui-combobox
+          select-only
           class="profile-edit-dialog__type-select"
-          data-contact-type-kind="phone"
-          data-row-index=${String(index)}
           aria-label=${typeLabel}
-          .options=${PHONE_TYPE_OPTIONS}
           .value=${normalizeContactTypeValue(phoneRow?.type || '', PHONE_TYPE_OPTIONS)}
           @change=${handleTypeInput}
-        ></solid-ui-select>
+        >
+          ${PHONE_TYPE_OPTIONS.map((option) => html`<solid-ui-combobox-option value=${option.value}>${option.label}</solid-ui-combobox-option>`)}
+        </solid-ui-combobox>
       </label>
       <div class="profile-edit-dialog__actions">
         <solid-ui-button
@@ -347,7 +313,9 @@ function renderContactEmailInputRow({
   }
 
   const handleTypeInput = (e: Event) => {
-    const nextType = readContactTypeChange(e)
+    const event = e as ComboboxChangeEvent
+    if (!event.detail.option) return
+    const nextType = String(event.detail.option.value)
     if (emails[index]) {
       applyRowSelectChange(emails[index], 'type', nextType)
     }
@@ -377,15 +345,15 @@ function renderContactEmailInputRow({
         />
       </label>
       <label aria-label=${typeLabel} class="label profile-edit-dialog__field-type emailTypeRow">
-        <solid-ui-select
+        <solid-ui-combobox
+          select-only
           class="profile-edit-dialog__type-select"
-          data-contact-type-kind="email"
-          data-row-index=${String(index)}
           aria-label=${typeLabel}
-          .options=${EMAIL_TYPE_OPTIONS}
           .value=${normalizeContactTypeValue(emailRow?.type || '', EMAIL_TYPE_OPTIONS)}
           @change=${handleTypeInput}
-        ></solid-ui-select>
+        >
+          ${EMAIL_TYPE_OPTIONS.map((option) => html`<solid-ui-combobox-option value=${option.value}>${option.label}</solid-ui-combobox-option>`)}
+        </solid-ui-combobox>
       </label>
       <div class="profile-edit-dialog__actions">
         <solid-ui-button
@@ -689,8 +657,6 @@ function renderContactInfoEditTemplate(
       ? html`<p class="profile-edit-dialog__login-message">${ownerLoginRequiredDialogMessageText}</p>`
       : null}
   `, form)
-
-  initializeContactTypeSelects(form, formState)
 
   if (options.focusSelector) {
     focusContactInfoField(form, options.focusSelector)

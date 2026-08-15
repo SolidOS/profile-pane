@@ -194,7 +194,6 @@ export const QRCodeCard = (
       data-value="${vCard}"
       data-testid="qrcode-card"
       aria-labelledby="qr-code-caption"
-      role="img"
       aria-describedby="qr-code-description"
     >
       <div class="qrcode-card__frame">
