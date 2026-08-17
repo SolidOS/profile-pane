@@ -1,7 +1,9 @@
 import { openInputDialog } from '../../ui/dialog'
 import { html, render, TemplateResult } from 'lit-html'
 import 'solid-ui/components/button'
-import 'solid-ui/components/select'
+import 'solid-ui/components/combobox'
+import 'solid-ui/components/combobox-option'
+import { type ComboboxChangeEvent } from 'solid-ui/components/combobox'
 import 'solid-ui/components/photo-capture'
 import type { PhotoCapture } from 'solid-ui/components/photo-capture'
 import { ProfileDetails, HeadingMutationPlan, ProfileBasicRow } from './types'
@@ -64,18 +66,6 @@ type HeadingPronounsOption = {
 
 type HeadingContactTypeKind = 'phone' | 'email'
 
-type HeadingContactTypeSelectElement = HTMLElement & {
-  options?: HeadingContactTypeOption[]
-  value?: string
-  label?: string
-}
-
-type HeadingPronounsSelectElement = HTMLElement & {
-  options?: HeadingPronounsOption[]
-  value?: string
-  label?: string
-}
-
 const HEADING_PHONE_TYPE_OPTIONS: HeadingContactTypeOption[] = [
   { label: 'Mobile', value: 'Mobile' },
   { label: 'Home', value: 'Home' },
@@ -111,26 +101,8 @@ function normalizeHeadingContactTypeValue(value: string, options: HeadingContact
   return options.some((option) => option.value === value) ? value : options[0]?.value || ''
 }
 
-function readHeadingContactTypeChange(event: Event): string {
-  const customEvent = event as CustomEvent<{ value?: string }>
-  if (typeof customEvent.detail?.value === 'string') {
-    return customEvent.detail.value
-  }
-
-  const target = event.target as HTMLSelectElement | HTMLInputElement | null
-  return typeof target?.value === 'string' ? target.value : ''
-}
-
 function getHeadingContactTypeOptions(kind: HeadingContactTypeKind): HeadingContactTypeOption[] {
   return kind === 'phone' ? HEADING_PHONE_TYPE_OPTIONS : HEADING_EMAIL_TYPE_OPTIONS
-}
-
-function getHeadingContactTypeValue(
-  kind: HeadingContactTypeKind,
-  formState: HeadingFormState
-): string {
-  const row = kind === 'phone' ? formState.phone : formState.email
-  return normalizeHeadingContactTypeValue(row?.type || '', getHeadingContactTypeOptions(kind))
 }
 
 function withDefaultHeadingContactType(
@@ -142,29 +114,6 @@ function withDefaultHeadingContactType(
     type: normalizeHeadingContactTypeValue(row.type || '', getHeadingContactTypeOptions(kind))
   }
 }
-
-function initializeHeadingContactTypeSelects(form: HTMLFormElement, formState: HeadingFormState): void {
-  const selectElements = form.querySelectorAll('solid-ui-select[data-heading-contact-type-kind]') as NodeListOf<HeadingContactTypeSelectElement>
-
-  selectElements.forEach((selectElement) => {
-    const kind = selectElement.dataset.headingContactTypeKind as HeadingContactTypeKind | undefined
-    if (!kind) return
-
-    selectElement.options = getHeadingContactTypeOptions(kind)
-    selectElement.value = getHeadingContactTypeValue(kind, formState)
-    selectElement.label = ''
-  })
-}
-
-function initializeHeadingPronounsSelect(form: HTMLFormElement, formState: HeadingFormState): void {
-  const selectElement = form.querySelector('solid-ui-select[data-heading-basic-field="pronouns"]') as HeadingPronounsSelectElement | null
-  if (!selectElement) return
-
-  selectElement.options = HEADING_PRONOUN_OPTIONS
-  selectElement.value = normalizePronounsValue(formState.basicInfo?.pronouns || '')
-  selectElement.label = ''
-}
-
 
 function rowHasContent(row: Row): boolean {
   if (isContactPointRow(row)) {
@@ -387,7 +336,9 @@ function renderContactPhoneInput({
   }
 
   const handleTypeInput = (e: Event) => {
-    const nextType = readHeadingContactTypeChange(e)
+    const event = e as ComboboxChangeEvent
+    if (!event.detail.option) return
+    const nextType = String(event.detail.option.value)
     if (phone) {
       applyRowSelectChange(phone, 'type', nextType)
     }
@@ -414,15 +365,16 @@ function renderContactPhoneInput({
         </label>
       </div>
       <label aria-label=${typeLabel} class="label profile-edit-dialog__field-type profile-edit-dialog__field-type--contact-point">
-        <solid-ui-select
+        <solid-ui-combobox
+          select-only
           class="profile-edit-dialog__type-select"
           id=${`phone-type-select-${inputName}`}
-          data-heading-contact-type-kind="phone"
           aria-label=${typeLabel}
-          .options=${HEADING_PHONE_TYPE_OPTIONS}
           .value=${normalizeHeadingContactTypeValue(phone?.type || '', HEADING_PHONE_TYPE_OPTIONS)}
           @change=${handleTypeInput}
-        ></solid-ui-select>
+        >
+          ${HEADING_PHONE_TYPE_OPTIONS.map((option) => html`<solid-ui-combobox-option value=${option.value}>${option.label}</solid-ui-combobox-option>`)}
+        </solid-ui-combobox>
       </label>
     </div>
   `
@@ -444,7 +396,9 @@ function renderContactEmailInputRow({
   }
 
   const handleTypeInput = (e: Event) => {
-    const nextType = readHeadingContactTypeChange(e)
+    const event = e as ComboboxChangeEvent
+    if (!event.detail.option) return
+    const nextType = String(event.detail.option.value)
     if (email) {
       applyRowSelectChange(email, 'type', nextType)
     }
@@ -469,15 +423,16 @@ function renderContactEmailInputRow({
         />
       </label>
       <label aria-label=${typeLabel} class="label profile-edit-dialog__field-type profile-edit-dialog__field-type--contact-point">
-        <solid-ui-select
+        <solid-ui-combobox
+          select-only
           class="profile-edit-dialog__type-select"
           id=${`email-type-select-${inputName}`}
-          data-heading-contact-type-kind="email"
           aria-label=${typeLabel}
-          .options=${HEADING_EMAIL_TYPE_OPTIONS}
           .value=${normalizeHeadingContactTypeValue(email?.type || '', HEADING_EMAIL_TYPE_OPTIONS)}
           @change=${handleTypeInput}
-        ></solid-ui-select>
+        >
+          ${HEADING_EMAIL_TYPE_OPTIONS.map((option) => html`<solid-ui-combobox-option value=${option.value}>${option.label}</solid-ui-combobox-option>`)}
+        </solid-ui-combobox>
       </label>
     </div>
   `
@@ -631,7 +586,9 @@ function renderHeadingInfoInput(
     }
   }
   const handlePronounsInput = (e: Event) => {
-    const nextValue = normalizePronounsValue(readHeadingContactTypeChange(e))
+    const event = e as ComboboxChangeEvent
+    if (!event.detail.option) return
+    const nextValue = normalizePronounsValue(String(event.detail.option.value))
     if (basicInfo) {
       applyRowSelectChange(basicInfo, 'pronouns', nextValue)
     }
@@ -784,25 +741,31 @@ function renderHeadingInfoInput(
         </label>
       </div>
       <div class="profile-edit-dialog__row profile-edit-dialog__row--equal profile-edit-dialog__row--heading-dob">
-        <label aria-label=${pronounsLabel} class="label profile-edit-dialog__field-type profile-edit-dialog__field--stack">
-          ${pronounsLabel}
-          <solid-ui-select
+        <div class="profile-edit-dialog__field-type profile-edit-dialog__field--stack">
+          <label aria-label=${pronounsLabel} class="label">
+            ${pronounsLabel}
+          </label>
+          <solid-ui-combobox
+            select-only
             class="profile-edit-dialog__type-select"
             name="pronouns"
             data-heading-basic-field="pronouns"
             aria-label=${pronounsLabel}
-            .options=${HEADING_PRONOUN_OPTIONS}
             .value=${normalizePronounsValue(basicInfo?.pronouns || '')}
             @change=${handlePronounsInput}
-          ></solid-ui-select>
-        </label>
-        <label aria-label=${dateOfBirthLabel} class="label profile-edit-dialog__field profile-edit-dialog__field--dob">
-          ${dateOfBirthLabel}
+          >
+            ${HEADING_PRONOUN_OPTIONS.map((option) => html`<solid-ui-combobox-option value=${option.value}>${option.label}</solid-ui-combobox-option>`)}
+          </solid-ui-combobox>
+        </div>
+        <div class="profile-edit-dialog__field profile-edit-dialog__field--stack">
+          <label aria-label=${dateOfBirthLabel} class="label">
+            ${dateOfBirthLabel}
+          </label>
           <input
             class="input profile-edit-dialog__input--dob"
             type="date"
-            name="profile-date-of-birth"
-            .value=${toStorageDateISO(basicInfo?.dateOfBirth)}
+            name="dateOfBirth"
+            .value=${toStorageDateISO(basicInfo?.dateOfBirth || '')}
             data-contact-field="dateOfBirth"
             data-entry-node=${basicInfo?.entryNode || ''}
             data-row-status=${basicInfo?.status || 'n/a'}
@@ -812,7 +775,7 @@ function renderHeadingInfoInput(
             data-bwignore="true"
             @change=${handleDateOfBirthInput}
           />
-        </label>
+        </div>
       </div>
       <div class="profile-edit-dialog__row profile-edit-dialog__row--equal">
         <div class="profile-edit-dialog__field profile-edit-dialog__field--full">
@@ -840,9 +803,6 @@ function renderHeadingEditTemplate(
       ? html`<p class="profile-edit-dialog__login-message">${ownerLoginRequiredDialogMessageText}</p>`
       : null}
   `, form)
-
-  initializeHeadingContactTypeSelects(form, formState)
-  initializeHeadingPronounsSelect(form, formState)
 }
 
 function createHeadingEditForm(
