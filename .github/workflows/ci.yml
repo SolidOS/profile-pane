@@ -74,7 +74,7 @@ jobs:
           name: build
       - uses: actions/setup-node@v7
         with:
-          node-version: 20
+          node-version: 22 # for npm@latest
           registry-url: 'https://registry.npmjs.org'
       - name: Update npm to latest (required for OIDC)
         run: npm install -g npm@latest
