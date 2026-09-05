@@ -79,14 +79,25 @@ function focusSocialField(form: HTMLFormElement, selector: string): void {
   if (shouldAvoidFocus) return
 
   if (nextField.tagName === 'SOLID-UI-COMBOBOX') {
-    const triggerButton = nextField.shadowRoot?.querySelector('button') as HTMLButtonElement | null
-    triggerButton?.focus()
+    const comboboxInput = nextField.shadowRoot?.querySelector('input') as HTMLInputElement | null
+    comboboxInput?.focus()
     return
   }
 
   if (typeof nextField.focus === 'function') {
     nextField.focus()
   }
+}
+
+function getInitialSocialFocusSelector(rows: SocialRow[]): string {
+  const firstRow = rows[0]
+  const firstRowHasValue = Boolean(firstRow && [firstRow.name, firstRow.icon, firstRow.homepage].some(hasNonEmptyText))
+
+  if (firstRowHasValue) {
+    return '[name="social-homepage-0"]'
+  }
+
+  return '[name="social-account-type-0"]'
 }
 
 function sanitizeSocialFieldValue(value: string): string {
@@ -505,7 +516,7 @@ export async function createSocialEditDialog(
     title: editSocialDialogTitleText,
     dom,
     form,
-    onOpen: () => focusSocialField(form, '[name="social-account-type-0"]'),
+    onOpen: () => focusSocialField(form, getInitialSocialFocusSelector(formState.socialAccounts)),
     shouldCloseWithoutSave: () => {
       const ops = summarizeRowOps(formState.socialAccounts, rowHasContent)
       const orderChanged = hasOrderChanged(formState.socialAccounts, formState.initialExistingOrder)
