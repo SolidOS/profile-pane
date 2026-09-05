@@ -294,7 +294,6 @@ function renderSocialInputRow({
           required
           @input=${handleTextInput('homepage')}
         />
-          <small class="profile-edit-dialog__input-help-text">Enter your profile link, handle, or username.</small>
       </label>
       <div class="profile-edit-dialog__actions profile-edit-dialog__actions--edge">
         <solid-ui-button
