@@ -353,6 +353,21 @@ export async function runUpdateTransport(
     await bestEffortLoadDocIfStoreEmpty(store, doc)
   }
 
+  if (doc) {
+    const fetcherAny = getStoreFetcher(store) as any
+    const editableState = typeof (updater as any)?.editable === 'function'
+      ? (updater as any).editable(doc.value, store)
+      : undefined
+    if (editableState === undefined && typeof fetcherAny?.refresh === 'function') {
+      try {
+        await fetcherAny.refresh(doc)
+      } catch {
+        // If the refresh fails we keep going; the caller will still get the
+        // original update error if rdflib cannot determine a protocol.
+      }
+    }
+  }
+
   const {
     safeDeletions,
     safeInsertions
