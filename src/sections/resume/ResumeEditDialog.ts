@@ -485,7 +485,7 @@ function renderResumeInputRow({
   onChange
 }: ResumeRowProps) {
   const resumeRow = resumeData[index]
-  const label = `Resume ${displayIndex + 1}`
+  const label = `Experience ${displayIndex + 1}`
   const experienceHeadingId = `resume-experience-heading-${index}`
 
   const titleName = `resume-title-${index}`
