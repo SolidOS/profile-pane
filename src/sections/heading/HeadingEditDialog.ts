@@ -321,7 +321,7 @@ function summarizeHeadingContactOps(
 function renderContactPhoneInput({
   phone
 }: ContactPhoneInputRowProps) {
-  const label = 'Phone Number 1'
+  const label = 'Mobile Number'
   const typeLabel = 'Phone Type 1'
   const inputName = 'phone-value'
   const splitValue = splitPhoneValue(phone?.value || '')
@@ -348,6 +348,7 @@ function renderContactPhoneInput({
     <div class="profile-edit-dialog__row profile-edit-dialog__row--equal profile-edit-dialog__row--contact-point">
       <div class="profile-edit-dialog__field">
         <label aria-label=${label} class="label">
+          ${label}
           <input
             class="input"
             type="tel"
@@ -383,7 +384,7 @@ function renderContactPhoneInput({
 function renderContactEmailInputRow({
   email
 }: ContactEmailInputRowProps) {
-  const label = 'Email Address'
+  const label = 'Email'
   const typeLabel = 'Email Type'
   const inputName = 'email-value'
 
@@ -407,6 +408,7 @@ function renderContactEmailInputRow({
   return html`
     <div class="profile-edit-dialog__row profile-edit-dialog__row--equal profile-edit-dialog__row--contact-point">
       <label aria-label=${label} class="label profile-edit-dialog__field">
+        ${label}
         <input
           class="input"
           type="email"

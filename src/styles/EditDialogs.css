@@ -523,6 +523,10 @@ solid-ui-button.profile-edit-dialog__drag-handle:active {
   min-width: 0;
 }
 
+.profile-edit-dialog--heading .profile-edit-dialog__field-type--contact-point {
+  padding-top: calc(var(--solid-ui-font-size-sm, 0.875rem) * 1.5);
+}
+
 .profile-edit-dialog--heading .profile-edit-dialog__row--contact-point > .profile-edit-dialog__field > .label {
   display: block;
   width: 100%;
