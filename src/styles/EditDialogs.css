@@ -52,6 +52,10 @@
   max-width: var(--profile-edit-dialog-row-max-width);
 }
 
+.profile-edit-dialog__row--heading-photo {
+  gap: 10px;
+}
+
 .profile-edit-dialog__row--full {
   max-width: 100%;
   width: 100%;
