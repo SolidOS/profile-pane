@@ -57,7 +57,7 @@
   gap: 12px;
   padding: 12px;
   border-radius: 5px;
-  transition: background-color var(--animation-duration, 0.2s) ease;
+  transition: transform var(--animation-duration, 0.2s) ease;
   position: relative;
   flex: 1;
   min-width: 0;
@@ -65,8 +65,8 @@
 
 .social-card__link:hover,
 .social-card__link:focus {
-  text-decoration: underline;
-  background-color: var(--color-surface-accent-subtle, var(--lavender-300, #e6dcff));
+  text-decoration: none;
+  transform: translateY(-1px);
 }
 
 .social-card__link[href^="http"]:after {
