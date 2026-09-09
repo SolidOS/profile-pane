@@ -40,6 +40,10 @@
   min-width: 0;
 }
 
+.profile-section-collapsible__action-label {
+  font-size: var(--solid-ui-font-size-sm, .875rem);
+}
+
 .profile-section-collapsible__toggle-button {
   display: none !important;
   width: var(--solid-ui-clickable-area, 42px);
