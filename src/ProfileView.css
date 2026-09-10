@@ -202,11 +202,17 @@ solid-ui-button.profile__btn-contacts {
   background: var(--solid-ui-color-white, #FFFFFF);
   border: 1px solid var(--solid-ui-color-slate-200, #E2E8F0);
   overflow-x: clip;
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
 }
 
 .profile-grid .profile__section {
   padding: 25px;
   border-radius: 5px;
+}
+
+.profile-grid .profile__section:hover,
+.profile-grid .profile__section--empty:hover {
+  box-shadow: 0 8px 10px rgba(124, 77, 255, 0.1);
 }
 
 .profile-grid .profile__section.profile-section-collapsible {
