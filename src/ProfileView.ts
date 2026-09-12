@@ -1,7 +1,6 @@
 import { html, TemplateResult } from 'lit-html'
 import { DataBrowserContext } from 'pane-registry'
 import { NamedNode, LiveStore } from 'rdflib'
-import { authn } from 'solid-logic'
 import './ProfileView.css'
 import './styles/CollapsibleSection.css'
 import { Layout, ViewerMode } from './types'
@@ -18,17 +17,7 @@ import { renderHeadingSection } from './sections/heading/HeadingSection'
 import { renderBioSection } from './sections/bio/BioSection'
 import { renderSocialSection } from './sections/social/SocialSection'
 import { renderQRCodeSection } from './sections/qrcode/QRCodeSection'
-
-
-function getViewerMode(subject: NamedNode): ViewerMode {
-  let mode: ViewerMode = 'anonymous'
-  const currentUser = authn.currentUser()
-  const sameTerm = currentUser ? currentUser.sameTerm(subject) : false
-
-  if (currentUser && sameTerm) mode = 'owner'
-  if (currentUser && !sameTerm) mode = 'authenticated'
-  return mode
-}
+import { getViewerMode } from './viewerMode'
 
 function renderSidebar(
   store: LiveStore,
@@ -64,7 +53,7 @@ export async function ProfileView (
   onSaved?: () => Promise<void> | void
 ): Promise <TemplateResult> {
   const store = context.session.store as LiveStore
-  const viewerMode = getViewerMode(subject)
+  const viewerMode = await getViewerMode(subject)
   const theme = context.environment?.theme ?? 'light'
   const inputMode = context.environment?.inputMode ?? 'pointer'
 
