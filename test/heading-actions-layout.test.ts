@@ -13,9 +13,12 @@ vi.mock('solid-logic', async (importOriginal) => {
     ...actual,
     solidLogicSingleton: {
       ...actual.solidLogicSingleton,
-      resource: {
-        ...actual.solidLogicSingleton.resource,
-        checkAndRefreshEditable: vi.fn(async () => true)
+      store: {
+        ...actual.solidLogicSingleton.store,
+        updater: {
+          ...actual.solidLogicSingleton.store.updater,
+          editable: vi.fn(() => true)
+        }
       }
     }
   }
@@ -54,7 +57,8 @@ describe('heading action layout', () => {
     }
     baseStore.updater = {
       ...baseStore.updater,
-      update: vi.fn(async () => undefined)
+      update: vi.fn(async () => undefined),
+      editable: vi.fn(() => true)
     }
     baseStore.whether = vi.fn().mockReturnValue(0)
   })
