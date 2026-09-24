@@ -15,7 +15,8 @@ export async function getViewerMode(subject: NamedNode): Promise<ViewerMode> {
   }
 
   try {
-    editable = await solidLogicSingleton.resource.checkAndRefreshEditable(subject)
+    const profileDoc = subject.doc()
+    editable = Boolean(solidLogicSingleton.store.updater?.editable?.(profileDoc))
   } catch {
     log('Resource could not be refreshed and is not editable.')
     return 'anonymous'

@@ -2,9 +2,9 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { sym } from 'rdflib'
 import { getViewerMode } from '../src/viewerMode'
 
-const { currentUser, checkAndRefreshEditable } = vi.hoisted(() => ({
+const { currentUser, editable } = vi.hoisted(() => ({
   currentUser: vi.fn(),
-  checkAndRefreshEditable: vi.fn()
+  editable: vi.fn()
 }))
 
 vi.mock('solid-logic', async (importOriginal) => {
@@ -18,9 +18,12 @@ vi.mock('solid-logic', async (importOriginal) => {
     },
     solidLogicSingleton: {
       ...actual.solidLogicSingleton,
-      resource: {
-        ...actual.solidLogicSingleton.resource,
-        checkAndRefreshEditable
+      store: {
+        ...actual.solidLogicSingleton.store,
+        updater: {
+          ...actual.solidLogicSingleton.store.updater,
+          editable
+        }
       }
     }
   }
@@ -29,22 +32,22 @@ vi.mock('solid-logic', async (importOriginal) => {
 describe('Profile view viewer mode', () => {
   beforeEach(() => {
     currentUser.mockReset()
-    checkAndRefreshEditable.mockReset()
+    editable.mockReset()
   })
 
   it('returns authenticated for a signed-in non-owner', async () => {
     currentUser.mockReturnValue(sym('https://example.com/profile/card#other'))
 
     await expect(getViewerMode(sym('https://example.com/profile/card#me'))).resolves.toBe('authenticated')
-    expect(checkAndRefreshEditable).not.toHaveBeenCalled()
+    expect(editable).not.toHaveBeenCalled()
   })
 
   it('refreshes an owner before returning owner', async () => {
     const subject = sym('https://example.com/profile/card#me')
     currentUser.mockReturnValue(subject)
-    checkAndRefreshEditable.mockResolvedValue(true)
+    editable.mockReturnValue(true)
 
     await expect(getViewerMode(subject)).resolves.toBe('owner')
-    expect(checkAndRefreshEditable).toHaveBeenCalledWith(subject)
+    expect(editable).toHaveBeenCalledWith(subject.doc())
   })
 })
