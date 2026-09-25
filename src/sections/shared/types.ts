@@ -19,10 +19,17 @@ export type UpdateCallback = (_uri: string, ok: boolean, message?: string) => vo
 
 export type DavUpdateCallback = (_uri: string, ok: boolean, body?: string) => void
 
+export type DocumentLoadOptions = {
+  force?: boolean
+  clearPreviousData?: boolean
+}
+
 export type RdfUpdater = PrefixCapable & {
   update?: (deletions: RdfStatement[], insertions: RdfStatement[], callback: UpdateCallback) => void
   updateDav?: (doc: NamedNode, deletions: RdfStatement[], insertions: RdfStatement[], callback: DavUpdateCallback) => void
   serialize?: (docUri: string, statements: RdfStatement[], contentType: string) => string
+  checkEditable?: (docUri: string, store: LiveStore) => Promise<boolean | undefined>
+  flagAuthorizationMetadata?: () => void
   store?: PrefixCapable
 }
 
@@ -33,7 +40,7 @@ export type WebOperationResponse = {
 }
 
 export type RdfFetcher = {
-  load?: (doc: NamedNode) => Promise<unknown>
+  load?: (doc: NamedNode, options?: DocumentLoadOptions) => Promise<unknown>
   webOperation?: (...args: unknown[]) => Promise<WebOperationResponse>
 }
 
