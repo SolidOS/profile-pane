@@ -1,24 +1,13 @@
-import { describe, expect, it, jest } from "@jest/globals"
+import { describe, expect, it, vi } from 'vitest'
 import { render } from 'lit-html'
 import { sym } from 'rdflib'
 import { renderHeadingSection } from '../../src/sections/heading/HeadingSection'
-import { addMeToYourContactsButtonText, addMeToYourFriendsButtonText } from '../../src/texts/buttonTexts'
+import { addMeToYourFriendsButtonText } from '../../src/texts/buttonTexts'
 import { runAxe } from '../helpers/runAxe'
 import { context, fakeLogInAs, subject } from '../setup'
 
-jest.mock('../../src/specialButtons/addContact/addMeToYourContacts', () => ({
-  addMeToYourContactsDiv: jest.fn(async () => {
-    const { html } = require('lit-html')
-    return html`
-      <section class="profile-contacts-button__section">
-        <solid-ui-button type="button">Add as Contact</solid-ui-button>
-      </section>
-    `
-  })
-}))
-
-jest.mock('../../src/specialButtons/addMeToYourFriends', () => ({
-  addMeToYourFriendsDiv: jest.fn(() => {
+vi.mock('../../src/specialButtons/addMeToYourFriends', () => ({
+  addMeToYourFriendsDiv: vi.fn(() => {
     const { html } = require('lit-html')
     return html`
       <section class="profile-friends-button__section">
@@ -57,13 +46,12 @@ describe('Intro section', () => {
       }
     }
 
-    render(await renderHeadingSection(context, subject, profile as any, 'owner'), container)
+    render(await renderHeadingSection(context, subject, profile as any, 'owner', 'desktop'), container)
 
     expect(container.querySelector('.profile__section')).toBeTruthy()
     expect(container.textContent).toContain('Jane Doe')
     expect(container.querySelector('solid-ui-button[aria-label="Add or edit heading information"], button[aria-label="Add or edit heading information"]')).toBeTruthy()
     expect(container.querySelector('.profile__heading-actions')).toBeNull()
-    expect(container.textContent).not.toContain(addMeToYourContactsButtonText)
     expect(container.textContent).not.toContain(addMeToYourFriendsButtonText)
     expect(container.querySelector('.profile__hero-alt')?.getAttribute('tabindex')).toBeNull()
 
@@ -74,12 +62,12 @@ describe('Intro section', () => {
     const container = document.createElement('div')
     document.body.appendChild(container)
 
-    const fetchSpy = jest.spyOn((context.session.store.fetcher as any), '_fetch').mockResolvedValue({
+    const fetchSpy = vi.spyOn((context.session.store.fetcher as any), '_fetch').mockResolvedValue({
       ok: true,
       blob: async () => new Blob(['image-bytes'], { type: 'image/png' })
     } as Response)
     const originalCreateObjectURL = URL.createObjectURL
-    const createObjectUrlMock = jest.fn(() => 'blob:heading-section-photo')
+    const createObjectUrlMock = vi.fn(() => 'blob:heading-section-photo')
     Object.defineProperty(URL, 'createObjectURL', {
       configurable: true,
       value: createObjectUrlMock
@@ -96,7 +84,7 @@ describe('Intro section', () => {
       orgName: 'SolidOS'
     }
 
-    render(await renderHeadingSection(context, subject, profile as any, 'owner'), container)
+    render(await renderHeadingSection(context, subject, profile as any, 'owner', 'desktop'), container)
 
     const image = container.querySelector('img.profile__hero') as HTMLImageElement | null
     expect(fetchSpy).toHaveBeenCalledWith('https://example.com/private/avatar.png')
@@ -115,6 +103,12 @@ describe('Intro section', () => {
     const container = document.createElement('div')
     document.body.appendChild(container)
 
+    const fetchSpy = vi.spyOn((context.session.store.fetcher as any), '_fetch').mockResolvedValue({
+      ok: false,
+      status: 404,
+      statusText: 'Not Found'
+    } as Response)
+
     const profile = {
       entryNode: sym('https://example.com/profile#entry'),
       name: 'Jane Doe',
@@ -126,7 +120,7 @@ describe('Intro section', () => {
       orgName: 'SolidOS'
     }
 
-    render(await renderHeadingSection(context, subject, profile as any, 'owner'), container)
+    render(await renderHeadingSection(context, subject, profile as any, 'owner', 'desktop'), container)
 
     const image = container.querySelector('img.profile__hero') as HTMLImageElement | null
     const fallback = container.querySelector('.profile__hero-alt') as HTMLElement | null
@@ -141,6 +135,7 @@ describe('Intro section', () => {
     expect(frame?.classList.contains('profile__image-frame--fallback')).toBe(true)
     expect(fallback?.getAttribute('aria-label')).toBe('Jane Doe')
 
+    fetchSpy.mockRestore()
     container.remove()
   })
 
@@ -174,11 +169,11 @@ describe('Intro section', () => {
       }
     }
 
-    render(await renderHeadingSection(context, subject, profile as any, 'authenticated'), container)
+    render(await renderHeadingSection(context, subject, profile as any, 'authenticated', 'desktop'), container)
 
     expect(container.querySelector('.profile__heading-actions')).toBeTruthy()
-    expect(container.textContent).toContain(addMeToYourContactsButtonText)
     expect(container.textContent).toContain(addMeToYourFriendsButtonText)
+    expect(container.querySelector('.profile-contacts-button__section')).toBeNull()
     expect(container.querySelector('solid-ui-button[aria-label="Add or edit heading information"], button[aria-label="Add or edit heading information"]')).toBeNull()
     expect(container.querySelector('.profile__heading-edit-action')).toBeNull()
 
@@ -213,7 +208,7 @@ describe('Intro section', () => {
       }
     }
 
-    render(await renderHeadingSection(context, subject, profile as any, 'owner'), container)
+    render(await renderHeadingSection(context, subject, profile as any, 'owner', 'desktop'), container)
 
     const results = await runAxe(container)
     expect(results.violations.length).toBe(0)
@@ -249,11 +244,10 @@ describe('Intro section', () => {
       }
     }
 
-    render(await renderHeadingSection(context, subject, profile as any, 'anonymous'), container)
+    render(await renderHeadingSection(context, subject, profile as any, 'anonymous', 'desktop'), container)
 
     expect(container.querySelector('solid-ui-button[aria-label="Add or edit heading information"], button[aria-label="Add or edit heading information"]')).toBeNull()
     expect(container.querySelector('.profile__heading-actions')).toBeNull()
-    expect(container.textContent).not.toContain(addMeToYourContactsButtonText)
     expect(container.textContent).not.toContain(addMeToYourFriendsButtonText)
 
     const results = await runAxe(container)

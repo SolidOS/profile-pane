@@ -3,6 +3,7 @@
   "include": ["test/**/*", "declarations.d.ts"],
   "compilerOptions": {
     "rootDir": ".",
-    "noEmit": true
+    "noEmit": true,
+    "types": ["node"]
   }
 }

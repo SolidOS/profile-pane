@@ -1,3 +1,4 @@
+import { describe, expect, it, beforeAll } from 'vitest'
 import { checkIfAnyUserLoggedIn, clearPreviousMessage, complain, mention } from '../src/buttonsHelper'
 import { context, subject } from './setup'
 

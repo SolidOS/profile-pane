@@ -1,8 +1,8 @@
-import { afterEach, beforeEach, describe, expect, it, jest } from '@jest/globals'
-import { fireEvent, waitFor } from '@testing-library/dom'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { authn } from 'solid-logic'
 import { sym } from 'rdflib'
 import { context, subject } from './setup'
+import { flushAsync } from './helpers/dom'
 import { addMeToYourFriendsDiv, checkIfThingExists, createAddMeToYourFriendsButton, saveNewThing } from '../src/specialButtons/addMeToYourFriends'
 import {
   addMeToYourFriendsButtonText,
@@ -15,18 +15,18 @@ describe('add-me-to-your-friends functions', () => {
     const me = sym('https://example.com/profile/card#me')
 
     beforeEach(() => {
-      jest.restoreAllMocks()
+      vi.restoreAllMocks()
       baseStore.fetcher = {
-        load: jest.fn(async () => undefined)
+        load: vi.fn(async () => undefined)
       }
       baseStore.updater = {
-        update: jest.fn(async () => undefined)
+        update: vi.fn(async () => undefined)
       }
-      baseStore.whether = jest.fn().mockReturnValue(0)
+      baseStore.whether = vi.fn().mockReturnValue(0)
     })
 
     afterEach(() => {
-      jest.restoreAllMocks()
+      vi.restoreAllMocks()
     })
 
     describe('addMeToYourFriendsDiv', () => {
@@ -49,7 +49,7 @@ describe('add-me-to-your-friends functions', () => {
       })
 
       it('disables the action and shows the logged-out label for anonymous users', () => {
-        jest.spyOn(authn, 'currentUser').mockReturnValue(null as any)
+        vi.spyOn(authn, 'currentUser').mockReturnValue(null as any)
 
         const button = createAddMeToYourFriendsButton(subject, context)
 
@@ -58,8 +58,8 @@ describe('add-me-to-your-friends functions', () => {
       })
 
       it('refreshes after a successful add and updates the label to already friends', async () => {
-        jest.spyOn(authn, 'currentUser').mockReturnValue(me as any)
-        const whetherMock = jest.fn()
+        vi.spyOn(authn, 'currentUser').mockReturnValue(me as any)
+        const whetherMock = vi.fn()
           .mockReturnValueOnce(0)
           .mockReturnValueOnce(0)
           .mockReturnValueOnce(1)
@@ -67,15 +67,16 @@ describe('add-me-to-your-friends functions', () => {
 
         const button = createAddMeToYourFriendsButton(subject, context)
 
-        await waitFor(() => {
-          expect(button.textContent).toBe(addMeToYourFriendsButtonText)
-        })
+        await flushAsync()
 
-        fireEvent.click(button)
+        expect(button.textContent).toBe(addMeToYourFriendsButtonText)
 
-        await waitFor(() => {
-          expect(button.textContent).toBe(friendExistsAlreadyButtonText)
-        })
+        button.dispatchEvent(new MouseEvent('click', { bubbles: true, cancelable: true }))
+
+        await flushAsync()
+        await flushAsync()
+
+        expect(button.textContent).toBe(friendExistsAlreadyButtonText)
 
         expect(baseStore.updater.update).toHaveBeenCalledTimes(1)
       })

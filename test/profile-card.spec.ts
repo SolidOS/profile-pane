@@ -1,9 +1,9 @@
-import { describe, expect, it, beforeEach } from '@jest/globals'
+import { beforeEach, describe, expect, it } from 'vitest'
 import pane from '../src/index'
 import { parse } from 'rdflib'
-import { waitFor } from '@testing-library/dom'
 import { context, doc, subject } from './setup'
 import { store } from 'solid-logic'
+import { waitForSelector } from './helpers/dom'
 
 describe('profile pane heading integration', () => {
   beforeEach(() => {
@@ -42,15 +42,17 @@ describe('profile pane heading integration', () => {
 
     parse(turtle, store, doc.uri)
     const result = pane.render(subject, context)
+    document.body.appendChild(result)
 
-    await waitFor(() => {
-      expect(result.querySelector('#profile-name')?.textContent).toBe('Jane Doe')
-      expect(result.textContent).toContain('Test Double')
-      expect(result.textContent).toContain('Hamburg')
-      expect(result.textContent).toContain('Germany')
-    })
+    await waitForSelector(result, '#profile-name')
+    expect(result.querySelector('#profile-name')?.textContent).toBe('Jane Doe')
+    expect(result.textContent).toContain('Test Double')
+    expect(result.textContent).toContain('Hamburg')
+    expect(result.textContent).toContain('Germany')
 
     const image = result.querySelector('img.profile__hero') as HTMLImageElement | null
     expect(image?.getAttribute('src')).toBe('https://janedoe.example/profile/me.jpg')
+
+    result.remove()
   })
 })

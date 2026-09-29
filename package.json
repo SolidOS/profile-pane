@@ -1,6 +1,6 @@
 {
   "name": "profile-pane",
-  "version": "3.3.0",
+  "version": "4.0.0",
   "description": "A SolidOS compatible pane to display a personal profile page",
   "sideEffects": [
     "*.css"
@@ -9,37 +9,35 @@
     "type": "git",
     "url": "git+https://github.com/SolidOS/profile-pane.git"
   },
-  "main": "lib/index.js",
-  "types": "lib/index.d.ts",
+  "main": "dist/index.cjs.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.esm.js",
+      "require": "./dist/index.cjs.js"
+    }
+  },
   "files": [
-    "/lib",
+    "/dist",
     "/icons-png",
     "README.md",
     "LICENSE"
   ],
   "scripts": {
-    "clean": "rm -rf lib",
-    "build": "npm run clean && npm run typecheck && npm run build-dist && npm run build-js",
-    "build-js": "babel src --out-dir lib --extensions '.ts' --copy-files && tsc --emitDeclarationOnly",
-    "build-dist": "webpack --progress",
-    "dev": "sh -c 'npm run watch & npm run start'",
-    "watch": "sh -c 'npm run watch:solid-ui & npm run watch-js & npm run watch-styles & npm run watch-dist & wait'",
-    "watch:workspace": "sh -c 'npm run watch-js & npm run watch-styles & npm run watch-dist & wait'",
-    "watch:solid-ui": "sh -c 'cd ../solid-ui && npm run watch'",
-    "watch-js": "babel src --out-dir lib --extensions '.ts' --copy-files --watch",
-    "watch-styles": "node scripts/watch-styles.mjs",
-    "watch-dist": "webpack --watch",
+    "clean": "rm -rf dist",
+    "build": "npm run clean && npm run typecheck && vite build",
+    "watch": "vite build --watch",
     "lint": "eslint",
     "lint-fix": "eslint --fix",
-    "test": "jest --no-coverage",
-    "test-coverage": "jest --coverage",
+    "test": "npm run typecheck-test && vitest run",
+    "test-coverage": "vitest run --coverage",
     "typecheck": "tsc --noEmit",
     "typecheck-test": "tsc --noEmit -p tsconfig.test.json",
     "prepush": "npm test && npm run lint-fix && npm run typecheck && npm run typecheck-test",
     "prepublishOnly": "npm run test && npm run build",
     "preversion": "npm run lint && npm run typecheck && npm test",
-    "postpublish": "git push origin main --follow-tags",
-    "start": "webpack serve --config webpack.dev.config.mjs --open"
+    "start": "vite"
   },
   "keywords": [
     "solid",
@@ -56,53 +54,45 @@
   "license": "MIT",
   "dependencies": {
     "@solid-data-modules/contacts-rdflib": "^0.7.1",
+    "chat-pane": "4.0.0",
     "lit-html": "^3.3.3",
-    "pane-registry": "^4.0.0",
+    "pane-registry": "5.0.1",
+    "patch-package": "^8.0.1",
     "qrcode": "^1.5.4",
-    "validate-color": "^2.2.4"
-  },
-  "peerDependencies": {
-    "rdflib": "^2.4.0",
-    "solid-logic": "^5.0.0",
-    "solid-ui": "^4.0.0"
+    "rdflib": "2.4.1",
+    "solid-logic": "6.0.0",
+    "solid-ui": "5.0.1",
+    "validate-color": "^2.2.4",
+    "vite": "^8.0.16",
+    "vitest": "^4.0.18",
+    "vitest-axe": "^0.1.0"
   },
   "overrides": {
-    "solid-ui": "$solid-ui"
+    "rdflib": "$rdflib"
   },
   "devDependencies": {
-    "@babel/cli": "^7.28.6",
-    "@babel/core": "^7.29.0",
-    "@babel/preset-env": "^7.29.5",
-    "@babel/preset-typescript": "^7.28.5",
-    "@testing-library/dom": "^10.4.1",
-    "@testing-library/jest-dom": "^6.9.1",
-    "@types/jest": "^30.0.0",
+    "@types/node": "^24.13.2",
     "@typescript-eslint/eslint-plugin": "^8.59.3",
     "@typescript-eslint/parser": "^8.59.3",
+    "@vitest/coverage-v8": "^4.0.18",
     "axe-core": "^4.11.4",
-    "babel-jest": "^30.4.1",
-    "babel-loader": "^10.1.1",
-    "babel-plugin-inline-import": "^3.0.0",
-    "chat-pane": "^3.1.0",
-    "contacts-pane": "^3.3.0",
-    "copy-webpack-plugin": "^14.0.0",
-    "css-loader": "^7.1.4",
+    "chat-pane": "^4.0.0",
     "eslint": "^9.39.4",
-    "html-webpack-plugin": "^5.6.7",
-    "jest": "^30.4.2",
-    "jest-environment-jsdom": "^30.4.1",
-    "jest-fetch-mock": "^3.0.3",
     "jsdom": "^29.1.1",
-    "node-polyfill-webpack-plugin": "^4.1.0",
-    "rdflib": "^2.4.0",
-    "solid-logic": "^5.0.0",
-    "solid-ui": "^4.0.0",
-    "style-loader": "^4.0.0",
-    "terser-webpack-plugin": "^5.6.0",
-    "ts-loader": "^9.5.7",
+    "rdflib": "^2.4.1",
+    "solid-logic": "^6.0.0",
+    "solidos-toolkit": "dev",
     "typescript": "^6.0.3",
-    "webpack": "^5.106.2",
-    "webpack-cli": "^7.0.2",
-    "webpack-dev-server": "^5.2.4"
+    "undici-types": "^7.18.2"
+  },
+  "solidosDependencies": [
+    "rdflib",
+    "solid-logic",
+    "solid-ui",
+    "pane-registry",
+    "chat-pane"
+  ],
+  "allowScripts": {
+    "fsevents@2.3.3": true
   }
 }

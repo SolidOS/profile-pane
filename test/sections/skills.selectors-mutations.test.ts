@@ -1,4 +1,4 @@
-import { describe, expect, it, jest } from "@jest/globals"
+import { describe, expect, it, vi } from 'vitest'
 import { graph, st, sym, literal } from 'rdflib'
 import { ns } from 'solid-ui'
 import { presentSkillDetails, presentSkills } from '../../src/sections/skills/selectors'
@@ -140,14 +140,14 @@ describe('Skills selectors and mutations', () => {
     const subject = sym('https://example.com/profile/card#me')
     const doc = subject.doc()
 
-    const updateDav = jest.fn((passedDoc: any, deletions: any[], insertions: any[], callback: Function) => {
+    const updateDav = vi.fn((passedDoc: any, deletions: any[], insertions: any[], callback: Function) => {
       deletions.forEach((statement) => store.remove(st(statement.subject, statement.predicate, statement.object, statement.why)))
       insertions.forEach((statement) => store.add(statement.subject, statement.predicate, statement.object, statement.why))
       callback(passedDoc.value, true)
     })
 
     store.fetcher = {
-      load: jest.fn(async () => undefined)
+      load: vi.fn(async () => undefined)
     }
 
     store.updater = {

@@ -1,4 +1,4 @@
-import { beforeAll, describe, expect, it } from '@jest/globals'
+import { beforeAll, describe, expect, it } from 'vitest'
 import { presentSocial } from '../src/sections/social/selectors'
 import { sym, parse } from 'rdflib'
 import { store } from 'solid-logic'

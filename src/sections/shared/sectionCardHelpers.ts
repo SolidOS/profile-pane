@@ -3,20 +3,6 @@ type DateLike = string | { value?: string } | null | undefined
 let descriptionResizeBound = false
 const DESCRIPTION_MAX_LINES = 2
 
-function getLineHeightPx(computed: CSSStyleDeclaration): number {
-  const parsedLineHeight = Number.parseFloat(computed.lineHeight)
-  if (Number.isFinite(parsedLineHeight)) {
-    return parsedLineHeight
-  }
-
-  const parsedFontSize = Number.parseFloat(computed.fontSize)
-  if (Number.isFinite(parsedFontSize)) {
-    return parsedFontSize * 1.5
-  }
-
-  return 24
-}
-
 function getExpandedTextHeight(textEl: HTMLElement): number {
   const previousDisplay = textEl.style.display
   const previousOverflow = textEl.style.overflow
@@ -49,6 +35,20 @@ function getExpandedTextHeight(textEl: HTMLElement): number {
   }
 
   return naturalHeight
+}
+
+function getLineHeightPx(computed: CSSStyleDeclaration): number {
+  const parsedLineHeight = Number.parseFloat(computed.lineHeight)
+  if (Number.isFinite(parsedLineHeight)) {
+    return parsedLineHeight
+  }
+
+  const parsedFontSize = Number.parseFloat(computed.fontSize)
+  if (Number.isFinite(parsedFontSize)) {
+    return parsedFontSize * 1.5
+  }
+
+  return 24
 }
 
 function isTextOverflowingClamp(textEl: HTMLElement, maxLines: number): boolean {
@@ -150,19 +150,19 @@ export function toggleDescription(event: Event) {
   const descriptionId = button.getAttribute('aria-controls')
   if (!descriptionId) return
 
-  const textEl = document.getElementById(descriptionId)
-  if (!textEl) return
+  const textElement = document.getElementById(descriptionId)
+  if (!textElement) return
 
   const expandedClass =
-    textEl.matches('.resume-card__description-text')
+    textElement.matches('.resume-card__description-text')
       ? 'resume-card__description-text--expanded'
-      : textEl.matches('.education-card__description-text')
+      : textElement.matches('.education-card__description-text')
         ? 'education-card__description-text--expanded'
-        : textEl.matches('.bio-card__description-text')
+        : textElement.matches('.bio-card__description-text')
           ? 'bio-card__description-text--expanded'
           : 'isExpanded'
 
-  const isExpanded = textEl.classList.toggle(expandedClass)
+  const isExpanded = textElement.classList.toggle(expandedClass)
   button.setAttribute('aria-expanded', isExpanded ? 'true' : 'false')
   button.textContent = isExpanded ? '...less' : '...more'
   if (!isExpanded) {

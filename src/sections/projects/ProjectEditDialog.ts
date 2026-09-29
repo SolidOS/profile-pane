@@ -1,9 +1,8 @@
 import { getSharedDialogSaveButton, openInputDialog } from '../../ui/dialog'
 import { html, render } from 'lit-html'
-import 'solid-ui/components/actions/button'
+import 'solid-ui/components/button'
 import { ProjectDetails, ProjectRow } from './types'
 import '../../styles/EditDialogs.css'
-import '../contactInfo/ContactInfoEditDialog.css'
 import { LiveStore, NamedNode } from 'rdflib'
 import { ViewerMode } from '../../types'
 import { applyRowFieldChange, summarizeRowOps } from '../shared/rowState'
@@ -116,16 +115,13 @@ function renderProjectInputRow(row: ProjectRow, onChange: () => void) {
             @input=${handleUrlInput}
           />
           <solid-ui-button
-            type="button"
-            variant="secondary"
-            size="md"
-            label="Paste"
+            variant="tertiary"
             class="profile-edit-dialog__paste-button"
             aria-label="Paste project or community URL from clipboard"
             title=${pasteEntryButtonTitleText}
             @click=${handlePaste}
           >
-            <span slot="icon" class="profile-edit-dialog__paste-icon" aria-hidden="true">${pasteIcon}</span>
+            <span slot="left-icon" class="profile-edit-dialog__paste-icon" aria-hidden="true">${pasteIcon}</span>
             Paste
           </solid-ui-button>
         </div>

@@ -1,4 +1,4 @@
-import { describe, expect, it } from "@jest/globals"
+import { describe, expect, it } from 'vitest'
 import { render } from 'lit-html'
 import { sym } from 'rdflib'
 import { renderBioSection } from '../../src/sections/bio/BioSection'
@@ -15,7 +15,7 @@ describe('Bio section', () => {
       description: 'I enjoy building Solid applications and web components.'
     }
 
-    render(renderBioSection(context.session.store, subject, bio as any, 'owner'), container)
+    render(renderBioSection(context.session.store, subject, bio as any, 'owner', 'desktop'), container)
 
     expect(container.querySelector('#bio-heading')).toBeTruthy()
     expect(container.textContent).toContain('I enjoy building Solid applications')
@@ -32,7 +32,7 @@ describe('Bio section', () => {
       description: 'I enjoy building Solid applications and web components.'
     }
 
-    render(renderBioSection(context.session.store, subject, bio as any, 'owner'), container)
+    render(renderBioSection(context.session.store, subject, bio as any, 'owner', 'desktop'), container)
 
     const results = await runAxe(container)
     expect(results.violations.length).toBe(0)

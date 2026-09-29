@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, it, jest } from '@jest/globals'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { graph, literal, st, sym } from 'rdflib'
 import { ns } from 'solid-ui'
 import {
@@ -50,7 +50,7 @@ type TestRow = EditableRow & {
 describe('shared helper utilities', () => {
   afterEach(() => {
     document.body.innerHTML = ''
-    jest.restoreAllMocks()
+    vi.restoreAllMocks()
   })
 
   describe('rowState', () => {
@@ -117,7 +117,7 @@ describe('shared helper utilities', () => {
       const existing = st(subject, ns.vcard('fn'), literal('Jane'), doc)
       store.add(existing.subject, existing.predicate, existing.object, existing.why)
 
-      const update = jest.fn((_deletions: any[], _insertions: any[], callback: Function) => callback('', true))
+      const update = vi.fn((_deletions: any[], _insertions: any[], callback: Function) => callback('', true))
       store.updater = { update }
 
       await applyUpdaterPatch(
@@ -151,7 +151,7 @@ describe('shared helper utilities', () => {
       const subject = sym('https://example.com/profile#me')
       const doc = subject.doc()
       const updaterStore: Record<string, unknown> = {}
-      const update = jest.fn((_deletions: any[], _insertions: any[], callback: Function) => callback('', true))
+      const update = vi.fn((_deletions: any[], _insertions: any[], callback: Function) => callback('', true))
       store.updater = { update, store: updaterStore }
 
       await applyUpdaterPatch(store, [], [st(subject, ns.org('location'), literal('San Diego'), doc)])
@@ -168,8 +168,8 @@ describe('shared helper utilities', () => {
       const store = graph() as any
       const subject = sym('https://example.com/profile#me')
       const doc = subject.doc()
-      const serialize = jest.fn(() => '@prefix org: <http://www.w3.org/ns/org#>.')
-      const webOperation = jest.fn(async () => ({ ok: true, status: 200 }))
+      const serialize = vi.fn(() => '@prefix org: <http://www.w3.org/ns/org#>.')
+      const webOperation = vi.fn(async () => ({ ok: true, status: 200 }))
 
       store.updater = {
         update: (_deletions: any[], _insertions: any[], callback: Function) => callback('', false, 'Fetch error for patch'),
@@ -200,10 +200,10 @@ describe('shared helper utilities', () => {
       const store = graph() as any
       const subject = sym('https://example.com/profile#me')
       const doc = subject.doc()
-      const update = jest.fn()
-      const serialize = jest.fn(() => '@prefix schema: <http://schema.org/> .')
-      const webOperation = jest.fn(async () => ({ ok: true, status: 200 }))
-      const load = jest.fn(async () => undefined)
+      const update = vi.fn()
+      const serialize = vi.fn(() => '@prefix schema: <http://schema.org/> .')
+      const webOperation = vi.fn(async () => ({ ok: true, status: 200 }))
+      const load = vi.fn(async () => undefined)
 
       store.updater = {
         update,
@@ -234,10 +234,10 @@ describe('shared helper utilities', () => {
       const store = graph() as any
       const subject = sym('https://example.com/profile#me')
       const doc = subject.doc()
-      const update = jest.fn()
-      const serialize = jest.fn(() => '@prefix schema: <http://schema.org/> .')
-      const webOperation = jest.fn(async () => ({ ok: true, status: 200 }))
-      const load = jest.fn(async () => {
+      const update = vi.fn()
+      const serialize = vi.fn(() => '@prefix schema: <http://schema.org/> .')
+      const webOperation = vi.fn(async () => ({ ok: true, status: 200 }))
+      const load = vi.fn(async () => {
         store.add(subject, ns.schema('name'), literal('Loaded copy'), doc)
       })
 
@@ -274,13 +274,13 @@ describe('shared helper utilities', () => {
       const subject = sym('https://example.com/profile#me')
       const doc = subject.doc()
       const remoteStatement = st(subject, ns.schema('name'), literal('Remote copy'), doc)
-      const update = jest.fn()
-      const serialize = jest.fn((_docValue: string, statements: any[]) => {
+      const update = vi.fn()
+      const serialize = vi.fn((_docValue: string, statements: any[]) => {
         expect(statements.some((statement: any) => statement.predicate?.value === ns.schema('name').value)).toBe(false)
         return '@prefix schema: <http://schema.org/> .'
       })
-      const webOperation = jest.fn(async () => ({ ok: true, status: 200 }))
-      const load = jest.fn(async () => {
+      const webOperation = vi.fn(async () => ({ ok: true, status: 200 }))
+      const load = vi.fn(async () => {
         store.add(remoteStatement.subject, remoteStatement.predicate, remoteStatement.object, remoteStatement.why)
       })
 
@@ -338,7 +338,7 @@ describe('shared helper utilities', () => {
 
   describe('id and input normalization helpers', () => {
     it('creates monotonically increasing id nodes even within the same millisecond', () => {
-      const nowSpy = jest.spyOn(Date, 'now')
+      const nowSpy = vi.spyOn(Date, 'now')
       nowSpy.mockReturnValue(1700000000000)
       const doc = sym('https://example.com/profile/card')
 
@@ -375,7 +375,7 @@ describe('shared helper utilities', () => {
 
   describe('shared section card behavior', () => {
     beforeEach(() => {
-      jest.spyOn(window, 'requestAnimationFrame').mockImplementation((callback: FrameRequestCallback) => {
+      vi.spyOn(window, 'requestAnimationFrame').mockImplementation((callback: FrameRequestCallback) => {
         callback(0)
         return 1
       })

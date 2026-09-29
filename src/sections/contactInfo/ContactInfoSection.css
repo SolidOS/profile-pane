@@ -1,6 +1,6 @@
 .profile__section[data-profile-section='contact-info'],
 .profile__section--empty[data-profile-section='contact-info'] {
-  --contact-info-icon-padding-inline: 0.575rem;
+  --contact-info-icon-padding-inline: 9.2px;
   --contact-info-icon-size: var(--icon-xxs, 1rem);
   --contact-info-contact-point-value-size: var(--font-size-sm, 0.875rem);
   --contact-info-contact-point-type-size: var(--font-size-xxs, 0.75rem);
@@ -13,14 +13,14 @@
   justify-content: center;
   width: 2.25rem;
   height: 2.25rem;
-  padding: 0 var(--contact-info-icon-padding-inline, 0.575rem);
+  padding: 0 var(--contact-info-icon-padding-inline);
   flex-shrink: 0;
 }
 
 .contact-info__item {
   display: flex;
   align-items: flex-start;
-  gap: var(--spacing-2xs, 0.625rem);
+  gap: 10px;
   margin-inline-start: 0;
 }
 
@@ -66,8 +66,8 @@
   box-sizing: border-box;
   list-style: none;
   margin: 0;
-  padding: 0 0 var(--spacing-2xs, 0.625rem) 0;
-  gap: var(--spacing-2xs, 0.625rem);
+  padding: 0 0 10px 0;
+  gap: 10px;
 }
 
 .contact-info__list:last-of-type {
@@ -75,7 +75,7 @@
 }
 
 .contact-info__list + .contact-info__list {
-  margin-top: var(--spacing-2xs, 0.625rem);
+  margin-top: 10px;
 }
 
 /* Empty state */
@@ -100,7 +100,7 @@
   text-align: center;
   font-size: var(--font-size-xs, 0.813rem);
   font-weight: var(--font-weight-normal, 400);
-  line-height: var(--line-height-tight, 1.4);
+  line-height: 1.4;
 }
 
 .contact-info__empty-icon-wrapper {

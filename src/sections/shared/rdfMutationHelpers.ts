@@ -88,7 +88,10 @@ export function sanitizePatchStatements(
   deletions: RdfStatement[],
   insertions: RdfStatement[],
   requireStoredDelete = false
-) {
+): {
+  safeDeletions: RdfStatement[]
+  safeInsertions: RdfStatement[]
+} {
   const safeDeletions = uniqueStatements(
     (deletions || []).filter((statement) => {
       if (!isCompleteStatement(statement)) return false
@@ -435,7 +438,7 @@ export function applyUpdaterPatch(store: LiveStore, deletions: RdfStatement[], i
   })
 }
 
-export function collectNodeStatements(store: LiveStore, node: Node, doc: NamedNode) {
+export function collectNodeStatements(store: LiveStore, node: Node, doc: NamedNode): RdfStatement[] {
   return store.statementsMatching(node as any, null, null, doc)
 }
 
@@ -445,7 +448,7 @@ export function collectLinkStatements(
   predicate: NamedNode,
   node: Node,
   doc: NamedNode
-) {
+): RdfStatement[] {
   return store.statementsMatching(subject, predicate, node, doc)
 }
 
@@ -473,7 +476,11 @@ export function collectLinkedNodeStatements(
   sourceNode: Node,
   predicate: NamedNode,
   doc: NamedNode
-) {
+): {
+  linkedNodes: Node[]
+  linkedStatements: RdfStatement[]
+  linkStatements: RdfStatement[]
+} {
   const linkedNodes = store.each(sourceNode as any, predicate, null, doc) as Node[]
   const linkedStatements = linkedNodes.flatMap((linkedNode) => collectNodeStatements(store, linkedNode, doc))
   const linkStatements = store.statementsMatching(sourceNode as any, predicate, null, doc)

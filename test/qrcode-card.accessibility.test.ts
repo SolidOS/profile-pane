@@ -1,3 +1,4 @@
+import { describe, expect, it } from 'vitest'
 import { render } from 'lit-html'
 import { QRCodeCard } from '../src/sections/qrcode/QRCodeCard'
 import { NamedNode, graph, parse, sym } from 'rdflib'

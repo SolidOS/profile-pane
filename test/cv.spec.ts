@@ -1,9 +1,9 @@
-import { beforeEach, describe, expect, it } from '@jest/globals'
+import { beforeEach, describe, expect, it } from 'vitest'
 import pane from '../src/index'
 import { parse } from 'rdflib'
-import { waitFor } from '@testing-library/dom'
 import { store } from 'solid-logic'
 import { context, doc, subject } from './setup'
+import { waitForSelector } from './helpers/dom'
 
 
 // This was at testingsolidos.solidcommunity.net
@@ -179,15 +179,26 @@ describe('profile pane curriculum vitae', () => {
   it('renders resume roles using the current CV section contract', async () => {
     parse(exampleProfile, store, doc.uri)
     const result = pane.render(subject, context)
+        document.body.appendChild(result)
 
-    await waitFor(() => {
-      const cv = result.querySelector('[data-testid="curriculum-vitae"]') as HTMLElement | null
-      expect(cv).not.toBeNull()
-      expect(cv?.textContent).toContain('Apple')
-      expect(cv?.textContent).toContain('The Beatles')
-    })
+        await waitForSelector(result, '#profile-name')
+        const cv = await waitForSelector<HTMLElement>(result, '[data-testid="curriculum-vitae"]')
+
+        expect(result.querySelector('#profile-name')?.textContent).toBe('Testing SolidOS Test')
+        expect(cv.textContent).toContain('Apple')
+        expect(cv.textContent).toContain('The Beatles')
+        expect(cv.textContent).toContain('Testeuse des Apps Solid')
+        expect(cv.textContent).toContain('Directed the white album')
+        expect(result.textContent).toContain('Testingville')
+        expect(result.textContent).toContain('Texas')
+        expect(result.textContent).toContain('USA')
 
         const roles = result.querySelectorAll('.resume-card__item')
     expect(roles.length).toBe(4)
+
+        const image = result.querySelector('img.profile__hero') as HTMLImageElement | null
+        expect(image?.getAttribute('src')).toBe('https://janedoe.example/profile/noun_test_2974484.svg')
+
+        result.remove()
   })
 })

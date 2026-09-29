@@ -1,4 +1,4 @@
-import { describe, expect, it } from "@jest/globals"
+import { describe, expect, it, vi } from 'vitest'
 import { graph, literal, st, sym } from 'rdflib'
 import { ns } from 'solid-ui'
 import { presentProfile, pronounsAsText } from '../../src/sections/heading/selectors'
@@ -227,13 +227,13 @@ describe('Intro selectors and mutations', () => {
     const store = graph() as any
     const subject = sym('https://example.com/profile/card#me')
     const doc = subject.doc()
-    const serialize = jest.fn(() => [
+    const serialize = vi.fn(() => [
       '@prefix foaf: <http://xmlns.com/foaf/0.1/>.',
       '@prefix vcard: <http://www.w3.org/2006/vcard/ns#>.',
       '@prefix solid: <http://www.w3.org/ns/solid/terms#>.',
       '<> foaf:primaryTopic <#me>.'
     ].join('\n'))
-    const webOperation = jest.fn(async (method: string) => {
+    const webOperation = vi.fn(async (method: string) => {
       if (method === 'GET') {
         return {
           ok: true,

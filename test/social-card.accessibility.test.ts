@@ -1,3 +1,4 @@
+import { describe, expect, it } from 'vitest'
 import { render } from 'lit-html'
 import { SocialCard } from '../src/sections/social/SocialSection'
 import { sym } from 'rdflib'

@@ -1,8 +1,11 @@
 import { openInputDialog } from '../../ui/dialog'
 import { html, render, TemplateResult } from 'lit-html'
-import 'solid-ui/components/actions/button'
-import 'solid-ui/components/forms/select'
-import 'solid-ui/components/media/photo-capture'
+import 'solid-ui/components/button'
+import 'solid-ui/components/combobox'
+import 'solid-ui/components/combobox-option'
+import { type ComboboxChangeEvent } from 'solid-ui/components/combobox'
+import 'solid-ui/components/photo-capture'
+import type { PhotoCapture } from 'solid-ui/components/photo-capture'
 import { ProfileDetails, HeadingMutationPlan, ProfileBasicRow } from './types'
 import { Image } from './HeadingSection'
 import '../../styles/EditDialogs.css'
@@ -33,30 +36,11 @@ import { cameraIcon } from '../../icons-svg/profileIcons'
 import { ContactAddressRow, ContactPointRow } from '../contactInfo/types'
 import { sanitizeAddressFieldValue, sanitizeBasicInputFieldValue, sanitizeEmailValue, sanitizePhoneLocalValue } from '../shared/sanitizeUtils'
 import { toStorageDateISO } from './dateHelpers'
-import { deletePhotoFile, resolvePhotoDisplaySrc, uploadPhotoFile } from './imageHelpers'
+import { invalidateResolvedPhotoDisplaySrc, resolvePhotoDisplaySrc, uploadPhotoFile } from './imageHelpers'
 /* Note: new design - has address type in More Edit Contacts for now we will leave
          out Address Type, but a ticket will be created to add type later
-         so I will keep the code and just comment it out for now. 
+         so I will keep the code and just comment it out for now.
          new design - has country code, will comment out code for now and create a ticket to add later. */
-
-type HeadingPhotoCaptureElement = HTMLElement & {
-  heading: string
-  captureLabel: string
-  confirmLabel: string
-  retakeLabel: string
-  cancelLabel: string
-  presentation: 'inline' | 'dialog'
-  showTrigger: boolean
-  showCancelButton: boolean
-  autoCloseOnCapture: boolean
-  fileNamePrefix: string
-  facingMode: string
-  open: boolean
-}
-
-type HeadingPhotoCapturedDetail = {
-  file: File
-}
 
 type HeadingFormState = {
   basicInfo: ProfileBasicRow
@@ -65,6 +49,7 @@ type HeadingFormState = {
   address: ContactAddressRow
   emailTypeWasMissing: boolean
   phoneTypeWasMissing: boolean
+  pendingImageFile?: File | null
   imagePreviewSrc: string
   clearImagePreview: () => void
 }
@@ -80,18 +65,6 @@ type HeadingPronounsOption = {
 }
 
 type HeadingContactTypeKind = 'phone' | 'email'
-
-type HeadingContactTypeSelectElement = HTMLElement & {
-  options?: HeadingContactTypeOption[]
-  value?: string
-  label?: string
-}
-
-type HeadingPronounsSelectElement = HTMLElement & {
-  options?: HeadingPronounsOption[]
-  value?: string
-  label?: string
-}
 
 const HEADING_PHONE_TYPE_OPTIONS: HeadingContactTypeOption[] = [
   { label: 'Mobile', value: 'Mobile' },
@@ -128,26 +101,8 @@ function normalizeHeadingContactTypeValue(value: string, options: HeadingContact
   return options.some((option) => option.value === value) ? value : options[0]?.value || ''
 }
 
-function readHeadingContactTypeChange(event: Event): string {
-  const customEvent = event as CustomEvent<{ value?: string }>
-  if (typeof customEvent.detail?.value === 'string') {
-    return customEvent.detail.value
-  }
-
-  const target = event.target as HTMLSelectElement | HTMLInputElement | null
-  return typeof target?.value === 'string' ? target.value : ''
-}
-
 function getHeadingContactTypeOptions(kind: HeadingContactTypeKind): HeadingContactTypeOption[] {
   return kind === 'phone' ? HEADING_PHONE_TYPE_OPTIONS : HEADING_EMAIL_TYPE_OPTIONS
-}
-
-function getHeadingContactTypeValue(
-  kind: HeadingContactTypeKind,
-  formState: HeadingFormState
-): string {
-  const row = kind === 'phone' ? formState.phone : formState.email
-  return normalizeHeadingContactTypeValue(row?.type || '', getHeadingContactTypeOptions(kind))
 }
 
 function withDefaultHeadingContactType(
@@ -159,29 +114,6 @@ function withDefaultHeadingContactType(
     type: normalizeHeadingContactTypeValue(row.type || '', getHeadingContactTypeOptions(kind))
   }
 }
-
-function initializeHeadingContactTypeSelects(form: HTMLFormElement, formState: HeadingFormState): void {
-  const selectElements = form.querySelectorAll('solid-ui-select[data-heading-contact-type-kind]') as NodeListOf<HeadingContactTypeSelectElement>
-
-  selectElements.forEach((selectElement) => {
-    const kind = selectElement.dataset.headingContactTypeKind as HeadingContactTypeKind | undefined
-    if (!kind) return
-
-    selectElement.options = getHeadingContactTypeOptions(kind)
-    selectElement.value = getHeadingContactTypeValue(kind, formState)
-    selectElement.label = ''
-  })
-}
-
-function initializeHeadingPronounsSelect(form: HTMLFormElement, formState: HeadingFormState): void {
-  const selectElement = form.querySelector('solid-ui-select[data-heading-basic-field="pronouns"]') as HeadingPronounsSelectElement | null
-  if (!selectElement) return
-
-  selectElement.options = HEADING_PRONOUN_OPTIONS
-  selectElement.value = normalizePronounsValue(formState.basicInfo?.pronouns || '')
-  selectElement.label = ''
-}
-
 
 function rowHasContent(row: Row): boolean {
   if (isContactPointRow(row)) {
@@ -302,15 +234,6 @@ function setResolvedHeadingPreview(formState: HeadingFormState, resolvedImageSrc
 
   formState.imagePreviewSrc = resolvedImageSrc
 
-  if (resolvedImageSrc.startsWith('blob:') && typeof URL.revokeObjectURL === 'function') {
-    formState.clearImagePreview = () => {
-      URL.revokeObjectURL(resolvedImageSrc)
-      formState.imagePreviewSrc = ''
-      formState.clearImagePreview = () => undefined
-    }
-    return
-  }
-
   formState.clearImagePreview = () => {
     formState.imagePreviewSrc = ''
     formState.clearImagePreview = () => undefined
@@ -398,7 +321,7 @@ function summarizeHeadingContactOps(
 function renderContactPhoneInput({
   phone
 }: ContactPhoneInputRowProps) {
-  const label = 'Phone Number 1'
+  const label = 'Mobile Number'
   const typeLabel = 'Phone Type 1'
   const inputName = 'phone-value'
   const splitValue = splitPhoneValue(phone?.value || '')
@@ -413,7 +336,9 @@ function renderContactPhoneInput({
   }
 
   const handleTypeInput = (e: Event) => {
-    const nextType = readHeadingContactTypeChange(e)
+    const event = e as ComboboxChangeEvent
+    if (!event.detail.option) return
+    const nextType = String(event.detail.option.value)
     if (phone) {
       applyRowSelectChange(phone, 'type', nextType)
     }
@@ -423,6 +348,7 @@ function renderContactPhoneInput({
     <div class="profile-edit-dialog__row profile-edit-dialog__row--equal profile-edit-dialog__row--contact-point">
       <div class="profile-edit-dialog__field">
         <label aria-label=${label} class="label">
+          ${label}
           <input
             class="input"
             type="tel"
@@ -440,16 +366,16 @@ function renderContactPhoneInput({
         </label>
       </div>
       <label aria-label=${typeLabel} class="label profile-edit-dialog__field-type profile-edit-dialog__field-type--contact-point">
-        <solid-ui-select
+        <solid-ui-combobox
+          select-only
           class="profile-edit-dialog__type-select"
           id=${`phone-type-select-${inputName}`}
-          data-heading-contact-type-kind="phone"
           aria-label=${typeLabel}
-          .label=${''}
-          .options=${HEADING_PHONE_TYPE_OPTIONS}
           .value=${normalizeHeadingContactTypeValue(phone?.type || '', HEADING_PHONE_TYPE_OPTIONS)}
           @change=${handleTypeInput}
-        ></solid-ui-select>
+        >
+          ${HEADING_PHONE_TYPE_OPTIONS.map((option) => html`<solid-ui-combobox-option value=${option.value}>${option.label}</solid-ui-combobox-option>`)}
+        </solid-ui-combobox>
       </label>
     </div>
   `
@@ -458,7 +384,7 @@ function renderContactPhoneInput({
 function renderContactEmailInputRow({
   email
 }: ContactEmailInputRowProps) {
-  const label = 'Email Address'
+  const label = 'Email'
   const typeLabel = 'Email Type'
   const inputName = 'email-value'
 
@@ -471,7 +397,9 @@ function renderContactEmailInputRow({
   }
 
   const handleTypeInput = (e: Event) => {
-    const nextType = readHeadingContactTypeChange(e)
+    const event = e as ComboboxChangeEvent
+    if (!event.detail.option) return
+    const nextType = String(event.detail.option.value)
     if (email) {
       applyRowSelectChange(email, 'type', nextType)
     }
@@ -480,6 +408,7 @@ function renderContactEmailInputRow({
   return html`
     <div class="profile-edit-dialog__row profile-edit-dialog__row--equal profile-edit-dialog__row--contact-point">
       <label aria-label=${label} class="label profile-edit-dialog__field">
+        ${label}
         <input
           class="input"
           type="email"
@@ -496,16 +425,16 @@ function renderContactEmailInputRow({
         />
       </label>
       <label aria-label=${typeLabel} class="label profile-edit-dialog__field-type profile-edit-dialog__field-type--contact-point">
-        <solid-ui-select
+        <solid-ui-combobox
+          select-only
           class="profile-edit-dialog__type-select"
           id=${`email-type-select-${inputName}`}
-          data-heading-contact-type-kind="email"
           aria-label=${typeLabel}
-          .label=${''}
-          .options=${HEADING_EMAIL_TYPE_OPTIONS}
           .value=${normalizeHeadingContactTypeValue(email?.type || '', HEADING_EMAIL_TYPE_OPTIONS)}
           @change=${handleTypeInput}
-        ></solid-ui-select>
+        >
+          ${HEADING_EMAIL_TYPE_OPTIONS.map((option) => html`<solid-ui-combobox-option value=${option.value}>${option.label}</solid-ui-combobox-option>`)}
+        </solid-ui-combobox>
       </label>
     </div>
   `
@@ -538,7 +467,7 @@ function renderContactAddressInput({
     const nextType = target.value
     if (address) {
       applyRowSelectChange(address, 'type', nextType)
-    } 
+    }
   } */
 
   return html`
@@ -632,8 +561,6 @@ function renderContactAddressInput({
 }
 
 function renderHeadingInfoInput(
-  store: LiveStore,
-  subject: NamedNode,
   formState: HeadingFormState,
   rerender: () => void
 ): TemplateResult {
@@ -661,7 +588,9 @@ function renderHeadingInfoInput(
     }
   }
   const handlePronounsInput = (e: Event) => {
-    const nextValue = normalizePronounsValue(readHeadingContactTypeChange(e))
+    const event = e as ComboboxChangeEvent
+    if (!event.detail.option) return
+    const nextValue = normalizePronounsValue(String(event.detail.option.value))
     if (basicInfo) {
       applyRowSelectChange(basicInfo, 'pronouns', nextValue)
     }
@@ -685,9 +614,9 @@ function renderHeadingInfoInput(
       if (!file || !basicInfo) return
 
       try {
-        const uploadedUri = await uploadPhotoFile(store, subject, file)
+        formState.pendingImageFile = file
         setHeadingImagePreview(formState, file)
-        applyRowFieldChange(basicInfo, 'imageSrc', uploadedUri, rowHasContent)
+        basicInfo.status = basicInfo.entryNode ? 'modified' : 'new'
         rerender()
       } catch (error) {
         debugError('Profile image upload failed', error)
@@ -698,70 +627,24 @@ function renderHeadingInfoInput(
     fileInput.click()
   }
 
-  const handleCameraClick = async (e: Event) => {
-    e.preventDefault()
-    const button = e.currentTarget as HTMLElement | null
-    const headingPhotoRow = button?.closest('.profile-edit-dialog__row--heading-photo') as HTMLElement | null
-    const hostRow = headingPhotoRow?.nextElementSibling as HTMLElement | null
-    const frame = hostRow?.querySelector('.profile-edit-dialog__image-camera-capture-frame') as HTMLDivElement | null
-    if (!frame || frame.dataset.active === 'true') return
+  const handleCameraInput = async (event: InputEvent) => {
+    const file = (event.target as PhotoCapture).value
 
-    frame.hidden = false
-    frame.dataset.active = 'true'
-    frame.replaceChildren()
-
-    const closeCameraFrame = () => {
-      frame.replaceChildren()
-      frame.hidden = true
-      frame.dataset.active = 'false'
-    }
+    if (!file || !basicInfo) return
 
     try {
-      const photoCapture = document.createElement('solid-ui-photo-capture') as HeadingPhotoCaptureElement
-      photoCapture.classList.add('profile-edit-dialog__photo-capture')
-      photoCapture.heading = ''
-      photoCapture.captureLabel = 'Take Photo'
-      photoCapture.confirmLabel = 'Use Photo'
-      photoCapture.retakeLabel = 'Retake'
-      photoCapture.cancelLabel = 'Close camera'
-      photoCapture.presentation = 'inline'
-      photoCapture.showTrigger = false
-      photoCapture.showCancelButton = true
-      photoCapture.autoCloseOnCapture = false
-      photoCapture.fileNamePrefix = 'camera'
-      photoCapture.facingMode = 'user'
-      photoCapture.open = true
-
-      photoCapture.addEventListener('cancel', (event) => {
-        event.preventDefault()
-        event.stopPropagation()
-        closeCameraFrame()
-      })
-
-      photoCapture.addEventListener('photo-captured', async (event: Event) => {
-        const detail = (event as CustomEvent<HeadingPhotoCapturedDetail>).detail
-        if (!detail?.file || !basicInfo) return
-
-        try {
-          const uploadedUri = await uploadPhotoFile(store, subject, detail.file)
-          closeCameraFrame()
-          setHeadingImagePreview(formState, detail.file)
-          applyRowFieldChange(basicInfo, 'imageSrc', uploadedUri, rowHasContent)
-          rerender()
-        } catch (error) {
-          debugError('Profile camera upload failed', error)
-        }
-      })
-
-      frame.appendChild(photoCapture)
+        formState.pendingImageFile = file
+        setHeadingImagePreview(formState, file)
+        basicInfo.status = basicInfo.entryNode ? 'modified' : 'new'
+        rerender()
     } catch (error) {
-      closeCameraFrame()
-      debugError('Camera control failed to initialize', error)
+        debugError('Profile camera upload failed', error)
     }
   }
 
-  const handleDelete = async (_e: Event) => {
+  const handleDelete = async () => {
     if (!basicInfo) return
+    formState.pendingImageFile = null
     formState.clearImagePreview()
     applyRowFieldChange(basicInfo, 'imageSrc', '', rowHasContent)
     rerender()
@@ -772,42 +655,44 @@ function renderHeadingInfoInput(
       <header class="profile-edit-dialog__image-preview-header" aria-label="Profile Image">
         <div class="profile-edit-dialog__image-frame">
           ${Image(imagePreviewSrc || basicInfo.imageSrc, basicInfo.name)}
-          <solid-ui-button
-            type="button"
-            class="profile-edit-dialog__image-camera-button"
-            variant="icon"
-            size="md"
-            aria-label="Take a photo"
-            title="Take a photo"
-            @click=${handleCameraClick}
+          <solid-ui-photo-capture
+            capture-label="Take Photo"
+            confirm-label="Use Photo"
+            retake-label="Retake"
+            cancel-label="Close camera"
+            file-name-prefix="camera"
+            facing-mode="user"
+            @input=${handleCameraInput}
           >
-            <span slot="icon" aria-hidden="true">${cameraIcon}</span>
-          </solid-ui-button>
+            <solid-ui-button
+              slot="trigger"
+              class="profile-edit-dialog__image-camera-button"
+              variant="ghost"
+              aria-label="Take a photo"
+              title="Take a photo"
+            >
+              <span slot="icon">${cameraIcon}</span>
+            </solid-ui-button>
+          </solid-ui-photo-capture>
         </div>
       </header>
 
       <div class="profile-edit-dialog__image-preview" aria-label="Profile Photo Preview">
-        <p class="profile-edit-dialog__image-preview-label"><strong>${imageSrcLabel}</strong></p>
+        <p class="profile-edit-dialog__image-preview-label">${imageSrcLabel}</p>
         <p class="profile-edit-dialog__image-preview-description">${recommendedImageToLoad}</p>
 
         <div class="profile-edit-dialog__image-preview-actions">
           <solid-ui-button
-            type="button"
             variant="secondary"
-            size="md"
-            label="Upload New"
             class="profile-edit-dialog__image-button profile-edit-dialog__image-upload-button"
             aria-label="Upload new profile photo"
-            title="Upload New"
+            title="Upload"
             @click=${handleUpload}
           >
-            Upload New
+            Upload
           </solid-ui-button>
           <solid-ui-button
-            type="button"
             variant="secondary"
-            size="md"
-            label="Remove"
             class="profile-edit-dialog__image-button profile-edit-dialog__image-remove-button"
             aria-label="Delete profile photo"
             title="Remove"
@@ -858,27 +743,31 @@ function renderHeadingInfoInput(
         </label>
       </div>
       <div class="profile-edit-dialog__row profile-edit-dialog__row--equal profile-edit-dialog__row--heading-dob">
-        <label aria-label=${pronounsLabel} class="label profile-edit-dialog__field-type profile-edit-dialog__field--stack">
-          ${pronounsLabel}
-          <solid-ui-select
+        <div class="profile-edit-dialog__field-type profile-edit-dialog__field--stack">
+          <label aria-label=${pronounsLabel} class="label">
+            ${pronounsLabel}
+          </label>
+          <solid-ui-combobox
+            select-only
             class="profile-edit-dialog__type-select"
-            id="heading-pronouns-select"
             name="pronouns"
             data-heading-basic-field="pronouns"
             aria-label=${pronounsLabel}
-            .label=${''}
-            .options=${HEADING_PRONOUN_OPTIONS}
             .value=${normalizePronounsValue(basicInfo?.pronouns || '')}
             @change=${handlePronounsInput}
-          ></solid-ui-select>
-        </label>
-        <label aria-label=${dateOfBirthLabel} class="label profile-edit-dialog__field profile-edit-dialog__field--dob">
-          ${dateOfBirthLabel}
+          >
+            ${HEADING_PRONOUN_OPTIONS.map((option) => html`<solid-ui-combobox-option value=${option.value}>${option.label}</solid-ui-combobox-option>`)}
+          </solid-ui-combobox>
+        </div>
+        <div class="profile-edit-dialog__field profile-edit-dialog__field--stack">
+          <label aria-label=${dateOfBirthLabel} class="label">
+            ${dateOfBirthLabel}
+          </label>
           <input
             class="input profile-edit-dialog__input--dob"
             type="date"
-            name="profile-date-of-birth"
-            .value=${toStorageDateISO(basicInfo?.dateOfBirth)}
+            name="dateOfBirth"
+            .value=${toStorageDateISO(basicInfo?.dateOfBirth || '')}
             data-contact-field="dateOfBirth"
             data-entry-node=${basicInfo?.entryNode || ''}
             data-row-status=${basicInfo?.status || 'n/a'}
@@ -888,7 +777,7 @@ function renderHeadingInfoInput(
             data-bwignore="true"
             @change=${handleDateOfBirthInput}
           />
-        </label>
+        </div>
       </div>
       <div class="profile-edit-dialog__row profile-edit-dialog__row--equal">
         <div class="profile-edit-dialog__field profile-edit-dialog__field--full">
@@ -905,27 +794,20 @@ function renderHeadingInfoInput(
 function renderHeadingEditTemplate(
   form: HTMLFormElement,
   formState: HeadingFormState,
-  store: LiveStore,
-  subject: NamedNode,
   viewerMode: ViewerMode
 ) {
-  const rerender = () => renderHeadingEditTemplate(form, formState, store, subject, viewerMode)
- 
+  const rerender = () => renderHeadingEditTemplate(form, formState, viewerMode)
+
   render(html`
-    ${renderHeadingInfoInput(store, subject, formState, rerender)}
+    ${renderHeadingInfoInput(formState, rerender)}
     ${renderContactAddressInput({ address: formState.address })}
     ${viewerMode !== 'owner'
       ? html`<p class="profile-edit-dialog__login-message">${ownerLoginRequiredDialogMessageText}</p>`
       : null}
   `, form)
-
-  initializeHeadingContactTypeSelects(form, formState)
-  initializeHeadingPronounsSelect(form, formState)
 }
 
 function createHeadingEditForm(
-  store: LiveStore,
-  subject: NamedNode,
   profileData: ProfileDetails,
   viewerMode: ViewerMode
 ) {
@@ -937,7 +819,7 @@ function createHeadingEditForm(
   form.setAttribute('data-bwignore', 'true')
 
   const formState = toFormState(profileData)
-  renderHeadingEditTemplate(form, formState, store, subject, viewerMode)
+  renderHeadingEditTemplate(form, formState, viewerMode)
 
   return { form, formState }
 }
@@ -974,13 +856,13 @@ export async function createHeadingEditDialog(
 ) {
   const dom = document
   const originalPhotoUri = sanitizeTextValue(toText(profileData.imageSrc || ''))
-  const { form, formState } = createHeadingEditForm(store, subject, profileData, viewerMode)
+  const { form, formState } = createHeadingEditForm(profileData, viewerMode)
 
   if (formState.basicInfo.imageSrc) {
     const resolvedImageSrc = await resolvePhotoDisplaySrc(store, formState.basicInfo.imageSrc)
     if (resolvedImageSrc && resolvedImageSrc !== formState.basicInfo.imageSrc) {
       setResolvedHeadingPreview(formState, resolvedImageSrc)
-      renderHeadingEditTemplate(form, formState, store, subject, viewerMode)
+      renderHeadingEditTemplate(form, formState, viewerMode)
     }
   }
 
@@ -1011,6 +893,11 @@ export async function createHeadingEditDialog(
       return validateHeadingDataBeforeSave(formState)
     },
     onSave: async () => {
+      if (formState.pendingImageFile) {
+        const uploadedUri = await uploadPhotoFile(store, subject, formState.pendingImageFile)
+        applyRowFieldChange(formState.basicInfo, 'imageSrc', uploadedUri, rowHasContent)
+      }
+
       const phoneOps = summarizeHeadingContactOps(formState.phone, 'phone', formState.phoneTypeWasMissing)
       const emailOps = summarizeHeadingContactOps(formState.email, 'email', formState.emailTypeWasMissing)
       const plan: HeadingMutationPlan = {
@@ -1024,9 +911,9 @@ export async function createHeadingEditDialog(
       const nextPhotoUri = sanitizeTextValue(formState.basicInfo.imageSrc || '')
       if (originalPhotoUri && originalPhotoUri !== nextPhotoUri) {
         try {
-          await deletePhotoFile(store, subject, originalPhotoUri)
+          invalidateResolvedPhotoDisplaySrc(originalPhotoUri)
         } catch (error) {
-          debugWarn('Profile image file delete failed', error)
+          debugWarn('Failed to invalidate resolved photo cache', error)
         }
       }
     },
@@ -1035,7 +922,9 @@ export async function createHeadingEditDialog(
     }
   })
 
-  if (!result) return
+  if (!result) {
+    return
+  }
 
   if (onSaved) {
     await onSaved()

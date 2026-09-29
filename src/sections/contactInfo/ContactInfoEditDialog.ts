@@ -1,7 +1,9 @@
 import { openInputDialog } from '../../ui/dialog'
 import { html, render } from 'lit-html'
-import 'solid-ui/components/actions/button'
-import 'solid-ui/components/forms/select'
+import 'solid-ui/components/button'
+import 'solid-ui/components/combobox'
+import 'solid-ui/components/combobox-option'
+import { type ComboboxChangeEvent } from 'solid-ui/components/combobox'
 import { ContactAddressRow, ContactInfo, ContactMutationPlan, ContactPointRow } from './types'
 import '../../styles/EditDialogs.css'
 import './ContactInfoEditDialog.css'
@@ -51,12 +53,6 @@ type ContactTypeSelectOption = {
 
 type ContactTypeSelectKind = 'phone' | 'email'
 
-type ContactTypeSelectElement = HTMLElement & {
-  options?: ContactTypeSelectOption[]
-  value?: string
-  label?: string
-}
-
 const PHONE_TYPE_OPTIONS: ContactTypeSelectOption[] = [
   { label: 'Mobile', value: 'Cell' },
   { label: 'Home', value: 'Home' },
@@ -72,27 +68,8 @@ function normalizeContactTypeValue(value: string, options: ContactTypeSelectOpti
   return options.some((option) => option.value === value) ? value : options[0]?.value || ''
 }
 
-function readContactTypeChange(event: Event): string {
-  const customEvent = event as CustomEvent<{ value?: string }>
-  if (typeof customEvent.detail?.value === 'string') {
-    return customEvent.detail.value
-  }
-
-  const target = event.target as HTMLSelectElement | HTMLInputElement | null
-  return typeof target?.value === 'string' ? target.value : ''
-}
-
 function getContactTypeOptions(kind: ContactTypeSelectKind): ContactTypeSelectOption[] {
   return kind === 'phone' ? PHONE_TYPE_OPTIONS : EMAIL_TYPE_OPTIONS
-}
-
-function getContactTypeValue(
-  kind: ContactTypeSelectKind,
-  formState: ContactInfoFormState,
-  rowIndex: number
-): string {
-  const row = kind === 'phone' ? formState.phones[rowIndex] : formState.emails[rowIndex]
-  return normalizeContactTypeValue(row?.type || '', getContactTypeOptions(kind))
 }
 
 function withDefaultContactType(
@@ -103,20 +80,6 @@ function withDefaultContactType(
     ...row,
     type: normalizeContactTypeValue(row.type || '', getContactTypeOptions(kind))
   }
-}
-
-function initializeContactTypeSelects(form: HTMLFormElement, formState: ContactInfoFormState): void {
-  const selectElements = form.querySelectorAll('solid-ui-select[data-contact-type-kind]') as NodeListOf<ContactTypeSelectElement>
-
-  selectElements.forEach((selectElement) => {
-    const kind = selectElement.dataset.contactTypeKind as ContactTypeSelectKind | undefined
-    const rowIndex = Number(selectElement.dataset.rowIndex)
-    if (!kind || Number.isNaN(rowIndex)) return
-
-    selectElement.options = getContactTypeOptions(kind)
-    selectElement.value = getContactTypeValue(kind, formState, rowIndex)
-    selectElement.label = ''
-  })
 }
 
 function isContactPointRow(row: ContactPointRow | ContactAddressRow): row is ContactPointRow {
@@ -227,7 +190,9 @@ function renderContactPhoneInputRow({
   }
 
   const handleTypeInput = (e: Event) => {
-    const nextType = readContactTypeChange(e)
+    const event = e as ComboboxChangeEvent
+    if (!event.detail.option) return
+    const nextType = String(event.detail.option.value)
     if (phones[index]) {
       applyRowSelectChange(phones[index], 'type', nextType)
     }
@@ -259,29 +224,24 @@ function renderContactPhoneInputRow({
         </label>
       </div>
       <label aria-label=${typeLabel} class="label profile-edit-dialog__field-type profile-edit-dialog__phone-type-row">
-        <solid-ui-select
+        <solid-ui-combobox
+          select-only
           class="profile-edit-dialog__type-select"
-          id=${`phone-type-select-${inputName}`}
-          data-contact-type-kind="phone"
-          data-row-index=${String(index)}
           aria-label=${typeLabel}
-          .label=${''}
-          .options=${PHONE_TYPE_OPTIONS}
           .value=${normalizeContactTypeValue(phoneRow?.type || '', PHONE_TYPE_OPTIONS)}
           @change=${handleTypeInput}
-        ></solid-ui-select>
+        >
+          ${PHONE_TYPE_OPTIONS.map((option) => html`<solid-ui-combobox-option value=${option.value}>${option.label}</solid-ui-combobox-option>`)}
+        </solid-ui-combobox>
       </label>
       <div class="profile-edit-dialog__actions">
         <solid-ui-button
-          type="button"
-          variant="icon"
-          size="md"
-          class="profile-edit-dialog__delete-button"
+          variant="ghost"
           aria-label=${`Delete phone number ${displayIndex + 1}`}
           title=${deleteEntryButtonTitleText}
           @click=${handleDelete}
         >
-          <span slot="icon" class="profile-edit-dialog__delete-icon" aria-hidden="true">${trashIcon}</span>
+          <span slot="icon" aria-hidden="true">${trashIcon}</span>
         </solid-ui-button>
       </div>
     </div>
@@ -309,17 +269,12 @@ function renderContactInfoPhoneSection(phones: ContactPointRow[], onAddRow: (opt
           Phone Numbers
         </h3>
         <solid-ui-button
-          type="button"
-          variant="secondary"
-          size="sm"
-          class="profile__action-button profile-action-text profile-edit-dialog__add-button"
+          variant="tertiary"
           aria-label="Add another phone number"
           @click=${createNewRow}
         >
-          <span class="profile__add-more-content">
-            <span class="profile__add-more-icon" aria-hidden="true">${addIcon}</span>
-            <span>Add More</span>
-          </span>
+          <span slot="left-icon" class="profile__add-more-icon" aria-hidden="true">${addIcon}</span>
+          Add More
         </solid-ui-button>
       </header>
       <fieldset>
@@ -358,7 +313,9 @@ function renderContactEmailInputRow({
   }
 
   const handleTypeInput = (e: Event) => {
-    const nextType = readContactTypeChange(e)
+    const event = e as ComboboxChangeEvent
+    if (!event.detail.option) return
+    const nextType = String(event.detail.option.value)
     if (emails[index]) {
       applyRowSelectChange(emails[index], 'type', nextType)
     }
@@ -388,29 +345,24 @@ function renderContactEmailInputRow({
         />
       </label>
       <label aria-label=${typeLabel} class="label profile-edit-dialog__field-type emailTypeRow">
-        <solid-ui-select
+        <solid-ui-combobox
+          select-only
           class="profile-edit-dialog__type-select"
-          id=${`email-type-select-${inputName}`}
-          data-contact-type-kind="email"
-          data-row-index=${String(index)}
           aria-label=${typeLabel}
-          .label=${''}
-          .options=${EMAIL_TYPE_OPTIONS}
           .value=${normalizeContactTypeValue(emailRow?.type || '', EMAIL_TYPE_OPTIONS)}
           @change=${handleTypeInput}
-        ></solid-ui-select>
+        >
+          ${EMAIL_TYPE_OPTIONS.map((option) => html`<solid-ui-combobox-option value=${option.value}>${option.label}</solid-ui-combobox-option>`)}
+        </solid-ui-combobox>
       </label>
       <div class="profile-edit-dialog__actions">
         <solid-ui-button
-          type="button"
-          variant="icon"
-          size="md"
-          class="profile-edit-dialog__delete-button"
+          variant="ghost"
           aria-label=${`Delete email address ${displayIndex + 1}`}
           title=${deleteEntryButtonTitleText}
           @click=${handleDelete}
         >
-          <span slot="icon" class="profile-edit-dialog__delete-icon" aria-hidden="true">${trashIcon}</span>
+          <span slot="icon" aria-hidden="true">${trashIcon}</span>
         </solid-ui-button>
       </div>
     </div>
@@ -438,17 +390,12 @@ function renderContactInfoEmailSection(emails: ContactPointRow[], onAddRow: (opt
           Email Addresses
         </h3>
         <solid-ui-button
-          type="button"
-          variant="secondary"
-          size="sm"
-          class="profile__action-button profile-action-text profile-edit-dialog__add-button"
+          variant="tertiary"
           aria-label="Add another email address"
           @click=${createNewRow}
         >
-          <span class="profile__add-more-content">
-            <span class="profile__add-more-icon" aria-hidden="true">${addIcon}</span>
-            <span>Add More</span>
-          </span>
+          <span slot="left-icon" class="profile__add-more-icon" aria-hidden="true">${addIcon}</span>
+          Add More
         </solid-ui-button>
       </header>
       <fieldset>
@@ -517,15 +464,12 @@ function renderContactAddressInputRow({
       </label>
       <div class="profile-edit-dialog__actions profile-edit-dialog__actions--edge">
         <solid-ui-button
-          type="button"
-          variant="icon"
-          size="md"
-          class="profile-edit-dialog__delete-button"
+          variant="ghost"
           aria-label=${`Delete address ${displayIndex + 1}`}
           title=${deleteEntryButtonTitleText}
           @click=${handleDelete}
         >
-          <span slot="icon" class="profile-edit-dialog__delete-icon" aria-hidden="true">${trashIcon}</span>
+          <span slot="icon" aria-hidden="true">${trashIcon}</span>
         </solid-ui-button>
       </div>
     </div>
@@ -650,17 +594,12 @@ function renderContactInfoAddressSection(addresses: ContactAddressRow[], onAddRo
           Addresses
         </h3>
         <solid-ui-button
-          type="button"
-          variant="secondary"
-          size="sm"
-          class="profile__action-button profile-action-text profile-edit-dialog__add-button"
+          variant="tertiary"
           aria-label="Add another address"
           @click=${createNewRow}
         >
-          <span class="profile__add-more-content">
-            <span class="profile__add-more-icon" aria-hidden="true">${addIcon}</span>
-            <span>Add More</span>
-          </span>
+          <span slot="left-icon" class="profile__add-more-icon" aria-hidden="true">${addIcon}</span>
+          Add More
         </solid-ui-button>
       </header>
       <fieldset>
@@ -718,8 +657,6 @@ function renderContactInfoEditTemplate(
       ? html`<p class="profile-edit-dialog__login-message">${ownerLoginRequiredDialogMessageText}</p>`
       : null}
   `, form)
-
-  initializeContactTypeSelects(form, formState)
 
   if (options.focusSelector) {
     focusContactInfoField(form, options.focusSelector)

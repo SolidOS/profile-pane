@@ -1,8 +1,9 @@
+import { beforeAll, describe, expect, it } from 'vitest'
 import pane from '../src/index'
 import { parse } from 'rdflib'
 import { store } from 'solid-logic'
-import { waitFor } from '@testing-library/dom'
 import { context, doc, subject } from './setup'
+import { flushAsync } from './helpers/dom'
 
 
 // import exampleProfile from './examples/testingsolidos.ttl'
@@ -71,23 +72,26 @@ const exampleProfile = `#Processed by Id
  // console.log('exampleProfile', exampleProfile)
 
 describe('profile-pane', () => {
-  let element
+  let element: HTMLElement | null = null
 
   describe('social media', () => {
     beforeAll(async () => {
       store.removeDocument(doc)
       parse(exampleProfile, store, doc.uri)
       const result = pane.render(subject, context)
-      console.log('Pane rendered <<< ', result.innerHTML , '>>>')
-      element = await waitFor(() => {
-        const socialMedia = result.querySelector('#social-media') as HTMLElement | null
-        expect(socialMedia).not.toBeNull()
-        return socialMedia
-      }, { timeout: 5000 })
+
+      let socialMedia = result.querySelector('#social-media') as HTMLElement | null
+      for (let attempt = 0; attempt < 20 && !socialMedia; attempt += 1) {
+        await flushAsync()
+        socialMedia = result.querySelector('#social-media') as HTMLElement | null
+      }
+
+      expect(socialMedia).not.toBeNull()
+      element = socialMedia
     })
 
     it('renders link to Facebook', () => {
-      expect(element.querySelector('a[aria-label*="Facebook"]')).toBeTruthy()
+      expect(element?.querySelector('a[aria-label*="Facebook"]')).toBeTruthy()
     })
 
     /*

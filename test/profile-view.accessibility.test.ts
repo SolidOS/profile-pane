@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, it } from '@jest/globals'
+import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import { ProfileView } from '../src/ProfileView'
 import { render } from 'lit-html'
 import { runAxe } from './helpers/runAxe'
@@ -22,7 +22,7 @@ describe('ProfileView accessibility', () => {
   it('has no accessibility violations', async () => {
     const context = createTestContext()
     // Render ProfileView (returns a Promise<TemplateResult>)
-    const result = await ProfileView(subject, context)
+    const result = await ProfileView(subject, context, 'desktop')
     render(result, container)
     const results = await runAxe(container)
     if (results.violations.length > 0) {

@@ -14,16 +14,29 @@ on:
   workflow_dispatch:
 
 jobs:
+  update-deps:
+    uses: SolidOS/solidos/.github/workflows/update-solidos-deps.yml@main
+    secrets: inherit
+
   build:
+    needs: update-deps
     runs-on: ubuntu-latest
     strategy:
       matrix:
         node-version: [ 22 , 24 ]
         # See supported Node.js release schedule at https://nodejs.org/en/about/releases/
     steps:
-      - uses: actions/checkout@v7
+      # The update-deps job commits the updated package.json/package-lock.json to the head
+      # branch, but `needs` only orders the jobs: without an explicit ref the default
+      # checkout uses the SHA of the triggering event, so the build (and the artifact that
+      # later gets published) would still carry the pre-update dependencies.
+      # Build the branch that received the commit (PR head branch, or the pushed branch);
+      # fork PRs keep the default commit, as the updater deliberately does not commit there.
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ github.event_name == 'pull_request' && (github.event.pull_request.head.repo.fork && github.sha || github.head_ref) || github.ref_name }}
       - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v7
+        uses: actions/setup-node@v6
         with:
           node-version: ${{ matrix.node-version }}
       - run: npm ci
@@ -57,6 +70,9 @@ jobs:
 
   npm-publish-dev:
     needs: build
+    permissions:
+      id-token: write
+      contents: read
     uses: SolidOS/solidos/.github/workflows/publish-prerelease.yml@main
     with:
       node_version: 22
@@ -72,9 +88,9 @@ jobs:
       - uses: actions/download-artifact@v8
         with:
           name: build
-      - uses: actions/setup-node@v7
+      - uses: actions/setup-node@v6
         with:
-          node-version: 22 # for npm@latest
+          node-version: 22
           registry-url: 'https://registry.npmjs.org'
       - name: Update npm to latest (required for OIDC)
         run: npm install -g npm@latest
@@ -91,7 +107,7 @@ jobs:
     permissions:
       contents: write
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@v6
         with:
           fetch-depth: 0
       - name: Create GitHub release with generated notes

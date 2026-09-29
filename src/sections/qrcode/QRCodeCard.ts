@@ -99,10 +99,12 @@ function firstContactValue(
 
 const qrCodeRenderOptions = {
   type: 'svg' as const,
+  margin: 0,
+  width: 151,
   color: {
     dark: '#000000',
-    light: '#ffffff'
-  }
+    light: '#ffffff00',
+  },
 }
 
 function renderQRCodeSvg(value: string): Promise<string> {

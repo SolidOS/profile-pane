@@ -1,4 +1,4 @@
-import { describe, expect, it } from "@jest/globals"
+import { describe, expect, it } from 'vitest'
 import { render } from 'lit-html'
 import { sym } from 'rdflib'
 import { renderContactInfoSection } from '../../src/sections/contactInfo/ContactInfoSection'
@@ -36,7 +36,7 @@ describe('Contact info section', () => {
     }
 
     render(
-      renderContactInfoSection(context.session.store, subject, contactInfo as any, 'owner'),
+      renderContactInfoSection(context.session.store, subject, contactInfo as any, 'owner', 'desktop'),
       container
     )
 
@@ -78,7 +78,7 @@ describe('Contact info section', () => {
     }
 
     render(
-      renderContactInfoSection(context.session.store, subject, contactInfo as any, 'owner'),
+      renderContactInfoSection(context.session.store, subject, contactInfo as any, 'owner', 'desktop'),
       container
     )
 

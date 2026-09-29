@@ -1,4 +1,4 @@
-import { describe, expect, it, jest } from "@jest/globals"
+import { describe, expect, it, vi } from 'vitest'
 import { Collection, graph, literal, st, sym } from 'rdflib'
 import { ns } from 'solid-ui'
 import { presentSocial } from '../../src/sections/social/selectors'
@@ -7,11 +7,11 @@ import { findSocialAccountOption, getSocialAccountOptions, homepageForAccount } 
 import { saveSocialUpdatesFailedMessageText } from '../../src/texts'
 import { expandRdfList } from '../../src/sections/shared/rdfList'
 
-jest.mock('../../src/sections/social/helpers', () => {
-  const actual = jest.requireActual('../../src/sections/social/helpers') as Record<string, unknown>
+vi.mock('../../src/sections/social/helpers', async () => {
+  const actual = await vi.importActual<Record<string, unknown>>('../../src/sections/social/helpers')
   return {
     ...actual,
-    ensureSocialOntologyLoaded: jest.fn()
+    ensureSocialOntologyLoaded: vi.fn()
   }
 })
 
@@ -138,11 +138,11 @@ describe('Social selectors and mutations', () => {
         insertions.forEach((statement) => store.add(statement.subject, statement.predicate, statement.object, statement.why))
         callback('', true)
       },
-      serialize: jest.fn(() => ''),
+      serialize: vi.fn(() => ''),
     }
 
     store.fetcher = {
-      webOperation: jest.fn(async () => ({ ok: true, status: 200 }))
+      webOperation: vi.fn(async () => ({ ok: true, status: 200 }))
     }
 
     const plan = {
@@ -348,8 +348,8 @@ describe('Social selectors and mutations', () => {
     const subject = sym('https://example.com/profile/card#me')
     const doc = subject.doc()
 
-    const serialize = jest.fn((_docValue: string, _statements: any[], _contentType: string) => 'serialized-body')
-    const webOperation = jest.fn(async (..._args: unknown[]) => ({ ok: true, status: 200 }))
+    const serialize = vi.fn((_docValue: string, _statements: any[], _contentType: string) => 'serialized-body')
+    const webOperation = vi.fn(async (..._args: unknown[]) => ({ ok: true, status: 200 }))
 
     store.fetcher = { webOperation }
     store.updater = {
@@ -387,7 +387,7 @@ describe('Social selectors and mutations', () => {
 
     store.updater = {
       update: (_deletions: any[], _insertions: any[], callback: Function) => callback('', false, 'Web error: 405 on patch'),
-      updateDav: jest.fn((_doc: any, deletions: any[], insertions: any[], callback: Function) => {
+      updateDav: vi.fn((_doc: any, deletions: any[], insertions: any[], callback: Function) => {
         deletions.forEach((statement) => store.remove(st(statement.subject, statement.predicate, statement.object, statement.why)))
         insertions.forEach((statement) => store.add(statement.subject, statement.predicate, statement.object, statement.why))
         callback('', true)
@@ -434,7 +434,7 @@ describe('Social selectors and mutations', () => {
       }
     }
     store.updater = {
-      update: jest.fn((_deletions: any[], _insertions: any[], callback: Function) => callback('', true)),
+      update: vi.fn((_deletions: any[], _insertions: any[], callback: Function) => callback('', true)),
       serialize: (_docValue: string, statements: any[]) => {
         serializedStatements = statements
         return '@prefix foaf: <http://xmlns.com/foaf/0.1/> .\n'

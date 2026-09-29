@@ -8,8 +8,9 @@
 
 .profile-grid [data-profile-section='bio'].profile__section,
 .profile-grid [data-profile-section='bio'].profile__section--empty {
-	--bio-section-content-gap-desktop: var(--spacing-lg, 1.5625rem);
-	--bio-section-content-gap-mobile: var(--spacing-sm, 0.9375rem);
+	--bio-section-content-gap-desktop: 25px;
+	--bio-section-content-gap-mobile: 15px;
+	--line-height: 1.5;
 }
 
 .bio-card__description-wrap {
@@ -20,15 +21,8 @@
 	--bio-description-toggle-transform: translateY(7px);
 }
 
-.bio-section__edit-button,
-solid-ui-button.bio-section__edit-button {
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-}
-
 .bio-section--empty {
-	border-radius: var(--border-radius-md, 0.5rem);
+	border-radius: 8px;
 	gap: var(--bio-section-content-gap-desktop);
 }
 
@@ -37,7 +31,7 @@ solid-ui-button.bio-section__edit-button {
 }
 
 .profile-grid [data-profile-section='bio'].profile__section--empty .profile__empty-state-content {
-	gap: var(--spacing-2xs, 0.625rem);
+	gap: 10px;
 }
 
 :is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .bio-section--empty {
@@ -53,33 +47,6 @@ solid-ui-button.bio-section__edit-button {
 	gap: var(--bio-section-content-gap-mobile);
 }
 
-:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .bio-section__edit-button.profile-section-collapsible__edit-button,
-:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] solid-ui-button.bio-section__edit-button.profile-section-collapsible__edit-button {
-	min-width: var(--min-touch-target, 44px);
-	min-height: var(--min-touch-target, 44px);
-	--button-width-sm: var(--min-touch-target, 44px);
-	--button-height-sm: var(--min-touch-target, 44px);
-	--button-background: transparent;
-	--button-border-width: 0;
-	--button-border: transparent;
-	--button-text: var(--profile-section-collapsible-action-button-text, var(--color-primary, #7C4DFF));
-	--button-hover-background: var(--profile-section-collapsible-action-button-hover-background, var(--color-surface-accent-subtle, var(--lavender-300, #e6dcff)));
-	--button-hover-border: transparent;
-	--button-hover-text: var(--profile-section-collapsible-action-button-text, var(--color-primary, #7C4DFF));
-}
-
-:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] solid-ui-button.bio-section__edit-button.profile-section-collapsible__edit-button::part(button) {
-	width: var(--min-touch-target, 44px);
-	min-width: var(--min-touch-target, 44px);
-}
-
-:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] solid-ui-button.bio-section__edit-button.profile-section-collapsible__edit-button::part(button):hover,
-:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] solid-ui-button.bio-section__edit-button.profile-section-collapsible__edit-button::part(button):focus,
-:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] solid-ui-button.bio-section__edit-button.profile-section-collapsible__edit-button::part(button):focus-visible {
-	background: var(--profile-section-collapsible-action-button-hover-background, var(--color-surface-accent-subtle, var(--lavender-300, #e6dcff)));
-	text-decoration: none;
-}
-
 .bio-card__description-text {
 	margin: 0;
 	width: 100%;
@@ -88,7 +55,7 @@ solid-ui-button.bio-section__edit-button {
 	-webkit-box-orient: vertical;
 	-webkit-line-clamp: 2;
 	line-clamp: 2;
-	line-height: var(--line-height-base, 1.5);
+	line-height: var(--line-height);
 	overflow: hidden;
 }
 
@@ -104,6 +71,7 @@ solid-ui-button.bio-section__edit-button {
 	overflow: visible;
 }
 
+
 .bio-card__description-toggle,
 solid-ui-button.bio-card__description-toggle {
 	margin: 0;
@@ -111,43 +79,26 @@ solid-ui-button.bio-card__description-toggle {
 	position: absolute;
 	right: 0;
 	bottom: 0;
-	background-color: var(--color-card-bg, #FFFFFF);
+	background-color: var(--color-card-bg, #FFF);
 	white-space: nowrap;
 	z-index: 0;
 }
 
 .bio-card__description-toggle {
 	border: 0;
-	background: none;
+	background: transparent;
 	color: var(--color-primary, #7C4DFF);
-	cursor: var(--profile-interactive-cursor, pointer);
 	font: inherit;
 	font-size: var(--font-size-sm, 0.875rem);
 	line-height: var(--line-height-base, 1.5);
 	min-height: auto;
 	min-width: auto;
-	padding-left: 0;
-	padding-right: 0;
-	padding-top: 0;
-	padding-bottom: 0;
-	margin-left: 0;
-	margin-right: 0;
+	cursor: var(--profile-interactive-cursor, pointer);
 }
 
-solid-ui-button.bio-card__description-toggle {
-	min-height: 0;
-	min-width: 0;
-	--button-height-sm: 0;
-	--button-padding-sm: 0;
-	--button-font-size-sm: var(--font-size-sm, 0.875rem);
-	--button-line-height: var(--line-height-base, 1.5);
-	--button-background: none;
-	--button-border-width: 0;
-	--button-border: transparent;
-	--button-text: var(--color-primary, #7C4DFF);
-	--button-hover-background: none;
-	--button-hover-border: transparent;
-	--button-hover-text: var(--color-primary, #7C4DFF);
+solid-ui-button.bio-card__description-toggle[hidden],
+.bio-card__description-toggle[hidden] {
+	display: none !important;
 }
 
 .bio-card__description-wrap .bio-card__description-text:not(.bio-card__description-text--expanded) + .bio-card__description-toggle {
@@ -179,7 +130,7 @@ solid-ui-button.bio-card__description-toggle {
 
 :is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .bio-card__description-text {
 	font-size: var(--font-size-sm, 0.875rem);
-	line-height: var(--line-height-base, 1.5);
+	line-height: var(--line-height);
 	-webkit-line-clamp: 2;
 	line-clamp: 2;
 }
@@ -199,7 +150,7 @@ solid-ui-button.bio-card__description-toggle {
 
 	.bio-card__description-text {
 		font-size: var(--font-size-sm, 0.875rem);
-		line-height: var(--line-height-base, 1.5);
+		line-height: var(--line-height);
 		-webkit-line-clamp: 2;
 		line-clamp: 2;
 	}
@@ -230,7 +181,7 @@ solid-ui-button.bio-card__description-toggle {
 
 	.bio-card__description-text {
 		font-size: var(--font-size-sm, 0.875rem);
-		line-height: var(--line-height-base, 1.5);
+		line-height: var(--line-height);
 		-webkit-line-clamp: 2;
 		line-clamp: 2;
 	}
@@ -238,63 +189,5 @@ solid-ui-button.bio-card__description-toggle {
 	.bio-card__description-wrap {
 		--bio-description-toggle-top: calc(100% - 1.5em);
 		--bio-description-toggle-transform: none;
-	}
-}
-
-@media (max-width: 768px) {
-	.bio-section__edit-button.profile-section-collapsible__edit-button,
-	solid-ui-button.bio-section__edit-button.profile-section-collapsible__edit-button {
-		min-width: var(--min-touch-target, 44px);
-		min-height: var(--min-touch-target, 44px);
-		--button-width-sm: var(--min-touch-target, 44px);
-		--button-height-sm: var(--min-touch-target, 44px);
-		--button-background: transparent;
-		--button-border-width: 0;
-		--button-border: transparent;
-		--button-text: var(--profile-section-collapsible-action-button-text, var(--color-primary, #7C4DFF));
-		--button-hover-background: var(--profile-section-collapsible-action-button-hover-background, var(--color-surface-accent-subtle, var(--lavender-300, #e6dcff)));
-		--button-hover-border: transparent;
-		--button-hover-text: var(--profile-section-collapsible-action-button-text, var(--color-primary, #7C4DFF));
-	}
-
-	solid-ui-button.bio-section__edit-button.profile-section-collapsible__edit-button::part(button) {
-		width: var(--min-touch-target, 44px);
-		min-width: var(--min-touch-target, 44px);
-	}
-
-	solid-ui-button.bio-section__edit-button.profile-section-collapsible__edit-button::part(button):hover,
-	solid-ui-button.bio-section__edit-button.profile-section-collapsible__edit-button::part(button):focus,
-	solid-ui-button.bio-section__edit-button.profile-section-collapsible__edit-button::part(button):focus-visible {
-		background: var(--profile-section-collapsible-action-button-hover-background, var(--color-surface-accent-subtle, var(--lavender-300, #e6dcff)));
-		text-decoration: none;
-	}
-}
-
-@container profile-pane (max-width: 768px) {
-	.bio-section__edit-button.profile-section-collapsible__edit-button,
-	solid-ui-button.bio-section__edit-button.profile-section-collapsible__edit-button {
-		min-width: var(--min-touch-target, 44px);
-		min-height: var(--min-touch-target, 44px);
-		--button-width-sm: var(--min-touch-target, 44px);
-		--button-height-sm: var(--min-touch-target, 44px);
-		--button-background: transparent;
-		--button-border-width: 0;
-		--button-border: transparent;
-		--button-text: var(--profile-section-collapsible-action-button-text, var(--color-primary, #7C4DFF));
-		--button-hover-background: var(--profile-section-collapsible-action-button-hover-background, var(--color-surface-accent-subtle, var(--lavender-300, #e6dcff)));
-		--button-hover-border: transparent;
-		--button-hover-text: var(--profile-section-collapsible-action-button-text, var(--color-primary, #7C4DFF));
-	}
-
-	solid-ui-button.bio-section__edit-button.profile-section-collapsible__edit-button::part(button) {
-		width: var(--min-touch-target, 44px);
-		min-width: var(--min-touch-target, 44px);
-	}
-
-	solid-ui-button.bio-section__edit-button.profile-section-collapsible__edit-button::part(button):hover,
-	solid-ui-button.bio-section__edit-button.profile-section-collapsible__edit-button::part(button):focus,
-	solid-ui-button.bio-section__edit-button.profile-section-collapsible__edit-button::part(button):focus-visible {
-		background: var(--profile-section-collapsible-action-button-hover-background, var(--color-surface-accent-subtle, var(--lavender-300, #e6dcff)));
-		text-decoration: none;
 	}
 }

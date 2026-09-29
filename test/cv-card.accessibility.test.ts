@@ -1,4 +1,4 @@
-import { describe, expect, it } from '@jest/globals'
+import { describe, expect, it } from 'vitest'
 import { render } from 'lit-html'
 import { CVCard } from '../src/sections/resume/ResumeSection'
 import { literal, sym } from 'rdflib'
@@ -31,7 +31,7 @@ describe('CVCard accessibility', () => {
     ]
     const container = document.createElement('div')
     document.body.appendChild(container)
-    render(CVCard(cvData as any, 'anonymous'), container)
+    render(CVCard(cvData as any), container)
 
     const results = await runAxe(container)
     expect(results.violations.length).toBe(0)

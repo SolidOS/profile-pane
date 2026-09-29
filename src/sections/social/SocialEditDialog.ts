@@ -1,7 +1,9 @@
 import { openInputDialog } from '../../ui/dialog'
 import { html, render } from 'lit-html'
-import 'solid-ui/components/actions/button'
-import 'solid-ui/components/forms/select'
+import 'solid-ui/components/button'
+import 'solid-ui/components/combobox'
+import 'solid-ui/components/combobox-option'
+import { type ComboboxChangeEvent } from 'solid-ui/components/combobox'
 import type { Account, SocialRow } from './types'
 import '../contactInfo/ContactInfoEditDialog.css'
 import '../../styles/EditDialogs.css'
@@ -40,17 +42,6 @@ type SocialRerenderOptions = {
   focusSelector?: string
 }
 
-type SocialAccountSelectOption = {
-  label: string
-  value: string
-}
-
-type SocialAccountSelectElement = HTMLElement & {
-  options?: SocialAccountSelectOption[]
-  value?: string
-  label?: string
-}
-
 type SocialRowInputProps = {
   rows: SocialRow[]
   index: number
@@ -70,48 +61,6 @@ type SocialRowInputProps = {
   isDropTarget: boolean
 }
 
-function toSocialAccountSelectOptions(options: SocialAccountOption[]): SocialAccountSelectOption[] {
-  return options.map((option) => ({
-    label: option.label,
-    value: option.label
-  }))
-}
-
-function getSocialAccountSelectValue(row: SocialRow, options: SocialAccountOption[]): string {
-  const selected = findSocialAccountOption(options, row?.name || '')
-  return selected?.label || ''
-}
-
-function readSocialAccountTypeChange(event: Event): string {
-  const customEvent = event as CustomEvent<{ value?: string }>
-  if (typeof customEvent.detail?.value === 'string') {
-    return customEvent.detail.value
-  }
-
-  const target = event.target as HTMLSelectElement | HTMLInputElement | null
-  return typeof target?.value === 'string' ? target.value : ''
-}
-
-function initializeSocialAccountSelects(
-  form: HTMLFormElement,
-  rows: SocialRow[],
-  options: SocialAccountOption[]
-): void {
-  const selectOptions = toSocialAccountSelectOptions(options)
-  const selectElements = form.querySelectorAll('solid-ui-select[data-social-account-row-index]') as NodeListOf<SocialAccountSelectElement>
-
-  selectElements.forEach((selectElement) => {
-    const rowIndex = Number(selectElement.dataset.socialAccountRowIndex)
-    if (Number.isNaN(rowIndex)) return
-
-    const row = rows[rowIndex]
-    if (!row) return
-
-    selectElement.options = selectOptions
-    selectElement.value = getSocialAccountSelectValue(row, options)
-    selectElement.label = ''
-  })
-}
 
 function focusSocialField(form: HTMLFormElement, selector: string): void {
   const nextField = form.querySelector(selector) as HTMLElement | null
@@ -129,15 +78,26 @@ function focusSocialField(form: HTMLFormElement, selector: string): void {
 
   if (shouldAvoidFocus) return
 
-  if (nextField.tagName === 'SOLID-UI-SELECT') {
-    const triggerButton = nextField.shadowRoot?.querySelector('button') as HTMLButtonElement | null
-    triggerButton?.focus()
+  if (nextField.tagName === 'SOLID-UI-COMBOBOX') {
+    const comboboxInput = nextField.shadowRoot?.querySelector('input') as HTMLInputElement | null
+    comboboxInput?.focus()
     return
   }
 
   if (typeof nextField.focus === 'function') {
     nextField.focus()
   }
+}
+
+function getInitialSocialFocusSelector(rows: SocialRow[]): string {
+  const firstRow = rows[0]
+  const firstRowHasValue = Boolean(firstRow && [firstRow.name, firstRow.icon, firstRow.homepage].some(hasNonEmptyText))
+
+  if (firstRowHasValue) {
+    return '[name="social-homepage-0"]'
+  }
+
+  return '[name="social-account-type-0"]'
 }
 
 function sanitizeSocialFieldValue(value: string): string {
@@ -212,19 +172,19 @@ function renderSocialAccountInputSelect(
   options: SocialAccountOption[],
   onChange: (event: Event) => void
 ) {
-  const selectedLabel = getSocialAccountSelectValue(row, options)
+  const selected = findSocialAccountOption(options, row?.name || '')
 
   return html`
-    <solid-ui-select
+    <solid-ui-combobox
+      select-only
       class="profile-edit-dialog__social-account-select"
       name=${`social-account-type-${rowIndex}`}
-      data-social-account-row-index=${String(rowIndex)}
       autocomplete="off"
-      .options=${toSocialAccountSelectOptions(options)}
-      .value=${selectedLabel}
-      .label=${''}
+      .value=${selected?.label || ''}
       @change=${onChange}
-    ></solid-ui-select>
+    >
+      ${options.map((option) => html`<solid-ui-combobox-option value=${option.label}>${option.label}</solid-ui-combobox-option>`)}
+    </solid-ui-combobox>
   `
 }
 
@@ -262,7 +222,9 @@ function renderSocialInputRow({
   }
 
   const handleAccountTypeInput = (event: Event) => {
-    const selected = findSocialAccountOption(options, readSocialAccountTypeChange(event))
+    const comboboxEvent = event as ComboboxChangeEvent
+    if (!comboboxEvent.detail.option) return
+    const selected = findSocialAccountOption(options, String(comboboxEvent.detail.option.value))
     if (!rows[index]) return
 
     if (!selected) {
@@ -292,10 +254,8 @@ function renderSocialInputRow({
       @drop=${(event: DragEvent) => onDrop(event, index)}
     >
       <solid-ui-button
-        type="button"
         class="profile-edit-dialog__drag-handle"
-        variant="icon"
-        size="md"
+        variant="ghost"
         aria-label=${`Reorder social account ${displayIndex + 1}`}
         title="Drag to reorder"
         draggable="true"
@@ -306,7 +266,7 @@ function renderSocialInputRow({
         @pointerup=${(event: PointerEvent) => onPointerUp(event)}
         @pointercancel=${(event: PointerEvent) => onPointerCancel(event)}
       >
-        <span slot="icon" class="profile-edit-dialog__drag-handle-icon" aria-hidden="true">${bentoIcon}</span>
+        <span slot="icon" aria-hidden="true">${bentoIcon}</span>
       </solid-ui-button>
       <img 
         class="profile-edit-dialog__social-icon" 
@@ -338,15 +298,12 @@ function renderSocialInputRow({
       </label>
       <div class="profile-edit-dialog__actions profile-edit-dialog__actions--edge">
         <solid-ui-button
-          type="button"
-          variant="icon"
-          size="md"
-          class="profile-edit-dialog__delete-button"
+          variant="ghost"
           aria-label=${`Delete social account ${displayIndex + 1}`}
           title=${deleteEntryButtonTitleText}
           @click=${handleDelete}
         >
-          <span slot="icon" class="profile-edit-dialog__delete-icon" aria-hidden="true">${trashIcon}</span>
+          <span slot="icon" aria-hidden="true">${trashIcon}</span>
         </solid-ui-button>
       </div>
     </div>
@@ -515,8 +472,6 @@ function renderSocialEditTemplate(
       : null}
   `, form)
 
-  initializeSocialAccountSelects(form, formState.socialAccounts, socialOptions)
-
   if (rerenderOptions.focusSelector) {
     focusSocialField(form, rerenderOptions.focusSelector)
   }
@@ -561,7 +516,7 @@ export async function createSocialEditDialog(
     title: editSocialDialogTitleText,
     dom,
     form,
-    onOpen: () => focusSocialField(form, '[name="social-account-type-0"]'),
+    onOpen: () => focusSocialField(form, getInitialSocialFocusSelector(formState.socialAccounts)),
     shouldCloseWithoutSave: () => {
       const ops = summarizeRowOps(formState.socialAccounts, rowHasContent)
       const orderChanged = hasOrderChanged(formState.socialAccounts, formState.initialExistingOrder)

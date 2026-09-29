@@ -1,6 +1,6 @@
 import { html, TemplateResult } from 'lit-html'
-import 'solid-ui/components/actions/button'
-import type { Button as SolidUIButtonElement } from 'solid-ui/components/actions/button'
+import 'solid-ui/components/button'
+import type { Button as SolidUIButtonElement } from 'solid-ui/components/button'
 import { DataBrowserContext } from 'pane-registry'
 import { authn } from 'solid-logic'
 import { LiveStore, NamedNode, st } from 'rdflib'
@@ -69,9 +69,7 @@ const createAddMeToYourFriendsButton = (
 ): SolidUIButtonElement => {
   let label = addMeToYourFriendsButtonText
   const button = context.dom.createElement('solid-ui-button') as SolidUIButtonElement
-  button.setAttribute('type', 'button')
   button.setAttribute('variant', 'secondary')
-  button.setAttribute('size', 'sm')
   setAddToFriendsButtonLabel(button, label)
   button.addEventListener('click', setButtonHandler)
 
