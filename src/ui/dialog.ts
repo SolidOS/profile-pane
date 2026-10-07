@@ -211,16 +211,27 @@ function getDialogElements (dialog: HTMLDialogElement): DialogElements {
   }
 }
 
+function syncDialogErrorDescription(elements: DialogElements): void {
+  const defaultDescription = 'modal-desc'
+  const describedBy = elements.error.hidden || !elements.error.textContent?.trim()
+    ? defaultDescription
+    : `${defaultDescription} modal-error`
+
+  elements.dialog.setAttribute('aria-describedby', describedBy)
+}
+
 function clearModalError(elements: DialogElements): void {
   elements.error.textContent = ''
   elements.error.setAttribute('aria-hidden', 'true')
   elements.error.hidden = true
+  syncDialogErrorDescription(elements)
 }
 
 function setModalError(elements: DialogElements, error: unknown, fallbackMessage?: string): void {
   elements.error.textContent = formatDisplayError(error, fallbackMessage)
   elements.error.setAttribute('aria-hidden', 'false')
   elements.error.hidden = false
+  syncDialogErrorDescription(elements)
 }
 
 function openDialogElement (dialog: HTMLDialogElement): void {
