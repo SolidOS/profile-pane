@@ -6,12 +6,18 @@ import { icons, ns } from 'solid-ui'
 import { hydrateQRCodes } from './sections/qrcode/QRCodeCard'
 import { createResizeDrivenSync } from './utils/resize'
 import { Layout } from './types'
+import { presentProfile } from './sections/heading/selectors'
 export {
   addMeToYourFriendsDiv,
   createAddMeToYourFriendsButton,
   saveNewThing,
   checkIfThingExists
 } from './specialButtons/addMeToYourFriends'
+export { createHeadingEditDialog } from './sections/heading/HeadingEditDialog'
+export { presentProfile } from './sections/heading/selectors'
+export { getViewerMode } from './viewerMode'
+export type { ProfileDetails } from './sections/heading/types'
+export type { ViewerMode } from './types'
 
 const MOBILE_LAYOUT_MAX_WIDTH = 768
 const HEADING_SECTION_SELECTOR = '[data-profile-section="heading"]'
@@ -130,7 +136,17 @@ const Pane = {
     const renderWithData = async () => {
       applyEnvironmentAttributes(target, context)
       target.dataset.layout = currentLayout
-      render(await ProfileView(subject, context, currentLayout, renderWithData), target)
+      render(await ProfileView(subject, context, currentLayout, async () => {
+        target.dispatchEvent(new CustomEvent('profile-pane-saved', {
+          bubbles: true,
+          composed: true,
+          detail: {
+            subjectUri: subject.value,
+            profileData: presentProfile(subject, store)
+          }
+        }))
+        await renderWithData()
+      }), target)
       cleanupSocialSectionHeightSync?.()
       cleanupSocialSectionHeightSync = syncSocialSectionHeight(target)
       cleanupLayoutSync?.()

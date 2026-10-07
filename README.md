@@ -3,6 +3,19 @@ SolidOS pane that displays a personal profile page
 
 ![CI](https://github.com/solid/profile-pane/workflows/CI/badge.svg)
 
+## Profile updates
+
+After a section editor successfully saves, the pane emits a bubbling, composed
+`profile-pane-saved` event with `detail.subjectUri` identifying the updated
+profile WebID and `detail.profileData` containing the fresh heading data computed
+from the pane's store after saving. Hosting applications can use that data without
+fetching the profile again to refresh related
+views, such as a standalone profile heading whose job title comes from the resume
+and whose primary phone, email, and location come from More contacts. Contact
+updates include adding, editing, and removing entries; the heading's existing
+selection rules prefer work phone and email entries.
+Initial rendering and layout changes do not emit this event.
+
 ## Contribute
 
 ### Tech stack
