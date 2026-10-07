@@ -13,7 +13,6 @@ export {
   saveNewThing,
   checkIfThingExists
 } from './specialButtons/addMeToYourFriends'
-export { createHeadingEditDialog } from './sections/heading/HeadingEditDialog'
 export { presentProfile } from './sections/heading/selectors'
 export { getViewerMode } from './viewerMode'
 export type { ProfileDetails } from './sections/heading/types'
