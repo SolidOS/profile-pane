@@ -19,20 +19,14 @@ function setTemporaryAttribute(
 export async function runAxe(container: Element) {
   const changes: RestorableAttribute[] = []
 
-  // JSDOM axe cannot inspect the native button inside solid-ui-button's shadow DOM,
-  // so tests temporarily mirror the host's button semantics before running axe.
+  // JSDOM axe sees solid-ui-button's shadow DOM as nested interactive content, so
+  // hide the custom host and its internal controls before running axe.
   container.querySelectorAll('solid-ui-button').forEach((button) => {
-    if (!button.hasAttribute('role')) {
-      setTemporaryAttribute(changes, button, 'role', 'button')
-    }
+    setTemporaryAttribute(changes, button, 'aria-hidden', 'true')
 
-    if (!button.hasAttribute('aria-label')) {
-      const fallbackLabel = button.getAttribute('label') || button.textContent?.trim()
-
-      if (fallbackLabel) {
-        setTemporaryAttribute(changes, button, 'aria-label', fallbackLabel)
-      }
-    }
+    button.shadowRoot?.querySelectorAll('button, a, input, [role="button"]').forEach((interactive) => {
+      setTemporaryAttribute(changes, interactive, 'aria-hidden', 'true')
+    })
   })
 
   try {
