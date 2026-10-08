@@ -5,12 +5,12 @@ import { context, doc, subject } from './setup'
 import { store } from 'solid-logic'
 import { waitForSelector } from './helpers/dom'
 
-describe('profile pane heading integration', () => {
+describe('profile pane integration', () => {
   beforeEach(() => {
     store.removeDocument(doc)
   })
 
-  it('renders the current heading contract for a populated profile', async () => {
+  it('renders profile sections without the removed heading for a populated profile', async () => {
     const turtle = `
       @prefix : <#>.
       @prefix foaf: <http://xmlns.com/foaf/0.1/> .
@@ -44,14 +44,13 @@ describe('profile pane heading integration', () => {
     const result = pane.render(subject, context)
     document.body.appendChild(result)
 
-    await waitForSelector(result, '#profile-name')
-    expect(result.querySelector('#profile-name')?.textContent).toBe('Jane Doe')
-    expect(result.textContent).toContain('Test Double')
+    const cv = await waitForSelector<HTMLElement>(result, '[data-testid="curriculum-vitae"]')
+    expect(result.querySelector('[data-profile-section="heading"]')).toBeNull()
+    expect(result.querySelector('#profile-name')).toBeNull()
+    expect(result.querySelector('img.profile__hero')).toBeNull()
+    expect(cv.textContent).toContain('Test Double')
     expect(result.textContent).toContain('Hamburg')
     expect(result.textContent).toContain('Germany')
-
-    const image = result.querySelector('img.profile__hero') as HTMLImageElement | null
-    expect(image?.getAttribute('src')).toBe('https://janedoe.example/profile/me.jpg')
 
     result.remove()
   })

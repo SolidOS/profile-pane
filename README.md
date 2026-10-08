@@ -3,6 +3,32 @@ SolidOS pane that displays a personal profile page
 
 ![CI](https://github.com/solid/profile-pane/workflows/CI/badge.svg)
 
+## Profile updates
+
+The Add as friend control is now owned by solid-panes' standalone profile heading,
+including existing-friend state and success/error feedback. Profile-pane no longer
+exports `addMeToYourFriendsDiv` or `createAddMeToYourFriendsButton`. The shared
+`saveNewThing` and `checkIfThingExists` helpers remain for the profile editors.
+
+After a section editor successfully saves, the pane emits a bubbling, composed
+`profile-pane-saved` event with `detail.subjectUri` identifying the updated
+profile WebID and `detail.profileData` containing the fresh heading data computed
+from the pane's store after saving. Hosting applications can use that data without
+fetching the profile again to refresh related
+views, such as a standalone profile heading whose job title comes from the resume
+and whose primary phone, email, and location come from More contacts. Contact
+updates include adding, editing, and removing entries; the heading's existing
+selection rules prefer work phone and email entries.
+Initial rendering and layout changes do not emit this event.
+
+Conversely, when a host edits the displayed profile outside the pane (for example a
+standalone heading editor that saves a location), it should dispatch a bubbling,
+composed `profile-heading-saved` event with `detail.subjectUri` set to the profile
+WebID after the store is updated. A rendered pane for that profile rerenders from
+the store so sections such as More contacts show the new data. The pane stops
+listening once it has been removed from the document, and it does not emit
+`profile-pane-saved` in response.
+
 ## Contribute
 
 ### Tech stack

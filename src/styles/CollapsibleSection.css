@@ -40,6 +40,19 @@
   min-width: 0;
 }
 
+.profile-section-collapsible__edit-button icon-lucide-pencil,
+solid-ui-button .profile__add-more-icon icon-lucide-plus {
+  color: var(--solid-ui-color-primary, #7C4DFF);
+}
+
+/* On hover/focus, inherit the button's own hover text color. */
+.profile-section-collapsible__edit-button:hover icon-lucide-pencil,
+.profile-section-collapsible__edit-button:focus-visible icon-lucide-pencil,
+solid-ui-button:hover .profile__add-more-icon icon-lucide-plus,
+solid-ui-button:focus-visible .profile__add-more-icon icon-lucide-plus {
+  color: inherit;
+}
+
 .profile-section-collapsible__action-label {
   font-size: var(--solid-ui-font-size-sm, .875rem);
 }
@@ -53,6 +66,16 @@
 /* Icons */
 .profile-section-collapsible__edit-icon {
   display: none;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  line-height: 0;
+}
+
+.profile-section-collapsible__edit-icon svg {
+  display: block;
+  margin: auto;
 }
 
 .profile-section-collapsible__chevron {
@@ -115,7 +138,13 @@
   transform: rotate(180deg);
 }
 
-:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-section-collapsible__action-label {
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-section-collapsible__chevron {
+  width: 1.125rem;
+  height: 0.75rem;
+}
+
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-section-collapsible__action-label,
+:is(.profile-pane-host, .profile-pane-root)[data-layout='mobile'] .profile-section-collapsible__edit-label {
   display: none !important;
 }
 
@@ -202,6 +231,9 @@
 
 /* Viewport fallback for mobile-width panes when no explicit layout attribute is available. */
 @media (max-width: 768px) {
+  .profile-section-collapsible__edit-label {
+    display: none !important;
+  }
   .profile-section-collapsible--inline-mobile-actions > .profile-section-collapsible__header h2 {
     flex: 1 1 auto;
     min-width: 0;
@@ -241,6 +273,11 @@
 
   .profile-section-collapsible[data-expanded="true"] .profile-section-collapsible__chevron {
     transform: rotate(180deg);
+  }
+
+  .profile-section-collapsible__chevron {
+    width: 1.125rem;
+    height: 0.75rem;
   }
 
   .profile-section-collapsible__action-label {
@@ -271,6 +308,9 @@
 
 /* Container-driven fallback for mobile-width panes inside a wider viewport. */
 @container profile-pane (max-width: 768px) {
+  .profile-section-collapsible__edit-label {
+    display: none !important;
+  }
   .profile-section-collapsible--inline-mobile-actions > .profile-section-collapsible__header h2 {
     flex: 1 1 auto;
     min-width: 0;
@@ -310,6 +350,11 @@
 
   .profile-section-collapsible[data-expanded="true"] .profile-section-collapsible__chevron {
     transform: rotate(180deg);
+  }
+
+  .profile-section-collapsible__chevron {
+    width: 1.125rem;
+    height: 0.75rem;
   }
 
   .profile-section-collapsible__action-label {

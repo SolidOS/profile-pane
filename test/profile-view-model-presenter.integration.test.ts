@@ -119,14 +119,11 @@ describe('presentProfileViewModel integration', () => {
       'cvDetails',
       'education',
       'languages',
-      'profileDetails',
       'projects',
       'skills',
       'social'
     ])
 
-    expect(viewModel.profileDetails.name).toBe('Jane Doe')
-    expect(viewModel.profileDetails.jobTitle).toBe('Staff Engineer')
     expect(viewModel.bioDetails.description).toBe('Builds profile features for SolidOS.')
     expect(viewModel.cvDetails[0].orgName).toBe('SolidOS')
     expect(viewModel.projects[0].title).toBe('Profile Pane')
