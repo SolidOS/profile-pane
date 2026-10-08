@@ -3,7 +3,7 @@ import { DataBrowserContext } from 'pane-registry'
 import { NamedNode } from 'rdflib'
 import { ns, widgets, icons } from 'solid-ui'
 import { friendsHeadingText } from '../texts'
-import { saveNewThing } from '../specialButtons/addMeToYourFriends'
+import { saveNewThing } from './helpers'
 import '../styles/editProfile.css'
 import { store } from 'solid-logic'
 import {

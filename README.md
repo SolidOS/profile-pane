@@ -5,6 +5,11 @@ SolidOS pane that displays a personal profile page
 
 ## Profile updates
 
+The Add as friend control is now owned by solid-panes' standalone profile heading,
+including existing-friend state and success/error feedback. Profile-pane no longer
+exports `addMeToYourFriendsDiv` or `createAddMeToYourFriendsButton`. The shared
+`saveNewThing` and `checkIfThingExists` helpers remain for the profile editors.
+
 After a section editor successfully saves, the pane emits a bubbling, composed
 `profile-pane-saved` event with `detail.subjectUri` identifying the updated
 profile WebID and `detail.profileData` containing the fresh heading data computed

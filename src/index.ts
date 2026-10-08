@@ -7,12 +7,6 @@ import { hydrateQRCodes } from './sections/qrcode/QRCodeCard'
 import { createResizeDrivenSync } from './utils/resize'
 import { Layout } from './types'
 import { presentProfile } from './sections/heading/selectors'
-export {
-  addMeToYourFriendsDiv,
-  createAddMeToYourFriendsButton,
-  saveNewThing,
-  checkIfThingExists
-} from './specialButtons/addMeToYourFriends'
 export { presentProfile } from './sections/heading/selectors'
 export { getViewerMode } from './viewerMode'
 export type { ProfileDetails } from './sections/heading/types'
