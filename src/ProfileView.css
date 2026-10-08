@@ -88,7 +88,7 @@ solid-ui-button.profile__btn-contacts {
   align-items: start;
   column-gap: 5px;
   row-gap: 20px;
-  padding-top: 12px;
+  padding-top: 0;
 }
 
 /* Grid columns and wrappers */
@@ -245,7 +245,12 @@ solid-ui-button.profile__btn-contacts {
 .profile-grid solid-ui-button.profile__action-button--empty .profile__action-icon[slot='left-icon'] {
   display: inline-flex;
   align-items: center;
-  transform: translateY(-1px);
+  justify-content: center;
+  line-height: 0;
+}
+
+.profile-grid solid-ui-button.profile__action-button--empty .profile__action-icon[slot='left-icon'] icon-lucide-plus {
+  display: block;
 }
 
 .profile-grid solid-ui-button.profile__action-button--empty:hover .profile__action-icon svg path,

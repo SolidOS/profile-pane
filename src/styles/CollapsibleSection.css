@@ -40,6 +40,19 @@
   min-width: 0;
 }
 
+.profile-section-collapsible__edit-button icon-lucide-pencil,
+solid-ui-button .profile__add-more-icon icon-lucide-plus {
+  color: var(--solid-ui-color-primary, #7C4DFF);
+}
+
+/* On hover/focus, inherit the button's own hover text color. */
+.profile-section-collapsible__edit-button:hover icon-lucide-pencil,
+.profile-section-collapsible__edit-button:focus-visible icon-lucide-pencil,
+solid-ui-button:hover .profile__add-more-icon icon-lucide-plus,
+solid-ui-button:focus-visible .profile__add-more-icon icon-lucide-plus {
+  color: inherit;
+}
+
 .profile-section-collapsible__action-label {
   font-size: var(--solid-ui-font-size-sm, .875rem);
 }

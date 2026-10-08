@@ -49,7 +49,7 @@ export const plusIcon = html`<icon-lucide-plus style="width: 12px; height: 12px;
 export const trashIcon = html`<icon-lucide-trash-2 style="width: 20px; height: 20px; color: #D1D5DC;" aria-hidden="true"></icon-lucide-trash-2>`
 export const bentoIcon = html`<icon-lucide-grid-2x2 style="width: 18px; height: 18px; color: #99A1AF;" aria-hidden="true"></icon-lucide-grid-2x2>`
 export const starIcon = html`<icon-lucide-star style="width: 30px; height: 30px; color: #F4F4F4;" aria-hidden="true"></icon-lucide-star>`
-export const addIcon = html`<icon-lucide-plus style="width: 12px; height: 12px; color: #7C4DFF;" aria-hidden="true"></icon-lucide-plus>`
+export const addIcon = html`<icon-lucide-plus style="width: 12px; height: 12px;" aria-hidden="true"></icon-lucide-plus>`
 export const chevronDownIcon = html`<icon-lucide-chevron-down style="width: 18px; height: 18px; color: #6A7282;" aria-hidden="true"></icon-lucide-chevron-down>`
 export const personInCircleIcon = html`<icon-lucide-circle-user style="width: 64px; height: 64px; color: #CBD5E1;" aria-hidden="true"></icon-lucide-circle-user>`
 export const globeIcon = html`<icon-lucide-globe style="width: 48px; height: 48px; color: #E5E7EB;" aria-hidden="true"></icon-lucide-globe>`
@@ -58,7 +58,7 @@ export const commentIcon = html`<icon-lucide-message-square style="width: 32px; 
 export const envelopeIcon = html`<icon-lucide-mail style="width: 48px; height: 48px; color: #E5E7EB;" aria-hidden="true"></icon-lucide-mail>`
 export const pasteIcon = html`<icon-lucide-clipboard style="width: 12px; height: 14px; color: #6A7282;" aria-hidden="true"></icon-lucide-clipboard>`
 export const closeIcon = html`<icon-lucide-x style="width: 12px; height: 12px; color: #4A5565;" aria-hidden="true"></icon-lucide-x>`
-export const editIcon = html`<icon-lucide-pencil style="width: 14px; height: 14px; color: #1E2939;" aria-hidden="true"></icon-lucide-pencil>`
+export const editIcon = html`<icon-lucide-pencil style="width: 14px; height: 14px;" aria-hidden="true"></icon-lucide-pencil>`
 export const deleteIcon = html`<icon-lucide-x style="width: 14px; height: 14px; color: #6A7282;" aria-hidden="true"></icon-lucide-x>`
 export const cameraIcon = html`<icon-lucide-camera style="width: 14px; height: 14px; color: #1E2939;" aria-hidden="true"></icon-lucide-camera>`
 export const twoDownArrowsIcon = html`<icon-lucide-chevron-down style="width: 16px; height: 16px; color: #7C4DFF;" aria-hidden="true"></icon-lucide-chevron-down>`
