@@ -88,6 +88,7 @@ solid-ui-button.profile__btn-contacts {
   align-items: start;
   column-gap: 5px;
   row-gap: 20px;
+  padding-top: 12px;
 }
 
 /* Grid columns and wrappers */
