@@ -50,6 +50,42 @@ describe('profile save notifications', () => {
     }
   })
 
+  it('rerenders when the host reports a heading save for the displayed profile', async () => {
+    const saved = vi.fn()
+    document.addEventListener('profile-pane-saved', saved)
+    try {
+      const target = pane.render(subject, context)
+      document.body.appendChild(target)
+      await vi.waitFor(() => expect(ProfileView).toHaveBeenCalledTimes(1))
+
+      const announce = (subjectUri: string) => document.dispatchEvent(new CustomEvent('profile-heading-saved', {
+        bubbles: true,
+        composed: true,
+        detail: { subjectUri }
+      }))
+
+      announce('https://another.example/profile/card#me')
+      await Promise.resolve()
+      expect(ProfileView).toHaveBeenCalledTimes(1)
+
+      announce(subject.value)
+      await vi.waitFor(() => expect(ProfileView).toHaveBeenCalledTimes(2))
+      expect(saved).not.toHaveBeenCalled()
+
+      target.remove()
+      announce(subject.value)
+      await Promise.resolve()
+      expect(ProfileView).toHaveBeenCalledTimes(2)
+
+      document.body.appendChild(target)
+      announce(subject.value)
+      await Promise.resolve()
+      expect(ProfileView).toHaveBeenCalledTimes(2)
+    } finally {
+      document.removeEventListener('profile-pane-saved', saved)
+    }
+  })
+
   it('treats close-without-save as a no-op instead of a successful save', async () => {
     const form = document.createElement('form')
     form.innerHTML = '<input name="field" value="unchanged">'

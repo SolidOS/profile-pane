@@ -18,6 +18,7 @@ export { getViewerMode } from './viewerMode'
 export type { ProfileDetails } from './sections/heading/types'
 export type { ViewerMode } from './types'
 
+const PROFILE_HEADING_SAVED_EVENT = 'profile-heading-saved'
 const MOBILE_LAYOUT_MAX_WIDTH = 768
 const HEADING_SECTION_SELECTOR = '[data-profile-section="heading"]'
 const SOCIAL_SECTION_SELECTOR = '[data-profile-section="social"]'
@@ -155,6 +156,27 @@ const Pane = {
       })
       await hydrateQRCodes(target)
     }
+
+    // Hosts may edit this profile elsewhere (e.g. a standalone heading); rerender so
+    // sections such as More contacts reflect the updated store.
+    let wasConnected = false
+    const handleHeadingSaved = (event: Event) => {
+      if (target.isConnected) {
+        wasConnected = true
+      } else if (wasConnected) {
+        context.dom.removeEventListener(PROFILE_HEADING_SAVED_EVENT, handleHeadingSaved)
+        return
+      } else {
+        return
+      }
+
+      const detail = (event as CustomEvent<{ subjectUri?: string }>).detail
+      if (detail?.subjectUri !== subject.value) return
+      renderWithData().catch((error: unknown) => {
+        console.error('Failed to refresh the profile after a heading update.', error)
+      })
+    }
+    context.dom.addEventListener(PROFILE_HEADING_SAVED_EVENT, handleHeadingSaved)
 
     loadExtendedProfile(store, subject).then(async () => {
       await renderWithData()

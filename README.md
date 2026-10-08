@@ -16,6 +16,14 @@ updates include adding, editing, and removing entries; the heading's existing
 selection rules prefer work phone and email entries.
 Initial rendering and layout changes do not emit this event.
 
+Conversely, when a host edits the displayed profile outside the pane (for example a
+standalone heading editor that saves a location), it should dispatch a bubbling,
+composed `profile-heading-saved` event with `detail.subjectUri` set to the profile
+WebID after the store is updated. A rendered pane for that profile rerenders from
+the store so sections such as More contacts show the new data. The pane stops
+listening once it has been removed from the document, and it does not emit
+`profile-pane-saved` in response.
+
 ## Contribute
 
 ### Tech stack
