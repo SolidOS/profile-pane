@@ -1,18 +1,8 @@
 import { solidPane, buildConfig } from "solidos-toolkit/vite";
 import { defineConfig } from "vitest/config";
-import type { PluginOption } from "vite";
 import Icons from "unplugin-icons/vite";
 
 const isWatch = process.argv.includes("--watch");
-type ConcretePlugin = Extract<PluginOption, { name: string }>;
-async function watchPlugins(input: PluginOption): Promise<ConcretePlugin[]> {
-  const resolved = await input;
-  if (!resolved) return [];
-  if (Array.isArray(resolved)) {
-    return (await Promise.all(resolved.map(watchPlugins))).flat();
-  }
-  return /dts/i.test(resolved.name) ? [] : [resolved];
-}
 const plugins = solidPane({
   litDecoratorPaths: ["src/components"],
   sandbox: {
@@ -38,7 +28,7 @@ export default defineConfig({
         iconPrefix: "icon",
       },
     }),
-    ...(isWatch ? await watchPlugins(plugins) : plugins),
+    ...plugins,
   ],
 
   build,

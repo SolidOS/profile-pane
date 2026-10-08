@@ -2,6 +2,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest'
 import { html } from 'lit-html'
 import { ProfileView } from '../src/ProfileView'
 import pane from '../src/index'
+import { openInputDialog } from '../src/ui/dialog'
 import { context, subject } from './setup'
 
 vi.mock('../src/ProfileView', () => ({
@@ -47,5 +48,30 @@ describe('profile save notifications', () => {
     } finally {
       document.removeEventListener('profile-pane-saved', saved)
     }
+  })
+
+  it('treats close-without-save as a no-op instead of a successful save', async () => {
+    const form = document.createElement('form')
+    form.innerHTML = '<input name="field" value="unchanged">'
+    const onSave = vi.fn()
+
+    const dialogPromise = openInputDialog({
+      title: 'Edit profile',
+      dom: document,
+      form,
+      shouldCloseWithoutSave: () => true,
+      onSave
+    })
+
+    await vi.waitFor(() => {
+      const saveButton = document.querySelector('#modal-buttons [data-dialog-primary="true"]') as HTMLElement | null
+      expect(saveButton).not.toBeNull()
+    })
+
+    const saveButton = document.querySelector('#modal-buttons [data-dialog-primary="true"]') as HTMLElement
+    saveButton.click()
+
+    await expect(dialogPromise).resolves.toBeNull()
+    expect(onSave).not.toHaveBeenCalled()
   })
 })

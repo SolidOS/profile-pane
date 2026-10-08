@@ -548,6 +548,17 @@ export function openInputDialog (options: OpenInputDialogCustom): Promise<InputD
   const cancelLabel = options.cancelLabel || 'Cancel'
   const dialog = ensureModalDialog(options.dom)
   const elements = getDialogElements(dialog)
+  const existingSubmitControl = options.form.querySelector('button[type="submit"], input[type="submit"]') as HTMLElement | null
+  const submitControl = (existingSubmitControl ?? options.form.ownerDocument.createElement('button')) as HTMLButtonElement
+  let shouldTreatCloseAsNoOp = false
+
+  if (!existingSubmitControl) {
+    submitControl.type = 'submit'
+    submitControl.hidden = true
+    submitControl.tabIndex = -1
+    submitControl.setAttribute('aria-hidden', 'true')
+    options.form.appendChild(submitControl)
+  }
 
   const deriveDefaultFieldLabel = (value: string): string => value
     .replace(/^\s*edit\s+/i, '')
@@ -603,6 +614,7 @@ export function openInputDialog (options: OpenInputDialogCustom): Promise<InputD
           clearModalError(elements)
 
           if (options.shouldCloseWithoutSave && await options.shouldCloseWithoutSave()) {
+            shouldTreatCloseAsNoOp = true
             return true
           }
 
@@ -646,11 +658,15 @@ export function openInputDialog (options: OpenInputDialogCustom): Promise<InputD
   return dialogPromise
     .then((result) => {
       if (result !== 'save') return null
+      if (shouldTreatCloseAsNoOp) return null
       return collectFormValues(options.form)
     })
     .finally(() => {
       elements.buttons.hidden = false
       updateSavingUI(dialog, submitLabel, false)
       options.form.removeEventListener('submit', handleSubmit)
+      if (!existingSubmitControl && submitControl.isConnected) {
+        submitControl.remove()
+      }
     })
 }
