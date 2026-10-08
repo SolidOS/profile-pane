@@ -56,6 +56,7 @@
     "@solid-data-modules/contacts-rdflib": "^0.7.1",
     "chat-pane": "4.0.0",
     "lit-html": "^3.3.3",
+    "lucide": "^1.52.0",
     "pane-registry": "5.0.1",
     "patch-package": "^8.0.1",
     "qrcode": "^1.5.4",
@@ -71,6 +72,7 @@
     "rdflib": "$rdflib"
   },
   "devDependencies": {
+    "@iconify-json/lucide": "^1.2.140",
     "@types/node": "^24.13.2",
     "@typescript-eslint/eslint-plugin": "^8.59.3",
     "@typescript-eslint/parser": "^8.59.3",
@@ -83,7 +85,8 @@
     "solid-logic": "^6.0.0",
     "solidos-toolkit": "dev",
     "typescript": "^6.0.3",
-    "undici-types": "^7.18.2"
+    "undici-types": "^7.18.2",
+    "unplugin-icons": "^24.0.0"
   },
   "solidosDependencies": [
     "rdflib",

@@ -1,6 +1,7 @@
 import { solidPane, buildConfig } from "solidos-toolkit/vite";
 import { defineConfig } from "vitest/config";
 import type { PluginOption } from "vite";
+import Icons from "unplugin-icons/vite";
 
 const isWatch = process.argv.includes("--watch");
 type ConcretePlugin = Extract<PluginOption, { name: string }>;
@@ -28,7 +29,17 @@ if (isWatch && build && Array.isArray(build.rolldownOptions?.output)) {
 }
 
 export default defineConfig({
-  plugins: isWatch ? await watchPlugins(plugins) : plugins,
+  plugins: [
+    Icons({
+      compiler: "web-components",
+      autoInstall: true,
+      webComponents: {
+        autoDefine: false,
+        iconPrefix: "icon",
+      },
+    }),
+    ...(isWatch ? await watchPlugins(plugins) : plugins),
+  ],
 
   build,
   test: {
