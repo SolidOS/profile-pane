@@ -125,7 +125,7 @@ describe('Profile view composition', () => {
   })
 
   it('aggregates all major presenter branches from one profile fixture', async () => {
-    const viewModel = await presentProfileViewModel(subject, store as any)
+    const viewModel = await presentProfileViewModel(subject)
 
     expect(viewModel.profileDetails.name).toBe('Jane Doe')
     expect(viewModel.profileDetails.jobTitle).toBe('Staff Engineer')

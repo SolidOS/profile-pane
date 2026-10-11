@@ -8,7 +8,7 @@ import { ViewerMode } from '../../types'
 import { applyRowFieldChange, summarizeRowOps } from '../shared/rowState'
 import { hasNonEmptyText, sanitizeTextValue } from '../../textUtils'
 import { MutationOps } from '../shared/types'
-import { processProjectsMutations } from './mutations'
+import { solidLogicSingleton } from 'solid-logic'
 import { pasteIcon } from '../../icons-svg/profileIcons'
 import {
   editProjectsDialogTitleText,
@@ -41,7 +41,7 @@ function isValidProjectUrl(value: string): boolean {
 }
 
 function rowHasContent(row: ProjectRow): boolean {
-  return [row.url, row.entryNode].some(hasNonEmptyText)
+  return [row.url, row.sourceNode].some(hasNonEmptyText)
 }
 
 async function pasteWebIdIntoRow(row: ProjectRow): Promise<string> {
@@ -56,7 +56,7 @@ async function pasteWebIdIntoRow(row: ProjectRow): Promise<string> {
 
 function toFormState(_details: ProjectDetails[]): ProjectFormState {
   return {
-    project: { url: '', entryNode: '', status: 'new' }
+    project: { url: '', sourceNode: '', status: 'new' }
   }
 }
 
@@ -107,7 +107,7 @@ function renderProjectInputRow(row: ProjectRow, onChange: () => void) {
             .value=${row?.url || ''}
             required
             data-contact-field="url"
-            data-entry-node=${row?.entryNode || ''}
+            data-entry-node=${row?.sourceNode || ''}
             data-row-status=${row?.status || 'n/a'}
             placeholder="Type or paste project/community WebID here"
             autocomplete="off"
@@ -169,7 +169,7 @@ export async function createProjectsEditDialog(
     dom,
     form,
     headerAction: { type: 'close' },
-    shouldCloseWithoutSave: () => !hasNonEmptyText(formState.project.url) && !hasNonEmptyText(formState.project.entryNode),
+    shouldCloseWithoutSave: () => !hasNonEmptyText(formState.project.url) && !hasNonEmptyText(formState.project.sourceNode),
     validate: () => {
       if (viewerMode !== 'owner') {
         return ownerLoginRequiredDialogMessageText
@@ -183,7 +183,7 @@ export async function createProjectsEditDialog(
         update: projectOps.update,
         remove: projectOps.remove
       }
-      await processProjectsMutations(store, subject, plan)
+      await solidLogicSingleton.profile.processProjectsMutations(subject, plan)
     },
     formatSaveError: (error: unknown) => {
       return error instanceof Error ? error.message : String(error)

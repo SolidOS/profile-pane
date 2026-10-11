@@ -13,21 +13,21 @@ describe('Contact info section', () => {
     const contactInfo = {
       phones: [
         {
-          entryNode: sym('https://example.com/profile#phone'),
+          sourceNode: sym('https://example.com/profile#phone'),
           type: sym('http://www.w3.org/2006/vcard/ns#Home'),
           valueNode: sym('tel:+1555123456')
         }
       ],
       emails: [
         {
-          entryNode: sym('https://example.com/profile#email'),
+          sourceNode: sym('https://example.com/profile#email'),
           type: sym('http://www.w3.org/2006/vcard/ns#Work'),
           valueNode: sym('mailto:jane@example.com')
         }
       ],
       addresses: [
         {
-          entryNode: sym('https://example.com/profile#address'),
+          sourceNode: sym('https://example.com/profile#address'),
           streetAddress: 'Main Street 1',
           locality: 'Boston',
           countryName: 'USA'
@@ -55,21 +55,21 @@ describe('Contact info section', () => {
     const contactInfo = {
       phones: [
         {
-          entryNode: sym('https://example.com/profile#phone'),
+          sourceNode: sym('https://example.com/profile#phone'),
           type: sym('http://www.w3.org/2006/vcard/ns#Home'),
           valueNode: sym('tel:+1555123456')
         }
       ],
       emails: [
         {
-          entryNode: sym('https://example.com/profile#email'),
+          sourceNode: sym('https://example.com/profile#email'),
           type: sym('http://www.w3.org/2006/vcard/ns#Work'),
           valueNode: sym('mailto:jane@example.com')
         }
       ],
       addresses: [
         {
-          entryNode: sym('https://example.com/profile#address'),
+          sourceNode: sym('https://example.com/profile#address'),
           streetAddress: 'Main Street 1',
           locality: 'Boston',
           countryName: 'USA'

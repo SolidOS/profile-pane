@@ -11,7 +11,7 @@ describe('Bio section', () => {
     document.body.appendChild(container)
 
     const bio = {
-      entryNode: sym('https://example.com/profile#bio'),
+      sourceNode: sym('https://example.com/profile#bio'),
       description: 'I enjoy building Solid applications and web components.'
     }
 
@@ -28,7 +28,7 @@ describe('Bio section', () => {
     document.body.appendChild(container)
 
     const bio = {
-      entryNode: sym('https://example.com/profile#bio'),
+      sourceNode: sym('https://example.com/profile#bio'),
       description: 'I enjoy building Solid applications and web components.'
     }
 

@@ -57,7 +57,7 @@ export async function ProfileView (
   const theme = context.environment?.theme ?? 'light'
   const inputMode = context.environment?.inputMode ?? 'pointer'
 
-  const viewModel = await presentProfileViewModel(subject, store)
+  const viewModel = await presentProfileViewModel(subject)
   const profileDetails = viewModel.profileDetails
   const rolesByType = viewModel.cvDetails
   const skills = viewModel.skills

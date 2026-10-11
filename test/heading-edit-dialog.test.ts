@@ -6,15 +6,12 @@ import { getSharedDialogCancelButton, getSharedDialogSaveButton } from '../src/u
 import { context, subject as viewedSubject } from './setup'
 import type { LiveStore, NamedNode } from 'rdflib'
 import type PhotoCapture from 'solid-ui/components/photo-capture'
+import { solidLogicSingleton } from 'solid-logic'
 
 const mockProcessHeadingMutations = vi.fn<(_: unknown, __: unknown, plan: HeadingMutationPlan) => Promise<void>>()
 const mockUploadPhotoFile = vi.fn<(store: LiveStore, subject: NamedNode, file: File) => Promise<string>>()
 const mockResolvePhotoDisplaySrc = vi.fn<(store: LiveStore, imageSrc?: string) => Promise<string | undefined>>()
 const mockInvalidateResolvedPhotoDisplaySrc = vi.fn<(imageSrc?: string) => void>()
-
-vi.mock('../src/sections/heading/mutations', () => ({
-  processHeadingMutations: (...args: Parameters<typeof mockProcessHeadingMutations>) => mockProcessHeadingMutations(...args)
-}))
 
 vi.mock('../src/sections/heading/imageHelpers', async () => {
   const actual = await vi.importActual<typeof import('../src/sections/heading/imageHelpers')>('../src/sections/heading/imageHelpers')
@@ -68,6 +65,9 @@ describe('Heading edit dialog', () => {
     mockInvalidateResolvedPhotoDisplaySrc.mockReset()
 
     mockProcessHeadingMutations.mockResolvedValue(undefined)
+    vi.spyOn(solidLogicSingleton.profile, 'processHeadingMutations').mockImplementation(
+      async (subject, plan) => mockProcessHeadingMutations(solidLogicSingleton.store, subject, plan)
+    )
     mockUploadPhotoFile.mockResolvedValue('https://example.com/profile/avatar.png')
     mockResolvePhotoDisplaySrc.mockImplementation(actualImageHelpers.resolvePhotoDisplaySrc)
     mockInvalidateResolvedPhotoDisplaySrc.mockImplementation(actualImageHelpers.invalidateResolvedPhotoDisplaySrc)
@@ -85,6 +85,7 @@ describe('Heading edit dialog', () => {
   })
 
   afterEach(() => {
+    vi.restoreAllMocks()
     document.body.innerHTML = ''
     actualImageHelpers.invalidateResolvedPhotoDisplaySrc('https://example.com/profile/original.png')
     actualImageHelpers.invalidateResolvedPhotoDisplaySrc('https://example.com/profile/existing.png')
@@ -106,7 +107,7 @@ describe('Heading edit dialog', () => {
     const store = graph() as any
     const subject = sym('https://example.com/profile/card#me')
     const profileData: ProfileDetails = {
-      entryNode: subject,
+      sourceNode: subject,
       name: 'Jane Doe',
       imageSrc: 'https://example.com/profile/original.png'
     }
@@ -148,7 +149,7 @@ describe('Heading edit dialog', () => {
     const store = graph() as any
     const subject = sym('https://example.com/profile/card#me')
     const profileData: ProfileDetails = {
-      entryNode: subject,
+      sourceNode: subject,
       name: 'Jane Doe',
       imageSrc: 'https://example.com/profile/original.png'
     }
@@ -180,7 +181,7 @@ describe('Heading edit dialog', () => {
     const store = graph() as any
     const subject = sym('https://example.com/profile/card#me')
     const profileData: ProfileDetails = {
-      entryNode: subject,
+      sourceNode: subject,
       name: 'Jane Doe',
       imageSrc: 'https://example.com/profile/original.png'
     }
@@ -211,7 +212,7 @@ describe('Heading edit dialog', () => {
     const store = graph() as any
     const subject = sym('https://example.com/profile/card#me')
     const profileData: ProfileDetails = {
-      entryNode: subject,
+      sourceNode: subject,
       name: 'Jane Doe',
       imageSrc: 'https://example.com/profile/existing.png'
     }
@@ -232,15 +233,15 @@ describe('Heading edit dialog', () => {
     const store = graph() as any
     const subject = sym('https://example.com/profile/card#me')
     const profileData: ProfileDetails = {
-      entryNode: subject,
+      sourceNode: subject,
       name: 'Jane Doe',
       primaryPhone: {
-        entryNode: sym('https://example.com/profile/card#phone'),
+        sourceNode: sym('https://example.com/profile/card#phone'),
         type: undefined as any,
         valueNode: sym('tel:5551234567')
       },
       primaryEmail: {
-        entryNode: sym('https://example.com/profile/card#email'),
+        sourceNode: sym('https://example.com/profile/card#email'),
         type: undefined as any,
         valueNode: sym('mailto:jane@example.com')
       }
@@ -279,7 +280,7 @@ describe('Heading edit dialog', () => {
     })
 
     const profile = {
-      entryNode: sym('https://example.com/profile#entry'),
+      sourceNode: sym('https://example.com/profile#entry'),
       name: 'Jane Doe',
       nickname: 'Jane',
       imageSrc: 'https://example.com/private/avatar.png',

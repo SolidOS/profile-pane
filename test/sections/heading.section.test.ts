@@ -23,7 +23,7 @@ describe('Intro section', () => {
     document.body.appendChild(container)
 
     const profile = {
-      entryNode: sym('https://example.com/profile#entry'),
+      sourceNode: sym('https://example.com/profile#entry'),
       name: 'Jane Doe',
       nickname: 'Jane',
       imageSrc: '',
@@ -32,17 +32,17 @@ describe('Intro section', () => {
       jobTitle: 'Engineer',
       orgName: 'SolidOS',
       primaryPhone: {
-        entryNode: sym('https://example.com/profile#phone'),
+        sourceNode: sym('https://example.com/profile#phone'),
         type: sym('http://www.w3.org/2006/vcard/ns#Home'),
         valueNode: sym('tel:+123456789')
       },
       primaryEmail: {
-        entryNode: sym('https://example.com/profile#email'),
+        sourceNode: sym('https://example.com/profile#email'),
         type: sym('http://www.w3.org/2006/vcard/ns#Home'),
         valueNode: sym('mailto:jane@example.com')
       },
       primaryAddress: {
-        entryNode: sym('https://example.com/profile#address')
+        sourceNode: sym('https://example.com/profile#address')
       }
     }
 
@@ -74,7 +74,7 @@ describe('Intro section', () => {
     })
 
     const profile = {
-      entryNode: sym('https://example.com/profile#entry'),
+      sourceNode: sym('https://example.com/profile#entry'),
       name: 'Jane Doe',
       nickname: 'Jane',
       imageSrc: 'https://example.com/private/avatar.png',
@@ -110,7 +110,7 @@ describe('Intro section', () => {
     } as Response)
 
     const profile = {
-      entryNode: sym('https://example.com/profile#entry'),
+      sourceNode: sym('https://example.com/profile#entry'),
       name: 'Jane Doe',
       nickname: 'Jane',
       imageSrc: 'https://example.com/profile/broken.png',
@@ -146,7 +146,7 @@ describe('Intro section', () => {
     fakeLogInAs(subject)
 
     const profile = {
-      entryNode: sym('https://example.com/profile#entry'),
+      sourceNode: sym('https://example.com/profile#entry'),
       name: 'Jane Doe',
       nickname: 'Jane',
       imageSrc: '',
@@ -155,17 +155,17 @@ describe('Intro section', () => {
       jobTitle: 'Engineer',
       orgName: 'SolidOS',
       primaryPhone: {
-        entryNode: sym('https://example.com/profile#phone'),
+        sourceNode: sym('https://example.com/profile#phone'),
         type: sym('http://www.w3.org/2006/vcard/ns#Home'),
         valueNode: sym('tel:+123456789')
       },
       primaryEmail: {
-        entryNode: sym('https://example.com/profile#email'),
+        sourceNode: sym('https://example.com/profile#email'),
         type: sym('http://www.w3.org/2006/vcard/ns#Home'),
         valueNode: sym('mailto:jane@example.com')
       },
       primaryAddress: {
-        entryNode: sym('https://example.com/profile#address')
+        sourceNode: sym('https://example.com/profile#address')
       }
     }
 
@@ -185,7 +185,7 @@ describe('Intro section', () => {
     document.body.appendChild(container)
 
     const profile = {
-      entryNode: sym('https://example.com/profile#entry'),
+      sourceNode: sym('https://example.com/profile#entry'),
       name: 'Jane Doe',
       nickname: 'Jane',
       imageSrc: '',
@@ -194,17 +194,17 @@ describe('Intro section', () => {
       jobTitle: 'Engineer',
       orgName: 'SolidOS',
       primaryPhone: {
-        entryNode: sym('https://example.com/profile#phone'),
+        sourceNode: sym('https://example.com/profile#phone'),
         type: sym('http://www.w3.org/2006/vcard/ns#Home'),
         valueNode: sym('tel:+123456789')
       },
       primaryEmail: {
-        entryNode: sym('https://example.com/profile#email'),
+        sourceNode: sym('https://example.com/profile#email'),
         type: sym('http://www.w3.org/2006/vcard/ns#Home'),
         valueNode: sym('mailto:jane@example.com')
       },
       primaryAddress: {
-        entryNode: sym('https://example.com/profile#address')
+        sourceNode: sym('https://example.com/profile#address')
       }
     }
 
@@ -221,7 +221,7 @@ describe('Intro section', () => {
     document.body.appendChild(container)
 
     const profile = {
-      entryNode: sym('https://example.com/profile#entry'),
+      sourceNode: sym('https://example.com/profile#entry'),
       name: 'Jane Doe',
       nickname: 'Jane',
       imageSrc: '',
@@ -230,17 +230,17 @@ describe('Intro section', () => {
       jobTitle: 'Engineer',
       orgName: 'SolidOS',
       primaryPhone: {
-        entryNode: sym('https://example.com/profile#phone'),
+        sourceNode: sym('https://example.com/profile#phone'),
         type: sym('http://www.w3.org/2006/vcard/ns#Home'),
         valueNode: sym('tel:+123456789')
       },
       primaryEmail: {
-        entryNode: sym('https://example.com/profile#email'),
+        sourceNode: sym('https://example.com/profile#email'),
         type: sym('http://www.w3.org/2006/vcard/ns#Home'),
         valueNode: sym('mailto:jane@example.com')
       },
       primaryAddress: {
-        entryNode: sym('https://example.com/profile#address')
+        sourceNode: sym('https://example.com/profile#address')
       }
     }
 

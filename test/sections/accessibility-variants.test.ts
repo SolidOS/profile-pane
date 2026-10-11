@@ -18,7 +18,7 @@ describe('Section accessibility variants', () => {
     document.body.appendChild(container)
 
     render(
-      renderBioSection(context.session.store, subject, { description: '', entryNode: '' } as any, 'owner', 'desktop'),
+      renderBioSection(context.session.store, subject, { description: '', sourceNode: '' } as any, 'owner', 'desktop'),
       container
     )
     render(renderProjectSection(context.session.store, subject, [], 'owner', 'desktop'), container)
@@ -38,18 +38,18 @@ describe('Section accessibility variants', () => {
     const container = document.createElement('div')
     document.body.appendChild(container)
 
-    const bio = { entryNode: sym('https://example.com/profile#bio'), description: 'Public bio content.' }
-    const projects = [{ entryNode: sym('https://example.com/profile#project1'), url: 'https://example.com/project', title: 'Profile Pane', orgName: 'Open Source', category: 'project' }]
-    const skills = [{ name: 'typescript', publicId: 'https://www.wikidata.org/wiki/Q978185', entryNode: sym('https://example.com/profile/card#skill-typescript') }]
+    const bio = { sourceNode: sym('https://example.com/profile#bio'), description: 'Public bio content.' }
+    const projects = [{ sourceNode: sym('https://example.com/profile#project1'), url: 'https://example.com/project', title: 'Profile Pane', orgName: 'Open Source', category: 'project' }]
+    const skills = [{ name: 'typescript', publicId: 'https://www.wikidata.org/wiki/Q978185', sourceNode: sym('https://example.com/profile/card#skill-typescript') }]
     const contactInfo = {
-      phones: [{ entryNode: sym('https://example.com/profile#phone'), type: sym('http://www.w3.org/2006/vcard/ns#Home'), valueNode: sym('tel:+1555123456') }],
-      emails: [{ entryNode: sym('https://example.com/profile#email'), type: sym('http://www.w3.org/2006/vcard/ns#Work'), valueNode: sym('mailto:jane@example.com') }],
-      addresses: [{ entryNode: sym('https://example.com/profile#address'), streetAddress: 'Main Street 1', locality: 'Boston', countryName: 'USA' }]
+      phones: [{ sourceNode: sym('https://example.com/profile#phone'), type: sym('http://www.w3.org/2006/vcard/ns#Home'), valueNode: sym('tel:+1555123456') }],
+      emails: [{ sourceNode: sym('https://example.com/profile#email'), type: sym('http://www.w3.org/2006/vcard/ns#Work'), valueNode: sym('mailto:jane@example.com') }],
+      addresses: [{ sourceNode: sym('https://example.com/profile#address'), streetAddress: 'Main Street 1', locality: 'Boston', countryName: 'USA' }]
     }
-    const educationData = [{ entryNode: sym('https://example.com/profile#edu1'), school: 'University of Amsterdam', degree: 'BSc Computer Science', location: 'Amsterdam', endDate: '2022-06-01', description: 'Focused on software engineering.' }]
-    const roles = [{ entryNode: sym('https://example.com/profile#role1'), title: 'Software Engineer', orgName: 'SolidOS', orgLocation: 'Remote', startDate: literal('2021-01-01'), endDate: literal('2024-01-01'), description: 'Built profile pane features.' }]
-    const languages = [{ name: 'English', proficiency: 'Fluent', entryNode: sym('https://example.com/profile#lang1') }]
-    const social = { accounts: [{ entryNode: sym('https://example.com/profile/card#github'), homepage: 'https://github.com/example', name: 'GitHub', icon: 'https://example.com/github-icon.svg' }] }
+    const educationData = [{ sourceNode: sym('https://example.com/profile#edu1'), school: 'University of Amsterdam', degree: 'BSc Computer Science', location: 'Amsterdam', endDate: '2022-06-01', description: 'Focused on software engineering.' }]
+    const roles = [{ sourceNode: sym('https://example.com/profile#role1'), title: 'Software Engineer', orgName: 'SolidOS', orgLocation: 'Remote', startDate: literal('2021-01-01'), endDate: literal('2024-01-01'), description: 'Built profile pane features.' }]
+    const languages = [{ name: 'English', proficiency: 'Fluent', sourceNode: sym('https://example.com/profile#lang1') }]
+    const social = { accounts: [{ sourceNode: sym('https://example.com/profile/card#github'), homepage: 'https://github.com/example', name: 'GitHub', icon: 'https://example.com/github-icon.svg' }] }
 
     render(renderBioSection(context.session.store, subject, bio as any, 'anonymous', 'desktop'), container)
     render(renderProjectSection(context.session.store, subject, projects as any, 'anonymous', 'desktop'), container)

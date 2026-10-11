@@ -3,7 +3,7 @@ import { html, render, TemplateResult } from 'lit-html'
 import type { BioDetails, BioRow } from './types'
 import '../../styles/EditDialogs.css'
 import { LiveStore, NamedNode } from 'rdflib'
-import { processBioMutations } from './mutations'
+import { solidLogicSingleton } from 'solid-logic'
 import { ViewerMode } from '../../types'
 import { applyRowFieldChange, summarizeRowOps } from '../shared/rowState'
 import { hasNonEmptyText, sanitizeTextValue, toText } from '../../textUtils'
@@ -26,8 +26,8 @@ function rowHasContent(row: BioRow): boolean {
 function toFormState(bioData: BioDetails): BioFormState {
   const row: BioRow = {
     description: sanitizeTextValue(toText(bioData?.description || '')),
-    entryNode: toText(bioData?.entryNode || ''),
-    status: toText(bioData?.entryNode || '') ? 'existing' as const : 'new' as const
+    sourceNode: toText(bioData?.sourceNode || ''),
+    status: toText(bioData?.sourceNode || '') ? 'existing' as const : 'new' as const
   }
 
   return {
@@ -64,7 +64,7 @@ function renderBioSection(bioRow: BioRow, onChange: () => void): TemplateResult 
           maxlength=${descriptionMaxLength}
           aria-describedby=${descriptionCounterId}
           data-contact-field="description"
-          data-entry-node=${bioRow?.entryNode || ''}
+          data-entry-node=${bioRow?.sourceNode || ''}
           data-row-status=${bioRow?.status || 'n/a'}
           placeholder="Write a short bio"
           autocomplete="off"
@@ -127,7 +127,7 @@ export async function createBioEditDialog(
     },
     onSave: async () => {
       const bioOps = summarizeRowOps([formState.bio], rowHasContent)
-      await processBioMutations(store, subject, bioOps)
+      await solidLogicSingleton.profile.processBioMutations(subject, bioOps)
     },
     formatSaveError: (error: unknown) => {
       return error instanceof Error ? error.message : saveBioUpdatesFailedMessageText

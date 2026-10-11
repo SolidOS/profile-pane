@@ -11,8 +11,8 @@ describe('Languages section', () => {
     document.body.appendChild(container)
 
     const languages = [
-      { name: 'English', proficiency: 'Fluent', entryNode: sym('https://example.com/profile#lang1') },
-      { name: 'Spanish', proficiency: 'Intermediate', entryNode: sym('https://example.com/profile#lang2') }
+      { name: 'English', proficiency: 'Fluent', sourceNode: sym('https://example.com/profile#lang1') },
+      { name: 'Spanish', proficiency: 'Intermediate', sourceNode: sym('https://example.com/profile#lang2') }
     ]
 
     render(renderLanguageSection(context.session.store, subject, languages as any, 'owner', 'desktop'), container)
@@ -29,8 +29,8 @@ describe('Languages section', () => {
     document.body.appendChild(container)
 
     const languages = [
-      { name: 'English', proficiency: 'Fluent', entryNode: sym('https://example.com/profile#lang1') },
-      { name: 'Spanish', proficiency: 'Intermediate', entryNode: sym('https://example.com/profile#lang2') }
+      { name: 'English', proficiency: 'Fluent', sourceNode: sym('https://example.com/profile#lang1') },
+      { name: 'Spanish', proficiency: 'Intermediate', sourceNode: sym('https://example.com/profile#lang2') }
     ]
 
     render(renderLanguageSection(context.session.store, subject, languages as any, 'owner', 'desktop'), container)
@@ -46,7 +46,7 @@ describe('Languages section', () => {
     document.body.appendChild(container)
 
     const languages = [
-      { name: 'English', proficiency: 'Fluent', entryNode: sym('https://example.com/profile#lang1') }
+      { name: 'English', proficiency: 'Fluent', sourceNode: sym('https://example.com/profile#lang1') }
     ]
 
     render(renderLanguageSection(context.session.store, subject, languages as any, 'owner', 'desktop'), container)

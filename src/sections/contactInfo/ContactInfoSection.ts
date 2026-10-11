@@ -37,7 +37,7 @@ function normalizeContactValue(rawValue: string, kind: 'email' | 'phone'): strin
 function resolveContactValue(store: LiveStore, point: any, kind: 'email' | 'phone'): string {
   if (!point) return ''
 
-  const directValue = toText(point.valueNode || point.entryNode).trim()
+  const directValue = toText(point.valueNode || point.sourceNode).trim()
   const looksLikeExpectedValue = kind === 'email'
     ? /^mailto:/i.test(directValue) || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(directValue)
     : /^tel:/i.test(directValue) || /^[+()\-\s\d]{5,}$/.test(directValue)
@@ -46,9 +46,9 @@ function resolveContactValue(store: LiveStore, point: any, kind: 'email' | 'phon
     return normalizeContactValue(directValue, kind)
   }
 
-  const entryNode = point.entryNode || point.valueNode
-  if (entryNode) {
-    const storedValueNode = store.any(entryNode as NamedNode, ns.vcard('value'))
+  const sourceNode = point.sourceNode || point.valueNode
+  if (sourceNode) {
+    const storedValueNode = store.any(sourceNode as NamedNode, ns.vcard('value'))
     const storedValue = toText(storedValueNode).trim()
     if (storedValue) return normalizeContactValue(storedValue, kind)
   }

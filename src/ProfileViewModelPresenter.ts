@@ -1,22 +1,15 @@
-import { NamedNode, LiveStore } from 'rdflib'
+import { NamedNode } from 'rdflib'
+import { solidLogicSingleton } from 'solid-logic'
 import { ContactInfo  } from './sections/contactInfo/types'
-import { presentSocial } from './sections/social/selectors'
 import { SocialPresentation } from './sections/social/types'
-import { presentSkillDetails } from './sections/skills/selectors'
+import { resolveSocialPresentationIcon } from './sections/social/helpers'
 import { SkillDetails } from './sections/skills/types'
-import { presentLanguages } from './sections/languages/selectors'
 import { LanguageDetails } from './sections/languages/types'
-import { presentCV } from './sections/resume/selectors'
 import { RoleDetails } from './sections/resume/types'
-import { presentContactInfo } from './sections/contactInfo/selectors'
 import { EducationDetails } from './sections/education/types'
-import { presentEducation } from './sections/education/selectors'
 import { ProjectDetails } from './sections/projects/types'
-import { presentProjects } from './sections/projects/selectors'
-import { presentProfile } from './sections/heading/selectors'
 import { ProfileDetails } from './sections/heading/types'
 import { BioDetails } from './sections/bio/types'
-import { presentBio } from './sections/bio/selectors'
 
 export type ProfileViewModel = {
   profileDetails: ProfileDetails,
@@ -30,16 +23,22 @@ export type ProfileViewModel = {
   cvDetails: RoleDetails[]
 }
 
-export async function presentProfileViewModel(subject: NamedNode, store: LiveStore): Promise<ProfileViewModel> {
-  const profileDetails = presentProfile(subject, store)
-  const contactInfo = presentContactInfo(subject, store)
-  const skills = presentSkillDetails(subject, store)
-  const languages = presentLanguages(subject, store)
-  const education = presentEducation(subject, store)
-  const projects = await presentProjects(subject, store)
-  const bioDetails = presentBio(subject, store)
-  const social = presentSocial(subject, store)
-  const cvDetails = presentCV(subject, store)
+export async function presentProfileViewModel(subject: NamedNode): Promise<ProfileViewModel> {
+  const { profile } = solidLogicSingleton
+  const profileDetails = profile.getHeading(subject)
+  const contactInfo = profile.getContactInfo(subject)
+  const skills = profile.getSkillDetails(subject)
+  const languages = profile.getLanguages(subject)
+  const education = profile.getEducation(subject)
+  const projects = await profile.getProjects(subject)
+  const bioDetails = profile.getBio(subject)
+  const social: SocialPresentation = {
+    accounts: profile.getSocial(subject).accounts.map(account => ({
+      ...account,
+      icon: resolveSocialPresentationIcon(account.icon)
+    }))
+  }
+  const cvDetails = profile.getResume(subject)
 
   return { 
     profileDetails,

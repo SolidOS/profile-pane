@@ -6,24 +6,6 @@ vi.mock('@solid-data-modules/contacts-rdflib', () => ({
   }))
 }))
 
-vi.mock('solid-logic', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('solid-logic')>()
-
-  return {
-    ...actual,
-    solidLogicSingleton: {
-      ...actual.solidLogicSingleton,
-      store: {
-        ...actual.solidLogicSingleton.store,
-        updater: {
-          ...actual.solidLogicSingleton.store.updater,
-          editable: vi.fn(() => true)
-        }
-      }
-    }
-  }
-})
-
 import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { parse, sym } from 'rdflib'
 import { store } from 'solid-logic'

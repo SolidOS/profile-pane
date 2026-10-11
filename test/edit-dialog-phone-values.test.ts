@@ -7,17 +7,10 @@ import type { ContactMutationPlan } from '../src/sections/contactInfo/types'
 import type { HeadingMutationPlan, ProfileDetails } from '../src/sections/heading/types'
 import { getSharedDialogCancelButton, getSharedDialogSaveButton } from '../src/ui/dialog'
 import { flushAsync } from './helpers/dom'
+import { solidLogicSingleton } from 'solid-logic'
 
 const mockProcessHeadingMutations = vi.fn<(_: unknown, __: unknown, plan: HeadingMutationPlan) => Promise<void>>()
 const mockProcessContactInfoMutations = vi.fn<(_: unknown, __: unknown, plan: ContactMutationPlan) => Promise<void>>()
-
-vi.mock('../src/sections/heading/mutations', () => ({
-  processHeadingMutations: (...args: Parameters<typeof mockProcessHeadingMutations>) => mockProcessHeadingMutations(...args)
-}))
-
-vi.mock('../src/sections/contactInfo/mutations', () => ({
-  processContactInfoMutations: (...args: Parameters<typeof mockProcessContactInfoMutations>) => mockProcessContactInfoMutations(...args)
-}))
 
 function dispatchInput(input: HTMLInputElement, value: string) {
   input.value = value
@@ -36,10 +29,17 @@ describe('Edit dialog phone value regression', () => {
     mockProcessContactInfoMutations.mockReset()
     mockProcessHeadingMutations.mockResolvedValue(undefined)
     mockProcessContactInfoMutations.mockResolvedValue(undefined)
+    vi.spyOn(solidLogicSingleton.profile, 'processHeadingMutations').mockImplementation(
+      async (subject, plan) => mockProcessHeadingMutations(solidLogicSingleton.store, subject, plan)
+    )
+    vi.spyOn(solidLogicSingleton.profile, 'processContactInfoMutations').mockImplementation(
+      async (subject, plan) => mockProcessContactInfoMutations(solidLogicSingleton.store, subject, plan)
+    )
     document.body.innerHTML = ''
   })
 
   afterEach(() => {
+    vi.restoreAllMocks()
     document.body.innerHTML = ''
   })
 
@@ -47,7 +47,7 @@ describe('Edit dialog phone value regression', () => {
     const store = graph() as any
     const subject = sym('https://example.com/profile/card#me')
     const profileData: ProfileDetails = {
-      entryNode: subject,
+      sourceNode: subject,
       name: 'Jane Doe'
     }
 

@@ -11,7 +11,7 @@ import { ViewerMode } from '../../types'
 import { applyRowFieldChange, applyRowSelectChange, deleteRow, summarizeRowOps } from '../shared/rowState'
 import { hasNonEmptyText, sanitizeTextValue, toText } from '../../textUtils'
 import { MutationOps } from '../shared/types'
-import { processLanguageMutations } from './mutations'
+import { solidLogicSingleton } from 'solid-logic'
 import { bentoIcon, trashIcon } from '../../icons-svg/profileIcons'
 import {
   deleteEntryButtonTitleText,
@@ -152,21 +152,21 @@ function toFormState(details: LanguageDetails[]): LanguageFormState {
       name: sanitizeLanguageFieldValue(toText(detail.name)),
       publicId: sanitizeLanguageFieldValue(toText(detail.publicId)),
       proficiency: sanitizeLanguageFieldValue(toText(detail.proficiency)),
-      entryNode: toText(detail.entryNode),
-      status: toText(detail.entryNode) ? 'existing' as const : 'new' as const
+      sourceNode: toText(detail.sourceNode),
+      status: toText(detail.sourceNode) ? 'existing' as const : 'new' as const
     }))
-    .filter((row) => Boolean(row.name || row.entryNode || row.proficiency || row.publicId))
+    .filter((row) => Boolean(row.name || row.sourceNode || row.proficiency || row.publicId))
 
   return {
-    languages: rows.length ? rows : [{ name: '', publicId: '', proficiency: '', entryNode: '', status: 'new' }],
+    languages: rows.length ? rows : [{ name: '', publicId: '', proficiency: '', sourceNode: '', status: 'new' }],
     initialExistingOrder: [],
   }
 }
 
 function hasOrderChanged(rows: LanguageRow[], initialExistingOrder: string[]): boolean {
   const currentExistingOrder = rows
-    .filter((row) => row.status !== 'deleted' && Boolean((row.entryNode || '').trim()))
-    .map((row) => (row.entryNode || '').trim())
+    .filter((row) => row.status !== 'deleted' && Boolean((row.sourceNode || '').trim()))
+    .map((row) => (row.sourceNode || '').trim())
 
   if (currentExistingOrder.length !== initialExistingOrder.length) return true
 
@@ -525,8 +525,8 @@ function createLanguageEditForm(details: LanguageDetails[], viewerMode: ViewerMo
 
   const formState = toFormState(details)
   formState.initialExistingOrder = formState.languages
-    .filter((row) => Boolean((row.entryNode || '').trim()))
-    .map((row) => (row.entryNode || '').trim())
+    .filter((row) => Boolean((row.sourceNode || '').trim()))
+    .map((row) => (row.sourceNode || '').trim())
   renderLanguageEditTemplate(form, formState, viewerMode)
 
   const addRow = () => {
@@ -534,7 +534,7 @@ function createLanguageEditForm(details: LanguageDetails[], viewerMode: ViewerMo
       name: '',
       publicId: '',
       proficiency: '',
-      entryNode: '',
+      sourceNode: '',
       status: 'new'
     })
     renderLanguageEditTemplate(form, formState, viewerMode, { focusSelector: '[data-language-row-index="0"]' })
@@ -586,7 +586,7 @@ export async function createLanguageEditDialog(
         update: languageOps.update,
         remove: languageOps.remove
       }
-      await processLanguageMutations(store, subject, plan, formState.languages)
+      await solidLogicSingleton.profile.processLanguageMutations(subject, plan, formState.languages)
     },
     formatSaveError: (error: unknown) => {
       return error instanceof Error ? error.message : saveLanguageUpdatesFailedMessageText

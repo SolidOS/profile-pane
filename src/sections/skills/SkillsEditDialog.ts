@@ -11,7 +11,7 @@ import { ViewerMode } from '../../types'
 import { applyRowFieldChange, deleteRow, summarizeRowOps } from '../shared/rowState'
 import { hasNonEmptyText, sanitizeTextValue, toText } from '../../textUtils'
 import { MutationOps } from '../shared/types'
-import { processSkillsMutations } from './mutations'
+import { solidLogicSingleton } from 'solid-logic'
 import { trashIcon } from '../../icons-svg/profileIcons'
 import {
   deleteEntryButtonTitleText,
@@ -113,14 +113,14 @@ function toFormState(details: SkillDetails[]): SkillFormState {
     .map((detail) => ({
       name: sanitizeSkillFieldValue(toText(detail.name)),
       publicId: normalizeSkillPublicId(toText(detail.publicId)),
-      entryNode: toText(detail.entryNode),
-      status: toText(detail.entryNode) ? 'existing' as const : 'new' as const
+      sourceNode: toText(detail.sourceNode),
+      status: toText(detail.sourceNode) ? 'existing' as const : 'new' as const
     }))
-    .filter((row) => Boolean(row.name || row.publicId || row.entryNode))
+    .filter((row) => Boolean(row.name || row.publicId || row.sourceNode))
 
 
   return {
-    skills: rows.length ? rows : [{ name: '', publicId: '', entryNode: '', status: 'new' }],
+    skills: rows.length ? rows : [{ name: '', publicId: '', sourceNode: '', status: 'new' }],
   }
 }
 
@@ -310,7 +310,7 @@ function createSkillsEditForm(details: SkillDetails[], viewerMode: ViewerMode) {
     formState.skills.unshift({
       name: '',
       publicId: '',
-      entryNode: '',
+      sourceNode: '',
       status: 'new'
     })
     renderSkillsEditTemplate(form, formState, viewerMode, { focusSelector: '[data-skill-row-index="0"]' })
@@ -361,7 +361,7 @@ export async function createSkillsEditDialog(
         update: skillOps.update,
         remove: skillOps.remove
       }
-      await processSkillsMutations(store, subject, plan)
+      await solidLogicSingleton.profile.processSkillsMutations(subject, plan)
     },
     formatSaveError: (error: unknown) => {
       return error instanceof Error ? error.message : saveSkillsUpdatesFailedMessageText

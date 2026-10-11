@@ -6,7 +6,7 @@ import { EducationRow, EducationDetails } from './types'
 import '../../styles/EditDialogs.css'
 import '../contactInfo/ContactInfoEditDialog.css'
 import { LiveStore, NamedNode } from 'rdflib'
-import { processEducationMutations } from './mutations'
+import { solidLogicSingleton } from 'solid-logic'
 import { ViewerMode } from '../../types'
 import { addIcon, trashIcon } from '../../icons-svg/profileIcons'
 import { applyRowFieldChange, deleteRow, summarizeRowOps } from '../shared/rowState'
@@ -151,10 +151,10 @@ function toFormState(educationData: EducationDetails[]): EducationFormState {
       degree: sanitizeEducationFieldValue(toText(educationEntry.degree)),
       location: sanitizeEducationFieldValue(toText(educationEntry.location)),
       description: sanitizeEducationFieldValue(toText(educationEntry.description)),
-      entryNode: toText(educationEntry.entryNode),
-      status: toText(educationEntry.entryNode) ? 'existing' as const : 'new' as const
+      sourceNode: toText(educationEntry.sourceNode),
+      status: toText(educationEntry.sourceNode) ? 'existing' as const : 'new' as const
     }))
-    .filter((educationEntry) => rowHasContent(educationEntry) || Boolean(educationEntry.entryNode))
+    .filter((educationEntry) => rowHasContent(educationEntry) || Boolean(educationEntry.sourceNode))
 
   return {
     educationData: education.length
@@ -166,7 +166,7 @@ function toFormState(educationData: EducationDetails[]): EducationFormState {
         degree: '',
         location: '',
         description: '',
-        entryNode: '',
+        sourceNode: '',
         status: 'new'
       }]
   }
@@ -351,7 +351,7 @@ function renderEducationInputRow({
         name=${schoolName}
         .value=${educationData[index]?.school || ''}
         data-contact-field="title"
-        data-entry-node=${educationData[index]?.entryNode || ''}
+        data-entry-node=${educationData[index]?.sourceNode || ''}
         data-row-status=${educationData[index]?.status || 'n/a'}
         placeholder="School/College"
         autocomplete="organization"
@@ -369,7 +369,7 @@ function renderEducationInputRow({
           .value=${educationData[index]?.degree || ''}
           required
           data-contact-field="degree"
-          data-entry-node=${educationData[index]?.entryNode || ''}
+          data-entry-node=${educationData[index]?.sourceNode || ''}
           data-row-status=${educationData[index]?.status || 'n/a'}
           placeholder="Degree"
           autocomplete="off"
@@ -442,7 +442,7 @@ function renderEducationInputRow({
         maxlength=${descriptionMaxLength}
         aria-describedby=${descriptionCounterId}
         data-contact-field="description"
-        data-entry-node=${educationData[index]?.entryNode || ''}
+        data-entry-node=${educationData[index]?.sourceNode || ''}
         data-row-status=${educationData[index]?.status || 'n/a'}
         placeholder="Description"
         autocomplete="off"
@@ -464,7 +464,7 @@ function renderEducationSection(educationData: EducationRow[], onAddRow: () => v
       startDate: undefined,
       endDate: undefined,
       description: '',
-      entryNode: '',
+      sourceNode: '',
       status: 'new'
     })
     onAddRow()
@@ -588,7 +588,7 @@ export async function createEducationEditDialog(
     },
     onSave: async () => {
       const plan: MutationOps<EducationRow> = summarizeRowOps(formState.educationData, rowHasContent)
-      await processEducationMutations(store, subject, plan)
+      await solidLogicSingleton.profile.processEducationMutations(subject, plan)
       rerender()
     },
     formatSaveError: (error: unknown) => {

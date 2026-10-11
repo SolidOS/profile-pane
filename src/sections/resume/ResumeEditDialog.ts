@@ -7,7 +7,7 @@ import { defineAsyncComboboxOptionsProvider, ComboboxChangeEvent, Combobox, Comb
 import { RoleDetails, ResumeRow } from './types'
 import '../../styles/EditDialogs.css'
 import { LiveStore, NamedNode, literal } from 'rdflib'
-import { processResumeMutations } from './mutations'
+import { solidLogicSingleton } from 'solid-logic'
 import { ViewerMode } from '../../types'
 import { applyRowFieldChange, applyRowSelectChange, deleteRow, summarizeRowOps } from '../shared/rowState'
 import { hasNonEmptyText, sanitizeTextValue, toText } from '../../textUtils'
@@ -381,10 +381,10 @@ function toFormState(resumeData: RoleDetails[]): ResumeFormState {
       orgLocation: sanitizeTextValue(toText(role.orgLocation)),
       orgHomePage: sanitizeTextValue(toText(role.orgHomePage)),
       description: sanitizeTextValue(toText(role.description)),
-      entryNode: toText(role.entryNode),
-      status: toText(role.entryNode) ? 'existing' as const : 'new' as const
+      sourceNode: toText(role.sourceNode),
+      status: toText(role.sourceNode) ? 'existing' as const : 'new' as const
     }))
-    .filter((role) => rowHasContent(role) || Boolean(role.entryNode))
+    .filter((role) => rowHasContent(role) || Boolean(role.sourceNode))
 
   return {
     resumeData: roles.length
@@ -401,7 +401,7 @@ function toFormState(resumeData: RoleDetails[]): ResumeFormState {
         orgLocation: '',
         orgHomePage: '',
         description: '',
-        entryNode: '',
+        sourceNode: '',
         status: 'new'
       }]
   }
@@ -662,7 +662,7 @@ function renderResumeInputRow({
         name=${titleName}
         .value=${resumeRow?.title || ''}
         data-contact-field="title"
-        data-entry-node=${resumeRow?.entryNode || ''}
+        data-entry-node=${resumeRow?.sourceNode || ''}
         data-row-status=${resumeRow?.status || 'n/a'}
         placeholder="Title"
         autocomplete="title"
@@ -704,7 +704,7 @@ function renderResumeInputRow({
           name=${companyUrlName}
           .value=${resumeRow?.orgHomePage || ''}
           data-contact-field="orgHomePage"
-          data-entry-node=${resumeRow?.entryNode || ''}
+          data-entry-node=${resumeRow?.sourceNode || ''}
           data-row-status=${resumeRow?.status || 'n/a'}
           placeholder="Company URL"
           autocomplete="url"
@@ -720,7 +720,7 @@ function renderResumeInputRow({
           name=${orgLocationName}
           .value=${resumeRow?.orgLocation || ''}
           data-contact-field="orgLocation"
-          data-entry-node=${resumeRow?.entryNode || ''}
+          data-entry-node=${resumeRow?.sourceNode || ''}
           data-row-status=${resumeRow?.status || 'n/a'}
           placeholder="Location"
           autocomplete="address-level2"
@@ -808,7 +808,7 @@ function renderResumeInputRow({
         maxlength=${descriptionMaxLength}
         aria-describedby=${descriptionCounterId}
         data-contact-field="description"
-        data-entry-node=${resumeRow?.entryNode || ''}
+        data-entry-node=${resumeRow?.sourceNode || ''}
         data-row-status=${resumeRow?.status || 'n/a'}
         placeholder="Description"
         autocomplete="off"
@@ -1021,7 +1021,7 @@ function createResumeEditForm(resumeData: RoleDetails[], viewerMode: ViewerMode)
       orgLocation: '',
       orgHomePage: '',
       description: '',
-      entryNode: '',
+      sourceNode: '',
       status: 'new'
     })
     rerender({ preserveState: false, focusSelector: '[name="resume-title-0"]' })
@@ -1075,7 +1075,7 @@ export async function createResumeEditDialog(
     onSave: async () => {
       syncResumeOrganizationRowsFromComboboxes(form, formState.resumeData)
       const plan: MutationOps<ResumeRow> = summarizeRowOps(formState.resumeData, rowHasContent)
-      await processResumeMutations(store, subject, plan)
+      await solidLogicSingleton.profile.processResumeMutations(subject, plan)
       rerender()
     },
     formatSaveError: (error: unknown) => {

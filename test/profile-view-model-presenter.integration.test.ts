@@ -3,18 +3,6 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { parse, sym } from 'rdflib'
 import { store } from 'solid-logic'
 import { presentProfileViewModel } from '../src/ProfileViewModelPresenter'
-import { presentProjects } from '../src/sections/projects/selectors'
-
-vi.mock('../src/sections/projects/selectors', async () => {
-  const actual = await vi.importActual<typeof import('../src/sections/projects/selectors')>('../src/sections/projects/selectors')
-  return {
-    ...actual,
-    presentProjects: vi.fn(actual.presentProjects)
-  }
-})
-
-const actualProjectSelectors = await vi.importActual<typeof import('../src/sections/projects/selectors')>('../src/sections/projects/selectors')
-const mockedPresentProjects = presentProjects as unknown as ReturnType<typeof vi.fn>
 
 const subject = sym('https://janedoe.example/profile/card#me')
 const profileDoc = subject.doc()
@@ -105,13 +93,12 @@ describe('presentProfileViewModel integration', () => {
       ...((store as any).fetcher || {}),
       load: vi.fn(async () => undefined)
     }
-    mockedPresentProjects.mockImplementation(actualProjectSelectors.presentProjects)
     parse(profileTurtle, store, profileDoc.uri, 'text/turtle')
     parse(projectTurtle, store, projectDoc.uri, 'text/turtle')
   })
 
   it('returns the complete aggregated presenter contract from one profile fixture', async () => {
-    const viewModel = await presentProfileViewModel(subject, store as any)
+    const viewModel = await presentProfileViewModel(subject)
 
     expect(Object.keys(viewModel).sort()).toEqual([
       'bioDetails',
@@ -139,11 +126,4 @@ describe('presentProfileViewModel integration', () => {
     expect(viewModel.social.accounts[0].homepage).toContain('linkedin.com')
   })
 
-  it('surfaces async selector failures from the project branch', async () => {
-    mockedPresentProjects.mockRejectedValueOnce(new Error('project selector failed'))
-
-    await expect(presentProfileViewModel(subject, store as any)).rejects.toThrow(
-      'project selector failed'
-    )
-  })
 })

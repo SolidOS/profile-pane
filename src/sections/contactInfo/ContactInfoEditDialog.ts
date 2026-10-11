@@ -8,7 +8,7 @@ import { ContactAddressRow, ContactInfo, ContactMutationPlan, ContactPointRow } 
 import '../../styles/EditDialogs.css'
 import './ContactInfoEditDialog.css'
 import { LiveStore, NamedNode } from 'rdflib'
-import { processContactInfoMutations } from './mutations'
+import { solidLogicSingleton } from 'solid-logic'
 import { ViewerMode } from '../../types'
 import {
   combinePhoneValue,
@@ -105,16 +105,16 @@ function toFormState(contactInfo: ContactInfo): ContactInfoFormState {
     .map((email) => ({
       value: sanitizeEmailValue(toText(email.valueNode).replace(/^mailto:/i, '')),
       type: normalizeContactTypeValue(normalizeEmailTypeForContactInfoEdit(email.type), EMAIL_TYPE_OPTIONS),
-      entryNode: toText(email.entryNode),
-      status: toText(email.entryNode) ? 'existing' as const : 'new' as const
+      sourceNode: toText(email.sourceNode),
+      status: toText(email.sourceNode) ? 'existing' as const : 'new' as const
     }))
-    .filter((email) => Boolean(email.value || email.entryNode || email.type))
+    .filter((email) => Boolean(email.value || email.sourceNode || email.type))
 
   const phones = (contactInfo.phones || [])
     .map((phone) => ({
       value: sanitizeTextValue(toText(phone.valueNode).replace(/^tel:/i, '')),
       type: normalizeContactTypeValue(normalizePhoneTypeForContactInfoEdit(phone.type), PHONE_TYPE_OPTIONS),
-      entryNode: toText(phone.entryNode),
+      sourceNode: toText(phone.sourceNode),
       status: 'existing' as const
     }))
     .filter((phone) => Boolean(phone.value))
@@ -126,17 +126,17 @@ function toFormState(contactInfo: ContactInfo): ContactInfoFormState {
       postalCode: sanitizeAddressFieldValue(toText(address.postalCode)),
       countryName: sanitizeAddressFieldValue(toText(address.countryName)),
       type: toText(address.type),
-      entryNode: toText(address.entryNode),
-      status: toText(address.entryNode) ? 'existing' as const : 'new' as const
+      sourceNode: toText(address.sourceNode),
+      status: toText(address.sourceNode) ? 'existing' as const : 'new' as const
     }))
-    .filter((address) => rowHasContent(address) || Boolean(address.entryNode || address.type))
+    .filter((address) => rowHasContent(address) || Boolean(address.sourceNode || address.type))
 
   return {
-    emails: emails.length ? emails : [{ value: '', type: EMAIL_TYPE_OPTIONS[0].value, entryNode: '', status: 'new' }],
-    phones: phones.length ? phones : [{ value: '', type: PHONE_TYPE_OPTIONS[0].value, entryNode: '', status: 'new' }],
+    emails: emails.length ? emails : [{ value: '', type: EMAIL_TYPE_OPTIONS[0].value, sourceNode: '', status: 'new' }],
+    phones: phones.length ? phones : [{ value: '', type: PHONE_TYPE_OPTIONS[0].value, sourceNode: '', status: 'new' }],
     addresses: addresses.length
       ? addresses
-      : [{ streetAddress: '', locality: '', region: '', postalCode: '', countryName: '', type: '', entryNode: '', status: 'new' }]
+      : [{ streetAddress: '', locality: '', region: '', postalCode: '', countryName: '', type: '', sourceNode: '', status: 'new' }]
   }
 }
 
@@ -214,7 +214,7 @@ function renderContactPhoneInputRow({
             .value=${splitValue.localNumber}
             required
             data-contact-field="value"
-            data-entry-node=${phoneRow?.entryNode || ''}
+            data-entry-node=${phoneRow?.sourceNode || ''}
             data-row-status=${phoneRow?.status || 'n/a'}
             placeholder=${label}
             autocomplete="tel-national"
@@ -251,7 +251,7 @@ function renderContactPhoneInputRow({
 function renderContactInfoPhoneSection(phones: ContactPointRow[], onAddRow: (options?: ContactInfoRerenderOptions) => void) {
   const createNewRow = (event: Event) => {
     event.preventDefault()
-    phones.unshift({ value: '', type: PHONE_TYPE_OPTIONS[0].value, entryNode: '', status: 'new' })
+    phones.unshift({ value: '', type: PHONE_TYPE_OPTIONS[0].value, sourceNode: '', status: 'new' })
     onAddRow({ focusSelector: '[name="phone-value-0"]' })
   }
 
@@ -336,7 +336,7 @@ function renderContactEmailInputRow({
           .value=${emailRow?.value || ''}
           required
           data-contact-field="value"
-          data-entry-node=${emailRow?.entryNode || ''}
+          data-entry-node=${emailRow?.sourceNode || ''}
           data-row-status=${emailRow?.status || 'n/a'}
           placeholder="Email Address"
           autocomplete="email"
@@ -372,7 +372,7 @@ function renderContactEmailInputRow({
 function renderContactInfoEmailSection(emails: ContactPointRow[], onAddRow: (options?: ContactInfoRerenderOptions) => void) {
   const createNewRow = (event: Event) => {
     event.preventDefault()
-    emails.unshift({ value: '', type: EMAIL_TYPE_OPTIONS[0].value, entryNode: '', status: 'new' })
+    emails.unshift({ value: '', type: EMAIL_TYPE_OPTIONS[0].value, sourceNode: '', status: 'new' })
     onAddRow({ focusSelector: '[name="email-value-0"]' })
   }
 
@@ -483,7 +483,7 @@ function renderContactAddressInputRow({
           .value=${addressRow?.streetAddress || ''}
           required
           data-contact-field="streetAddress"
-          data-entry-node=${addressRow?.entryNode || ''}
+          data-entry-node=${addressRow?.sourceNode || ''}
           data-row-status=${addressRow?.status || 'n/a'}
           placeholder="Street Address"
           autocomplete="street-address"
@@ -501,7 +501,7 @@ function renderContactAddressInputRow({
           name=${localityName}
           .value=${addressRow?.locality || ''}
           data-contact-field="locality"
-          data-entry-node=${addressRow?.entryNode || ''}
+          data-entry-node=${addressRow?.sourceNode || ''}
           data-row-status=${addressRow?.status || 'n/a'}
           placeholder="City / Locality"
           autocomplete="address-level2"
@@ -517,7 +517,7 @@ function renderContactAddressInputRow({
           name=${postalCodeName}
           .value=${addressRow?.postalCode || ''}
           data-contact-field="postalCode"
-          data-entry-node=${addressRow?.entryNode || ''}
+          data-entry-node=${addressRow?.sourceNode || ''}
           data-row-status=${addressRow?.status || 'n/a'}
           placeholder="Postal Code"
           autocomplete="postal-code"
@@ -536,7 +536,7 @@ function renderContactAddressInputRow({
           name=${regionName}
           .value=${addressRow?.region || ''}
           data-contact-field="region"
-          data-entry-node=${addressRow?.entryNode || ''}
+          data-entry-node=${addressRow?.sourceNode || ''}
           data-row-status=${addressRow?.status || 'n/a'}
           placeholder="State / Region"
           autocomplete="address-level1"
@@ -552,7 +552,7 @@ function renderContactAddressInputRow({
           name=${countryName}
           .value=${addressRow?.countryName || ''}
           data-contact-field="countryName"
-          data-entry-node=${addressRow?.entryNode || ''}
+          data-entry-node=${addressRow?.sourceNode || ''}
           data-row-status=${addressRow?.status || 'n/a'}
           placeholder="Country"
           autocomplete="country-name"
@@ -574,7 +574,7 @@ function renderContactInfoAddressSection(addresses: ContactAddressRow[], onAddRo
       postalCode: '',
       countryName: '',
       type: '',
-      entryNode: '',
+      sourceNode: '',
       status: 'new'
     })
     onAddRow({ focusSelector: '[name="address-street-0"]' })
@@ -758,7 +758,7 @@ export async function createContactInfoEditDialog(
         },
         addressOps: summarizeRowOps(formState.addresses, rowHasContent)
       }
-      await processContactInfoMutations(store, subject, plan)
+      await solidLogicSingleton.profile.processContactInfoMutations(subject, plan)
     },
     formatSaveError: (error: unknown) => {
       return error instanceof Error ? error.message : saveContactUpdatesFailedMessageText
