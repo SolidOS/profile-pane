@@ -109,6 +109,9 @@ function buildSocialStatements(
 
 	const accountPrefix = accountOption?.userProfilePrefix || accountOption?.homepage
 	const accountName = toAccountNameFromHomepage(normalizeValue(row.homepage), accountPrefix)
+	if (normalizedName) {
+		inserts.push(st(node, ns.foaf('name'), literal(normalizedName), doc))
+	}
 	if (accountName) {
 		inserts.push(st(node, ns.foaf('accountName'), literal(accountName), doc))
 	}
@@ -248,6 +251,7 @@ async function mutateSocialEntries(
 		...removedAccountNodes.flatMap((node) => collectNodeStatements(store, node, doc)),
 		...retainedAccountNodes.flatMap((node) => [
 			...store.statementsMatching(node, ns.rdf('type'), null, doc),
+			...store.statementsMatching(node, ns.foaf('name'), null, doc),
 			...store.statementsMatching(node, ns.foaf('accountName'), null, doc),
 			...store.statementsMatching(node, ns.foaf('homepage'), null, doc),
 			...store.statementsMatching(node, ns.foaf('icon'), null, doc),

@@ -530,14 +530,16 @@ function createLanguageEditForm(details: LanguageDetails[], viewerMode: ViewerMo
   renderLanguageEditTemplate(form, formState, viewerMode)
 
   const addRow = () => {
-    formState.languages.unshift({
+    formState.languages.push({
       name: '',
       publicId: '',
       proficiency: '',
       entryNode: '',
       status: 'new'
     })
-    renderLanguageEditTemplate(form, formState, viewerMode, { focusSelector: '[data-language-row-index="0"]' })
+    renderLanguageEditTemplate(form, formState, viewerMode, {
+      focusSelector: `[data-language-row-index="${formState.languages.length - 1}"]`
+    })
   }
 
   return { form, formState, addRow }

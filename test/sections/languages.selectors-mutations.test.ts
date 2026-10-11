@@ -405,7 +405,8 @@ describe('Languages selectors and mutations', () => {
     expect(store.updater.update).not.toHaveBeenCalled()
     expect(store.updater.updateDav).not.toHaveBeenCalled()
     expect(putCalled).toBe(true)
-    expect(serializedStatements.some((statement) => statement.object?.termType === 'Collection')).toBe(true)
+    expect(serializedStatements.some((statement) => statement.object?.termType === 'Collection')).toBe(false)
+    expect(serializedStatements.filter((statement) => statement.predicate?.value === ns.rdf('first').value)).toHaveLength(2)
     expect(serializedStatements.some((statement) => statement.predicate?.value === ns.schema('name').value)).toBe(true)
   })
 
@@ -452,7 +453,8 @@ describe('Languages selectors and mutations', () => {
     expect(store.updater.update).not.toHaveBeenCalled()
     expect(store.updater.updateDav).not.toHaveBeenCalled()
     expect(putCalled).toBe(true)
-    expect(serializedStatements.some((statement) => statement.object?.termType === 'Collection')).toBe(true)
+    expect(serializedStatements.some((statement) => statement.object?.termType === 'Collection')).toBe(false)
+    expect(serializedStatements.filter((statement) => statement.predicate?.value === ns.rdf('first').value)).toHaveLength(3)
     expect(serializedStatements.filter((statement) => statement.predicate?.value === ns.schema('name').value)).toHaveLength(3)
   })
 

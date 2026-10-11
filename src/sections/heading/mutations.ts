@@ -273,6 +273,7 @@ async function mutateBasicProfileEntry(store: LiveStore, subject: NamedNode, bas
       : basic
 
     replaceLiteralField(ns.vcard('fn'), data.name)
+    replaceLiteralField(ns.foaf('name'), data.name)
     // Keep foaf:nick in sync where available in existing data.
     replaceLiteralField(ns.foaf('nick'), data.nickname)
     replaceLiteralField(ns.vcard('nickname'), data.nickname)

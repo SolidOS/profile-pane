@@ -488,14 +488,16 @@ function createSocialEditForm(details: Account[], store: LiveStore, viewerMode: 
   renderSocialEditTemplate(form, formState, store, viewerMode)
 
   const addRow = () => {
-    formState.socialAccounts.unshift({
+    formState.socialAccounts.push({
       name: '',
       icon: '',
       homepage: '',
       entryNode: '',
       status: 'new'
     })
-    renderSocialEditTemplate(form, formState, store, viewerMode, { focusSelector: '[name="social-account-type-0"]' })
+    renderSocialEditTemplate(form, formState, store, viewerMode, {
+      focusSelector: `[name="social-account-type-${formState.socialAccounts.length - 1}"]`
+    })
   }
 
   return { form, formState, addRow }
