@@ -8,13 +8,13 @@ describe('CVCard accessibility', () => {
   it('has no accessibility violations', async () => {
     const cvData = [
       {
-        entryNode: sym('https://example.com/profile#role-future'),
+        sourceNode: sym('https://example.com/profile#role-future'),
         title: 'Future Developer',
         orgName: 'FutureOrg',
         startDate: literal('2027-01-01')
       },
       {
-        entryNode: sym('https://example.com/profile#role-current'),
+        sourceNode: sym('https://example.com/profile#role-current'),
         title: 'Developer',
         orgName: 'CurrentOrg',
         startDate: literal('2023-01-01'),
@@ -22,7 +22,7 @@ describe('CVCard accessibility', () => {
         description: 'Building accessible profile tooling.'
       },
       {
-        entryNode: sym('https://example.com/profile#role-past'),
+        sourceNode: sym('https://example.com/profile#role-past'),
         title: 'Junior Dev',
         orgName: 'PastOrg',
         startDate: literal('2020-01-01'),

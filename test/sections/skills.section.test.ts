@@ -14,12 +14,12 @@ describe('Skills section', () => {
       {
         name: 'typescript',
         publicId: 'https://www.wikidata.org/wiki/Q978185',
-        entryNode: sym('https://example.com/profile/card#skill-typescript')
+        sourceNode: sym('https://example.com/profile/card#skill-typescript')
       },
       {
         name: 'solid',
         publicId: 'https://www.wikidata.org/wiki/Q858775',
-        entryNode: sym('https://example.com/profile/card#skill-solid')
+        sourceNode: sym('https://example.com/profile/card#skill-solid')
       }
     ]
 
@@ -41,12 +41,12 @@ describe('Skills section', () => {
       {
         name: 'typescript',
         publicId: 'https://www.wikidata.org/wiki/Q978185',
-        entryNode: sym('https://example.com/profile/card#skill-typescript')
+        sourceNode: sym('https://example.com/profile/card#skill-typescript')
       },
       {
         name: 'solid',
         publicId: 'https://www.wikidata.org/wiki/Q858775',
-        entryNode: sym('https://example.com/profile/card#skill-solid')
+        sourceNode: sym('https://example.com/profile/card#skill-solid')
       }
     ]
 

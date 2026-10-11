@@ -1,5 +1,6 @@
 import { describe, expect, it, vi } from 'vitest'
-import { graph, sym } from 'rdflib'
+import { sym } from 'rdflib'
+import { store as profileStore } from 'solid-logic'
 import { ns } from 'solid-ui'
 import type { Combobox } from 'solid-ui/components/combobox'
 import './setup'
@@ -425,7 +426,7 @@ describe('Dialog accessibility', () => {
   })
 
   it.skip('opens social, skills, and language dialogs with focus on the first field while keeping popups closed', async () => {
-    const store = graph() as any
+    const store = profileStore as any
     const subject = sym('https://example.com/profile/card#me')
     const trigger = document.createElement('button')
     trigger.textContent = 'Open dialog'
@@ -492,9 +493,11 @@ describe('Dialog accessibility', () => {
   })
 
   it('treats typed custom skills as changes and saves them from the dialog', async () => {
-    const store = graph() as any
+    const store = profileStore as any
     const subject = sym('https://example.com/profile/card#me')
     const doc = subject.doc()
+    store.removeDocument(doc)
+    store.removeMatches(subject, ns.schema('skills'), null, doc)
     const trigger = document.createElement('button')
     trigger.textContent = 'Open dialog'
     document.body.appendChild(trigger)
@@ -503,6 +506,7 @@ describe('Dialog accessibility', () => {
       load: async () => undefined
     }
     store.updater = {
+      editable: () => true,
       update: (deletions: any[], insertions: any[], callback: Function) => {
         deletions.forEach((statement) => store.remove(statement.subject, statement.predicate, statement.object, statement.why))
         insertions.forEach((statement) => store.add(statement.subject, statement.predicate, statement.object, statement.why))
@@ -533,8 +537,8 @@ describe('Dialog accessibility', () => {
     const skillLinks = store.statementsMatching(subject, ns.schema('skills'), null, doc)
     expect(skillLinks).toHaveLength(1)
 
-    const entryNode = skillLinks[0].object
-    const publicIdLink = store.any(entryNode, ns.solid('publicId'), null, doc)
+    const sourceNode = skillLinks[0].object
+    const publicIdLink = store.any(sourceNode, ns.solid('publicId'), null, doc)
     expect(publicIdLink?.termType).toBe('BlankNode')
 
     const skillName = store.any(publicIdLink as any, ns.schema('name'), null, doc)
@@ -542,9 +546,11 @@ describe('Dialog accessibility', () => {
   })
 
   it('keeps a typed custom skill when using Add More before saving', async () => {
-    const store = graph() as any
+    const store = profileStore as any
     const subject = sym('https://example.com/profile/card#me')
     const doc = subject.doc()
+    store.removeDocument(doc)
+    store.removeMatches(subject, ns.schema('skills'), null, doc)
     const trigger = document.createElement('button')
     trigger.textContent = 'Open dialog'
     document.body.appendChild(trigger)
@@ -553,6 +559,7 @@ describe('Dialog accessibility', () => {
       load: async () => undefined
     }
     store.updater = {
+      editable: () => true,
       update: (deletions: any[], insertions: any[], callback: Function) => {
         deletions.forEach((statement) => store.remove(statement.subject, statement.predicate, statement.object, statement.why))
         insertions.forEach((statement) => store.add(statement.subject, statement.predicate, statement.object, statement.why))
@@ -591,16 +598,17 @@ describe('Dialog accessibility', () => {
     const skillLinks = store.statementsMatching(subject, ns.schema('skills'), null, doc)
     expect(skillLinks).toHaveLength(1)
 
-    const entryNode = skillLinks[0].object
-    const publicIdLink = store.any(entryNode, ns.solid('publicId'), null, doc)
+    const sourceNode = skillLinks[0].object
+    const publicIdLink = store.any(sourceNode, ns.solid('publicId'), null, doc)
     const skillName = store.any(publicIdLink as any, ns.schema('name'), null, doc)
     expect(skillName?.value).toBe('Facilitation')
   })
 
   it('treats typed custom resume organizations as changes and saves them from the dialog', async () => {
-    const store = graph() as any
+    const store = profileStore as any
     const subject = sym('https://example.com/profile/card#me')
     const doc = subject.doc()
+    store.removeDocument(doc)
     const trigger = document.createElement('button')
     trigger.textContent = 'Open dialog'
     document.body.appendChild(trigger)
@@ -609,6 +617,7 @@ describe('Dialog accessibility', () => {
       load: async () => undefined
     }
     store.updater = {
+      editable: () => true,
       update: (deletions: any[], insertions: any[], callback: Function) => {
         deletions.forEach((statement) => store.remove(statement.subject, statement.predicate, statement.object, statement.why))
         insertions.forEach((statement) => store.add(statement.subject, statement.predicate, statement.object, statement.why))

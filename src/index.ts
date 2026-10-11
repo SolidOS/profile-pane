@@ -6,8 +6,6 @@ import { icons, ns } from 'solid-ui'
 import { hydrateQRCodes } from './sections/qrcode/QRCodeCard'
 import { createResizeDrivenSync } from './utils/resize'
 import { Layout } from './types'
-import { presentProfile } from './selectors'
-export { presentProfile } from './selectors'
 export { getViewerMode } from './viewerMode'
 export type { ProfileDetails, ViewerMode } from './types'
 export type { AddressDetails, ContactAddressRow, ContactPointRow, PointDetails } from './sections/contactInfo/types'
@@ -139,8 +137,7 @@ const Pane = {
           bubbles: true,
           composed: true,
           detail: {
-            subjectUri: subject.value,
-            profileData: presentProfile(subject, store)
+            subjectUri: subject.value
           }
         }))
         await renderWithData()

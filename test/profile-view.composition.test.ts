@@ -125,7 +125,7 @@ describe('Profile view composition', () => {
   })
 
   it('aggregates all major presenter branches from one profile fixture', async () => {
-    const viewModel = await presentProfileViewModel(subject, store as any)
+    const viewModel = await presentProfileViewModel(subject)
 
     expect(viewModel.bioDetails.description).toBe('Builds profile features for SolidOS.')
 
@@ -163,7 +163,7 @@ describe('Profile view composition', () => {
     const result = await ProfileView(subject, context, 'desktop')
     render(result, container)
 
-    expect(container.querySelector('#profile-name')).toBeNull()
+    expect(container.querySelector('#profile-name')?.textContent).toContain('Jane Doe')
     expect(container.textContent).toContain('Builds profile features for SolidOS.')
     expect(container.textContent).toContain('Staff Engineer')
     expect(container.textContent).toContain('Profile Pane')

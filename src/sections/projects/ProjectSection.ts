@@ -5,7 +5,7 @@ import { Layout, ViewerMode } from '../../types'
 import { ProjectDetails, ProjectRow } from './types'
 import { projectsHeadingText, unfollowProjectFailedMessageText } from '../../texts'
 import { createProjectsEditDialog } from './ProjectEditDialog'
-import { processProjectsMutations } from './mutations'
+import { solidLogicSingleton } from 'solid-logic'
 import { addIcon, checkMarkIcon, chevronDownIcon, editIcon, plusDarkIcon, twoDownArrowsIcon } from '../../icons-svg/profileIcons'
 import { MutationOps } from '../shared/types'
 import './ProjectSection.css'
@@ -73,14 +73,14 @@ function toProjectRow(project: ProjectDetails, status: 'existing' | 'deleted'): 
     category: project.category,
     name: project.name,
     orgName: project.orgName,
-    entryNode: (project.entryNode as any)?.value || '',
+    sourceNode: (project.sourceNode as any)?.value || '',
     status
   }
 }
 
 function renderProject(
   project: ProjectDetails,
-  store: LiveStore,
+  _store: LiveStore,
   subject: NamedNode,
   viewerMode: ViewerMode,
   onSaved?: () => Promise<void> | void
@@ -104,7 +104,7 @@ function renderProject(
       unfollowButton?.setAttribute('disabled', '')
       unfollowButton?.setAttribute('loading', '')
       unfollowButton?.setAttribute('aria-busy', 'true')
-      await processProjectsMutations(store, subject, removePlan)
+      await solidLogicSingleton.profile.processProjectsMutations(subject, removePlan)
       if (section) {
         setProjectsSectionError(section, null)
       }

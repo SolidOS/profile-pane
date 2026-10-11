@@ -9,7 +9,7 @@ import { SkillDetails, SkillRow } from './types'
 import { addIcon, chevronDownIcon, deleteIcon, editIcon, lighteningIcon } from '../../icons-svg/profileIcons'
 import { skillsHeadingText } from '../../texts'
 import { toggleCollapsibleSection } from '../shared/collapsibleSection'
-import { processSkillsMutations } from './mutations'
+import { solidLogicSingleton } from 'solid-logic'
 import { formatDisplayError } from '../../utils/errorDisplay'
 import { renderResponsiveActionButton } from '../../ui/responsiveActionButton'
 
@@ -34,7 +34,7 @@ function setSkillsSectionError(section: HTMLElement, message: string | null): vo
 
 function renderSkillItem(
   detail: SkillDetails,
-  store: LiveStore,
+  _store: LiveStore,
   subject: NamedNode,
   viewerMode: ViewerMode,
   onSaved?: () => Promise<void> | void
@@ -51,7 +51,7 @@ function renderSkillItem(
     const removeRow: SkillRow = {
       name: detail.name,
       publicId: detail.publicId,
-      entryNode: detail.entryNode.value,
+      sourceNode: detail.sourceNode.value,
       status: 'deleted'
     }
 
@@ -60,7 +60,7 @@ function renderSkillItem(
       removeButton?.setAttribute('aria-busy', 'true')
       removeButton?.setAttribute('data-loading', 'true')
       skillRow?.setAttribute('data-pending', 'true')
-      await processSkillsMutations(store, subject, {
+      await solidLogicSingleton.profile.processSkillsMutations(subject, {
         create: [],
         update: [],
         remove: [removeRow]

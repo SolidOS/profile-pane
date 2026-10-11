@@ -12,7 +12,7 @@ import { ViewerMode } from '../../types'
 import { applyRowFieldChange, deleteRow, summarizeRowOps } from '../shared/rowState'
 import { hasNonEmptyText, sanitizeTextValue, toText } from '../../textUtils'
 import { MutationOps } from '../shared/types'
-import { processSocialMutations } from './mutations'
+import { solidLogicSingleton } from 'solid-logic'
 import { bentoIcon, trashIcon } from '../../icons-svg/profileIcons'
 import {
   deleteEntryButtonTitleText,
@@ -119,23 +119,23 @@ function toFormState(socialAccounts: Account[]): SocialFormState {
       name: sanitizeSocialFieldValue(toText(account.name)),
       icon: sanitizeSocialFieldValue(toText(account.icon)),
       homepage: sanitizeSocialFieldValue(toText(account.homepage)),
-      entryNode: toText(account.entryNode),
-      status: toText(account.entryNode) ? 'existing' as const : 'new' as const
+      sourceNode: toText(account.sourceNode),
+      status: toText(account.sourceNode) ? 'existing' as const : 'new' as const
     }))
-    .filter((row) => Boolean(row.name || row.icon || row.homepage || row.entryNode))
+    .filter((row) => Boolean(row.name || row.icon || row.homepage || row.sourceNode))
 
   return {
     socialAccounts: rows.length
       ? rows
-      : [{ name: '', icon: '', homepage: '', entryNode: '', status: 'new' }],
+      : [{ name: '', icon: '', homepage: '', sourceNode: '', status: 'new' }],
     initialExistingOrder: []
   }
 }
 
 function hasOrderChanged(rows: SocialRow[], initialExistingOrder: string[]): boolean {
   const currentExistingOrder = rows
-    .filter((row) => row.status !== 'deleted' && Boolean((row.entryNode || '').trim()))
-    .map((row) => (row.entryNode || '').trim())
+    .filter((row) => row.status !== 'deleted' && Boolean((row.sourceNode || '').trim()))
+    .map((row) => (row.sourceNode || '').trim())
 
   if (currentExistingOrder.length !== initialExistingOrder.length) return true
 
@@ -286,7 +286,7 @@ function renderSocialInputRow({
           name=${`social-homepage-${index}`}
           .value=${row?.homepage || ''}
           data-contact-field="homepage"
-          data-entry-node=${row?.entryNode || ''}
+          data-entry-node=${row?.sourceNode || ''}
           data-row-status=${row?.status || 'n/a'}
           placeholder="Profile link or handle"
           autocomplete="off"
@@ -483,8 +483,8 @@ function createSocialEditForm(details: Account[], store: LiveStore, viewerMode: 
 
   const formState = toFormState(details)
   formState.initialExistingOrder = formState.socialAccounts
-    .filter((row) => Boolean((row.entryNode || '').trim()))
-    .map((row) => (row.entryNode || '').trim())
+    .filter((row) => Boolean((row.sourceNode || '').trim()))
+    .map((row) => (row.sourceNode || '').trim())
   renderSocialEditTemplate(form, formState, store, viewerMode)
 
   const addRow = () => {
@@ -492,7 +492,7 @@ function createSocialEditForm(details: Account[], store: LiveStore, viewerMode: 
       name: '',
       icon: '',
       homepage: '',
-      entryNode: '',
+      sourceNode: '',
       status: 'new'
     })
     renderSocialEditTemplate(form, formState, store, viewerMode, { focusSelector: '[name="social-account-type-0"]' })
@@ -543,7 +543,7 @@ export async function createSocialEditDialog(
         update: socialOps.update,
         remove: socialOps.remove
       }
-      await processSocialMutations(store, subject, plan, formState.socialAccounts)
+      await solidLogicSingleton.profile.processSocialMutations(subject, plan, formState.socialAccounts)
     },
     formatSaveError: (error: unknown) => {
       return error instanceof Error ? error.message : saveSocialUpdatesFailedMessageText

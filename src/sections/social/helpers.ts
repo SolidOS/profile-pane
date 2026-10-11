@@ -111,6 +111,10 @@ function resolveSocialIcon(classUri: string, iconValue: string): string {
   return iconValue || DEFAULT_ICON_URI
 }
 
+export function resolveSocialPresentationIcon(iconValue: string | undefined): string {
+  return resolveSocialIcon('', iconValue || '')
+}
+
 function getSocialOntologyStore(): LiveStore {
   if (cachedSocialOntologyStore) return cachedSocialOntologyStore
 

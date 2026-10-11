@@ -12,7 +12,7 @@ describe('Resume section', () => {
 
     const roles = [
       {
-        entryNode: sym('https://example.com/profile#role1'),
+        sourceNode: sym('https://example.com/profile#role1'),
         title: 'Software Engineer',
         orgName: 'SolidOS',
         orgLocation: 'Remote',
@@ -36,7 +36,7 @@ describe('Resume section', () => {
 
     const roles = [
       {
-        entryNode: sym('https://example.com/profile#role1'),
+        sourceNode: sym('https://example.com/profile#role1'),
         title: 'Software Engineer',
         orgName: 'SolidOS',
         orgLocation: 'Remote',

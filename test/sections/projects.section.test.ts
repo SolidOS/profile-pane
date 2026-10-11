@@ -12,7 +12,7 @@ describe('Projects section', () => {
 
     const projects = [
       {
-        entryNode: sym('https://example.com/profile#project1'),
+        sourceNode: sym('https://example.com/profile#project1'),
         url: 'https://example.com/project',
         title: 'Profile Pane',
         orgName: 'Open Source',
@@ -35,7 +35,7 @@ describe('Projects section', () => {
 
     const projects = [
       {
-        entryNode: sym('https://example.com/profile#project1'),
+        sourceNode: sym('https://example.com/profile#project1'),
         url: 'https://example.com/project',
         title: 'Profile Pane',
         orgName: 'Open Source',
@@ -58,21 +58,21 @@ describe('Projects section', () => {
 
     const projects = [
       {
-        entryNode: sym('https://example.com/profile#project1'),
+        sourceNode: sym('https://example.com/profile#project1'),
         url: 'https://example.com/project-1',
         title: 'Project One',
         orgName: 'Open Source',
         category: 'project'
       },
       {
-        entryNode: sym('https://example.com/profile#project2'),
+        sourceNode: sym('https://example.com/profile#project2'),
         url: 'https://example.com/project-2',
         title: 'Project Two',
         orgName: 'Open Source',
         category: 'project'
       },
       {
-        entryNode: sym('https://example.com/profile#project3'),
+        sourceNode: sym('https://example.com/profile#project3'),
         url: 'https://example.com/project-3',
         title: 'Project Three',
         orgName: 'Open Source',

@@ -12,7 +12,7 @@ describe('Education section', () => {
 
     const educationData = [
       {
-        entryNode: sym('https://example.com/profile#edu1'),
+        sourceNode: sym('https://example.com/profile#edu1'),
         school: 'University of Amsterdam',
         degree: 'BSc Computer Science',
         location: 'Amsterdam',
@@ -35,7 +35,7 @@ describe('Education section', () => {
 
     const educationData = [
       {
-        entryNode: sym('https://example.com/profile#edu1'),
+        sourceNode: sym('https://example.com/profile#edu1'),
         school: 'University of Amsterdam',
         degree: 'BSc Computer Science',
         location: 'Amsterdam',

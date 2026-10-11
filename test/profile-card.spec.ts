@@ -10,7 +10,7 @@ describe('profile pane integration', () => {
     store.removeDocument(doc)
   })
 
-  it('renders profile sections without the removed heading for a populated profile', async () => {
+  it('renders the heading and profile sections for a populated profile', async () => {
     const turtle = `
       @prefix : <#>.
       @prefix foaf: <http://xmlns.com/foaf/0.1/> .
@@ -45,9 +45,9 @@ describe('profile pane integration', () => {
     document.body.appendChild(result)
 
     const cv = await waitForSelector<HTMLElement>(result, '[data-testid="curriculum-vitae"]')
-    expect(result.querySelector('[data-profile-section="heading"]')).toBeNull()
-    expect(result.querySelector('#profile-name')).toBeNull()
-    expect(result.querySelector('img.profile__hero')).toBeNull()
+    expect(result.querySelector('[data-profile-section="heading"]')).not.toBeNull()
+    expect(result.querySelector('#profile-name')?.textContent).toContain('Jane Doe')
+    expect(result.querySelector('img.profile__hero')).not.toBeNull()
     expect(cv.textContent).toContain('Test Double')
     expect(result.textContent).toContain('Hamburg')
     expect(result.textContent).toContain('Germany')

@@ -43,8 +43,7 @@ describe('profile save notifications', () => {
       expect(saved).toHaveBeenCalledOnce()
       const event = saved.mock.calls[0][0] as CustomEvent<{ subjectUri: string }>
       expect(event.detail).toMatchObject({
-        subjectUri: subject.value,
-        profileData: { entryNode: subject }
+        subjectUri: subject.value
       })
       expect(event.bubbles).toBe(true)
       expect(event.composed).toBe(true)

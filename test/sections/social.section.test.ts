@@ -13,7 +13,7 @@ describe('Social section', () => {
     const socialPresentation = {
       accounts: [
         {
-          entryNode: sym('https://example.com/profile#social1'),
+          sourceNode: sym('https://example.com/profile#social1'),
           name: 'GitHub',
           icon: 'https://example.com/icon.svg',
           homepage: 'https://github.com/janedoe'
@@ -36,13 +36,13 @@ describe('Social section', () => {
     const socialPresentation = {
       accounts: [
         {
-          entryNode: sym('https://example.com/profile#social1'),
+          sourceNode: sym('https://example.com/profile#social1'),
           name: 'GitHub',
           icon: 'https://example.com/icon.svg',
           homepage: 'https://github.com/janedoe'
         },
         {
-          entryNode: sym('https://example.com/profile#social2'),
+          sourceNode: sym('https://example.com/profile#social2'),
           name: 'Mastodon',
           icon: 'https://example.com/mastodon.svg',
           homepage: 'https://social.example/@janedoe'

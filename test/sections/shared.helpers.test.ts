@@ -55,8 +55,8 @@ describe('shared helper utilities', () => {
 
   describe('rowState', () => {
     it('marks persisted rows as deleted and removes unsaved rows', () => {
-      const existingRow: TestRow = { entryNode: 'https://example.com#1', status: 'existing', label: 'keep' }
-      const newRow: TestRow = { entryNode: '', status: 'new', label: 'remove' }
+      const existingRow: TestRow = { sourceNode: 'https://example.com#1', status: 'existing', label: 'keep' }
+      const newRow: TestRow = { sourceNode: '', status: 'new', label: 'remove' }
       const rows = [existingRow, newRow]
 
       deleteRow(rows, 0)
@@ -68,8 +68,8 @@ describe('shared helper utilities', () => {
     })
 
     it('trims select values and updates status for existing and new rows', () => {
-      const existingRow: TestRow = { entryNode: 'https://example.com#1', status: 'existing', label: '' }
-      const newRow: TestRow = { entryNode: '', status: 'new', label: '' }
+      const existingRow: TestRow = { sourceNode: 'https://example.com#1', status: 'existing', label: '' }
+      const newRow: TestRow = { sourceNode: '', status: 'new', label: '' }
 
       applyRowSelectChange(existingRow, 'label', '  Work  ')
       applyRowSelectChange(newRow, 'label', '  Home  ')
@@ -82,11 +82,11 @@ describe('shared helper utilities', () => {
 
     it('summarizes create, update, and remove operations using row content', () => {
       const result = summarizeRowOps<TestRow>([
-        { entryNode: '', status: 'new', label: 'Create me' },
-        { entryNode: '', status: 'new', label: '   ' },
-        { entryNode: 'https://example.com#2', status: 'modified', label: 'Update me' },
-        { entryNode: 'https://example.com#3', status: 'modified', label: '' },
-        { entryNode: 'https://example.com#4', status: 'deleted', label: '' }
+        { sourceNode: '', status: 'new', label: 'Create me' },
+        { sourceNode: '', status: 'new', label: '   ' },
+        { sourceNode: 'https://example.com#2', status: 'modified', label: 'Update me' },
+        { sourceNode: 'https://example.com#3', status: 'modified', label: '' },
+        { sourceNode: 'https://example.com#4', status: 'deleted', label: '' }
       ], (row) => row.label.trim().length > 0)
 
       expect(result.create).toHaveLength(1)
@@ -95,7 +95,7 @@ describe('shared helper utilities', () => {
     })
 
     it('marks empty persisted rows as deleted in field changes', () => {
-      const row: TestRow = { entryNode: 'https://example.com#1', status: 'existing', label: 'Before' }
+      const row: TestRow = { sourceNode: 'https://example.com#1', status: 'existing', label: 'Before' }
 
       applyRowFieldChange(row, 'label', '', (currentRow) => currentRow.label.trim().length > 0)
 

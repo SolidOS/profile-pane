@@ -9,13 +9,13 @@ describe('SocialCard accessibility', () => {
     const SocialData = {
       accounts: [
         {
-          entryNode: sym('https://example.com/profile/card#twitter'),
+          sourceNode: sym('https://example.com/profile/card#twitter'),
           homepage: 'https://twitter.com/example',
           name: 'Twitter',
           icon: 'https://example.com/twitter-icon.svg'
         },
         {
-          entryNode: sym('https://example.com/profile/card#github'),
+          sourceNode: sym('https://example.com/profile/card#github'),
           homepage: 'https://github.com/example',
           name: 'GitHub',
           icon: 'https://example.com/github-icon.svg'
@@ -33,7 +33,7 @@ describe('SocialCard accessibility', () => {
   it('shows a hidden social accounts count button when more than two mobile rows exist', () => {
     const SocialData = {
       accounts: Array.from({ length: 11 }, (_, index) => ({
-        entryNode: sym(`https://example.com/profile/card#account-${index}`),
+        sourceNode: sym(`https://example.com/profile/card#account-${index}`),
         homepage: `https://example.com/${index}`,
         name: `Account ${index}`,
         icon: `https://example.com/icon-${index}.svg`
