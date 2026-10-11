@@ -88,6 +88,7 @@ describe('Social selectors and mutations', () => {
 
     const accountName = store.any(entryNode, ns.foaf('accountName'), null, doc)
     expect(accountName?.value).toBe('sharon')
+    expect(store.any(entryNode, ns.foaf('name'), null, doc)?.value).toBe('Github')
   })
 
   it('normalizes duplicated profile prefix when writing accountName', async () => {
@@ -452,6 +453,7 @@ describe('Social selectors and mutations', () => {
 
     expect(store.updater.update).not.toHaveBeenCalled()
     expect(putCalled).toBe(true)
-    expect(serializedStatements.some((statement) => statement.object?.termType === 'Collection')).toBe(true)
+    expect(serializedStatements.some((statement) => statement.object?.termType === 'Collection')).toBe(false)
+    expect(serializedStatements.filter((statement) => statement.predicate?.value === ns.rdf('first').value)).toHaveLength(1)
   })
 })

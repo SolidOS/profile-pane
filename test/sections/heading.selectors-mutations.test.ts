@@ -157,10 +157,12 @@ describe('Intro selectors and mutations', () => {
     expect(profile.jobTitle).toBe('Senior Developer')
   })
 
-  it('writes trimmed basic heading fields and keeps nicknames in sync', async () => {
+  it('updates visible and stored names together while keeping nicknames in sync', async () => {
     const store = graph() as any
     const subject = sym('https://example.com/profile/card#me')
     const doc = subject.doc()
+    store.add(st(subject, ns.vcard('fn'), literal('Previous Name'), doc))
+    store.add(st(subject, ns.foaf('name'), literal('Previous Name'), doc))
 
     store.updater = {
       update: (deletions: any[], insertions: any[], callback: Function) => {
@@ -172,16 +174,16 @@ describe('Intro selectors and mutations', () => {
 
     await processHeadingMutations(store, subject, {
       basicOps: {
-        create: [{
+        create: [],
+        update: [{
           entryNode: subject.value,
           name: '  Jane Doe  ',
           nickname: '  janey  ',
           pronouns: '  She/Her  ',
           dateOfBirth: '2000-01-01',
           imageSrc: 'https://example.com/jane.png',
-          status: 'new'
+          status: 'existing'
         }],
-        update: [],
         remove: []
       },
       phoneOps: { create: [], update: [], remove: [] },
@@ -190,6 +192,7 @@ describe('Intro selectors and mutations', () => {
     } as any)
 
     expect(store.any(subject, ns.vcard('fn'), null, doc)?.value).toBe('Jane Doe')
+    expect(store.any(subject, ns.foaf('name'), null, doc)?.value).toBe('Jane Doe')
     expect(store.any(subject, ns.foaf('nick'), null, doc)?.value).toBe('janey')
     expect(store.any(subject, ns.vcard('nickname'), null, doc)?.value).toBe('janey')
     expect(store.any(subject, ns.solid('preferredSubjectPronoun'), null, doc)?.value).toBe('She')
@@ -217,6 +220,7 @@ describe('Intro selectors and mutations', () => {
     } as any)
 
     expect(store.any(subject, ns.vcard('fn'), null, doc)).toBeNull()
+    expect(store.any(subject, ns.foaf('name'), null, doc)).toBeNull()
     expect(store.any(subject, ns.foaf('nick'), null, doc)).toBeNull()
     expect(store.any(subject, ns.solid('preferredSubjectPronoun'), null, doc)).toBeNull()
     expect(store.any(subject, ns.solid('preferredObjectPronoun'), null, doc)).toBeNull()

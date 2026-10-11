@@ -52,6 +52,37 @@ function setComboboxInputValue(combobox: Combobox | null, value: string): void {
 }
 
 describe('Dialog accessibility', () => {
+  it('appends new language rows after existing entries', async () => {
+    const store = graph() as any
+    const subject = sym('https://example.com/profile/card#me')
+    const trigger = document.createElement('button')
+    document.body.appendChild(trigger)
+
+    const dialogPromise = createLanguageEditDialog(
+      { currentTarget: trigger } as unknown as Event,
+      store,
+      subject,
+      [
+        { name: 'English', publicId: 'https://www.w3.org/ns/iana/language-code/en', entryNode: sym('https://example.com/profile/card#en') },
+        { name: 'Spanish', publicId: 'https://www.w3.org/ns/iana/language-code/es', entryNode: sym('https://example.com/profile/card#es') }
+      ],
+      'owner'
+    )
+
+    await waitForDialogFocus()
+    const addLanguageButton = document.querySelector<HTMLButtonElement>('[aria-label="Add another language"]')
+    expect(addLanguageButton).not.toBeNull()
+    addLanguageButton?.click()
+    await waitForFrame()
+
+    expect(document.querySelectorAll('solid-ui-combobox[data-language-row-index]')).toHaveLength(3)
+    expect(document.querySelector('solid-ui-combobox[data-language-row-index="2"]')).not.toBeNull()
+
+    getSharedDialogCancelButton(document)?.click()
+    await expect(dialogPromise).resolves.toBeUndefined()
+    trigger.remove()
+  })
+
   it('mounts the shared dialog on the document body', async () => {
     const paneRoot = document.createElement('div')
     paneRoot.className = 'profile-pane-root'
