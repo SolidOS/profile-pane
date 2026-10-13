@@ -2,10 +2,10 @@
 /* Copied from presenter and modified for new functionallity */
 import { NamedNode, Node, LiveStore } from 'rdflib'
 import { utils, ns, widgets } from 'solid-ui'
-import type { AddressDetails, PointDetails } from '../contactInfo/types'
+import type { AddressDetails, PointDetails } from './sections/contactInfo/types'
 import type { ProfileDetails } from './types'
-import { presentCV } from '../resume/selectors'
-import type { RoleDetails } from '../resume/types'
+import { presentCV } from './sections/resume/selectors'
+import type { RoleDetails } from './sections/resume/types'
 
 function termValue(term: unknown): string {
   if (!term) return ''

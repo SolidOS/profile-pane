@@ -3,6 +3,8 @@ import { html } from 'lit-html'
 import { ProfileView } from '../src/ProfileView'
 import pane from '../src/index'
 import { openInputDialog } from '../src/ui/dialog'
+import { createResizeDrivenSync } from '../src/utils/resize'
+import { hydrateQRCodes } from '../src/sections/qrcode/QRCodeCard'
 import { context, subject } from './setup'
 
 vi.mock('../src/ProfileView', () => ({
@@ -17,8 +19,10 @@ vi.mock('../src/utils/resize', () => ({
   createResizeDrivenSync: vi.fn(() => () => undefined)
 }))
 
-afterEach(() => {
+afterEach(async () => {
   document.body.replaceChildren()
+  await Promise.resolve()
+  vi.restoreAllMocks()
   vi.clearAllMocks()
 })
 
@@ -84,6 +88,80 @@ describe('profile save notifications', () => {
     } finally {
       document.removeEventListener('profile-pane-saved', saved)
     }
+  })
+
+  it('cleans up on ancestor removal without any heading events', async () => {
+    const removeListener = vi.spyOn(document, 'removeEventListener')
+    const disconnect = vi.spyOn(MutationObserver.prototype, 'disconnect')
+    const cleanupHeight = vi.fn()
+    const cleanupLayout = vi.fn()
+    vi.mocked(createResizeDrivenSync)
+      .mockReturnValueOnce(cleanupHeight)
+      .mockReturnValueOnce(cleanupLayout)
+
+    const wrapper = document.createElement('div')
+    const target = pane.render(subject, context)
+    wrapper.appendChild(target)
+    document.body.appendChild(wrapper)
+    await vi.waitFor(() => expect(createResizeDrivenSync).toHaveBeenCalledTimes(2))
+
+    wrapper.remove()
+    await Promise.resolve()
+
+    expect(removeListener).toHaveBeenCalledWith('profile-heading-saved', expect.any(Function))
+    expect(disconnect).toHaveBeenCalledOnce()
+    expect(cleanupHeight).toHaveBeenCalledOnce()
+    expect(cleanupLayout).toHaveBeenCalledOnce()
+  })
+
+  it('does not dispose during a synchronous detach and reinsert', async () => {
+    const removeListener = vi.spyOn(document, 'removeEventListener')
+    const target = pane.render(subject, context)
+    document.body.appendChild(target)
+    await vi.waitFor(() => expect(createResizeDrivenSync).toHaveBeenCalledTimes(2))
+
+    target.remove()
+    document.body.appendChild(target)
+    await Promise.resolve()
+
+    expect(removeListener).not.toHaveBeenCalledWith('profile-heading-saved', expect.any(Function))
+    document.dispatchEvent(new CustomEvent('profile-heading-saved', {
+      detail: { subjectUri: subject.value }
+    }))
+    await vi.waitFor(() => expect(ProfileView).toHaveBeenCalledTimes(2))
+  })
+
+  it('does not install resize subscriptions after an in-flight render is disposed', async () => {
+    let finishRender!: (view: Awaited<ReturnType<typeof ProfileView>>) => void
+    vi.mocked(ProfileView).mockImplementationOnce(() => new Promise(resolve => {
+      finishRender = resolve
+    }))
+    const removeListener = vi.spyOn(document, 'removeEventListener')
+    const target = pane.render(subject, context)
+    document.body.appendChild(target)
+    await vi.waitFor(() => expect(ProfileView).toHaveBeenCalledOnce())
+
+    target.remove()
+    await Promise.resolve()
+    finishRender(html`<section>Late profile</section>`)
+    await Promise.resolve()
+    await Promise.resolve()
+
+    expect(removeListener).toHaveBeenCalledWith('profile-heading-saved', expect.any(Function))
+    expect(target.textContent).toBe('')
+    expect(createResizeDrivenSync).not.toHaveBeenCalled()
+    expect(hydrateQRCodes).not.toHaveBeenCalled()
+  })
+
+  it('disposes even when mounted and removed in the same mutation batch', async () => {
+    const removeListener = vi.spyOn(document, 'removeEventListener')
+    const target = pane.render(subject, context)
+    document.body.appendChild(target)
+    target.remove()
+    await Promise.resolve()
+
+    expect(removeListener).toHaveBeenCalledWith('profile-heading-saved', expect.any(Function))
+    expect(createResizeDrivenSync).not.toHaveBeenCalled()
   })
 
   it('treats close-without-save as a no-op instead of a successful save', async () => {

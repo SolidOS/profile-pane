@@ -83,7 +83,7 @@
     "jsdom": "^29.1.1",
     "rdflib": "^2.4.1",
     "solid-logic": "^6.0.1-0",
-    "solidos-toolkit": "1.0.0-dev.c11da40967c5d278451118142650415d688d8d4c",
+    "solidos-toolkit": "dev",
     "typescript": "^6.0.3",
     "undici-types": "^7.18.2",
     "unplugin-icons": "^24.0.0"

@@ -6,11 +6,11 @@ import { icons, ns } from 'solid-ui'
 import { hydrateQRCodes } from './sections/qrcode/QRCodeCard'
 import { createResizeDrivenSync } from './utils/resize'
 import { Layout } from './types'
-import { presentProfile } from './sections/heading/selectors'
-export { presentProfile } from './sections/heading/selectors'
+import { presentProfile } from './selectors'
+export { presentProfile } from './selectors'
 export { getViewerMode } from './viewerMode'
-export type { ProfileDetails } from './sections/heading/types'
-export type { ViewerMode } from './types'
+export type { ProfileDetails, ViewerMode } from './types'
+export type { AddressDetails, ContactAddressRow, ContactPointRow, PointDetails } from './sections/contactInfo/types'
 
 const PROFILE_HEADING_SAVED_EVENT = 'profile-heading-saved'
 const MOBILE_LAYOUT_MAX_WIDTH = 768
@@ -127,10 +127,14 @@ const Pane = {
     applyEnvironmentAttributes(target, context)
     target.dataset.layout = currentLayout
 
+    let disposed = false
+
     const renderWithData = async () => {
+      if (disposed) return
       applyEnvironmentAttributes(target, context)
       target.dataset.layout = currentLayout
-      render(await ProfileView(subject, context, currentLayout, async () => {
+      const view = await ProfileView(subject, context, currentLayout, async () => {
+        if (disposed) return
         target.dispatchEvent(new CustomEvent('profile-pane-saved', {
           bubbles: true,
           composed: true,
@@ -140,7 +144,9 @@ const Pane = {
           }
         }))
         await renderWithData()
-      }), target)
+      })
+      if (disposed) return
+      render(view, target)
       cleanupSocialSectionHeightSync?.()
       cleanupSocialSectionHeightSync = syncSocialSectionHeight(target)
       cleanupLayoutSync?.()
@@ -153,12 +159,28 @@ const Pane = {
 
     // Hosts may edit this profile elsewhere (e.g. a standalone heading); rerender so
     // sections such as More contacts reflect the updated store.
-    let wasConnected = false
+    let wasConnected = target.isConnected
+    const dispose = () => {
+      if (disposed) return
+      disposed = true
+      context.dom.removeEventListener(PROFILE_HEADING_SAVED_EVENT, handleHeadingSaved)
+      connectionObserver.disconnect()
+      cleanupSocialSectionHeightSync?.()
+      cleanupLayoutSync?.()
+    }
+    const connectionObserver = new MutationObserver((records) => {
+      // Added-node records also cover mounting and removal within one mutation batch.
+      wasConnected ||= target.isConnected || records.some(record =>
+        Array.from(record.addedNodes).some(node => node === target || node.contains(target))
+      )
+      if (wasConnected && !target.isConnected) dispose()
+    })
+    connectionObserver.observe(context.dom, { childList: true, subtree: true })
     const handleHeadingSaved = (event: Event) => {
       if (target.isConnected) {
         wasConnected = true
       } else if (wasConnected) {
-        context.dom.removeEventListener(PROFILE_HEADING_SAVED_EVENT, handleHeadingSaved)
+        dispose()
         return
       } else {
         return
