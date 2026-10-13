@@ -8,7 +8,7 @@ import '../styles/editProfile.css'
 import {
   clearPreviousMessage, complain
 } from '../buttonsHelper'
-import { saveNewThing } from '../specialButtons/addMeToYourFriends'
+import { saveNewThing } from './helpers'
 import { isAWebID, refresh } from './editProfilePresenter'
 
 const GREEN_PLUS = icons.iconBase + 'noun_34653_green.svg'

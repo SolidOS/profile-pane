@@ -13,7 +13,6 @@ import { ContactInfo } from './sections/contactInfo/types'
 import { LanguageDetails } from './sections/languages/types'
 import { renderCVSection } from './sections/resume/ResumeSection'
 import { renderProjectSection } from './sections/projects/ProjectSection'
-import { renderHeadingSection } from './sections/heading/HeadingSection'
 import { renderBioSection } from './sections/bio/BioSection'
 import { renderSocialSection } from './sections/social/SocialSection'
 import { renderQRCodeSection } from './sections/qrcode/QRCodeSection'
@@ -58,7 +57,6 @@ export async function ProfileView (
   const inputMode = context.environment?.inputMode ?? 'pointer'
 
   const viewModel = await presentProfileViewModel(subject, store)
-  const profileDetails = viewModel.profileDetails
   const rolesByType = viewModel.cvDetails
   const skills = viewModel.skills
   const languages = viewModel.languages
@@ -67,7 +65,6 @@ export async function ProfileView (
   const accounts = viewModel.social
   const contactInfo = viewModel.contactInfo
 
-  const headingSection = await renderHeadingSection(context, subject, profileDetails, viewerMode, layout,onSaved)
   const bioSection = renderBioSection(store, subject, bioDetails, viewerMode, layout, onSaved)
   const skillsSection = renderSkillsSection(store, subject, skills, viewerMode, layout, onSaved)
   const languageSection = renderLanguageSection(store, subject, languages, viewerMode, layout, onSaved)
@@ -90,7 +87,6 @@ export async function ProfileView (
           class="profile-grid"
           tabindex="-1"
         >
-          ${headingSection}
           ${bioSection}
           ${skillsSection}
           ${languageSection}
@@ -118,7 +114,6 @@ export async function ProfileView (
       >
 
         <section class="profile__main">
-          ${headingSection}
           ${bioSection}
           ${cvSection}
           ${projectSection}

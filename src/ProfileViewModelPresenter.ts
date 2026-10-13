@@ -1,5 +1,5 @@
 import { NamedNode, LiveStore } from 'rdflib'
-import { ContactInfo  } from './sections/contactInfo/types'
+import { ContactInfo } from './sections/contactInfo/types'
 import { presentSocial } from './sections/social/selectors'
 import { SocialPresentation } from './sections/social/types'
 import { presentSkillDetails } from './sections/skills/selectors'
@@ -13,16 +13,13 @@ import { EducationDetails } from './sections/education/types'
 import { presentEducation } from './sections/education/selectors'
 import { ProjectDetails } from './sections/projects/types'
 import { presentProjects } from './sections/projects/selectors'
-import { presentProfile } from './sections/heading/selectors'
-import { ProfileDetails } from './sections/heading/types'
 import { BioDetails } from './sections/bio/types'
 import { presentBio } from './sections/bio/selectors'
 
 export type ProfileViewModel = {
-  profileDetails: ProfileDetails,
   contactInfo: ContactInfo,
   skills: SkillDetails[],
-  languages: LanguageDetails[], 
+  languages: LanguageDetails[],
   education: EducationDetails[],
   projects: ProjectDetails[],
   bioDetails: BioDetails,
@@ -31,7 +28,6 @@ export type ProfileViewModel = {
 }
 
 export async function presentProfileViewModel(subject: NamedNode, store: LiveStore): Promise<ProfileViewModel> {
-  const profileDetails = presentProfile(subject, store)
   const contactInfo = presentContactInfo(subject, store)
   const skills = presentSkillDetails(subject, store)
   const languages = presentLanguages(subject, store)
@@ -41,11 +37,10 @@ export async function presentProfileViewModel(subject: NamedNode, store: LiveSto
   const social = presentSocial(subject, store)
   const cvDetails = presentCV(subject, store)
 
-  return { 
-    profileDetails,
+  return {
     social,
     contactInfo,
-    skills, 
+    skills,
     languages,
     education,
     projects,

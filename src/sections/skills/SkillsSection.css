@@ -51,6 +51,12 @@
   justify-content: center;
 }
 
+.skills__empty-icon svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
 solid-ui-button.skills__remove-button[data-loading='true'] {
   pointer-events: none;
 }
