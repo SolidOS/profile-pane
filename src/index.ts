@@ -7,13 +7,11 @@ import { hydrateQRCodes } from './sections/qrcode/QRCodeCard'
 import { createResizeDrivenSync } from './utils/resize'
 import { Layout } from './types'
 export { getViewerMode } from './viewerMode'
-export type { ProfileDetails, ViewerMode } from './types'
+export type { ViewerMode } from './types'
 export type { AddressDetails, ContactAddressRow, ContactPointRow, PointDetails } from './sections/contactInfo/types'
 
 const PROFILE_HEADING_SAVED_EVENT = 'profile-heading-saved'
 const MOBILE_LAYOUT_MAX_WIDTH = 768
-const HEADING_SECTION_SELECTOR = '[data-profile-section="heading"]'
-const SOCIAL_SECTION_SELECTOR = '[data-profile-section="social"]'
 
 async function loadExtendedProfile(store: LiveStore, subject: NamedNode) {
   const otherProfiles = store.each(
@@ -56,33 +54,6 @@ function syncRenderedLayout(
   return createResizeDrivenSync(updateLayout, [root, grid])
 }
 
-function syncSocialSectionHeight(root: HTMLElement): () => void {
-  const updateHeight = () => {
-    const grid = root.querySelector('.profile-grid') as HTMLElement | null
-    const headingSection = root.querySelector(HEADING_SECTION_SELECTOR) as HTMLElement | null
-    const socialSection = root.querySelector(SOCIAL_SECTION_SELECTOR) as HTMLElement | null
-
-    if (!grid || !headingSection || !socialSection) {
-      return
-    }
-
-    const isDesktopGrid = root.dataset.layout !== 'mobile' && getComputedStyle(grid).display === 'grid'
-    if (!isDesktopGrid) {
-      socialSection.style.removeProperty('min-height')
-      return
-    }
-
-    const nextMinHeight = `${Math.ceil(headingSection.getBoundingClientRect().height)}px`
-    if (socialSection.style.minHeight !== nextMinHeight) {
-      socialSection.style.minHeight = nextMinHeight
-    }
-  }
-  const headingSection = root.querySelector(HEADING_SECTION_SELECTOR) as HTMLElement | null
-  const socialSection = root.querySelector(SOCIAL_SECTION_SELECTOR) as HTMLElement | null
-
-  return createResizeDrivenSync(updateHeight, [root, headingSection, socialSection])
-}
-
 function applyEnvironmentAttributes(
   element: HTMLElement,
   context: DataBrowserContext
@@ -118,7 +89,6 @@ const Pane = {
   render: (subject: NamedNode, context: DataBrowserContext): HTMLElement => {
     const target = context.dom.createElement('div')
     const store = context.session.store
-    let cleanupSocialSectionHeightSync: (() => void) | null = null
     let cleanupLayoutSync: (() => void) | null = null
     let currentLayout: Layout = measureLayout(context, target)
 
@@ -144,8 +114,6 @@ const Pane = {
       })
       if (disposed) return
       render(view, target)
-      cleanupSocialSectionHeightSync?.()
-      cleanupSocialSectionHeightSync = syncSocialSectionHeight(target)
       cleanupLayoutSync?.()
       cleanupLayoutSync = syncRenderedLayout(target, context, (nextLayout) => {
         currentLayout = nextLayout
@@ -162,7 +130,6 @@ const Pane = {
       disposed = true
       context.dom.removeEventListener(PROFILE_HEADING_SAVED_EVENT, handleHeadingSaved)
       connectionObserver.disconnect()
-      cleanupSocialSectionHeightSync?.()
       cleanupLayoutSync?.()
     }
     const connectionObserver = new MutationObserver((records) => {

@@ -8,11 +8,9 @@ import { LanguageDetails } from './sections/languages/types'
 import { RoleDetails } from './sections/resume/types'
 import { EducationDetails } from './sections/education/types'
 import { ProjectDetails } from './sections/projects/types'
-import { ProfileDetails } from './sections/heading/types'
 import { BioDetails } from './sections/bio/types'
 
 export type ProfileViewModel = {
-  profileDetails: ProfileDetails,
   contactInfo: ContactInfo,
   skills: SkillDetails[],
   languages: LanguageDetails[],
@@ -25,7 +23,6 @@ export type ProfileViewModel = {
 
 export async function presentProfileViewModel(subject: NamedNode): Promise<ProfileViewModel> {
   const { profile } = solidLogicSingleton
-  const profileDetails = profile.getHeading(subject)
   const contactInfo = profile.getContactInfo(subject)
   const skills = profile.getSkillDetails(subject)
   const languages = profile.getLanguages(subject)
@@ -41,7 +38,6 @@ export async function presentProfileViewModel(subject: NamedNode): Promise<Profi
   const cvDetails = profile.getResume(subject)
 
   return {
-    profileDetails,
     social,
     contactInfo,
     skills, 

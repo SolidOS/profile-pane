@@ -106,7 +106,6 @@ describe('presentProfileViewModel integration', () => {
       'cvDetails',
       'education',
       'languages',
-      'profileDetails',
       'projects',
       'skills',
       'social'

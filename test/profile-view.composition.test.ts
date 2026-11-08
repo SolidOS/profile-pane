@@ -163,7 +163,6 @@ describe('Profile view composition', () => {
     const result = await ProfileView(subject, context, 'desktop')
     render(result, container)
 
-    expect(container.querySelector('#profile-name')?.textContent).toContain('Jane Doe')
     expect(container.textContent).toContain('Builds profile features for SolidOS.')
     expect(container.textContent).toContain('Staff Engineer')
     expect(container.textContent).toContain('Profile Pane')

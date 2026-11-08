@@ -679,7 +679,7 @@ function isValidEmailAddress(value: string): boolean {
 }
 
 function isValidPhoneNumber(value: string): boolean {
-  return /^\d+$/.test(value)
+  return /^\d[\d\s().-]*$/.test(value) && /\d/.test(value)
 }
 
 function validateContactInfoBeforeSave(formState: ContactInfoFormState): string | null {
