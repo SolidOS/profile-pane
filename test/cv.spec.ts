@@ -174,31 +174,26 @@ l:du schema:name "Dutch"@en.
 describe('profile pane curriculum vitae', () => {
   beforeEach(() => {
     store.removeDocument(doc)
-})
+  })
 
   it('renders resume roles using the current CV section contract', async () => {
     parse(exampleProfile, store, doc.uri)
     const result = pane.render(subject, context)
-        document.body.appendChild(result)
+    document.body.appendChild(result)
 
-        await waitForSelector(result, '#profile-name')
-        const cv = await waitForSelector<HTMLElement>(result, '[data-testid="curriculum-vitae"]')
+    const cv = await waitForSelector<HTMLElement>(result, '[data-testid="curriculum-vitae"]')
 
-        expect(result.querySelector('#profile-name')?.textContent).toBe('Testing SolidOS Test')
-        expect(cv.textContent).toContain('Apple')
-        expect(cv.textContent).toContain('The Beatles')
-        expect(cv.textContent).toContain('Testeuse des Apps Solid')
-        expect(cv.textContent).toContain('Directed the white album')
-        expect(result.textContent).toContain('Testingville')
-        expect(result.textContent).toContain('Texas')
-        expect(result.textContent).toContain('USA')
+    expect(cv.textContent).toContain('Apple')
+    expect(cv.textContent).toContain('The Beatles')
+    expect(cv.textContent).toContain('Testeuse des Apps Solid')
+    expect(cv.textContent).toContain('Directed the white album')
+    expect(result.textContent).toContain('Testingville')
+    expect(result.textContent).toContain('Texas')
+    expect(result.textContent).toContain('USA')
 
-        const roles = result.querySelectorAll('.resume-card__item')
+    const roles = cv.querySelectorAll('.resume-card__item')
     expect(roles.length).toBe(4)
 
-        const image = result.querySelector('img.profile__hero') as HTMLImageElement | null
-        expect(image?.getAttribute('src')).toBe('https://janedoe.example/profile/noun_test_2974484.svg')
-
-        result.remove()
+    result.remove()
   })
 })

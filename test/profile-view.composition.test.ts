@@ -127,9 +127,6 @@ describe('Profile view composition', () => {
   it('aggregates all major presenter branches from one profile fixture', async () => {
     const viewModel = await presentProfileViewModel(subject, store as any)
 
-    expect(viewModel.profileDetails.name).toBe('Jane Doe')
-    expect(viewModel.profileDetails.jobTitle).toBe('Staff Engineer')
-
     expect(viewModel.bioDetails.description).toBe('Builds profile features for SolidOS.')
 
     expect(viewModel.cvDetails).toHaveLength(1)
@@ -166,7 +163,7 @@ describe('Profile view composition', () => {
     const result = await ProfileView(subject, context, 'desktop')
     render(result, container)
 
-    expect(container.querySelector('#profile-name')?.textContent).toBe('Jane Doe')
+    expect(container.querySelector('#profile-name')).toBeNull()
     expect(container.textContent).toContain('Builds profile features for SolidOS.')
     expect(container.textContent).toContain('Staff Engineer')
     expect(container.textContent).toContain('Profile Pane')

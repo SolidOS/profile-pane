@@ -78,6 +78,28 @@ describe('Dialog accessibility', () => {
     await expect(resultPromise).resolves.toBeNull()
   })
 
+  it('keeps a submit control attached to the form so Enter submits the dialog', async () => {
+    const form = document.createElement('form')
+    const input = document.createElement('input')
+    input.name = 'displayName'
+    form.appendChild(input)
+
+    const resultPromise = openInputDialog({
+      title: 'Edit display name',
+      dom: document,
+      form,
+      headerAction: { type: 'none' }
+    })
+
+    const submitControl = form.querySelector('button[type="submit"], input[type="submit"]') as HTMLElement | null
+    expect(submitControl).not.toBeNull()
+    expect(submitControl?.getAttribute('type')).toBe('submit')
+
+    getSharedDialogCancelButton(document)?.click()
+    await expect(resultPromise).resolves.toBeNull()
+    expect(form.querySelector('button[type="submit"], input[type="submit"]')).toBeNull()
+  })
+
   it('has no accessibility violations for the shared input dialog', async () => {
     const form = document.createElement('form')
     const label = document.createElement('label')
