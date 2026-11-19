@@ -1,6 +1,6 @@
 {
   "name": "profile-pane",
-  "version": "4.1.0-0",
+  "version": "4.1.1-0",
   "description": "A SolidOS compatible pane to display a personal profile page",
   "sideEffects": [
     "*.css"
@@ -54,15 +54,14 @@
   "license": "MIT",
   "dependencies": {
     "@solid-data-modules/contacts-rdflib": "^0.7.1",
-    "chat-pane": "4.0.0",
     "lit-html": "^3.3.3",
     "lucide": "^1.52.0",
-    "pane-registry": "5.0.2-2",
+    "pane-registry": "5.1.2-0",
     "patch-package": "^8.0.1",
     "qrcode": "^1.5.4",
     "rdflib": "2.4.1",
-    "solid-logic": "6.0.1-5",
-    "solid-ui": "5.0.2-6",
+    "solid-logic": "6.2.1-0",
+    "solid-ui": "5.1.1-0",
     "validate-color": "^2.2.4"
   },
   "overrides": {
@@ -75,11 +74,8 @@
     "@typescript-eslint/parser": "^8.59.3",
     "@vitest/coverage-v8": "^4.0.18",
     "axe-core": "^4.11.4",
-    "chat-pane": "^4.0.0",
     "eslint": "^9.39.4",
     "jsdom": "^29.1.1",
-    "rdflib": "^2.4.1",
-    "solid-logic": "^6.0.1-0",
     "solidos-toolkit": "dev",
     "typescript": "^6.0.3",
     "undici-types": "^7.18.2",
@@ -92,8 +88,7 @@
     "rdflib",
     "solid-logic",
     "solid-ui",
-    "pane-registry",
-    "chat-pane"
+    "pane-registry"
   ],
   "allowScripts": {
     "fsevents@2.3.3": true
